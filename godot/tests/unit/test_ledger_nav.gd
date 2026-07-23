@@ -3,7 +3,7 @@ extends GutTest
 ##
 ## Behaviour that needs a live viewport (the actual L toggle wiring inside MainUI._input,
 ## ESC returning from the Employee screen, and the visual layout filling the panel) is
-## exercised by the boot check + a human eye — see the PR notes. These tests lock the
+## exercised by the boot check + a human eye -- see the PR notes. These tests lock the
 ## cheap, deterministic invariants: the L keybind, the distinct-red warning constant, and
 ## the ledger dialog's toggle meta being reachable from the script.
 
@@ -28,7 +28,7 @@ func test_open_ledger_bound_to_L():
 		"open_ledger should be bound to L (the key that both opens and closes the ledger)")
 
 func test_L_matches_open_ledger_action():
-	# With nothing focused, an L key event matches open_ledger — the trigger the toggle uses.
+	# With nothing focused, an L key event matches open_ledger -- the trigger the toggle uses.
 	var vp = KeybindManager.get_viewport()
 	if vp and vp.gui_get_focus_owner():
 		vp.gui_get_focus_owner().release_focus()

@@ -95,19 +95,19 @@ func _get_message_color(message_type: String) -> Color:
 func _get_message_prefix(message_type: String) -> String:
 	match message_type:
 		"success":
-			return "✓"
+			return "[OK]"
 		"error":
-			return "✗"
+			return "[X]"
 		"warning":
-			return "⚠"
+			return "[!]"
 		"info":
-			return "ℹ"
+			return "[i]"
 		"action":
-			return "→"
+			return "->"
 		"event":
-			return "★"
+			return "*"
 		"doom":
-			return "☠"
+			return "[X]"
 		_:
 			return ""
 
@@ -128,7 +128,7 @@ func clear_log():
 	message_count = 0
 
 ## Add a separator line
-func add_separator(separator_char: String = "─"):
+func add_separator(separator_char: String = "-"):
 	var separator = separator_char.repeat(50)
 	add_message(separator, "system")
 

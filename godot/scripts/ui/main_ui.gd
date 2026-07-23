@@ -59,6 +59,10 @@ var event_dialog  # #622 L10: event dialog presenter (script-instantiated child)
 var ledger_screen  # #622 L10: Liability Ledger UI (leather palette + summary button + screen builder)
 var employee_panel  # #622 L10: employee roster + staff ID card (becomes L2's assignment surface)
 var screen_mode: ScreenModeController  # Lane 1 / Phase A: PLAN<->WATCH two-screen mode controller
+var layout_controller: LayoutController  # A/B layout harness (classic | proposed); container-reflow only
+var queue_gantt: QueueGantt              # P10 committed-queue gantt (proposed layout only; pure view)
+var _last_actions: Array = []            # last actions payload, re-rendered when the layout flips
+var _ui_layout: String = "classic"       # active A/B layout; gates P9 grouped hand + P10 gantt
 var _inflight_hiring_box: VBoxContainer  # in-flight hiring jobs + progress, mounted under the queue (VIEW-only)
 # EE-7 (ADR-0012 loss legibility): per-resource "last turn" delta chips beside the
 # money/compute/reputation/doom readouts. Snapshot at each turn boundary; a chip shows
@@ -68,6 +72,21 @@ var _prev_turn_snapshot: Dictionary = {}
 var _last_delta_turn: int = -1
 const _DELTA_GOOD := Color(0.35, 0.85, 0.40)
 const _DELTA_BAD := Color(0.95, 0.30, 0.25)
+# P9 proposed-layout category headers: each grouping renders with its accent colour PLUS a
+# real navigation icon (was falling through IconLoader.get_action_icon(category_key) -> neon
+# placeholder, since a category key is not an action id). Single source for the mapping; loads
+# are guarded so a missing file degrades to no-icon, never a crash. (influence/other are
+# stand-ins pending #795.)
+const CATEGORY_HEADER_ICONS := {
+	"hiring": "res://assets/icons/main_navigation/ui_staff_management_64.png",
+	"resources": "res://assets/icons/main_navigation/ui_guide_resources_64.png",
+	"research": "res://assets/icons/main_navigation/ui_research_tech_64.png",
+	"funding": "res://assets/icons/main_navigation/ui_budget_finance_64.png",
+	"management": "res://assets/icons/main_navigation/ui_governance_oversight_64.png",
+	"influence": "res://assets/icons/main_navigation/ui_guide_objective_64.png",
+	"strategic": "res://assets/icons/main_navigation/ui_guide_strategy_64.png",
+	"other": "res://assets/icons/main_navigation/ui_guide_book_64.png",
+}
 var _seen_unlocked_actions: Dictionary = {}  # #578: action ids seen unlocked, to detect NEW unlocks for fanfare
 var _actions_primed: bool = false  # skip fanfare on the very first action population (baseline)
 var current_turn_phase: String = "NOT_STARTED"
@@ -317,6 +336,29 @@ func _setup_plan_watch_scaffold() -> void:
 	# Start in PLAN (the game opens at the month plan).
 	screen_mode.enter_plan()
 
+	# --- A/B layout harness (UI_PROPOSALS_2026-07-22 section 4) --------------------------------
+	# Container-reflow sibling to ScreenModeController: registers the existing columns/panels and
+	# flips their layout properties from GameConfig.ui_layout. "classic" is captured first so it
+	# stays pixel-identical; "proposed" assembles P6/P9/P10/P11. Flip live with the dev hotkey.
+	layout_controller = LayoutController.new()
+	add_child(layout_controller)
+	layout_controller.register_targets(
+		plan_screen, instruments, watch_screen,
+		instruments.office_cat, plan_screen, plan_screen.upgrades_label, plan_screen.upgrades_scroll)
+
+	# P10 gantt: mount under the shared queue panel in the instrument column (visible only in
+	# proposed). Pure view -- driven read-only from state via _refresh_gantt().
+	queue_gantt = QueueGantt.new()
+	queue_gantt.name = "QueueGantt"
+	instruments.add_child(queue_gantt)
+	instruments.move_child(queue_gantt, instruments.queue_panel.get_index() + 1)
+
+	# Re-skin the gantt register (amber PLAN / green WATCH + progress fill) on every mode flip.
+	screen_mode.mode_changed.connect(func(_m): _refresh_gantt())
+
+	# Apply the persisted layout (classic default -> a no-op restore, so first boot is unchanged).
+	_apply_ui_layout(GameConfig.ui_layout)
+
 
 func _unhandled_key_input(event: InputEvent):
 	"""Handle keyboard shortcuts for dialogs (runs after focus but before _unhandled_input)"""
@@ -352,6 +394,13 @@ func _input(event: InputEvent):
 		# TODO: remove before any release/PR if undesired (currently gated, so release-safe).
 		if OS.is_debug_build() and (event.keycode == KEY_PAGEUP or event.keycode == KEY_PAGEDOWN):
 			_debug_nudge_doom(10.0 if event.keycode == KEY_PAGEUP else -10.0)
+			get_viewport().set_input_as_handled()
+			return
+
+		# DEBUG: flip the A/B UI layout live (classic<->proposed) for Pip's iteration loop.
+		# Debug builds only -- release players use the Settings toggle. Persists the choice.
+		if OS.is_debug_build() and event.keycode == KEY_F9:
+			_toggle_ui_layout()
 			get_viewport().set_input_as_handled()
 			return
 
@@ -543,6 +592,44 @@ func _trigger_action_by_index(index: int):
 		if button and not button.disabled:
 			button.emit_signal("pressed")
 			log_message("[color=cyan]Keyboard shortcut: %d[/color]" % (index + 1))
+
+func _apply_ui_layout(name: String) -> void:
+	"""Flip the A/B layout (VIEW-only; ADR-0006). LayoutController reflows the containers (P6
+	cat clamp + P11 column split + upgrades dock); here we swap the classic one-line queue hint
+	for the P10 gantt and re-render the action hand grouped (P9) vs flat. Zero writes to game
+	state, zero RNG, no turn-logic -- pure presentation."""
+	var target := name if name == "proposed" else "classic"
+	_ui_layout = target
+	if layout_controller:
+		layout_controller.apply_layout(target)
+	var proposed := target == "proposed"
+	# P10: the gantt stands in for the one-line queue hint panel in proposed.
+	if queue_gantt:
+		queue_gantt.visible = proposed
+	if instruments and instruments.queue_panel:
+		instruments.queue_panel.visible = not proposed
+	# P9: re-render the hand in the new register (grouped vs flat), if we have a payload.
+	if not _last_actions.is_empty():
+		_on_actions_available(_last_actions)
+	_refresh_gantt()
+
+func _toggle_ui_layout() -> void:
+	"""Dev hotkey: flip classic<->proposed live and persist the choice (same iteration loop as
+	the debug doom-nudge). Debug-build gated at the call site."""
+	var next := "classic" if _ui_layout == "proposed" else "proposed"
+	_apply_ui_layout(next)
+	GameConfig.set_setting("ui_layout", next, true)  # persist so the choice survives a restart
+	log_message("[color=cyan]UI layout -> %s[/color]" % next)
+
+func _refresh_gantt() -> void:
+	"""Rebuild the P10 gantt rows from live state (committed strategic WIP + in-flight hiring +
+	the plan-time tentative queue). READ-ONLY: snapshots state, writes nothing. No-op in classic."""
+	if queue_gantt == null or _ui_layout != "proposed":
+		return
+	var state: Dictionary = game_manager.get_game_state() if game_manager else {}
+	var rows := QueueGantt.rows_from_state(state, queued_actions)
+	var watch_mode := screen_mode != null and screen_mode.current_mode == ScreenModeController.Mode.WATCH
+	queue_gantt.update_rows(rows, watch_mode)
 
 func _apply_balance_tooltips() -> void:
 	"""Rebuild the resource HUD tooltips that quote balance numbers from Balance,
@@ -766,9 +853,17 @@ func _on_game_state_updated(state: Dictionary):
 	if screen_mode:
 		screen_mode.update_from_state(state)
 
+	# Office-floor visual layer (WATCH): walker count mirrors the staff count. PURE VIEW
+	# (ADR-0006) -- reads the state snapshot, writes nothing, cannot affect determinism.
+	if watch_screen and watch_screen.has_method("update_office_floor"):
+		watch_screen.update_office_floor(state)
+
 	# Refresh the PLAN attention gauge (allocated vs reserved pips) from the month plan.
 	if plan_screen:
 		plan_screen.update_reserve_gauge(state)
+
+	# P10 gantt (proposed layout): rebuild the operations tracker from live state. No-op in classic.
+	_refresh_gantt()
 
 	# Turn/time (Pip: "count turns and tell us the date"). ONE tidy element:
 	#   "Turn 14  -  Fri 21 Jul 2017"
@@ -870,9 +965,10 @@ func _on_game_state_updated(state: Dictionary):
 		# Show cat if adopted, hide if not
 		office_cat.visible = state.get("has_cat", false)
 
-	# Hide getting started hint after turn 3 (new player onboarding)
+	# Hide getting started hint after turn 3 (new player onboarding).
+	# Gated on GameConfig.show_hints (issue #720) so the hints toggle suppresses it.
 	if getting_started_hint:
-		getting_started_hint.visible = state.get("turn", 0) < 3
+		getting_started_hint.visible = GameConfig.show_hints and state.get("turn", 0) < 3
 
 	# #801: retire the first-lever pulse once the onboarding window has passed, even if the
 	# player never hired (belt-and-suspenders; the primary clear is on first hire).
@@ -1151,6 +1247,9 @@ func _on_actions_available(actions: Array):
 	"""Populate action list with icon buttons in a grid layout"""
 	print("[MainUI] Populating ", actions.size(), " actions as icon buttons")
 
+	# Remember the payload so a live layout flip can re-render the hand (P9).
+	_last_actions = actions
+
 	# Clear existing action buttons
 	for child in actions_list.get_children():
 		child.queue_free()
@@ -1205,9 +1304,18 @@ func _on_actions_available(actions: Array):
 		"other": Color(0.8, 0.8, 0.8)
 	}
 
+	# P9 (proposed layout): render the hand GROUPED -- one collapsible category section per the
+	# ABBBCCC sketch -- instead of the flat concatenated icon column. Classic falls through to the
+	# untouched flat renderer below, so it stays pixel-identical.
+	if _ui_layout == "proposed":
+		_render_actions_grouped(categories, category_order, category_colors, current_state)
+		_populate_upgrades()
+		return
+
 	# Create a single-column vertical stack for icons on left edge
 	var icon_stack = VBoxContainer.new()
 	icon_stack.add_theme_constant_override("separation", 1)  # #594: tighter vertical packing for 11+ icons
+	icon_stack.alignment = BoxContainer.ALIGNMENT_BEGIN  # P2/#768: pack to the top, no vertical float
 	actions_list.add_child(icon_stack)
 
 	# Create icon buttons - single column layout
@@ -1232,7 +1340,9 @@ func _on_actions_available(actions: Array):
 			icon_button.custom_minimum_size = Vector2(70, 70)  # square icon tiles
 			# #594: hug the 70px icon instead of ballooning across the wide left panel -- this
 			# reclaims the empty padding around each icon (and stops expand_icon distorting them).
-			icon_button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+			# P2/#768: bind to the LEFT (was SHRINK_CENTER) so icons pack against the column edge
+			# instead of floating centred with wide side margins (Pip's "white gaps" complaint).
+			icon_button.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 			icon_button.focus_mode = Control.FOCUS_NONE
 
 			# Get icon texture
@@ -1322,6 +1432,95 @@ func _clear_first_lever_nudge() -> void:
 	if _first_lever_pulse_tween != null and _first_lever_pulse_tween.is_valid():
 		_first_lever_pulse_tween.kill()
 	_first_lever_pulse_tween = null
+func _render_actions_grouped(categories: Dictionary, category_order: Array, category_colors: Dictionary, current_state: Dictionary) -> void:
+	"""P9 grouped hand (proposed layout only): each category is one A-header that expands/collapses
+	a B-list of its actions -- Pip's ABBBCCC sketch as inline collapsible sections. Fewer top-level
+	entries, real grouping, hiring folded into its own category (fixes D3/D4). The C context stays
+	the shared InfoBar on hover. VIEW-only: same press/hover handlers as the flat renderer."""
+	var stack := VBoxContainer.new()
+	stack.add_theme_constant_override("separation", 3)
+	stack.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	actions_list.add_child(stack)
+
+	var display_names := {
+		"hiring": "Hiring", "resources": "Resources", "research": "Research",
+		"funding": "Funding", "management": "Management", "influence": "Influence",
+		"strategic": "Strategic", "other": "Other",
+	}
+
+	for category_key in category_order:
+		if not categories.has(category_key):
+			continue
+		var category_actions: Array = categories[category_key]
+		if category_actions.is_empty():
+			continue
+		var accent: Color = category_colors.get(category_key, Color(0.8, 0.8, 0.8))
+		var label_name: String = display_names.get(category_key, String(category_key).capitalize())
+
+		# B-list built first so the header's toggle closure can capture it.
+		var blist := VBoxContainer.new()
+		blist.add_theme_constant_override("separation", 1)
+		blist.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+
+		# A-header: category name + count, toggles the B-list open/closed.
+		var header := Button.new()
+		header.toggle_mode = true
+		header.button_pressed = true
+		header.focus_mode = Control.FOCUS_NONE
+		header.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		header.alignment = HORIZONTAL_ALIGNMENT_LEFT
+		# Category header icon: pull the mapped navigation icon (not IconLoader, which keys on
+		# action ids and returned the neon placeholder for a category key). Guard the load so a
+		# missing asset degrades to an icon-less (but still colour-coded) header, never a crash.
+		var cat_icon_path: String = CATEGORY_HEADER_ICONS.get(category_key, "")
+		if cat_icon_path != "" and ResourceLoader.exists(cat_icon_path):
+			var cat_icon := load(cat_icon_path) as Texture2D
+			if cat_icon:
+				header.icon = cat_icon
+		header.text = "v %s (%d)" % [label_name, category_actions.size()]
+		header.add_theme_color_override("font_color", accent)
+		header.tooltip_text = "Show / hide %s actions" % label_name
+		header.toggled.connect(func(on: bool):
+			blist.visible = on
+			header.text = "%s %s (%d)" % ["v" if on else ">", label_name, category_actions.size()])
+		stack.add_child(header)
+		stack.add_child(blist)
+
+		for action in category_actions:
+			var action_id: String = action.get("id", "")
+			var action_name: String = action.get("name", "Unknown")
+			var action_cost: Dictionary = action.get("costs", {})
+
+			# Affordability -- same rule as the flat renderer.
+			var can_afford := true
+			var missing_resources := []
+			for resource in action_cost.keys():
+				var cost = action_cost[resource]
+				var available = current_state.get(resource, 0)
+				if available < cost:
+					can_afford = false
+					missing_resources.append("%s (need %s, have %s)" % [resource, cost, available])
+
+			var row := Button.new()
+			row.focus_mode = Control.FOCUS_NONE
+			row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			row.alignment = HORIZONTAL_ALIGNMENT_LEFT
+			row.clip_text = true
+			row.text = "  " + action_name
+			var icon_texture := IconLoader.get_action_icon(action_id)
+			if icon_texture:
+				row.icon = icon_texture
+			row.set_meta("action_id", action_id)  # submenu alignment (#510) + button lookup
+			if not can_afford:
+				row.disabled = true
+				row.modulate = Color(0.4, 0.4, 0.4)
+			else:
+				row.modulate = Color(0.9, 0.9, 0.9).lerp(accent, 0.4)
+			row.tooltip_text = action_name
+			row.pressed.connect(func(): _on_dynamic_action_pressed(action_id, action_name))
+			row.mouse_entered.connect(func(): _on_action_hover(action, can_afford, missing_resources))
+			row.mouse_exited.connect(func(): _on_action_unhover())
+			blist.add_child(row)
 
 func _populate_upgrades():
 	"""Populate upgrades list"""
@@ -1502,6 +1701,27 @@ func _close_active_submenu() -> void:
 	active_dialog = null
 	active_dialog_buttons = []
 
+func _present_modal_dialog(dialog: Control) -> void:
+	"""Mount a modal Panel over the board WITH a full-rect input barrier beneath it
+	(#767). Before this, submenu/pipeline/ledger panels were added over the board with
+	no blocker, so clicks landing outside the panel still reached the action icons
+	behind (e.g. buy compute while the hiring pipeline was open). This mirrors the
+	event-dialog blocker pattern (event_dialog.gd): a MOUSE_FILTER_STOP ColorRect that
+	swallows every click to the board. The barrier is a sibling added just BEFORE the
+	dialog (so the dialog, a later sibling, still receives its own clicks) and is freed
+	automatically when the dialog leaves the tree -- via ANY close path (X, ESC, cancel,
+	or a replacing dialog's queue_free) -- so no call site needs to manage it."""
+	var barrier := ColorRect.new()
+	barrier.name = "ModalInputBarrier"
+	barrier.color = Color(0.0, 0.0, 0.0, 0.35)   # faint dim so the board reads as "behind"
+	barrier.mouse_filter = Control.MOUSE_FILTER_STOP
+	tab_manager.add_child(barrier)
+	barrier.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	tab_manager.add_child(dialog)   # later sibling -> drawn above the barrier, stays interactive
+	# Free the barrier whenever the dialog leaves the tree -- via ANY close path (X, ESC,
+	# cancel button, or a replacing dialog's queue_free). No call site manages it.
+	dialog.tree_exited.connect(barrier.queue_free)
+
 
 func _debug_nudge_doom(delta: float) -> void:
 	"""DEBUG-only QA helper: bump doom by delta, record a history point so the trend graph
@@ -1576,7 +1796,7 @@ func _show_doom_trend_expanded() -> void:
 
 	_add_submenu_close_affordance(dialog)
 	active_dialog = dialog
-	tab_manager.add_child(dialog)
+	_present_modal_dialog(dialog)
 	dialog.visible = true
 	dialog.z_index = 1000
 	dialog.z_as_relative = false
@@ -1711,7 +1931,7 @@ func _show_hiring_submenu():
 	_add_submenu_close_affordance(dialog)
 	active_dialog = dialog
 	active_dialog_buttons = []
-	tab_manager.add_child(dialog)
+	_present_modal_dialog(dialog)
 	dialog.visible = true
 	dialog.z_index = 1000
 	dialog.z_as_relative = false
@@ -2069,7 +2289,7 @@ func _show_offer_dialog(candidate_id: String) -> void:
 	_add_submenu_close_affordance(dialog)
 	active_dialog = dialog
 	active_dialog_buttons = []
-	tab_manager.add_child(dialog)
+	_present_modal_dialog(dialog)
 	dialog.visible = true
 	dialog.z_index = 1000
 	dialog.z_as_relative = false
@@ -2238,7 +2458,7 @@ func _show_fundraising_submenu():
 
 	# Add dialog to TabManager (parent) so it overlays everything without shifting layout
 	print("[MainUI] Adding dialog to TabManager as overlay...")
-	tab_manager.add_child(dialog)
+	_present_modal_dialog(dialog)
 	dialog.visible = true
 	dialog.z_index = 1000  # Very high z-index to ensure it's on top
 	dialog.z_as_relative = false  # Absolute z-index, not relative to parent
@@ -2357,7 +2577,7 @@ func _show_financing_submenu():
 
 	active_dialog = dialog
 	active_dialog_buttons = buttons
-	tab_manager.add_child(dialog)
+	_present_modal_dialog(dialog)
 	dialog.visible = true
 	dialog.z_index = 1000
 	dialog.z_as_relative = false
@@ -2400,7 +2620,7 @@ func _show_ledger_screen():
 
 	active_dialog = dialog
 	active_dialog_buttons = []
-	tab_manager.add_child(dialog)
+	_present_modal_dialog(dialog)
 	dialog.visible = true
 	dialog.z_index = 1000
 	dialog.z_as_relative = false
@@ -2547,7 +2767,7 @@ func _show_publicity_submenu():
 
 	# Add dialog to TabManager as overlay
 	print("[MainUI] Adding dialog to TabManager as overlay...")
-	tab_manager.add_child(dialog)
+	_present_modal_dialog(dialog)
 	dialog.visible = true
 	dialog.z_index = 1000
 	dialog.z_as_relative = false
@@ -2739,7 +2959,7 @@ func _show_strategic_submenu():
 	print("[MainUI] Strategic submenu opened, tracked %d buttons" % buttons.size())
 
 	# Add dialog to TabManager as overlay
-	tab_manager.add_child(dialog)
+	_present_modal_dialog(dialog)
 	dialog.visible = true
 	dialog.z_index = 1000
 	dialog.z_as_relative = false
@@ -3022,7 +3242,7 @@ func _show_travel_submenu():
 	print("[MainUI] Travel submenu opened, tracked %d buttons" % buttons.size())
 
 	# Add dialog to TabManager as overlay
-	tab_manager.add_child(dialog)
+	_present_modal_dialog(dialog)
 	dialog.visible = true
 	dialog.z_index = 1000
 	dialog.z_as_relative = false
@@ -3164,7 +3384,7 @@ func _show_paper_submission_dialog():
 
 	_add_submenu_close_affordance(dialog)  # X + ESC hint, consistent with action submenus (#510)
 	active_dialog = dialog
-	tab_manager.add_child(dialog)
+	_present_modal_dialog(dialog)
 	dialog.visible = true
 	dialog.z_index = 1000
 	dialog.z_as_relative = false
@@ -3280,7 +3500,7 @@ func _show_conference_attendance_dialog():
 
 	_add_submenu_close_affordance(dialog)  # X + ESC hint, consistent with action submenus (#510)
 	active_dialog = dialog
-	tab_manager.add_child(dialog)
+	_present_modal_dialog(dialog)
 	dialog.visible = true
 	dialog.z_index = 1000
 	dialog.z_as_relative = false
@@ -3510,6 +3730,9 @@ func update_queued_actions_display():
 		clear_queue_button.disabled = queue_empty
 		end_turn_button.disabled = queue_empty
 		print("[MainUI] Updated button states: queue_size=%d, buttons_disabled=%s" % [queued_actions.size(), queue_empty])
+
+	# P10 gantt: mirror the tentative plan-time queue into the operations tracker. No-op in classic.
+	_refresh_gantt()
 
 func _on_event_dialog_opened(dialog: Control, buttons: Array) -> void:
 	"""EventDialog put its modal up (#622) -- route MainUI keyboard shortcuts to it.
@@ -3758,7 +3981,7 @@ func _show_operations_submenu():
 	print("[MainUI] Operations submenu opened, tracked %d buttons" % buttons.size())
 
 	# Add dialog to TabManager as overlay
-	tab_manager.add_child(dialog)
+	_present_modal_dialog(dialog)
 	dialog.visible = true
 	dialog.z_index = 1000
 	dialog.z_as_relative = false

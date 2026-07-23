@@ -44,6 +44,11 @@ func _ready():
 
 	# Add the story-intro toggle under Gameplay (built in code, not the .tscn)
 	_add_play_intros_toggle()
+	# Add the "Show gameplay hints" onboarding toggle under Gameplay (issue #720)
+	_add_show_hints_toggle()
+
+	# Add the experimental A/B UI layout toggle under UI (built in code, not the .tscn)
+	_add_ui_layout_toggle()
 
 	# Connect theme dropdown
 	theme_dropdown.item_selected.connect(_on_theme_changed)
@@ -191,6 +196,61 @@ func _on_play_intros_toggled(pressed: bool):
 	print("[SettingsMenu] Play story intros: ", pressed)
 	GameConfig.set_setting("play_intros", pressed, false)
 	NotificationManager.info("Story intros " + ("enabled" if pressed else "disabled"))
+
+var show_hints_checkbox: CheckButton = null
+
+func _add_show_hints_toggle():
+	"""Append a 'Show gameplay hints' toggle to the Gameplay section (issue #720).
+	Master switch for onboarding help surfaces (getting-started hint + first-launch
+	welcome overlay). Respects the player's choice (GameConfig.show_hints). Default ON."""
+	var gameplay = get_node_or_null("VBox/SettingsContainer/GameplaySettings")
+	if gameplay == null:
+		return
+	var row = HBoxContainer.new()
+	var label = Label.new()
+	label.text = "Show gameplay hints"
+	label.tooltip_text = "Show onboarding help: the getting-started hint and the first-launch welcome overlay."
+	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	row.add_child(label)
+	show_hints_checkbox = CheckButton.new()
+	show_hints_checkbox.button_pressed = GameConfig.show_hints
+	show_hints_checkbox.toggled.connect(_on_show_hints_toggled)
+	row.add_child(show_hints_checkbox)
+	gameplay.add_child(row)
+
+func _on_show_hints_toggled(pressed: bool):
+	"""Handle the show-gameplay-hints toggle (issue #720)."""
+	print("[SettingsMenu] Show gameplay hints: ", pressed)
+	GameConfig.set_setting("show_hints", pressed, false)
+	NotificationManager.info("Gameplay hints " + ("enabled" if pressed else "disabled"))
+
+var ui_layout_checkbox: CheckButton = null
+
+func _add_ui_layout_toggle():
+	"""Append a 'Proposed UI layout (experimental)' toggle to the UI section. A/B scaffolding
+	(UI_PROPOSALS_2026-07-22): OFF = classic PLAN/WATCH; ON = the proposed grouped-hand + gantt +
+	reclaim assembly. Applies on the next game load; the in-game F9 hotkey flips it live."""
+	var ui_section = get_node_or_null("VBox/SettingsContainer/UISettings")
+	if ui_section == null:
+		return
+	var row = HBoxContainer.new()
+	var label = Label.new()
+	label.text = "Proposed UI layout (experimental)"
+	label.tooltip_text = "A/B test: proposed PLAN/WATCH (grouped actions, operations gantt, reclaimed space). Applies on next game load."
+	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	row.add_child(label)
+	ui_layout_checkbox = CheckButton.new()
+	ui_layout_checkbox.button_pressed = (GameConfig.ui_layout == "proposed")
+	ui_layout_checkbox.toggled.connect(_on_ui_layout_toggled)
+	row.add_child(ui_layout_checkbox)
+	ui_section.add_child(row)
+
+func _on_ui_layout_toggled(pressed: bool):
+	"""Handle the proposed-UI-layout toggle."""
+	var layout = "proposed" if pressed else "classic"
+	print("[SettingsMenu] UI layout: ", layout)
+	GameConfig.set_setting("ui_layout", layout, false)
+	NotificationManager.info("Proposed UI layout " + ("enabled" if pressed else "disabled") + " (applies on next game load)")
 
 func _on_colorblind_toggled(pressed: bool):
 	"""Handle colorblind mode toggle"""

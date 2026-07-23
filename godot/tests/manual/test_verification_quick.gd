@@ -5,7 +5,7 @@ extends Node
 ## Usage:
 ##   1. Add this scene to your project
 ##   2. Run it (F6 in Godot)
-##   3. Check output for ✅ PASS or ❌ FAIL
+##   3. Check output for [OK] PASS or [X] FAIL
 ##   4. Both runs should produce IDENTICAL hashes
 
 func _ready():
@@ -29,11 +29,11 @@ func _ready():
 	print("")
 
 	if hash1 == hash2:
-		print("✅ PASS: Hashes match! System is deterministic.")
+		print("[OK] PASS: Hashes match! System is deterministic.")
 		print("   This means: same seed + same actions = same hash")
 		print("   Ready for deployment!")
 	else:
-		print("❌ FAIL: Hashes don't match!")
+		print("[X] FAIL: Hashes don't match!")
 		print("   This means: something is not deterministic")
 		print("   Check RNG tracking in turn_manager.gd")
 
@@ -44,9 +44,9 @@ func _ready():
 	var hash3 = run_test_game_variant("quick-test-002")
 
 	if hash3 != hash1:
-		print("✅ PASS: Different actions produce different hash")
+		print("[OK] PASS: Different actions produce different hash")
 	else:
-		print("❌ FAIL: Different actions produce same hash!")
+		print("[X] FAIL: Different actions produce same hash!")
 
 	print("\n============================================================")
 	print("TEST COMPLETE - Check results above")

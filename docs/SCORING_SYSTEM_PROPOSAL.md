@@ -1,7 +1,7 @@
 # PDoom Scoring System Proposal
 
 **Date**: November 20, 2024
-**Status**: 🟡 Proposal for Review
+**Status**: [Y] Proposal for Review
 **Context**: Replacing simple "turns survived" with comprehensive scoring
 
 ---
@@ -456,6 +456,6 @@ score = (100 - doom) * turn * 20 + papers * turn * 100 + ...
 
 ---
 
-**Status**: 🟡 Awaiting review and feedback
+**Status**: [Y] Awaiting review and feedback
 **Next Step**: Implement in Godot after approval
 **Timeline**: Can deploy with Week 3 testing phase

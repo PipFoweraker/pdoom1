@@ -64,19 +64,19 @@ Both measured on this machine. Calibrated = `l1-balance-calibration` baseline; m
 
 | Policy | Calibrated median (range) | Migrated median (range) | death-cause (migrated) | contract |
 |---|---|---|---|---|
-| `do_nothing` | 14.0 (13–15) | **14.0 (14–15)** | 10/0/0 doom | ✅ median 14 |
-| `safety_lean` | 16.5 (13–21) | 18.0 (17–26) | 8/0/0 doom | 🟠 +1.5 (in n=8 variance; ordering held) |
-| `reserve_heavy` | 19.0 (15–45) | **19.5 (17–21)** | 8/0/0 doom | ✅ |
-| `random_walk` | 8.0 (4–13) | 6.0 (4–13) | 0/0/30 ledger | 🟠 −2 (still ledger-rooted) |
-| `greedy_overcommit` | 7.0 (6–13) | **7.5 (7–14)** | 8/0/0 doom | ✅ T4 + T9 (min 7) |
-| `loan_desperation` | 7.0 (6–8) | **7.0 (6–7)** | 0/0/8 ledger | ✅ T5 + T9 (min 6) |
+| `do_nothing` | 14.0 (13–15) | **14.0 (14–15)** | 10/0/0 doom | [x] median 14 |
+| `safety_lean` | 16.5 (13–21) | 18.0 (17–26) | 8/0/0 doom | [O] +1.5 (in n=8 variance; ordering held) |
+| `reserve_heavy` | 19.0 (15–45) | **19.5 (17–21)** | 8/0/0 doom | [x] |
+| `random_walk` | 8.0 (4–13) | 6.0 (4–13) | 0/0/30 ledger | [O] −2 (still ledger-rooted) |
+| `greedy_overcommit` | 7.0 (6–13) | **7.5 (7–14)** | 8/0/0 doom | [x] T4 + T9 (min 7) |
+| `loan_desperation` | 7.0 (6–8) | **7.0 (6–7)** | 0/0/8 ledger | [x] T5 + T9 (min 6) |
 
 `MORTALITY_CHECK: max_months=26, immortal_runs=0 → PASS` (calibrated max was 45; both « 400).
 
-**Contract status:** do_nothing median 14 ✅ · T9 floor ≥6 for all standard policies ✅ (greedy 7,
+**Contract status:** do_nothing median 14 [x] · T9 floor ≥6 for all standard policies [x] (greedy 7,
 loan 6; random_walk min 4 is the fuzzer, matching the calibrated baseline) · mortality 0 immortal,
-max 26 ✅ · loan_desperation ledger-rooted (8/8) ✅ · ordering `greedy≈loan≈random < do_nothing <
-safety < reserve` ✅.
+max 26 [x] · loan_desperation ledger-rooted (8/8) [x] · ordering `greedy≈loan≈random < do_nothing <
+safety < reserve` [x].
 
 **Deviations (precise):**
 1. `safety_lean` 18.0 vs 16.5 (+1.5 months). Within the memo's stated n=8 variance (±2–3). Ordering

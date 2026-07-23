@@ -39,7 +39,7 @@ var keybinds: Dictionary = {
 	# UI Navigation
 	"next_tab": {"key": KEY_TAB, "category": Category.UI, "description": "Next Tab"},
 	"prev_tab": {"key": KEY_TAB, "shift": true, "category": Category.UI, "description": "Previous Tab"},
-	# Moved off backslash to N (N already opened the bug reporter) — backslash is now DEV MODE.
+	# Moved off backslash to N (N already opened the bug reporter) -- backslash is now DEV MODE.
 	"bug_reporter": {"key": KEY_N, "category": Category.UI, "description": "Open Bug Reporter"},
 	# "employee_tab": {"key": KEY_E, "category": Category.UI, "description": "Employee Screen"},  # DISABLED: moving to main UI
 	"settings": {"key": KEY_F10, "category": Category.UI, "description": "Settings Menu"},
@@ -97,7 +97,7 @@ func load_keybinds():
 	if err == OK:
 		# Defaults changed since this config was written? Refresh from defaults. Otherwise a
 		# stale saved bind silently overrides the new default (e.g. the F3 debug overlay was
-		# stuck on the old '~' bind — issue #564). In beta this resets custom rebinds on a
+		# stuck on the old '~' bind -- issue #564). In beta this resets custom rebinds on a
 		# default change; the alternative is defaults that never take effect.
 		var saved_version = config.get_value("settings", "config_version", 1)
 		if saved_version < KEYBINDS_CONFIG_VERSION:
@@ -275,7 +275,7 @@ func _input(event: InputEvent):
 	if not event is InputEventKey:
 		return
 
-	# Yield to focused text fields — never steal characters being typed (#575).
+	# Yield to focused text fields -- never steal characters being typed (#575).
 	# A bug-report form or any LineEdit/TextEdit must receive letters like 'n'/'t'
 	# rather than having them trigger global shortcuts.
 	if is_text_input_focused():
@@ -296,12 +296,12 @@ func _input(event: InputEvent):
 		debug_overlay_toggled.emit()
 		get_viewport().set_input_as_handled()
 
-	# Dev mode overlay (backslash) — full state readout + dev controls (dev builds only)
+	# Dev mode overlay (backslash) -- full state readout + dev controls (dev builds only)
 	elif is_action_pressed(event, "dev_mode"):
 		dev_mode_toggled.emit()
 		get_viewport().set_input_as_handled()
 
-	# Flight recorder (F6) — screenshot + state snapshot + marker note in one press
+	# Flight recorder (F6) -- screenshot + state snapshot + marker note in one press
 	# (dev builds only; FlightRecorder itself gates on BuildInfo.is_dev_build()).
 	elif is_action_pressed(event, "flight_recorder"):
 		flight_recorder_requested.emit()

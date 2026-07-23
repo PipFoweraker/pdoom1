@@ -88,15 +88,15 @@ python sync_from_pdoom1.py --manifest ../pdoom1/_website_export/manifest.json
 The [`.github/workflows/docs-sync.yml`](../../.github/workflows/docs-sync.yml) workflow:
 
 ### On Pull Requests
-- ✅ Checks if mechanics docs are in sync with game code
-- ⚠️ **Fails the PR** if docs are out of sync
-- 💬 Comments on PR with documentation preview
-- 📦 Uploads website export as artifact
+- [x] Checks if mechanics docs are in sync with game code
+- [!] **Fails the PR** if docs are out of sync
+- Comments on PR with documentation preview
+- Uploads website export as artifact
 
 ### On Main Branch Push
-- 🔄 Auto-updates docs if game code changed
-- 📝 Auto-commits updated docs
-- 📦 Exports website docs
+- Auto-updates docs if game code changed
+- Auto-commits updated docs
+- Exports website docs
 
 ### Triggers
 The workflow runs when these files change:
@@ -151,14 +151,14 @@ touch docs/mechanics/funding.md
 ```markdown
 # Funding & Investors
 
-> **Status**: 🟡 Stub - Under active development
+> **Status**: [Y] Stub - Under active development
 
 ## Current Mechanics
 
 ### Game Data (Auto-Generated)
 *Will be populated automatically*
 
-## Planned Enhancements 🚧
+## Planned Enhancements [wip]
 ...
 ```
 
@@ -227,10 +227,10 @@ python scripts/generate_mechanics_docs.py
 ```
 
 ### Future Extraction Targets
-- 🚧 Action costs and effects from `actions.gd`
-- 🚧 Event probabilities from `events.gd`
-- 🚧 Researcher trait definitions
-- 🚧 Upgrade costs and effects
+- [wip] Action costs and effects from `actions.gd`
+- [wip] Event probabilities from `events.gd`
+- [wip] Researcher trait definitions
+- [wip] Upgrade costs and effects
 
 ## Best Practices
 

@@ -77,7 +77,7 @@ func run_test(test_name: String):
 		print("[TEST] %s" % test_name.to_upper())
 		print("-".repeat(70))
 		tests[test_name].call()
-		print("[✓] Test '%s' completed" % test_name)
+		print("[[OK]] Test '%s' completed" % test_name)
 		print("-".repeat(70))
 	else:
 		print("[ERROR] Unknown test: %s" % test_name)
@@ -116,16 +116,16 @@ func test_game_state():
 	var initial_turn = gs.turn
 	if gs.has_method("advance_turn"):
 		gs.advance_turn()
-		print("  Turn advanced: %d → %d" % [initial_turn, gs.turn])
+		print("  Turn advanced: %d -> %d" % [initial_turn, gs.turn])
 	elif gs.has_method("end_turn"):
 		gs.end_turn()
-		print("  Turn ended: %d → %d" % [initial_turn, gs.turn])
+		print("  Turn ended: %d -> %d" % [initial_turn, gs.turn])
 	else:
 		print("  [SKIP] No advance_turn or end_turn method found")
 
 	print("\n[INFO] Cleaning up GameState instance...")
 	gs.free()
-	print("[✓] GameState working correctly")
+	print("[[OK]] GameState working correctly")
 
 func test_seed_variations():
 	"""Test seed consistency"""
@@ -161,15 +161,15 @@ func test_seed_variations():
 	gs2.free()
 
 	var matches = (name1 == name2)
-	var status = "[✓]" if matches else "[✗]"
+	var status = "[[OK]]" if matches else "[[X]]"
 	print("  %s Run 1: '%s'" % [status, name1])
 	print("  %s Run 2: '%s'" % [status, name2])
 	print("  %s Consistency: %s" % [status, "PASS" if matches else "FAIL"])
 
 	if matches:
-		print("\n[✓] Seed variation system working correctly")
+		print("\n[[OK]] Seed variation system working correctly")
 	else:
-		print("\n[✗] Seed variation INCONSISTENT - this is a bug!")
+		print("\n[[X]] Seed variation INCONSISTENT - this is a bug!")
 
 func test_dual_identity():
 	"""Test dual identity system"""
@@ -205,12 +205,12 @@ func test_dual_identity():
 		print("  Lab Name: %s" % new_lab)
 
 		if original_lab == new_lab:
-			print("  [✓] Lab name unchanged (correct behavior)")
+			print("  [[OK]] Lab name unchanged (correct behavior)")
 		else:
 			print("  [!] Lab name changed (unexpected)")
 
 	gs.free()
-	print("\n[✓] Dual identity test complete")
+	print("\n[[OK]] Dual identity test complete")
 
 ## ============================================================================
 ## HELPER INFO

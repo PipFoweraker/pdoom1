@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://bvqxj8x5p6h8c"]
+[gd_scene load_steps=13 format=3 uid="uid://bvqxj8x5p6h8c"]
 
 [ext_resource type="Script" path="res://scripts/ui/main_ui.gd" id="2_main_ui"]
 [ext_resource type="PackedScene" uid="uid://plan_screen_pw01" path="res://scenes/ui/plan_screen.tscn" id="12_plan_screen"]
@@ -13,6 +13,7 @@
 [ext_resource type="PackedScene" uid="uid://officecat123456" path="res://scenes/ui/office_cat.tscn" id="9_officecat"]
 [ext_resource type="PackedScene" uid="uid://cnj8yk4x5oopm" path="res://scenes/pause_menu.tscn" id="10_pausemenu"]
 [ext_resource type="PackedScene" uid="uid://dqc4gxtx62j3s" path="res://scenes/debug_overlay.tscn" id="11_debugoverlay"]
+[ext_resource type="Texture2D" path="res://assets/images/backgrounds/office_wide_day.webp" id="15_backdrop"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_TurnCounter"]
 bg_color = Color(0.09, 0.04, 0.11, 0.85)
@@ -33,6 +34,29 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="Backdrop" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("15_backdrop")
+expand_mode = 1
+stretch_mode = 6
+modulate = Color(0.35, 0.35, 0.35, 1)
+
+[node name="BackdropScrim" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.090196, 0.039216, 0.109804, 0.25)
 
 [node name="TabManager" type="Control" parent="."]
 layout_mode = 1
@@ -236,6 +260,7 @@ theme_override_constants/margin_bottom = 2
 
 [node name="DoomMeter" parent="TabManager/MainUI/ContentArea/InstrumentColumn/CoreZone/RightZones/DoomMeterZone/DoomMeterPanel/MarginContainer" instance=ExtResource("4_doom_meter")]
 layout_mode = 2
+show_percentage = false
 
 [node name="DoomExplanation" type="CenterContainer" parent="TabManager/MainUI/ContentArea/InstrumentColumn/CoreZone/RightZones"]
 layout_mode = 2

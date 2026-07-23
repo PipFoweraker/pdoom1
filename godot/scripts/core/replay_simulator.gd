@@ -6,12 +6,12 @@ class_name ReplaySimulator
 ## Why re-simulation and not just the hash chain: a hash chain only proves a transcript
 ## is internally self-consistent. It does NOT prove the transcript describes a *legal*
 ## game. Only replaying the inputs through the real engine does. The input string is
-## therefore the canonical artifact — anti-cheat, share format, and bug-repro in one.
+## therefore the canonical artifact -- anti-cheat, share format, and bug-repro in one.
 
-# Mirror of BaselineSimulator.MAX_TURNS — bound runaway/immortal runs.
-# 10000 day-ticks ≈ 450 fiction-months, past the ADR-0002 400-month mortality cap. The old
+# Mirror of BaselineSimulator.MAX_TURNS -- bound runaway/immortal runs.
+# 10000 day-ticks ~ 450 fiction-months, past the ADR-0002 400-month mortality cap. The old
 # value (200) was a pre-L1 relic: 200 STRATEGIC turns was generous, but 200 day-ticks is
-# ~9 fiction-months — post-recalibration (#638) every legitimate run outlives it, and a
+# ~9 fiction-months -- post-recalibration (#638) every legitimate run outlives it, and a
 # verifier that truncates at the cap REJECTS honest long runs.
 const MAX_TURNS: int = 10000
 
@@ -63,7 +63,7 @@ static func replay(replay_data: Dictionary) -> Dictionary:
 		var t: int = state.turn
 
 		# Resolve triggered events with the recorded choices (fall back to first choice
-		# if the artifact is missing one — keeps replay total rather than crashing).
+		# if the artifact is missing one -- keeps replay total rather than crashing).
 		var guard: int = 0
 		while state.pending_events.size() > 0 and guard < 128:
 			guard += 1
@@ -107,7 +107,7 @@ static func replay(replay_data: Dictionary) -> Dictionary:
 static func verify(replay_data: Dictionary, claimed_turns: int, claimed_integral: int, claimed_hash: String = "") -> bool:
 	"""
 	True only if re-simulating the artifact reproduces the claimed SCORE (turns, integral),
-	and — when a claimed_hash is supplied — the claimed verification hash.
+	and -- when a claimed_hash is supplied -- the claimed verification hash.
 
 	The score check is the sound anti-cheat property: you cannot claim a score higher than
 	your input sequence actually produces. The hash is the cheap fast-path fingerprint tier

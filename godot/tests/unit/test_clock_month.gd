@@ -4,7 +4,7 @@ extends GutTest
 # --- Leap-day infinite-loop fix -------------------------------------------------
 # The old date_for_turn compared `day` against the NON-leap DAYS_IN_MONTH[1]=28 in the
 # while-condition while the body used a leap-adjusted 29, so a date landing exactly on
-# Feb 29 entered the loop but never decremented — an infinite hang. If this regresses,
+# Feb 29 entered the loop but never decremented -- an infinite hang. If this regresses,
 # these two calls hang the whole suite (a hard, if blunt, guard).
 
 func test_date_landing_exactly_on_feb29_does_not_hang():

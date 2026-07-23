@@ -4,7 +4,7 @@ class_name Ledger
 ##
 ## A two-sided ledger of trades that pay now and bill later. There is NO new
 ## player-facing currency (ADR-0003 "no parallel economy"): every entry reads and
-## writes only existing resources — money, reputation, governance, action_points,
+## writes only existing resources -- money, reputation, governance, action_points,
 ## doom. Compounding interest on payables is the mortality guarantee (ADR-0002):
 ## an un-serviced debt grows without bound until a bill it cannot pay ends the run,
 ## and the death is attributable to specific entries.
@@ -36,7 +36,7 @@ class Entry:
 		# Principals are quantized to whole units (dollars / governance points / doom).
 		# Determinism guard, not a style choice: Godot's JSON float parse is not
 		# correctly-rounded for arbitrary doubles, so a full-precision principal can come
-		# back from a save 1 ulp off — breaking save/load deep-equality and post-load
+		# back from a save 1 ulp off -- breaking save/load deep-equality and post-load
 		# replay determinism. Integer-valued doubles print/parse exactly (and a 1-ulp
 		# corruption self-heals through the next round). Sub-unit precision is invisible
 		# at game scales (principals >= ~1000; doom rollovers vs a 10-point cap).
@@ -71,14 +71,14 @@ class Entry:
 		e.settled = bool(d.get("settled", false))
 		return e
 
-# How hard an unpayable money bill converts to doom — the "teeth" that guarantee
+# How hard an unpayable money bill converts to doom -- the "teeth" that guarantee
 # mortality when a debtor cannot cover a balloon payment. Live values come from the
 # Balance surface ("ledger.*", L9 #621); these consts are the call-site fallbacks
 # (and keep external references/tests compiling).
 const DOOM_PER_UNPAID_1000: float = 3.5
 const REP_PER_UNPAID_1000: float = 2.0
 
-var entries: Array = []            # Array[Entry] — all entries, incl. settled (post-mortem trail)
+var entries: Array = []            # Array[Entry] -- all entries, incl. settled (post-mortem trail)
 var death_attribution: Array = []  # populated when a bill drives the killing blow
 var _rollover_queue: Array = []    # residual doom rolled forward from capped bills (see _apply_capped_doom)
 
@@ -89,7 +89,7 @@ func add(entry: Entry) -> void:
 # benefit (money now / doom suppressed now) and add the returned future bill. ----
 
 ## Money now, balloon repayment later with compounding interest. The classic
-## "bill for turn 2" — deep runs are heroic because of what funded them.
+## "bill for turn 2" -- deep runs are heroic because of what funded them.
 ## Negative term/rate = "use the Balance surface" (defaults can't call autoloads).
 static func loan(amount: float, term: int = -1, rate: float = -1.0) -> Entry:
 	if term < 0:
@@ -181,7 +181,7 @@ static func resentment_debt(name: String) -> Entry:
 ## Called once per turn (after WS-C scheduled causes). Compounds interest on live
 ## payables, advances fuses, and bills anything due. Unbounded compounding is the
 ## mortality guarantee (ADR-0002). Returns the entries billed THIS call so the turn
-## log can state them (EE-7 loss legibility — the cascade must be visible).
+## log can state them (EE-7 loss legibility -- the cascade must be visible).
 func tick_and_bill(state) -> Array:
 	var billed: Array = []
 	_rollover_queue = []
@@ -189,7 +189,7 @@ func tick_and_bill(state) -> Array:
 		if e.settled or e.side != Side.PAYABLE:
 			continue
 		if e.interest > 0.0:
-			# Unbounded growth -> no immortal runs. Rounded to whole units each step —
+			# Unbounded growth -> no immortal runs. Rounded to whole units each step --
 			# same determinism guard as Entry._init (see comment there).
 			e.principal = roundf(e.principal * (1.0 + e.interest))
 		if e.fuse > 0:
@@ -199,7 +199,7 @@ func tick_and_bill(state) -> Array:
 		e.settled = true
 		billed.append(e)
 	# Append any residual-doom rollovers AFTER the billing pass so they bill NEXT tick, not
-	# this one — keeps the per-tick doom cap a hard invariant (one capped hit per entry/tick)
+	# this one -- keeps the per-tick doom cap a hard invariant (one capped hit per entry/tick)
 	# and spreads a large bill's teeth over subsequent months (ADR-0013 loan semantics).
 	for roll in _rollover_queue:
 		entries.append(roll)
@@ -208,7 +208,7 @@ func tick_and_bill(state) -> Array:
 
 ## Bill a due entry in its own currency. A money bill the debtor cannot cover
 ## converts the shortfall into doom + reputation damage and records the entry as a
-## cause of death — this is the escalation that makes debt lethal and traceable.
+## cause of death -- this is the escalation that makes debt lethal and traceable.
 func _bill(e: Entry, state) -> void:
 	match e.currency:
 		"money":
@@ -216,7 +216,7 @@ func _bill(e: Entry, state) -> void:
 			# cash covered it is `paid_from_cash`, and only the uncovered `shortfall` converts
 			# to (capped) doom + rep. The old note recorded only the shortfall, so a bill that
 			# drained $345k of cash but left a $21k shortfall read as a "$21k problem" in the
-			# death chain — the numbers didn't reconcile. Now the note states billed =
+			# death chain -- the numbers didn't reconcile. Now the note states billed =
 			# paid_from_cash + shortfall, and shortfall -> capped doom/rep.
 			var billed: float = e.principal
 			state.money -= e.principal
@@ -227,8 +227,8 @@ func _bill(e: Entry, state) -> void:
 				var raw_doom: float = shortfall / 1000.0 * Balance.num("ledger.doom_per_unpaid_1000", DOOM_PER_UNPAID_1000)
 				var doom_hit: float = _apply_capped_doom(e, raw_doom, state)
 				# Reputation teeth are capped per bill too (dial 3: a single default is a loan,
-				# not a one-click rep-collapse — this is the #566 reputation-crash fix, 50->7.5
-				# was uncapped rep damage). Unlike doom, the residual is NOT rolled forward —
+				# not a one-click rep-collapse -- this is the #566 reputation-crash fix, 50->7.5
+				# was uncapped rep damage). Unlike doom, the residual is NOT rolled forward --
 				# rep damage beyond the cap is forgiven; the DOOM teeth (rolled) carry the mortality.
 				var rep_amount: float = minf(shortfall / 1000.0 * Balance.num("ledger.rep_per_unpaid_1000", REP_PER_UNPAID_1000),
 					Balance.num("ledger.max_rep_per_bill", 1000000000.0))
@@ -245,7 +245,7 @@ func _bill(e: Entry, state) -> void:
 		"governance":
 			# Governance is a resource the ledger reads/writes (ADR-0003). Its
 			# player-facing design is parked (workshop #2). Below zero, corroded
-			# governance leaks into doom — the bribery/blackmail pressure surface.
+			# governance leaks into doom -- the bribery/blackmail pressure surface.
 			state.governance -= e.principal
 			if state.governance < 0.0:
 				var deficit: float = -state.governance
@@ -276,7 +276,7 @@ func _bill(e: Entry, state) -> void:
 			state.action_points = max(0, state.action_points - int(e.principal))
 		"equity", "board_seat", "agenda":
 			# Non-cash standing TERMS from the financing engine (ADR-0013 riders: equity
-			# dilution, board seat, agenda narrowing). Inert by design — recorded, no resource
+			# dilution, board seat, agenda narrowing). Inert by design -- recorded, no resource
 			# conversion; their consequences are owned by other lanes (DQ-7 governance/voting,
 			# late-game equity). Minted with a ~10^9 fuse so this is defensive only (never billed
 			# in a real run); L5's boundary forbids doom conversion here.
@@ -284,7 +284,7 @@ func _bill(e: Entry, state) -> void:
 
 ## Apply a doom bill, bounded to ledger.max_doom_per_bill in any single tick (ADR-0013:
 ## a defer/loan is a bill that lands over MONTHS, never a one-click guillotine). Residual
-## doom beyond the cap is NOT forgiven — it rolls forward as a fresh short-fuse doom entry
+## doom beyond the cap is NOT forgiven -- it rolls forward as a fresh short-fuse doom entry
 ## that re-bills (capped again) next tick, so the FULL teeth still land, just spread out
 ## (ADR-0002 mortality guarantee preserved; the debt keeps biting until paid or dead).
 ## Returns the doom actually applied THIS tick. Fallback cap 1e9 = effectively uncapped, so
@@ -299,7 +299,7 @@ func _apply_capped_doom(e: Entry, raw_doom: float, state) -> float:
 		# death chain still names the originating trade. The rollover fuse sets the BLEED
 		# CADENCE of a big default (T9/#638: ruin can be SET UP early but takes weeks-months
 		# to COMPLETE): fuse N -> a capped hit every ~N+1 ticks until the residual exhausts.
-		# Nothing is forgiven — mortality (ADR-0002) rides the full residual.
+		# Nothing is forgiven -- mortality (ADR-0002) rides the full residual.
 		var roll := Entry.new(e.source, "doom", residual,
 			Balance.inum("ledger.rollover_fuse_ticks", 1), 0.0, false)
 		roll.id = e.id
@@ -308,7 +308,7 @@ func _apply_capped_doom(e: Entry, raw_doom: float, state) -> float:
 
 
 ## Route a ledger bill's doom into the `ledger` STREAM (ADR-0015 single-authority discipline).
-## A ledger default is not a direct write to the doom LEVEL — it is a contribution to a named
+## A ledger default is not a direct write to the doom LEVEL -- it is a contribution to a named
 ## stream that the doom function reads and integrates on the next tick, so DoomSystem stays the
 ## sole writer of state.doom and the bill shows up, attributed, in the stream breakdown (loss
 ## legibility). This also fixes the old clobber (Finding A): there is no parallel state.doom
@@ -333,7 +333,7 @@ func _note(state, kind: String, source: String, effects: Dictionary) -> void:
 		state.note_cause(kind, source, effects)
 
 ## Expose a secret entry (rival action / scheduled cause). Converts it to
-## reputation + governance damage, and — the chain continues — may offer a
+## reputation + governance damage, and -- the chain continues -- may offer a
 ## blackmail entry (a new, worse liability). Blackmail is content, not a system.
 func expose(entry: Entry, state, offer_blackmail: bool = true) -> void:
 	if not entry.secret or entry.settled:
@@ -356,10 +356,10 @@ func expose(entry: Entry, state, offer_blackmail: bool = true) -> void:
 # ---- Voluntary repayment (the "pay the bill" interaction, #566) ----
 
 ## Settle a live MONEY payable early from cash, retiring the future balloon before it
-## bills (ADR-0013 optionality — the player can buy down leverage). Only money-currency
+## bills (ADR-0013 optionality -- the player can buy down leverage). Only money-currency
 ## payables are cash-payable; governance/doom/equity terms are not. Returns
 ## {success, paid, message}. Records a benign `ledger_paid` note (NOT a LEDGER_KINDS
-## damage cause — early repayment is the opposite of a default).
+## damage cause -- early repayment is the opposite of a default).
 func pay_entry(entry, state) -> Dictionary:
 	if entry == null or entry.settled or entry.side != Side.PAYABLE:
 		return {"success": false, "paid": 0.0, "message": "Nothing to pay"}
@@ -440,7 +440,7 @@ func to_dict() -> Dictionary:
 	}
 
 
-## L7 (#618): restore the full ledger — every entry (incl. settled post-mortem trail)
+## L7 (#618): restore the full ledger -- every entry (incl. settled post-mortem trail)
 ## and the death-attribution list. Summary keys are derived on read, so ignored here.
 func from_dict(data: Dictionary) -> void:
 	entries.clear()

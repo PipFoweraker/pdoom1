@@ -63,7 +63,7 @@ func _input(event):
 	# Handle keyboard shortcuts
 	if event is InputEventKey and event.pressed and not event.echo:
 		# Only ESC closes the panel. N and Backslash were previously close keys, but
-		# they are ordinary characters the user needs to type into the report fields —
+		# they are ordinary characters the user needs to type into the report fields --
 		# closing on them made filing a report nearly impossible (issue #575).
 		if event.keycode == KEY_ESCAPE:
 			hide_panel()

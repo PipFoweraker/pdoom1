@@ -3,7 +3,7 @@ extends GutTest
 ## game_manager.end_month(); this smoke drives that exact API headlessly through a full
 ## month: plan commit -> day-tick playback -> auto-pause windows (event_triggered ->
 ## resolve_event round-trip, the event_dialog wiring) -> month review dialog -> next plan
-## phase. The old end_turn() day-step is untested here on purpose — it is DEV-overlay-only.
+## phase. The old end_turn() day-step is untested here on purpose -- it is DEV-overlay-only.
 
 var game_manager
 var _review_event: Dictionary = {}
@@ -45,7 +45,7 @@ func _auto_respond(event: Dictionary) -> void:
 func _keep_alive(_state_dict: Dictionary) -> void:
 	"""Harness intervention: pre-rebalance doom drift kills bot runs by turn ~4-12 (the
 	L0 pacing datum), which would end the run before the month boundary. Clamp doom so
-	the WIRING under test — a full month of playback — is reachable. Balance is G1's job."""
+	the WIRING under test -- a full month of playback -- is reachable. Balance is G1's job."""
 	if game_manager.state != null and not game_manager.state.game_over:
 		game_manager.state.doom = 5.0
 		if game_manager.state.doom_system != null:
@@ -60,7 +60,7 @@ func test_end_month_button_path_plays_a_full_month():
 	_keep_alive({})
 
 	# Resolve any game-start events on the legacy plan-phase path (emitted before our
-	# listener connected — they still sit in pending_events).
+	# listener connected -- they still sit in pending_events).
 	var guard := 0
 	while game_manager.state.pending_events.size() > 0 and guard < 20:
 		guard += 1
@@ -90,7 +90,7 @@ func test_end_month_button_path_plays_a_full_month():
 		"a calendar month of workday ticks played out (got %d)" % (game_manager.state.turn - turn0))
 	assert_false(game_manager.month_playback_active, "playback stopped at the boundary")
 
-	# Closing the review opens the plan phase — the loop is closed: plan, play, review, plan.
+	# Closing the review opens the plan phase -- the loop is closed: plan, play, review, plan.
 	game_manager.resolve_event(_review_event, "begin_planning")
 	assert_eq(game_manager.state.current_phase, GameState.TurnPhase.ACTION_SELECTION,
 		"back in the plan phase after the review")

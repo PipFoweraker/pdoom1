@@ -68,6 +68,16 @@
 - **Promoted: conference/travel design** *(ADR-0010)* — now the mandatory middle of the
   research→adoption value chain, no longer flavor; design with DQ-9 receivables +
   ADR-0007 counterparties.
+- **DQ-15 ext · Portrait variant pools + seeded assignment** *(Pip 2026-07-21, batch
+  verdicts)* -- each archetype carries a POOL of appearance variants (gender, ethnicity
+  -- the representation rule made mechanical) with per-run random assignment and
+  hot-swap capability; Pip kept both style-pole bests deliberately as pool stock (the
+  CRT-dossier v2 set promoted as the current consistent face of the roster). OPEN
+  QUESTION with teeth: assignment must respect determinism -- same seed => same staff
+  (DQ-4 ruling), so variant assignment is presumably drawn from the seeded stream (a
+  cosmetic step that must not perturb existing RNG ordering) or keyed off researcher
+  identity hash. Decide at the Friday portrait-system conversation (#758). Interacts:
+  DQ-15 roster, DQ-35 cosmetics, ADR-0006 replay.
 - **DQ-16 · Conference-attendance subgame** *(ADR-0014)* — Pip's flagged ambition
   ("that's how critical I think these are"). v1 ships attendance + yields only; revisit
   when playtests show conference turns feel thin.
@@ -430,6 +440,43 @@ more interesting."*
   publishes, not about new formats. Interacts: DQ-3 (cross-version boards), DQ-11
   (forks), DQ-32 (SA-priced info), DQ-33 (provenance), and the #712 vision doc
   (held open for Pip's dedicated pass).
+- **DQ-35 ext · Scene/art unlocks + conditional event art** *(Pip 2026-07-21, scene-wave
+  verdicts -- "directionally very strong")* -- concrete mechanisms for DQ-35: (a) event
+  hero-art VARIANTS as unlockables (crisis V3 as achievement unlock; records_vault as
+  unlocked leaderboard ground; records_trophy_terminal as a post-game achievements
+  surface); (b) CONDITIONAL art selection -- e.g. opportunity events show V2 vs V4
+  depending on likelihood of success -- art as legible world-state signal; (c) backdrop
+  rotation across keepers. Also RULED: board/council art must be menacing but VARIED
+  (representation rule extends to authority figures); board members/overseers get
+  characterised over time (ties DQ-31 actor tags).
+- **DQ-35 · Cosmetic progression + community insignia** *(Pip 2026-07-21, pinned for
+  next workshop)* — background theory of rewarding progress: one of the few things Pip
+  likes in CoD is its appeasement of hardcore grinders via **lots of little cosmetic
+  tags and banners** with distinct subthemes — pure cosmetics, no power. Ties to a
+  FAR.ai conversation about branding and rewarding AI-safety community participation
+  via **mission patches and challenge coins**. Candidate shape: cosmetic
+  tags/banners/patches earned through play (and possibly through community
+  participation), themed to the game's register. Interacts: DQ-17/17-ext
+  (achievements), DQ-34 (hall-of-fame surface), the league metabolism (ADR-0016 —
+  monthly patches as literal *patches*?). Workshop material, not a lane.
+- **Wireframe drift check OWED (Pip 2026-07-21):** the original two-panel UI
+  wireframes included **gantt-chart / progress-style "these operations are underway"
+  tracking**. Check current UI direction against those wireframes for vision drift —
+  Pip suspects this surface is a key part of giving players visual feedback on game-
+  state progress as more hidden engine interactions get surfaced. Home: the UI pass
+  (UI_PASS_NOTES_2026-07-20.md) + #707 consistency sweep + DQ-14 (progression
+  display). Locate the original wireframes and diff intent vs built before the next
+  UI lane.
+- **POSITIONING RULED (Pip 2026-07-22, via grant-framing review):** the player is NOT
+  running a frontier lab -- they run an ORGANISATION whose driving motive is reducing
+  p(Doom). Frontier-model building is a TEMPTATION (and a possible expansion via the
+  business/development side), not the premise: capabilities-enhancing research is part
+  of the two-edged sword that AI-safety research really represents. The mechanics
+  already agree (player slice in frontier_capability; "your own frontier outran your
+  absorption" death line, #725; DQ-31 tags support an org that MAY acquire the
+  frontier tag mid-run). COPY CORRECTIONS OWED: docs/ARCHITECTURE.md section 1 says
+  "You run a frontier AI lab" -- wrong under this ruling; audit README/store/pitch
+  copy for the same claim. All grant/pitch materials use the organisation framing.
 - **L5 finance construction AUTHORIZED (Pip):** loans over months+, player optionality
   among offered instruments (interest-rate intuitions from ADR-0013), "orchestrate the
   construction… in parallel with the other finance ideas" — build lane L5 (#616)

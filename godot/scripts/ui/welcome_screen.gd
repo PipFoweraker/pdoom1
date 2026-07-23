@@ -20,6 +20,10 @@ extends Control
 var whats_new_modal: Control = null
 const WHATS_NEW_SCENE = preload("res://scenes/ui/whats_new_modal.tscn")
 
+# First-launch welcome overlay (issue #720)
+var welcome_overlay: Control = null
+const WELCOME_OVERLAY_SCENE = preload("res://scenes/ui/welcome_overlay.tscn")
+
 var menu_buttons: Array[Button] = []
 var selected_index: int = 0
 
@@ -73,8 +77,10 @@ func _ready():
 	# confirm which build he's on right from the welcome/loading screen.
 	add_child(DevBuildBadge.new())
 
-	# Initialize What's New modal
-	_setup_whats_new_modal()
+	# Initialize the first-launch onboarding overlays (welcome + What's New).
+	# The welcome overlay (issue #720) takes priority on a genuine first launch so the
+	# two modals never stack; What's New handles returning players after an update.
+	_setup_onboarding_overlays()
 
 	# Enable input processing for keyboard navigation
 	set_process_input(true)
@@ -181,17 +187,32 @@ func _on_whats_new_pressed():
 	if whats_new_modal:
 		whats_new_modal.show_all_notes()
 
-func _setup_whats_new_modal():
-	"""Initialize the What's New modal and check for unseen patch notes"""
-	# Instance the modal
+func _setup_onboarding_overlays():
+	"""Instance both first-launch overlays, then auto-show at most ONE.
+
+	Priority: on a genuine first launch (GameConfig.should_show_welcome()) show the
+	welcome/help overlay (issue #720) and silently mark patch notes seen -- a brand
+	new player does not need a change-log, and this stops the two modals stacking.
+	Otherwise fall back to the What's New modal for returning players after an update."""
+	# Instance the What's New modal
 	whats_new_modal = WHATS_NEW_SCENE.instantiate()
 	add_child(whats_new_modal)
-
-	# Connect the closed signal to restore focus
 	whats_new_modal.closed.connect(_on_whats_new_closed)
 
-	# Check if we should show the modal automatically (first launch after update)
-	if GameConfig.has_unseen_patch_notes():
+	# Instance the welcome overlay
+	welcome_overlay = WELCOME_OVERLAY_SCENE.instantiate()
+	add_child(welcome_overlay)
+	welcome_overlay.closed.connect(_on_whats_new_closed)
+
+	if GameConfig.should_show_welcome():
+		print("[WelcomeScreen] First launch detected! Showing welcome overlay...")
+		# A brand-new player does not need patch notes; mark them seen so What's New
+		# does not also fire (now or on the next launch).
+		GameConfig.mark_patch_notes_seen()
+		# Delay slightly to ensure UI is ready
+		await get_tree().create_timer(0.3).timeout
+		welcome_overlay.show_overlay()  # marks welcome_seen (persisted show-once)
+	elif GameConfig.has_unseen_patch_notes():
 		print("[WelcomeScreen] New version detected! Showing What's New modal...")
 		# Delay slightly to ensure UI is ready
 		await get_tree().create_timer(0.3).timeout

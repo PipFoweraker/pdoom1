@@ -1,14 +1,14 @@
 class_name MonthController
 extends RefCounted
-## Day-tick playback within a plan month, with auto-pause-on-window (L1 / ADR-0009 §UI).
+## Day-tick playback within a plan month, with auto-pause-on-window (L1 / ADR-0009 SUI).
 ##
 ## The plan cadence is the month; beneath it the day-turn is the resolution tick. This
 ## driver advances ticks (delegating the heavy sim to TurnManager), routes each tick's
 ## fired events by delivery tier, and PAUSES playback whenever a window demands a decision
-## — the auto-pause-on-window the ADR calls for. Ambient/feed events never interrupt.
+## -- the auto-pause-on-window the ADR calls for. Ambient/feed events never interrupt.
 ##
 ## The window DEMAND budget (workshop#3 addendum #1) is enforced here: only N windows per
-## month may demand a decision (2-3 early, more in endgame — Balance-driven); window-tier
+## month may demand a decision (2-3 early, more in endgame -- Balance-driven); window-tier
 ## events beyond the budget are downgraded to the feed (readable, no decision) rather than
 ## piling onto the player. That is the structural #630 fix: a demand budget, not an
 ## information budget.
@@ -25,16 +25,16 @@ var turn_manager  # TurnManager (untyped to avoid class_name load-order coupling
 
 # Windows awaiting a decision on the current tick (auto-pause holds here).
 var window_queue: Array = []
-# Feed items surfaced this run (pull, no acknowledgment) — provenance-stamped.
+# Feed items surfaced this run (pull, no acknowledgment) -- provenance-stamped.
 var feed_log: Array = []
 var windows_surfaced_this_month: int = 0
 var current_month_index: int = -1
 var status: int = Status.READY
-# Strategic WIP released this tick (duration elapsed) — surfaced for the caller/L2 to apply
+# Strategic WIP released this tick (duration elapsed) -- surfaced for the caller/L2 to apply
 # effects; the controller does not reach into GameActions itself (clean seam).
 var last_released_strategic: Array = []
 # True while the month-boundary tick is HELD OPEN as the new month's plan phase. The engine
-# convention is an OPEN turn during planning (started, not executed — start_new_game leaves
+# convention is an OPEN turn during planning (started, not executed -- start_new_game leaves
 # turn 1 open the same way); auto-executing the boundary tick would double-run its
 # consequence steps when the plan later commits. advance_tick() sets this on a boundary and
 # skips _complete_tick; the caller shows the month review and waits for the plan commit
@@ -119,7 +119,7 @@ func advance_tick() -> Dictionary:
 		}
 
 	if month_open_pending:
-		# The boundary tick is HELD OPEN as the new month's plan phase — no execute_turn.
+		# The boundary tick is HELD OPEN as the new month's plan phase -- no execute_turn.
 		# The plan-commit path (GameManager.end_month) executes it, matching the engine's
 		# open-turn-during-planning convention (avoids double-running consequence steps).
 		_hold_open_for_planning()
@@ -197,7 +197,7 @@ func _dispatch(events: Array) -> Dictionary:
 		feed_log.append(item)
 		surfaced_feed.append(item)
 	# Ambient: board-state mutation, no notification. v1 has no separate ambient effect
-	# payload, so this is an acknowledged no-op — the tier is honoured, content is L4.
+	# payload, so this is an acknowledged no-op -- the tier is honoured, content is L4.
 	for w in parts.windows:
 		if windows_surfaced_this_month < window_demand_budget():
 			window_queue.append(w)
@@ -211,9 +211,9 @@ func _dispatch(events: Array) -> Dictionary:
 
 
 func resolve_current_window(response: String) -> Dictionary:
-	"""Answer the head window with a costed response (ADR-0009 §3). When the queue empties,
+	"""Answer the head window with a costed response (ADR-0009 S3). When the queue empties,
 	the paused tick completes (execute_turn runs). The window is popped only AFTER the
-	resolver validates payment — a failed verb (e.g. handle_reserve with an empty reserve)
+	resolver validates payment -- a failed verb (e.g. handle_reserve with an empty reserve)
 	leaves the window open and still demanding a decision, resolvable via another verb
 	(pop-before-validate silently dropped it: no effect, no charge, no window)."""
 	if not is_paused() or window_queue.is_empty():
@@ -232,7 +232,7 @@ func resolve_current_window(response: String) -> Dictionary:
 
 func resolve_current_window_option(option_id: String) -> Dictionary:
 	"""Answer the head window by choosing one of the event's own options (the v1 dialog
-	path — the event_dialog presents the event's options, not the four verbs). The chosen
+	path -- the event_dialog presents the event's options, not the four verbs). The chosen
 	option maps onto the verb menu: the window's ignore option resolves as IGNORE (list
 	price, no Attention); any other option is a HANDLE paid reserve-first, falling back to
 	cannibalizing (WindowResolver.resolve_chosen_option). Payment source still lands in the
@@ -251,13 +251,13 @@ func resolve_current_window_option(option_id: String) -> Dictionary:
 
 
 func skip_current_window() -> Dictionary:
-	"""Leave the head window unanswered — auto-resolves as IGNORE + a mild rep penalty
+	"""Leave the head window unanswered -- auto-resolves as IGNORE + a mild rep penalty
 	(unignorable windows refuse this and stay queued)."""
 	if not is_paused() or window_queue.is_empty():
 		return {"success": false, "message": "no open window"}
 	var window: Dictionary = window_queue[0]
 	if EventTiers.is_unignorable(window):
-		return {"success": false, "message": "window is unignorable — must be handled"}
+		return {"success": false, "message": "window is unignorable -- must be handled"}
 	var result := WindowResolver.resolve(state, state.month_plan, window, "auto_ignore", state.rng)
 	if not result.get("success", false):
 		return result  # same pop-only-on-success guard as resolve_current_window
@@ -297,7 +297,7 @@ func _hold_open_for_planning() -> void:
 func _sync_pending() -> void:
 	"""Keep the serialized pending_events in step with the live window queue, so save/load
 	captures an open pause point (ADR-0009 UI: day-tick playback resumes at the window).
-	pending_events is Array[Dictionary] — build a typed array, don't assign an untyped one."""
+	pending_events is Array[Dictionary] -- build a typed array, don't assign an untyped one."""
 	var typed: Array[Dictionary] = []
 	for w in window_queue:
 		if w is Dictionary:
@@ -307,7 +307,7 @@ func _sync_pending() -> void:
 
 func rehydrate_from_state() -> void:
 	"""Rebuild the live pause state from a freshly-loaded GameState. If the save was taken
-	while a window was open, pending_events still holds it — re-enter the paused state so
+	while a window was open, pending_events still holds it -- re-enter the paused state so
 	playback resumes exactly where it stopped."""
 	current_month_index = Clock.month_index(state.turn, state.start_year, state.start_month, state.start_day)
 	window_queue = []

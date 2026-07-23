@@ -132,7 +132,7 @@ MiddlePanel (VBoxContainer, alignment = 2 = bottom aligned)
 
 #### The 4 Zones (Color-Coded):
 
-**🟠 ORANGE ZONE - Title**
+**[O] ORANGE ZONE - Title**
 - **Element:** TitleLabel
 - **Text:** "P(DOOM)"
 - **Font Size:** 24px
@@ -140,7 +140,7 @@ MiddlePanel (VBoxContainer, alignment = 2 = bottom aligned)
 - **Purpose:** Game title / branding
 - **File Reference:** [main.tscn:187-192](../godot/scenes/main.tscn#L187-L192)
 
-**🟢 GREEN ZONE - Office Cat**
+**[G] GREEN ZONE - Office Cat**
 - **Element:** OfficeCat (instanced scene)
 - **Size:** 196x245 (reduced from 280x350)
 - **Cat Panel:** 179x179 (reduced from 256x256)
@@ -150,7 +150,7 @@ MiddlePanel (VBoxContainer, alignment = 2 = bottom aligned)
 - **Scene File:** [office_cat.tscn](../godot/scenes/ui/office_cat.tscn)
 - **Script:** [office_cat.gd](../godot/scripts/ui/office_cat.gd)
 
-**🔵 BLUE ZONE - Numeric Doom**
+**[B] BLUE ZONE - Numeric Doom**
 - **Element:** NumericDoomLabel
 - **Font Size:** 18px (reduced from 20px)
 - **Color:** Dynamic via ThemeManager.get_doom_color(doom)
@@ -160,7 +160,7 @@ MiddlePanel (VBoxContainer, alignment = 2 = bottom aligned)
 - **Purpose:** Display exact doom percentage as text
 - **File Reference:** [main.tscn:211-219](../godot/scenes/main.tscn#L211-L219)
 
-**🟣 PURPLE ZONE - Doom Meter (Visual)**
+**[P] PURPLE ZONE - Doom Meter (Visual)**
 - **Element:** DoomMeter (instanced scene)
 - **Size:** 140x140 (reduced from 150x150)
 - **Margins:** 2px (reduced from 8px)

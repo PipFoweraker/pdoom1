@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Icon + settings-ground review -- PR #750 (31 candidates)</title>
+<style>
+  :root{
+    --ground:#17120e;--panel:#211a14;--panel-2:#2b221a;--ink:#ece0cf;--ink-dim:#a9977f;--ink-faint:#6f6250;
+    --amber:#e8a33d;--amber-deep:#c07a1f;--win:#6fae86;--line:#3a2e22;--checker-a:#201811;--checker-b:#180f09;
+    --field:#120d09;--shadow:rgba(0,0,0,.45);
+  }
+  @media (prefers-color-scheme:light){:root{
+    --ground:#efe6d6;--panel:#f7efe0;--panel-2:#fbf5e9;--ink:#2b2116;--ink-dim:#6b5b45;--ink-faint:#9a876c;
+    --amber:#b9741a;--amber-deep:#8f5710;--win:#3f8a5c;--line:#ddccb0;--checker-a:#e6dac4;--checker-b:#ded1b8;
+    --field:#fffaf0;--shadow:rgba(80,55,20,.18);}}
+  :root{--keep:var(--win);--maybe:var(--amber);--reroll:#d8695a}
+  @media (prefers-color-scheme:light){:root{--reroll:#c14a3a}}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--ink);font-family:ui-sans-serif,system-ui,"Segoe UI",Helvetica,Arial,sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased}
+  img{max-width:100%;height:auto;display:block}
+  .wrap{max-width:1180px;margin:0 auto;padding:2.4rem 1.4rem 6rem}
+  .eyebrow{font-family:ui-monospace,Consolas,monospace;font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:var(--amber);margin:0 0 .8rem}
+  h1{font-family:ui-monospace,"Cascadia Code",Consolas,monospace;font-weight:700;font-size:clamp(1.6rem,4vw,2.4rem);line-height:1.05;margin:0 0 .5rem;text-wrap:balance}
+  .lede{max-width:74ch;color:var(--ink-dim);font-size:.98rem;margin:0}
+  .deck{position:sticky;top:0;z-index:40;margin:1.5rem 0 1.4rem;padding:.8rem 0 .5rem;background:color-mix(in srgb,var(--ground) 92%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+  .deck-row{display:flex;align-items:center;gap:.9rem;flex-wrap:wrap;margin-bottom:.6rem}
+  .seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+  .seg button{font-family:ui-monospace,Consolas,monospace;font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;padding:.34rem .7rem;border:0;background:var(--field);color:var(--ink-dim);cursor:pointer}
+  .seg button+button{border-left:1px solid var(--line)}
+  .seg button.on{background:var(--amber);color:#20140a;font-weight:700}
+  .seg button:focus-visible{outline:2px solid var(--amber);outline-offset:-2px}
+  .deck-label{font-family:ui-monospace,Consolas,monospace;font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-faint)}
+  .tabbar{display:flex;gap:.35rem;overflow-x:auto;padding-bottom:.3rem;scrollbar-width:thin}
+  .tab{white-space:nowrap;font-family:ui-monospace,Consolas,monospace;font-size:.76rem;padding:.4rem .75rem;border-radius:8px 8px 0 0;border:1px solid var(--line);border-bottom:0;background:var(--panel);color:var(--ink-dim);cursor:pointer}
+  .tab .cnt{font-size:.62rem;color:var(--ink-faint);margin-left:.35rem}
+  .tab.on{background:var(--panel-2);color:var(--ink);box-shadow:inset 0 -3px 0 var(--amber)}
+  .tab:focus-visible{outline:2px solid var(--amber);outline-offset:1px}
+  #board{min-height:40vh}
+  .empty{color:var(--ink-faint);font-family:ui-monospace,Consolas,monospace;font-size:.85rem;padding:2rem 0}
+  .board-rows{display:flex;flex-direction:column;gap:1rem}
+  .row{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:.9rem;display:grid;grid-template-columns:180px 1fr;gap:.9rem;align-items:start}
+  .rowhead h4{margin:0 0 .25rem;font-size:.9rem;font-family:ui-monospace,Consolas,monospace;word-break:break-word}
+  .rowhead p{margin:0;font-size:.72rem;color:var(--ink-faint);font-family:ui-monospace,Consolas,monospace;word-break:break-word}
+  .rowhead .winner-of{margin-top:.4rem;font-size:.66rem;color:var(--win)}
+  .rolls{display:grid;grid-template-columns:repeat(var(--cols),minmax(140px,1fr));gap:.7rem}
+  .cell{position:relative;display:flex;flex-direction:column;gap:.4rem;background:var(--panel-2);border:1px solid var(--line);padding:.6rem;border-radius:8px;scroll-margin:120px}
+  .cell.v-keep{box-shadow:0 0 0 2px var(--keep)}
+  .cell.v-maybe{box-shadow:0 0 0 2px var(--maybe)}
+  .cell.v-reroll{box-shadow:0 0 0 2px var(--reroll)}
+  .cell.winner{border-color:var(--win);background:color-mix(in srgb,var(--win) 14%,var(--panel-2))}
+  .cell.focused{outline:2px solid var(--amber);outline-offset:2px}
+  .caprow{display:flex;align-items:center;justify-content:space-between;gap:.4rem}
+  .cap{font-family:ui-monospace,Consolas,monospace;font-size:.66rem;color:var(--amber);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .winbtn{flex:none;font-size:.8rem;line-height:1;padding:.15rem .4rem;border-radius:5px;border:1px solid var(--line);background:var(--field);color:var(--ink-faint);cursor:pointer}
+  .winbtn:hover{color:var(--amber);border-color:var(--ink-faint)}
+  .winbtn.on{background:var(--win);border-color:var(--win);color:#12251a}
+  .winbtn:focus-visible{outline:2px solid var(--amber);outline-offset:1px}
+  .stage{background-color:var(--checker-a);background-image:linear-gradient(45deg,var(--checker-b) 25%,transparent 25%),linear-gradient(-45deg,var(--checker-b) 25%,transparent 25%),linear-gradient(45deg,transparent 75%,var(--checker-b) 75%),linear-gradient(-45deg,transparent 75%,var(--checker-b) 75%);background-size:14px 14px;background-position:0 0,0 7px,7px -7px,-7px 0;border:1px solid var(--line);border-radius:8px;padding:.4rem;display:grid;place-items:center;min-height:130px;cursor:zoom-in}
+  .stage img{width:auto;max-height:160px}
+  .stage.pending{color:var(--ink-faint);font-family:ui-monospace,Consolas,monospace;font-size:.7rem;text-align:center;cursor:default}
+  .note{width:100%;background:var(--field);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:.35rem .5rem;font-size:.76rem;font-family:ui-sans-serif,system-ui,sans-serif}
+  .note:focus-visible{outline:2px solid var(--amber);outline-offset:1px}
+  .verdict{display:flex;gap:.25rem}
+  .vbtn{flex:1;font-family:ui-monospace,Consolas,monospace;font-size:.62rem;text-transform:uppercase;letter-spacing:.03em;padding:.28rem .1rem;border-radius:5px;border:1px solid var(--line);background:var(--field);color:var(--ink-dim);cursor:pointer;transition:.1s}
+  .vbtn:hover{color:var(--ink);border-color:var(--ink-faint)}
+  .vbtn:focus-visible{outline:2px solid var(--amber);outline-offset:1px}
+  .vbtn.on[data-v="keep"]{background:var(--keep);border-color:var(--keep);color:#12251a}
+  .vbtn.on[data-v="maybe"]{background:var(--maybe);border-color:var(--maybe);color:#2a1e08}
+  .vbtn.on[data-v="reroll"]{background:var(--reroll);border-color:var(--reroll);color:#2a1210}
+  .kbd-legend{position:fixed;top:10px;right:10px;z-index:50;display:flex;flex-direction:column;gap:.28rem;background:color-mix(in srgb,var(--panel) 92%,transparent);border:1px solid var(--line);border-radius:9px;padding:.55rem .65rem;font-family:ui-monospace,Consolas,monospace;font-size:.66rem;color:var(--ink-dim);pointer-events:none;box-shadow:0 2px 12px var(--shadow);backdrop-filter:blur(4px)}
+  .kbd-legend b{color:var(--amber);font-weight:400}
+  .kbd-legend kbd{display:inline-block;min-width:1.1em;text-align:center;padding:.05rem .32rem;margin-right:.12rem;border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;background:var(--field);color:var(--ink);font-size:.62rem}
+  .exportbar{position:sticky;bottom:0;margin:2.5rem -1.4rem -6rem;padding:1rem 1.4rem;background:color-mix(in srgb,var(--ground) 88%,transparent);backdrop-filter:blur(8px);border-top:1px solid var(--line);display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+  .tally{font-family:ui-monospace,Consolas,monospace;font-size:.78rem;color:var(--ink-dim)}
+  .tally b{color:var(--win)}
+  .spacer{flex:1}
+  .btn{font-family:ui-monospace,Consolas,monospace;font-size:.8rem;padding:.5rem .9rem;border-radius:7px;border:1px solid var(--amber);background:var(--amber);color:#20140a;font-weight:700;cursor:pointer}
+  .btn:hover{background:var(--amber-deep);border-color:var(--amber-deep)}
+  .btn:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+  .btn.ghost{background:transparent;color:var(--ink-dim);border-color:var(--line);font-weight:400}
+  .btn.ghost:hover{color:var(--ink);border-color:var(--ink-faint)}
+  dialog{background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:12px;padding:0;max-width:min(760px,92vw);width:100%}
+  dialog::backdrop{background:rgba(0,0,0,.55)}
+  .modal-head{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.2rem;border-bottom:1px solid var(--line)}
+  .modal-head h3{margin:0;font-size:1rem;font-family:ui-monospace,Consolas,monospace}
+  .modal-body{padding:1.1rem 1.2rem}
+  .modal-body p{margin:0 0 .7rem;color:var(--ink-dim);font-size:.85rem}
+  #exporttext,#cmdtext{width:100%;min-height:320px;resize:vertical;background:var(--field);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:.8rem;font-family:ui-monospace,Consolas,monospace;font-size:.76rem;line-height:1.5;white-space:pre}
+  #cmdtext{min-height:120px}
+  dialog.lightbox{max-width:96vw;width:auto;background:transparent;border:0}
+  dialog.lightbox::backdrop{background:rgba(0,0,0,.82)}
+  dialog.lightbox img{max-width:96vw;max-height:92vh;border-radius:8px;box-shadow:0 8px 40px rgba(0,0,0,.6);cursor:zoom-out}
+  footer{margin-top:3rem;padding-top:1.4rem;border-top:1px solid var(--line);color:var(--ink-faint);font-size:.78rem;font-family:ui-monospace,Consolas,monospace}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+  @media (max-width:760px){.row{grid-template-columns:1fr}.rolls{--cols:2!important}}
+  @media (max-width:640px){.kbd-legend{display:none}}
+</style>
+</head>
+<body>
+<div class="kbd-legend" aria-hidden="true">
+  <span><kbd>&larr;</kbd><kbd>&rarr;</kbd> move focus</span>
+  <span><b>K</b> keep &middot; <b>M</b> maybe &middot; <b>R</b> re-roll</span>
+  <span><b>W</b> winner &middot; <kbd>N</kbd>/<kbd>&crarr;</kbd> note</span>
+  <span>click image = enlarge &middot; <kbd>Esc</kbd> back</span>
+</div>
+
+<div class="wrap">
+  <p class="eyebrow">P(Doom)1 &middot; asset gallery &middot; repo tool</p>
+  <h1>Icon + settings-ground review -- PR #750 (31 candidates)</h1>
+  <p class="lede" id="lede"></p>
+
+  <div class="deck">
+    <div class="deck-row">
+      <span class="deck-label">status</span>
+      <div class="seg" id="filterseg" role="group" aria-label="Status filter">
+        <button type="button" data-f="all">All</button>
+        <button type="button" data-f="pending">Pending</button>
+        <button type="button" data-f="keep">Keep</button>
+        <button type="button" data-f="maybe">Maybe</button>
+        <button type="button" data-f="reroll">Re-roll</button>
+      </div>
+    </div>
+    <div class="tabbar" id="tabbar" role="tablist"></div>
+  </div>
+
+  <div id="board"></div>
+
+  <div class="exportbar">
+    <div class="tally" id="tally"></div>
+    <div class="tally" id="vct"></div>
+    <div class="spacer"></div>
+    <button type="button" class="btn ghost" id="clearbtn">reset</button>
+    <button type="button" class="btn ghost" id="cmdbtn">Copy --select &rarr;</button>
+    <button type="button" class="btn" id="exportbtn">Export verdicts &rarr;</button>
+  </div>
+  <footer>Verdicts + winner picks saved in your browser (localStorage). Star a variant to pick the group winner; K/M/R to verdict. Export hands both back for the next round.</footer>
+</div>
+
+<dialog id="exportdlg">
+  <div class="modal-head"><h3>// verdicts + picks</h3><button type="button" class="btn ghost" id="copybtn">copy</button></div>
+  <div class="modal-body"><p>Copy and paste this back into the chat.</p><textarea id="exporttext" readonly></textarea></div>
+</dialog>
+
+<dialog id="cmddlg">
+  <div class="modal-head"><h3>// --select commands</h3><button type="button" class="btn ghost" id="cmdcopybtn">copy</button></div>
+  <div class="modal-body"><p>Run these to write your winner picks back into the manifests.</p><textarea id="cmdtext" readonly></textarea></div>
+</dialog>
+
+<dialog id="lightbox" class="lightbox"><img id="lightimg" alt="enlarged asset"></dialog>
+
+<script>
+(function(){
+  "use strict";
+  var DATA={"cells":[{"id":"procedural icons:icon_cat_face:v1","tab":"procedural icons","group":"procedural icons:icon_cat_face","row":"icon_cat_face","sub":"procedural icons","variant":"v1","cap":"v1","img":"../../art_source/iconset_2026-07-21/icon_cat_face_256.png","full":"../../art_source/iconset_2026-07-21/icon_cat_face_1024.png","winnerKey":"procedural icons:icon_cat_face"},{"id":"procedural icons:icon_cat_face_doom:v1","tab":"procedural icons","group":"procedural icons:icon_cat_face_doom","row":"icon_cat_face_doom","sub":"procedural icons","variant":"v1","cap":"v1","img":"../../art_source/iconset_2026-07-21/icon_cat_face_doom_256.png","full":"../../art_source/iconset_2026-07-21/icon_cat_face_doom_1024.png","winnerKey":"procedural icons:icon_cat_face_doom"},{"id":"procedural icons:icon_cat_sitting:v1","tab":"procedural icons","group":"procedural icons:icon_cat_sitting","row":"icon_cat_sitting","sub":"procedural icons","variant":"v1","cap":"v1","img":"../../art_source/iconset_2026-07-21/icon_cat_sitting_256.png","full":"../../art_source/iconset_2026-07-21/icon_cat_sitting_1024.png","winnerKey":"procedural icons:icon_cat_sitting"},{"id":"procedural icons:icon_dial_clock:v1","tab":"procedural icons","group":"procedural icons:icon_dial_clock","row":"icon_dial_clock","sub":"procedural icons","variant":"v1","cap":"v1","img":"../../art_source/iconset_2026-07-21/icon_dial_clock_256.png","full":"../../art_source/iconset_2026-07-21/icon_dial_clock_1024.png","winnerKey":"procedural icons:icon_dial_clock"},{"id":"procedural icons:icon_dial_half:v1","tab":"procedural icons","group":"procedural icons:icon_dial_half","row":"icon_dial_half","sub":"procedural icons","variant":"v1","cap":"v1","img":"../../art_source/iconset_2026-07-21/icon_dial_half_256.png","full":"../../art_source/iconset_2026-07-21/icon_dial_half_1024.png","winnerKey":"procedural icons:icon_dial_half"},{"id":"procedural icons:icon_dial_radar:v1","tab":"procedural icons","group":"procedural icons:icon_dial_radar","row":"icon_dial_radar","sub":"procedural icons","variant":"v1","cap":"v1","img":"../../art_source/iconset_2026-07-21/icon_dial_radar_256.png","full":"../../art_source/iconset_2026-07-21/icon_dial_radar_1024.png","winnerKey":"procedural icons:icon_dial_radar"},{"id":"procedural icons:icon_dial_ring:v1","tab":"procedural icons","group":"procedural icons:icon_dial_ring","row":"icon_dial_ring","sub":"procedural icons","variant":"v1","cap":"v1","img":"../../art_source/iconset_2026-07-21/icon_dial_ring_256.png","full":"../../art_source/iconset_2026-07-21/icon_dial_ring_1024.png","winnerKey":"procedural icons:icon_dial_ring"},{"id":"procedural icons:icon_seal_check:v1","tab":"procedural icons","group":"procedural icons:icon_seal_check","row":"icon_seal_check","sub":"procedural icons","variant":"v1","cap":"v1","img":"../../art_source/iconset_2026-07-21/icon_seal_check_256.png","full":"../../art_source/iconset_2026-07-21/icon_seal_check_1024.png","winnerKey":"procedural icons:icon_seal_check"},{"id":"procedural icons:icon_seal_hourglass:v1","tab":"procedural icons","group":"procedural icons:icon_seal_hourglass","row":"icon_seal_hourglass","sub":"procedural icons","variant":"v1","cap":"v1","img":"../../art_source/iconset_2026-07-21/icon_seal_hourglass_256.png","full":"../../art_source/iconset_2026-07-21/icon_seal_hourglass_1024.png","winnerKey":"procedural icons:icon_seal_hourglass"},{"id":"procedural icons:icon_seal_red:v1","tab":"procedural icons","group":"procedural icons:icon_seal_red","row":"icon_seal_red","sub":"procedural icons","variant":"v1","cap":"v1","img":"../../art_source/iconset_2026-07-21/icon_seal_red_256.png","full":"../../art_source/iconset_2026-07-21/icon_seal_red_1024.png","winnerKey":"procedural icons:icon_seal_red"},{"id":"procedural icons:icon_seal_star:v1","tab":"procedural icons","group":"procedural icons:icon_seal_star","row":"icon_seal_star","sub":"procedural icons","variant":"v1","cap":"v1","img":"../../art_source/iconset_2026-07-21/icon_seal_star_256.png","full":"../../art_source/iconset_2026-07-21/icon_seal_star_1024.png","winnerKey":"procedural icons:icon_seal_star"},{"id":"procedural icons:icon_type_amber:v1","tab":"procedural icons","group":"procedural icons:icon_type_amber","row":"icon_type_amber","sub":"procedural icons","variant":"v1","cap":"v1","img":"../../art_source/iconset_2026-07-21/icon_type_amber_256.png","full":"../../art_source/iconset_2026-07-21/icon_type_amber_1024.png","winnerKey":"procedural icons:icon_type_amber"},{"id":"procedural icons:icon_type_dial_paren:v1","tab":"procedural icons","group":"procedural icons:icon_type_dial_paren","row":"icon_type_dial_paren","sub":"procedural icons","variant":"v1","cap":"v1","img":"../../art_source/iconset_2026-07-21/icon_type_dial_paren_256.png","full":"../../art_source/iconset_2026-07-21/icon_type_dial_paren_1024.png","winnerKey":"procedural icons:icon_type_dial_paren"},{"id":"procedural icons:icon_type_mono:v1","tab":"procedural icons","group":"procedural icons:icon_type_mono","row":"icon_type_mono","sub":"procedural icons","variant":"v1","cap":"v1","img":"../../art_source/iconset_2026-07-21/icon_type_mono_256.png","full":"../../art_source/iconset_2026-07-21/icon_type_mono_1024.png","winnerKey":"procedural icons:icon_type_mono"},{"id":"procedural icons:icon_type_wordmark:v1","tab":"procedural icons","group":"procedural icons:icon_type_wordmark","row":"icon_type_wordmark","sub":"procedural icons","variant":"v1","cap":"v1","img":"../../art_source/iconset_2026-07-21/icon_type_wordmark_256.png","full":"../../art_source/iconset_2026-07-21/icon_type_wordmark_1024.png","winnerKey":"procedural icons:icon_type_wordmark"},{"id":"generative icons:gen_cat_doom:v1","tab":"generative icons","group":"generative icons:gen_cat_doom","row":"gen_cat_doom","sub":"generative icons","variant":"v1","cap":"v1","img":"../../art_source/iconset_2026-07-21/gen_cat_doom_256.png","full":"../../art_source/iconset_2026-07-21/gen_cat_doom_512.png","winnerKey":"generative icons:gen_cat_doom"},{"id":"generative icons:gen_cat_face:v1","tab":"generative icons","group":"generative icons:gen_cat_face","row":"gen_cat_face","sub":"generative icons","variant":"v1","cap":"v1","img":"../../art_source/iconset_2026-07-21/gen_cat_face_256.png","full":"../../art_source/iconset_2026-07-21/gen_cat_face_512.png","winnerKey":"generative icons:gen_cat_face"},{"id":"generative icons:gen_cat_loaf:v1","tab":"generative icons","group":"generative icons:gen_cat_loaf","row":"gen_cat_loaf","sub":"generative icons","variant":"v1","cap":"v1","img":"../../art_source/iconset_2026-07-21/gen_cat_loaf_256.png","full":"../../art_source/iconset_2026-07-21/gen_cat_loaf_512.png","winnerKey":"generative icons:gen_cat_loaf"},{"id":"generative icons:gen_cat_sitting:v1","tab":"generative icons","group":"generative icons:gen_cat_sitting","row":"gen_cat_sitting","sub":"generative icons","variant":"v1","cap":"v1","img":"../../art_source/iconset_2026-07-21/gen_cat_sitting_256.png","full":"../../art_source/iconset_2026-07-21/gen_cat_sitting_512.png","winnerKey":"generative icons:gen_cat_sitting"},{"id":"generative icons:gen_dial_clock:v1","tab":"generative icons","group":"generative icons:gen_dial_clock","row":"gen_dial_clock","sub":"generative icons","variant":"v1","cap":"v1","img":"../../art_source/iconset_2026-07-21/gen_dial_clock_256.png","full":"../../art_source/iconset_2026-07-21/gen_dial_clock_512.png","winnerKey":"generative icons:gen_dial_clock"},{"id":"generative icons:gen_dial_half:v1","tab":"generative icons","group":"generative icons:gen_dial_half","row":"gen_dial_half","sub":"generative icons","variant":"v1","cap":"v1","img":"../../art_source/iconset_2026-07-21/gen_dial_half_256.png","full":"../../art_source/iconset_2026-07-21/gen_dial_half_512.png","winnerKey":"generative icons:gen_dial_half"},{"id":"generative icons:gen_seal_check:v1","tab":"generative icons","group":"generative icons:gen_seal_check","row":"gen_seal_check","sub":"generative icons","variant":"v1","cap":"v1","img":"../../art_source/iconset_2026-07-21/gen_seal_check_256.png","full":"../../art_source/iconset_2026-07-21/gen_seal_check_512.png","winnerKey":"generative icons:gen_seal_check"},{"id":"generative icons:gen_seal_hourglass:v1","tab":"generative icons","group":"generative icons:gen_seal_hourglass","row":"gen_seal_hourglass","sub":"generative icons","variant":"v1","cap":"v1","img":"../../art_source/iconset_2026-07-21/gen_seal_hourglass_256.png","full":"../../art_source/iconset_2026-07-21/gen_seal_hourglass_512.png","winnerKey":"generative icons:gen_seal_hourglass"},{"id":"generative icons:gen_seal_paper:v1","tab":"generative icons","group":"generative icons:gen_seal_paper","row":"gen_seal_paper","sub":"generative icons","variant":"v1","cap":"v1","img":"../../art_source/iconset_2026-07-21/gen_seal_paper_256.png","full":"../../art_source/iconset_2026-07-21/gen_seal_paper_512.png","winnerKey":"generative icons:gen_seal_paper"},{"id":"generative icons:gen_seal_star:v1","tab":"generative icons","group":"generative icons:gen_seal_star","row":"gen_seal_star","sub":"generative icons","variant":"v1","cap":"v1","img":"../../art_source/iconset_2026-07-21/gen_seal_star_256.png","full":"../../art_source/iconset_2026-07-21/gen_seal_star_512.png","winnerKey":"generative icons:gen_seal_star"},{"id":"settings grounds:gen_bg_warm_bakelite:v1","tab":"settings grounds","group":"settings grounds:gen_bg_warm_bakelite","row":"gen_bg_warm_bakelite","sub":"settings grounds","variant":"v1","cap":"v1","img":"../../art_source/settings_bg_2026-07-21/gen_bg_warm_bakelite_512.png","full":"../../art_source/settings_bg_2026-07-21/gen_bg_warm_bakelite_512.png","winnerKey":"settings grounds:gen_bg_warm_bakelite"},{"id":"settings grounds:gen_bg_warm_ochre:v1","tab":"settings grounds","group":"settings grounds:gen_bg_warm_ochre","row":"gen_bg_warm_ochre","sub":"settings grounds","variant":"v1","cap":"v1","img":"../../art_source/settings_bg_2026-07-21/gen_bg_warm_ochre_512.png","full":"../../art_source/settings_bg_2026-07-21/gen_bg_warm_ochre_512.png","winnerKey":"settings grounds:gen_bg_warm_ochre"},{"id":"settings grounds:gen_bg_warm_terracotta:v1","tab":"settings grounds","group":"settings grounds:gen_bg_warm_terracotta","row":"gen_bg_warm_terracotta","sub":"settings grounds","variant":"v1","cap":"v1","img":"../../art_source/settings_bg_2026-07-21/gen_bg_warm_terracotta_512.png","full":"../../art_source/settings_bg_2026-07-21/gen_bg_warm_terracotta_512.png","winnerKey":"settings grounds:gen_bg_warm_terracotta"},{"id":"settings grounds:settings_bg_warm_bakelite:v1","tab":"settings grounds","group":"settings grounds:settings_bg_warm_bakelite","row":"settings_bg_warm_bakelite","sub":"settings grounds","variant":"v1","cap":"v1","img":"../../art_source/settings_bg_2026-07-21/settings_bg_warm_bakelite_512.png","full":"../../art_source/settings_bg_2026-07-21/settings_bg_warm_bakelite_512.png","winnerKey":"settings grounds:settings_bg_warm_bakelite"},{"id":"settings grounds:settings_bg_warm_ochre:v1","tab":"settings grounds","group":"settings grounds:settings_bg_warm_ochre","row":"settings_bg_warm_ochre","sub":"settings grounds","variant":"v1","cap":"v1","img":"../../art_source/settings_bg_2026-07-21/settings_bg_warm_ochre_512.png","full":"../../art_source/settings_bg_2026-07-21/settings_bg_warm_ochre_512.png","winnerKey":"settings grounds:settings_bg_warm_ochre"},{"id":"settings grounds:settings_bg_warm_terracotta:v1","tab":"settings grounds","group":"settings grounds:settings_bg_warm_terracotta","row":"settings_bg_warm_terracotta","sub":"settings grounds","variant":"v1","cap":"v1","img":"../../art_source/settings_bg_2026-07-21/settings_bg_warm_terracotta_512.png","full":"../../art_source/settings_bg_2026-07-21/settings_bg_warm_terracotta_512.png","winnerKey":"settings grounds:settings_bg_warm_terracotta"}],"tabs":["procedural icons","generative icons","settings grounds"],"typeFile":{"procedural icons":"","generative icons":"","settings grounds":""},"title":"Icon + settings-ground review -- PR #750 (31 candidates)","storeKey":"pdoom_icon_pass_750_v1"};
+  var KEY=(DATA.storeKey||"pdoom_asset_gallery_v1"),UKEY=KEY+"_ui";
+  var CELLDATA=DATA.cells;
+  var TYPEFILE=DATA.typeFile||{};
+  var LABELS={};CELLDATA.forEach(function(c){LABELS[c.id]=c.row+" / "+c.variant;});
+  var TABS=["All"].concat(DATA.tabs||[]);
+
+  var st={picks:{},verdicts:{},notes:{}};
+  try{var ls=JSON.parse(localStorage.getItem(KEY)||"{}");
+    if(ls.picks)st.picks=ls.picks;
+    if(ls.verdicts)st.verdicts=ls.verdicts;
+    if(ls.notes)st.notes=ls.notes;
+  }catch(e){}
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st));}catch(e){}}
+  function reduceMotion(){return window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches;}
+  function esc(s){return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+
+  var ui={tab:"All",filter:"all"};
+  try{var us=JSON.parse(localStorage.getItem(UKEY)||"{}");
+    if(us.tab&&TABS.indexOf(us.tab)>=0)ui.tab=us.tab;
+    if(us.filter)ui.filter=us.filter;
+  }catch(e){}
+  function saveUI(){try{localStorage.setItem(UKEY,JSON.stringify(ui));}catch(e){}}
+
+  var board=document.getElementById('board');
+  var tabbar=document.getElementById('tabbar');
+  document.getElementById('lede').textContent=
+    CELLDATA.length+" renders across "+(DATA.tabs||[]).length+" batch(es). "+
+    "Star a variant to pick a group winner; K/M/R to verdict; click an image to enlarge.";
+
+  function inTab(c){return ui.tab==="All"||c.tab===ui.tab;}
+  function passesFilter(c){
+    if(ui.filter==="all")return true;
+    var v=st.verdicts[c.id]||null;
+    if(ui.filter==="pending")return !v;
+    return v===ui.filter;
+  }
+  function activeCells(){return CELLDATA.filter(function(c){return inTab(c)&&passesFilter(c);});}
+
+  // ---- verdicts ----
+  function applyVerdict(c,v){
+    c.classList.remove('v-keep','v-maybe','v-reroll');
+    if(v)c.classList.add('v-'+v);
+    c.querySelectorAll('.vbtn').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-v')===v);});
+  }
+  function setVerdict(c,v){
+    var id=c.getAttribute('data-id');
+    if(st.verdicts[id]===v){delete st.verdicts[id];v=null;}
+    else{st.verdicts[id]=v;}
+    applyVerdict(c,v);save();tally();
+    if(ui.filter!=="all")render();
+  }
+
+  // ---- winner picks ----
+  function setWinner(c){
+    var wk=c.getAttribute('data-wk'),variant=c.getAttribute('data-variant');
+    if(st.picks[wk]===variant)delete st.picks[wk];else st.picks[wk]=variant;
+    save();render();tally();
+  }
+
+  // ---- keyboard focus ----
+  var CELLS=[],cur=-1;
+  function setFocus(i,scroll){
+    if(i<0||i>=CELLS.length)return;
+    if(cur>=0&&CELLS[cur])CELLS[cur].classList.remove('focused');
+    cur=i;var c=CELLS[cur];c.classList.add('focused');
+    if(scroll)c.scrollIntoView({behavior:reduceMotion()?'auto':'smooth',block:'nearest',inline:'nearest'});
+  }
+  function move(d){var i=cur<0?0:cur+d;if(i<0)i=0;if(i>=CELLS.length)i=CELLS.length-1;setFocus(i,true);}
+  function focusNote(){
+    if(cur<0)setFocus(0,true);
+    var c=CELLS[cur],n=c&&c.querySelector('.note');
+    if(n){n.focus();if(n.select)n.select();}
+  }
+
+  // ---- lightbox ----
+  var lb=document.getElementById('lightbox'),lbimg=document.getElementById('lightimg');
+  function enlarge(full,label){
+    lbimg.src=full;lbimg.alt=label||"enlarged asset";
+    if(typeof lb.showModal==='function')lb.showModal();
+  }
+  lb.addEventListener('click',function(){lb.close();});
+
+  // ---- rendering ----
+  function cellHTML(c){
+    var won=st.picks[c.winnerKey]===c.variant;
+    var stg=c.img
+      ? '<div class="stage" data-full="'+esc(c.full)+'" title="click to enlarge"><img loading="lazy" src="'+esc(c.img)+'" alt="'+esc(c.row)+' '+esc(c.variant)+'"></div>'
+      : '<div class="stage pending"><span>missing<br>regenerate</span></div>';
+    return '<div class="cell'+(won?' winner':'')+'" data-id="'+esc(c.id)+'" data-wk="'+esc(c.winnerKey)+'" data-variant="'+esc(c.variant)+'">'
+      +'<div class="caprow"><span class="cap" title="'+esc(c.variant)+'">'+esc(c.cap)+'</span>'
+      +'<button type="button" class="winbtn'+(won?' on':'')+'" title="Pick winner (W)" aria-label="Pick winner">&#9733;</button></div>'
+      +stg
+      +'<div class="verdict" role="group" aria-label="Verdict for '+esc(c.row)+' '+esc(c.variant)+'">'
+      +'<button type="button" class="vbtn" data-v="keep" title="Keep (K)">keep</button>'
+      +'<button type="button" class="vbtn" data-v="maybe" title="Maybe (M)">maybe</button>'
+      +'<button type="button" class="vbtn" data-v="reroll" title="Re-roll (R)">re-roll</button></div>'
+      +'<input type="text" class="note" placeholder="note..." aria-label="Note for '+esc(c.row)+' '+esc(c.variant)+'">'
+      +'</div>';
+  }
+  function buildTabs(){
+    var totals={};CELLDATA.forEach(function(c){totals[c.tab]=(totals[c.tab]||0)+1;});
+    totals["All"]=CELLDATA.length;
+    tabbar.innerHTML=TABS.map(function(t){
+      var on=t===ui.tab?' on':'';
+      return '<button type="button" class="tab'+on+'" role="tab" data-tab="'+esc(t)+'" aria-selected="'+(t===ui.tab)+'">'
+        +esc(t)+'<span class="cnt">'+(totals[t]||0)+'</span></button>';
+    }).join('');
+    tabbar.querySelectorAll('.tab').forEach(function(btn){
+      btn.addEventListener('click',function(){ui.tab=btn.getAttribute('data-tab');saveUI();render();});
+    });
+  }
+  function render(){
+    buildTabs();
+    var cells=activeCells();
+    var order=[],groups={};
+    cells.forEach(function(c){if(!groups[c.group]){groups[c.group]=[];order.push(c.group);}groups[c.group].push(c);});
+    var html;
+    if(!order.length){
+      html='<p class="empty">no cells match this tab + filter.</p>';
+    }else{
+      html='<div class="board-rows">'+order.map(function(g){
+        var rows=groups[g],first=rows[0];
+        var wk=first.winnerKey,winv=st.picks[wk];
+        var wtag=winv?'<p class="winner-of">winner: '+esc(winv)+'</p>':'';
+        return '<div class="row"><div class="rowhead"><h4>'+esc(first.row)+'</h4>'
+          +'<p>'+esc(first.sub||"")+'</p>'+wtag+'</div>'
+          +'<div class="rolls" style="--cols:'+Math.max(rows.length,1)+'">'
+          +rows.map(cellHTML).join('')+'</div></div>';
+      }).join('')+'</div>';
+    }
+    board.innerHTML=html;
+    wireCells();
+  }
+  function wireCells(){
+    CELLS=[].slice.call(board.querySelectorAll('.cell'));cur=-1;
+    CELLS.forEach(function(c,idx){
+      var id=c.getAttribute('data-id');
+      var inp=c.querySelector('.note');
+      if(inp){
+        if(st.notes[id])inp.value=st.notes[id];
+        inp.addEventListener('input',function(e){st.notes[id]=e.target.value;if(!e.target.value)delete st.notes[id];save();});
+      }
+      applyVerdict(c,st.verdicts[id]||null);
+      c.querySelectorAll('.vbtn').forEach(function(btn){
+        btn.addEventListener('click',function(){setFocus(idx,false);setVerdict(c,btn.getAttribute('data-v'));});
+      });
+      var win=c.querySelector('.winbtn');
+      if(win)win.addEventListener('click',function(){setFocus(idx,false);setWinner(c);});
+      var stg=c.querySelector('.stage');
+      if(stg&&stg.getAttribute('data-full')){
+        stg.addEventListener('click',function(){setFocus(idx,false);enlarge(stg.getAttribute('data-full'),LABELS[id]);});
+      }
+      c.addEventListener('mousedown',function(e){if(e.target.tagName!=='INPUT')setFocus(idx,false);});
+    });
+  }
+
+  document.querySelectorAll('#filterseg button').forEach(function(btn){
+    btn.classList.toggle('on',btn.getAttribute('data-f')===ui.filter);
+    btn.addEventListener('click',function(){
+      ui.filter=btn.getAttribute('data-f');
+      document.querySelectorAll('#filterseg button').forEach(function(b){b.classList.toggle('on',b===btn);});
+      saveUI();render();
+    });
+  });
+
+  document.addEventListener('keydown',function(e){
+    var t=e.target,tag=(t.tagName||'').toLowerCase();
+    var typing=tag==='input'||tag==='textarea'||t.isContentEditable;
+    if(typing){if(e.key==='Escape'){t.blur();e.preventDefault();}return;}
+    if(e.ctrlKey||e.metaKey||e.altKey)return;
+    var k=e.key;
+    if(k==='ArrowRight'||k==='ArrowDown'){move(1);e.preventDefault();}
+    else if(k==='ArrowLeft'||k==='ArrowUp'){move(-1);e.preventDefault();}
+    else if(k==='k'||k==='K'){if(cur>=0){setVerdict(CELLS[cur],'keep');e.preventDefault();}}
+    else if(k==='m'||k==='M'){if(cur>=0){setVerdict(CELLS[cur],'maybe');e.preventDefault();}}
+    else if(k==='r'||k==='R'){if(cur>=0){setVerdict(CELLS[cur],'reroll');e.preventDefault();}}
+    else if(k==='w'||k==='W'){if(cur>=0){setWinner(CELLS[cur]);e.preventDefault();}}
+    else if(k==='n'||k==='N'||k==='Enter'){focusNote();e.preventDefault();}
+    else if(k==='Escape'){if(lb.open){lb.close();}else if(cur>=0){CELLS[cur].classList.remove('focused');cur=-1;}}
+  });
+
+  function tally(){
+    var np=Object.keys(st.picks).length;
+    document.getElementById('tally').innerHTML='winners picked: <b>'+np+'</b>';
+    var k=0,m=0,r=0;
+    for(var id in st.verdicts){var v=st.verdicts[id];if(v==='keep')k++;else if(v==='maybe')m++;else if(v==='reroll')r++;}
+    document.getElementById('vct').innerHTML='keep <b>'+k+'</b> / maybe <b>'+m+'</b> / re-roll <b>'+r+'</b>';
+  }
+
+  // ---- --select command output (grouped by asset_type -> manifest) ----
+  function buildCommands(){
+    var byType={};
+    Object.keys(st.picks).forEach(function(wk){
+      var i=wk.indexOf(":");var atype=wk.slice(0,i),aid=wk.slice(i+1);
+      (byType[atype]=byType[atype]||[]).push(aid+":"+st.picks[wk]);
+    });
+    var lines=[];
+    Object.keys(byType).forEach(function(atype){
+      var f=TYPEFILE[atype]||("art_prompts/"+atype+".yaml");
+      lines.push("python tools/assets/select_assets.py --file "+f+" --select "+byType[atype].join(" "));
+    });
+    return lines.length?lines.join("\n"):"(no winners picked yet -- star a variant)";
+  }
+
+  function labelFor(id){return LABELS[id]||id;}
+  function buildExport(){
+    var L=["# P(Doom)1 asset gallery -- Pip's picks",""];
+    L.push("## Winners (--select)");
+    var cmd=buildCommands();
+    L.push(cmd.indexOf("no winners")>=0?"_(none picked)_":("```\n"+cmd+"\n```"));
+    L.push("");
+    var groups={keep:[],maybe:[],reroll:[]};
+    Object.keys(st.verdicts).forEach(function(id){
+      var v=st.verdicts[id];if(!groups[v])return;
+      var note=st.notes[id]?(" -- "+st.notes[id]):"";
+      groups[v].push("- "+labelFor(id)+" ("+id+")"+note);
+    });
+    var titles={keep:"Keep",maybe:"Maybe",reroll:"Re-roll"};
+    ["keep","maybe","reroll"].forEach(function(g){
+      if(groups[g].length){L.push("## "+titles[g],groups[g].join("\n"),"");}
+    });
+    var extra=Object.keys(st.notes).filter(function(id){return !st.verdicts[id];});
+    if(extra.length){L.push("## Other notes");
+      extra.forEach(function(id){L.push("- "+labelFor(id)+" ("+id+"): "+st.notes[id]);});
+      L.push("");
+    }
+    return L.join("\n");
+  }
+
+  function copyText(el,btn){
+    el.select();var ok=false;try{ok=document.execCommand('copy');}catch(e){}
+    if(navigator.clipboard)navigator.clipboard.writeText(el.value).catch(function(){});
+    var old=btn.textContent;btn.textContent=ok?"copied":"select+copy";
+    setTimeout(function(){btn.textContent=old;},1500);
+  }
+
+  var dlg=document.getElementById('exportdlg'),txt=document.getElementById('exporttext');
+  document.getElementById('exportbtn').addEventListener('click',function(){
+    txt.value=buildExport();
+    if(typeof dlg.showModal==='function')dlg.showModal();else alert(txt.value);
+    txt.focus();txt.select();
+  });
+  document.getElementById('copybtn').addEventListener('click',function(){copyText(txt,this);});
+
+  var cdlg=document.getElementById('cmddlg'),cmdtxt=document.getElementById('cmdtext');
+  document.getElementById('cmdbtn').addEventListener('click',function(){
+    cmdtxt.value=buildCommands();
+    if(typeof cdlg.showModal==='function')cdlg.showModal();else alert(cmdtxt.value);
+    cmdtxt.focus();cmdtxt.select();
+  });
+  document.getElementById('cmdcopybtn').addEventListener('click',function(){copyText(cmdtxt,this);});
+
+  document.getElementById('clearbtn').addEventListener('click',function(){
+    if(!confirm("Clear all winner picks, verdicts and notes?"))return;
+    st={picks:{},verdicts:{},notes:{}};save();render();tally();
+  });
+
+  render();
+  tally();
+})();
+</script>
+</body>
+</html>

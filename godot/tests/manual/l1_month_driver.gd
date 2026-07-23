@@ -3,7 +3,7 @@ extends RefCounted
 ## THE shared L1 month-cycle run driver (harness unification, PR #642 correction round).
 ##
 ## Extracted VERBATIM from test_l1_month_sweep.gd's `_run`/`_answer_windows` (the G1
-## calibration harness whose 72-run CSV is the calibration reference — see
+## calibration harness whose 72-run CSV is the calibration reference -- see
 ## docs/balance/L1_CALIBRATION_2026-07-14.md) so that every balance instrument drives the
 ## SAME month loop: the calibrator's sweep, the EE-9 reactive-policy sweep, the desperation
 ## solver-bot, and the EE-10 opening-book miner. Two month-runners was a maintenance smell;
@@ -12,19 +12,19 @@ extends RefCounted
 ##
 ## The driver reimplements GameManager.end_month + _run_month_playback SYNCHRONOUSLY (no
 ## SceneTree timers): plan commit -> day-tick playback (MonthController.advance_tick) ->
-## auto-pause-on-window -> month boundary -> new plan phase. It does NOT clamp doom — a
+## auto-pause-on-window -> month boundary -> new plan phase. It does NOT clamp doom -- a
 ## balance instrument must let runs die.
 ##
 ## Policy decisions are delegated to an ADAPTER object providing:
-##   name() -> String                              — stamps bot_seed = hash("seed|name")
-##   plan(state, brng, month_ordinal) -> void      — queue actions / strategic WIP for the
+##   name() -> String                              -- stamps bot_seed = hash("seed|name")
+##   plan(state, brng, month_ordinal) -> void      -- queue actions / strategic WIP for the
 ##                                                   open plan turn (AP/affordability-gated
 ##                                                   by the adapter via try_queue below)
-##   window_prefs(state, brng, window) -> Array    — preference-ordered response verbs; the
+##   window_prefs(state, brng, window) -> Array    -- preference-ordered response verbs; the
 ##                                                   driver applies legality + a fallback
 ##                                                   ladder so the pause always clears
 ## Determinism contract: the engine RNG is seeded by the game seed; the bot's own draws come
-## from `brng` (seeded hash(seed|name)) — an adapter must make identical brng draws in
+## from `brng` (seeded hash(seed|name)) -- an adapter must make identical brng draws in
 ## identical order for a given (seed, policy) to keep runs replayable.
 
 const MAX_TICKS_PER_MONTH := 60  # wiring guard: a calendar month is ~16 workday ticks
@@ -123,7 +123,7 @@ static func _answer_windows(adapter, state, mc, brng: RandomNumberGenerator, wst
 
 
 # ============================================================================
-# THE MONTH DRIVER — synchronous reimplementation of end_month + playback
+# THE MONTH DRIVER -- synchronous reimplementation of end_month + playback
 # ============================================================================
 
 static func run(seed: String, adapter, cfg: Dictionary = {}) -> Dictionary:

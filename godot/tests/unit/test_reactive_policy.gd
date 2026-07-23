@@ -1,5 +1,5 @@
 extends GutTest
-## EE-9 · Unit tests for the reactive-policy framework (ReactivePolicy / SweepPolicies) and a fast
+## EE-9 - Unit tests for the reactive-policy framework (ReactivePolicy / SweepPolicies) and a fast
 ## smoke of the shared month runner. Runs in the CI quick gate (tests/unit). The heavy sweeps live
 ## in tests/manual and are excluded from CI.
 
@@ -171,7 +171,7 @@ func test_fundraise_first_borrows_only_when_runway_low() -> void:
 
 
 # --- Fast smoke of the SHARED month driver via the reactive adapter (CI coverage) ---
-# The driver is l1_month_driver.gd — the calibration harness's extracted run loop
+# The driver is l1_month_driver.gd -- the calibration harness's extracted run loop
 # (harness unification, PR #642): one driver serves the calibrator AND the EE-9/EE-10
 # instruments. This smoke proves the reactive adapter drives it end to end.
 

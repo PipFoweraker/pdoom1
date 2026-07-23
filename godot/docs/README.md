@@ -152,7 +152,7 @@ godot/
 |   |   `--- test_events.gd
 |   `--- run_tests.gd          # Test runner
 |--- theme/
-|   `--- welcome_theme.tres    # UI styling
+|   `--- menu_theme.tres       # shared menu/screen chrome Theme (#743)
 `--- addons/
     `--- gut/                  # Testing framework
 ```

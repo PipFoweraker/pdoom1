@@ -56,11 +56,11 @@ un-seeded thing). Pip's verbatim string is retained in each heading so grep can 
   (ADR-0010 routing — an adopted capability paper is diffusion); rival deployment.
 - **Lowers:** almost never in practice (ratchet). A deliberate un-diffusion (recall,
   moratorium that sticks) is a *sacred-object chain* outcome, not a routine lever.
-- **Enters doom via:** the **diffusion stream** (✅ R2-Q1 confirmed: its own stream) —
+- **Enters doom via:** the **diffusion stream** ([x] R2-Q1 confirmed: its own stream) —
   raises the hazard *floor*; more actors, more surface. Slow, broad, hard to reverse.
 - **Read/written by:** schedule causes (ADR-0005/0016) write it; ADR-0010 adoption
   routing writes it when the adopted work is capability-flavored; doom function reads it.
-- **✅ RULED (round 4, Q-MERGE-2):** stays a **stored** intermediary in v1 (not derived
+- **[x] RULED (round 4, Q-MERGE-2):** stays a **stored** intermediary in v1 (not derived
   from `frontier_capability` + lag); derive later only if the exploit sweep shows
   redundancy.
 
@@ -72,7 +72,7 @@ un-seeded thing). Pip's verbatim string is retained in each heading so grep can 
   one intermediary, not eight new intermediaries** (ADR-0015 restraint). The scalar the
   doom function reads is `max` over actors (or top-k); the gap `frontier − general` is the
   *overhang*.
-- **✅ RULED (round 4, Q-FRONTIER-INDEX):** indices-into-one-map confirmed, **and** the
+- **[x] RULED (round 4, Q-FRONTIER-INDEX):** indices-into-one-map confirmed, **and** the
   player's slice gets its own name since DQ-22 aggro reads it specially — proposed name
   (Fable's, veto-able like all names): **`player_frontier`**, an alias for
   `frontier_capability[player]`, the variable rival aggro-thresholds key on.
@@ -100,11 +100,11 @@ un-seeded thing). Pip's verbatim string is retained in each heading so grep can 
 - **Lowers:** effectively never at game grain (a fab war / supply shock is a rare
   scheduled event).
 - **Enters doom via:** **indirectly, through `dedicated_ai_compute`** — see 1.4.
-  `global_compute` does **not** have its own doom term (✅ confirmed via Q-SEM-COMPUTE);
+  `global_compute` does **not** have its own doom term ([x] confirmed via Q-SEM-COMPUTE);
   it is a *derivation input* that sets the ceiling and the diffusion pace.
 - **Read/written by:** schedule writes; `dedicated_ai_compute` derivation reads;
   `general_capability` diffusion pace reads.
-- **✅ RULED (round 2, Pip):** stack-level crispness holds — **no standing player lever
+- **[x] RULED (round 2, Pip):** stack-level crispness holds — **no standing player lever
   governs `global_compute`** — but content MAY touch it: edge-case events (e.g. autocratic
   crackdowns on PC-grade compute) are legal at the cards level per ADR-0005. Pip: *"I
   might be able to solve this at the cards-level, not the stack-level, to use a M:TG
@@ -147,7 +147,7 @@ ocean, you can regulate the clusters.
   adoption"); the player's lobbying chains (ADR-0003 — the "job as a lobbyist" ledger arc).
 - **Lowers (toward acceleration):** `global_panic` (see 1.8); rival lobbying; racing
   incentives; the player's own dual-use success being read as proof racing pays.
-- **Enters doom via (✅ R2-Q2 ruled: gate-only, no stream of its own):** positive
+- **Enters doom via ([x] R2-Q2 ruled: gate-only, no stream of its own):** positive
   `political_pressure` gates the availability and strength of **typed dampers** on
   specific streams (e.g. a compute-cap damper on the compute stream, a regulation damper
   on a release pulse); negative `political_pressure` weakens/blocks dampers and feeds the
@@ -163,7 +163,7 @@ ocean, you can regulate the clusters.
   component risk factors, that decomposition should map onto a real-world risk/harm
   taxonomy rather than an invented one. Future ADR-grade work; noted here so the v1
   scalar is understood as a placeholder for a componentized structure.
-- **⚠ CONFLICT — ✅ CONFIRMED (Pip, round 3):** **two distinct objects.**
+- **[!] CONFLICT — [x] CONFIRMED (Pip, round 3):** **two distinct objects.**
   `political_pressure` = world-state intermediary (the world's disposition). The existing
   `game_state.gd governance: float = 50.0` stays a **player-currency stub** whose DQ-7
   design will define it as a **lever that writes into** the world intermediary. Vintage
@@ -188,12 +188,12 @@ ocean, you can regulate the clusters.
 - **Read/written by:** schedule/league config writes (ADR-0016); doom function reads as its
   base term.
 - **Note on the dash in the name:** the verbatim `ambient_capability_-_risk_background_levels`
-  reads as *"capability-risk background levels."* **✅ RULED (round 4, Q-SPLIT-1): one
+  reads as *"capability-risk background levels."* **[x] RULED (round 4, Q-SPLIT-1): one
   scalar** — no split into `ambient_capability` vs `ambient_risk`.
 
 ### 1.7 `global_alarm`  *(verbatim: `global_alarm`)*
 
-- **Definition (✅ semantics confirmed round 4, Q-SEM-ALARM/PANIC — the load-bearing half
+- **Definition ([x] semantics confirmed round 4, Q-SEM-ALARM/PANIC — the load-bearing half
   of the pair).** **Productive
   concern.** Alarm is society/governance taking the problem seriously in a *coordinated,
   competent* way: it funds safety, enables caps, slows reckless racing, makes safety work
@@ -203,7 +203,7 @@ ocean, you can regulate the clusters.
   (ADR-0014) carrying real signal.
 - **Lowers:** time/habituation (alarm decays if not fed); an incident mishandled converts
   alarm→panic rather than raising alarm; cynicism.
-- **Enters doom via (✅ R2-Q2 CHANGED, round 4 — alarm now has BOTH roles):**
+- **Enters doom via ([x] R2-Q2 CHANGED, round 4 — alarm now has BOTH roles):**
   1. **A small stream of its own** in the doom function — a modest, direct contribution
      reflecting that a genuinely alarmed world is somewhat safer even before formal
      governance lands (norms shift, reviewers get pickier, deployments get double-checked).
@@ -221,7 +221,7 @@ ocean, you can regulate the clusters.
 
 ### 1.8 `global_panic`  *(verbatim: `global_panic`)*
 
-- **Definition (✅ semantics confirmed round 4, Q-SEM-ALARM/PANIC — the other half).**
+- **Definition ([x] semantics confirmed round 4, Q-SEM-ALARM/PANIC — the other half).**
   **Counterproductive flailing.**
   Panic is fear *without* competent coordination: it fuels bad regulation (either
   restrictive theater that drives work underground / offshore, or reactive nationalist
@@ -246,7 +246,7 @@ awareness event becomes depends on the *epistemic quality of the surrounding env
 and how the player handles it* — a well-run org converts scare-events into alarm; a
 flailing one (or a rival's psyop) converts them into panic. They are **not** two ends of
 one variable: a society can be simultaneously highly alarmed *and* highly panicked (the
-realistic case), so they are two variables, not a signed one (✅ CONFIRMED, round 4,
+realistic case), so they are two variables, not a signed one ([x] CONFIRMED, round 4,
 Q-MERGE-1).
 
 ---
@@ -276,7 +276,7 @@ Design rules (ADR-0015 + DESIGN_PHILOSOPHY 2026-07-13, as amended by veto rounds
    `doom_level` crosses a threshold; the **badge is the date** (ADR-0009 / WORLD_AND_LORE).
 2. **The background nearly always climbs — statistically, not by clamp.** The baseline
    stream's year-keyed schedule does the climbing; the engine never forces the sum positive.
-3. **Trend-grade invariant (✅ R2-Q7 ruled, N=6):** doom rate MAY go negative on any turn;
+3. **Trend-grade invariant ([x] R2-Q7 ruled, N=6):** doom rate MAY go negative on any turn;
    what the engine loudly flags (debug + telemetry) is a **sustained 6-month negative
    trend without sacred-object-grade causes**. A bot policy that sustains decline is an
    **exploit-sweep gate failure**. Single negative turns need no sacred cause — they're
@@ -290,7 +290,7 @@ Pseudocode (illustrative — not GDScript; magnitudes are `Balance` config, not 
 
 ```
 # ── Per day tick. doom_rate = sum of NAMED streams. All eight intermediaries
-#    enter as their own streams (✅ R2-Q1 confirmed). ──
+#    enter as their own streams ([x] R2-Q1 confirmed). ──
 
 func compute_doom_rate(s, t) -> (float, Dict):
     streams = {}
@@ -311,13 +311,13 @@ func compute_doom_rate(s, t) -> (float, Dict):
     # (e) panic — additive social accelerant (§1.8)
     streams["panic"] = W_PANIC * s.global_panic
 
-    # (f) alarm — small direct stream (✅ R2-Q2 changed, round 4): a genuinely alarmed
+    # (f) alarm — small direct stream ([x] R2-Q2 changed, round 4): a genuinely alarmed
     #     world is slightly safer even before formal governance lands. Small by design;
     #     the heavy lifting stays in dampers (which alarm also gates, §1.7).
     streams["alarm"] = -W_ALARM * s.global_alarm          # W_ALARM small; sign per §1.7
 
     # (g) SCHEDULED PULSES — ADR-0005 schedule entries inject time-shaped rate bumps
-    #     (✅ R2-Q6: envelope is a schedule-entry schema field): anticipation ramp →
+    #     ([x] R2-Q6: envelope is a schedule-entry schema field): anticipation ramp →
     #     spike → decay tail. Pip: "we can predict an increase in Doom around the time
     #     these 3 new models are going to be released."
     for pulse in s.schedule.active_pulses(t):
@@ -329,7 +329,7 @@ func compute_doom_rate(s, t) -> (float, Dict):
     # ── TYPED DAMPERS ── player mitigations attach to SPECIFIC streams, with durations.
     # damper = (target_stream, strength(t), expires_at). Granted by completed workstreams,
     # adopted safety work, governance wins (gated by alarm/political_pressure, §1.5/§1.7).
-    # Targeting (✅ R2-Q3): baseline is NOT damper-proof; scheduled pulses ARE
+    # Targeting ([x] R2-Q3): baseline is NOT damper-proof; scheduled pulses ARE
     # damper-eligible (pre-emptive policy against an anticipated release spike —
     # inferred from Pip's prior model-release scenario, flagged as inferred not explicit).
     # v1 clamp (R2-Q9, LOUD REVISIT MARKER): dampers cannot push a hazard stream below 0.
@@ -340,7 +340,7 @@ func compute_doom_rate(s, t) -> (float, Dict):
 
     rate = sum(streams.values())                     # superposition — MAY be negative
 
-    # Trend-grade invariant (✅ R2-Q7, N=6): flag sustained decline, not single dips.
+    # Trend-grade invariant ([x] R2-Q7, N=6): flag sustained decline, not single dips.
     if trailing_trend(s.rate_history, months=6) < 0.0 and not s.sacred_grade_causes_in_window(months=6):
         telemetry.flag("sustained_negative_trend_without_sacred_cause", t, streams)  # loud
         # exploit sweep: a bot policy sustaining this state FAILS the gate
@@ -374,7 +374,7 @@ Why this shape (mechanism, not decoration):
 - **Typed dampers replace the global multiplier.** A mitigation is a *targeted, timed*
   purchase: a compute-cap treaty damps the compute stream for its duration; a competent
   public-comms play damps panic; pre-emptive policy work damps an upcoming release pulse
-  (✅ R2-Q3 — pulse-damping inferred from Pip's model-release scenario; baseline is also
+  ([x] R2-Q3 — pulse-damping inferred from Pip's model-release scenario; baseline is also
   damper-eligible, ruled explicitly). This kills the round-1 problem (one scalar hid
   *what* governance was actually gripping) and buys per-stream attribution for free.
 - **Decline is earned, visible, and policed at trend grain.** Single negative turns are
@@ -385,7 +385,7 @@ Why this shape (mechanism, not decoration):
   "frontier overhang" vs "panic-driven racing" vs "the March release pulse," satisfying
   ADR-0015 §3.
 
-### Display implications — two instruments (✅ RULED, Pip 2026-07-13)
+### Display implications — two instruments ([x] RULED, Pip 2026-07-13)
 
 Pip, verbatim: *"we can have the satisfaction of watching something like the delta Doom
 rise and fall in response to our observed outputs, and then the actual, accumulated Doom
@@ -434,7 +434,7 @@ to-be-spent, DESIGN_PHILOSOPHY "On the hero and the office"), mission purity (th
 crusader walks, §DQ-15 archetype 3). The price is a ledger burn (ADR-0003), and the pain
 scales with how long you fed the stock.
 
-**(c) Composition — ✅ REJECTED as a hard gate (round 4, R2-Q8).** Pip, verbatim:
+**(c) Composition — [x] REJECTED as a hard gate (round 4, R2-Q8).** Pip, verbatim:
 *"doesn't actually require sacrifice. Earlier thoughts thought of as papers etc as a
 grind. Players might be able to seize opportunities when they come up, sacrifice will be
 required for many good results, but not all and not deterministically, but because it's
@@ -464,55 +464,55 @@ Current literal-doom sites the L1 pass must convert to intermediary writes (grep
 (safety researchers) → `global_alarm`/`political_pressure` writes that gate **typed
 dampers** (§2), **not** a direct −doom; `opponents` doom contributions → per-actor
 `frontier_capability` + rival-driven `panic`. New schema surface from round 2: ADR-0005
-schedule entries gain a **pulse envelope** field (ramp/spike/tail — ✅ R2-Q6 confirmed).
+schedule entries gain a **pulse envelope** field (ramp/spike/tail — [x] R2-Q6 confirmed).
 ADR-0015 §5: L9 schema deprecates direct doom fields; exploit sweeps are the regression.
 
 ---
 
 ## Veto checklist — RULING RECORD (round 4: full sheet completed)
 
-> **Status key:** ✅ RESOLVED (ruling recorded) · ⏸ DEFERRED (R2-Q4) · 🔄 OPEN by design
-> (R2-Q5) · ⚠ RESOLVED-v1 with LOUD revisit marker (R2-Q9).
+> **Status key:** [x] RESOLVED (ruling recorded) · DEFERRED (R2-Q4) · OPEN by design
+> (R2-Q5) · [!] RESOLVED-v1 with LOUD revisit marker (R2-Q9).
 
-**Names — all ✅ APPROVED (round 4):**
-- ✅ **Q-NAME-1** `dedicated_ai_compute` **APPROVED**.
-- ✅ **Q-NAME-2** `political_pressure` **APPROVED** (signed axis).
-- ✅ **Q-NAME-3** `ambient_risk` **APPROVED**.
-- ✅ **Q-NAME-4** Rest verbatim **APPROVED**: `general_capability`, `frontier_capability`, `global_compute`, `global_alarm`, `global_panic`.
+**Names — all [x] APPROVED (round 4):**
+- [x] **Q-NAME-1** `dedicated_ai_compute` **APPROVED**.
+- [x] **Q-NAME-2** `political_pressure` **APPROVED** (signed axis).
+- [x] **Q-NAME-3** `ambient_risk` **APPROVED**.
+- [x] **Q-NAME-4** Rest verbatim **APPROVED**: `general_capability`, `frontier_capability`, `global_compute`, `global_alarm`, `global_panic`.
 
-**Load-bearing semantics — all ✅ CONFIRMED (round 4):**
-- ✅ **Q-SEM-ALARM/PANIC** **CONFIRMED**: alarm = productive concern → governance; panic = counterproductive flailing → bad regulation + racing; two-variable framing (see Q-MERGE-1).
-- ✅ **Q-SEM-COMPUTE** **CONFIRMED**: ocean-vs-fleet framing; cards-level exceptions legal (see Q-COMPUTE-DIRECT).
-- ✅ **Q-SEM-POLITICAL** **CONFIRMED**: `political_pressure` = the world's disposition, signed axis, distinct from the player governance stub (Q-CONFLICT-1). **Addition (Pip, verbatim; "Rist" normalized to "Risk"):** *"this will probably need to be built into component risk factors. Note future intent to integrate real world risk and harm taxonomies like the MIT AI Risk work into the game."* Reference taxonomy source: the **MIT AI Risk Repository** (see §1.5 forward-integration note).
+**Load-bearing semantics — all [x] CONFIRMED (round 4):**
+- [x] **Q-SEM-ALARM/PANIC** **CONFIRMED**: alarm = productive concern → governance; panic = counterproductive flailing → bad regulation + racing; two-variable framing (see Q-MERGE-1).
+- [x] **Q-SEM-COMPUTE** **CONFIRMED**: ocean-vs-fleet framing; cards-level exceptions legal (see Q-COMPUTE-DIRECT).
+- [x] **Q-SEM-POLITICAL** **CONFIRMED**: `political_pressure` = the world's disposition, signed axis, distinct from the player governance stub (Q-CONFLICT-1). **Addition (Pip, verbatim; "Rist" normalized to "Risk"):** *"this will probably need to be built into component risk factors. Note future intent to integrate real world risk and harm taxonomies like the MIT AI Risk work into the game."* Reference taxonomy source: the **MIT AI Risk Repository** (see §1.5 forward-integration note).
 
 **Structural:**
-- ✅ **Q-FN-1** `MIN_FLOOR` **REJECTED as an engine clamp** (round 2). Replaced by the instrumentation invariant, refined trend-grade by R2-Q7. Pip: downward spikes legal *"if a player pulls something impressive off."* The floor is an instrument, not a clamp.
-- ✅ **Q-FN-2** Bounded global governance-damping **RULED too restrictive** (round 2). Restructured to named component streams + typed dampers with durations (§2); never-reverses clamp deleted.
-- ✅ **Q-FN-3** Resolved via rounds 2+4: dampers can push the *rate* negative; sacred-object chains (§2b) are the discrete *level* reductions; the R2-Q7 trend-grade invariant (now ruled, N=6) polices sustained decline.
-- ✅ **Q-ASYM-1** Superseded by the stream restructure (round 2); alarm's role finalized by R2-Q2 (round 4).
-- ✅ **Q-FN-4** **CONFIRMED (round 4)**: overhang = acute hazard, `general_capability` = chronic floor.
-- ✅ **Q-COMPUTE-DIRECT** **RULED: cards, not stack** (round 2, §1.3). No standing player lever on `global_compute`; edge-case content events legal per ADR-0005. Pip: *"I might be able to solve this at the cards-level, not the stack-level, to use a M:TG analogy."*
-- ✅ **Q-FRONTIER-INDEX** **CONFIRMED (round 4)**: indices into one map, **and** the player's slice is separately named since DQ-22 aggro reads it — proposed `player_frontier` (Fable's name proposal, §1.2).
+- [x] **Q-FN-1** `MIN_FLOOR` **REJECTED as an engine clamp** (round 2). Replaced by the instrumentation invariant, refined trend-grade by R2-Q7. Pip: downward spikes legal *"if a player pulls something impressive off."* The floor is an instrument, not a clamp.
+- [x] **Q-FN-2** Bounded global governance-damping **RULED too restrictive** (round 2). Restructured to named component streams + typed dampers with durations (§2); never-reverses clamp deleted.
+- [x] **Q-FN-3** Resolved via rounds 2+4: dampers can push the *rate* negative; sacred-object chains (§2b) are the discrete *level* reductions; the R2-Q7 trend-grade invariant (now ruled, N=6) polices sustained decline.
+- [x] **Q-ASYM-1** Superseded by the stream restructure (round 2); alarm's role finalized by R2-Q2 (round 4).
+- [x] **Q-FN-4** **CONFIRMED (round 4)**: overhang = acute hazard, `general_capability` = chronic floor.
+- [x] **Q-COMPUTE-DIRECT** **RULED: cards, not stack** (round 2, §1.3). No standing player lever on `global_compute`; edge-case content events legal per ADR-0005. Pip: *"I might be able to solve this at the cards-level, not the stack-level, to use a M:TG analogy."*
+- [x] **Q-FRONTIER-INDEX** **CONFIRMED (round 4)**: indices into one map, **and** the player's slice is separately named since DQ-22 aggro reads it — proposed `player_frontier` (Fable's name proposal, §1.2).
 
 **Merges/splits:**
-- ✅ **Q-MERGE-1** **CONFIRMED (round 4)**: two variables (society can be both alarmed and panicked at once).
-- ✅ **Q-SPLIT-1** **CONFIRMED (round 4)**: one scalar (`ambient_risk`); no split.
-- ✅ **Q-MERGE-2** **RESOLVED (round 4, per recommendation)**: `general_capability` stays **stored** in v1; derive it later only if the exploit sweep shows redundancy.
+- [x] **Q-MERGE-1** **CONFIRMED (round 4)**: two variables (society can be both alarmed and panicked at once).
+- [x] **Q-SPLIT-1** **CONFIRMED (round 4)**: one scalar (`ambient_risk`); no split.
+- [x] **Q-MERGE-2** **RESOLVED (round 4, per recommendation)**: `general_capability` stays **stored** in v1; derive it later only if the exploit sweep shows redundancy.
 
 **Conflicts:**
-- ✅ **Q-CONFLICT-1** **CONFIRMED (round 3)**: two distinct objects; the `game_state.gd governance` float stays a player-currency stub whose DQ-7 design will define it as a lever writing into `political_pressure`.
-- ✅ **Q-CONFLICT-2** Mapping **ACCEPTED** (round 2); Pip reserves revisit. Pip's principle, verbatim: *"our architecture should be robust to some numbers shifts if things are moving laterally, not up and down, as we establish hierarchies and embed them into our structural tree."*
+- [x] **Q-CONFLICT-1** **CONFIRMED (round 3)**: two distinct objects; the `game_state.gd governance` float stays a player-currency stub whose DQ-7 design will define it as a lever writing into `political_pressure`.
+- [x] **Q-CONFLICT-2** Mapping **ACCEPTED** (round 2); Pip reserves revisit. Pip's principle, verbatim: *"our architecture should be robust to some numbers shifts if things are moving laterally, not up and down, as we establish hierarchies and embed them into our structural tree."*
 
 **Round-2 questions — rulings (round 4):**
-- ✅ **R2-Q1** **CONFIRMED**: all eight intermediaries enter as their own streams (baseline, overhang, diffusion, compute, panic, alarm, + pulses from the schedule).
-- ✅ **R2-Q2** **CHANGED**: `global_alarm` becomes a **small stream itself** *in addition to* gating typed-damper availability/strength (both roles, §1.7); `political_pressure` remains **gate-only** (§1.5).
-- ✅ **R2-Q3** **RULED**: the baseline stream is **NOT damper-proof**. Pulse-damping (pre-emptive policy against an anticipated release spike): **YES** — provenance: *inferred from Pip's prior model-release scenario (mitigations stacked against an anticipated spike)*, flagged as inferred, not explicit.
-- ⏸ **R2-Q4** **DEFERRED to next workshop beat.** Pip's instruction, verbatim: *"prompt agent to find examples from real history to baseline with or against."* **Research errand logged:** historical analogs of policy/institutional responses damping technology risks (candidates to research: CFC/Montreal Protocol, nuclear test-ban and nonproliferation regimes, automotive/aviation safety regulation, leaded-petrol and asbestos phase-outs) — to baseline damper magnitudes and durations against real response curves.
-- 🔄 **R2-Q5** **OPEN with direction**: Pip prefers cycles **emergent from mechanisms** over a hardcoded cyclic type — *"I feel like there might be ways of making these emergent from mechanisms as we keep workshopping them."* **v1 ships no distinct cyclic machinery.**
-- ✅ **R2-Q6** **CONFIRMED**: pulse envelope (ramp/spike/tail) becomes an ADR-0005 schedule-entry schema field (L1/L9 schema addition).
-- ✅ **R2-Q7** **CONFIRMED, N=6**: trend-grade invariant — a **sustained 6-month negative trend without sacred-object-grade causes flags loudly** (debug + telemetry); a bot policy sustaining decline is an **exploit-sweep gate failure**. Single negative turns are legal without ceremony.
-- ✅ **R2-Q8** **REVISED — composition REJECTED as a hard gate.** Pip, verbatim: *"doesn't actually require sacrifice. Earlier thoughts thought of as papers etc as a grind. Players might be able to seize opportunities when they come up, sacrifice will be required for many good results, but not all and not deterministically, but because it's hard to do hard things."* §2b rewritten: gauntlet completion alone CAN pay level reductions; sacrifice is an emergent situational cost of hard things, not a design formula; opportunity-seizing is legal and rewarded.
-- ⚠ **R2-Q9** **RESOLVED-v1 with LOUD REVISIT MARKER**: streams clamp at 0 in v1 (dampers cannot push a hazard stream negative). Pip, verbatim: *"make careful note to revisit, noting we had had some discussions in this recently and am not settled."* **REVISIT NOTE:** the round-4 alarm stream (R2-Q2) is *natively* negative and sits outside the clamp — the clamp/negative-component boundary is exactly the unsettled ground; re-open both together.
+- [x] **R2-Q1** **CONFIRMED**: all eight intermediaries enter as their own streams (baseline, overhang, diffusion, compute, panic, alarm, + pulses from the schedule).
+- [x] **R2-Q2** **CHANGED**: `global_alarm` becomes a **small stream itself** *in addition to* gating typed-damper availability/strength (both roles, §1.7); `political_pressure` remains **gate-only** (§1.5).
+- [x] **R2-Q3** **RULED**: the baseline stream is **NOT damper-proof**. Pulse-damping (pre-emptive policy against an anticipated release spike): **YES** — provenance: *inferred from Pip's prior model-release scenario (mitigations stacked against an anticipated spike)*, flagged as inferred, not explicit.
+- **R2-Q4** **DEFERRED to next workshop beat.** Pip's instruction, verbatim: *"prompt agent to find examples from real history to baseline with or against."* **Research errand logged:** historical analogs of policy/institutional responses damping technology risks (candidates to research: CFC/Montreal Protocol, nuclear test-ban and nonproliferation regimes, automotive/aviation safety regulation, leaded-petrol and asbestos phase-outs) — to baseline damper magnitudes and durations against real response curves.
+- **R2-Q5** **OPEN with direction**: Pip prefers cycles **emergent from mechanisms** over a hardcoded cyclic type — *"I feel like there might be ways of making these emergent from mechanisms as we keep workshopping them."* **v1 ships no distinct cyclic machinery.**
+- [x] **R2-Q6** **CONFIRMED**: pulse envelope (ramp/spike/tail) becomes an ADR-0005 schedule-entry schema field (L1/L9 schema addition).
+- [x] **R2-Q7** **CONFIRMED, N=6**: trend-grade invariant — a **sustained 6-month negative trend without sacred-object-grade causes flags loudly** (debug + telemetry); a bot policy sustaining decline is an **exploit-sweep gate failure**. Single negative turns are legal without ceremony.
+- [x] **R2-Q8** **REVISED — composition REJECTED as a hard gate.** Pip, verbatim: *"doesn't actually require sacrifice. Earlier thoughts thought of as papers etc as a grind. Players might be able to seize opportunities when they come up, sacrifice will be required for many good results, but not all and not deterministically, but because it's hard to do hard things."* §2b rewritten: gauntlet completion alone CAN pay level reductions; sacrifice is an emergent situational cost of hard things, not a design formula; opportunity-seizing is legal and rewarded.
+- [!] **R2-Q9** **RESOLVED-v1 with LOUD REVISIT MARKER**: streams clamp at 0 in v1 (dampers cannot push a hazard stream negative). Pip, verbatim: *"make careful note to revisit, noting we had had some discussions in this recently and am not settled."* **REVISIT NOTE:** the round-4 alarm stream (R2-Q2) is *natively* negative and sits outside the clamp — the clamp/negative-component boundary is exactly the unsettled ground; re-open both together.
 
 ---
 

@@ -10,7 +10,7 @@ note: This guide predates the pygame -> Godot migration. Only the Development Se
 
 # Developer Guide for P(Doom)
 
-> WARNING **This guide is mid-revision.** P(Doom) migrated from pygame/Python to **Godot 4.5.1 / GDScript**.
+> [!] **This guide is mid-revision.** P(Doom) migrated from pygame/Python to **Godot 4.5.1 / GDScript**.
 > The **Development Setup** section below is current. **The architecture and deep-dive sections
 > further down still describe the retired pygame build** (`src/`, `main.py`, `ui.py`,
 > `python -m unittest`) and should not be followed  --  they are queued for rewrite. Authoritative

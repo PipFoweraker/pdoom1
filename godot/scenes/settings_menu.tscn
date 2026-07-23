@@ -1,56 +1,9 @@
-[gd_scene load_steps=8 format=3 uid="uid://bp3k6x8y9d1mn"]
+[gd_scene load_steps=5 format=3 uid="uid://bp3k6x8y9d1mn"]
 
 [ext_resource type="Script" path="res://scripts/ui/settings_menu.gd" id="1_settings"]
 [ext_resource type="Texture2D" path="res://assets/textures/surfaces/tex_painted_metal_panel_512.png" id="2_background"]
 [ext_resource type="Texture2D" path="res://assets/textures/terminal/tex_gray_dither_512.png" id="3_overlay"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_normal"]
-bg_color = Color(0.18, 0.145, 0.278, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.09, 0.04, 0.11, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hover"]
-bg_color = Color(0.231, 0.192, 0.349, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.91, 0.64, 0.24, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pressed"]
-bg_color = Color(0.106, 0.078, 0.165, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.965, 0.659, 0, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_focus"]
-bg_color = Color(0.18, 0.145, 0.278, 1)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(0.965, 0.659, 0, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
+[ext_resource type="Theme" uid="uid://dmenuthemepd001" path="res://theme/menu_theme.tres" id="4_theme"]
 
 [node name="SettingsMenu" type="Control"]
 layout_mode = 3
@@ -59,6 +12,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("4_theme")
 script = ExtResource("1_settings")
 
 [node name="Background" type="TextureRect" parent="."]
@@ -451,10 +405,6 @@ custom_minimum_size = Vector2(150, 50)
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 20
-theme_override_styles/normal = SubResource("StyleBoxFlat_normal")
-theme_override_styles/hover = SubResource("StyleBoxFlat_hover")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_pressed")
-theme_override_styles/focus = SubResource("StyleBoxFlat_focus")
 text = "Apply"
 
 [node name="BackButton" type="Button" parent="VBox/ButtonRow"]
@@ -462,10 +412,6 @@ custom_minimum_size = Vector2(150, 50)
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 20
-theme_override_styles/normal = SubResource("StyleBoxFlat_normal")
-theme_override_styles/hover = SubResource("StyleBoxFlat_hover")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_pressed")
-theme_override_styles/focus = SubResource("StyleBoxFlat_focus")
 text = "Back"
 
 [connection signal="value_changed" from="VBox/SettingsContainer/AudioSettings/MasterVolumeRow/Slider" to="." method="_on_master_volume_changed"]

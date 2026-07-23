@@ -33,11 +33,13 @@ func _ready():
 
 	# Delineate the end-game box with a solid panel + border so it reads clearly as an
 	# overlay rather than blending into the dimmed game behind it (playtest: screen4).
+	# Palette-sourced (#743): deep-aubergine dread ground + dimmed cozy-amber frame,
+	# matching the menu_theme.tres modal register (pause/player-guide panels).
 	if panel_container:
 		var box := StyleBoxFlat.new()
-		box.bg_color = Color(0.10, 0.12, 0.15, 0.98)
+		box.bg_color = Color(0.09, 0.04, 0.11, 0.98)
 		box.set_border_width_all(3)
-		box.border_color = Color(0.45, 0.55, 0.50, 1.0)
+		box.border_color = Color(0.91, 0.64, 0.24, 0.8)
 		box.set_corner_radius_all(10)
 		box.set_content_margin_all(6)
 		panel_container.add_theme_stylebox_override("panel", box)
@@ -74,7 +76,7 @@ func show_game_over(is_victory: bool, final_state: Dictionary):
 	     after a multi-second synchronous baseline sim -- a force-quit during that freeze
 	     meant the POST was never even dispatched (root cause of the live score loss).
 	  3. NEVER BLOCK: read the baseline NON-BLOCKING (get_baseline_score() ran a ~4s
-	     synchronous simulation on the main thread -> "Not Responding" at the defeat moment).
+		 synchronous simulation on the main thread -> "Not Responding" at the defeat moment).
 	  4. NEVER CRASH: music / save / submit are all failure-tolerant side-effects.
 	"""
 	# Rule 1 -- re-entrancy guard. Later calls only keep the overlay visible.
@@ -92,7 +94,7 @@ func show_game_over(is_victory: bool, final_state: Dictionary):
 	else:
 		MusicManager.play_context(MusicManager.MusicContext.DEFEAT)
 
-	# ADR-0002: the engine is the scoring authority — read the (turns, doom_integral)
+	# ADR-0002: the engine is the scoring authority -- read the (turns, doom_integral)
 	# tuple straight off final_state; no formula here.
 	var st = GameState.score_tuple(final_state)
 	final_turns = st[0]
@@ -152,7 +154,7 @@ func show_game_over(is_victory: bool, final_state: Dictionary):
 	var stats_text = "[center][b]FINAL STATISTICS[/b][/center]\n\n"
 
 	# Final Score (prominent display)
-	stats_text += "[center][color=gold]★ FINAL SCORE ★[/color][/center]\n"
+	stats_text += "[center][color=gold]* FINAL SCORE *[/color][/center]\n"
 	stats_text += "[center][b][color=yellow]%s[/color][/b][/center]\n" % GameState.format_score(final_turns, final_doom_integral)
 
 	# Baseline comparison (Issue #372)
@@ -166,31 +168,31 @@ func show_game_over(is_victory: bool, final_state: Dictionary):
 
 	# Game duration
 	var turn = final_state.get("turn", 0)
-	stats_text += "[color=cyan]◆ Turns Survived:[/color] [b]%d[/b]\n\n" % turn
+	stats_text += "[color=cyan]* Turns Survived:[/color] [b]%d[/b]\n\n" % turn
 
 	# Doom level
 	var doom = final_state.get("doom", 0)
 	var doom_color = _get_doom_display_color(doom)
-	stats_text += "[color=cyan]◆ Final Doom:[/color] [color=%s][b]%.1f%%[/b][/color]\n" % [doom_color, doom]
+	stats_text += "[color=cyan]* Final Doom:[/color] [color=%s][b]%.1f%%[/b][/color]\n" % [doom_color, doom]
 
 	# Doom momentum
 	var doom_momentum = final_state.get("doom_momentum", 0.0)
 	if abs(doom_momentum) > 0.1:
-		var momentum_text = "↑ %.1f (Spiral)" % doom_momentum if doom_momentum > 0 else "↓ %.1f (Flywheel)" % abs(doom_momentum)
+		var momentum_text = "^ %.1f (Spiral)" % doom_momentum if doom_momentum > 0 else "v %.1f (Flywheel)" % abs(doom_momentum)
 		var momentum_color = "red" if doom_momentum > 0 else "green"
-		stats_text += "[color=cyan]  └─ Momentum:[/color] [color=%s]%s[/color]\n" % [momentum_color, momentum_text]
+		stats_text += "[color=cyan]  `- Momentum:[/color] [color=%s]%s[/color]\n" % [momentum_color, momentum_text]
 
 	stats_text += "\n"
 
 	# Resources accumulated
-	stats_text += "[color=cyan]◆ Resources:[/color]\n"
+	stats_text += "[color=cyan]* Resources:[/color]\n"
 	stats_text += "  [color=gold]Money:[/color] $%d\n" % final_state.get("money", 0)
 	stats_text += "  [color=blue]Compute:[/color] %.1f\n" % final_state.get("compute", 0)
 	stats_text += "  [color=purple]Research:[/color] %.1f\n" % final_state.get("research", 0)
 	stats_text += "  [color=white]Papers:[/color] %d\n" % final_state.get("papers", 0)
 	stats_text += "  [color=orange]Reputation:[/color] %.0f\n\n" % final_state.get("reputation", 0)
 
-	# Team composition — count via GameState.get_total_staff() (L0 #620: the legacy
+	# Team composition -- count via GameState.get_total_staff() (L0 #620: the legacy
 	# field sum below missed the researchers[] roster, showing 0 employees mid-era).
 	var safety = final_state.get("safety_researchers", 0)
 	var capability = final_state.get("capability_researchers", 0)
@@ -199,7 +201,7 @@ func show_game_over(is_victory: bool, final_state: Dictionary):
 	if GameManager.is_initialized and GameManager.state:
 		total_staff = GameManager.state.get_total_staff()
 
-	stats_text += "[color=cyan]◆ Team:[/color] [b]%d employees[/b]\n" % total_staff
+	stats_text += "[color=cyan]* Team:[/color] [b]%d employees[/b]\n" % total_staff
 	if total_staff > 0:
 		stats_text += "  [color=green]Safety Researchers:[/color] %d\n" % safety
 		stats_text += "  [color=red]Capability Researchers:[/color] %d\n" % capability
@@ -208,19 +210,19 @@ func show_game_over(is_victory: bool, final_state: Dictionary):
 	# Upgrades purchased
 	var upgrades = final_state.get("purchased_upgrades", [])
 	if upgrades.size() > 0:
-		stats_text += "\n[color=cyan]◆ Upgrades:[/color] [b]%d purchased[/b]\n" % upgrades.size()
+		stats_text += "\n[color=cyan]* Upgrades:[/color] [b]%d purchased[/b]\n" % upgrades.size()
 
 	# L8 achievements (#619): recognition only, never score (ADR-0002 anti-sink).
 	var achievements_node = get_node_or_null("/root/Achievements")
 	if achievements_node and not achievements_node.unlocked_this_run.is_empty():
-		stats_text += "\n[color=cyan]◆ Achievements this run:[/color]\n"
+		stats_text += "\n[color=cyan]* Achievements this run:[/color]\n"
 		for ach_id in achievements_node.unlocked_this_run:
 			var ach_def = achievements_node.get_definition(ach_id)
 			if not ach_def.is_empty():
-				stats_text += "  [color=gold]★ %s[/color] [color=gray]— %s[/color]\n" % [ach_def["title"], ach_def["flavor"]]
+				stats_text += "  [color=gold]* %s[/color] [color=gray]-- %s[/color]\n" % [ach_def["title"], ach_def["flavor"]]
 
 	# Victory/defeat flavor text
-	stats_text += "\n[center][color=gray]───────────────────[/color][/center]\n"
+	stats_text += "\n[center][color=gray]-------------------[/color][/center]\n"
 	if is_victory:
 		stats_text += "\n[center][color=lime]Your leadership guided humanity safely through\nthe development of transformative AI.[/color][/center]"
 	else:
@@ -231,9 +233,9 @@ func show_game_over(is_victory: bool, final_state: Dictionary):
 			stats_text += "\n[center][color=orange]%s[/color][/center]" % attribution
 
 	# AI Safety resources call to action (condensed to reduce vertical overflow)
-	stats_text += "\n[center][color=gray]───────────────────[/color][/center]\n"
+	stats_text += "\n[center][color=gray]-------------------[/color][/center]\n"
 	stats_text += "[center][color=cyan]Learn about real AI safety: [url=https://aisafety.info][color=dodger_blue]aisafety.info[/color][/url][/color][/center]\n"
-	stats_text += "[center][color=gold][b]⏎ Press ENTER for Leaderboard[/b][/color][/center]"
+	stats_text += "[center][color=gold][b]> Press ENTER for Leaderboard[/b][/color][/center]"
 
 	stats_label.text = stats_text
 
@@ -305,7 +307,7 @@ func _ensure_sync_status_label() -> void:
 	parent.add_child(sync_status_label)
 
 func _get_doom_display_color(doom: float) -> String:
-	"""BBCode colour for the final-doom stat — ThemeManager's doom ramp, stroke variant
+	"""BBCode colour for the final-doom stat -- ThemeManager's doom ramp, stroke variant
 	so it stays legible on the dark panel (L6 unification: was a divergent 30/60/80
 	green/yellow/orange/red copy)."""
 	return "#" + ThemeManager.get_doom_stroke_color(doom).to_html(false)
@@ -313,7 +315,7 @@ func _get_doom_display_color(doom: float) -> String:
 func _get_defeat_title(final_state: Dictionary) -> String:
 	"""Short honest defeat headline, keyed to the ACTUAL death cause (P0 fix).
 	Order mirrors GameState.check_win_lose(): doom >= 100, then reputation <= 0, then the
-	bankruptcy fallback — so the subtitle always names the counter that ended the run."""
+	bankruptcy fallback -- so the subtitle always names the counter that ended the run."""
 	var doom = final_state.get("doom", 0)
 	var reputation = final_state.get("reputation", 100)
 
@@ -335,14 +337,14 @@ func _get_defeat_reason(final_state: Dictionary) -> String:
 	if doom >= 100.0:
 		return "Doom reached 100%. The AI became\nunaligned and humanity was lost."
 	elif reputation <= 0.0:
-		return "Your lab lost all credibility —\nreputation hit zero and the doors closed."
+		return "Your lab lost all credibility --\nreputation hit zero and the doors closed."
 	elif final_state.get("money", 0) < 0:
 		return "Your organization went bankrupt before\nthe mission could be completed."
 	else:
 		return "The experiment ended prematurely."
 
 func _fmt_money(amount: float) -> String:
-	"""Money display — routes through the ONE formatter (L0 #620: was a duplicate
+	"""Money display -- routes through the ONE formatter (L0 #620: was a duplicate
 	compact implementation; GameConfig.format_money is the canonical one)."""
 	return GameConfig.format_money(amount)
 
@@ -438,7 +440,7 @@ func _get_ledger_attribution_text(final_state: Dictionary) -> String:
 	var parts := []
 	for src in counts:
 		parts.append("%d %s" % [counts[src], src])
-	return "Your ledger came due: %s — %s in bills you couldn't cover." % [", ".join(parts), _fmt_money(total)]
+	return "Your ledger came due: %s -- %s in bills you couldn't cover." % [", ".join(parts), _fmt_money(total)]
 
 ## Issue #734: build the single shareable result line. Pure + static so it can be unit-tested
 ## without instantiating the screen. ASCII only ("--" for the dash); clipboard only, no network.

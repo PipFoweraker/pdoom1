@@ -30,9 +30,9 @@ message_log.add_separator()
 - `warning` / `caution` - Yellow with WARNING
 - `error` / `danger` - Red with FAILED
 - `info` - White with INFO
-- `action` - Light blue with  -> 
-- `event` - Gold with ★
-- `doom` - Red with ☠
+- `action` - Light blue with  ->
+- `event` - Gold with *
+- `doom` - Red with [X]
 - `system` / `phase` - Accent color
 
 ### 2. Resource Bar (`resource_bar.gd`)
@@ -105,7 +105,7 @@ NotificationManager.show_notification(
 - SUCCESS: CHECKED, Green background
 - WARNING: WARNING, Yellow background
 - ERROR: FAILED, Red background
-- ACHIEVEMENT: ★, Purple background
+- ACHIEVEMENT: *, Purple background
 
 ## Theme Integration
 

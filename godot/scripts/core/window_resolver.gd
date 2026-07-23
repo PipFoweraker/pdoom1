@@ -1,20 +1,20 @@
 class_name WindowResolver
 extends RefCounted
-## Response-window resolution (L1 / ADR-0009 §3, ADR-0012). A window is the only event
+## Response-window resolution (L1 / ADR-0009 S3, ADR-0012). A window is the only event
 ## tier that demands a decision; this resolves the costed menu:
-##   handle_reserve      — HANDLE, paid painlessly from the crisp reserve (Attention)
-##   handle_cannibalize  — HANDLE, paid by eating un-reserved capacity / killing planned WIP
-##   defer               — mints a Liability Ledger entry (deferrable class only)
-##   ignore              — the stated list-price consequence
-##   auto_ignore         — an UNANSWERED window auto-resolves as IGNORE + a mild rep penalty
+##   handle_reserve      -- HANDLE, paid painlessly from the crisp reserve (Attention)
+##   handle_cannibalize  -- HANDLE, paid by eating un-reserved capacity / killing planned WIP
+##   defer               -- mints a Liability Ledger entry (deferrable class only)
+##   ignore              -- the stated list-price consequence
+##   auto_ignore         -- an UNANSWERED window auto-resolves as IGNORE + a mild rep penalty
 ##                         (nonresponse annoys the offerer, addendum #1); illegal on
 ##                         unignorable windows.
 ##
 ## Attention (the founder decision currency) is paid via MonthPlan; the chosen option's own
 ## in-fiction resource costs (money/etc.) still apply through GameEvents.execute_event_choice.
-## Legacy action_point costs on window options are STRIPPED — Attention replaces AP as the
+## Legacy action_point costs on window options are STRIPPED -- Attention replaces AP as the
 ## window decision currency (L1 introduces Attention; L2 deletes the AP pool). Seam left clean
-## for ADR-0015: this resolver never reads/writes doom directly — it routes through option
+## for ADR-0015: this resolver never reads/writes doom directly -- it routes through option
 ## effects and ledger factories, both of which L2 migrates onto intermediaries.
 
 const Events = preload("res://scripts/core/events.gd")
@@ -104,7 +104,7 @@ static func resolve(state: GameState, plan: MonthPlan, event: Dictionary, respon
 				state.ledger.add(entry)
 				result["ledger_source"] = entry.source
 			result["payment_source"] = "defer"
-			result["message"] = "Deferred — minted ledger entry"
+			result["message"] = "Deferred -- minted ledger entry"
 			result["success"] = true
 
 		"ignore", "auto_ignore":
@@ -123,9 +123,9 @@ static func resolve(state: GameState, plan: MonthPlan, event: Dictionary, respon
 					state.reputation = max(0.0, state.reputation - pen)
 					var d: Dictionary = result["deltas"]
 					d["reputation"] = float(d.get("reputation", 0.0)) - pen
-					result["message"] = "Window lapsed — auto-ignored (-%.1f reputation)" % pen
+					result["message"] = "Window lapsed -- auto-ignored (-%.1f reputation)" % pen
 				else:
-					result["message"] = "Window lapsed — auto-ignored"
+					result["message"] = "Window lapsed -- auto-ignored"
 			result["success"] = true
 
 		_:
@@ -133,7 +133,7 @@ static func resolve(state: GameState, plan: MonthPlan, event: Dictionary, respon
 			return result
 
 	# Record into the replay artifact at the choke point (schema bump: window responses
-	# carry the payment source — ADR-0009 consequence).
+	# carry the payment source -- ADR-0009 consequence).
 	if result["success"] and typeof(VerificationTracker) != TYPE_NIL:
 		VerificationTracker.record_window_response(event_id, response, String(result["payment_source"]), state.turn)
 	return result
@@ -148,7 +148,7 @@ static func resolve_chosen_option(state: GameState, plan: MonthPlan, event: Dict
 	                                  cannibalizing un-reserved capacity/WIP
 	The chosen option's own in-fiction costs/effects apply (AP stripped); the real payment
 	source (reserve/cannibalize/ignore) lands in the replay artifact. The explicit
-	four-verb menu incl. DEFER is the plan-screen UI's job — DEFER is not reachable from
+	four-verb menu incl. DEFER is the plan-screen UI's job -- DEFER is not reachable from
 	this v1 path."""
 	var event_id := String(event.get("id", ""))
 
@@ -214,7 +214,7 @@ static func resolve_chosen_option(state: GameState, plan: MonthPlan, event: Dict
 static func _apply_option(state: GameState, event: Dictionary, option_id: String) -> Dictionary:
 	"""Apply an event option by id, STRIPPING any legacy action_point cost (windows spend
 	Attention, not AP). Returns the execute_event_choice result (or an empty success if the
-	option id is blank — a no-op ignore)."""
+	option id is blank -- a no-op ignore)."""
 	if option_id == "":
 		return {"success": true, "message": "No action", "deltas": {}}
 	# #789: hiring prompt cards mutate pipeline state (onboarding flags + money), not
@@ -252,7 +252,7 @@ static func _merge_option(result: Dictionary, opt_result: Dictionary) -> void:
 static func _mint_deferral(event: Dictionary, rng: RandomNumberGenerator):
 	"""Mint a Ledger entry for a DEFER, from the event's window.defer config. Defaults to a
 	loan sized by the handle option's money cost (deferring a bill you didn't pay). Content
-	tuning is L4/ADR-0013 — this is the intake valve."""
+	tuning is L4/ADR-0013 -- this is the intake valve."""
 	var cfg = window_config(event).get("defer", {})
 	var factory: String = String(cfg.get("factory", "loan")) if cfg is Dictionary else "loan"
 	var amount: float = float(cfg.get("amount", 0.0)) if cfg is Dictionary else 0.0

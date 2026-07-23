@@ -68,8 +68,10 @@ const LUCKY_HOLD: float = 1.3           # how long "Oh! how lucky!" holds before
 const HOLD_SKIP_SECONDS: float = 3.0    # how long the conviction ring takes to fill -> skip
 const HOLD_DECAY_SECONDS: float = 0.7   # how fast the ring empties when released early
 
-# Hero art behind the fade (verified present; imports as CompressedTexture2D).
-const HERO_ART: String = "res://assets/dump_october_31_2025/hero-bg-2400w.webp"
+# Hero art behind the fade (imports as CompressedTexture2D). Re-pointed from the retired
+# dump_october_31_2025/hero-bg (main #792 moved that dir out of godot/ to shrink the .pck)
+# to a shipped in-tree background -- a wide dawn office fits the fade-up-from-black arrival.
+const HERO_ART: String = "res://assets/images/backgrounds/office_wide_dawn.webp"
 
 # ============================================================================
 # End tunables. Machinery below.

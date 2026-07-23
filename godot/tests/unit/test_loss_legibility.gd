@@ -1,9 +1,9 @@
 extends GutTest
-## EE-7 (ADR-0012): loss legibility — engine-side pieces.
+## EE-7 (ADR-0012): loss legibility -- engine-side pieces.
 ## Resource-affecting event choices report their net deltas; the ledger returns
 ## what it billed so the turn log can state every bill and its fallout. The one
 ## human ledger-death specimen was low-resolution because the player couldn't
-## see the spiral — these are the numbers future specimens point at.
+## see the spiral -- these are the numbers future specimens point at.
 
 func test_event_choice_reports_net_resource_deltas():
 	var state = GameState.new("legibility-ev")

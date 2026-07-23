@@ -128,11 +128,11 @@ func test_game_state():
 	print("\n  Testing turn advancement...")
 	var initial_turn = game_state.turn
 	game_state.advance_turn()
-	print("    Turn advanced: %d → %d" % [initial_turn, game_state.turn])
+	print("    Turn advanced: %d -> %d" % [initial_turn, game_state.turn])
 	print("    Action Points reset: %d" % game_state.action_points)
 
 	game_state.free()
-	print("\n[✓] GameState working correctly")
+	print("\n[[OK]] GameState working correctly")
 
 func test_seed_variations():
 	"""Test how different seeds create different experiences"""
@@ -169,10 +169,10 @@ func test_seed_variations():
 		gs2.free()
 
 		var matches = (name1 == name2)
-		var status = "[✓]" if matches else "[✗]"
+		var status = "[[OK]]" if matches else "[[X]]"
 		print("    %s Seed '%s': '%s' == '%s' : %s" % [status, seed, name1, name2, matches])
 
-	print("\n[✓] Seed variation system working correctly")
+	print("\n[[OK]] Seed variation system working correctly")
 
 func test_dual_identity():
 	"""Test dual identity system (player_name + lab_name)"""
@@ -205,7 +205,7 @@ func test_dual_identity():
 
 	gs.free()
 	gs2.free()
-	print("\n[✓] Dual identity system working correctly")
+	print("\n[[OK]] Dual identity system working correctly")
 
 func test_leaderboard_system():
 	"""Test leaderboard functionality"""
@@ -226,7 +226,7 @@ func test_leaderboard_system():
 		print("  [SKIP] Could not access Leaderboard node")
 		return
 
-	print("  [✓] Leaderboard autoload found")
+	print("  [[OK]] Leaderboard autoload found")
 
 	# Test basic functionality
 	var test_seed = "dev-test-seed"
@@ -236,11 +236,11 @@ func test_leaderboard_system():
 	# This is a template - adjust based on actual Leaderboard interface
 	if leaderboard.has_method("get_entries_for_seed"):
 		var entries = leaderboard.get_entries_for_seed(test_seed)
-		print("  [✓] Retrieved %d entries for seed '%s'" % [entries.size(), test_seed])
+		print("  [[OK]] Retrieved %d entries for seed '%s'" % [entries.size(), test_seed])
 	else:
 		print("  [INFO] Leaderboard.get_entries_for_seed() not implemented yet")
 
-	print("\n[✓] Leaderboard system check completed")
+	print("\n[[OK]] Leaderboard system check completed")
 
 func test_turn_progression():
 	"""Test game progression over multiple turns"""
@@ -282,10 +282,10 @@ func test_turn_progression():
 		gs.reputation += 5
 
 	if not gs.game_over:
-		print("\n  [✓] Game survived 10 turns")
+		print("\n  [[OK]] Game survived 10 turns")
 
 	gs.free()
-	print("\n[✓] Turn progression test completed")
+	print("\n[[OK]] Turn progression test completed")
 
 func test_complete_session():
 	"""Test complete game session simulation"""
@@ -312,7 +312,7 @@ func test_complete_session():
 		gs.reputation += 5
 		print("    Turn %d: $%.0f, Rep: %.0f" % [gs.turn, gs.money, gs.reputation])
 
-	print("\n  [✓] Session simulation completed")
+	print("\n  [[OK]] Session simulation completed")
 
 	# Test leaderboard recording (if available)
 	var leaderboard = null
@@ -325,7 +325,7 @@ func test_complete_session():
 		print("  [SKIP] Leaderboard recording not available")
 
 	gs.free()
-	print("\n[✓] Complete session test finished")
+	print("\n[[OK]] Complete session test finished")
 
 ## ============================================================================
 ## HELPER FUNCTIONS

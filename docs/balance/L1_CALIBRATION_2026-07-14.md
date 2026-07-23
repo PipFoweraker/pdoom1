@@ -4,11 +4,11 @@
 **Harness:** `godot/tests/manual/test_l1_month_sweep.gd` (72 runs, same seeds/policies as #637) · **Raw data:** `docs/balance/L1_sweep_runs.csv`
 **Baseline:** the overnight sweep memo `docs/balance/L1_SWEEP_2026-07-13.md` (PR #637) — under pre-rebalance constants **no policy survived even one plan-month**.
 
-> **Headline (post-review round).** After the original 5 measured iterations, Pip's #638 review rulings, and a second calibration round for the new **T9 floor** ("no standard run finishes in less than 6 months"), the final state is: do_nothing **14 months** (T1 ✓, byte-identical through the whole T9 round), **every standard policy survives ≥6 full months** (loan_desperation 6-7, greedy_overcommit 6-13 — T9 ✓), the ledger bites *legibly over months* with per-bill caps and a slow-bleed rollover (T6 ✓), and **every policy still dies** (max 45 months, 0 immortal — ADR-0002/T8 ✓). **Two targets still miss, both for a reason outside dials 1-4:** the safety-beats-passive *margin* (~1.2-1.4×, wanted 1.5-2.5×) is bounded by the bot policy's monthly-overhiring **bankruptcy** (a money/salary effect: safety-coefficient bumps do not move the median), and random_walk sits below the do_nothing↔safety band because it takes genuinely self-harming actions ~40% of the time. Neither is the out-of-scope Attention dial — see §Scope + §7. Final numbers measured on the merge with `main` through #640.
+> **Headline (post-review round).** After the original 5 measured iterations, Pip's #638 review rulings, and a second calibration round for the new **T9 floor** ("no standard run finishes in less than 6 months"), the final state is: do_nothing **14 months** (T1 [x], byte-identical through the whole T9 round), **every standard policy survives ≥6 full months** (loan_desperation 6-7, greedy_overcommit 6-13 — T9 [x]), the ledger bites *legibly over months* with per-bill caps and a slow-bleed rollover (T6 [x]), and **every policy still dies** (max 45 months, 0 immortal — ADR-0002/T8 [x]). **Two targets still miss, both for a reason outside dials 1-4:** the safety-beats-passive *margin* (~1.2-1.4×, wanted 1.5-2.5×) is bounded by the bot policy's monthly-overhiring **bankruptcy** (a money/salary effect: safety-coefficient bumps do not move the median), and random_walk sits below the do_nothing↔safety band because it takes genuinely self-harming actions ~40% of the time. Neither is the out-of-scope Attention dial — see §Scope + §7. Final numbers measured on the merge with `main` through #640.
 
 ---
 
-## ⚠️ Read this first — two load-bearing findings + a scope confession
+## [!] Read this first — two load-bearing findings + a scope confession
 
 **FINDING A — the ledger's doom teeth were INERT (probe-confirmed).** The #637 memo dramatised DEFER as a "+99…+143 doom one-click death button." **That doom never actually landed.** The turn loop overwrites `state.doom = doom_system.current_doom` every tick (`turn_manager._step_resolve_doom`), and that authority never reads `state.doom` — so the ledger's `state.doom += doom_hit` was silently **clobbered** the same tick. loan_desperation's "8/8 ledger deaths" in #637 were ordinary *rival-doom* deaths that `DeathAttribution` merely **labelled** ledger (a ledger default sat in the cause log). Probe: a governance bill computing `doom: 104.8` moved actual doom by ~0 (rivals only). **To make dial 3's target real ("DEFER's doom cost lands over subsequent months"), the ledger doom must actually land** — so this calibration routes ledger doom through `doom_system.add_event_doom`. **APPROVED (#638 review, coordinator ruling on Pip's deferral), with this rationale: the fix aligns with ADR-0005/ADR-0015 — one authority for doom writes, no parallel pipes.** `doom_system` is the single doom authority; the pre-fix ledger write was a parallel pipe that the authority (correctly, by its own contract) overwrote. Routing the ledger through the authority's event channel is the ADR-0015-shaped fix, not a workaround — and it makes ledger doom visible in the doom-source breakdown (loss legibility) for free. Event/action *direct* doom writes (`add_resources({"doom": …})`) are still clobbered — that is the remainder of the same bug class, logged as open question §7.1 for the ADR-0015 migration lane.
 
@@ -28,15 +28,15 @@ T1-T8 are the **coordinator's** interim targets, derived from ADR anchors (ADR-0
 
 | # | Target | Status (final) |
 |---|---|---|
-| T1 | do_nothing median **12-18 months** | ✅ HIT (14.0) |
-| T2 | safety_lean & reserve_heavy **1.5-2.5× do_nothing** | ❌ MISS (1.18× / 1.36×) — bankruptcy/variance-bound (Finding B) |
-| T3 | random_walk **between do_nothing and safety_lean** | ❌ MISS (8.0, below band) — but now clearly above the reckless cluster |
-| T4 | greedy_overcommit **faster than do_nothing, not sub-month** | ✅ HIT (7.0 < 14, min 6) |
-| T5 | loan_desperation **mid-range, predominantly ledger-rooted** | ✅ HIT (7.0, 8/8 ledger-rooted) |
-| T6 | a single **DEFER survivable**, doom over months, capped per tick | ✅ HIT (per-bill cap 10, slow-bleed rollover — see explainer below) |
-| T7 | start doom **meaningfully below 50 (15-25)** | ✅ set to **20** |
-| T8 | **HARD (ADR-0002):** every policy dies; no run >400 months | ✅ HIT (max 45 mo, 0 immortal) |
-| T9 | **Pip (#638): no standard run finishes in < 6 months** | ✅ HIT (min months: greedy 6, loan_desperation 6) |
+| T1 | do_nothing median **12-18 months** | [x] HIT (14.0) |
+| T2 | safety_lean & reserve_heavy **1.5-2.5× do_nothing** | [X] MISS (1.18× / 1.36×) — bankruptcy/variance-bound (Finding B) |
+| T3 | random_walk **between do_nothing and safety_lean** | [X] MISS (8.0, below band) — but now clearly above the reckless cluster |
+| T4 | greedy_overcommit **faster than do_nothing, not sub-month** | [x] HIT (7.0 < 14, min 6) |
+| T5 | loan_desperation **mid-range, predominantly ledger-rooted** | [x] HIT (7.0, 8/8 ledger-rooted) |
+| T6 | a single **DEFER survivable**, doom over months, capped per tick | [x] HIT (per-bill cap 10, slow-bleed rollover — see explainer below) |
+| T7 | start doom **meaningfully below 50 (15-25)** | [x] set to **20** |
+| T8 | **HARD (ADR-0002):** every policy dies; no run >400 months | [x] HIT (max 45 mo, 0 immortal) |
+| T9 | **Pip (#638): no standard run finishes in < 6 months** | [x] HIT (min months: greedy 6, loan_desperation 6) |
 
 **T1 — why 12-18 months.** ADR-0009 pins a noob death at ~2 fiction-years (~24 months) and an early-competent loss at ~2027 (~114 months). Passive non-play must be *worse than* a noob actually playing (else engagement is punished — the #637 shame finding) but not so fast the world reads as arbitrary; 12-18 puts do_nothing at roughly half the noob anchor. Drift down → month cadence stops mattering (too few plan screens to learn from); drift up past ~24 → passivity outperforms noobs and the shame finding returns.
 
@@ -66,7 +66,7 @@ Each iteration = adjust constants → run the full 72-run sweep → table vs tar
 |---|---|---|---|---|---|---|---|---|---|
 | **#637 base** | *(none)* | 0 | 0 | 0 | 0 | 0 | 0 | all die tick 4-9 | nothing survives month 0 |
 | **I1** | rival scale 0.03, overhang 0.003, base 0.1, momentum accum 0.05/cap 2, **start doom 20**, doom-cap+rollover+**doom-routing fix** (max_doom_per_bill 15), payroll sev 2500/1500 | 9 | **5** | **5.5** | 2 | 0 | 1 | PASS | doom re-denom works but **INVERSION**: safety dies *faster* than passive (bankruptcy→`unproductive`(0.5)×momentum explodes doom); greedy sub-month |
-| **I2** | **researcher/legacy/unproductive doom ÷~20** (safety -0.18, cap +0.15, unproductive 0.025); **ledger fuses ×~11-15 + interest ÷~20** (loan 44/0.012, payroll 33, etc.); rival scale 0.02, overhang 0.002, base 0.06 | **14 ✓** | 15.5 | 15.5 | 4.5 | 5 | 1 | PASS | inversion fixed, do_nothing in band; safety only **1.1×**; ledger still fast |
+| **I2** | **researcher/legacy/unproductive doom ÷~20** (safety -0.18, cap +0.15, unproductive 0.025); **ledger fuses ×~11-15 + interest ÷~20** (loan 44/0.012, payroll 33, etc.); rival scale 0.02, overhang 0.002, base 0.06 | **14 [x]** | 15.5 | 15.5 | 4.5 | 5 | 1 | PASS | inversion fixed, do_nothing in band; safety only **1.1×**; ledger still fast |
 | **I3** | safety -0.18→**-0.28** (interp -0.24, align -0.25); payroll sev **1200/800**; **rep cap 15** (max_rep_per_bill) | 14 | 15.5 | 16 | 6 | 5 | 2 | PASS | safety strengthen = **0.0 effect** (bankruptcy-bound, Finding B); rep-cap lifts random/loan a little |
 | **I4** | `doom_per_unpaid_1000` 3.5→**1.5** | 14 | 15.5 | 15.5 | 6 | 5 | 2 | PASS | ledger *doom* isn't the binding killer for random/loan → near-zero move |
 | **I5** | **exposure_chance 0.15→0.007**, blackmail fuse 2→22/interest 0.5→0.02 | 14 | 15.5 | 16 | 6 | 5 | **4** | PASS | loan_desperation exposed as **rep-collapse via secret-exposure** (per-tick chance); re-denom → 8/8 ledger, tighter (4-5 mo) |
@@ -92,49 +92,49 @@ Each iteration = adjust constants → run the full 72-run sweep → table vs tar
 
 ## 3. Final constants — status after the #638 review round
 
-All in `godot/data/balance/defaults.json` unless noted. Review status: **✔A = approved as-is by Pip's #638 review** (dials 1, 2, 3, both code caps, all ⚑ re-denomination completions, and the doom-routing fix); **◐I = accepted as interim** (dial 4 momentum); **☐N = NEW this round (T9) — awaiting Pip's ruling**. ⚑ marks re-denomination completions (all blessed: "if we discovered more environments where the game is interacting with a different per-tick speed than makes sense to a human… that's awesome").
+All in `godot/data/balance/defaults.json` unless noted. Review status: **[x]A = approved as-is by Pip's #638 review** (dials 1, 2, 3, both code caps, all [!] re-denomination completions, and the doom-routing fix); **◐I = accepted as interim** (dial 4 momentum); **[ ]N = NEW this round (T9) — awaiting Pip's ruling**. [!] marks re-denomination completions (all blessed: "if we discovered more environments where the game is interacting with a different per-tick speed than makes sense to a human… that's awesome").
 
-### Dial 1 — rival + per-tick doom re-denomination *(✔A approved)*
-- ✔A `rivals.per_tick_doom_scale` — **NEW → 0.02** (multiplies summed rival per-action+overhang doom in `turn_manager`; 1.0 = pre-L1)
-- ✔A `rivals.capability_overhang_doom_per_progress` — 0.025 → **0.002**
-- ✔A `doom.base_per_turn` — 1.0 → **0.06**
-- ✔A ⚑ `doom.researcher.safety_base` — -3.5 → **-0.28**
-- ✔A ⚑ `doom.researcher.capabilities_base` — 3.0 → **0.15**
-- ✔A ⚑ `doom.researcher.interpretability_base` — -3.0 → **-0.24**
-- ✔A ⚑ `doom.researcher.alignment_base` — -3.2 → **-0.25**
-- ✔A ⚑ `doom.legacy_capability_per_researcher` — 3.0 → **0.15**
-- ✔A ⚑ `doom.legacy_safety_per_researcher` — 3.5 → **0.18**
-- ✔A ⚑ `doom.unproductive_per_staff` — 0.5 → **0.025** *(this one killed the I1 inversion)*
+### Dial 1 — rival + per-tick doom re-denomination *([x]A approved)*
+- [x]A `rivals.per_tick_doom_scale` — **NEW → 0.02** (multiplies summed rival per-action+overhang doom in `turn_manager`; 1.0 = pre-L1)
+- [x]A `rivals.capability_overhang_doom_per_progress` — 0.025 → **0.002**
+- [x]A `doom.base_per_turn` — 1.0 → **0.06**
+- [x]A [!] `doom.researcher.safety_base` — -3.5 → **-0.28**
+- [x]A [!] `doom.researcher.capabilities_base` — 3.0 → **0.15**
+- [x]A [!] `doom.researcher.interpretability_base` — -3.0 → **-0.24**
+- [x]A [!] `doom.researcher.alignment_base` — -3.2 → **-0.25**
+- [x]A [!] `doom.legacy_capability_per_researcher` — 3.0 → **0.15**
+- [x]A [!] `doom.legacy_safety_per_researcher` — 3.5 → **0.18**
+- [x]A [!] `doom.unproductive_per_staff` — 0.5 → **0.025** *(this one killed the I1 inversion)*
 
-### Dial 2 — lower start doom *(✔A approved)*
-- ✔A `starting_resources.doom` — 50.0 → **20.0** *(scenarios still override on top for late-league spawns)*
+### Dial 2 — lower start doom *([x]A approved)*
+- [x]A `starting_resources.doom` — 50.0 → **20.0** *(scenarios still override on top for late-league spawns)*
 
-### Dial 3 — DEFER/ledger priced as a loan, not a one-click death *(✔A approved at #638 values; ☐N rows moved further for T9)*
-- ✔A→☐N `ledger.max_doom_per_bill` — NEW 15.0 at review → **10.0 after T9** *(T9-G: the monthly maturity PAIR must stay under a lethal single-tick spike)*
-- ✔A→☐N `ledger.max_rep_per_bill` — NEW 15.0 at review → **10.0 after T9** *(T9-H: symmetric — the last sub-6-month death was a rep collapse)*
-- ✔A→☐N `ledger.doom_per_unpaid_1000` — 3.5 → 1.5 at review → **0.9 after T9**
-- ✔A `ledger.desperation_payroll.severity_base` — 8000 → **1200**
-- ✔A `ledger.desperation_payroll.severity_spread` — 6000 → **800**
-- ✔A→☐N ⚑ `ledger.desperation_payroll.fuse_turns` — 3 → 33 at review → **55 after T9** *(~2.5 fiction-months to first bill)*
-- ✔A→☐N ⚑ `ledger.desperation_payroll.interest_rate` — 0.35 → 0.012 at review → **0.008 after T9** *(+ float round-trip constraint, §7.2)*
-- ✔A→☐N ⚑ `ledger.loan.fuse_turns` — 4 → 44 at review → **77 after T9** *(~3.5 fiction-months)*
-- ✔A→☐N ⚑ `ledger.loan.interest_rate` — 0.25 → 0.012 at review → **0.008 after T9** *(≈ ~19%/fiction-month compounding)*
-- ✔A→☐N ⚑ `ledger.funding_strings.fuse_turns` — 6 → 66 at review → **88 after T9** *(~4 fiction-months)*
-- ✔A→☐N `ledger.funding_strings.principal_multiplier` — 0.15 → **0.10 after T9** *(governance strings bill ~5k, ~4.5 doom — drip, not spike)*
-- ✔A ⚑ `ledger.funding_strings.interest_rate` — 0.05 → **0.0025**
-- ✔A ⚑ `ledger.staff_rider.fuse_turns` — 8 → **88**
-- ✔A ⚑ `ledger.staff_rider.interest_rate` — 0.02 → **0.001**
-- ✔A ⚑ `ledger.exposure_chance_per_turn` — 0.15 → **0.007** *(per-tick secret-exposure was near-instant; now ~14%/month per secret)*
-- ✔A ⚑ `ledger.blackmail.fuse_turns` — 2 → **22**
-- ✔A ⚑ `ledger.blackmail.interest_rate` — 0.5 → **0.02**
-- ☐N `ledger.expose.rep_per_1000` — 4.0 → **2.5** *(T9-H: exposure rep was finishing runs at month 5)*
-- ☐N `ledger.rollover_fuse_ticks` — **NEW → 8** *(bleed cadence of a capped bill's residual: one capped hit every ~9 ticks; null-effect on the bots but sets how fast a HUMAN's single mega-default completes)*
+### Dial 3 — DEFER/ledger priced as a loan, not a one-click death *([x]A approved at #638 values; [ ]N rows moved further for T9)*
+- [x]A→[ ]N `ledger.max_doom_per_bill` — NEW 15.0 at review → **10.0 after T9** *(T9-G: the monthly maturity PAIR must stay under a lethal single-tick spike)*
+- [x]A→[ ]N `ledger.max_rep_per_bill` — NEW 15.0 at review → **10.0 after T9** *(T9-H: symmetric — the last sub-6-month death was a rep collapse)*
+- [x]A→[ ]N `ledger.doom_per_unpaid_1000` — 3.5 → 1.5 at review → **0.9 after T9**
+- [x]A `ledger.desperation_payroll.severity_base` — 8000 → **1200**
+- [x]A `ledger.desperation_payroll.severity_spread` — 6000 → **800**
+- [x]A→[ ]N [!] `ledger.desperation_payroll.fuse_turns` — 3 → 33 at review → **55 after T9** *(~2.5 fiction-months to first bill)*
+- [x]A→[ ]N [!] `ledger.desperation_payroll.interest_rate` — 0.35 → 0.012 at review → **0.008 after T9** *(+ float round-trip constraint, §7.2)*
+- [x]A→[ ]N [!] `ledger.loan.fuse_turns` — 4 → 44 at review → **77 after T9** *(~3.5 fiction-months)*
+- [x]A→[ ]N [!] `ledger.loan.interest_rate` — 0.25 → 0.012 at review → **0.008 after T9** *(≈ ~19%/fiction-month compounding)*
+- [x]A→[ ]N [!] `ledger.funding_strings.fuse_turns` — 6 → 66 at review → **88 after T9** *(~4 fiction-months)*
+- [x]A→[ ]N `ledger.funding_strings.principal_multiplier` — 0.15 → **0.10 after T9** *(governance strings bill ~5k, ~4.5 doom — drip, not spike)*
+- [x]A [!] `ledger.funding_strings.interest_rate` — 0.05 → **0.0025**
+- [x]A [!] `ledger.staff_rider.fuse_turns` — 8 → **88**
+- [x]A [!] `ledger.staff_rider.interest_rate` — 0.02 → **0.001**
+- [x]A [!] `ledger.exposure_chance_per_turn` — 0.15 → **0.007** *(per-tick secret-exposure was near-instant; now ~14%/month per secret)*
+- [x]A [!] `ledger.blackmail.fuse_turns` — 2 → **22**
+- [x]A [!] `ledger.blackmail.interest_rate` — 0.5 → **0.02**
+- [ ]N `ledger.expose.rep_per_1000` — 4.0 → **2.5** *(T9-H: exposure rep was finishing runs at month 5)*
+- [ ]N `ledger.rollover_fuse_ticks` — **NEW → 8** *(bleed cadence of a capped bill's residual: one capped hit every ~9 ticks; null-effect on the bots but sets how fast a HUMAN's single mega-default completes)*
 
 ### Dial 4 — momentum re-tune *(◐I accepted as INTERIM; now a switch per the ruling)*
 - ◐I `doom.momentum_accumulation_rate` — 0.15 → **0.05**
 - ◐I `doom.momentum_cap` — 8.0 → **2.0**
-- ☐N `doom.momentum_enabled` — **NEW → 1.0** *(the ruled kill-switch: 0 = momentum contributes nothing)*
-- ☐N `doom.momentum_weight` — **NEW → 1.0** *(scales the contribution without touching the accumulator shape)*
+- [ ]N `doom.momentum_enabled` — **NEW → 1.0** *(the ruled kill-switch: 0 = momentum contributes nothing)*
+- [ ]N `doom.momentum_weight` — **NEW → 1.0** *(scales the contribution without touching the accumulator shape)*
 
 > **Momentum explainer (refresher owed to Pip — what this mechanic even is).**
 > *What it does:* every tick, the doom system sums its raw sources (base + rivals + researchers + events…), then feeds a fraction of that raw change into an accumulator: `momentum += raw_change × accumulation_rate`, clamped to ±`cap`, decayed by ×`decay_rate` (0.92) each tick. The accumulator's current value is then **added on top of** the raw change. So momentum is a *trend amplifier*: sustained rising doom makes doom rise faster ("doom spiral"), sustained falling doom makes it fall faster ("safety flywheel"). It is symmetric and self-decaying — stop the trend and the bonus fades ~8%/tick.
@@ -144,13 +144,13 @@ All in `godot/data/balance/defaults.json` unless noted. Review status: **✔A = 
 > *Switch semantics:* while disabled, the accumulator still ticks (velocity/trend readouts stay live, and re-enabling mid-run behaves sanely); only the doom *contribution* is zeroed.
 
 ### Code changes (behaviour, not just numbers)
-- ✔A `turn_manager.gd` `_step_process_rival_turns` — multiply summed rival doom by `rivals.per_tick_doom_scale`.
-- ✔A **`ledger.gd` — route ledger doom through `doom_system.add_event_doom` (Finding A fix)**, per-bill caps, residual rollover. **Approved with the ADR-0005/ADR-0015 rationale: one authority for doom writes, no parallel pipes** (see Finding A).
-- ☐N `risk_pool.gd` — probabilistic trigger scaled by `risk.trigger_scale_per_tick` (**NEW → 0.045**): pool/100 was per day-tick, i.e. a pool of 40 fired ~9 events/month; now pool N ≈ N%/month. Threshold crossings (50/75/100) remain guaranteed one-shots. *(T9 lever: this was greedy_overcommit's hidden drip.)*
-- ☐N `ledger.gd` — **whole-unit principal rounding** at mint + each compound step. Determinism guard, not flavour: Godot's JSON float parse is not correctly-rounded, so full-precision principals came back from a save 1 ulp off, breaking save/load deep-equality (§7.2).
-- ☐N `doom_system.gd` — momentum switch (`momentum_enabled`/`momentum_weight`, see explainer).
-- ✔A `test_l1_month_sweep.gd` harness — `MAX_MONTHS` 60→420 (ADR-0002 detection), m1-m6 CSV/slope columns, `MORTALITY_CHECK` line.
-- ✔A `test_ledger_actions.gd` — `soonest_fuse` assertion reads the Balance fuse. Plus this round: `test_game_state.gd` (start-doom + clamp assertions read Balance), `test_death_attribution.gd` (exposure magnitudes updated to re-priced rates).
+- [x]A `turn_manager.gd` `_step_process_rival_turns` — multiply summed rival doom by `rivals.per_tick_doom_scale`.
+- [x]A **`ledger.gd` — route ledger doom through `doom_system.add_event_doom` (Finding A fix)**, per-bill caps, residual rollover. **Approved with the ADR-0005/ADR-0015 rationale: one authority for doom writes, no parallel pipes** (see Finding A).
+- [ ]N `risk_pool.gd` — probabilistic trigger scaled by `risk.trigger_scale_per_tick` (**NEW → 0.045**): pool/100 was per day-tick, i.e. a pool of 40 fired ~9 events/month; now pool N ≈ N%/month. Threshold crossings (50/75/100) remain guaranteed one-shots. *(T9 lever: this was greedy_overcommit's hidden drip.)*
+- [ ]N `ledger.gd` — **whole-unit principal rounding** at mint + each compound step. Determinism guard, not flavour: Godot's JSON float parse is not correctly-rounded, so full-precision principals came back from a save 1 ulp off, breaking save/load deep-equality (§7.2).
+- [ ]N `doom_system.gd` — momentum switch (`momentum_enabled`/`momentum_weight`, see explainer).
+- [x]A `test_l1_month_sweep.gd` harness — `MAX_MONTHS` 60→420 (ADR-0002 detection), m1-m6 CSV/slope columns, `MORTALITY_CHECK` line.
+- [x]A `test_ledger_actions.gd` — `soonest_fuse` assertion reads the Balance fuse. Plus this round: `test_game_state.gd` (start-doom + clamp assertions read Balance), `test_death_attribution.gd` (exposure magnitudes updated to re-priced rates).
 
 **NOT changed (dial 5, out of scope):** `attention.per_month` (20), window `attention_cost` (1), `window_demand_budget` (3).
 
@@ -162,12 +162,12 @@ All in `godot/data/balance/defaults.json` unless noted. Review status: **✔A = 
 
 | Policy | #637 median (mo / death-tick) | **Final median (mo / death-tick)** | range (mo) | death-cause (doom/rep/ledger) | month-1→6 mean doom slope | target verdict |
 |---|---|---|---|---|---|---|
-| `do_nothing` | 0 / 6 | **14.0 / 308** | 13-15 | 10 / 0 / 0 | +3.7,3.5,4.0,5.1,5.4,4.4 | ✅ T1 |
-| `safety_lean` | 0 / 8 | **16.5 / 361** | 13-21 | 8 / 0 / 0 | −6.0,−13.2,0.6,2.1,6.0,2.7 | ❌ T2 (1.18×) |
-| `reserve_heavy` | 0 / 9 | **19.0 / 424** | 15-45 | 8 / 0 / 0 | −7.7,−11.6,0.5,2.6,3.8,6.0 | 🟠 T2 (1.36×) |
-| `random_walk` | 0 / 6 | **8.0 / 179** | 4-13 | 2 / 0 / 28 | +3.1,1.0,1.4,4.4,8.5,9.0 | ❌ T3 (below band, above reckless) |
-| `greedy_overcommit` | 0 / 4 | **7.0 / 168** | **6**-13 | 8 / 0 / 0 | +9.1,9.3,9.3,10.2,10.3,10.5 | ✅ T4 + T9 |
-| `loan_desperation` | 0 / 6 | **7.0 / 160** | **6**-8 | 0 / 0 / 8 | +3.0,3.4,6.3,6.5,11.4,12.9 | ✅ T5 + T9 |
+| `do_nothing` | 0 / 6 | **14.0 / 308** | 13-15 | 10 / 0 / 0 | +3.7,3.5,4.0,5.1,5.4,4.4 | [x] T1 |
+| `safety_lean` | 0 / 8 | **16.5 / 361** | 13-21 | 8 / 0 / 0 | −6.0,−13.2,0.6,2.1,6.0,2.7 | [X] T2 (1.18×) |
+| `reserve_heavy` | 0 / 9 | **19.0 / 424** | 15-45 | 8 / 0 / 0 | −7.7,−11.6,0.5,2.6,3.8,6.0 | [O] T2 (1.36×) |
+| `random_walk` | 0 / 6 | **8.0 / 179** | 4-13 | 2 / 0 / 28 | +3.1,1.0,1.4,4.4,8.5,9.0 | [X] T3 (below band, above reckless) |
+| `greedy_overcommit` | 0 / 4 | **7.0 / 168** | **6**-13 | 8 / 0 / 0 | +9.1,9.3,9.3,10.2,10.3,10.5 | [x] T4 + T9 |
+| `loan_desperation` | 0 / 6 | **7.0 / 160** | **6**-8 | 0 / 0 / 8 | +3.0,3.4,6.3,6.5,11.4,12.9 | [x] T5 + T9 |
 
 **Ordinal spread (final):** aggressive cluster `greedy 7 ≈ loan_desperation 7 < random_walk 8` clearly below careful cluster `do_nothing 14 < safety_lean 16.5 < reserve_heavy 19`, and **nothing dies before month 6** among the standard policies (T9). The #637 "only-safety-or-nothing shame finding" is **broken in direction** — active safety play beats passive, capability-rushing and debt-abuse die fastest but legibly — the unmet piece is the *magnitude* of safety's edge (T2, Finding B). Note on T2's apparent regression vs the pre-T9 snapshot (safety_lean 20 → 16.5): the risk-trigger re-denomination shifts every subsequent rng draw, and at n=8 the median jitters ±2-3 months across rng streams (range 13-21 overlapping throughout); the honest claim is "safety ≈ 1.2-1.4× passive, variance-dominated," not any single decimal.
 

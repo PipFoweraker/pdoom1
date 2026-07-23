@@ -1,0 +1,299 @@
+schema_version: '1.0'
+asset_type: researcher_portraits_pilot
+default_size: 1024x1024
+output_sizes:
+- 1024
+- 512
+- 256
+background: opaque
+styles:
+  portrait_common: a single fictional invented AI-safety-research staff member, an
+    imagined archetype and NOT a portrait of any real person, one figure only, head-and-shoulders
+    bust, front-facing, plain contained studio-style background (no room, no scene),
+    tightly framed, no watermark, no logo, no caption
+  pole_a_painterly: painterly digital matte-painting character portrait in the StarCraft
+    2 / XCOM soldier-card manner, visible confident brushwork and canvas texture,
+    richly rendered form, dramatic but restrained single-key cinematic lighting with
+    soft falloff, high dynamic range, a real sense of a face modelled in paint
+  pole_b_crt_dossier: a flat CRT personnel-dossier ID portrait, deadpan Papers-Please
+    mugshot aesthetic, limited flat cel shading with hard edges and minimal gradients,
+    heavy dot-matrix print texture, dither and faint horizontal scanlines over the
+    whole image, a thin rectangular dossier frame with one solid colour role-stripe
+    down the side, neutral flat expression, the look of a cheap laminated badge photo
+    printed on a terminal, deliberately un-painterly (do NOT render any legible text,
+    numbers or letters -- suggest a printed header bar as an abstract band only)
+themes:
+  pole_a_painterly:
+    style_overrides:
+    - portrait_common
+    - pole_a_painterly
+    color_bias: heavily desaturated teal and olive palette with muted slate grey,
+      a single warm amber rim/key light as the only saturated accent, dark graded
+      background, low overall saturation, no cyan, no electric blue
+  pole_b_crt_dossier:
+    style_overrides:
+    - portrait_common
+    - pole_b_crt_dossier
+    color_bias: heavily desaturated teal and olive with a warm amber CRT phosphor
+      tint over everything, muted slate grey, one solid role-stripe accent, low saturation,
+      grainy print, no cyan, no electric blue
+assets:
+- id: poleA_people_pleaser
+  category: portrait_pilot
+  display_name: People-Pleaser (painterly)
+  status: generated
+  theme: pole_a_painterly
+  prompt_tail: an interpretability researcher who desperately wants to be liked, a
+    warm approachable soft-featured face with an anxious eager-to-please half smile
+    and slightly pleading eyes, gentle rounded features, a well-worn cardigan and
+    a conference lanyard, the look of someone who says yes to everyone
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T03:25:50.470589+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: be66771270ce
+    file_path: art_generated\researcher_portraits_pilot\v1\poleA_people_pleaser_v1_1024.png
+    cost_usd: 0.06
+  - version: v2
+    generated_at: '2026-07-21T03:26:07.484992+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: be66771270ce
+    file_path: art_generated\researcher_portraits_pilot\v1\poleA_people_pleaser_v2_1024.png
+    cost_usd: 0.06
+- id: poleA_authoritarian_pessimist
+  category: portrait_pilot
+  display_name: Authoritarian Pessimist (painterly)
+  status: generated
+  theme: pole_a_painterly
+  prompt_tail: a governance specialist with a stern severe grim expression, hard set
+    jaw and cold assessing eyes, sharp formal dark blazer buttoned high, a small unreadable
+    institutional lapel pin, the bearing of someone convinced it is all going wrong
+    and only strict control can help
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T03:26:26.150693+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 4c2d00b1fdaa
+    file_path: art_generated\researcher_portraits_pilot\v1\poleA_authoritarian_pessimist_v1_1024.png
+    cost_usd: 0.06
+  - version: v2
+    generated_at: '2026-07-21T03:26:50.861029+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 4c2d00b1fdaa
+    file_path: art_generated\researcher_portraits_pilot\v1\poleA_authoritarian_pessimist_v2_1024.png
+    cost_usd: 0.06
+- id: poleA_moral_crusader
+  category: portrait_pilot
+  display_name: Moral Crusader (painterly)
+  status: generated
+  theme: pole_a_painterly
+  prompt_tail: an introverted agent-foundations theorist burning with quiet moral
+    conviction, intense unwavering eyes that avoid the viewer slightly, a plain worn
+    hoodie, faintly unkempt hair, the coiled purity of a coder who believes the work
+    must never be compromised
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T03:27:06.760130+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 9d3898d18ed5
+    file_path: art_generated\researcher_portraits_pilot\v1\poleA_moral_crusader_v1_1024.png
+    cost_usd: 0.06
+  - version: v2
+    generated_at: '2026-07-21T03:27:23.654585+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 9d3898d18ed5
+    file_path: art_generated\researcher_portraits_pilot\v1\poleA_moral_crusader_v2_1024.png
+    cost_usd: 0.06
+- id: poleA_capabilities_optimist
+  category: portrait_pilot
+  display_name: Capabilities-Curious Optimist (painterly)
+  status: generated
+  theme: pole_a_painterly
+  prompt_tail: a scaling-efficiency researcher radiating bright genuine optimism,
+    a confident charismatic magazine-cover grin, energetic bright eyes, casual startup
+    vest over a plain tee, the easy charm of a true believer certain the capabilities
+    also help safety
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T03:27:40.558084+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 6375f58de021
+    file_path: art_generated\researcher_portraits_pilot\v1\poleA_capabilities_optimist_v1_1024.png
+    cost_usd: 0.06
+  - version: v2
+    generated_at: '2026-07-21T03:27:57.151066+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 6375f58de021
+    file_path: art_generated\researcher_portraits_pilot\v1\poleA_capabilities_optimist_v2_1024.png
+    cost_usd: 0.06
+- id: poleA_burned_out_senior
+  category: portrait_pilot
+  display_name: Burned-Out Ex-Frontier Senior (painterly)
+  status: generated
+  theme: pole_a_painterly
+  prompt_tail: an older ex-frontier-lab senior on evals, tired hollow eyes with deep
+    shadows, greying stubble and thinning hair, a weary cynical set to the mouth,
+    a rumpled unbuttoned shirt, a cold coffee just in frame, the exhaustion of someone
+    who has seen it all and is quietly writing it down
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T03:28:15.584269+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: a724ee128bf4
+    file_path: art_generated\researcher_portraits_pilot\v1\poleA_burned_out_senior_v1_1024.png
+    cost_usd: 0.06
+  - version: v2
+    generated_at: '2026-07-21T03:28:33.352418+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: a724ee128bf4
+    file_path: art_generated\researcher_portraits_pilot\v1\poleA_burned_out_senior_v2_1024.png
+    cost_usd: 0.06
+- id: poleA_fresh_grad_believer
+  category: portrait_pilot
+  display_name: Fresh-Grad True-Believer (painterly)
+  status: generated
+  theme: pole_a_painterly
+  prompt_tail: a young wide-eyed new-graduate researcher on their very first job,
+    bright hopeful naive expression, clear unlined face, a brand-new stiff lanyard
+    worn proudly, neat earnest posture, the untouched idealism of someone who has
+    not yet been burned -- the deliberate mirror of the burned-out senior
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T03:28:49.629929+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 9ab2c6eba201
+    file_path: art_generated\researcher_portraits_pilot\v1\poleA_fresh_grad_believer_v1_1024.png
+    cost_usd: 0.06
+  - version: v2
+    generated_at: '2026-07-21T03:29:13.286457+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 9ab2c6eba201
+    file_path: art_generated\researcher_portraits_pilot\v1\poleA_fresh_grad_believer_v2_1024.png
+    cost_usd: 0.06
+- id: poleB_people_pleaser
+  category: portrait_pilot
+  display_name: People-Pleaser (CRT dossier)
+  status: generated
+  theme: pole_b_crt_dossier
+  prompt_tail: an interpretability researcher who desperately wants to be liked, a
+    warm approachable soft-featured face with an anxious eager-to-please half smile,
+    a well-worn cardigan and a conference lanyard, the role-stripe in a soft teal
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T03:44:43.184360+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 69df5294572b
+    file_path: art_generated\researcher_portraits_pilot\v1\poleB_people_pleaser_v1_1024.png
+    cost_usd: 0.06
+  - version: v2
+    generated_at: '2026-07-21T03:45:01.020661+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 69df5294572b
+    file_path: art_generated\researcher_portraits_pilot\v1\poleB_people_pleaser_v2_1024.png
+    cost_usd: 0.06
+- id: poleB_authoritarian_pessimist
+  category: portrait_pilot
+  display_name: Authoritarian Pessimist (CRT dossier)
+  status: generated
+  theme: pole_b_crt_dossier
+  prompt_tail: a governance specialist with a stern severe grim expression, hard set
+    jaw, sharp formal dark blazer buttoned high, a small institutional lapel pin,
+    the role-stripe in a deep slate grey
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T03:45:16.666789+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: d07bb3148659
+    file_path: art_generated\researcher_portraits_pilot\v1\poleB_authoritarian_pessimist_v1_1024.png
+    cost_usd: 0.06
+  - version: v2
+    generated_at: '2026-07-21T03:45:33.102534+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: d07bb3148659
+    file_path: art_generated\researcher_portraits_pilot\v1\poleB_authoritarian_pessimist_v2_1024.png
+    cost_usd: 0.06
+- id: poleB_moral_crusader
+  category: portrait_pilot
+  display_name: Moral Crusader (CRT dossier)
+  status: generated
+  theme: pole_b_crt_dossier
+  prompt_tail: an introverted agent-foundations theorist with quiet moral conviction,
+    intense eyes, a plain worn hoodie, faintly unkempt hair, the role-stripe in an
+    olive green
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T03:45:50.710816+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 1ddd9a48b893
+    file_path: art_generated\researcher_portraits_pilot\v1\poleB_moral_crusader_v1_1024.png
+    cost_usd: 0.06
+  - version: v2
+    generated_at: '2026-07-21T03:46:07.647552+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 1ddd9a48b893
+    file_path: art_generated\researcher_portraits_pilot\v1\poleB_moral_crusader_v2_1024.png
+    cost_usd: 0.06
+- id: poleB_capabilities_optimist
+  category: portrait_pilot
+  display_name: Capabilities-Curious Optimist (CRT dossier)
+  status: generated
+  theme: pole_b_crt_dossier
+  prompt_tail: a scaling-efficiency researcher with a confident charismatic grin,
+    bright eyes, casual startup vest over a plain tee, the easy charm of a true believer,
+    the role-stripe in a warm amber
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T03:46:27.637073+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: a090800bdc95
+    file_path: art_generated\researcher_portraits_pilot\v1\poleB_capabilities_optimist_v1_1024.png
+    cost_usd: 0.06
+  - version: v2
+    generated_at: '2026-07-21T03:46:46.691925+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: a090800bdc95
+    file_path: art_generated\researcher_portraits_pilot\v1\poleB_capabilities_optimist_v2_1024.png
+    cost_usd: 0.06
+- id: poleB_burned_out_senior
+  category: portrait_pilot
+  display_name: Burned-Out Ex-Frontier Senior (CRT dossier)
+  status: generated
+  theme: pole_b_crt_dossier
+  prompt_tail: an older ex-frontier-lab senior on evals, tired hollow eyes with deep
+    shadows, greying stubble, a weary cynical mouth, a rumpled unbuttoned shirt, the
+    role-stripe in a soured brick red
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T03:47:05.014382+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 5dad022a6f90
+    file_path: art_generated\researcher_portraits_pilot\v1\poleB_burned_out_senior_v1_1024.png
+    cost_usd: 0.06
+  - version: v2
+    generated_at: '2026-07-21T03:47:25.922039+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 5dad022a6f90
+    file_path: art_generated\researcher_portraits_pilot\v1\poleB_burned_out_senior_v2_1024.png
+    cost_usd: 0.06
+- id: poleB_fresh_grad_believer
+  category: portrait_pilot
+  display_name: Fresh-Grad True-Believer (CRT dossier)
+  status: generated
+  theme: pole_b_crt_dossier
+  prompt_tail: a young wide-eyed new-graduate researcher on their first job, a bright
+    hopeful naive expression, clear unlined face, a brand-new stiff lanyard worn proudly,
+    the role-stripe in a pale mint teal -- the deliberate mirror of the burned-out
+    senior
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T03:48:03.898026+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: aa42df292ec6
+    file_path: art_generated\researcher_portraits_pilot\v1\poleB_fresh_grad_believer_v1_1024.png
+    cost_usd: 0.06
+  - version: v2
+    generated_at: '2026-07-21T03:48:23.648499+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: aa42df292ec6
+    file_path: art_generated\researcher_portraits_pilot\v1\poleB_fresh_grad_believer_v2_1024.png
+    cost_usd: 0.06
