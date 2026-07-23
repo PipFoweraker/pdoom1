@@ -1,7 +1,7 @@
 {
-	"_description": "Central gameplay tunables (L9, issue #621). These are the shipped defaults — identical to the pre-L9 inline literals, so this file is behavior-neutral until a sweep varies it. Tune by editing here or by dropping a user://balance_overrides.json with the same shape (deep-merged on top). Consumers pass the same values as call-site fallbacks, so a missing file degrades safely.",
+	"_description": "Central gameplay tunables (L9, issue #621). These are the shipped defaults -- identical to the pre-L9 inline literals, so this file is behavior-neutral until a sweep varies it. Tune by editing here or by dropping a user://balance_overrides.json with the same shape (deep-merged on top). Consumers pass the same values as call-site fallbacks, so a missing file degrades safely.",
 	"events": {
-		"_description": "Event pacing. first_event_turn/max_new_events_per_turn are the pre-L1 day-tick throttle (#568) — kept for the resolution tick. The MONTH plan layer (ADR-0009/workshop#3) governs decision load via the window DEMAND budget below, not an information budget: only 'window'-tier events demand a decision. Tiers per genre live on the event definitions (delivery_tier: ambient|feed|window).",
+		"_description": "Event pacing. first_event_turn/max_new_events_per_turn are the pre-L1 day-tick throttle (#568) -- kept for the resolution tick. The MONTH plan layer (ADR-0009/workshop#3) governs decision load via the window DEMAND budget below, not an information budget: only 'window'-tier events demand a decision. Tiers per genre live on the event definitions (delivery_tier: ambient|feed|window).",
 		"first_event_turn": 2,
 		"max_new_events_per_turn": 2,
 		"default_delivery_tier": "feed",
@@ -12,7 +12,7 @@
 		"default_event_class": "deferrable"
 	},
 	"attention": {
-		"_description": "Founder currency (workshop#3 addendum #5 / ADR-0011): ~N decisions per PLAN MONTH; admin is painful overhead spent here. Staff spend a SEPARATE per-person 'actions' currency — there is no global pool (L2 deletes the legacy AP pool; L1 introduces Attention alongside it). Unspent reserve evaporates at month end (ADR-0009 §4 — no banking).",
+		"_description": "Founder currency (workshop#3 addendum #5 / ADR-0011): ~N decisions per PLAN MONTH; admin is painful overhead spent here. Staff spend a SEPARATE per-person 'actions' currency -- there is no global pool (L2 deletes the legacy AP pool; L1 introduces Attention alongside it). Unspent reserve evaporates at month end (ADR-0009 S4 -- no banking).",
 		"per_month": 20
 	},
 	"papers": {
@@ -26,7 +26,7 @@
 		"per_researcher_per_turn": 1.0
 	},
 	"ledger": {
-		"_description": "Liability Ledger (ADR-0003): factory magnitudes, fuses, interest; the doom/rep teeth for unpayable bills; secret-exposure chance (BL-2). GOTCHA: interest_rate values are COPIED INTO SAVED ENTRIES, and Godot's JSON parse is not correctly-rounded for every decimal — pick rates that survive print->parse exactly (probe-verified: 0.008/0.0025/0.001/0.02 ok; 0.009/0.015/0.045 NOT) or save/load deep-equality and post-load determinism break.",
+		"_description": "Liability Ledger (ADR-0003): factory magnitudes, fuses, interest; the doom/rep teeth for unpayable bills; secret-exposure chance (BL-2). GOTCHA: interest_rate values are COPIED INTO SAVED ENTRIES, and Godot's JSON parse is not correctly-rounded for every decimal -- pick rates that survive print->parse exactly (probe-verified: 0.008/0.0025/0.001/0.02 ok; 0.009/0.015/0.045 NOT) or save/load deep-equality and post-load determinism break.",
 		"doom_per_unpaid_1000": 0.9,
 		"rep_per_unpaid_1000": 2.0,
 		"max_doom_per_bill": 10.0,
@@ -49,7 +49,7 @@
 		"resentment_debt": { "principal": 1500.0, "fuse_turns": 6, "interest_rate": 0.02 }
 	},
 	"hiring": {
-		"_description": "Hiring pipeline (BUILD_BRIEF_HIRING_PIPELINE Phase B): source -> interview -> offer -> onboard. Every stage is Attention-gated and duration-bearing (ADR-0009). advertise = money + slow multi-month trickle; connections = a reputation favor for one fast pre-vetted lead (success scales with standing). offer.* is the hidden self-worth range; onboarding.* gates a new hire's productivity.",
+		"_description": "Hiring pipeline (BUILD_BRIEF_HIRING_PIPELINE Phase B): source -> interview -> offer -> onboard. Every stage is Attention-gated and duration-bearing (ADR-0009). advertise = money + slow multi-month trickle; connections = a reputation favor for one fast pre-vetted lead (success scales with standing). offer.* is the hidden self-worth range; onboarding.* gates a new hire's productivity. NOTE (#789): onboarding step Attention (laptop/systems/meet_people/mentoring) is tuned in HiringPipeline.ONBOARD_ATTENTION (hiring_pipeline.gd), which SUPERSEDES laptop_attention/mentoring_attention below; visa_attention and the *_money keys remain live here.",
 		"advertise": { "cost_money": 8000.0, "cost_attention": 3, "campaign_months": 3, "per_month_min": 0, "per_month_max": 2, "reputation_gain": 1.0 },
 		"connections": { "cost_reputation": 6.0, "cost_attention": 2, "duration_ticks": 2, "rep_for_certainty": 80.0, "min_success": 0.05, "max_success": 0.95, "prevet_skill_min": 5, "prevet_skill_max": 8 },
 		"interview": { "cost_attention": 2, "duration_ticks": 3, "reveal_step": 1 },
@@ -113,7 +113,7 @@
 		"per_staff": 0.5
 	},
 	"rivals": {
-		"_description": "Rival lab coefficients (rivals.gd). ADR-0015: rivals no longer emit doom literals — capability_overhang_doom_per_progress and per_tick_doom_scale (the pre-L1 shim) are RETIRED (Legacy #7/#12). Rival capability_progress IS the actor's frontier_capability slice, converted by the DoomSystem overhang stream; panic_per_capability_action feeds global_panic when a rival makes a reckless capability move.",
+		"_description": "Rival lab coefficients (rivals.gd). ADR-0015: rivals no longer emit doom literals -- capability_overhang_doom_per_progress and per_tick_doom_scale (the pre-L1 shim) are RETIRED (Legacy #7/#12). Rival capability_progress IS the actor's frontier_capability slice, converted by the DoomSystem overhang stream; panic_per_capability_action feeds global_panic when a rival makes a reckless capability move.",
 		"panic_per_capability_action": 0.05,
 		"discovery": { "base_chance": 0.15, "chance_per_rep_above_threshold": 0.005 }
 	},
@@ -130,7 +130,7 @@
 		"hard": { "money_multiplier": 0.75, "max_action_points": 2 }
 	},
 	"financing": {
-		"_description": "Cost-of-debt pricing engine + financing instruments (ADR-0013, lane L5/#616). FinanceEngine.price() computes terms from org_type + counterparty + typed reputation + current leverage; generate_offers() mints 2-3 concurrent STANDING offers with an expiry (ADR-0012 — expiry mints no ledger entry). Engine: godot/scripts/core/finance_engine.gd. GOTCHA: computed interest rates are snapped to 0.001 (JSON save-safe, probe-verified against the real full-precision save path) and principals to whole units before entering a Ledger.Entry, so minted offers survive save/load (calibration open-Q #2). Baseline continuity: bank_loan at default context reproduces the calibrated ledger.loan terms (rate 0.008, ~77-tick fuse, 1.2x balloon); the sweep's take_loan path is UNCHANGED (routes Ledger.loan directly), so this block is additive and does not move the L1 medians.",
+		"_description": "Cost-of-debt pricing engine + financing instruments (ADR-0013, lane L5/#616). FinanceEngine.price() computes terms from org_type + counterparty + typed reputation + current leverage; generate_offers() mints 2-3 concurrent STANDING offers with an expiry (ADR-0012 -- expiry mints no ledger entry). Engine: godot/scripts/core/finance_engine.gd. GOTCHA: computed interest rates are snapped to 0.001 (JSON save-safe, probe-verified against the real full-precision save path) and principals to whole units before entering a Ledger.Entry, so minted offers survive save/load (calibration open-Q #2). Baseline continuity: bank_loan at default context reproduces the calibrated ledger.loan terms (rate 0.008, ~77-tick fuse, 1.2x balloon); the sweep's take_loan path is UNCHANGED (routes Ledger.loan directly), so this block is additive and does not move the L1 medians.",
 		"ticks_per_month": 22.0,
 		"offer_ttl_turns": 44,
 		"leverage_scale": 120000.0,

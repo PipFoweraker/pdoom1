@@ -257,7 +257,10 @@ func _persist_and_submit_score(final_state: Dictionary, game_seed: String) -> vo
 	)
 
 	# ---- local save (authoritative: the score must exist locally regardless of network) --
-	var leaderboard = Leaderboard.new(game_seed, "v" + GameConfig.CURRENT_VERSION)
+	# BOARD KEY: the ladder epoch (build-vs-ladder split) -- a cosmetic build bump
+	# must land scores on the SAME board file. Entry.game_mode above keeps the build
+	# string for provenance.
+	var leaderboard = Leaderboard.new(game_seed, GameConfig.get_board_version())
 	var result: Dictionary = leaderboard.add_score(entry)
 	leaderboard_entry_uuid = entry.entry_uuid
 	GameConfig.latest_leaderboard_entry = leaderboard_entry_uuid  # for leaderboard highlight
@@ -277,7 +280,10 @@ func _maybe_submit_remote(entry, game_seed: String) -> void:
 	sync_status_label.add_theme_color_override("font_color", Color(0.7, 0.8, 0.9))
 	if not LeaderboardSync.submit_completed.is_connected(_on_sync_submit_completed):
 		LeaderboardSync.submit_completed.connect(_on_sync_submit_completed)
-	LeaderboardSync.submit_score(entry, game_seed, "v" + GameConfig.CURRENT_VERSION)
+	# BOARD KEY: remote board is scoped by the ladder epoch too. BACKEND TASK (flagged,
+	# not attempted here): api.pdoom1.com's score API must key by ladder_version and
+	# alias the live v0.12.0 board to L1 -- see GameConfig.get_board_version() docs.
+	LeaderboardSync.submit_score(entry, game_seed, GameConfig.get_board_version())
 
 func _on_sync_submit_completed(success: bool, _added: bool, _rank: int, message: String) -> void:
 	"""Resolve the status blip. Failure is silent-ish: score is already saved locally."""

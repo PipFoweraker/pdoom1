@@ -91,10 +91,10 @@ repos:
         pass_filenames: true
 
       - id: version-sync-check
-        name: version.txt synced to derived copies
+        name: version.txt + ladder_version.txt synced to derived copies
         entry: python tools/sync_version.py --check
         language: system
-        files: '(version\.txt|godot/autoload/game_config\.gd|godot/project\.godot|godot/export_presets\.cfg|godot/scenes/welcome\.tscn)$'
+        files: '(version\.txt|ladder_version\.txt|godot/autoload/game_config\.gd|godot/project\.godot|godot/export_presets\.cfg|godot/scenes/welcome\.tscn)$'
         pass_filenames: false
 
 # Configuration

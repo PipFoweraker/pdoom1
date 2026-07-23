@@ -86,6 +86,16 @@ const CURRENT_VERSION: String = "0.11.0"
 # cold-open content changes enough to warrant a forced re-show.
 const INTRO_VERSION: String = "1"
 
+# Ladder (ruleset/epoch) version -- the build-vs-ladder version split
+# (docs/game-design/BUILD_VS_LADDER_VERSION_SPLIT.md). SSOT is ladder_version.txt at
+# the repo root; STAMPED here by tools/sync_version.py exactly like CURRENT_VERSION
+# (do not hand-edit; `--check` fails on drift). This integer bumps ONLY when
+# gameplay/scoring/seed/RNG rules change (spec Section 3 checklist) -- cosmetic
+# patches bump version.txt alone, so everyone stays on the same leaderboard.
+# Epoch L1 == the current ruleset. NOTE: #789 hiring-stitch changes gameplay and
+# bumps this to 2 at the v0.13 epoch cut (spec DECISION C2) -- do not bump earlier.
+const LADDER_VERSION: String = "1"
+
 # Leaderboard State (transient, not saved)
 var latest_leaderboard_entry: String = ""  # UUID of most recent score entry
 
@@ -431,6 +441,20 @@ func mark_intro_seen() -> void:
 ## Get the current game version
 func get_current_version() -> String:
 	return CURRENT_VERSION
+
+## The value that scopes leaderboard boards (ADR-0002 #5). This is the LADDER
+## epoch ("L<n>"), NOT the build version -- cosmetic build bumps must not fork the
+## board. EVERY board-key site (local board filename, remote submit/fetch,
+## current-board select) must route through this single accessor; never rebuild
+## the key from CURRENT_VERSION. Provenance sites (share line, bug report, the
+## replay artifact's build tag) stay on CURRENT_VERSION -- they answer "which
+## binary", not "which ruleset".
+## BACKEND NOTE (separate task, do NOT attempt client-side): the PHP score API at
+## api.pdoom1.com must also key boards by this ladder value, and the live
+## v0.12.0 board must be aliased to L1 server-side so introducing the split does
+## not fork the existing board.
+func get_board_version() -> String:
+	return "L" + LADDER_VERSION
 
 ## Debug print current configuration
 func print_config() -> void:

@@ -84,9 +84,14 @@ func _on_global_toggle(pressed: bool):
 		_filter_and_display()
 
 func _fetch_and_show_global():
-	"""Async-fetch the global board for the CURRENT (seed, version) and show it."""
+	"""Async-fetch the global board for the CURRENT (seed, ladder epoch) and show it.
+
+	BOARD KEY: the ladder epoch (build-vs-ladder split), NOT the build version --
+	players on different cosmetic builds share one board. BACKEND TASK (flagged, not
+	attempted here): api.pdoom1.com must key by ladder_version and alias the live
+	v0.12.0 board to L1 -- see GameConfig.get_board_version() docs."""
 	var board_seed = GameConfig.get_display_seed()
-	var version = "v" + GameConfig.CURRENT_VERSION
+	var version = GameConfig.get_board_version()
 	subtitle.text = "Global board: fetching %s ..." % board_seed
 	LeaderboardSync.fetch_board(board_seed, version, 100, _on_global_board_fetched)
 
@@ -103,14 +108,38 @@ func _on_global_board_fetched(ok: bool, entries: Array):
 		return
 	filtered_entries = entries.duplicate()
 	current_page = 1
-	subtitle.text = "Global board: %s (v%s)" % [GameConfig.get_display_seed(), GameConfig.CURRENT_VERSION]
+	# Show BOTH: the epoch the board is scoped by, and the build the viewer runs --
+	# so a player on a cosmetic patch sees they are correctly on the same board.
+	subtitle.text = "Global board: %s (epoch %s, build v%s)" % [
+		GameConfig.get_display_seed(), GameConfig.get_board_version(), GameConfig.CURRENT_VERSION]
 	_display_current_page()
 	_update_pagination_ui()
 	_update_stats()
 
 func _board_key(lb_seed: String, lb_version: String) -> String:
-	"""Full-identity key so same-seed/different-version boards don't collide (ADR-0002 #5)."""
+	"""Full-identity key so same-seed/different-version boards don't collide (ADR-0002 #5).
+
+	Post-split, lb_version is the ladder epoch ("L1") for current boards and the old
+	build string ("v0.11.0") for legacy pre-ladder board files -- the key preserves
+	whichever identity the board file actually carries."""
 	return lb_seed if lb_version == "" else "%s (%s)" % [lb_seed, lb_version]
+
+func _is_legacy_board_version(lb_version: String) -> bool:
+	"""True for pre-ladder board identities (build-keyed "v0.11.0" or the ancient
+	versionless files), false for ladder-epoch boards ("L1", "L2", ...). Legacy
+	boards stay VISIBLE but read-only (spec DECISION B1): nothing writes to them
+	any more because all writes key on GameConfig.get_board_version()."""
+	return not lb_version.begins_with("L")
+
+func _board_label(lb_seed: String, lb_version: String) -> String:
+	"""Human-facing dropdown/subtitle label. Epoch boards read "seed (Epoch L1)";
+	pre-split boards are tagged legacy so nobody reads an old build-keyed board as
+	current (spec Section 5.4)."""
+	if lb_version == "":
+		return "%s (legacy, pre-ladder)" % lb_seed
+	if _is_legacy_board_version(lb_version):
+		return "%s (%s, legacy)" % [lb_seed, lb_version]
+	return "%s (Epoch %s)" % [lb_seed, lb_version]
 
 func _discover_boards():
 	"""CHEAP: list the leaderboard files and record their (seed, version) identities.
@@ -150,7 +179,8 @@ func _discover_boards():
 
 	# Prefer the CURRENT run's board when present (it is what the player expects to see,
 	# with their just-set score highlighted); otherwise keep the newest-file default.
-	var current_key = _board_key(GameConfig.get_display_seed(), "v" + GameConfig.CURRENT_VERSION)
+	# BOARD KEY: current boards key on the ladder epoch (build-vs-ladder split).
+	var current_key = _board_key(GameConfig.get_display_seed(), GameConfig.get_board_version())
 	if _board_files.has(current_key):
 		_default_key = current_key
 
@@ -247,9 +277,14 @@ func _populate_seed_dropdown():
 	seeds.sort()
 
 	for seed in seeds:
-		var label = seed
+		# Label by board identity: epoch boards read "seed (Epoch L1)", pre-split
+		# build-keyed boards are tagged legacy (spec DECISION B1 / Section 5.4).
+		# The dropdown METADATA stays the raw board_key so selection/filtering is
+		# untouched -- this is labelling only.
+		var identity = _board_files[seed]
+		var label = _board_label(identity["seed"], identity["version"])
 		if all_leaderboards.has(seed):
-			label = "%s (%d)" % [seed, all_leaderboards[seed].size()]
+			label = "%s (%d)" % [label, all_leaderboards[seed].size()]
 		seed_dropdown.add_item(label, idx)
 		seed_dropdown.set_item_metadata(idx, seed)
 		idx += 1
@@ -298,7 +333,17 @@ func _filter_and_display():
 		filtered_entries.clear()
 		if all_leaderboards.has(current_seed):
 			filtered_entries = all_leaderboards[current_seed].duplicate()
-		subtitle.text = "Top scores for seed: %s" % current_seed
+		# Subtitle shows BOTH the board's epoch identity and the viewer's build; legacy
+		# pre-split boards are named as read-only history (spec Section 5.4).
+		if _board_files.has(current_seed):
+			var identity = _board_files[current_seed]
+			if _is_legacy_board_version(identity["version"]):
+				subtitle.text = "Top scores: %s -- read-only archive" % _board_label(identity["seed"], identity["version"])
+			else:
+				subtitle.text = "Top scores: %s (you are on build v%s)" % [
+					_board_label(identity["seed"], identity["version"]), GameConfig.CURRENT_VERSION]
+		else:
+			subtitle.text = "Top scores for seed: %s" % current_seed
 
 	# Reset to page 1 when filter changes
 	current_page = 1

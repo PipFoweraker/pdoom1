@@ -115,12 +115,17 @@ static func resolve(state: GameState, plan: MonthPlan, event: Dictionary, respon
 			_merge_option(result, _apply_option(state, event, ignore_option_id(event)))
 			if response == "auto_ignore":
 				# Nonresponse annoys the offerer: a mild, data-driven reputation penalty
-				# (addendum #1). Applied on top of the list-price consequence.
-				var pen := Balance.num("events.unanswered_window_rep_penalty", 2.0)
-				state.reputation = max(0.0, state.reputation - pen)
-				var d: Dictionary = result["deltas"]
-				d["reputation"] = float(d.get("reputation", 0.0)) - pen
-				result["message"] = "Window lapsed — auto-ignored (-%.1f reputation)" % pen
+				# (addendum #1). Applied on top of the list-price consequence. Windows a
+				# player owes only themselves (#789 hiring prompts) opt out via
+				# window.lapse_penalty=false -- there is no offerer to annoy.
+				if bool(window_config(event).get("lapse_penalty", true)):
+					var pen := Balance.num("events.unanswered_window_rep_penalty", 2.0)
+					state.reputation = max(0.0, state.reputation - pen)
+					var d: Dictionary = result["deltas"]
+					d["reputation"] = float(d.get("reputation", 0.0)) - pen
+					result["message"] = "Window lapsed — auto-ignored (-%.1f reputation)" % pen
+				else:
+					result["message"] = "Window lapsed — auto-ignored"
 			result["success"] = true
 
 		_:
@@ -146,6 +151,20 @@ static func resolve_chosen_option(state: GameState, plan: MonthPlan, event: Dict
 	four-verb menu incl. DEFER is the plan-screen UI's job — DEFER is not reachable from
 	this v1 path."""
 	var event_id := String(event.get("id", ""))
+
+	# #789: a window may map its OWN option ids onto explicit payment verbs
+	# (window.option_verbs) -- the hiring accept-prompt uses this so the player chooses
+	# the Attention source explicitly (reserve vs cannibalize; teaches the crisp
+	# reserve). Pre-check the chosen option's own costs (money) BEFORE delegating, so a
+	# failed money check can never consume the reserve.
+	var verbs_cfg = window_config(event).get("option_verbs", {})
+	if verbs_cfg is Dictionary and verbs_cfg.has(option_id):
+		for opt in event.get("options", []):
+			if opt is Dictionary and String(opt.get("id", "")) == option_id:
+				if not state.can_afford(opt.get("costs", {})):
+					return {"success": false, "message": "Cannot afford this choice"}
+		return resolve(state, plan, event, String(verbs_cfg[option_id]), rng)
+
 	if option_id == ignore_option_id(event) and not EventTiers.is_unignorable(event):
 		return resolve(state, plan, event, "ignore", rng)
 
@@ -198,6 +217,11 @@ static func _apply_option(state: GameState, event: Dictionary, option_id: String
 	option id is blank — a no-op ignore)."""
 	if option_id == "":
 		return {"success": true, "message": "No action", "deltas": {}}
+	# #789: hiring prompt cards mutate pipeline state (onboarding flags + money), not
+	# generic event effects -- route them to the pipeline. For handle verbs the Attention
+	# was already drawn before this call; the pipeline charges money only.
+	if String(event.get("kind", "")).begins_with("hiring_") and state.hiring != null:
+		return state.hiring.apply_prompt_option(state, event, option_id)
 	var cleaned := strip_ap(event)
 	return Events.execute_event_choice(cleaned, option_id, state)
 

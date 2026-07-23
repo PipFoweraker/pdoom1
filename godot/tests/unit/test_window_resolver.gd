@@ -98,3 +98,62 @@ func test_auto_ignore_refused_on_unignorable():
 	var r := WindowResolver.resolve(s, s.month_plan, ev, "auto_ignore")
 	assert_false(r.success, "an unignorable window cannot lapse into auto-ignore")
 	assert_almost_eq(s.reputation, rep0, 0.01, "no penalty applied on a refused auto-ignore")
+
+
+# --- #789 hiring prompt cards: option_verbs routing + pipeline application ---
+
+func _employed_unonboarded(s: GameState) -> Researcher:
+	"""An employed, un-onboarded pipeline hire (no visa) for prompt-card tests."""
+	var c := Researcher.new("safety")
+	c.skill_level = 6
+	s.add_candidate(c)  # stamps candidate_id
+	c.needs_visa = false
+	c.transition_hire_state(Researcher.HireState.OFFERED)
+	s.remove_candidate(c)
+	s.add_researcher(c, false)
+	c.onboarded = false
+	c.laptop_done = false
+	c.visa_done = true
+	c.systems_done = false
+	c.meet_people_done = false
+	return c
+
+
+func test_hiring_prompt_option_verbs_route_payment_and_apply():
+	var s := _state()
+	var cand := _employed_unonboarded(s)
+	var ev: Dictionary = s.hiring.build_onboard_prompt(cand)
+	assert_eq(EventTiers.tier_of(ev), EventTiers.TIER_WINDOW,
+		"the prompt card is a window (so a mid-pause save rehydrates it)")
+	s.month_plan.set_reserve(5)
+	var money0: float = s.money
+	var r := WindowResolver.resolve_chosen_option(s, s.month_plan, ev, "provision_reserve")
+	assert_true(r.get("success", false), "provision_reserve resolves")
+	assert_eq(String(r.get("payment_source", "")), "reserve",
+		"window.option_verbs mapped the chosen option to handle_reserve (explicit source choice)")
+	assert_true(cand.onboarded, "the handle applied the full provision bundle")
+	assert_lt(s.money, money0, "the bundle's money cost was charged")
+
+
+func test_hiring_prompt_money_precheck_protects_the_reserve():
+	var s := _state()
+	var cand := _employed_unonboarded(s)
+	var ev: Dictionary = s.hiring.build_onboard_prompt(cand)
+	s.money = 0.0
+	s.month_plan.set_reserve(5)
+	var r := WindowResolver.resolve_chosen_option(s, s.month_plan, ev, "provision_reserve")
+	assert_false(r.get("success", true), "unaffordable money cost fails the choice up front")
+	assert_eq(s.month_plan.reserve_used, 0, "the failed pre-check drew NO reserve")
+	assert_false(cand.onboarded, "no flags flipped")
+
+
+func test_hiring_prompt_lapse_has_no_rep_penalty():
+	var s := _state()
+	var cand := _employed_unonboarded(s)
+	var ev: Dictionary = s.hiring.build_onboard_prompt(cand)
+	var rep0: float = s.reputation
+	var r := WindowResolver.resolve(s, s.month_plan, ev, "auto_ignore")
+	assert_true(r.get("success", false), "a lapsed prompt card auto-resolves")
+	assert_almost_eq(s.reputation, rep0, 0.01,
+		"lapse_penalty=false: no offerer to annoy on the player's own follow-up card")
+	assert_false(cand.onboarded, "lapse = defer (they settle in slowly)")
