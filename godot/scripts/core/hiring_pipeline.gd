@@ -41,6 +41,32 @@ const KIND_OFFER := "offer"
 # The lanes a sourced candidate can land in (identity is decoupled from ability, Phase A).
 const SPEC_POOL := ["safety", "capabilities", "interpretability", "alignment"]
 
+# ============================================================================
+# #789 ONBOARDING STEP ATTENTION -- PROVISIONAL VALUES, TUNE HERE.
+# Source: Pip's ruling + provisional-values comment on issue #789 (2026-07-23; NOT
+# locked). Calibration anchor: 1 Attention ~= 1 day, out of ~20/plan-month (ADR-0011).
+# Full onboard ~= 5 Attention mentored / 3 unmentored -- one hire eats roughly a whole
+# month's decision headroom BY DESIGN (mentoring is the natural first cut on a
+# recruitment-heavy run).
+#
+# These values SUPERSEDE the legacy Balance keys hiring.onboarding.laptop_attention /
+# mentoring_attention. The visa stays Balance-driven (hiring.onboarding.visa_attention)
+# as a situational item. "Reports to manager" is 0 Attention (player-operator default)
+# so it has no step. The laptop pre-order / lead-time mechanic is OUT of #789's cut
+# (filed separately as office-economy depth).
+#
+# LADDER NOTE (#789 ruling 3, path a -- split-first): this stitch is a GAMEPLAY change
+# (Attention economy + offer-accept control flow); it bumps the ladder at the v0.13
+# epoch cut once the build-vs-ladder version split lands. The ladder_version machinery
+# does not exist yet -- deliberately NO version bump here.
+# ============================================================================
+const ONBOARD_ATTENTION := {
+	"laptop": 1,       # mostly a money expense; rounded up to 1 for now
+	"systems": 1,      # onboard to systems; requires the laptop to exist first
+	"meet_people": 1,  # introductions around the lab
+	"mentoring": 2,    # OPTIONAL: ramps efficiency / cuts attrition; skipping is viable-but-risky
+}
+
 # Promise ids the player can attach to an offer (appetite -> the hunger it feeds).
 const PROMISE_APPETITE := {
 	"first_authorship": "prestige",
@@ -303,6 +329,8 @@ func _accept_offer(state, cand: Researcher, cash: float, promises: Array, resent
 	cand.onboarded = false
 	cand.laptop_done = false
 	cand.visa_done = not cand.needs_visa
+	cand.systems_done = false
+	cand.meet_people_done = false
 	cand.mentoring_done = false
 	cand.mentoring_skipped = false
 	var minted: Array = []
@@ -328,11 +356,15 @@ func _accept_offer(state, cand: Researcher, cash: float, promises: Array, resent
 # ============================================================================
 
 func onboarding_required(candidate: Researcher) -> Array:
-	"""The HARD checklist that gates productivity: a laptop, plus a visa for foreign/remote
-	hires. Mentoring is a soft (recommended-not-required) item handled separately."""
+	"""The HARD checklist that gates productivity (#789): laptop -> systems -> meet
+	people, plus a visa for foreign/remote hires. Order matters: systems needs the
+	laptop first. Mentoring is a soft (recommended-not-required) item handled
+	separately."""
 	var items: Array = ["laptop"]
 	if candidate.needs_visa:
 		items.append("visa")
+	items.append("systems")
+	items.append("meet_people")
 	return items
 
 
@@ -343,10 +375,80 @@ func onboarding_status(candidate: Researcher) -> Dictionary:
 		"needs_visa": candidate.needs_visa,
 		"laptop_done": candidate.laptop_done,
 		"visa_done": candidate.visa_done,
+		"systems_done": candidate.systems_done,
+		"meet_people_done": candidate.meet_people_done,
 		"mentoring_done": candidate.mentoring_done,
 		"mentoring_skipped": candidate.mentoring_skipped,
 		"required": onboarding_required(candidate),
 	}
+
+
+func item_attention(item: String) -> int:
+	"""Attention cost of one onboarding step. #789 steps read the ONBOARD_ATTENTION
+	const above (the tunable); the visa stays Balance-driven (situational item)."""
+	if item == "visa":
+		return Balance.inum("hiring.onboarding.visa_attention", 2)
+	return int(ONBOARD_ATTENTION.get(item, 1))
+
+
+func item_money(item: String) -> float:
+	"""Money cost of one onboarding step (only the physical/legal items cost cash)."""
+	match item:
+		"laptop":
+			return Balance.num("hiring.onboarding.laptop_money", 3000.0)
+		"visa":
+			return Balance.num("hiring.onboarding.visa_money", 5000.0)
+		"mentoring":
+			return Balance.num("hiring.onboarding.mentoring_money", 0.0)
+		_:
+			return 0.0
+
+
+func _item_done(cand: Researcher, item: String) -> bool:
+	match item:
+		"laptop": return cand.laptop_done
+		"visa": return cand.visa_done
+		"systems": return cand.systems_done
+		"meet_people": return cand.meet_people_done
+		"mentoring": return cand.mentoring_done
+		_: return false
+
+
+func _set_item_done(cand: Researcher, item: String) -> void:
+	match item:
+		"laptop": cand.laptop_done = true
+		"visa": cand.visa_done = true
+		"systems": cand.systems_done = true
+		"meet_people": cand.meet_people_done = true
+		"mentoring":
+			cand.mentoring_done = true
+			cand.mentoring_skipped = false
+
+
+func remaining_hard_items(cand: Researcher) -> Array:
+	"""Still-pending hard-checklist items (excludes mentoring by construction)."""
+	var items: Array = []
+	for item in onboarding_required(cand):
+		if not _item_done(cand, item):
+			items.append(item)
+	return items
+
+
+func hard_checklist_attention(cand: Researcher) -> int:
+	"""Projected Attention to finish the hard checklist (#789: the predictable sink the
+	player can plan for when making the offer). Excludes optional mentoring."""
+	var total := 0
+	for item in remaining_hard_items(cand):
+		total += item_attention(item)
+	return total
+
+
+func hard_checklist_money(cand: Researcher) -> float:
+	"""Projected money to finish the hard checklist."""
+	var total := 0.0
+	for item in remaining_hard_items(cand):
+		total += item_money(item)
+	return total
 
 
 func onboard_step(state, candidate_id: String, item: String) -> Dictionary:
@@ -363,7 +465,7 @@ func onboard_step(state, candidate_id: String, item: String) -> Dictionary:
 		"laptop":
 			if cand.laptop_done:
 				return {"success": false, "message": "Laptop already issued."}
-			if not _pay_onboard(state, Balance.num("hiring.onboarding.laptop_money", 3000.0), Balance.inum("hiring.onboarding.laptop_attention", 1)):
+			if not _pay_onboard(state, item_money("laptop"), item_attention("laptop")):
 				return {"success": false, "message": "Can't afford to kit out %s yet." % cand.researcher_name}
 			cand.laptop_done = true
 		"visa":
@@ -371,13 +473,27 @@ func onboard_step(state, candidate_id: String, item: String) -> Dictionary:
 				return {"success": false, "message": "%s doesn't need a visa." % cand.researcher_name}
 			if cand.visa_done:
 				return {"success": false, "message": "Visa already sorted."}
-			if not _pay_onboard(state, Balance.num("hiring.onboarding.visa_money", 5000.0), Balance.inum("hiring.onboarding.visa_attention", 2)):
+			if not _pay_onboard(state, item_money("visa"), item_attention("visa")):
 				return {"success": false, "message": "Can't afford the visa sponsorship yet."}
 			cand.visa_done = true
+		"systems":
+			if cand.systems_done:
+				return {"success": false, "message": "Already onboarded to systems."}
+			if not cand.laptop_done:
+				return {"success": false, "message": "%s needs their laptop before systems onboarding." % cand.researcher_name}
+			if not _pay_onboard(state, item_money("systems"), item_attention("systems")):
+				return {"success": false, "message": "Not enough Attention to onboard %s to systems." % cand.researcher_name}
+			cand.systems_done = true
+		"meet_people":
+			if cand.meet_people_done:
+				return {"success": false, "message": "Introductions already made."}
+			if not _pay_onboard(state, item_money("meet_people"), item_attention("meet_people")):
+				return {"success": false, "message": "Not enough Attention to walk %s around the lab." % cand.researcher_name}
+			cand.meet_people_done = true
 		"mentoring":
 			if cand.mentoring_done:
 				return {"success": false, "message": "Mentoring already done."}
-			if not _pay_onboard(state, Balance.num("hiring.onboarding.mentoring_money", 0.0), Balance.inum("hiring.onboarding.mentoring_attention", 2)):
+			if not _pay_onboard(state, item_money("mentoring"), item_attention("mentoring")):
 				return {"success": false, "message": "Not enough Attention to mentor %s." % cand.researcher_name}
 			cand.mentoring_done = true
 			cand.mentoring_skipped = false
@@ -414,11 +530,153 @@ func _pay_onboard(state, money_cost: float, att_cost: int) -> bool:
 
 
 func _maybe_finish_onboarding(cand: Researcher) -> void:
-	"""Flip the hire to productive once the hard checklist (laptop + any visa) is clear.
-	Mentoring is not required to become productive -- only to avoid the debuffs."""
-	var ready := cand.laptop_done and (cand.visa_done or not cand.needs_visa)
-	if ready:
+	"""Flip the hire to productive once the hard checklist (#789: laptop + systems +
+	meet people + any visa) is clear. Mentoring is not required to become productive --
+	only to avoid the debuffs."""
+	if remaining_hard_items(cand).is_empty():
 		cand.onboarded = true
+
+
+# ============================================================================
+# #789 ACCEPT-PROMPT WINDOWS (the hiring stitch)
+# When a hire accepts mid-playback, the onboarding follow-ups surface as response-window
+# CARDS (Pip ruling 1: hard-pause via the tested window pipeline, copy softened to feel
+# like an opportunity; multiple cards FIFO -- click-order = execution order). The player
+# picks the Attention SOURCE explicitly (ruling 2: handle_reserve vs handle_cannibalize,
+# teaching the crisp reserve). Mentoring is IN as its own optional card (ruling 5);
+# skipping stays viable-but-risky. RNG guard: the accept/reject roll happened in
+# _resolve_offer BEFORE these cards are built -- prompting moves no draw.
+# ============================================================================
+
+const PROMPT_LABELS := {"laptop": "laptop", "visa": "visa", "systems": "systems access", "meet_people": "introductions"}
+
+
+func build_accept_windows(cand: Researcher) -> Array:
+	"""The prompt cards queued when `cand` accepts: card 1 = provision the hard
+	checklist, card 2 = optional mentoring. Returns [] entries omitted when moot."""
+	var out: Array = []
+	var w1 := build_onboard_prompt(cand)
+	if not w1.is_empty():
+		out.append(w1)
+	var w2 := build_mentoring_prompt(cand)
+	if not w2.is_empty():
+		out.append(w2)
+	return out
+
+
+func build_onboard_prompt(cand: Researcher) -> Dictionary:
+	"""Card 1: provision + onboard the whole hard checklist in one HANDLE. The money
+	cost rides the provision options' `costs` (pre-checked + greyed by the dialog);
+	the Attention cost rides window.attention_cost and is drawn by the chosen verb."""
+	var items := remaining_hard_items(cand)
+	if items.is_empty():
+		return {}
+	var att := hard_checklist_attention(cand)
+	var money := hard_checklist_money(cand)
+	var pretty: Array = []
+	for item in items:
+		pretty.append(String(PROMPT_LABELS.get(item, item)))
+	var steps := ", ".join(pretty)
+	return {
+		"id": "hiring_onboard_%s" % cand.candidate_id,
+		"kind": "hiring_onboard_prompt",
+		"name": "%s said yes" % cand.researcher_name,
+		"description": "Good news -- %s accepted and starts Monday. Set them up now (%s) and they hit the ground running. Or let it wait: they stay at reduced output until you onboard them from the hiring screen." % [cand.researcher_name, steps],
+		"type": "popup",
+		"delivery_tier": "window",
+		"event_class": "no-action",
+		"source_id": "hiring",
+		"candidate_id": cand.candidate_id,
+		"options": [
+			{"id": "provision_reserve", "text": "Set them up now (%d Att from reserve)" % att, "costs": {"money": money}, "effects": {}},
+			{"id": "provision_cannibalize", "text": "Set them up now (%d Att, pull from planned work)" % att, "costs": {"money": money}, "effects": {}},
+			{"id": "defer", "text": "Let it wait (onboard later from the hiring screen)", "costs": {}, "effects": {}},
+		],
+		"window": {
+			"attention_cost": att,
+			"handle_option": "provision",
+			"ignore_option": "defer",
+			"option_verbs": {"provision_reserve": "handle_reserve", "provision_cannibalize": "handle_cannibalize", "defer": "ignore"},
+			"lapse_penalty": false,
+		},
+	}
+
+
+func build_mentoring_prompt(cand: Researcher) -> Dictionary:
+	"""Card 2 (optional, ruling 5): mentoring as an explicit lever. Dismissing/lapsing
+	the card SKIPS mentoring (arms the debuff + attrition risk) -- but the hiring screen
+	can still mentor later, which un-arms it. Skipping stays viable-but-risky."""
+	if cand.mentoring_done or cand.mentoring_skipped:
+		return {}
+	var att := item_attention("mentoring")
+	return {
+		"id": "hiring_mentor_%s" % cand.candidate_id,
+		"kind": "hiring_mentoring_prompt",
+		"name": "Mentor %s?" % cand.researcher_name,
+		"description": "Optional: block out founder time to mentor %s. Mentored hires ramp to full effectiveness faster and are less likely to quit early. Skipping saves the time now, at a lasting output debuff and an early-quit risk." % cand.researcher_name,
+		"type": "popup",
+		"delivery_tier": "window",
+		"event_class": "no-action",
+		"source_id": "hiring",
+		"candidate_id": cand.candidate_id,
+		"options": [
+			{"id": "mentor_reserve", "text": "Mentor them (%d Att from reserve)" % att, "costs": {}, "effects": {}},
+			{"id": "mentor_cannibalize", "text": "Mentor them (%d Att, pull from planned work)" % att, "costs": {}, "effects": {}},
+			{"id": "skip_mentoring", "text": "Let them sink or swim (skip mentoring)", "costs": {}, "effects": {}},
+		],
+		"window": {
+			"attention_cost": att,
+			"handle_option": "mentor",
+			"ignore_option": "skip_mentoring",
+			"option_verbs": {"mentor_reserve": "handle_reserve", "mentor_cannibalize": "handle_cannibalize", "skip_mentoring": "ignore"},
+			"lapse_penalty": false,
+		},
+	}
+
+
+func apply_prompt_option(state, event: Dictionary, option_id: String) -> Dictionary:
+	"""Apply a #789 hiring-card decision. Called by WindowResolver AFTER the Attention
+	payment (reserve or cannibalize) was drawn for handle verbs -- so this charges MONEY
+	only and flips flags; Attention is never double-charged. Defer/skip cost nothing."""
+	var cand := find_employed(state, String(event.get("candidate_id", "")))
+	if cand == null:
+		return {"success": false, "message": "No such onboarding hire."}
+	match String(event.get("kind", "")):
+		"hiring_onboard_prompt":
+			if option_id == "provision":
+				return _provision_hard_checklist(state, cand)
+			return {"success": true, "message": "%s will settle in slowly -- onboard them from the hiring screen (reduced output until then)." % cand.researcher_name}
+		"hiring_mentoring_prompt":
+			if option_id == "mentor":
+				if cand.mentoring_done:
+					return {"success": true, "message": "Mentoring already done."}
+				var mmoney := item_money("mentoring")
+				if state.money < mmoney:
+					return {"success": false, "message": "Can't afford the mentoring budget ($%d)." % int(mmoney)}
+				state.money -= mmoney
+				_set_item_done(cand, "mentoring")
+				return {"success": true, "message": "You block out time to mentor %s -- they'll ramp fast." % cand.researcher_name}
+			# skip_mentoring (chosen or lapsed): the explicit viable-but-risky lever.
+			cand.mentoring_skipped = true
+			cand.mentoring_done = false
+			return {"success": true, "message": "Skipped mentoring for %s (lasting output debuff + early-attrition risk)." % cand.researcher_name}
+	return {"success": false, "message": "Unknown hiring prompt '%s'." % String(event.get("kind", ""))}
+
+
+func _provision_hard_checklist(state, cand: Researcher) -> Dictionary:
+	"""Flip every remaining hard-checklist item, charging the MONEY cost only (the
+	window verb already drew the Attention). All-or-nothing on money."""
+	var items := remaining_hard_items(cand)
+	if items.is_empty():
+		return {"success": true, "message": "%s is already onboarded." % cand.researcher_name}
+	var money := hard_checklist_money(cand)
+	if state.money < money:
+		return {"success": false, "message": "Can't afford to kit out %s ($%d needed)." % [cand.researcher_name, int(money)]}
+	state.money -= money
+	for item in items:
+		_set_item_done(cand, item)
+	_maybe_finish_onboarding(cand)
+	return {"success": true, "message": "%s is set up and fully productive." % cand.researcher_name}
 
 
 # ============================================================================
@@ -466,8 +724,15 @@ func _resolve_job(state, job: Dictionary) -> void:
 			if oc != null:
 				var params: Dictionary = job.get("params", {})
 				var r := _resolve_offer(state, oc, float(params.get("cash", 0.0)), params.get("promises", []))
-				last_events.append({"kind": "offer_" + String(r.get("outcome", "?")),
-					"candidate": oc.researcher_name, "message": r.get("message", "")})
+				var outcome := String(r.get("outcome", "?"))
+				var ev := {"kind": "offer_" + outcome, "candidate": oc.researcher_name,
+					"candidate_id": oc.candidate_id, "message": r.get("message", "")}
+				if outcome == "accepted" or outcome == "resentful_accept":
+					# #789: carry the onboarding projection so the accept-prompt cards
+					# (MonthController) can be built without re-deriving it.
+					ev["onboard_attention"] = hard_checklist_attention(oc)
+					ev["onboard_money"] = hard_checklist_money(oc)
+				last_events.append(ev)
 
 
 func on_month_boundary(state) -> Array:
@@ -613,6 +878,10 @@ func onboard_all(state) -> Dictionary:
 			step = "laptop"
 		elif r.needs_visa and not r.visa_done:
 			step = "visa"
+		elif not r.systems_done:
+			step = "systems"
+		elif not r.meet_people_done:
+			step = "meet_people"
 		elif not r.mentoring_done:
 			step = "mentoring"
 		if step != "":

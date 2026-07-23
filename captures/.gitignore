@@ -1,0 +1,6 @@
+# Captured cinematic footage (AVI/MP4/GIF/PNG palettes) is large binary output --
+# keep it OUT of git. This dir self-ignores everything except this .gitignore file.
+# Written by tools/capture_cinematic.py; lives at repo root (OUTSIDE godot/) so it is
+# never packed into the shipped .pck.
+*
+!.gitignore

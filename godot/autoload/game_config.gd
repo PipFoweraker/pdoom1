@@ -65,6 +65,26 @@ var pending_load_path: String = ""
 # Version tracking for What's New feature
 var last_seen_version: String = ""  # Empty = never seen patch notes
 
+# Cold-open intro gate (#801). Mirrors the last_seen_version / whats_new show-once
+# pattern, but is a SEPARATE track: a player may have seen patch notes yet never the
+# intro, and we may want to force a re-intro on a major narrative revision WITHOUT
+# re-showing patch notes. Persisted in the "game" section next to last_seen_version.
+var last_seen_intro_version: String = ""  # "" = never seen the cold-open
+
+# Master opt-out for story intros / cinematics (#801). Persisted in the "game" section.
+#
+# REUSABLE CONVENTION -- "auto-flip on player signal + reversible settings toggle"
+# (Pip's general preference pattern): a PLAYER ACTION quietly sets a persistent
+# preference (here: completing a hold-to-skip auto-flips play_intros = false, respecting
+# the "I skip intros" signal), and the settings menu ALWAYS lets the player undo it (the
+# "Play story intros" toggle re-enables it). This lets players configure their runs by
+# doing, while keeping every such auto-flip reversible. Reuse this shape elsewhere.
+var play_intros: bool = true
+
+# Transient (NOT persisted): set true by the cold-open on completion; main_ui reads it
+# to pulse the first lever (hire) button once as an advisor nudge, then clears it.
+# Pure presentation -- never touches game state, RNG, or score.
+var show_first_lever_hint: bool = false
 # First-launch welcome overlay show-once gate (issue #720). Reuses the
 # last_seen_version show-once shape: once the welcome/help overlay has been shown
 # it is marked seen and PERSISTED, so it never re-appears on later launches -- even
@@ -79,6 +99,21 @@ var welcome_seen: bool = false
 # board-key derives from this value, so it must resolve identically in exported
 # builds where a res:// text read is not guaranteed to be packed.
 const CURRENT_VERSION: String = "0.12.0"
+
+# Cold-open intro content version (#801). Independent of CURRENT_VERSION on purpose:
+# ordinary patch releases must NOT re-trigger the intro. Bump this ONLY when the
+# cold-open content changes enough to warrant a forced re-show.
+const INTRO_VERSION: String = "1"
+
+# Ladder (ruleset/epoch) version -- the build-vs-ladder version split
+# (docs/game-design/BUILD_VS_LADDER_VERSION_SPLIT.md). SSOT is ladder_version.txt at
+# the repo root; STAMPED here by tools/sync_version.py exactly like CURRENT_VERSION
+# (do not hand-edit; `--check` fails on drift). This integer bumps ONLY when
+# gameplay/scoring/seed/RNG rules change (spec Section 3 checklist) -- cosmetic
+# patches bump version.txt alone, so everyone stays on the same leaderboard.
+# Epoch L1 == the current ruleset. NOTE: #789 hiring-stitch changes gameplay and
+# bumps this to 2 at the v0.13 epoch cut (spec DECISION C2) -- do not bump earlier.
+const LADDER_VERSION: String = "1"
 
 # Leaderboard State (transient, not saved)
 var latest_leaderboard_entry: String = ""  # UUID of most recent score entry
@@ -114,6 +149,8 @@ func save_config() -> void:
 	config.set_value("game", "last_seed", game_seed)
 	config.set_value("game", "scenario_id", scenario_id)
 	config.set_value("game", "last_seen_version", last_seen_version)
+	config.set_value("game", "last_seen_intro_version", last_seen_intro_version)
+	config.set_value("game", "play_intros", play_intros)
 	config.set_value("game", "baseline_mode", baseline_mode)
 
 	# Audio section
@@ -168,6 +205,8 @@ func load_config() -> void:
 	game_seed = config.get_value("game", "last_seed", game_seed)
 	scenario_id = config.get_value("game", "scenario_id", scenario_id)
 	last_seen_version = config.get_value("game", "last_seen_version", last_seen_version)
+	last_seen_intro_version = config.get_value("game", "last_seen_intro_version", last_seen_intro_version)
+	play_intros = config.get_value("game", "play_intros", play_intros)
 	baseline_mode = config.get_value("game", "baseline_mode", baseline_mode)
 
 	# Load audio settings
@@ -266,6 +305,8 @@ func set_setting(key: String, value, save_immediately: bool = false) -> void:
 			show_hints = value
 		"submit_scores_global":
 			submit_scores_global = value
+		"play_intros":
+			play_intros = value
 		"ui_layout":
 			# Reject unknown layout names so the UI never applies a garbage flag.
 			if not UI_LAYOUTS.has(value):
@@ -417,10 +458,42 @@ func mark_patch_notes_seen() -> void:
 	save_config()
 	print("[GameConfig] Patch notes marked as seen for version %s" % CURRENT_VERSION)
 
+## Check if the cold-open intro should play (#801).
+## Gated PURELY on last_seen_intro_version (NOT games_played) so it is immune to the
+## increment_games_played() ordering in config_confirmation.gd: that increment runs
+## BEFORE we route to the intro, which would break a games_played==0 test.
+func should_show_intro() -> bool:
+	# play_intros is the master gate: if the player opted out (or auto-opted-out via a
+	# hold-to-skip), NO intro shows -- even a bumped INTRO_VERSION stays suppressed until
+	# they re-enable it in settings.
+	if not play_intros:
+		return false
+	return last_seen_intro_version != INTRO_VERSION
+
+## Mark the cold-open intro as seen for the current INTRO_VERSION. Called on intro
+## completion OR skip (a skip counts as seen, same as the whats-new modal).
+func mark_intro_seen() -> void:
+	last_seen_intro_version = INTRO_VERSION
+	save_config()
+	print("[GameConfig] Cold-open intro marked as seen for intro version %s" % INTRO_VERSION)
+
 ## Get the current game version
 func get_current_version() -> String:
 	return CURRENT_VERSION
 
+## The value that scopes leaderboard boards (ADR-0002 #5). This is the LADDER
+## epoch ("L<n>"), NOT the build version -- cosmetic build bumps must not fork the
+## board. EVERY board-key site (local board filename, remote submit/fetch,
+## current-board select) must route through this single accessor; never rebuild
+## the key from CURRENT_VERSION. Provenance sites (share line, bug report, the
+## replay artifact's build tag) stay on CURRENT_VERSION -- they answer "which
+## binary", not "which ruleset".
+## BACKEND NOTE (separate task, do NOT attempt client-side): the PHP score API at
+## api.pdoom1.com must also key boards by this ladder value, and the live
+## v0.12.0 board must be aliased to L1 server-side so introducing the split does
+## not fork the existing board.
+func get_board_version() -> String:
+	return "L" + LADDER_VERSION
 ## Should the first-launch welcome/help overlay be shown? (issue #720)
 ## True only on a genuine first launch (no games played yet), when it has never
 ## been shown before, and while gameplay hints are enabled. The welcome_seen gate
@@ -453,5 +526,6 @@ func print_config() -> void:
 	print("  Games Played: %d" % games_played)
 	print("  Baseline Mode: %s" % get_baseline_mode_string())
 	print("  Last Seen Version: %s" % last_seen_version)
+	print("  Last Seen Intro Version: %s" % last_seen_intro_version)
 	print("  Current Version: %s" % CURRENT_VERSION)
 	print("========================================")

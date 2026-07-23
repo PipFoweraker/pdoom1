@@ -85,12 +85,23 @@ func advance_tick() -> Dictionary:
 	# Hiring pipeline (Phase B): resolve any interview/offer/connections jobs due this tick.
 	# Stream-neutral when no jobs are in flight (guarded inside on_tick), so pre-existing
 	# replays are unaffected.
+	var hiring_feed: Array = []
 	if state.hiring != null:
-		state.hiring.on_tick(state)
+		var hiring_events: Array = state.hiring.on_tick(state)
+		# #789 seam 3: a scheduled interview resolving used to land SILENTLY -- surface it.
+		hiring_feed = _surface_hiring_tick_events(hiring_events)
+		# #789 seams 1+2: a hire accepting mid-playback queues onboarding prompt cards
+		# (hard-pause windows, FIFO play-queue -- ruling 1). Deliberately NOT counted
+		# against the window demand budget: these are the player's own follow-up
+		# opportunities on an action they initiated, not external demands.
+		_enqueue_hiring_windows(hiring_events)
 
 	var fired: Array = state.pending_events.duplicate()
 	state.pending_events.clear()
 	var surfaced := _dispatch(fired)
+	var feed_out: Array = []
+	feed_out.append_array(hiring_feed)
+	feed_out.append_array(surfaced.get("feed", []))
 
 	if not window_queue.is_empty():
 		status = Status.PAUSED_ON_WINDOW
@@ -103,7 +114,7 @@ func advance_tick() -> Dictionary:
 			"status": "paused_on_window",
 			"month_opened": month_opened,
 			"windows": window_queue.duplicate(),
-			"feed": surfaced.get("feed", []),
+			"feed": feed_out,
 			"released": last_released_strategic,
 		}
 
@@ -116,7 +127,7 @@ func advance_tick() -> Dictionary:
 			"status": "month_open",
 			"month_opened": true,
 			"windows": [],
-			"feed": surfaced.get("feed", []),
+			"feed": feed_out,
 			"released": last_released_strategic,
 		}
 
@@ -125,9 +136,54 @@ func advance_tick() -> Dictionary:
 		"status": "ready",
 		"month_opened": month_opened,
 		"windows": [],
-		"feed": surfaced.get("feed", []),
+		"feed": feed_out,
 		"released": last_released_strategic,
 	}
+
+
+func _surface_hiring_tick_events(events: Array) -> Array:
+	"""#789 seam 3 (interview = schedule -> HAPPEN): route a resolved interview to the
+	player feed, tagged toast=true so the UI layer also raises a notification. Pure view
+	on an already-resolved deterministic outcome -- no RNG, no sim mutation. Returns the
+	feed items surfaced (they also land in feed_log)."""
+	var out: Array = []
+	for e in events:
+		if not (e is Dictionary):
+			continue
+		if String(e.get("kind", "")) != "interview_done":
+			continue
+		var who := String(e.get("candidate", "?"))
+		var feed_event := {
+			"id": "hiring_interview_done",
+			"name": "Interview held: %s" % who,
+			"delivery_tier": EventTiers.TIER_FEED,
+			"source_id": "hiring",
+			"message": "Interview with %s took place -- new details on their card." % who,
+			"toast": true,
+			"reveal_level": int(e.get("reveal_level", 0)),
+		}
+		var item := {"event": feed_event, "source_id": EventTiers.source_id_of(feed_event)}
+		feed_log.append(item)
+		out.append(item)
+	return out
+
+
+func _enqueue_hiring_windows(events: Array) -> void:
+	"""#789 seams 1+2: offer-accept -> onboarding prompt cards on the window queue
+	(provision card first, then the optional mentoring card -- FIFO play-queue). The
+	accept/reject RNG roll already happened inside the pipeline, so pausing here moves
+	no draw. Cards bypass the demand budget (see advance_tick comment)."""
+	for e in events:
+		if not (e is Dictionary):
+			continue
+		var kind := String(e.get("kind", ""))
+		if kind != "offer_accepted" and kind != "offer_resentful_accept":
+			continue
+		var cand: Researcher = state.hiring.find_employed(state, String(e.get("candidate_id", "")))
+		if cand == null:
+			continue
+		for w in state.hiring.build_accept_windows(cand):
+			window_queue.append(w)
 
 
 func _dispatch(events: Array) -> Dictionary:

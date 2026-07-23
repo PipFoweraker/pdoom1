@@ -148,3 +148,6 @@ tools/music/refs_local/
 tools/music/**/*.flac
 tools/music/**/*.mp3
 tools/music/**/*.wav
+
+# Claude Code worktrees (scratch working dirs -- never tracked)
+.claude/worktrees/

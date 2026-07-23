@@ -217,6 +217,46 @@ func test_pre_phase_a_save_loads_with_defaults():
 	assert_eq(r.hire_state, Researcher.HireState.CANDIDATE_IN_POOL, "Missing hire_state -> default")
 	assert_eq(r.appetites.size(), Researcher.APPETITE_KEYS.size(), "Missing appetites -> neutral set")
 
+# --- #789 onboarding-chain steps (systems / meet_people + the tunable const) --
+
+func test_789_step_flags_round_trip():
+	var r := _make_seeded()
+	r.systems_done = true
+	r.meet_people_done = true
+	var parsed = JSON.parse_string(JSON.stringify(r.to_dict()))
+	assert_not_null(parsed, "round-trips through JSON")
+	var r2 := Researcher.new()
+	r2.from_dict(parsed)
+	assert_true(r2.systems_done, "systems_done round-trips")
+	assert_true(r2.meet_people_done, "meet_people_done round-trips")
+
+func test_pre_789_save_defaults_new_steps_false():
+	# A pre-#789 save (no systems/meet_people keys) loads with the steps still owed.
+	var legacy := {"name": "Old Hand", "specialization": "safety", "laptop_done": true}
+	var r := Researcher.new()
+	r.from_dict(legacy)
+	assert_false(r.systems_done, "missing systems_done -> false (step still owed)")
+	assert_false(r.meet_people_done, "missing meet_people_done -> false (step still owed)")
+
+func test_789_onboard_attention_const_shape():
+	# Guard the tunable const's SHAPE (a renamed key would silently break the
+	# item_attention lookups and the hard-checklist projection).
+	for k in ["laptop", "systems", "meet_people", "mentoring"]:
+		assert_true(HiringPipeline.ONBOARD_ATTENTION.has(k), "ONBOARD_ATTENTION carries '%s'" % k)
+		assert_gt(int(HiringPipeline.ONBOARD_ATTENTION[k]), 0, "step '%s' costs real Attention" % k)
+
+func test_789_hard_checklist_includes_new_steps():
+	var pipeline := HiringPipeline.new()
+	var r := _make_seeded()
+	r.needs_visa = false
+	var required: Array = pipeline.onboarding_required(r)
+	for item in ["laptop", "systems", "meet_people"]:
+		assert_true(required.has(item), "hard checklist includes '%s'" % item)
+	assert_false(required.has("mentoring"), "mentoring stays optional (soft item)")
+	assert_false(required.has("visa"), "no visa for a domestic hire")
+	r.needs_visa = true
+	assert_true(pipeline.onboarding_required(r).has("visa"), "visa appears for a foreign hire")
+
 # --- Card view --------------------------------------------------------------
 
 func test_card_view_renders_hidden_and_revealed():

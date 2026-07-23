@@ -26,6 +26,9 @@ static func replay(replay_data: Dictionary) -> Dictionary:
 	"""
 	var run_seed: String = str(replay_data.get("seed", ""))
 	var run_version: String = str(replay_data.get("version", "unknown"))
+	# Build-vs-ladder split (spec 5.3): carry the epoch through so a replay-of-a-replay
+	# re-emits it. "" on pre-split artifacts; not hashed, so old hashes still reproduce.
+	var run_ladder: String = str(replay_data.get("ladder", ""))
 	var input_log: Array = replay_data.get("log", [])
 	# WS-C (ADR-0005): the event schedule is part of the run's identity, so it must be
 	# replayed alongside seed+version or a scheduled run won't reproduce.
@@ -53,7 +56,7 @@ static func replay(replay_data: Dictionary) -> Dictionary:
 	var state: GameState = GameState.new(run_seed, run_schedule)
 	var turn_manager: TurnManager = TurnManager.new(state)
 	# Pass the schedule through so a replay-of-a-replay re-emits it (DQ-6, #620).
-	VerificationTracker.start_tracking(run_seed, run_version, run_schedule)
+	VerificationTracker.start_tracking(run_seed, run_version, run_schedule, "", run_ladder)
 
 	while not state.game_over and state.turn < MAX_TURNS:
 		turn_manager.start_turn()

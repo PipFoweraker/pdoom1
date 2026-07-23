@@ -292,7 +292,10 @@ class StandardsEnforcer:
                 for lineno, line in enumerate(content.splitlines(), 1):
                     bad = next((ch for ch in line if ord(ch) > 127), None)
                     if bad is not None:
-                        self.errors.append("%s:%d non-ASCII %r" % (rel, lineno, bad))
+                        # Report the codepoint, never the raw char -- an ASCII
+                        # enforcer must only ever emit ASCII, or print() crashes
+                        # on a cp1252 (Windows) console (UnicodeEncodeError).
+                        self.errors.append("%s:%d non-ASCII U+%04X" % (rel, lineno, ord(bad)))
                         ok = False
                         break
             if p.suffix == ".py":
@@ -522,15 +525,20 @@ class StandardsEnforcer:
         print("[CHART] STANDARDS CHECK SUMMARY")
         print("=" * 50)
 
+        def _ascii_safe(text: str) -> str:
+            # Never let a non-ASCII char in a message crash the summary print
+            # on a cp1252 console -- escape anything outside ASCII.
+            return str(text).encode("ascii", "backslashreplace").decode("ascii")
+
         if self.errors:
             print(f"[ERROR] ERRORS ({len(self.errors)}):")
             for error in self.errors:
-                print(f"   {error}")
+                print("   " + _ascii_safe(error))
 
         if self.warnings:
             print(f"\n[WARNING] WARNINGS ({len(self.warnings)}):")
             for warning in self.warnings:
-                print(f"   {warning}")
+                print("   " + _ascii_safe(warning))
 
         if not self.errors and not self.warnings:
             print("[SUCCESS] All checks passed!")

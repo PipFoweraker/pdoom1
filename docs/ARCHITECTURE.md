@@ -28,9 +28,9 @@ scored on **turns survived**, doom-integral as tiebreak (ADR-0002). Every run is
 deterministic from a seed, and the input-replay is the canonical artifact (ADR-0006).
 
 - **Design philosophy (the "why"):** [`docs/game-design/DESIGN_PHILOSOPHY.md`](game-design/DESIGN_PHILOSOPHY.md)
-- **Decision log (the "what & why-not"):** [`docs/game-design/decisions/`](game-design/decisions/) — one ADR per decision.
+- **Decision log (the "what & why-not"):** [`docs/game-design/decisions/`](game-design/decisions/) -- one ADR per decision.
   > [!] The ADR index in [`decisions/README.md`](game-design/decisions/README.md) is
-  > **stale** (lists only ADR-0001 as PROPOSED). The real set is ADR-0001…0016, nearly all
+  > **stale** (lists only ADR-0001 as PROPOSED). The real set is ADR-0001...0016, nearly all
   > ACCEPTED. Trust the files, not the index.
 
 ---
@@ -236,8 +236,8 @@ Gameplay numbers live in JSON, not code, via the **`Balance` autoload** (L9 #621
   `risk`, `difficulty`, `events`, `papers`.
 - **Contract:** every consumer passes its inline literal as the fallback, so a missing/broken
   file *should* degrade to shipped behavior. [!] **This contract is currently violated for
-  `doom.streams.*`** — see [§7](#7-known-gaps--active-fronts).
-- **Other data dirs:** `data/actions/*.json` (10 files — action definitions),
+  `doom.streams.*`** -- see [S7](#7-known-gaps--active-fronts).
+- **Other data dirs:** `data/actions/*.json` (10 files -- action definitions),
   `data/events/*.json` (8 files across `balancing/`, `extensions/`, `overrides/`),
   `data/scenarios/*.json` (bootstrap / crisis / sandbox).
 
@@ -292,8 +292,8 @@ again.
 | Adjust how doom is computed (structure, not numbers) | [`doom_system.gd`](../godot/scripts/core/doom_system.gd) `_compute_streams` / `_advance_intermediaries` |
 | Change the turn/month loop | [`month_controller.gd`](../godot/scripts/core/month_controller.gd) + [`game_manager.gd`](../godot/scripts/game_manager.gd) `end_month`/`_run_month_playback` |
 | Add a ledger liability type | factories in [`ledger.gd`](../godot/scripts/core/ledger.gd) |
-| Change turn step order / add a sim step | `_step_*` in [`turn_manager.gd`](../godot/scripts/core/turn_manager.gd) — **[!] order is replay-load-bearing** |
-| Register new save/load state | `to_dict`/`from_dict` in [`game_state.gd`](../godot/scripts/core/game_state.gd) — read the SERIALIZATION CONVENTION block first |
+| Change turn step order / add a sim step | `_step_*` in [`turn_manager.gd`](../godot/scripts/core/turn_manager.gd) -- **[!] order is replay-load-bearing** |
+| Register new save/load state | `to_dict`/`from_dict` in [`game_state.gd`](../godot/scripts/core/game_state.gd) -- read the SERIALIZATION CONVENTION block first |
 | Change scoring | `score_tuple`/`compare_score` in [`game_state.gd`](../godot/scripts/core/game_state.gd) |
 | Navigate between scenes (menu/game/leaderboard) | `SceneTransition.go_to(path)` / `.reload()` in [`scene_transition.gd`](../godot/autoload/scene_transition.gd) -- **NEVER** `get_tree().change_scene_to_file()` directly (deferred-swap chokepoint; enforced by `tools/check_scene_nav.py`). Why: [`LEADERBOARD_CRASH_DIAGNOSIS.md`](LEADERBOARD_CRASH_DIAGNOSIS.md) |
 | Cut a Windows build | `python tools/build_release.py` (nukes `.godot`, stamps the build, PROVES the pack is fresh) -- never a raw `godot --export` (stale-cache trap) |

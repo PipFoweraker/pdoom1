@@ -61,10 +61,19 @@ jobs:
 
     - name: Version Consistency Check
       run: |
-        echo "Checking version.txt (SSOT) is stamped into every derived copy..."
+        echo "Checking version.txt + ladder_version.txt (SSOTs) are stamped into every derived copy..."
         echo "(game_config.gd / project.godot / export_presets.cfg / welcome.tscn."
         echo " A silent drift forks the leaderboard board-key, so this gate is FATAL.)"
         python tools/sync_version.py --check
+
+    - name: Ladder Bump Heuristic (advisory)
+      if: github.event_name == 'pull_request'
+      run: |
+        echo "Build-vs-ladder split: warn when gameplay-surface files changed without a"
+        echo "ladder_version.txt bump (or vice versa). Advisory smell detector, never blocks;"
+        echo "reviewer acks against the spec Section 3.3 checklist."
+        git fetch origin ${{ github.base_ref }} --depth=1
+        python tools/check_ladder_bump.py --base origin/${{ github.base_ref }} || true
 
     - name: Web Export System Check
       run: |

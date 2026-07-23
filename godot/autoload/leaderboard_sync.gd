@@ -102,8 +102,13 @@ static func build_endpoint(p_base_url: String) -> String:
 		b = b.substr(0, b.length() - 1)
 	return "%s/%s" % [b, ENDPOINT_FILE]
 
-## POST body = the ScoreEntry dict PLUS seed + version (game_version), per the frozen
-## contract. entry_dict is exactly Leaderboard.ScoreEntry.to_dict().
+## POST body = the ScoreEntry dict PLUS seed + version, per the frozen contract.
+## entry_dict is exactly Leaderboard.ScoreEntry.to_dict(). Post build-vs-ladder
+## split, the `version` param carries the LADDER EPOCH ("L1", via
+## GameConfig.get_board_version()), not the build string -- the server buckets
+## boards by whatever lands in this column, so no schema change is needed.
+## BACKEND TASK (flagged, separate): api.pdoom1.com must alias the live v0.12.0
+## board to L1 so the epoch cutover does not fork the existing board.
 static func build_post_body(entry_dict: Dictionary, seed: String, version: String) -> Dictionary:
 	var body := entry_dict.duplicate(true)
 	body["seed"] = seed
@@ -111,6 +116,7 @@ static func build_post_body(entry_dict: Dictionary, seed: String, version: Strin
 	return body
 
 ## GET url for a board: <base>/score_api.php?seed=&version=&limit=
+## `version` is the board-scope value: the ladder epoch post-split (see build_post_body).
 static func build_get_url(p_base_url: String, seed: String, version: String, limit: int) -> String:
 	var n: int = max(1, limit)
 	return "%s?seed=%s&version=%s&limit=%d" % [

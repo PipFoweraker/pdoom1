@@ -49,7 +49,7 @@
 		"resentment_debt": { "principal": 1500.0, "fuse_turns": 6, "interest_rate": 0.02 }
 	},
 	"hiring": {
-		"_description": "Hiring pipeline (BUILD_BRIEF_HIRING_PIPELINE Phase B): source -> interview -> offer -> onboard. Every stage is Attention-gated and duration-bearing (ADR-0009). advertise = money + slow multi-month trickle; connections = a reputation favor for one fast pre-vetted lead (success scales with standing). offer.* is the hidden self-worth range; onboarding.* gates a new hire's productivity.",
+		"_description": "Hiring pipeline (BUILD_BRIEF_HIRING_PIPELINE Phase B): source -> interview -> offer -> onboard. Every stage is Attention-gated and duration-bearing (ADR-0009). advertise = money + slow multi-month trickle; connections = a reputation favor for one fast pre-vetted lead (success scales with standing). offer.* is the hidden self-worth range; onboarding.* gates a new hire's productivity. NOTE (#789): onboarding step Attention (laptop/systems/meet_people/mentoring) is tuned in HiringPipeline.ONBOARD_ATTENTION (hiring_pipeline.gd), which SUPERSEDES laptop_attention/mentoring_attention below; visa_attention and the *_money keys remain live here.",
 		"advertise": { "cost_money": 8000.0, "cost_attention": 3, "campaign_months": 3, "per_month_min": 0, "per_month_max": 2, "reputation_gain": 1.0 },
 		"connections": { "cost_reputation": 6.0, "cost_attention": 2, "duration_ticks": 2, "rep_for_certainty": 80.0, "min_success": 0.05, "max_success": 0.95, "prevet_skill_min": 5, "prevet_skill_max": 8 },
 		"interview": { "cost_attention": 2, "duration_ticks": 3, "reveal_step": 1 },

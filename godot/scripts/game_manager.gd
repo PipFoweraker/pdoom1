@@ -69,13 +69,17 @@ func start_new_game(game_seed: String = ""):
 
 	# Start verification tracking. The event schedule travels with the artifact
 	# (ADR-0005: seed = RNG seed + schedule; DQ-6 fix, L0 #620 item 4).
+	# Build-vs-ladder split (spec 5.3): the artifact carries BOTH versions --
+	# game_version = the BUILD (repro identity: a replay must reproduce on the exact
+	# binary that made it), ladder = the EPOCH the score ranks under
+	# (GameConfig.get_board_version(), the board key).
 	var game_version = GameConfig.CURRENT_VERSION
 	# ADR-0016 league metabolism: stamp the artifact with its league (the baseline month).
 	# Placeholder until the league pipeline lands -- the run's start month is a stable id
 	# carried beside (seed, game_version) so cross-league boards (DQ-3) can key on it.
 	var league_id := "%04d-%02d" % [state.start_year, state.start_month]
 	VerificationTracker.enable_debug()  # Enable verbose logging
-	VerificationTracker.start_tracking(game_seed, game_version, state.event_schedule, league_id)
+	VerificationTracker.start_tracking(game_seed, game_version, state.event_schedule, league_id, GameConfig.get_board_version())
 	print("[GameManager] Verification tracking enabled (debug mode: ON)")
 
 	# Start baseline simulation in background if appropriate (Issue #372)
@@ -588,11 +592,16 @@ func _run_month_playback() -> void:
 		game_state_updated.emit(state.to_dict())
 		for item in r.get("feed", []):
 			var fev: Dictionary = item.get("event", {})
+			# #789: feed items tagged toast=true (hiring surfacing, e.g. "interview took
+			# place") also raise a transient notification; the feed line below stays the
+			# persistent record. View-only -- no sim effect.
+			if bool(fev.get("toast", false)):
+				NotificationManager.info(String(fev.get("message", fev.get("name", ""))))
 			# P0: carry the event's channel so the feed UI can filter the low-severity
 			# arxiv/flavour stream out of the default view (EventService tags it "flavour").
 			action_executed.emit({"success": true,
 				"channel": String(fev.get("channel", "normal")),
-				"message": "[color=gray]FEED - %s -- %s[/color]" % [
+				"message": "[color=gray]FEED | %s -- %s[/color]" % [
 				String(item.get("source_id", "?")), String(fev.get("name", fev.get("id", "update")))]})
 		match String(r.get("status", "")):
 			"paused_on_window":
@@ -621,7 +630,7 @@ func _finish_month_playback() -> void:
 	var review := {
 		"id": MONTH_REVIEW_EVENT_ID,
 		"name": "Month Review -- %s" % label,
-		"description": "%s begins.\n\nAttention: %d fresh decisions this month (last month's unspent reserve evaporated -- no banking).\nFunds: %s   -   Doom: %.1f%%   -   Staff: %d%s\n\nQueue this month's actions, then End Turn to play the month out." % [
+		"description": "%s begins.\n\nAttention: %d fresh decisions this month (last month's unspent reserve evaporated -- no banking).\nFunds: %s   |   Doom: %.1f%%   |   Staff: %d%s\n\nQueue this month's actions, then End Turn to play the month out." % [
 			label, attention_now, GameConfig.format_money(state.money), state.doom, state.get_total_staff(),
 			_build_rivals_review_section()],
 		"type": "popup",
@@ -728,7 +737,7 @@ func load_saved_game(path: String = SaveLoad.QUICKSAVE_PATH) -> bool:
 	# NOTE: replay verification rebuilds from turn 0 (ADR-0006); a loaded session
 	# is a snapshot continuation, so tracking restarts here only to keep the
 	# in-turn recording calls alive -- the artifact is not replay-verifiable.
-	VerificationTracker.start_tracking(state.game_seed_str, GameConfig.CURRENT_VERSION)
+	VerificationTracker.start_tracking(state.game_seed_str, GameConfig.CURRENT_VERSION, [], "", GameConfig.get_board_version())
 	MusicManager.play_context(MusicManager.MusicContext.GAMEPLAY)
 	print("[GameManager] Loaded save %s -- turn %d, phase %s" % [
 		path, state.turn, GameState.TurnPhase.keys()[state.current_phase]])

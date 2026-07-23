@@ -77,7 +77,11 @@ var version: String = "1.0.0"
 var max_entries: int = 50
 var entries: Array[ScoreEntry] = []
 var game_seed: String = ""  # Renamed from 'seed' to avoid shadowing built-in function
-var game_version: String = ""  # ADR-0002 #5: boards are keyed by (seed, game_version)
+# ADR-0002 #5: boards are keyed by (seed, game_version). Post build-vs-ladder split
+# this value is the LADDER EPOCH ("L1") passed by callers via
+# GameConfig.get_board_version(), NOT the build string -- legacy pre-split files
+# carry the old "v0.11.0"-style value and remain readable (spec DECISION B1).
+var game_version: String = ""
 var leaderboard_dir: String = "user://leaderboards"
 var file_path: String = ""
 
@@ -85,8 +89,10 @@ func _init(p_seed: String = "default", p_version: String = ""):
 	game_seed = p_seed
 	game_version = p_version
 	# ADR-0002 #5: version-scope the board so balance patches rotate the meta and old
-	# scores never rank against the current game. Legacy callers (no version) keep the
-	# old per-seed filename. Delimiter is '__' to survive hyphens/underscores in seeds.
+	# scores never rank against the current game. Post build-vs-ladder split the scope
+	# is the ladder EPOCH (filename "...__L1.json"), so cosmetic build bumps do NOT
+	# rotate the board -- only gameplay-rule bumps do. Legacy callers (no version) keep
+	# the old per-seed filename. Delimiter is '__' to survive hyphens/underscores in seeds.
 	if game_version != "":
 		file_path = "%s/leaderboard_%s__%s.json" % [leaderboard_dir, game_seed, game_version]
 	else:

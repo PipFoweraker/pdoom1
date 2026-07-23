@@ -75,8 +75,14 @@ func _on_launch_pressed():
 	# Mark game as active
 	GameConfig.current_game_active = true
 
-	# Transition to main game
-	SceneTransition.go_to("res://scenes/main.tscn")
+	# First-launch (or re-versioned intro): play the cold-open onboarding first (#801).
+	# The cold-open itself SceneTransition.go_to()s main on completion/skip. Gated on
+	# last_seen_intro_version (see GameConfig.should_show_intro), so it is immune to the
+	# increment_games_played() above. Pure presentation -- does not fork the ladder.
+	if GameConfig.should_show_intro():
+		SceneTransition.go_to("res://scenes/cold_open_sequence.tscn")
+	else:
+		SceneTransition.go_to("res://scenes/main.tscn")
 
 func _on_back_pressed():
 	"""Return to welcome screen"""

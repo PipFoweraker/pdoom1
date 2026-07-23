@@ -36,8 +36,17 @@ var game_seed: String = ""
 # Tracking state
 var tracking_enabled: bool = false
 
-# Game version (for cross-version compatibility checks)
+# Game version (for cross-version compatibility checks). This is the BUILD string
+# (GameConfig.CURRENT_VERSION): a replay must reproduce on the EXACT build that made
+# it, so the build is the artifact's repro identity (spec Section 5.3).
 var game_version: String = ""
+
+# Ladder epoch the run was played under (build-vs-ladder split, spec Section 5.3):
+# the board the score ranks on. Stored ALONGSIDE game_version -- they answer
+# different questions (repro identity vs ranking scope). Carried as data only;
+# deliberately NOT mixed into the hash chain so pre-split artifacts replay to
+# identical hashes (score-integrity: the fingerprint math is unchanged).
+var ladder_version: String = ""
 
 # Debug mode (enables verbose logging)
 var debug_mode: bool = false
@@ -59,20 +68,24 @@ var event_schedule: Array = []
 var league_id: String = ""
 
 
-func start_tracking(seed: String, version: String = "unknown", schedule: Array = [], league: String = ""):
+func start_tracking(seed: String, version: String = "unknown", schedule: Array = [], league: String = "", ladder: String = ""):
 	"""
 	Initialize verification hash for new game.
 
 	Args:
 		seed: Game seed (deterministic RNG source)
-		version: Game version (for compatibility checks)
+		version: BUILD version (repro identity / compatibility checks)
 		schedule: The run's event schedule (ADR-0005: part of seed identity; emitted
 			in the replay artifact so scheduled runs reproduce -- DQ-6)
+		league: Monthly league id (ADR-0016)
+		ladder: Ladder epoch the run ranks under (build-vs-ladder split, spec 5.3).
+			"" for legacy/pre-split artifacts. NOT hashed -- carried data only.
 	"""
 	game_seed = seed
 	game_version = version
 	event_schedule = schedule.duplicate(true)
 	league_id = league
+	ladder_version = ladder
 	tracking_enabled = true
 	replay_log.clear()
 
@@ -276,6 +289,9 @@ func get_replay() -> Dictionary:
 		"schedule": event_schedule.duplicate(true),
 		# ADR-0016: which monthly league produced this run, carried beside seed+version.
 		"league": league_id,
+		# Build-vs-ladder split (spec 5.3): the epoch this run RANKS under, beside the
+		# build tag it must REPRODUCE on. "" on pre-split artifacts.
+		"ladder": ladder_version,
 		"log": replay_log.duplicate(true)
 	}
 
@@ -305,6 +321,7 @@ func snapshot() -> Dictionary:
 		"game_version": game_version,
 		"event_schedule": event_schedule.duplicate(true),
 		"league_id": league_id,
+		"ladder_version": ladder_version,
 		"replay_log": replay_log.duplicate(true)
 	}
 
@@ -317,6 +334,7 @@ func restore(snap: Dictionary) -> void:
 	game_version = snap.get("game_version", "")
 	event_schedule = (snap.get("event_schedule", []) as Array).duplicate(true)
 	league_id = String(snap.get("league_id", ""))
+	ladder_version = String(snap.get("ladder_version", ""))
 	replay_log = (snap.get("replay_log", []) as Array).duplicate(true)
 
 
@@ -382,6 +400,9 @@ func export_for_submission(final_state: Dictionary) -> Dictionary:
 		"verification_hash": verification_hash,
 		"seed": game_seed,
 		"game_version": game_version,
+		# Build-vs-ladder split (spec 5.3): the ranking scope travels beside the
+		# build tag. The server verifies against the board keyed by THIS value.
+		"ladder_version": ladder_version,
 		"final_state": final_state,
 		"replay": serialize_replay(),  # ADR-0006: canonical artifact travels with the submission
 		"timestamp": Time.get_unix_time_from_system()

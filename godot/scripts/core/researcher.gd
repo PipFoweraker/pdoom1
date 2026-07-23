@@ -43,6 +43,8 @@ var needs_visa: bool = false        # foreign/remote hire -> a situational onboa
 var onboarded: bool = true          # DEFAULT true: legacy/direct hires are productive at once
 var laptop_done: bool = false       # hard checklist item
 var visa_done: bool = false         # hard checklist item (only when needs_visa)
+var systems_done: bool = false      # hard checklist item (#789): onboarded to systems; needs laptop first
+var meet_people_done: bool = false  # hard checklist item (#789): introduced around the lab
 var mentoring_done: bool = false    # soft item: skipping it debuffs + arms attrition
 var mentoring_skipped: bool = false # player explicitly skimped mentoring (slack-as-insurance)
 
@@ -627,6 +629,8 @@ func to_dict() -> Dictionary:
 		"onboarded": onboarded,
 		"laptop_done": laptop_done,
 		"visa_done": visa_done,
+		"systems_done": systems_done,
+		"meet_people_done": meet_people_done,
 		"mentoring_done": mentoring_done,
 		"mentoring_skipped": mentoring_skipped,
 	}
@@ -671,5 +675,9 @@ func from_dict(data: Dictionary):
 	onboarded = bool(data.get("onboarded", true))
 	laptop_done = bool(data.get("laptop_done", false))
 	visa_done = bool(data.get("visa_done", false))
+	# #789 checklist steps: missing keys (pre-#789 saves) default false. A pre-#789 save
+	# mid-onboard therefore owes the new steps -- acceptable; #789 is a gameplay change.
+	systems_done = bool(data.get("systems_done", false))
+	meet_people_done = bool(data.get("meet_people_done", false))
 	mentoring_done = bool(data.get("mentoring_done", false))
 	mentoring_skipped = bool(data.get("mentoring_skipped", false))

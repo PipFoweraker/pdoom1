@@ -91,6 +91,14 @@ var _seen_unlocked_actions: Dictionary = {}  # #578: action ids seen unlocked, t
 var _actions_primed: bool = false  # skip fanfare on the very first action population (baseline)
 var current_turn_phase: String = "NOT_STARTED"
 
+# First-lever nudge (#801 cold-open handoff). When GameConfig.show_first_lever_hint is set
+# (by the cold-open on completion), pulse the hire button + point the getting-started hint at
+# the lever, so a new player learns action->effect. Cleared after the first hire or turn 3.
+# Pure presentation -- reads a transient flag, mutates no game state / RNG / score.
+const FIRST_LEVER_ACTION_ID := "hire_staff"
+const FIRST_LEVER_HINT_TEXT := "Advisor: doom is rising -- hire a researcher to lower it (the glowing button)."
+var _first_lever_pulse_tween: Tween
+
 # P0 feed filter (playtest 2026-07-17): the arxiv/technical-research flavour deck floods the
 # feed. Each logged line is recorded here with its channel; the "flavour" channel is hidden
 # by default so real, actionable events aren't crowded out. The toggle flips this.
@@ -962,6 +970,11 @@ func _on_game_state_updated(state: Dictionary):
 	if getting_started_hint:
 		getting_started_hint.visible = GameConfig.show_hints and state.get("turn", 0) < 3
 
+	# #801: retire the first-lever pulse once the onboarding window has passed, even if the
+	# player never hired (belt-and-suspenders; the primary clear is on first hire).
+	if GameConfig.show_first_lever_hint and state.get("turn", 0) >= 3:
+		_clear_first_lever_nudge()
+
 	# Enable controls after first init
 	if state.get("turn", 0) >= 0:
 		# Enable/disable Reserve AP button based on available AP
@@ -1389,6 +1402,36 @@ func _on_actions_available(actions: Array):
 	# Also populate upgrades
 	_populate_upgrades()
 
+	# #801: re-apply the first-lever pulse each rebuild (buttons are recreated above, so a
+	# tween on the old button would dangle). No-op unless the cold-open set the flag.
+	_apply_first_lever_nudge()
+
+## #801 cold-open handoff: pulse the hire button and point the hint at the lever.
+## Guarded + minimal -- does nothing unless GameConfig.show_first_lever_hint is set.
+func _apply_first_lever_nudge() -> void:
+	# Kill any prior pulse (its target button was just freed + recreated).
+	if _first_lever_pulse_tween != null and _first_lever_pulse_tween.is_valid():
+		_first_lever_pulse_tween.kill()
+	_first_lever_pulse_tween = null
+	if not GameConfig.show_first_lever_hint:
+		return
+	var btn := _find_action_button(FIRST_LEVER_ACTION_ID)
+	if btn == null:
+		return
+	# Advisor pointer line (names the lever AND its effect).
+	if getting_started_hint:
+		getting_started_hint.text = FIRST_LEVER_HINT_TEXT
+	# Looping alpha pulse to draw the eye to the named lever.
+	_first_lever_pulse_tween = create_tween().set_loops()
+	_first_lever_pulse_tween.tween_property(btn, "modulate:a", 0.4, 0.6)
+	_first_lever_pulse_tween.tween_property(btn, "modulate:a", 1.0, 0.6)
+
+## Stop the first-lever nudge (first hire taken, or onboarding window passed).
+func _clear_first_lever_nudge() -> void:
+	GameConfig.show_first_lever_hint = false
+	if _first_lever_pulse_tween != null and _first_lever_pulse_tween.is_valid():
+		_first_lever_pulse_tween.kill()
+	_first_lever_pulse_tween = null
 func _render_actions_grouped(categories: Dictionary, category_order: Array, category_colors: Dictionary, current_state: Dictionary) -> void:
 	"""P9 grouped hand (proposed layout only): each category is one A-header that expands/collapses
 	a B-list of its actions -- Pip's ABBBCCC sketch as inline collapsible sections. Fewer top-level
@@ -1574,6 +1617,10 @@ func _on_upgrade_hover(upgrade: Dictionary, is_purchased: bool):
 func _on_dynamic_action_pressed(action_id: String, action_name: String):
 	"""Handle dynamic action button press"""
 	log_message("[color=cyan]Selecting action: %s[/color]" % action_name)
+
+	# #801: the player engaged the taught lever -- retire the first-lever nudge.
+	if GameConfig.show_first_lever_hint and action_id == FIRST_LEVER_ACTION_ID:
+		_clear_first_lever_nudge()
 
 	# Check if this is a submenu action
 	var action = _get_action_by_id(action_id)
@@ -1972,7 +2019,9 @@ func _build_candidate_card(cand) -> PanelContainer:
 
 func _build_onboarding_card(r) -> PanelContainer:
 	"""One onboarding hire: checklist state, the productivity debuff made legible, and a
-	button per pending step (laptop / visa / mentoring / skip). Calls hiring_onboard_step."""
+	button per pending step (#789: laptop / visa / systems / meet people / mentoring /
+	skip). Calls hiring_onboard_step. This is the non-paused path; the accept-prompt
+	window is the paused one."""
 	var st = game_manager.state
 	var status: Dictionary = st.hiring.onboarding_status(r)
 	var panel := PanelContainer.new()
@@ -2006,8 +2055,11 @@ func _build_onboarding_card(r) -> PanelContainer:
 	if status["needs_visa"]:
 		var visa_mark = "[x]" if status["visa_done"] else "[ ]"
 		visa_line = "   Visa %s" % visa_mark
+	# #789: the hard checklist grew (laptop -> systems -> meet people, + visa).
+	var sys_mark = "[x]" if status["systems_done"] else "[ ]"
+	var meet_mark = "[x]" if status["meet_people_done"] else "[ ]"
 	var ment_mark = "[x]" if status["mentoring_done"] else ("SKIPPED" if status["mentoring_skipped"] else "[ ]")
-	check.text = "Laptop %s%s   Mentoring %s" % [laptop_mark, visa_line, ment_mark]
+	check.text = "Laptop %s%s   Systems %s   Meet %s   Mentoring %s" % [laptop_mark, visa_line, sys_mark, meet_mark, ment_mark]
 	vb.add_child(check)
 
 	var actions := HBoxContainer.new()
@@ -2029,6 +2081,23 @@ func _build_onboarding_card(r) -> PanelContainer:
 		b2.add_theme_font_size_override("font_size", 10)
 		b2.pressed.connect(_on_hiring_onboard_pressed.bind(cid, "visa"))
 		actions.add_child(b2)
+	# #789 steps (Attention from the tunable HiringPipeline.ONBOARD_ATTENTION const).
+	if not r.systems_done:
+		var bs := Button.new()
+		bs.text = "Systems (%dAtt)" % int(HiringPipeline.ONBOARD_ATTENTION["systems"])
+		bs.focus_mode = Control.FOCUS_NONE
+		bs.add_theme_font_size_override("font_size", 10)
+		bs.disabled = not r.laptop_done
+		bs.tooltip_text = "Onboard them to your systems." if r.laptop_done else "Needs their laptop first."
+		bs.pressed.connect(_on_hiring_onboard_pressed.bind(cid, "systems"))
+		actions.add_child(bs)
+	if not r.meet_people_done:
+		var bm := Button.new()
+		bm.text = "Meet people (%dAtt)" % int(HiringPipeline.ONBOARD_ATTENTION["meet_people"])
+		bm.focus_mode = Control.FOCUS_NONE
+		bm.add_theme_font_size_override("font_size", 10)
+		bm.pressed.connect(_on_hiring_onboard_pressed.bind(cid, "meet_people"))
+		actions.add_child(bm)
 	if not r.mentoring_done and not r.mentoring_skipped:
 		var b3 := Button.new()
 		b3.text = "Mentor (2Att)"
@@ -2146,6 +2215,19 @@ func _show_offer_dialog(candidate_id: String) -> void:
 	band_lbl.add_theme_font_size_override("font_size", 9)
 	band_lbl.add_theme_color_override("font_color", Color(0.6, 0.6, 0.6))
 	vb.add_child(band_lbl)
+
+	# #789: make the onboarding follow-up a PREDICTABLE sink at offer time ("plan for it
+	# when you make the offer"): project the hard-checklist Attention and show the current
+	# crisp reserve, so the player can pre-fund the accept-prompt before ending the turn.
+	var onboard_att: int = st.hiring.hard_checklist_attention(cand)
+	var mentor_att: int = st.hiring.item_attention("mentoring")
+	var reserve_now: int = st.month_plan.reserve_remaining() if st.month_plan != null else 0
+	var onboard_lbl := Label.new()
+	onboard_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	onboard_lbl.text = "If they accept: onboarding costs ~%d Attention (+%d optional mentoring). Reserve on hand: %d." % [onboard_att, mentor_att, reserve_now]
+	onboard_lbl.add_theme_font_size_override("font_size", 9)
+	onboard_lbl.add_theme_color_override("font_color", Color(0.7, 0.8, 0.9))
+	vb.add_child(onboard_lbl)
 
 	var cash_row := HBoxContainer.new()
 	cash_row.add_theme_constant_override("separation", 8)
@@ -3489,20 +3571,21 @@ func _update_inflight_hiring_display(state: Dictionary) -> void:
 		var done: int = clampi(total - remaining, 0, total)
 		rows.append({"title": title, "done": done, "total": total, "unit": "ticks"})
 
-	# Onboarding hires (checklist, not tick-timed): laptop [+ visa]. Legacy/direct hires
-	# default onboarded=true, so only pipeline hires still cooking show here.
+	# Onboarding hires (checklist, not tick-timed). #789 hard checklist: laptop +
+	# systems + meet people [+ visa]. Legacy/direct hires default onboarded=true, so
+	# only pipeline hires still cooking show here.
 	for r in staff:
 		if bool(r.get("onboarded", true)):
 			continue
-		var need_visa := bool(r.get("needs_visa", false))
-		var steps_total := 2 if need_visa else 1
+		var flags: Array = ["laptop_done", "systems_done", "meet_people_done"]
+		if bool(r.get("needs_visa", false)):
+			flags.append("visa_done")
 		var steps_done := 0
-		if bool(r.get("laptop_done", false)):
-			steps_done += 1
-		if need_visa and bool(r.get("visa_done", false)):
-			steps_done += 1
+		for f in flags:
+			if bool(r.get(f, false)):
+				steps_done += 1
 		rows.append({"title": "Onboarding: %s" % String(r.get("name", "?")),
-			"done": steps_done, "total": steps_total, "unit": "steps"})
+			"done": steps_done, "total": flags.size(), "unit": "steps"})
 
 	if rows.is_empty():
 		_inflight_hiring_box.visible = false
