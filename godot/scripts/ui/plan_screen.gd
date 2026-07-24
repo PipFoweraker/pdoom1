@@ -18,11 +18,47 @@ extends VBoxContainer
 # and mounted at the top of the screen. Refreshed each state tick via update_reserve_gauge.
 var _reserve_gauge: RichTextLabel
 
+# Transient rejection toast (playtest 2026-07-24). Built in code, mounted under the reserve
+# gauge, hidden until flash_error() surfaces an action-queue rejection HERE on the PLAN screen
+# (previously such errors went only to the WATCH feed, which is hidden in PLAN mode).
+var _error_toast: Label
+var _error_flash_seq: int = 0
+
 
 func _ready() -> void:
 	# Amber the upgrades label into the PLAN (strategy) register.
 	upgrades_label.add_theme_color_override("font_color", TerminalTheme.AMBER_DIM)
 	_build_reserve_gauge()
+	_build_error_toast()
+
+
+func _build_error_toast() -> void:
+	_error_toast = Label.new()
+	_error_toast.name = "PlanErrorToast"
+	_error_toast.add_theme_color_override("font_color", Color(1.0, 0.45, 0.4))  # warm amber/red
+	_error_toast.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_error_toast.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_error_toast.visible = false
+	add_child(_error_toast)
+	move_child(_error_toast, 1)  # just under the reserve gauge
+
+
+func flash_error(message: String) -> void:
+	"""Surface an action-queue rejection (e.g. 'Not enough Attention', 'Cannot afford ...') ON
+	the PLAN screen where the player is acting. Previously error_occurred routed only to the
+	WATCH feed (hidden in PLAN mode), so a rejected queue attempt gave no visible feedback here
+	(playtest 2026-07-24). Auto-hides after a few seconds; a newer flash supersedes an older
+	one's pending hide. Pure presentation -- no sim/scene effect."""
+	if _error_toast == null or message == "":
+		return
+	_error_toast.text = "[!] %s" % message
+	_error_toast.visible = true
+	_error_flash_seq += 1
+	var my_seq := _error_flash_seq
+	var timer := get_tree().create_timer(4.0)
+	timer.timeout.connect(func() -> void:
+		if is_instance_valid(_error_toast) and my_seq == _error_flash_seq:
+			_error_toast.visible = false)
 
 
 func _build_reserve_gauge() -> void:

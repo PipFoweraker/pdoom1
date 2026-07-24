@@ -111,6 +111,10 @@ var purchased_upgrades: Array[String] = []
 var turn: int = 0
 var game_over: bool = false
 var victory: bool = false
+# Org form (early-game choice, part of DQ-19 char/org creation): "nonprofit" | "for_profit".
+# Set from GameConfig at game start (game_manager); read by FinanceEngine.context_from_state
+# to gate instruments (e.g. vc_equity is for_profit-only) and scale debt pricing.
+var org_type: String = "nonprofit"
 var game_seed_str: String = ""  # Renamed from 'seed' to avoid shadowing built-in function
 static var _empty_seed_counter: int = 0  # Keeps empty ("random") seeds unique within the same instant (#538)
 

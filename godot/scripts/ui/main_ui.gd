@@ -721,8 +721,9 @@ func _remove_queued_action(action_id: String, action_name: String):
 		print("[MainUI] ERROR: Could not find action to remove: %s" % action_id)
 
 func _on_end_turn_button_pressed():
-	if queued_actions.size() == 0:
-		# Issue #733: an empty queue no longer hard-errors. Route through the existing
+	if queued_actions.size() == 0 or (game_manager.state != null and game_manager.state.queued_actions.is_empty()):
+		# Issue #733 (+ overbook soft-lock): an empty ACCEPTED queue no longer hard-errors --
+		# phantom UI tiles could previously suppress this net. Route through the existing
 		# pass-action path (identical to the Do Nothing button) so COMMIT THE MONTH always
 		# advances. Determinism-safe: no new RNG and no turn-step reordering -- select_action()
 		# only queues the canonical pass id, and end_month() below plays it out exactly as a
@@ -956,8 +957,12 @@ func _on_game_state_updated(state: Dictionary):
 			state.get("rival_labs_full", []))
 
 	# BL-1: refresh the compact Liability Ledger summary (#622 L10: lives in LedgerScreen)
+	# turn/start_* let the summary show a real calendar due date, not a raw turn count.
 	if ledger_screen:
-		ledger_screen.update_summary(state.get("ledger", {}))
+		ledger_screen.update_summary(state.get("ledger", {}), int(state.get("turn", 0)),
+			int(state.get("start_year", GameState.DEFAULT_START_YEAR)),
+			int(state.get("start_month", GameState.DEFAULT_START_MONTH)),
+			int(state.get("start_day", GameState.DEFAULT_START_DAY)))
 
 	# Update office cat for doom level and visibility
 	if office_cat:
@@ -1162,6 +1167,12 @@ func _on_achievement_unlocked(achievement: Dictionary) -> void:
 func _on_error_occurred(error_msg: String):
 	print("[MainUI] Error: ", error_msg)
 	log_message("[color=red]ERROR: " + error_msg + "[/color]")
+	# Also surface it ON the PLAN screen where the player is acting (playtest 2026-07-24): the
+	# feed above is WATCH-only (hidden in PLAN mode), so an action-queue rejection like "Not
+	# enough Attention" / "Cannot afford ..." was previously invisible while planning. The toast
+	# is hidden unless PLAN is the active screen, so this is additive, not duplicate noise.
+	if plan_screen != null and is_instance_valid(plan_screen):
+		plan_screen.flash_error(error_msg)
 
 func _notification(what: int) -> void:
 	# P0 rage-quit friction: intercept the window-manager close during a run and route to the
@@ -1657,11 +1668,12 @@ func _on_dynamic_action_pressed(action_id: String, action_name: String):
 		log_message("[color=red]Cannot afford action: %s[/color]" % action_name)
 		return
 
-	# Track queued action
-	queued_actions.append({"id": action_id, "name": action_name})
-	update_queued_actions_display()
-
-	game_manager.select_action(action_id)
+	# Track queued action -- #821: only add the UI tile when the backend accepts
+	# (select_action returns false on Attention overbook + emits the error), so a
+	# rejected action no longer leaves a phantom queue tile.
+	if game_manager.select_action(action_id):
+		queued_actions.append({"id": action_id, "name": action_name})
+		update_queued_actions_display()
 
 func _get_action_by_id(action_id: String) -> Dictionary:
 	"""Helper to find action definition - delegates to GameActions"""
@@ -1941,9 +1953,17 @@ func _build_candidate_card(cand) -> PanelContainer:
 	the ??? placeholder) + Interview / Make Offer actions wired to the hiring_* delegates."""
 	var c: Dictionary = cand.get_card_data()
 	var panel := PanelContainer.new()
+	var hb := HBoxContainer.new()
+	hb.add_theme_constant_override("separation", 6)
+	panel.add_child(hb)
+	# Deterministic per-person portrait (DQ-15 / #758, not archetype-matched yet -- see
+	# PortraitLibrary docstring); falls back to text-only if the asset is missing.
+	var portrait := PortraitLibrary.make_texture_rect(cand.appearance_id)
+	if portrait != null:
+		hb.add_child(portrait)
 	var vb := VBoxContainer.new()
 	vb.add_theme_constant_override("separation", 2)
-	panel.add_child(vb)
+	hb.add_child(vb)
 
 	var title := Label.new()
 	title.text = "%s  -  %s  [%s]" % [c["name"], c["lane"], c["hire_state"]]
@@ -2025,9 +2045,16 @@ func _build_onboarding_card(r) -> PanelContainer:
 	var st = game_manager.state
 	var status: Dictionary = st.hiring.onboarding_status(r)
 	var panel := PanelContainer.new()
+	var hb := HBoxContainer.new()
+	hb.add_theme_constant_override("separation", 6)
+	panel.add_child(hb)
+	# Deterministic per-person portrait (DQ-15 / #758); see _build_candidate_card above.
+	var portrait := PortraitLibrary.make_texture_rect(r.appearance_id)
+	if portrait != null:
+		hb.add_child(portrait)
 	var vb := VBoxContainer.new()
 	vb.add_theme_constant_override("separation", 2)
-	panel.add_child(vb)
+	hb.add_child(vb)
 
 	var title := Label.new()
 	title.text = "%s  -  %s" % [r.researcher_name, r.get_specialization_name()]
@@ -2311,6 +2338,62 @@ func _on_hiring_send_offer_pressed(candidate_id: String, cash_spin: SpinBox, pro
 	var promises := _selected_promises(promise_boxes)
 	_hiring_action_result(game_manager.hiring_offer(candidate_id, cash_spin.value, promises), "Offer")
 
+func _format_costs_inline(costs: Dictionary) -> String:
+	"""Shared cost-summary formatter for the icon-grid submenus (fundraising / publicity /
+	strategic / travel / operations). Cost-display sweep (2026-07-24, Pip playtest): these
+	buttons were only showing cost on hover (tooltip_text) -- this is what now also goes ON
+	the button face via a dedicated cost label, so a hidden-AP surprise (e.g. Compute
+	Partnership, Intelligence Opportunity) can't happen here. Returns 'Free' for an empty/
+	zero-cost dict."""
+	var parts: Array[String] = []
+	if costs.get("action_points", 0) > 0:
+		parts.append("%d AP" % int(costs["action_points"]))
+	if costs.get("money", 0) > 0:
+		parts.append(GameConfig.format_money(costs["money"]))
+	if costs.get("reputation", 0) > 0:
+		parts.append("%d Rep" % int(costs["reputation"]))
+	if costs.get("papers", 0) > 0:
+		parts.append("%d Papers" % int(costs["papers"]))
+	if costs.get("research", 0) > 0:
+		parts.append("%d Research" % int(costs["research"]))
+	if costs.get("compute", 0) > 0:
+		parts.append("%d Compute" % int(costs["compute"]))
+	if parts.is_empty():
+		return "Free"
+	return ", ".join(parts)
+
+
+func _costs_affordable(costs: Dictionary, state: Dictionary) -> bool:
+	"""Shared affordability check for the icon-grid submenus. IMPORTANT: action_points must be
+	checked against the monthly Attention budget (available_ap), not the raw legacy
+	action_points primitive -- get_available_ap() nets out what's already committed/reserved
+	this plan month (see GameState.get_available_ap docstring). Using the raw field under-
+	reported unaffordable options as affordable (cost-display sweep, #822-adjacent)."""
+	for resource in costs.keys():
+		var need = costs[resource]
+		if need <= 0:
+			continue
+		var have = state.get("available_ap", 0) if resource == "action_points" else state.get(resource, 0)
+		if have < need:
+			return false
+	return true
+
+
+func _make_cost_label(cost_text: String, is_free: bool) -> Label:
+	"""Small on-face cost line added under an icon-grid submenu button (cost-display sweep).
+	Amber for a real cost, muted green for Free -- consistent with the AP-cost-indicator
+	color used in update_queued_actions_display()."""
+	var lbl := Label.new()
+	lbl.text = cost_text
+	lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	lbl.add_theme_font_size_override("font_size", 9)
+	if is_free:
+		lbl.add_theme_color_override("font_color", Color(0.55, 0.8, 0.55))
+	else:
+		lbl.add_theme_color_override("font_color", Color(0.9, 0.75, 0.35))
+	return lbl
+
+
 func _show_fundraising_submenu():
 	"""Show popup dialog with fundraising options with keyboard support - icon grid layout"""
 	print("[MainUI] === FUNDRAISING SUBMENU STARTING ===")
@@ -2386,18 +2469,9 @@ func _show_fundraising_submenu():
 		btn.add_theme_font_size_override("font_size", 10)
 		btn.add_theme_color_override("font_color", Color(1, 1, 1, 0.6))
 
-		# Format costs for tooltip
-		var cost_text = ""
-		if fund_costs.get("action_points", 0) > 0:
-			cost_text += "%d AP" % fund_costs.get("action_points")
-		if fund_costs.get("reputation", 0) > 0:
-			if cost_text != "":
-				cost_text += ", "
-			cost_text += "%d Rep" % fund_costs.get("reputation")
-		if fund_costs.get("papers", 0) > 0:
-			if cost_text != "":
-				cost_text += ", "
-			cost_text += "%d Papers" % fund_costs.get("papers")
+		# Cost summary -- shown ON the button face (cost label below), not hover-only (#822).
+		var cost_text = _format_costs_inline(fund_costs)
+		var is_free = cost_text == "Free"
 
 		# Format gains for tooltip
 		var gain_text = ""
@@ -2406,19 +2480,15 @@ func _show_fundraising_submenu():
 		elif fund_gains.has("money"):
 			gain_text = GameConfig.format_money(fund_gains.get("money"))
 
-		# Check affordability
-		var can_afford = true
-		for resource in fund_costs.keys():
-			if current_state.get(resource, 0) < fund_costs[resource]:
-				can_afford = false
-				break
+		# Check affordability (available_ap, not raw action_points -- see _costs_affordable)
+		var can_afford = _costs_affordable(fund_costs, current_state)
 
 		if not can_afford:
 			btn.disabled = true
 			btn.modulate = Color(0.5, 0.5, 0.5)
 
 		# Tooltip with full details
-		btn.tooltip_text = "%s\n%s\n\nCosts: %s\nGains: %s" % [fund_name, fund_desc, cost_text if cost_text != "" else "Free", gain_text]
+		btn.tooltip_text = "%s\n%s\n\nCosts: %s\nGains: %s" % [fund_name, fund_desc, cost_text, gain_text]
 
 		# Connect button
 		btn.pressed.connect(func(): _on_fundraising_option_selected(fund_id, fund_name, dialog))
@@ -2434,6 +2504,12 @@ func _show_fundraising_submenu():
 		name_label.add_theme_font_size_override("font_size", 10)
 		name_label.add_theme_color_override("font_color", Color(0.8, 0.8, 0.8))
 		item_vbox.add_child(name_label)
+
+		# On-face cost line (#822 cost-display sweep) -- greyed along with the button when unaffordable.
+		var fund_cost_label = _make_cost_label(cost_text, is_free)
+		if not can_afford:
+			fund_cost_label.modulate = Color(0.5, 0.5, 0.5)
+		item_vbox.add_child(fund_cost_label)
 
 		grid.add_child(item_vbox)
 		buttons.append(btn)
@@ -2496,12 +2572,13 @@ func _on_fundraising_option_selected(action_id: String, action_name: String, dia
 
 	log_message("[color=cyan]Fundraising: %s[/color]" % action_name)
 
-	# Queue the actual fundraising action
-	queued_actions.append({"id": action_id, "name": action_name})
-	update_queued_actions_display()
-
+	# Queue the actual fundraising action -- #821: only add the UI tile when the
+	# backend accepts (select_action returns false on Attention overbook), so a
+	# rejected action no longer leaves a phantom queue tile.
 	print("[MainUI] Calling game_manager.select_action(%s)" % action_id)
-	game_manager.select_action(action_id)
+	if game_manager.select_action(action_id):
+		queued_actions.append({"id": action_id, "name": action_name})
+		update_queued_actions_display()
 
 func _show_financing_submenu():
 	"""BL-1: the Liability Ledger financing menu (ADR-0003) - lists the ledger trades
@@ -2553,12 +2630,10 @@ func _show_financing_submenu():
 		var cost_txt = (" (%s)" % ", ".join(cost_bits)) if cost_bits.size() > 0 else ""
 		btn.text = "[%s]  %s%s" % [key, opt_name, cost_txt]
 		btn.tooltip_text = option.get("description", "")
-		var can_afford = true
-		for res in opt_costs.keys():
-			if res == "action_points":
-				continue
-			if current_state.get(res, 0) < opt_costs[res]:
-				can_afford = false
+		# available_ap (not raw action_points) -- see _costs_affordable docstring. This loop
+		# previously SKIPPED action_points entirely, so a financing trade could show affordable
+		# while the player had no Attention left to actually queue it (cost-display sweep, #822).
+		var can_afford = _costs_affordable(opt_costs, current_state)
 		if not can_afford:
 			btn.disabled = true
 			btn.modulate = Color(0.5, 0.5, 0.5)
@@ -2598,9 +2673,11 @@ func _on_financing_option_selected(action_id: String, action_name: String, dialo
 		log_message("[color=red]Cannot afford: %s[/color]" % action_name)
 		return
 	log_message("[color=cyan]Financing: %s[/color]" % action_name)
-	queued_actions.append({"id": action_id, "name": action_name})
-	update_queued_actions_display()
-	game_manager.select_action(action_id)
+	# #821: only add the UI tile when the backend accepts (select_action returns
+	# false on Attention overbook), so a rejected action leaves no phantom tile.
+	if game_manager.select_action(action_id):
+		queued_actions.append({"id": action_id, "name": action_name})
+		update_queued_actions_display()
 
 func _show_ledger_screen():
 	"""BL-1/#601: open the full Liability Ledger screen. #622 L10: the panel itself is
@@ -2616,7 +2693,14 @@ func _show_ledger_screen():
 	# (ui_cancel) affordance itself, wired to our _close_active_submenu so the dialog
 	# bookkeeping stays with the host. No separate _decorate_active_submenu() needed --
 	# doing both would stack two [X] buttons.
-	var dialog: Panel = ledger_screen.build_screen(ledger, get_viewport().get_visible_rect().size, _close_active_submenu)
+	# turn/start_* let each row show a real calendar due date, not a raw turn count.
+	var g_state = game_manager.state if game_manager else null
+	var dialog: Panel = ledger_screen.build_screen(ledger, get_viewport().get_visible_rect().size,
+		_close_active_submenu,
+		g_state.turn if g_state else 0,
+		g_state.start_year if g_state else GameState.DEFAULT_START_YEAR,
+		g_state.start_month if g_state else GameState.DEFAULT_START_MONTH,
+		g_state.start_day if g_state else GameState.DEFAULT_START_DAY)
 
 	active_dialog = dialog
 	active_dialog_buttons = []
@@ -2699,36 +2783,19 @@ func _show_publicity_submenu():
 		btn.add_theme_font_size_override("font_size", 10)
 		btn.add_theme_color_override("font_color", Color(1, 1, 1, 0.6))
 
-		# Format costs for tooltip
-		var cost_text = ""
-		if pub_costs.get("action_points", 0) > 0:
-			cost_text += "%d AP" % pub_costs.get("action_points")
-		if pub_costs.get("money", 0) > 0:
-			if cost_text != "":
-				cost_text += ", "
-			cost_text += GameConfig.format_money(pub_costs.get("money"))
-		if pub_costs.get("reputation", 0) > 0:
-			if cost_text != "":
-				cost_text += ", "
-			cost_text += "%d Rep" % pub_costs.get("reputation")
-		if pub_costs.get("papers", 0) > 0:
-			if cost_text != "":
-				cost_text += ", "
-			cost_text += "%d Papers" % pub_costs.get("papers")
+		# Cost summary -- shown ON the button face (cost label below), not hover-only (#822).
+		var cost_text = _format_costs_inline(pub_costs)
+		var is_free = cost_text == "Free"
 
-		# Check affordability
-		var can_afford = true
-		for resource in pub_costs.keys():
-			if current_state.get(resource, 0) < pub_costs[resource]:
-				can_afford = false
-				break
+		# Check affordability (available_ap, not raw action_points -- see _costs_affordable)
+		var can_afford = _costs_affordable(pub_costs, current_state)
 
 		if not can_afford:
 			btn.disabled = true
 			btn.modulate = Color(0.5, 0.5, 0.5)
 
 		# Tooltip with full details
-		btn.tooltip_text = "%s\n%s\n\nCosts: %s" % [pub_name, pub_desc, cost_text if cost_text != "" else "Free"]
+		btn.tooltip_text = "%s\n%s\n\nCosts: %s" % [pub_name, pub_desc, cost_text]
 
 		# Connect button
 		btn.pressed.connect(func(): _on_publicity_option_selected(pub_id, pub_name, dialog))
@@ -2743,6 +2810,12 @@ func _show_publicity_submenu():
 		name_label.add_theme_font_size_override("font_size", 10)
 		name_label.add_theme_color_override("font_color", Color(0.8, 0.8, 0.8))
 		item_vbox.add_child(name_label)
+
+		# On-face cost line (#822 cost-display sweep) -- greyed along with the button when unaffordable.
+		var pub_cost_label = _make_cost_label(cost_text, is_free)
+		if not can_afford:
+			pub_cost_label.modulate = Color(0.5, 0.5, 0.5)
+		item_vbox.add_child(pub_cost_label)
 
 		grid.add_child(item_vbox)
 		buttons.append(btn)
@@ -2805,12 +2878,13 @@ func _on_publicity_option_selected(action_id: String, action_name: String, dialo
 
 	log_message("[color=cyan]Publicity: %s[/color]" % action_name)
 
-	# Queue the actual publicity action
-	queued_actions.append({"id": action_id, "name": action_name})
-	update_queued_actions_display()
-
+	# Queue the actual publicity action -- #821: only add the UI tile when the
+	# backend accepts (select_action returns false on Attention overbook), so a
+	# rejected action no longer leaves a phantom queue tile.
 	print("[MainUI] Calling game_manager.select_action(%s)" % action_id)
-	game_manager.select_action(action_id)
+	if game_manager.select_action(action_id):
+		queued_actions.append({"id": action_id, "name": action_name})
+		update_queued_actions_display()
 
 func _show_strategic_unlock_fanfare() -> void:
 	"""#578: Civ-style fade-up reveal when Strategic Moves first unlocks, instead of a button
@@ -2897,36 +2971,19 @@ func _show_strategic_submenu():
 		btn.add_theme_font_size_override("font_size", 10)
 		btn.add_theme_color_override("font_color", Color(1, 1, 1, 0.6))
 
-		# Format costs for tooltip
-		var cost_text = ""
-		if strat_costs.get("action_points", 0) > 0:
-			cost_text += "%d AP" % strat_costs.get("action_points")
-		if strat_costs.get("money", 0) > 0:
-			if cost_text != "":
-				cost_text += ", "
-			cost_text += GameConfig.format_money(strat_costs.get("money"))
-		if strat_costs.get("reputation", 0) > 0:
-			if cost_text != "":
-				cost_text += ", "
-			cost_text += "%d Rep" % strat_costs.get("reputation")
-		if strat_costs.get("papers", 0) > 0:
-			if cost_text != "":
-				cost_text += ", "
-			cost_text += "%d Papers" % strat_costs.get("papers")
+		# Cost summary -- shown ON the button face (cost label below), not hover-only (#822).
+		var cost_text = _format_costs_inline(strat_costs)
+		var is_free = cost_text == "Free"
 
-		# Check affordability
-		var can_afford = true
-		for resource in strat_costs.keys():
-			if current_state.get(resource, 0) < strat_costs[resource]:
-				can_afford = false
-				break
+		# Check affordability (available_ap, not raw action_points -- see _costs_affordable)
+		var can_afford = _costs_affordable(strat_costs, current_state)
 
 		if not can_afford:
 			btn.disabled = true
 			btn.modulate = Color(0.5, 0.5, 0.5)
 
 		# Tooltip with full details
-		btn.tooltip_text = "%s\n%s\n\nCosts: %s" % [strat_name, strat_desc, cost_text if cost_text != "" else "Free"]
+		btn.tooltip_text = "%s\n%s\n\nCosts: %s" % [strat_name, strat_desc, cost_text]
 
 		# Connect button
 		btn.pressed.connect(func(): _on_strategic_option_selected(strat_id, strat_name, dialog))
@@ -2940,6 +2997,12 @@ func _show_strategic_submenu():
 		name_label.add_theme_font_size_override("font_size", 10)
 		name_label.add_theme_color_override("font_color", Color(0.8, 0.8, 0.8))
 		item_vbox.add_child(name_label)
+
+		# On-face cost line (#822 cost-display sweep) -- greyed along with the button when unaffordable.
+		var strat_cost_label = _make_cost_label(cost_text, is_free)
+		if not can_afford:
+			strat_cost_label.modulate = Color(0.5, 0.5, 0.5)
+		item_vbox.add_child(strat_cost_label)
 
 		grid.add_child(item_vbox)
 		buttons.append(btn)
@@ -2991,12 +3054,13 @@ func _on_strategic_option_selected(action_id: String, action_name: String, dialo
 
 	log_message("[color=cyan]Strategic: %s[/color]" % action_name)
 
-	# Queue the actual strategic action
-	queued_actions.append({"id": action_id, "name": action_name})
-	update_queued_actions_display()
-
+	# Queue the actual strategic action -- #821: only add the UI tile when the
+	# backend accepts (select_action returns false on Attention overbook), so a
+	# rejected action no longer leaves a phantom queue tile.
 	print("[MainUI] Calling game_manager.select_action(%s)" % action_id)
-	game_manager.select_action(action_id)
+	if game_manager.select_action(action_id):
+		queued_actions.append({"id": action_id, "name": action_name})
+		update_queued_actions_display()
 
 # === TRAVEL & CONFERENCES SUBMENU (Issue #468) ===
 
@@ -3092,34 +3156,23 @@ func _show_travel_submenu():
 		btn.add_theme_font_size_override("font_size", 10)
 		btn.add_theme_color_override("font_color", Color(1, 1, 1, 0.6))
 
-		# Format costs for tooltip
-		var cost_text = ""
-		if travel_costs.get("action_points", 0) > 0:
-			cost_text += "%d AP" % travel_costs.get("action_points")
-		if travel_costs.get("research", 0) > 0:
-			if cost_text != "":
-				cost_text += ", "
-			cost_text += "%d Research" % travel_costs.get("research")
+		# Cost summary -- shown ON the button face (cost label below), not hover-only (#822).
+		var cost_text = _format_costs_inline(travel_costs)
+		var is_free = cost_text == "Free"
 
 		# Check affordability
 		var can_afford = true
 		if is_stub:
 			can_afford = false
 		else:
-			for resource in travel_costs.keys():
-				var current_val = current_state.get(resource, 0)
-				if resource == "action_points":
-					current_val = current_state.get("available_ap", 0)
-				if current_val < travel_costs[resource]:
-					can_afford = false
-					break
+			can_afford = _costs_affordable(travel_costs, current_state)
 
 		if not can_afford:
 			btn.disabled = true
 			btn.modulate = Color(0.5, 0.5, 0.5)
 
 		# Tooltip
-		btn.tooltip_text = "%s\n%s\n\nCosts: %s" % [travel_name, travel_desc, cost_text if cost_text != "" else "Free"]
+		btn.tooltip_text = "%s\n%s\n\nCosts: %s" % [travel_name, travel_desc, cost_text]
 
 		# Connect button
 		btn.pressed.connect(func(): _on_travel_option_selected(travel_id, travel_name, dialog))
@@ -3133,6 +3186,12 @@ func _show_travel_submenu():
 		name_label.add_theme_font_size_override("font_size", 10)
 		name_label.add_theme_color_override("font_color", Color(0.8, 0.8, 0.8))
 		item_vbox.add_child(name_label)
+
+		# On-face cost line (#822 cost-display sweep) -- greyed along with the button when unaffordable.
+		var travel_cost_label = _make_cost_label(cost_text, is_free)
+		if not can_afford:
+			travel_cost_label.modulate = Color(0.5, 0.5, 0.5)
+		item_vbox.add_child(travel_cost_label)
 
 		actions_grid.add_child(item_vbox)
 		buttons.append(btn)
@@ -3747,8 +3806,17 @@ func _on_event_dialog_closed() -> void:
 	active_dialog_buttons = []
 
 func _on_event_choice_selected(event: Dictionary, choice_id: String) -> void:
-	"""Resolution stays signal-driven through game_manager.resolve_event (#622, L1 reuse)."""
-	game_manager.resolve_event(event, choice_id)
+	"""Resolution stays signal-driven through game_manager.resolve_event (#622, L1 reuse).
+	Direction-b (playtest 2026-07-24): the dialog no longer closes on press -- it waits for
+	the resolution result and only closes/advances on SUCCESS. On a failed affordability check
+	the dialog stays OPEN and shows WHY, so a rejected choice never reads as 'order accepted'."""
+	var result: Dictionary = game_manager.resolve_event(event, choice_id)
+	var ok := true
+	var reason := ""
+	if result is Dictionary:
+		ok = bool(result.get("success", true))
+		reason = String(result.get("message", result.get("error", "")))
+	event_dialog.report_choice_result(ok, reason)
 
 
 func _on_action_hover(action: Dictionary, can_afford: bool, missing_resources: Array):
@@ -3932,31 +4000,19 @@ func _show_operations_submenu():
 		btn.add_theme_font_size_override("font_size", 10)
 		btn.add_theme_color_override("font_color", Color(1, 1, 1, 0.6))
 
-		# Format costs for tooltip
-		var cost_text = ""
-		if op_costs.get("action_points", 0) > 0:
-			cost_text += "%d AP" % op_costs.get("action_points")
-		if op_costs.get("money", 0) > 0:
-			if cost_text != "":
-				cost_text += ", "
-			cost_text += GameConfig.format_money(op_costs.get("money"))
+		# Cost summary -- shown ON the button face (cost label below), not hover-only (#822).
+		var cost_text = _format_costs_inline(op_costs)
+		var is_free = cost_text == "Free"
 
-		# Check affordability
-		var can_afford = true
-		for resource in op_costs.keys():
-			var current_val = current_state.get(resource, 0)
-			if resource == "action_points":
-				current_val = current_state.get("available_ap", 0)
-			if current_val < op_costs[resource]:
-				can_afford = false
-				break
+		# Check affordability (available_ap, not raw action_points -- see _costs_affordable)
+		var can_afford = _costs_affordable(op_costs, current_state)
 
 		if not can_afford:
 			btn.disabled = true
 			btn.modulate = Color(0.5, 0.5, 0.5)
 
 		# Tooltip
-		btn.tooltip_text = "%s\n%s\n\nCosts: %s" % [op_name, op_desc, cost_text if cost_text != "" else "Free"]
+		btn.tooltip_text = "%s\n%s\n\nCosts: %s" % [op_name, op_desc, cost_text]
 
 		# Connect button
 		btn.pressed.connect(func(): _on_operations_option_selected(op_id, op_name, dialog))
@@ -3970,6 +4026,12 @@ func _show_operations_submenu():
 		name_label.add_theme_font_size_override("font_size", 10)
 		name_label.add_theme_color_override("font_color", Color(0.8, 0.8, 0.8))
 		item_vbox.add_child(name_label)
+
+		# On-face cost line (#822 cost-display sweep) -- greyed along with the button when unaffordable.
+		var op_cost_label = _make_cost_label(cost_text, is_free)
+		if not can_afford:
+			op_cost_label.modulate = Color(0.5, 0.5, 0.5)
+		item_vbox.add_child(op_cost_label)
 
 		grid.add_child(item_vbox)
 		buttons.append(btn)
@@ -4013,12 +4075,13 @@ func _on_operations_option_selected(action_id: String, action_name: String, dial
 
 	log_message("[color=cyan]Operations: %s[/color]" % action_name)
 
-	# Queue the action
-	queued_actions.append({"id": action_id, "name": action_name})
-	update_queued_actions_display()
-
+	# Queue the action -- #821: only add the UI tile when the backend accepts
+	# (select_action returns false on Attention overbook), so a rejected action
+	# no longer leaves a phantom queue tile.
 	print("[MainUI] Calling game_manager.select_action(%s)" % action_id)
-	game_manager.select_action(action_id)
+	if game_manager.select_action(action_id):
+		queued_actions.append({"id": action_id, "name": action_name})
+		update_queued_actions_display()
 
 # === COMMAND ZONE - PASS ACTION ===
 
@@ -4046,9 +4109,10 @@ func _on_pass_button_pressed():
 
 	log_message("[color=gray]%s - skipping this action[/color]" % action_name)
 
-	# Queue the pass action
-	queued_actions.append({"id": action_id, "name": action_name})
-	update_queued_actions_display()
-
+	# Queue the pass action -- #821: only add the UI tile when the backend accepts
+	# (select_action returns false if e.g. events are pending), so a rejected pass
+	# no longer leaves a phantom queue tile. Pass is free, so overbook never blocks it.
 	print("[MainUI] Calling game_manager.select_action(%s)" % action_id)
-	game_manager.select_action(action_id)
+	if game_manager.select_action(action_id):
+		queued_actions.append({"id": action_id, "name": action_name})
+		update_queued_actions_display()

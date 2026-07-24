@@ -62,6 +62,7 @@ func _on_launch_pressed():
 	if GameConfig.config_mode == "default":
 		GameConfig.game_seed = ""  # Use weekly seed
 		GameConfig.difficulty = 1  # Force standard difficulty
+		GameConfig.org_type = "nonprofit"  # Featured league is always nonprofit (DQ-19); org form is a custom-setup choice only
 
 	# Save configuration
 	GameConfig.save_config()

@@ -13,7 +13,7 @@
 			"options": [
 				{
 					"id": "emergency_fundraise",
-					"text": "Emergency Fundraising (costs 1 AP)",
+					"text": "Emergency Fundraising",
 					"costs": {
 						"action_points": 1
 					},
@@ -24,7 +24,7 @@
 				},
 				{
 					"id": "sell_assets",
-					"text": "Sell Lab Equipment (costs 2 AP)",
+					"text": "Sell Lab Equipment",
 					"costs": {
 						"action_points": 2
 					},
@@ -36,7 +36,7 @@
 				},
 				{
 					"id": "accept",
-					"text": "Continue Anyway (no AP cost)",
+					"text": "Continue Anyway",
 					"costs": {},
 					"effects": {},
 					"message": "Continuing with limited funds..."
@@ -56,7 +56,7 @@
 			"options": [
 				{
 					"id": "hire_immediately",
-					"text": "Fast-Track Hiring (costs 1 AP, {cost_money})",
+					"text": "Fast-Track Hiring",
 					"costs": {
 						"money": 25000,
 						"action_points": 1
@@ -69,7 +69,7 @@
 				},
 				{
 					"id": "hire_discounted",
-					"text": "Standard Hiring ({cost_money}, no AP)",
+					"text": "Standard Hiring",
 					"costs": {
 						"money": 25000
 					},
@@ -81,7 +81,7 @@
 				},
 				{
 					"id": "decline",
-					"text": "Decline Offer (no cost)",
+					"text": "Decline Offer",
 					"costs": {},
 					"effects": {},
 					"message": "Declined recruitment opportunity"
@@ -216,7 +216,7 @@
 			"options": [
 				{
 					"id": "emergency_intervention",
-					"text": "Emergency Intervention (costs 2 AP, {cost_money})",
+					"text": "Emergency Intervention",
 					"costs": {
 						"money": 30000,
 						"action_points": 2
@@ -229,7 +229,7 @@
 				},
 				{
 					"id": "team_retreat",
-					"text": "Organize Team Retreat ({cost_money}, no AP)",
+					"text": "Organize Team Retreat",
 					"costs": {
 						"money": 30000
 					},
@@ -241,7 +241,7 @@
 				},
 				{
 					"id": "salary_raise",
-					"text": "Give Raises ($50k, no AP)",
+					"text": "Give Raises",
 					"costs": {
 						"money": 50000
 					},
@@ -252,7 +252,7 @@
 				},
 				{
 					"id": "ignore_burnout",
-					"text": "Push Through (no cost, costs trust -- affected researchers lose loyalty)",
+					"text": "Push Through (costs trust -- affected researchers lose loyalty)",
 					"costs": {},
 					"effects": {
 						"doom": 3,
@@ -276,7 +276,7 @@
 			"options": [
 				{
 					"id": "counter_offer",
-					"text": "Counter-Offer ($80k)",
+					"text": "Counter-Offer",
 					"costs": {
 						"money": 80000
 					},
@@ -307,7 +307,7 @@
 			"options": [
 				{
 					"id": "pr_campaign",
-					"text": "Launch PR Campaign ($40k)",
+					"text": "Launch PR Campaign",
 					"costs": {
 						"money": 40000
 					},
@@ -337,7 +337,7 @@
 			"options": [
 				{
 					"id": "support_regulation",
-					"text": "Publicly Support ($50k lobbying)",
+					"text": "Publicly Support",
 					"costs": {
 						"money": 50000,
 						"action_points": 1
@@ -381,7 +381,7 @@
 			"options": [
 				{
 					"id": "emergency_repair",
-					"text": "Emergency Repair ($60k)",
+					"text": "Emergency Repair",
 					"costs": {
 						"money": 60000
 					},
@@ -392,7 +392,7 @@
 				},
 				{
 					"id": "basic_fix",
-					"text": "Basic Fix ($20k)",
+					"text": "Basic Fix",
 					"costs": {
 						"money": 20000
 					},
@@ -400,6 +400,16 @@
 						"compute": -20
 					},
 					"message": "System limping along (-20 compute)"
+				},
+				{
+					"id": "run_degraded",
+					"text": "Run on degraded hardware",
+					"costs": {},
+					"effects": {
+						"compute": -35,
+						"reputation": -2
+					},
+					"message": "Systems stay online, barely. The fans scream, the researchers grumble (-35 compute, -2 reputation)"
 				}
 			]
 		},
@@ -457,7 +467,7 @@
 			"options": [
 				{
 					"id": "mediate_personally",
-					"text": "Mediate Personally (costs 1 AP)",
+					"text": "Mediate Personally",
 					"costs": {
 						"action_points": 1
 					},
@@ -469,7 +479,7 @@
 				},
 				{
 					"id": "hire_mediator",
-					"text": "Hire Professional Mediator ($15k)",
+					"text": "Hire Professional Mediator",
 					"costs": {
 						"money": 15000
 					},
@@ -503,7 +513,7 @@
 			"options": [
 				{
 					"id": "thorough_investigation",
-					"text": "Full Investigation (costs 2 AP, $25k)",
+					"text": "Full Investigation",
 					"costs": {
 						"action_points": 2,
 						"money": 25000
@@ -515,7 +525,7 @@
 				},
 				{
 					"id": "quick_resolution",
-					"text": "Quick Resolution ($40k)",
+					"text": "Quick Resolution",
 					"costs": {
 						"money": 40000
 					},
@@ -550,7 +560,7 @@
 			"options": [
 				{
 					"id": "salary_audit",
-					"text": "Conduct Salary Audit & Adjust ($60k)",
+					"text": "Conduct Salary Audit & Adjust",
 					"costs": {
 						"money": 60000
 					},
@@ -562,7 +572,7 @@
 				},
 				{
 					"id": "explain_structure",
-					"text": "Explain Compensation Structure (costs 1 AP)",
+					"text": "Explain Compensation Structure",
 					"costs": {
 						"action_points": 1
 					},
@@ -596,7 +606,7 @@
 			"options": [
 				{
 					"id": "full_support",
-					"text": "Full Support + Paid Leave ($30k)",
+					"text": "Full Support + Paid Leave",
 					"costs": {
 						"money": 30000
 					},
@@ -639,7 +649,7 @@
 			"options": [
 				{
 					"id": "security_upgrade",
-					"text": "Install Security System ($35k)",
+					"text": "Install Security System",
 					"costs": {
 						"money": 35000
 					},
@@ -651,7 +661,7 @@
 				},
 				{
 					"id": "team_meeting",
-					"text": "Address at Team Meeting (costs 1 AP)",
+					"text": "Address at Team Meeting",
 					"costs": {
 						"action_points": 1
 					},
@@ -685,7 +695,7 @@
 			"options": [
 				{
 					"id": "formal_discipline",
-					"text": "Formal Disciplinary Action (costs 1 AP)",
+					"text": "Formal Disciplinary Action",
 					"costs": {
 						"action_points": 1
 					},
@@ -727,7 +737,7 @@
 			"options": [
 				{
 					"id": "investigate_leak",
-					"text": "Full Investigation (costs 2 AP, $30k)",
+					"text": "Full Investigation",
 					"costs": {
 						"action_points": 2,
 						"money": 30000
@@ -775,7 +785,7 @@
 			"options": [
 				{
 					"id": "use_intel",
-					"text": "Use the Information ($20k)",
+					"text": "Use the Information",
 					"costs": {
 						"money": 20000
 					},
@@ -821,7 +831,7 @@
 			"options": [
 				{
 					"id": "full_support",
-					"text": "Fully Support & Publicize (costs 2 AP, $50k)",
+					"text": "Fully Support & Publicize",
 					"costs": {
 						"action_points": 2,
 						"money": 50000
@@ -834,7 +844,7 @@
 				},
 				{
 					"id": "anonymous_support",
-					"text": "Anonymous Support ($25k)",
+					"text": "Anonymous Support",
 					"costs": {
 						"money": 25000
 					},
@@ -846,7 +856,7 @@
 				},
 				{
 					"id": "hire_whistleblower",
-					"text": "Hire Them Instead ($60k, 1 AP)",
+					"text": "Hire Them Instead",
 					"costs": {
 						"money": 60000,
 						"action_points": 1
@@ -881,7 +891,7 @@
 			"options": [
 				{
 					"id": "address_concerns",
-					"text": "Open Forum Discussion (costs 1 AP)",
+					"text": "Open Forum Discussion",
 					"costs": {
 						"action_points": 1
 					},
@@ -893,7 +903,7 @@
 				},
 				{
 					"id": "private_resolution",
-					"text": "Private Resolution ($30k)",
+					"text": "Private Resolution",
 					"costs": {
 						"money": 30000
 					},
@@ -925,7 +935,7 @@
 			"options": [
 				{
 					"id": "plant_source",
-					"text": "Plant a Source ($80k, 1 AP)",
+					"text": "Plant a Source",
 					"costs": {
 						"money": 80000,
 						"action_points": 1
@@ -971,7 +981,7 @@
 			"options": [
 				{
 					"id": "public_security_audit",
-					"text": "Announce Public Security Audit ($40k, 1 AP)",
+					"text": "Announce Public Security Audit",
 					"costs": {
 						"money": 40000,
 						"action_points": 1
@@ -984,7 +994,7 @@
 				},
 				{
 					"id": "offer_help",
-					"text": "Offer to Help Affected Users ($25k)",
+					"text": "Offer to Help Affected Users",
 					"costs": {
 						"money": 25000
 					},
@@ -1030,7 +1040,7 @@
 			"options": [
 				{
 					"id": "full_security_overhaul",
-					"text": "Full Security Overhaul ($60k, 2 AP)",
+					"text": "Full Security Overhaul",
 					"costs": {
 						"money": 60000,
 						"action_points": 2
@@ -1043,7 +1053,7 @@
 				},
 				{
 					"id": "patch_critical",
-					"text": "Patch Critical Issues ($20k)",
+					"text": "Patch Critical Issues",
 					"costs": {
 						"money": 20000
 					},
@@ -1077,7 +1087,7 @@
 			"options": [
 				{
 					"id": "match_offer",
-					"text": "Match Their Offer ($50k)",
+					"text": "Match Their Offer",
 					"costs": {
 						"money": 50000
 					},
@@ -1088,7 +1098,7 @@
 				},
 				{
 					"id": "counter_promotion",
-					"text": "Counter with Promotion (1 AP, $30k)",
+					"text": "Counter with Promotion",
 					"costs": {
 						"action_points": 1,
 						"money": 30000

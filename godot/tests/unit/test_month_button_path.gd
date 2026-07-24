@@ -33,13 +33,27 @@ func _auto_respond(event: Dictionary) -> void:
 	if String(event.get("id", "")) == game_manager.MONTH_REVIEW_EVENT_ID:
 		_review_event = event
 		return
-	var options: Array = event.get("options", [])
-	var choice_id := ""
-	if options.size() > 0 and options[0] is Dictionary:
-		choice_id = String(options[0].get("id", ""))
 	_windows_answered += 1
 	# Deferred, as the real dialog answers on a later frame than the emission.
-	game_manager.resolve_event.call_deferred(event, choice_id)
+	_answer_window.call_deferred(event)
+
+
+func _answer_window(event: Dictionary) -> void:
+	"""Emulate the direction-b dialog + player: try the first option (usually the HANDLE); if it
+	is REJECTED (e.g. unaffordable -> the real dialog stays open and returns success=false), the
+	player takes the free out. Previously the harness relied on the auto-lapse to drain such
+	windows; now it falls back explicitly, exercising the real keep-open-then-retry flow."""
+	var options: Array = event.get("options", [])
+	if options.is_empty() or not (options[0] is Dictionary):
+		return
+	var first_id := String(options[0].get("id", ""))
+	var r = game_manager.resolve_event(event, first_id)
+	if r is Dictionary and not r.get("success", true):
+		# The window is still open (not lapsed); take the guaranteed free out (the ignore path
+		# always resolves). This is exactly what a player does when they cannot afford a HANDLE.
+		var free_id := WindowResolver.ignore_option_id(event)
+		if free_id != "" and free_id != first_id:
+			game_manager.resolve_event(event, free_id)
 
 
 func _keep_alive(_state_dict: Dictionary) -> void:

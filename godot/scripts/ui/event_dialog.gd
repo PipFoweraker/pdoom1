@@ -28,6 +28,17 @@ var state_provider: Callable
 var event_queue: Array[Dictionary] = []
 var is_showing_event: bool = false
 
+# Direction-b (playtest 2026-07-24): the dialog no longer closes on press. When a choice is
+# pressed we keep these references so the host's resolution result (report_choice_result) can
+# either close/advance (SUCCESS) or keep THIS dialog open with the reason (a rejected choice
+# must never read as 'order accepted'). Only one event dialog shows at a time (is_showing_event
+# gate), so single-slot instance state is safe.
+var _pending_dialog: Control = null
+var _pending_blocker: Control = null
+var _pending_event: Dictionary = {}
+var _pending_choice_id: String = ""
+var _reason_label: Label = null
+
 func present(event: Dictionary) -> void:
 	"""Handle event trigger - queue event for sequential presentation"""
 	print("[EventDialog] === EVENT TRIGGERED: %s ===" % event.get("name", "Unknown"))
@@ -43,18 +54,23 @@ func present(event: Dictionary) -> void:
 		print("[EventDialog] Event added to queue, will show after current event resolves")
 
 static func format_cost_summary(costs: Dictionary) -> String:
-	"""Compact inline cost string for event option buttons, e.g. ' ($30,000, 2 AP)' (#510)."""
-	if costs.is_empty():
-		return ""
+	"""Compact inline cost string for event option buttons, e.g. ' ($30,000, 2 AP)' (#510).
+	Cost-display sweep (2026-07-24): a costless option (the 'decline'/'ignore'/'acknowledge'
+	free-out) now explicitly says ' (Free)' instead of showing nothing -- a blank cost read
+	as ambiguous, not obviously safe-to-pick, next to options that DO cost something."""
 	var parts: Array[String] = []
 	for resource in costs.keys():
 		var amount = costs[resource]
+		if amount == null or float(amount) <= 0:
+			continue  # a zero/negative-cost entry is not a real cost -- don't clutter the face
 		if resource == "money":
 			parts.append(GameConfig.format_money(amount))
 		elif resource == "action_points":
 			parts.append("%d AP" % int(amount))
 		else:
 			parts.append("%d %s" % [int(amount), str(resource).capitalize()])
+	if parts.is_empty():
+		return " (Free)"
 	return " (%s)" % ", ".join(parts)
 
 func _show_next_event() -> void:
@@ -155,6 +171,19 @@ func _show_next_event() -> void:
 	var vbox = VBoxContainer.new()
 	vbox.add_theme_constant_override("separation", 10)
 	main_vbox.add_child(vbox)
+
+	# Failure-reason line (direction-b, playtest 2026-07-24). Hidden until an attempted choice
+	# is REJECTED (e.g. can't afford the HANDLE). Shown in-place -- the dialog stays open so the
+	# player can pick a different option (e.g. the free out). Without this the dialog closed on
+	# the rejected click, which reads as 'order accepted' in this genre (the legibility bug).
+	var reason_label = Label.new()
+	reason_label.add_theme_color_override("font_color", Color(1.0, 0.55, 0.4))  # warm amber/red
+	reason_label.add_theme_font_size_override("font_size", 14)
+	reason_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	reason_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	reason_label.visible = false
+	main_vbox.add_child(reason_label)
+	_reason_label = reason_label
 
 	# Add each option as a button
 	var options = event.get("options", [])
@@ -272,24 +301,95 @@ func _show_next_event() -> void:
 	print("[EventDialog] Ready for keyboard input via MainUI._input()")
 
 func _on_choice_pressed(event: Dictionary, choice_id: String, dialog: Control, blocker: Control) -> void:
-	"""Handle event choice selection"""
-	dialog.queue_free()
-	blocker.queue_free()
+	"""Handle an event choice press. Direction-b (playtest 2026-07-24): do NOT close the dialog
+	here. Resolution is signal-driven (the host routes choice_selected to game_manager.
+	resolve_event); the host then calls report_choice_result() with the outcome. Only a SUCCESS
+	closes/advances this dialog -- a rejected (unaffordable) choice keeps it OPEN and shows why,
+	so a rejection can never be mistaken for 'order accepted'."""
+	# Remember what is in flight so report_choice_result can act on the right dialog.
+	_pending_dialog = dialog
+	_pending_blocker = blocker
+	_pending_event = event
+	_pending_choice_id = choice_id
 
-	# Tell the host to clear its key-routing state
-	dialog_closed.emit()
+	# Clear any stale rejection reason from a prior attempt before re-trying.
+	_clear_reason()
 
-	message_logged.emit("[color=cyan]Event choice: %s[/color]" % choice_id)
-
-	# Resolution stays signal-driven: the host routes this to game_manager.resolve_event
+	# Resolution stays signal-driven. NOTE: this emit runs synchronously -- the host resolves
+	# and calls report_choice_result() back into us DURING this call, so nothing below the emit
+	# may assume the dialog still exists. All close/advance logic lives in report_choice_result.
 	choice_selected.emit(event, choice_id)
 
-	# Show next event in queue if any
+
+func report_choice_result(success: bool, message: String) -> void:
+	"""Host callback with the resolution outcome (MainUI._on_event_choice_selected).
+	SUCCESS -> close this dialog and advance the queue (the old _on_choice_pressed tail).
+	FAILURE -> keep the dialog OPEN and surface the reason in-place, so the player can pick a
+	different option (e.g. the free out). The failed press consumed nothing (WindowResolver
+	pre-checks money before any state change), so a retry is safe."""
+	if not is_instance_valid(_pending_dialog):
+		return  # defensive: nothing in flight (e.g. a non-dialog resolution path)
+
+	if not success:
+		# Prefer a concrete, actionable money shortfall; else fall back to the resolver message
+		# (e.g. "Not enough Attention to handle this window").
+		var reason := _money_shortfall_reason(_pending_event, _pending_choice_id)
+		if reason == "":
+			reason = message
+		_show_reason(reason)
+		return
+
+	# SUCCESS: the choice actually resolved -- close this dialog and move on.
+	message_logged.emit("[color=cyan]Event choice: %s[/color]" % _pending_choice_id)
+	if is_instance_valid(_pending_dialog):
+		_pending_dialog.queue_free()
+	if is_instance_valid(_pending_blocker):
+		_pending_blocker.queue_free()
+	_pending_dialog = null
+	_pending_blocker = null
+	_reason_label = null
+
+	# Tell the host to clear its key-routing state.
+	dialog_closed.emit()
+
+	# Show next event in queue if any (playback may have enqueued more during resolution).
 	if not event_queue.is_empty():
 		print("[EventDialog] Event resolved, showing next event in queue...")
-		# Wait one frame to ensure dialog is cleaned up before showing next
 		await get_tree().process_frame
 		_show_next_event()
 	else:
 		print("[EventDialog] Event resolved, queue empty")
 		is_showing_event = false
+
+
+func _show_reason(message: String) -> void:
+	"""Surface a rejection reason inside the still-open dialog (direction-b)."""
+	if not is_instance_valid(_reason_label):
+		return
+	var text := message if message != "" else "That choice was rejected."
+	_reason_label.text = "[!] %s -- pick another option." % text
+	_reason_label.visible = true
+
+
+func _clear_reason() -> void:
+	if is_instance_valid(_reason_label):
+		_reason_label.text = ""
+		_reason_label.visible = false
+
+
+func _money_shortfall_reason(event: Dictionary, choice_id: String) -> String:
+	"""Concrete money-shortfall string for the chosen option, e.g.
+	'Not enough money: need $20,000, have $8,400'. Returns '' when there is no money shortfall
+	(so the resolver's own message stands -- e.g. an Attention shortfall, which lives on the
+	window, not the option costs). Read-only: derives from the option costs + current state,
+	it does NOT re-run resolution."""
+	var current_state: Dictionary = state_provider.call() if state_provider.is_valid() else {}
+	for option in event.get("options", []):
+		if option is Dictionary and String(option.get("id", "")) == choice_id:
+			var costs: Dictionary = option.get("costs", {})
+			var need = costs.get("money", 0)
+			var have = current_state.get("money", 0)
+			if need > have:
+				return "Not enough money: need %s, have %s" % [GameConfig.format_money(need), GameConfig.format_money(have)]
+			return ""
+	return ""

@@ -44,6 +44,19 @@ static func annual_to_per_turn(annual_amount: float) -> float:
 	return annual_amount / WORKDAYS_PER_YEAR
 
 
+static func calendar_days_between(turn_a: int, turn_b: int) -> int:
+	"""Calendar-day distance from turn_a to turn_b (positive when turn_b is later),
+	accounting for the weekends baked into the turn->day mapping (turn = 1 workday,
+	but 2 calendar days pass per weekend). Pure date arithmetic -- no state, no
+	billing behaviour; a display-layer helper for "due in N days" style UI (ledger
+	due-date display)."""
+	@warning_ignore("integer_division")
+	var days_a = (turn_a / TURNS_PER_WEEK) * DAYS_PER_WEEK + (turn_a % TURNS_PER_WEEK)
+	@warning_ignore("integer_division")
+	var days_b = (turn_b / TURNS_PER_WEEK) * DAYS_PER_WEEK + (turn_b % TURNS_PER_WEEK)
+	return days_b - days_a
+
+
 static func week_number(turn: int) -> int:
 	"""Current week number (1-indexed)."""
 	@warning_ignore("integer_division")

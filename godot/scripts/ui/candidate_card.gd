@@ -10,6 +10,7 @@ class_name CandidateCard
 
 var _title: Label
 var _body: Label
+var _portrait: TextureRect
 var _researcher: Researcher
 
 func _ready() -> void:
@@ -17,8 +18,19 @@ func _ready() -> void:
 		_build()
 
 func _build() -> void:
+	var hbox := HBoxContainer.new()
+	hbox.add_theme_constant_override("separation", 6)
+	add_child(hbox)
+	# Portrait slot (DQ-15 / #758): built up-front so _refresh() only ever swaps texture/
+	# visibility, never re-parents nodes. Stays hidden until a texture is actually available.
+	_portrait = TextureRect.new()
+	_portrait.custom_minimum_size = Vector2(48, 48)
+	_portrait.stretch_mode = TextureRect.STRETCH_SCALE
+	_portrait.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
+	_portrait.visible = false
+	hbox.add_child(_portrait)
 	var vbox := VBoxContainer.new()
-	add_child(vbox)
+	hbox.add_child(vbox)
 	_title = Label.new()
 	_title.add_theme_font_size_override("font_size", 16)
 	vbox.add_child(_title)
@@ -43,3 +55,8 @@ func _refresh() -> void:
 	var c: Dictionary = _researcher.get_card_data()
 	_title.text = "%s  [%s]" % [c["name"], c["hire_state"]]
 	_body.text = _researcher.get_card_text()
+	# Deterministic per-person portrait (not archetype-matched yet, see PortraitLibrary
+	# docstring): falls back to text-only if the asset is missing, never errors.
+	var tex := PortraitLibrary.get_portrait(_researcher.appearance_id)
+	_portrait.texture = tex
+	_portrait.visible = tex != null
