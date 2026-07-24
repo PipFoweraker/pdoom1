@@ -258,12 +258,47 @@ func resolve_current_window_option(option_id: String, event: Dictionary = {}) ->
 	var window: Dictionary = window_queue[idx]
 	var result := WindowResolver.resolve_chosen_option(state, state.month_plan, window, option_id, state.rng)
 	if result.get("success", false):
-		window_queue.remove_at(idx)
-		_sync_pending()
-		if window_queue.is_empty():
-			status = Status.READY
-			_finish_paused_tick()
-	return result
+		_drop_window(idx)
+		return result
+
+	# The HANDLE failed. The #789 hiring accept-prompt (option_verbs path) deliberately
+	# re-prompts on a failed reserve-vs-cannibalize verb choice -- leave it queued, untouched.
+	# Also surface a genuine data error (chosen option absent from the window) rather than
+	# masking it as a lapse.
+	if WindowResolver.window_config(window).has("option_verbs"):
+		return result
+	var option_present := false
+	for opt in WindowResolver.strip_ap(window).get("options", []):
+		if opt is Dictionary and String(opt.get("id", "")) == option_id:
+			option_present = true
+			break
+	if not option_present:
+		return result
+
+	# The chosen option EXISTS but cannot be paid (no reserve + nothing to cannibalize, or the
+	# option's own money cost is unaffordable). The event_dialog has already closed (it
+	# advances on every press), so leaving this window queued would soft-lock playback forever
+	# -- an orphaned window the player can no longer answer (playtest 2026-07-24, same dead-end
+	# family as the overbook lock). Auto-lapse it to IGNORE (list price, NO nonresponse rep
+	# penalty -- the player tried to engage, they just could not afford it) so window_queue
+	# stays in sync with the dialog and the month can always finish.
+	var lapse := WindowResolver.resolve(state, state.month_plan, window, "ignore", state.rng)
+	_drop_window(idx)
+	lapse["auto_lapsed"] = true
+	lapse["message"] = "Could not afford to handle; window lapsed -- %s" % String(lapse.get("message", "no effect"))
+	return lapse
+
+
+func _drop_window(idx: int) -> void:
+	"""Remove a resolved (or auto-lapsed) window from the queue, keep the serialized pause
+	point in step, and -- if the queue is now empty -- complete the paused tick so playback
+	resumes. Shared by the success and can't-afford-lapse paths so both keep window_queue and
+	the dialog in sync (the month always finishes)."""
+	window_queue.remove_at(idx)
+	_sync_pending()
+	if window_queue.is_empty():
+		status = Status.READY
+		_finish_paused_tick()
 
 
 func skip_current_window() -> Dictionary:
