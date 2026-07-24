@@ -1658,11 +1658,12 @@ func _on_dynamic_action_pressed(action_id: String, action_name: String):
 		log_message("[color=red]Cannot afford action: %s[/color]" % action_name)
 		return
 
-	# Track queued action
-	queued_actions.append({"id": action_id, "name": action_name})
-	update_queued_actions_display()
-
-	game_manager.select_action(action_id)
+	# Track queued action -- #821: only add the UI tile when the backend accepts
+	# (select_action returns false on Attention overbook + emits the error), so a
+	# rejected action no longer leaves a phantom queue tile.
+	if game_manager.select_action(action_id):
+		queued_actions.append({"id": action_id, "name": action_name})
+		update_queued_actions_display()
 
 func _get_action_by_id(action_id: String) -> Dictionary:
 	"""Helper to find action definition - delegates to GameActions"""
@@ -2497,12 +2498,13 @@ func _on_fundraising_option_selected(action_id: String, action_name: String, dia
 
 	log_message("[color=cyan]Fundraising: %s[/color]" % action_name)
 
-	# Queue the actual fundraising action
-	queued_actions.append({"id": action_id, "name": action_name})
-	update_queued_actions_display()
-
+	# Queue the actual fundraising action -- #821: only add the UI tile when the
+	# backend accepts (select_action returns false on Attention overbook), so a
+	# rejected action no longer leaves a phantom queue tile.
 	print("[MainUI] Calling game_manager.select_action(%s)" % action_id)
-	game_manager.select_action(action_id)
+	if game_manager.select_action(action_id):
+		queued_actions.append({"id": action_id, "name": action_name})
+		update_queued_actions_display()
 
 func _show_financing_submenu():
 	"""BL-1: the Liability Ledger financing menu (ADR-0003) - lists the ledger trades
@@ -2599,9 +2601,11 @@ func _on_financing_option_selected(action_id: String, action_name: String, dialo
 		log_message("[color=red]Cannot afford: %s[/color]" % action_name)
 		return
 	log_message("[color=cyan]Financing: %s[/color]" % action_name)
-	queued_actions.append({"id": action_id, "name": action_name})
-	update_queued_actions_display()
-	game_manager.select_action(action_id)
+	# #821: only add the UI tile when the backend accepts (select_action returns
+	# false on Attention overbook), so a rejected action leaves no phantom tile.
+	if game_manager.select_action(action_id):
+		queued_actions.append({"id": action_id, "name": action_name})
+		update_queued_actions_display()
 
 func _show_ledger_screen():
 	"""BL-1/#601: open the full Liability Ledger screen. #622 L10: the panel itself is
@@ -2806,12 +2810,13 @@ func _on_publicity_option_selected(action_id: String, action_name: String, dialo
 
 	log_message("[color=cyan]Publicity: %s[/color]" % action_name)
 
-	# Queue the actual publicity action
-	queued_actions.append({"id": action_id, "name": action_name})
-	update_queued_actions_display()
-
+	# Queue the actual publicity action -- #821: only add the UI tile when the
+	# backend accepts (select_action returns false on Attention overbook), so a
+	# rejected action no longer leaves a phantom queue tile.
 	print("[MainUI] Calling game_manager.select_action(%s)" % action_id)
-	game_manager.select_action(action_id)
+	if game_manager.select_action(action_id):
+		queued_actions.append({"id": action_id, "name": action_name})
+		update_queued_actions_display()
 
 func _show_strategic_unlock_fanfare() -> void:
 	"""#578: Civ-style fade-up reveal when Strategic Moves first unlocks, instead of a button
@@ -2992,12 +2997,13 @@ func _on_strategic_option_selected(action_id: String, action_name: String, dialo
 
 	log_message("[color=cyan]Strategic: %s[/color]" % action_name)
 
-	# Queue the actual strategic action
-	queued_actions.append({"id": action_id, "name": action_name})
-	update_queued_actions_display()
-
+	# Queue the actual strategic action -- #821: only add the UI tile when the
+	# backend accepts (select_action returns false on Attention overbook), so a
+	# rejected action no longer leaves a phantom queue tile.
 	print("[MainUI] Calling game_manager.select_action(%s)" % action_id)
-	game_manager.select_action(action_id)
+	if game_manager.select_action(action_id):
+		queued_actions.append({"id": action_id, "name": action_name})
+		update_queued_actions_display()
 
 # === TRAVEL & CONFERENCES SUBMENU (Issue #468) ===
 
@@ -4014,12 +4020,13 @@ func _on_operations_option_selected(action_id: String, action_name: String, dial
 
 	log_message("[color=cyan]Operations: %s[/color]" % action_name)
 
-	# Queue the action
-	queued_actions.append({"id": action_id, "name": action_name})
-	update_queued_actions_display()
-
+	# Queue the action -- #821: only add the UI tile when the backend accepts
+	# (select_action returns false on Attention overbook), so a rejected action
+	# no longer leaves a phantom queue tile.
 	print("[MainUI] Calling game_manager.select_action(%s)" % action_id)
-	game_manager.select_action(action_id)
+	if game_manager.select_action(action_id):
+		queued_actions.append({"id": action_id, "name": action_name})
+		update_queued_actions_display()
 
 # === COMMAND ZONE - PASS ACTION ===
 
@@ -4047,9 +4054,10 @@ func _on_pass_button_pressed():
 
 	log_message("[color=gray]%s - skipping this action[/color]" % action_name)
 
-	# Queue the pass action
-	queued_actions.append({"id": action_id, "name": action_name})
-	update_queued_actions_display()
-
+	# Queue the pass action -- #821: only add the UI tile when the backend accepts
+	# (select_action returns false if e.g. events are pending), so a rejected pass
+	# no longer leaves a phantom queue tile. Pass is free, so overbook never blocks it.
 	print("[MainUI] Calling game_manager.select_action(%s)" % action_id)
-	game_manager.select_action(action_id)
+	if game_manager.select_action(action_id):
+		queued_actions.append({"id": action_id, "name": action_name})
+		update_queued_actions_display()
