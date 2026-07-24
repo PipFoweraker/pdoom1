@@ -99,6 +99,25 @@ const FIRST_LEVER_ACTION_ID := "hire_staff"
 const FIRST_LEVER_HINT_TEXT := "Advisor: doom is rising -- hire a researcher to lower it (the glowing button)."
 var _first_lever_pulse_tween: Tween
 
+# Right-size the promise (hiring rightsize pass): "advertise" currently spawns candidates
+# with a RANDOM specialization -- it over-promises a targeted role. Real fix (spawn
+# role-interested candidates) is a forking mechanic for a later patch, so grey the button
+# out and label it coming-soon everywhere it renders (action bar + hiring submenu) instead
+# of shipping a button that lies about what it does.
+const COMING_SOON_ACTION_IDS := ["advertise"]
+const COMING_SOON_TOOLTIP_SUFFIX := " -- COMING SOON (spawns a random specialization for now; targeted-role hiring is not available yet)"
+
+# "Interview a Candidate" / "Make an Offer" were meant as per-candidate STEPS in the
+# recruitment epic ("interview [candidate]", "offer to [candidate]"), never standalone
+# generic verbs -- the target is chosen at random by the underlying no-target menu
+# drivers (interview_next / hire_best, see actions.gd), which reads as confusing/
+# stateless from the player-facing action bar. The per-candidate hiring submenu panel
+# (_build_candidate_card) already binds Interview/Make Offer to a specific candidate
+# correctly, so hide the generic drivers from the player-facing action list and steer
+# players to that panel instead. The action ids stay wired in core.json / actions.gd --
+# bots and tests still exercise interview_next/hire_best directly.
+const HIDDEN_FROM_ACTION_BAR_IDS := ["interview_next", "hire_best"]
+
 # P0 feed filter (playtest 2026-07-17): the arxiv/technical-research flavour deck floods the
 # feed. Each logged line is recorded here with its channel; the "flavour" channel is hidden
 # by default so real, actionable events aren't crowded out. The toggle flips this.
@@ -1276,6 +1295,12 @@ func _on_actions_available(actions: Array):
 	var categories = {}
 	var unlocked_ids := {}  # #578: track which ids are unlocked this pass (for new-unlock fanfares)
 	for action in actions:
+		# Right-size the promise: interview_next/hire_best are no-target menu drivers that
+		# pick a candidate at random -- never show them as generic action-bar items, the
+		# per-candidate hiring submenu is the correct path (see HIDDEN_FROM_ACTION_BAR_IDS).
+		if HIDDEN_FROM_ACTION_BAR_IDS.has(action.get("id", "")):
+			continue
+
 		# Check if action is unlocked based on game state
 		if not GameActions.is_action_unlocked(action, current_state):
 			locked_count += 1
@@ -1345,6 +1370,7 @@ func _on_actions_available(actions: Array):
 			var action_id = action.get("id", "")
 			var action_name = action.get("name", "Unknown")
 			var action_cost = action.get("costs", {})
+			var is_coming_soon: bool = COMING_SOON_ACTION_IDS.has(action_id)
 
 			# Create icon-only button (square, fills width)
 			var icon_button = Button.new()
@@ -1363,8 +1389,16 @@ func _on_actions_available(actions: Array):
 				icon_button.expand_icon = true
 				icon_button.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
-			# Add keyboard shortcut number badge (prominent for discoverability)
-			if action_index < 9:
+			# Add keyboard shortcut number badge (prominent for discoverability), unless the
+			# button is coming-soon -- badge that slot with "SOON" instead so the greyed-out
+			# state is visible without hovering for the tooltip.
+			if is_coming_soon:
+				icon_button.text = "SOON"
+				icon_button.add_theme_font_size_override("font_size", 10)
+				icon_button.add_theme_color_override("font_color", Color(0.85, 0.85, 0.85, 1))
+				icon_button.add_theme_color_override("font_outline_color", Color(0, 0, 0, 1))
+				icon_button.add_theme_constant_override("outline_size", 2)
+			elif action_index < 9:
 				icon_button.text = str(action_index + 1)
 				icon_button.add_theme_font_size_override("font_size", 14)  # Increased from 9
 				icon_button.add_theme_color_override("font_color", Color(1, 1, 1, 1))  # Full opacity
@@ -1385,8 +1419,12 @@ func _on_actions_available(actions: Array):
 					can_afford = false
 					missing_resources.append("%s (need %s, have %s)" % [resource, cost, available])
 
-			# Style based on affordability and category
-			if not can_afford:
+			# Style based on affordability and category. Coming-soon always wins: it's
+			# disabled regardless of whether the player could otherwise afford it.
+			if is_coming_soon:
+				icon_button.disabled = true
+				icon_button.modulate = Color(0.35, 0.35, 0.35)  # Darker gray than plain unaffordable
+			elif not can_afford:
 				icon_button.disabled = true
 				icon_button.modulate = Color(0.4, 0.4, 0.4)  # Dark gray for unaffordable
 			else:
@@ -1395,7 +1433,7 @@ func _on_actions_available(actions: Array):
 				icon_button.modulate = Color(0.9, 0.9, 0.9).lerp(button_color, 0.4)
 
 			# Simple tooltip for accessibility
-			icon_button.tooltip_text = action_name
+			icon_button.tooltip_text = (action_name + COMING_SOON_TOOLTIP_SUFFIX) if is_coming_soon else action_name
 
 			# Tag with action_id so submenus can align to the button that opened them (#510)
 			icon_button.set_meta("action_id", action_id)
@@ -1501,6 +1539,7 @@ func _render_actions_grouped(categories: Dictionary, category_order: Array, cate
 			var action_id: String = action.get("id", "")
 			var action_name: String = action.get("name", "Unknown")
 			var action_cost: Dictionary = action.get("costs", {})
+			var is_coming_soon: bool = COMING_SOON_ACTION_IDS.has(action_id)
 
 			# Affordability -- same rule as the flat renderer.
 			var can_afford := true
@@ -1517,17 +1556,22 @@ func _render_actions_grouped(categories: Dictionary, category_order: Array, cate
 			row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 			row.alignment = HORIZONTAL_ALIGNMENT_LEFT
 			row.clip_text = true
-			row.text = "  " + action_name
+			row.text = ("  " + action_name + " [SOON]") if is_coming_soon else ("  " + action_name)
 			var icon_texture := IconLoader.get_action_icon(action_id)
 			if icon_texture:
 				row.icon = icon_texture
 			row.set_meta("action_id", action_id)  # submenu alignment (#510) + button lookup
-			if not can_afford:
+			# Coming-soon always wins: disabled regardless of affordability (see FIRST_LEVER
+			# block above for the "advertise" over-promise this right-sizes).
+			if is_coming_soon:
+				row.disabled = true
+				row.modulate = Color(0.35, 0.35, 0.35)
+			elif not can_afford:
 				row.disabled = true
 				row.modulate = Color(0.4, 0.4, 0.4)
 			else:
 				row.modulate = Color(0.9, 0.9, 0.9).lerp(accent, 0.4)
-			row.tooltip_text = action_name
+			row.tooltip_text = (action_name + COMING_SOON_TOOLTIP_SUFFIX) if is_coming_soon else action_name
 			row.pressed.connect(func(): _on_dynamic_action_pressed(action_id, action_name))
 			row.mouse_entered.connect(func(): _on_action_hover(action, can_afford, missing_resources))
 			row.mouse_exited.connect(func(): _on_action_unhover())
