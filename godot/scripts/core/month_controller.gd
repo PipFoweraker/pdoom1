@@ -230,13 +230,24 @@ func resolve_current_window(response: String) -> Dictionary:
 	return result
 
 
-func resolve_current_window_option(option_id: String, event: Dictionary = {}) -> Dictionary:
+func resolve_current_window_option(option_id: String, event: Dictionary = {}, allow_auto_lapse: bool = false) -> Dictionary:
 	"""Answer a queued window by choosing one of the event's own options (the v1 dialog
 	path -- the event_dialog presents the event's options, not the four verbs). The chosen
 	option maps onto the verb menu: the window's ignore option resolves as IGNORE (list
 	price, no Attention); any other option is a HANDLE paid reserve-first, falling back to
 	cannibalizing (WindowResolver.resolve_chosen_option). Payment source still lands in the
 	replay artifact. The explicit four-verb menu (incl. DEFER) is the plan-screen UI's job.
+
+	allow_auto_lapse (default FALSE -- the interactive dialog path):
+	  When a HANDLE fails because the player cannot afford it, the return is a plain FAILURE
+	  ({success:false, message}) and the window STAYS QUEUED. The event_dialog no longer closes
+	  on a failed press (direction-b, playtest 2026-07-24): it keeps the window open with the
+	  reason so the player can pick a different option (e.g. the free out). Because the dialog
+	  keeps the window answerable, leaving it queued is correct -- it does NOT orphan/soft-lock.
+	  Pass TRUE only from a NON-interactive forced-drain path that has no open dialog to keep the
+	  window answerable; then the 5af981c3 backstop fires: the window auto-lapses to IGNORE and
+	  drops from the queue so playback can always finish. No production caller sets this today;
+	  it is retained as the documented soft-lock backstop (and exercised by regression tests).
 
 	Resolve against the window the player actually chose from (matched by id via `event`),
 	NOT blindly window_queue[0]. The event_dialog presents queued windows one at a time and
@@ -261,10 +272,19 @@ func resolve_current_window_option(option_id: String, event: Dictionary = {}) ->
 		_drop_window(idx)
 		return result
 
-	# The HANDLE failed. The #789 hiring accept-prompt (option_verbs path) deliberately
-	# re-prompts on a failed reserve-vs-cannibalize verb choice -- leave it queued, untouched.
-	# Also surface a genuine data error (chosen option absent from the window) rather than
-	# masking it as a lapse.
+	# The HANDLE failed. Direction-b (playtest 2026-07-24): the event_dialog now KEEPS the
+	# window open on a failed press and surfaces the reason, so the default is to return the
+	# plain failure and leave the window queued -- the still-open dialog keeps it answerable
+	# (the player retries or picks the free out). This is NOT an orphan: dialog and queue stay
+	# in sync. Faking acceptance by closing (and silently lapsing) was the legibility bug.
+	if not allow_auto_lapse:
+		return result
+
+	# --- Backstop path (allow_auto_lapse=TRUE): only reached from a NON-interactive forced
+	# drain with no open dialog to keep the window answerable. Retained from 5af981c3. ---
+	# The #789 hiring accept-prompt (option_verbs path) deliberately re-prompts on a failed
+	# reserve-vs-cannibalize verb choice -- leave it queued, untouched. Also surface a genuine
+	# data error (chosen option absent from the window) rather than masking it as a lapse.
 	if WindowResolver.window_config(window).has("option_verbs"):
 		return result
 	var option_present := false
@@ -276,12 +296,11 @@ func resolve_current_window_option(option_id: String, event: Dictionary = {}) ->
 		return result
 
 	# The chosen option EXISTS but cannot be paid (no reserve + nothing to cannibalize, or the
-	# option's own money cost is unaffordable). The event_dialog has already closed (it
-	# advances on every press), so leaving this window queued would soft-lock playback forever
-	# -- an orphaned window the player can no longer answer (playtest 2026-07-24, same dead-end
-	# family as the overbook lock). Auto-lapse it to IGNORE (list price, NO nonresponse rep
-	# penalty -- the player tried to engage, they just could not afford it) so window_queue
-	# stays in sync with the dialog and the month can always finish.
+	# option's own money cost is unaffordable). With no dialog to keep it answerable, leaving
+	# this window queued would soft-lock playback forever -- an orphaned window (playtest
+	# 2026-07-24, same dead-end family as the overbook lock). Auto-lapse it to IGNORE (list
+	# price, NO nonresponse rep penalty -- the player tried to engage, they just could not
+	# afford it) so window_queue stays in sync and the month can always finish.
 	var lapse := WindowResolver.resolve(state, state.month_plan, window, "ignore", state.rng)
 	_drop_window(idx)
 	lapse["auto_lapsed"] = true

@@ -7,10 +7,13 @@ extends GutTest
 ##    (matched by id via `event`), not blindly window_queue[0]. A window left queued would
 ##    otherwise desync the head from the dialog -> bogus "Unknown option: <id>".
 ##
-## 2. No orphan soft-lock: a HANDLE that cannot be paid (no reserve + nothing to cannibalize,
-##    or an unaffordable money cost) used to stay queued while the dialog closed -> playback
-##    PAUSED_ON_WINDOW forever. It now auto-lapses to IGNORE so the month can always finish.
-##    EXCEPTION preserved: the #789 hiring accept-prompt (option_verbs) still re-prompts.
+## 2. Unaffordable HANDLE handling. Direction-b (playtest 2026-07-24): the event_dialog now
+##    stays OPEN on a failed press and surfaces the reason, so the INTERACTIVE default
+##    (allow_auto_lapse=false) returns a plain FAILURE and leaves the window QUEUED -- the open
+##    dialog keeps it answerable (retry / free out). The 5af981c3 auto-lapse-to-IGNORE survives
+##    as an explicit BACKSTOP (allow_auto_lapse=true) for any non-interactive forced-drain with
+##    no dialog to keep the window answerable. EXCEPTION preserved on both paths: the #789
+##    hiring accept-prompt (option_verbs) never auto-lapses; a genuine Unknown option is surfaced.
 
 func _state() -> GameState:
 	var s := GameState.new("window-option-routing-seed")
@@ -121,15 +124,39 @@ func test_routing_by_id_past_a_stuck_verb_window():
 		"the still-open verb window remains queued")
 
 
-# --- Fix 2: unaffordable HANDLE auto-lapses instead of orphan-blocking ---
+# --- Fix 2 (direction-b, playtest 2026-07-24): the INTERACTIVE default keeps the window open
+# so the dialog surfaces the reason; the auto-lapse survives only as an explicit backstop. ---
 
-func test_unaffordable_handle_auto_lapses_and_unblocks():
-	# The soft-lock: a single window whose HANDLE cannot be paid must not stay queued forever.
+func test_unaffordable_handle_stays_queued_for_the_open_dialog():
+	# Direction-b default (allow_auto_lapse=false): an unaffordable HANDLE returns a plain
+	# FAILURE and the window STAYS QUEUED. The event_dialog is kept open on this failure and
+	# surfaces the reason, so the window is still answerable (the player retries / picks the
+	# free out) -- it does NOT fake acceptance by closing, and it does NOT silently lapse.
 	var s := _state()
 	_exhaust_attention(s)
 	var mc := _paused_controller(s, [_research_event()])
 
 	var r := mc.resolve_current_window_option("build_upon", _research_event())
+	assert_false(r.get("success", true), "the unaffordable HANDLE fails (the dialog stays open)")
+	assert_false(r.get("auto_lapsed", false), "it does NOT silently auto-lapse on the interactive path")
+	assert_eq(mc.window_queue.size(), 1, "the window stays queued -- the open dialog keeps it answerable")
+	assert_true(mc.is_paused(), "still paused on the window the player can retry")
+
+	# The player then takes the free out (zero-cost ignore option) -> resolves cleanly.
+	var r2 := mc.resolve_current_window_option("acknowledge", _research_event())
+	assert_true(r2.get("success", false), "the free out resolves the window")
+	assert_eq(mc.window_queue.size(), 0, "now the window drains -- the month can finish")
+	assert_false(mc.is_paused(), "playback resumes")
+
+
+func test_unaffordable_handle_auto_lapses_when_backstop_requested():
+	# The 5af981c3 soft-lock backstop is retained: a forced-drain caller (no open dialog to keep
+	# the window answerable) passes allow_auto_lapse=true, and the window auto-lapses to IGNORE.
+	var s := _state()
+	_exhaust_attention(s)
+	var mc := _paused_controller(s, [_research_event()])
+
+	var r := mc.resolve_current_window_option("build_upon", _research_event(), true)
 	assert_true(r.get("success", false), "the unaffordable HANDLE auto-resolves (no dead-end)")
 	assert_true(r.get("auto_lapsed", false), "it lapsed to IGNORE because it could not be paid")
 	assert_eq(mc.window_queue.size(), 0, "the window was removed -- not orphaned in the queue")
@@ -137,30 +164,31 @@ func test_unaffordable_handle_auto_lapses_and_unblocks():
 
 
 func test_unaffordable_handle_in_a_batch_does_not_stick():
-	# Two windows, no Attention: answering the head HANDLE auto-lapses it and the dialog's
-	# next window is still cleanly answerable -- the whole batch drains, no orphan.
+	# Backstop batch drain: two windows, no Attention. With allow_auto_lapse=true, answering the
+	# head HANDLE auto-lapses it and the whole batch drains, no orphan.
 	var s := _state()
 	_exhaust_attention(s)
 	var mc := _paused_controller(s, [_policy_event(), _research_event()])
 
-	var r1 := mc.resolve_current_window_option("support", _policy_event())
+	var r1 := mc.resolve_current_window_option("support", _policy_event(), true)
 	assert_true(r1.get("auto_lapsed", false), "the unaffordable policy HANDLE lapses")
 	assert_eq(mc.window_queue.size(), 1, "the policy window drained; research remains")
 
 	# acknowledge is the zero-cost IGNORE-path option -> always resolvable.
-	var r2 := mc.resolve_current_window_option("acknowledge", _research_event())
+	var r2 := mc.resolve_current_window_option("acknowledge", _research_event(), true)
 	assert_true(r2.get("success", false), "the research window resolves; no Unknown option, no orphan")
 	assert_eq(mc.window_queue.size(), 0, "the batch fully drained")
 	assert_false(mc.is_paused(), "playback resumes -- the month always finishes")
 
 
 func test_option_verbs_window_is_not_auto_lapsed():
-	# Guard the must-preserve #789 behavior: a failed reserve-vs-cannibalize verb choice
-	# leaves the option_verbs window OPEN (re-prompt), it does NOT silently auto-lapse.
+	# Guard the must-preserve #789 behavior even under the backstop: a failed reserve-vs-
+	# cannibalize verb choice leaves the option_verbs window OPEN (re-prompt), it does NOT
+	# auto-lapse -- so the backstop's option_verbs guard must fire.
 	var s := _state()
 	s.money = 0.0  # provision_reserve unaffordable
 	var mc := _paused_controller(s, [_verb_window()])
-	var r := mc.resolve_current_window_option("provision_reserve", _verb_window())
+	var r := mc.resolve_current_window_option("provision_reserve", _verb_window(), true)
 	assert_false(r.get("success", true), "the unaffordable verb choice fails")
 	assert_false(r.get("auto_lapsed", false), "an option_verbs window is NOT auto-lapsed")
 	assert_eq(mc.window_queue.size(), 1, "the hiring prompt stays queued for a different verb")
@@ -168,11 +196,12 @@ func test_option_verbs_window_is_not_auto_lapsed():
 
 
 func test_genuine_unknown_option_is_not_masked():
-	# A truly absent option (data/routing error) must still surface, not be swallowed as a lapse.
+	# A truly absent option (data/routing error) must still surface, not be swallowed as a lapse,
+	# even on the backstop path (its unknown-option guard must fire).
 	var s := _state()
 	s.month_plan.set_reserve(3)
 	var mc := _paused_controller(s, [_research_event()])
-	var r := mc.resolve_current_window_option("no_such_option", _research_event())
+	var r := mc.resolve_current_window_option("no_such_option", _research_event(), true)
 	assert_false(r.get("success", true), "an unknown option still fails")
 	assert_false(r.get("auto_lapsed", false), "it is NOT auto-lapsed -- the error is surfaced")
 	assert_string_contains(String(r.get("message", "")), "Unknown option", "the real error is reported")

@@ -1163,6 +1163,12 @@ func _on_achievement_unlocked(achievement: Dictionary) -> void:
 func _on_error_occurred(error_msg: String):
 	print("[MainUI] Error: ", error_msg)
 	log_message("[color=red]ERROR: " + error_msg + "[/color]")
+	# Also surface it ON the PLAN screen where the player is acting (playtest 2026-07-24): the
+	# feed above is WATCH-only (hidden in PLAN mode), so an action-queue rejection like "Not
+	# enough Attention" / "Cannot afford ..." was previously invisible while planning. The toast
+	# is hidden unless PLAN is the active screen, so this is additive, not duplicate noise.
+	if plan_screen != null and is_instance_valid(plan_screen):
+		plan_screen.flash_error(error_msg)
 
 func _notification(what: int) -> void:
 	# P0 rage-quit friction: intercept the window-manager close during a run and route to the
@@ -3754,8 +3760,17 @@ func _on_event_dialog_closed() -> void:
 	active_dialog_buttons = []
 
 func _on_event_choice_selected(event: Dictionary, choice_id: String) -> void:
-	"""Resolution stays signal-driven through game_manager.resolve_event (#622, L1 reuse)."""
-	game_manager.resolve_event(event, choice_id)
+	"""Resolution stays signal-driven through game_manager.resolve_event (#622, L1 reuse).
+	Direction-b (playtest 2026-07-24): the dialog no longer closes on press -- it waits for
+	the resolution result and only closes/advances on SUCCESS. On a failed affordability check
+	the dialog stays OPEN and shows WHY, so a rejected choice never reads as 'order accepted'."""
+	var result: Dictionary = game_manager.resolve_event(event, choice_id)
+	var ok := true
+	var reason := ""
+	if result is Dictionary:
+		ok = bool(result.get("success", true))
+		reason = String(result.get("message", result.get("error", "")))
+	event_dialog.report_choice_result(ok, reason)
 
 
 func _on_action_hover(action: Dictionary, can_afford: bool, missing_resources: Array):

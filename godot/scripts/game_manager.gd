@@ -758,13 +758,18 @@ func load_saved_game(path: String = SaveLoad.QUICKSAVE_PATH) -> bool:
 		actions_available.emit(turn_manager.get_available_actions())
 	return true
 
-func resolve_event(event: Dictionary, choice_id: String):
+func resolve_event(event: Dictionary, choice_id: String) -> Dictionary:
 	"""Handle player's event choice - FIX #418: Use TurnManager.
 	L1: month-review dialogs and paused-playback windows route to the month loop first;
-	only plan-phase events (game start / legacy path) reach TurnManager below."""
+	only plan-phase events (game start / legacy path) reach TurnManager below.
+
+	Returns the resolution result {success, message, ...}. The caller (MainUI._on_event_
+	choice_selected) reads success/message to decide whether to CLOSE the event_dialog or keep
+	it open with the failure reason (direction-b, playtest 2026-07-24): an unaffordable window
+	HANDLE returns {success:false} so the dialog stays up instead of faking acceptance."""
 	if not is_initialized:
 		error_occurred.emit("Game not initialized")
-		return
+		return {"success": false, "message": "Game not initialized"}
 
 	# L1: the synthetic month-review dialog just closes into the new plan phase.
 	if String(event.get("id", "")) == MONTH_REVIEW_EVENT_ID:
@@ -772,7 +777,7 @@ func resolve_event(event: Dictionary, choice_id: String):
 		game_state_updated.emit(state.to_dict())
 		turn_phase_changed.emit("action_selection")
 		actions_available.emit(turn_manager.get_available_actions())
-		return
+		return {"success": true, "message": ""}
 
 	# L1: while day-tick playback is paused on response windows, choices route through the
 	# month controller (Attention payment, replay payment_source), not the legacy path.
@@ -781,6 +786,8 @@ func resolve_event(event: Dictionary, choice_id: String):
 		# Pass the event the dialog presented so the option resolves against THAT window,
 		# not blindly window_queue[0] (a prior unresolved window would otherwise desync the
 		# head from the dialog -> bogus "Unknown option", playtest 2026-07-24).
+		# allow_auto_lapse defaults FALSE: an unaffordable HANDLE returns a plain failure and
+		# the window stays queued, kept answerable by the still-open dialog (no orphan/lapse).
 		var wresult: Dictionary = month_controller.resolve_current_window_option(choice_id, event)
 		if wresult.get("success", false):
 			action_executed.emit(wresult)
@@ -794,7 +801,7 @@ func resolve_event(event: Dictionary, choice_id: String):
 					_run_month_playback()
 		else:
 			error_occurred.emit(String(wresult.get("message", "Window resolution failed")))
-		return
+		return wresult
 
 	# Use TurnManager's resolve_event which handles phase transitions
 	var result = turn_manager.resolve_event(event, choice_id)
@@ -812,6 +819,7 @@ func resolve_event(event: Dictionary, choice_id: String):
 			actions_available.emit(actions)
 	else:
 		error_occurred.emit(result.get("error", result.get("message", "Event resolution failed")))
+	return result
 
 func _apply_difficulty_settings():
 	"""Apply difficulty modifiers to game state"""
