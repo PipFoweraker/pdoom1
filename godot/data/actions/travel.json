@@ -14,11 +14,12 @@
 		{
 			"id": "attend_conference",
 			"name": "Attend Conference",
-			"description": "Travel to present accepted paper or network at a conference",
+			"description": "[Coming Soon] Travel to present accepted paper or network at a conference -- day-bound scheduling is not available yet",
 			"costs": {
 				"action_points": 2
 			},
-			"category": "travel"
+			"category": "travel",
+			"is_stub": true
 		},
 		{
 			"id": "send_delegation",
