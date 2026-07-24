@@ -54,18 +54,23 @@ func present(event: Dictionary) -> void:
 		print("[EventDialog] Event added to queue, will show after current event resolves")
 
 static func format_cost_summary(costs: Dictionary) -> String:
-	"""Compact inline cost string for event option buttons, e.g. ' ($30,000, 2 AP)' (#510)."""
-	if costs.is_empty():
-		return ""
+	"""Compact inline cost string for event option buttons, e.g. ' ($30,000, 2 AP)' (#510).
+	Cost-display sweep (2026-07-24): a costless option (the 'decline'/'ignore'/'acknowledge'
+	free-out) now explicitly says ' (Free)' instead of showing nothing -- a blank cost read
+	as ambiguous, not obviously safe-to-pick, next to options that DO cost something."""
 	var parts: Array[String] = []
 	for resource in costs.keys():
 		var amount = costs[resource]
+		if amount == null or float(amount) <= 0:
+			continue  # a zero/negative-cost entry is not a real cost -- don't clutter the face
 		if resource == "money":
 			parts.append(GameConfig.format_money(amount))
 		elif resource == "action_points":
 			parts.append("%d AP" % int(amount))
 		else:
 			parts.append("%d %s" % [int(amount), str(resource).capitalize()])
+	if parts.is_empty():
+		return " (Free)"
 	return " (%s)" % ", ".join(parts)
 
 func _show_next_event() -> void:
