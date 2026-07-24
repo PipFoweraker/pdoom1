@@ -1953,9 +1953,17 @@ func _build_candidate_card(cand) -> PanelContainer:
 	the ??? placeholder) + Interview / Make Offer actions wired to the hiring_* delegates."""
 	var c: Dictionary = cand.get_card_data()
 	var panel := PanelContainer.new()
+	var hb := HBoxContainer.new()
+	hb.add_theme_constant_override("separation", 6)
+	panel.add_child(hb)
+	# Deterministic per-person portrait (DQ-15 / #758, not archetype-matched yet -- see
+	# PortraitLibrary docstring); falls back to text-only if the asset is missing.
+	var portrait := PortraitLibrary.make_texture_rect(cand.appearance_id)
+	if portrait != null:
+		hb.add_child(portrait)
 	var vb := VBoxContainer.new()
 	vb.add_theme_constant_override("separation", 2)
-	panel.add_child(vb)
+	hb.add_child(vb)
 
 	var title := Label.new()
 	title.text = "%s  -  %s  [%s]" % [c["name"], c["lane"], c["hire_state"]]
@@ -2037,9 +2045,16 @@ func _build_onboarding_card(r) -> PanelContainer:
 	var st = game_manager.state
 	var status: Dictionary = st.hiring.onboarding_status(r)
 	var panel := PanelContainer.new()
+	var hb := HBoxContainer.new()
+	hb.add_theme_constant_override("separation", 6)
+	panel.add_child(hb)
+	# Deterministic per-person portrait (DQ-15 / #758); see _build_candidate_card above.
+	var portrait := PortraitLibrary.make_texture_rect(r.appearance_id)
+	if portrait != null:
+		hb.add_child(portrait)
 	var vb := VBoxContainer.new()
 	vb.add_theme_constant_override("separation", 2)
-	panel.add_child(vb)
+	hb.add_child(vb)
 
 	var title := Label.new()
 	title.text = "%s  -  %s" % [r.researcher_name, r.get_specialization_name()]
