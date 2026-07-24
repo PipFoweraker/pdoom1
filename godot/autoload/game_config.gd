@@ -19,7 +19,7 @@ var baseline_mode: int = 0
 # Audio Settings
 var master_volume: int = 50  # 0-100
 var sfx_volume: int = 50  # 0-100
-var music_volume: int = 50  # 0-100
+var music_volume: int = 20  # 0-100 (Pip 2026-07-24: downtuned from 50 -- too loud/intense on first playtest)
 
 # Graphics Settings
 var graphics_quality: int = 1  # 0=Low, 1=Medium, 2=High

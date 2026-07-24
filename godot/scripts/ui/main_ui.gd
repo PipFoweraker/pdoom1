@@ -721,8 +721,9 @@ func _remove_queued_action(action_id: String, action_name: String):
 		print("[MainUI] ERROR: Could not find action to remove: %s" % action_id)
 
 func _on_end_turn_button_pressed():
-	if queued_actions.size() == 0:
-		# Issue #733: an empty queue no longer hard-errors. Route through the existing
+	if queued_actions.size() == 0 or (game_manager.state != null and game_manager.state.queued_actions.is_empty()):
+		# Issue #733 (+ overbook soft-lock): an empty ACCEPTED queue no longer hard-errors --
+		# phantom UI tiles could previously suppress this net. Route through the existing
 		# pass-action path (identical to the Do Nothing button) so COMMIT THE MONTH always
 		# advances. Determinism-safe: no new RNG and no turn-step reordering -- select_action()
 		# only queues the canonical pass id, and end_month() below plays it out exactly as a

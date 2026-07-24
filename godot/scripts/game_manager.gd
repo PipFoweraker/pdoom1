@@ -552,8 +552,11 @@ func end_month():
 	if month_playback_active:
 		return  # already playing the month out
 	if state.queued_actions.is_empty():
-		error_occurred.emit("No actions queued")
-		return
+		# Soft-lock fix: a month with no ACCEPTED actions (e.g. overbooking rejected them all
+		# while phantom UI tiles suppressed the pass net) must NOT hard-error. Route through the
+		# canonical pass so COMMIT THE MONTH always advances. Determinism-safe: pass id, cost 0,
+		# identical to the Do Nothing path. (Phantom-tile cleanup + overbook "teeth" = fast-follow.)
+		state.queued_actions.append(GameActions.PASS_ACTION_ID)
 
 	print("[GameManager] Committing month plan (%d actions)..." % state.queued_actions.size())
 	turn_phase_changed.emit("turn_end")
