@@ -400,6 +400,16 @@
 						"compute": -20
 					},
 					"message": "System limping along (-20 compute)"
+				},
+				{
+					"id": "run_degraded",
+					"text": "Run on degraded hardware (no cost)",
+					"costs": {},
+					"effects": {
+						"compute": -35,
+						"reputation": -2
+					},
+					"message": "Systems stay online, barely. The fans scream, the researchers grumble (-35 compute, -2 reputation)"
 				}
 			]
 		},
