@@ -2,17 +2,17 @@ extends Control
 ## Settings Menu - Comprehensive settings management using GameConfig
 
 # UI References
-@onready var master_volume_slider = $VBox/SettingsContainer/AudioSettings/MasterVolumeRow/Slider
-@onready var master_volume_label = $VBox/SettingsContainer/AudioSettings/MasterVolumeRow/ValueLabel
-@onready var sfx_volume_slider = $VBox/SettingsContainer/AudioSettings/SFXVolumeRow/Slider
-@onready var sfx_volume_label = $VBox/SettingsContainer/AudioSettings/SFXVolumeRow/ValueLabel
-@onready var music_volume_slider = $VBox/SettingsContainer/AudioSettings/MusicVolumeRow/Slider
-@onready var music_volume_label = $VBox/SettingsContainer/AudioSettings/MusicVolumeRow/ValueLabel
-@onready var graphics_quality_option = $VBox/SettingsContainer/GraphicsSettings/QualityRow/OptionButton
-@onready var fullscreen_checkbox = $VBox/SettingsContainer/GraphicsSettings/FullscreenRow/CheckBox
-@onready var difficulty_option = $VBox/SettingsContainer/GameplaySettings/DifficultyRow/OptionButton
-@onready var theme_dropdown = $VBox/SettingsContainer/UISettings/ThemeRow/ThemeDropdown
-@onready var colorblind_checkbox = $VBox/SettingsContainer/AccessibilitySettings/ColorblindRow/CheckBox
+@onready var master_volume_slider = $VBox/Scroll/SettingsContainer/AudioSettings/MasterVolumeRow/Slider
+@onready var master_volume_label = $VBox/Scroll/SettingsContainer/AudioSettings/MasterVolumeRow/ValueLabel
+@onready var sfx_volume_slider = $VBox/Scroll/SettingsContainer/AudioSettings/SFXVolumeRow/Slider
+@onready var sfx_volume_label = $VBox/Scroll/SettingsContainer/AudioSettings/SFXVolumeRow/ValueLabel
+@onready var music_volume_slider = $VBox/Scroll/SettingsContainer/AudioSettings/MusicVolumeRow/Slider
+@onready var music_volume_label = $VBox/Scroll/SettingsContainer/AudioSettings/MusicVolumeRow/ValueLabel
+@onready var graphics_quality_option = $VBox/Scroll/SettingsContainer/GraphicsSettings/QualityRow/OptionButton
+@onready var fullscreen_checkbox = $VBox/Scroll/SettingsContainer/GraphicsSettings/FullscreenRow/CheckBox
+@onready var difficulty_option = $VBox/Scroll/SettingsContainer/GameplaySettings/DifficultyRow/OptionButton
+@onready var theme_dropdown = $VBox/Scroll/SettingsContainer/UISettings/ThemeRow/ThemeDropdown
+@onready var colorblind_checkbox = $VBox/Scroll/SettingsContainer/AccessibilitySettings/ColorblindRow/CheckBox
 
 # Built programmatically (no .tscn row): global-leaderboard opt-out (default ON).
 var global_leaderboard_checkbox: CheckButton = null
@@ -23,12 +23,12 @@ var global_leaderboard_checkbox: CheckButton = null
 var play_intros_checkbox: CheckButton = null
 
 # Section header labels for icon integration
-@onready var audio_label = $VBox/SettingsContainer/AudioSettings/AudioLabel
-@onready var graphics_label = $VBox/SettingsContainer/GraphicsSettings/GraphicsLabel
-@onready var gameplay_label = $VBox/SettingsContainer/GameplaySettings/GameplayLabel
-@onready var ui_label = $VBox/SettingsContainer/UISettings/UILabel
-@onready var accessibility_label = $VBox/SettingsContainer/AccessibilitySettings/AccessibilityLabel
-@onready var keyboard_label = $VBox/SettingsContainer/KeyboardShortcuts/KeyboardLabel
+@onready var audio_label = $VBox/Scroll/SettingsContainer/AudioSettings/AudioLabel
+@onready var graphics_label = $VBox/Scroll/SettingsContainer/GraphicsSettings/GraphicsLabel
+@onready var gameplay_label = $VBox/Scroll/SettingsContainer/GameplaySettings/GameplayLabel
+@onready var ui_label = $VBox/Scroll/SettingsContainer/UISettings/UILabel
+@onready var accessibility_label = $VBox/Scroll/SettingsContainer/AccessibilitySettings/AccessibilityLabel
+@onready var keyboard_label = $VBox/Scroll/SettingsContainer/KeyboardShortcuts/KeyboardLabel
 
 func _ready():
 	print("[SettingsMenu] Initializing...")
@@ -154,7 +154,7 @@ func _on_difficulty_changed(index: int):
 func _add_global_leaderboard_toggle():
 	"""Append a 'Submit Scores to Global Leaderboard' toggle to the Gameplay section.
 	Respects the player's choice (LeaderboardSync.should_submit reads this). Default ON."""
-	var gameplay = get_node_or_null("VBox/SettingsContainer/GameplaySettings")
+	var gameplay = get_node_or_null("VBox/Scroll/SettingsContainer/GameplaySettings")
 	if gameplay == null:
 		return
 	var row = HBoxContainer.new()
@@ -177,7 +177,7 @@ func _on_global_leaderboard_toggled(pressed: bool):
 func _add_play_intros_toggle():
 	"""Append a 'Play story intros' toggle to the Gameplay section (#801). Reversible escape
 	hatch: hold-to-skip auto-flips play_intros off; this lets the player turn intros back on."""
-	var gameplay = get_node_or_null("VBox/SettingsContainer/GameplaySettings")
+	var gameplay = get_node_or_null("VBox/Scroll/SettingsContainer/GameplaySettings")
 	if gameplay == null:
 		return
 	var row = HBoxContainer.new()
@@ -203,7 +203,7 @@ func _add_show_hints_toggle():
 	"""Append a 'Show gameplay hints' toggle to the Gameplay section (issue #720).
 	Master switch for onboarding help surfaces (getting-started hint + first-launch
 	welcome overlay). Respects the player's choice (GameConfig.show_hints). Default ON."""
-	var gameplay = get_node_or_null("VBox/SettingsContainer/GameplaySettings")
+	var gameplay = get_node_or_null("VBox/Scroll/SettingsContainer/GameplaySettings")
 	if gameplay == null:
 		return
 	var row = HBoxContainer.new()
@@ -230,7 +230,7 @@ func _add_ui_layout_toggle():
 	"""Append a 'Proposed UI layout (experimental)' toggle to the UI section. A/B scaffolding
 	(UI_PROPOSALS_2026-07-22): OFF = classic PLAN/WATCH; ON = the proposed grouped-hand + gantt +
 	reclaim assembly. Applies on the next game load; the in-game F9 hotkey flips it live."""
-	var ui_section = get_node_or_null("VBox/SettingsContainer/UISettings")
+	var ui_section = get_node_or_null("VBox/Scroll/SettingsContainer/UISettings")
 	if ui_section == null:
 		return
 	var row = HBoxContainer.new()
