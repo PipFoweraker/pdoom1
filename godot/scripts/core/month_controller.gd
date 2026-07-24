@@ -79,8 +79,18 @@ func advance_tick() -> Dictionary:
 		month_opened = true
 		month_open_pending = true
 
-	# Release duration-elapsed strategic WIP (seam: caller/L2 applies their effects).
+	# Release duration-elapsed strategic WIP. L3 (per-tick resolution / PER_TICK_RESOLUTION_
+	# DESIGN.md): cards scheduled at end_month resolve HERE, on their day-tick. Feed the due
+	# cards' action_ids into state.queued_actions so this tick's _complete_tick -> execute_turn
+	# -> _step_execute_queued_actions resolves them: records into the replay log at THIS turn,
+	# debits committed Attention (resolve_committed), applies effects. Routing through the
+	# existing execute path (not a separate effect hook) is what lets the flat replay simulator
+	# reproduce the new order unchanged (it re-queues actions by their recorded turn).
+	# Determinism: due cards are appended in (resolve_tick, queue) order -- take_due_strategic
+	# scans queued_strategic, which is insertion-ordered = queue order.
 	last_released_strategic = state.month_plan.take_due_strategic(state.turn)
+	for _card in last_released_strategic:
+		state.queued_actions.append(String(_card.get("action_id", "")))
 
 	# Hiring pipeline (Phase B): resolve any interview/offer/connections jobs due this tick.
 	# Stream-neutral when no jobs are in flight (guarded inside on_tick), so pre-existing

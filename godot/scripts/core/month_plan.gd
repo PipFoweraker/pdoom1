@@ -138,13 +138,14 @@ func release_committed(cost: int) -> void:
 
 
 func queue_strategic(action_id: String, attention_cost: int, duration_ticks: int, current_turn: int) -> bool:
-	"""Queue a strategic action at plan speed. Spends Attention now; the EFFECT lands
-	`duration_ticks` resolution ticks later (ADR-0009 S5). duration_ticks <= 0 is coerced
-	to 1 -- nothing strategic resolves on the same tick it was queued."""
-	if not can_queue(attention_cost):
+	"""Queue a strategic action at plan speed. L3 (per-tick resolution): the Attention is now
+	COMMITTED here (held, not debited); the DEBIT lands when the card resolves
+	`duration_ticks` ticks later (resolve_committed). duration_ticks <= 0 is coerced to 1 --
+	nothing strategic resolves on the same tick it was queued. (Pre-L3 this spent Attention up
+	front; unified onto the committed model so queued WIP is divertible.)"""
+	if not commit_attention(attention_cost):
 		return false
 	var ticks: int = max(1, duration_ticks)
-	attention_spent += attention_cost
 	queued_strategic.append({
 		"action_id": action_id,
 		"attention_cost": attention_cost,
@@ -152,6 +153,21 @@ func queue_strategic(action_id: String, attention_cost: int, duration_ticks: int
 		"queued_on_turn": current_turn,
 	})
 	return true
+
+
+func enqueue_committed_card(action_id: String, attention_cost: int, resolves_on_turn: int, queued_on_turn: int) -> void:
+	"""L3 (per-tick resolution): schedule an ALREADY-COMMITTED queued action as duration WIP
+	that resolves on `resolves_on_turn`. The Attention was committed at queue time
+	(GameManager.select_action -> commit_attention), so this does NOT re-charge -- it only
+	records the resolution tick. The debit lands when the card resolves (resolve_committed);
+	diverting it first releases the commitment (pay_by_cannibalizing). This is the production
+	seam end_month uses to spread the plan across the month's day-ticks."""
+	queued_strategic.append({
+		"action_id": action_id,
+		"attention_cost": attention_cost,
+		"resolves_on_turn": resolves_on_turn,
+		"queued_on_turn": queued_on_turn,
+	})
 
 
 func take_due_strategic(current_turn: int) -> Array:
@@ -188,12 +204,16 @@ func pay_by_cannibalizing(cost: int) -> Dictionary:
 	# Cancel most-recent queued strategic WIP until we can cover the cost from free Attention.
 	while free < cost and not queued_strategic.is_empty():
 		var victim: Dictionary = queued_strategic.pop_back()
-		attention_spent -= int(victim.get("attention_cost", 0))
+		# L3 (per-tick resolution): queued WIP holds COMMITTED (not yet spent) Attention --
+		# diverting the card RELEASES its commitment, raising available(). (Pre-L3 this
+		# decremented attention_spent because queue_strategic spent up front.) This is the
+		# mid-month diversion seam: an unresolved planned card is sacrificed to fund a window.
+		attention_committed = max(0, attention_committed - int(victim.get("attention_cost", 0)))
 		cancelled.append(String(victim.get("action_id", "")))
 		free = available()
 	if free < cost:
-		# Roll back nothing was actually spent; report failure. (attention_spent already
-		# reflects the cancellations, which is correct -- cancelling WIP is a real refund.)
+		# Nothing debited; report failure. The cancellations above stand (a diverted card is a
+		# real refund of committed Attention), matching the pre-L3 refund semantics.
 		return {"paid": false, "cancelled": cancelled}
 	attention_spent += cost  # the window consumes this much of the freed/available capacity
 	return {"paid": true, "cancelled": cancelled}

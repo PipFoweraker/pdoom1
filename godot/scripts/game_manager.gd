@@ -563,9 +563,36 @@ func end_month():
 	print("[GameManager] Committing month plan (%d actions)..." % state.queued_actions.size())
 	turn_phase_changed.emit("turn_end")
 
-	# Execute the OPEN plan turn (started at the previous boundary / game start).
-	# L2 (ADR-0011): Attention was spent at queue time; per-action self-charging (the hiring
-	# pipeline, etc.) also debits Attention HERE, at execution. No per-turn AP pool debit.
+	# L3 (per-tick resolution / PER_TICK_RESOLUTION_DESIGN.md): instead of resolving every
+	# queued card NOW, SCHEDULE each onto a future day-tick and let the month play them out.
+	# Mapping Q1(1): sequential, one card per working day, in queue order (resolves_on_turn =
+	# commit_turn + 1 + i). Attention was COMMITTED at queue time; the DEBIT lands as each card
+	# resolves during playout (MonthController.advance_tick feeds due cards into queued_actions
+	# -> turn_manager._step_execute_queued_actions -> resolve_committed). This is what
+	# interleaves the plan with events/windows and makes unresolved cards divertible.
+	#
+	# Q5 PROTOTYPE CARVE-OUT: the hiring-pipeline SOURCE/INTERVIEW/OFFER/ONBOARD actions
+	# self-charge Attention at execute time (month_plan.spend_attention, which checks
+	# available()). The implicit reserve drives available() to 0 during playout, so those
+	# actions can only run at commit (before the reserve is set) -- they own their OWN duration
+	# pipeline (hiring.on_tick) anyway. So keep them in queued_actions to resolve at commit; only
+	# SCHEDULE the rest. Redesigning this seam so hiring can resolve per-tick is a WS-3 open
+	# question (design doc Q5).
+	if state.month_plan != null:
+		var _self_charging := ["advertise", "use_connections", "interview_next", "hire_best", "onboard_next"]
+		var _stay: Array[String] = []
+		var _slot := 1
+		for aid in state.queued_actions:
+			if aid in _self_charging:
+				_stay.append(aid)  # resolves at commit (below), as today
+				continue
+			var att_cost := int(_get_action_by_id(aid).get("costs", {}).get("action_points", 0))
+			state.month_plan.enqueue_committed_card(aid, att_cost, state.turn + _slot, state.turn)
+			_slot += 1
+		state.queued_actions = _stay
+
+	# Execute the OPEN plan turn's CONSEQUENCE steps (doom/rivals/papers) plus any self-charging
+	# hiring actions kept above. General cards are now scheduled and resolve on their ticks.
 	var result = turn_manager.execute_turn()
 	if result.has("action_results"):
 		for action_result in result["action_results"]:
@@ -574,16 +601,14 @@ func end_month():
 	if state.game_over:
 		return
 
-	# Implicit reserve (v1): every Attention point NOT spent by this month's executed actions
-	# now guards the response windows during day-tick playback (_run_month_playback, below).
-	# This MUST run AFTER execute_turn: execution-time self-charging actions (hiring pipeline)
-	# spend from `available` (= total - spent - reserved); setting the reserve first drives
-	# available to 0 and starves them. Reserving the post-execution remainder is both the fix
-	# and the correct semantics -- the reserve protects what's left once commitments have run.
-	# The full plan screen makes this an explicit dial.
+	# Implicit reserve (v1): every Attention point NOT committed to this month's plan now guards
+	# the response windows during day-tick playback (_run_month_playback, below).
+	# L3 (per-tick resolution): cards are now COMMITTED (scheduled), not yet spent, so the
+	# reserve = total - committed = the uncommitted slack. As cards resolve during playout,
+	# committed -> spent, so this value is stable across the month. NOTE (design Q5): this drives
+	# available() to 0 during playout, which can starve a hiring card's self-charge -- flagged in
+	# PER_TICK_RESOLUTION_DESIGN.md as the messiest open seam.
 	if state.month_plan != null:
-		# SPIKE: net out any residual committed too (normally 0 -- execute_turn resolved every
-		# queued card -- but keep the reserve within the set_reserve guard if a card was dropped).
 		state.month_plan.set_reserve(state.month_plan.attention_total - state.month_plan.attention_spent - state.month_plan.attention_committed)
 
 	month_playback_active = true
