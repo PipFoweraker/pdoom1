@@ -99,7 +99,7 @@ var welcome_seen: bool = false
 # runtime file read) because version.txt lives outside res:// and the leaderboard
 # board-key derives from this value, so it must resolve identically in exported
 # builds where a res:// text read is not guaranteed to be packed.
-const CURRENT_VERSION: String = "0.12.0"
+const CURRENT_VERSION: String = "0.13.0"
 
 # Cold-open intro content version (#801). Independent of CURRENT_VERSION on purpose:
 # ordinary patch releases must NOT re-trigger the intro. Bump this ONLY when the
@@ -114,7 +114,7 @@ const INTRO_VERSION: String = "1"
 # patches bump version.txt alone, so everyone stays on the same leaderboard.
 # Epoch L1 == the current ruleset. NOTE: #789 hiring-stitch changes gameplay and
 # bumps this to 2 at the v0.13 epoch cut (spec DECISION C2) -- do not bump earlier.
-const LADDER_VERSION: String = "1"
+const LADDER_VERSION: String = "2"
 
 # Leaderboard State (transient, not saved)
 var latest_leaderboard_entry: String = ""  # UUID of most recent score entry
