@@ -903,7 +903,8 @@ func _on_game_state_updated(state: Dictionary):
 	# "~20 decisions this month" is now the true, spendable number.
 	var mp = state.get("month_plan", {})
 	var total_ap = int(mp.get("attention_total", 0))
-	var committed_ap = int(mp.get("attention_spent", 0))
+	# SPIKE (resolve-time-spend): "committed" on the HUD = debited (spent) + held (committed).
+	var committed_ap = int(mp.get("attention_spent", 0)) + int(mp.get("attention_committed", 0))
 	var reserved_ap = int(mp.get("attention_reserved", 0))
 	var remaining_ap = total_ap - committed_ap - reserved_ap
 

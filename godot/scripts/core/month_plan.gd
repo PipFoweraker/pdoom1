@@ -22,7 +22,11 @@ extends RefCounted
 
 # --- Attention accounting (all integer Attention units) ---
 var attention_total: int = 0        # granted this plan-month (Balance attention.per_month)
-var attention_spent: int = 0        # committed to queued strategic actions
+var attention_spent: int = 0        # DEBITED as queued cards RESOLVE (see resolve_committed)
+var attention_committed: int = 0    # SPIKE (resolve-time-spend): held by queued-but-not-yet-
+                                    # resolved cards; moves into attention_spent on resolution.
+                                    # Pre-spike this pool did not exist -- the debit landed in
+                                    # attention_spent at QUEUE time. Now queue-time only COMMITS.
 var attention_reserved: int = 0     # explicitly held for response windows (the crisp reserve)
 var reserve_used: int = 0           # reserve consumed by HANDLE-from-reserve this month
 
@@ -41,6 +45,7 @@ func begin_month(attention_per_month: int, ordinal: int) -> void:
 	the pools reset, so last month's unspent reserve is simply gone (ADR-0009 S4)."""
 	attention_total = attention_per_month
 	attention_spent = 0
+	attention_committed = 0
 	attention_reserved = 0
 	reserve_used = 0
 	month_ordinal = ordinal
@@ -49,8 +54,11 @@ func begin_month(attention_per_month: int, ordinal: int) -> void:
 
 
 func available() -> int:
-	"""Attention free to fund new plan-speed commitments (not spent, not reserved)."""
-	return attention_total - attention_spent - attention_reserved
+	"""Attention free to fund new plan-speed commitments. SPIKE: now also nets out
+	attention_committed (queued-but-unresolved cards), so the queue gate still stops the
+	founder committing past the 20/month budget even though the debit no longer lands in
+	attention_spent until a card resolves."""
+	return attention_total - attention_spent - attention_committed - attention_reserved
 
 
 func reserve_remaining() -> int:
@@ -64,8 +72,11 @@ func set_reserve(amount: int) -> bool:
 	has already been drawn from reserve (reserve_used) this month."""
 	if amount < reserve_used:
 		return false  # can't reserve less than already drawn from reserve
-	# The new reserve must fit within total minus what's spent on strategic work.
-	if amount > attention_total - attention_spent:
+	# The new reserve must fit within total minus what's spent AND still committed to
+	# strategic work (SPIKE: committed is 0 by the time end_month sets the implicit reserve --
+	# every card has resolved -- so this is unchanged for the live caller; the term keeps the
+	# invariant honest if a reserve is set mid-plan).
+	if amount > attention_total - attention_spent - attention_committed:
 		return false
 	attention_reserved = amount
 	return true
@@ -87,6 +98,43 @@ func spend_attention(cost: int) -> bool:
 		return false
 	attention_spent += cost
 	return true
+
+
+# --- SPIKE (resolve-time-spend): commit at queue time, DEBIT at resolution ------------------
+# The design goal (Pip): Attention leaves the founder's budget as queued cards RESOLVE over the
+# month, not when they are queued. Queue-time COMMITS (reserves budget so the 20/month gate
+# still holds); resolution DEBITS (moves committed -> spent). Removing a card before it resolves
+# RELEASES its commitment untouched -- the diversion affordance. NOTE: with the current
+# batch-execute model every queued card resolves in the single end_month execute_turn, so
+# committed->spent all lands at once, before day-tick playout. True mid-month diversion needs the
+# per-tick resolution seam (queue_strategic/take_due_strategic) wired into the real action path;
+# that is the larger L3/WS-3 change this spike assesses.
+
+func commit_attention(cost: int) -> bool:
+	"""Queue-time COMMIT: hold `cost` Attention against the budget without debiting it. Returns
+	false (no hold) if it doesn't fit within available Attention."""
+	if cost <= 0:
+		return true
+	if available() < cost:
+		return false
+	attention_committed += cost
+	return true
+
+
+func resolve_committed(cost: int) -> void:
+	"""Resolution-time DEBIT: a committed card resolves -- move its hold from committed to spent.
+	Clamped so a mismatched cost can never drive committed negative."""
+	if cost <= 0:
+		return
+	attention_committed = max(0, attention_committed - cost)
+	attention_spent += cost
+
+
+func release_committed(cost: int) -> void:
+	"""Cancel a queued-but-unresolved card: give back its commitment (nothing was debited)."""
+	if cost <= 0:
+		return
+	attention_committed = max(0, attention_committed - cost)
 
 
 func queue_strategic(action_id: String, attention_cost: int, duration_ticks: int, current_turn: int) -> bool:
@@ -157,6 +205,7 @@ func to_dict() -> Dictionary:
 	return {
 		"attention_total": attention_total,
 		"attention_spent": attention_spent,
+		"attention_committed": attention_committed,
 		"attention_reserved": attention_reserved,
 		"reserve_used": reserve_used,
 		"month_ordinal": month_ordinal,
@@ -167,6 +216,7 @@ func to_dict() -> Dictionary:
 func from_dict(data: Dictionary) -> void:
 	attention_total = int(data.get("attention_total", 0))
 	attention_spent = int(data.get("attention_spent", 0))
+	attention_committed = int(data.get("attention_committed", 0))
 	attention_reserved = int(data.get("attention_reserved", 0))
 	reserve_used = int(data.get("reserve_used", 0))
 	month_ordinal = int(data.get("month_ordinal", 0))

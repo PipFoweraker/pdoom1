@@ -216,11 +216,12 @@ func select_action(action_id: String) -> bool:
 		error_occurred.emit("Cannot afford " + action.get("name", action_id))
 		return false
 
-	# Spend Attention from the monthly budget (the founder currency). This is the same
-	# pool queued strategic WIP and the implicit reserve draw from, so end_month's
-	# reserve = attention_total - attention_spent stays correct.
+	# SPIKE (resolve-time-spend): COMMIT the Attention at queue time (holds it against the
+	# 20/month budget so the founder still cannot over-queue) but do NOT debit it. The debit
+	# lands when the card RESOLVES (turn_manager._step_execute_queued_actions ->
+	# month_plan.resolve_committed). Pre-spike this line was `attention_spent += cost`.
 	if state.month_plan != null:
-		state.month_plan.attention_spent += attention_cost
+		state.month_plan.commit_attention(attention_cost)
 
 	# Queue the action
 	state.queued_actions.append(action_id)
@@ -376,7 +377,8 @@ func clear_action_queue():
 	var refunded := _queued_attention_cost()
 	state.queued_actions.clear()
 	if state.month_plan != null:
-		state.month_plan.attention_spent = max(0, state.month_plan.attention_spent - refunded)
+		# SPIKE: queued cards hold COMMITTED (not spent) Attention -- release the commitment.
+		state.month_plan.release_committed(refunded)
 
 	print("[GameManager] Queue cleared, refunded %d Attention" % refunded)
 	game_state_updated.emit(state.to_dict())
@@ -415,10 +417,10 @@ func remove_queued_action(action_id: String):
 		var action = _get_action_by_id(action_id)
 		var attention_cost = action.get("costs", {}).get("action_points", 0)
 
-		# Remove and refund Attention
+		# Remove and refund Attention (SPIKE: release the COMMITMENT -- nothing was debited yet).
 		state.queued_actions.remove_at(removed_index)
 		if state.month_plan != null:
-			state.month_plan.attention_spent = max(0, state.month_plan.attention_spent - attention_cost)
+			state.month_plan.release_committed(attention_cost)
 
 		print("[GameManager] Removed %s from queue, refunded %d Attention (available: %d)" % [action_id, attention_cost, state.month_plan.available() if state.month_plan else 0])
 		game_state_updated.emit(state.to_dict())
@@ -580,7 +582,9 @@ func end_month():
 	# and the correct semantics -- the reserve protects what's left once commitments have run.
 	# The full plan screen makes this an explicit dial.
 	if state.month_plan != null:
-		state.month_plan.set_reserve(state.month_plan.attention_total - state.month_plan.attention_spent)
+		# SPIKE: net out any residual committed too (normally 0 -- execute_turn resolved every
+		# queued card -- but keep the reserve within the set_reserve guard if a card was dropped).
+		state.month_plan.set_reserve(state.month_plan.attention_total - state.month_plan.attention_spent - state.month_plan.attention_committed)
 
 	month_playback_active = true
 	_run_month_playback()  # async -- runs day ticks until window-pause or month boundary

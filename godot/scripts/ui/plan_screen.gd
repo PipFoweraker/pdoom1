@@ -51,7 +51,10 @@ func update_reserve_gauge(state: Dictionary) -> void:
 		return
 	var mp: Dictionary = state.get("month_plan", {})
 	var total := int(mp.get("attention_total", 0))
-	var spent := int(mp.get("attention_spent", 0))
+	# SPIKE (resolve-time-spend): allocated = already-DEBITED (spent) + still-COMMITTED (queued,
+	# not yet resolved). Reading spent alone would show 0 while planning, since the debit now
+	# lands at resolution.
+	var spent := int(mp.get("attention_spent", 0)) + int(mp.get("attention_committed", 0))
 	var reserved := int(mp.get("attention_reserved", 0))
 	if total <= 0:
 		_reserve_gauge.text = "[color=#a87a28]ATTENTION -- plan the month[/color]"

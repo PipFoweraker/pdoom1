@@ -175,7 +175,8 @@ func update_from_state(state: Dictionary) -> void:
 	if _reserve_label != null:
 		var mp: Dictionary = state.get("month_plan", {})
 		var total := int(mp.get("attention_total", 0))
-		var spent := int(mp.get("attention_spent", 0))
+		# SPIKE (resolve-time-spend): debited (spent) + still-held (committed) = allocated.
+		var spent := int(mp.get("attention_spent", 0)) + int(mp.get("attention_committed", 0))
 		var reserved := int(mp.get("attention_reserved", 0))
 		# Remaining slack = whatever isn't committed to strategic work this month.
 		var remaining: int = max(0, total - spent)

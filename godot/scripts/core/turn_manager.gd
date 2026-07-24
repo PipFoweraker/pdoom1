@@ -465,6 +465,13 @@ func _step_execute_queued_actions(results: Array) -> bool:
 	"""Execute each queued action in order, recording each into the replay log."""
 	var all_success = true
 	for action_id in state.queued_actions:
+		# SPIKE (resolve-time-spend): DEBIT the card's committed Attention as it resolves
+		# (moves committed -> spent). Pre-spike the debit had already landed at queue time.
+		# Determinism-neutral: touches only Attention accounting, which is NOT in the
+		# verification snapshot, and does not read/advance the RNG stream.
+		if state.month_plan != null:
+			var att_cost := int(GameActions.get_action_by_id(action_id).get("costs", {}).get("action_points", 0))
+			state.month_plan.resolve_committed(att_cost)
 		var result = GameActions.execute_action(action_id, state)
 		results.append(result)
 		if not result["success"]:
