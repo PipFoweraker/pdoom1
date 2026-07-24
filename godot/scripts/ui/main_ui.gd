@@ -2338,6 +2338,62 @@ func _on_hiring_send_offer_pressed(candidate_id: String, cash_spin: SpinBox, pro
 	var promises := _selected_promises(promise_boxes)
 	_hiring_action_result(game_manager.hiring_offer(candidate_id, cash_spin.value, promises), "Offer")
 
+func _format_costs_inline(costs: Dictionary) -> String:
+	"""Shared cost-summary formatter for the icon-grid submenus (fundraising / publicity /
+	strategic / travel / operations). Cost-display sweep (2026-07-24, Pip playtest): these
+	buttons were only showing cost on hover (tooltip_text) -- this is what now also goes ON
+	the button face via a dedicated cost label, so a hidden-AP surprise (e.g. Compute
+	Partnership, Intelligence Opportunity) can't happen here. Returns 'Free' for an empty/
+	zero-cost dict."""
+	var parts: Array[String] = []
+	if costs.get("action_points", 0) > 0:
+		parts.append("%d AP" % int(costs["action_points"]))
+	if costs.get("money", 0) > 0:
+		parts.append(GameConfig.format_money(costs["money"]))
+	if costs.get("reputation", 0) > 0:
+		parts.append("%d Rep" % int(costs["reputation"]))
+	if costs.get("papers", 0) > 0:
+		parts.append("%d Papers" % int(costs["papers"]))
+	if costs.get("research", 0) > 0:
+		parts.append("%d Research" % int(costs["research"]))
+	if costs.get("compute", 0) > 0:
+		parts.append("%d Compute" % int(costs["compute"]))
+	if parts.is_empty():
+		return "Free"
+	return ", ".join(parts)
+
+
+func _costs_affordable(costs: Dictionary, state: Dictionary) -> bool:
+	"""Shared affordability check for the icon-grid submenus. IMPORTANT: action_points must be
+	checked against the monthly Attention budget (available_ap), not the raw legacy
+	action_points primitive -- get_available_ap() nets out what's already committed/reserved
+	this plan month (see GameState.get_available_ap docstring). Using the raw field under-
+	reported unaffordable options as affordable (cost-display sweep, #822-adjacent)."""
+	for resource in costs.keys():
+		var need = costs[resource]
+		if need <= 0:
+			continue
+		var have = state.get("available_ap", 0) if resource == "action_points" else state.get(resource, 0)
+		if have < need:
+			return false
+	return true
+
+
+func _make_cost_label(cost_text: String, is_free: bool) -> Label:
+	"""Small on-face cost line added under an icon-grid submenu button (cost-display sweep).
+	Amber for a real cost, muted green for Free -- consistent with the AP-cost-indicator
+	color used in update_queued_actions_display()."""
+	var lbl := Label.new()
+	lbl.text = cost_text
+	lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	lbl.add_theme_font_size_override("font_size", 9)
+	if is_free:
+		lbl.add_theme_color_override("font_color", Color(0.55, 0.8, 0.55))
+	else:
+		lbl.add_theme_color_override("font_color", Color(0.9, 0.75, 0.35))
+	return lbl
+
+
 func _show_fundraising_submenu():
 	"""Show popup dialog with fundraising options with keyboard support - icon grid layout"""
 	print("[MainUI] === FUNDRAISING SUBMENU STARTING ===")
@@ -2413,18 +2469,9 @@ func _show_fundraising_submenu():
 		btn.add_theme_font_size_override("font_size", 10)
 		btn.add_theme_color_override("font_color", Color(1, 1, 1, 0.6))
 
-		# Format costs for tooltip
-		var cost_text = ""
-		if fund_costs.get("action_points", 0) > 0:
-			cost_text += "%d AP" % fund_costs.get("action_points")
-		if fund_costs.get("reputation", 0) > 0:
-			if cost_text != "":
-				cost_text += ", "
-			cost_text += "%d Rep" % fund_costs.get("reputation")
-		if fund_costs.get("papers", 0) > 0:
-			if cost_text != "":
-				cost_text += ", "
-			cost_text += "%d Papers" % fund_costs.get("papers")
+		# Cost summary -- shown ON the button face (cost label below), not hover-only (#822).
+		var cost_text = _format_costs_inline(fund_costs)
+		var is_free = cost_text == "Free"
 
 		# Format gains for tooltip
 		var gain_text = ""
@@ -2433,19 +2480,15 @@ func _show_fundraising_submenu():
 		elif fund_gains.has("money"):
 			gain_text = GameConfig.format_money(fund_gains.get("money"))
 
-		# Check affordability
-		var can_afford = true
-		for resource in fund_costs.keys():
-			if current_state.get(resource, 0) < fund_costs[resource]:
-				can_afford = false
-				break
+		# Check affordability (available_ap, not raw action_points -- see _costs_affordable)
+		var can_afford = _costs_affordable(fund_costs, current_state)
 
 		if not can_afford:
 			btn.disabled = true
 			btn.modulate = Color(0.5, 0.5, 0.5)
 
 		# Tooltip with full details
-		btn.tooltip_text = "%s\n%s\n\nCosts: %s\nGains: %s" % [fund_name, fund_desc, cost_text if cost_text != "" else "Free", gain_text]
+		btn.tooltip_text = "%s\n%s\n\nCosts: %s\nGains: %s" % [fund_name, fund_desc, cost_text, gain_text]
 
 		# Connect button
 		btn.pressed.connect(func(): _on_fundraising_option_selected(fund_id, fund_name, dialog))
@@ -2461,6 +2504,12 @@ func _show_fundraising_submenu():
 		name_label.add_theme_font_size_override("font_size", 10)
 		name_label.add_theme_color_override("font_color", Color(0.8, 0.8, 0.8))
 		item_vbox.add_child(name_label)
+
+		# On-face cost line (#822 cost-display sweep) -- greyed along with the button when unaffordable.
+		var fund_cost_label = _make_cost_label(cost_text, is_free)
+		if not can_afford:
+			fund_cost_label.modulate = Color(0.5, 0.5, 0.5)
+		item_vbox.add_child(fund_cost_label)
 
 		grid.add_child(item_vbox)
 		buttons.append(btn)
@@ -2581,12 +2630,10 @@ func _show_financing_submenu():
 		var cost_txt = (" (%s)" % ", ".join(cost_bits)) if cost_bits.size() > 0 else ""
 		btn.text = "[%s]  %s%s" % [key, opt_name, cost_txt]
 		btn.tooltip_text = option.get("description", "")
-		var can_afford = true
-		for res in opt_costs.keys():
-			if res == "action_points":
-				continue
-			if current_state.get(res, 0) < opt_costs[res]:
-				can_afford = false
+		# available_ap (not raw action_points) -- see _costs_affordable docstring. This loop
+		# previously SKIPPED action_points entirely, so a financing trade could show affordable
+		# while the player had no Attention left to actually queue it (cost-display sweep, #822).
+		var can_afford = _costs_affordable(opt_costs, current_state)
 		if not can_afford:
 			btn.disabled = true
 			btn.modulate = Color(0.5, 0.5, 0.5)
@@ -2736,36 +2783,19 @@ func _show_publicity_submenu():
 		btn.add_theme_font_size_override("font_size", 10)
 		btn.add_theme_color_override("font_color", Color(1, 1, 1, 0.6))
 
-		# Format costs for tooltip
-		var cost_text = ""
-		if pub_costs.get("action_points", 0) > 0:
-			cost_text += "%d AP" % pub_costs.get("action_points")
-		if pub_costs.get("money", 0) > 0:
-			if cost_text != "":
-				cost_text += ", "
-			cost_text += GameConfig.format_money(pub_costs.get("money"))
-		if pub_costs.get("reputation", 0) > 0:
-			if cost_text != "":
-				cost_text += ", "
-			cost_text += "%d Rep" % pub_costs.get("reputation")
-		if pub_costs.get("papers", 0) > 0:
-			if cost_text != "":
-				cost_text += ", "
-			cost_text += "%d Papers" % pub_costs.get("papers")
+		# Cost summary -- shown ON the button face (cost label below), not hover-only (#822).
+		var cost_text = _format_costs_inline(pub_costs)
+		var is_free = cost_text == "Free"
 
-		# Check affordability
-		var can_afford = true
-		for resource in pub_costs.keys():
-			if current_state.get(resource, 0) < pub_costs[resource]:
-				can_afford = false
-				break
+		# Check affordability (available_ap, not raw action_points -- see _costs_affordable)
+		var can_afford = _costs_affordable(pub_costs, current_state)
 
 		if not can_afford:
 			btn.disabled = true
 			btn.modulate = Color(0.5, 0.5, 0.5)
 
 		# Tooltip with full details
-		btn.tooltip_text = "%s\n%s\n\nCosts: %s" % [pub_name, pub_desc, cost_text if cost_text != "" else "Free"]
+		btn.tooltip_text = "%s\n%s\n\nCosts: %s" % [pub_name, pub_desc, cost_text]
 
 		# Connect button
 		btn.pressed.connect(func(): _on_publicity_option_selected(pub_id, pub_name, dialog))
@@ -2780,6 +2810,12 @@ func _show_publicity_submenu():
 		name_label.add_theme_font_size_override("font_size", 10)
 		name_label.add_theme_color_override("font_color", Color(0.8, 0.8, 0.8))
 		item_vbox.add_child(name_label)
+
+		# On-face cost line (#822 cost-display sweep) -- greyed along with the button when unaffordable.
+		var pub_cost_label = _make_cost_label(cost_text, is_free)
+		if not can_afford:
+			pub_cost_label.modulate = Color(0.5, 0.5, 0.5)
+		item_vbox.add_child(pub_cost_label)
 
 		grid.add_child(item_vbox)
 		buttons.append(btn)
@@ -2935,36 +2971,19 @@ func _show_strategic_submenu():
 		btn.add_theme_font_size_override("font_size", 10)
 		btn.add_theme_color_override("font_color", Color(1, 1, 1, 0.6))
 
-		# Format costs for tooltip
-		var cost_text = ""
-		if strat_costs.get("action_points", 0) > 0:
-			cost_text += "%d AP" % strat_costs.get("action_points")
-		if strat_costs.get("money", 0) > 0:
-			if cost_text != "":
-				cost_text += ", "
-			cost_text += GameConfig.format_money(strat_costs.get("money"))
-		if strat_costs.get("reputation", 0) > 0:
-			if cost_text != "":
-				cost_text += ", "
-			cost_text += "%d Rep" % strat_costs.get("reputation")
-		if strat_costs.get("papers", 0) > 0:
-			if cost_text != "":
-				cost_text += ", "
-			cost_text += "%d Papers" % strat_costs.get("papers")
+		# Cost summary -- shown ON the button face (cost label below), not hover-only (#822).
+		var cost_text = _format_costs_inline(strat_costs)
+		var is_free = cost_text == "Free"
 
-		# Check affordability
-		var can_afford = true
-		for resource in strat_costs.keys():
-			if current_state.get(resource, 0) < strat_costs[resource]:
-				can_afford = false
-				break
+		# Check affordability (available_ap, not raw action_points -- see _costs_affordable)
+		var can_afford = _costs_affordable(strat_costs, current_state)
 
 		if not can_afford:
 			btn.disabled = true
 			btn.modulate = Color(0.5, 0.5, 0.5)
 
 		# Tooltip with full details
-		btn.tooltip_text = "%s\n%s\n\nCosts: %s" % [strat_name, strat_desc, cost_text if cost_text != "" else "Free"]
+		btn.tooltip_text = "%s\n%s\n\nCosts: %s" % [strat_name, strat_desc, cost_text]
 
 		# Connect button
 		btn.pressed.connect(func(): _on_strategic_option_selected(strat_id, strat_name, dialog))
@@ -2978,6 +2997,12 @@ func _show_strategic_submenu():
 		name_label.add_theme_font_size_override("font_size", 10)
 		name_label.add_theme_color_override("font_color", Color(0.8, 0.8, 0.8))
 		item_vbox.add_child(name_label)
+
+		# On-face cost line (#822 cost-display sweep) -- greyed along with the button when unaffordable.
+		var strat_cost_label = _make_cost_label(cost_text, is_free)
+		if not can_afford:
+			strat_cost_label.modulate = Color(0.5, 0.5, 0.5)
+		item_vbox.add_child(strat_cost_label)
 
 		grid.add_child(item_vbox)
 		buttons.append(btn)
@@ -3131,34 +3156,23 @@ func _show_travel_submenu():
 		btn.add_theme_font_size_override("font_size", 10)
 		btn.add_theme_color_override("font_color", Color(1, 1, 1, 0.6))
 
-		# Format costs for tooltip
-		var cost_text = ""
-		if travel_costs.get("action_points", 0) > 0:
-			cost_text += "%d AP" % travel_costs.get("action_points")
-		if travel_costs.get("research", 0) > 0:
-			if cost_text != "":
-				cost_text += ", "
-			cost_text += "%d Research" % travel_costs.get("research")
+		# Cost summary -- shown ON the button face (cost label below), not hover-only (#822).
+		var cost_text = _format_costs_inline(travel_costs)
+		var is_free = cost_text == "Free"
 
 		# Check affordability
 		var can_afford = true
 		if is_stub:
 			can_afford = false
 		else:
-			for resource in travel_costs.keys():
-				var current_val = current_state.get(resource, 0)
-				if resource == "action_points":
-					current_val = current_state.get("available_ap", 0)
-				if current_val < travel_costs[resource]:
-					can_afford = false
-					break
+			can_afford = _costs_affordable(travel_costs, current_state)
 
 		if not can_afford:
 			btn.disabled = true
 			btn.modulate = Color(0.5, 0.5, 0.5)
 
 		# Tooltip
-		btn.tooltip_text = "%s\n%s\n\nCosts: %s" % [travel_name, travel_desc, cost_text if cost_text != "" else "Free"]
+		btn.tooltip_text = "%s\n%s\n\nCosts: %s" % [travel_name, travel_desc, cost_text]
 
 		# Connect button
 		btn.pressed.connect(func(): _on_travel_option_selected(travel_id, travel_name, dialog))
@@ -3172,6 +3186,12 @@ func _show_travel_submenu():
 		name_label.add_theme_font_size_override("font_size", 10)
 		name_label.add_theme_color_override("font_color", Color(0.8, 0.8, 0.8))
 		item_vbox.add_child(name_label)
+
+		# On-face cost line (#822 cost-display sweep) -- greyed along with the button when unaffordable.
+		var travel_cost_label = _make_cost_label(cost_text, is_free)
+		if not can_afford:
+			travel_cost_label.modulate = Color(0.5, 0.5, 0.5)
+		item_vbox.add_child(travel_cost_label)
 
 		actions_grid.add_child(item_vbox)
 		buttons.append(btn)
@@ -3980,31 +4000,19 @@ func _show_operations_submenu():
 		btn.add_theme_font_size_override("font_size", 10)
 		btn.add_theme_color_override("font_color", Color(1, 1, 1, 0.6))
 
-		# Format costs for tooltip
-		var cost_text = ""
-		if op_costs.get("action_points", 0) > 0:
-			cost_text += "%d AP" % op_costs.get("action_points")
-		if op_costs.get("money", 0) > 0:
-			if cost_text != "":
-				cost_text += ", "
-			cost_text += GameConfig.format_money(op_costs.get("money"))
+		# Cost summary -- shown ON the button face (cost label below), not hover-only (#822).
+		var cost_text = _format_costs_inline(op_costs)
+		var is_free = cost_text == "Free"
 
-		# Check affordability
-		var can_afford = true
-		for resource in op_costs.keys():
-			var current_val = current_state.get(resource, 0)
-			if resource == "action_points":
-				current_val = current_state.get("available_ap", 0)
-			if current_val < op_costs[resource]:
-				can_afford = false
-				break
+		# Check affordability (available_ap, not raw action_points -- see _costs_affordable)
+		var can_afford = _costs_affordable(op_costs, current_state)
 
 		if not can_afford:
 			btn.disabled = true
 			btn.modulate = Color(0.5, 0.5, 0.5)
 
 		# Tooltip
-		btn.tooltip_text = "%s\n%s\n\nCosts: %s" % [op_name, op_desc, cost_text if cost_text != "" else "Free"]
+		btn.tooltip_text = "%s\n%s\n\nCosts: %s" % [op_name, op_desc, cost_text]
 
 		# Connect button
 		btn.pressed.connect(func(): _on_operations_option_selected(op_id, op_name, dialog))
@@ -4018,6 +4026,12 @@ func _show_operations_submenu():
 		name_label.add_theme_font_size_override("font_size", 10)
 		name_label.add_theme_color_override("font_color", Color(0.8, 0.8, 0.8))
 		item_vbox.add_child(name_label)
+
+		# On-face cost line (#822 cost-display sweep) -- greyed along with the button when unaffordable.
+		var op_cost_label = _make_cost_label(cost_text, is_free)
+		if not can_afford:
+			op_cost_label.modulate = Color(0.5, 0.5, 0.5)
+		item_vbox.add_child(op_cost_label)
 
 		grid.add_child(item_vbox)
 		buttons.append(btn)
