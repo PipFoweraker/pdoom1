@@ -49,6 +49,24 @@ static func _apply_leather_style(btn: Button) -> void:
 	btn.add_theme_stylebox_override("pressed", _make_leather_box(_LEDGER_LEATHER_PRESSED))
 	btn.add_theme_stylebox_override("focus", _make_leather_box(_LEDGER_LEATHER_HOVER))
 
+## Player-facing due date for a ledger entry (Pip 2026-07-24: the ledger used to show
+## raw turn counts, but the game's clock is DAYS -- this is a pure display conversion,
+## NOT a new time system. The underlying fuse is already day-tick-grained: turn_manager
+## calls Ledger.tick_and_bill() exactly once per turn (turn_manager.gd
+## _step_ledger_tick_and_bill), and Clock defines turn = 1 workday (clock.gd), so
+## `turn + fuse` is the due turn and Clock.date_for_turn() gives its real calendar date.
+## Returns "due this turn" when the fuse has reached 0 (bills THIS tick, per the
+## Ledger.Entry.fuse doc: "0 = due now"); otherwise "due <date> (in N days)" using
+## Clock.calendar_days_between() so weekends are counted correctly, not just turn deltas.
+static func _due_text(fuse: int, turn: int, start_year: int, start_month: int, start_day: int) -> String:
+	if fuse <= 0:
+		return "due this turn"
+	var due_turn := turn + fuse
+	var d := Clock.date_for_turn(due_turn, start_year, start_month, start_day)
+	var date_txt := "%d %s %d" % [int(d.day), Clock.MONTH_ABBR[int(d.month) - 1], int(d.year)]
+	var days := Clock.calendar_days_between(turn, due_turn)
+	return "due %s (in %d day%s)" % [date_txt, days, "" if days == 1 else "s"]
+
 func create_summary_button() -> Button:
 	"""BL-1: compact Liability Ledger summary button. Kept terse so the main view stays
 	uncrowded; the full ledger is a switchable screen (Financing).
@@ -69,9 +87,14 @@ func create_summary_button() -> Button:
 	_summary_button.tooltip_text = "Open the Liability Ledger  (press L)"
 	return _summary_button
 
-func update_summary(ledger_data: Dictionary) -> void:
+func update_summary(ledger_data: Dictionary, turn: int = 0,
+		start_year: int = GameState.DEFAULT_START_YEAR,
+		start_month: int = GameState.DEFAULT_START_MONTH,
+		start_day: int = GameState.DEFAULT_START_DAY) -> void:
 	"""BL-1 compact summary: outstanding owed, soonest due, secret count. Deliberately
-	terse so the main view stays uncrowded; the full ledger is a switchable screen."""
+	terse so the main view stays uncrowded; the full ledger is a switchable screen.
+	turn/start_* let the soonest-fuse count be shown as a real calendar date (see
+	_due_text) instead of a raw turn count."""
 	if not _summary_button:
 		return
 	var owed: float = float(ledger_data.get("outstanding_payable", 0.0))
@@ -82,7 +105,7 @@ func update_summary(ledger_data: Dictionary) -> void:
 		_summary_button.add_theme_color_override("font_color", _LEDGER_INK_CLEAN)
 		_ledger_due_soon_logged = false
 		return
-	var due_txt := ("due %dt" % soonest) if soonest >= 0 else "no due"
+	var due_txt := _due_text(soonest, turn, start_year, start_month, start_day) if soonest >= 0 else "no due"
 	var secret_txt := ("  |  %d secret" % secrets) if secrets > 0 else ""
 	# #578: due-soon reminder. When the soonest payable fuse is within ~1-2 turns, flag it
 	# visibly ([!] prefix + strong red) and drop a one-shot message-log line so the player is
@@ -94,22 +117,27 @@ func update_summary(ledger_data: Dictionary) -> void:
 		# Urgent: warm red (legible on brown leather), and log once on entry into the window.
 		_summary_button.add_theme_color_override("font_color", _LEDGER_INK_DUE)
 		if not _ledger_due_soon_logged:
-			var when_txt := "this turn" if soonest <= 0 else ("in %d turn%s" % [soonest, "" if soonest == 1 else "s"])
-			message_logged.emit("[color=#%s][!] Ledger: %s payment due %s -- open the ledger (click summary or press L) to review.[/color]" % [_LEDGER_WARN_RED.to_html(false), GameConfig.format_money(owed), when_txt])
+			message_logged.emit("[color=#%s][!] Ledger: %s payment %s -- open the ledger (click summary or press L) to review.[/color]" % [_LEDGER_WARN_RED.to_html(false), GameConfig.format_money(owed), due_txt])
 			_ledger_due_soon_logged = true
 	else:
 		_ledger_due_soon_logged = false
 		# Warm parchment when only owed; warm amber as secret liabilities mount (exposure pressure).
 		_summary_button.add_theme_color_override("font_color", _LEDGER_INK_CLEAN if secrets == 0 else _LEDGER_INK_SECRET)
 
-func build_screen(ledger, viewport_size: Vector2, on_close: Callable = Callable()) -> Panel:
+func build_screen(ledger, viewport_size: Vector2, on_close: Callable = Callable(),
+		turn: int = 0,
+		start_year: int = GameState.DEFAULT_START_YEAR,
+		start_month: int = GameState.DEFAULT_START_MONTH,
+		start_day: int = GameState.DEFAULT_START_DAY) -> Panel:
 	"""BL-1: the full Liability Ledger screen -- lists every live entry (source, currency,
 	principal, fuse, secrecy) plus death attribution.
 
 	#601: styled as a distinct leather-bound object whose inner content FILLS the panel
 	(the old build left everything cramped top-left with the terms truncated). The entries
-	are laid out as a real column table so nothing like 'due 3t @25%/t' gets clipped, and
-	the panel carries an is_ledger meta so the L key can toggle it closed (#601).
+	are laid out as a real column table so nothing like 'due 16 Aug 2017 (in 12 days)
+	@25%/t' gets clipped, and the panel carries an is_ledger meta so the L key can toggle
+	it closed (#601). turn/start_* convert each entry's fuse to a real calendar due date
+	(see _due_text) instead of a raw turn count.
 
 	The host owns overlay parenting, z-index, active_dialog bookkeeping, and chrome."""
 	# Larger, centred panel so the ledger reads as a substantial object, not a scrap.
@@ -178,7 +206,8 @@ func build_screen(ledger, viewport_size: Vector2, on_close: Callable = Callable(
 			scroll.add_child(clean)
 		else:
 			# Real column table: Source | Amount | Due | Notes. Each cell sizes to its own
-			# content so terms like 'due 3t @25%/t' are never truncated (#601).
+			# content so terms like 'due 16 Aug 2017 (in 12 days) @25%/t' are never
+			# truncated (#601).
 			var table := GridContainer.new()
 			table.columns = 4
 			table.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -201,7 +230,7 @@ func build_screen(ledger, viewport_size: Vector2, on_close: Callable = Callable(
 				var cells = [
 					str(e.source),
 					"%s %.0f %s" % [side_txt, e.principal, e.currency],
-					"due %dt%s" % [e.fuse, interest_txt],
+					"%s%s" % [_due_text(e.fuse, turn, start_year, start_month, start_day), interest_txt],
 					note_txt,
 				]
 				for cell_text in cells:

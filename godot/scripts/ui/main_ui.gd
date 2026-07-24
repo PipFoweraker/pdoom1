@@ -957,8 +957,12 @@ func _on_game_state_updated(state: Dictionary):
 			state.get("rival_labs_full", []))
 
 	# BL-1: refresh the compact Liability Ledger summary (#622 L10: lives in LedgerScreen)
+	# turn/start_* let the summary show a real calendar due date, not a raw turn count.
 	if ledger_screen:
-		ledger_screen.update_summary(state.get("ledger", {}))
+		ledger_screen.update_summary(state.get("ledger", {}), int(state.get("turn", 0)),
+			int(state.get("start_year", GameState.DEFAULT_START_YEAR)),
+			int(state.get("start_month", GameState.DEFAULT_START_MONTH)),
+			int(state.get("start_day", GameState.DEFAULT_START_DAY)))
 
 	# Update office cat for doom level and visibility
 	if office_cat:
@@ -2627,7 +2631,14 @@ func _show_ledger_screen():
 	# (ui_cancel) affordance itself, wired to our _close_active_submenu so the dialog
 	# bookkeeping stays with the host. No separate _decorate_active_submenu() needed --
 	# doing both would stack two [X] buttons.
-	var dialog: Panel = ledger_screen.build_screen(ledger, get_viewport().get_visible_rect().size, _close_active_submenu)
+	# turn/start_* let each row show a real calendar due date, not a raw turn count.
+	var g_state = game_manager.state if game_manager else null
+	var dialog: Panel = ledger_screen.build_screen(ledger, get_viewport().get_visible_rect().size,
+		_close_active_submenu,
+		g_state.turn if g_state else 0,
+		g_state.start_year if g_state else GameState.DEFAULT_START_YEAR,
+		g_state.start_month if g_state else GameState.DEFAULT_START_MONTH,
+		g_state.start_day if g_state else GameState.DEFAULT_START_DAY)
 
 	active_dialog = dialog
 	active_dialog_buttons = []
