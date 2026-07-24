@@ -778,7 +778,10 @@ func resolve_event(event: Dictionary, choice_id: String):
 	# month controller (Attention payment, replay payment_source), not the legacy path.
 	# Also covers a save loaded mid-pause (controller rehydrated paused, playback inactive).
 	if month_controller != null and month_controller.is_paused():
-		var wresult: Dictionary = month_controller.resolve_current_window_option(choice_id)
+		# Pass the event the dialog presented so the option resolves against THAT window,
+		# not blindly window_queue[0] (a prior unresolved window would otherwise desync the
+		# head from the dialog -> bogus "Unknown option", playtest 2026-07-24).
+		var wresult: Dictionary = month_controller.resolve_current_window_option(choice_id, event)
 		if wresult.get("success", false):
 			action_executed.emit(wresult)
 			game_state_updated.emit(state.to_dict())

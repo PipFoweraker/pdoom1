@@ -230,19 +230,35 @@ func resolve_current_window(response: String) -> Dictionary:
 	return result
 
 
-func resolve_current_window_option(option_id: String) -> Dictionary:
-	"""Answer the head window by choosing one of the event's own options (the v1 dialog
+func resolve_current_window_option(option_id: String, event: Dictionary = {}) -> Dictionary:
+	"""Answer a queued window by choosing one of the event's own options (the v1 dialog
 	path -- the event_dialog presents the event's options, not the four verbs). The chosen
 	option maps onto the verb menu: the window's ignore option resolves as IGNORE (list
 	price, no Attention); any other option is a HANDLE paid reserve-first, falling back to
 	cannibalizing (WindowResolver.resolve_chosen_option). Payment source still lands in the
-	replay artifact. The explicit four-verb menu (incl. DEFER) is the plan-screen UI's job."""
+	replay artifact. The explicit four-verb menu (incl. DEFER) is the plan-screen UI's job.
+
+	Resolve against the window the player actually chose from (matched by id via `event`),
+	NOT blindly window_queue[0]. The event_dialog presents queued windows one at a time and
+	advances on every press; a prior window left unresolved (e.g. a HANDLE that failed for
+	lack of Attention stays queued) would otherwise desync the queue head from the dialog,
+	and the chosen option_id -- absent from the stale head -- threw a bogus
+	"Unknown option: <id>" (playtest 2026-07-24). Falls back to the head when no event is
+	supplied (legacy/test callers)."""
 	if not is_paused() or window_queue.is_empty():
 		return {"success": false, "message": "no open window"}
-	var window: Dictionary = window_queue[0]
+	var idx := 0
+	if not event.is_empty():
+		var wanted := String(event.get("id", ""))
+		for i in window_queue.size():
+			var w = window_queue[i]
+			if w is Dictionary and String(w.get("id", "")) == wanted:
+				idx = i
+				break
+	var window: Dictionary = window_queue[idx]
 	var result := WindowResolver.resolve_chosen_option(state, state.month_plan, window, option_id, state.rng)
 	if result.get("success", false):
-		window_queue.pop_front()
+		window_queue.remove_at(idx)
 		_sync_pending()
 		if window_queue.is_empty():
 			status = Status.READY
