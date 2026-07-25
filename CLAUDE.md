@@ -66,10 +66,14 @@ runtime -- the old Python bridge is gone). Python exists only for CI/tooling in
 - **Pushes hang on Git Credential Manager** (interactive prompt, no GUI):
   prefix `GIT_TERMINAL_PROMPT=0` on `git push` -- pushes instantly via gh's
   helper.
-- **enforce-standards sprays whole-tree UNSTAGED transliteration churn**
-  during pre-commit (#773 tracks the fix). Discard it (`git checkout -- .`
-  of unintended paths); NEVER `git add -A`. If a worktree looks mass-
-  modified or a script looks corrupted, suspect this before blaming main.
+- **enforce-standards whole-tree churn is FIXED (#773, PR #849).** The
+  pre-commit CHECK runs `enforce_standards.py --incremental` on only the
+  files pre-commit passes (read-only, changed-files-only, since a274a09d),
+  and `intelligent_ascii_converter.py` is now report-only DRY RUN by default
+  -- it rewrites files ONLY with an explicit `--apply` (00adece3). A bare or
+  accidental run no longer sprays transliterated churn across the tree. Still
+  NEVER `git add -A` (the `.import`/`.uid` staging trap remains); if a worktree
+  ever looks mass-modified, suspect that, not enforce-standards.
 - **Squash-merge does NOT fire closes-keywords here** -- after merging,
   verify the linked issues closed; close stale ones manually.
 - **Verify your Edit paths land in YOUR worktree** -- three lanes in one
