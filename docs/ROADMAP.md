@@ -13,12 +13,12 @@
 
 > **Nomenclature (2026-07-25):** precise definitions of Theme / Epoch / Seed and
 > the version numbers live in [`RELEASE_NOMENCLATURE.md`](RELEASE_NOMENCLATURE.md).
-> Ruling: the game evolves on a **MONTHLY** rhythm -- each month is a named Theme
-> = a minor-version bump = a forking Epoch. Quarterly planning is retired (it slows
-> the real ~feature-a-week pace). The "Quarterly pins" table below is therefore
-> **pending re-cast** into monthly Themes; only the two Big Milestones (First
-> Contact, Rivals & News) survive as coarse multi-month groupings. Left for Pip
-> to re-cast + name the upcoming Themes (`v0.14`+).
+> Ruling (**ADOPTED 2026-07-25**): the game evolves on a **MONTHLY** rhythm --
+> each month is a named Theme = a minor-version bump = a forking Epoch. Quarterly
+> planning is retired (it slowed the real ~feature-a-week pace). The old quarterly
+> table is re-cast into the **Monthly Themes** table below; only the two Big
+> Milestones (First Contact, Rivals & News) survive as coarse multi-month
+> groupings. Rendered view: [`ROADMAP_RECAST_PROPOSAL.html`](ROADMAP_RECAST_PROPOSAL.html).
 
 ## Now (committed) -- GitHub milestones
 
@@ -36,17 +36,29 @@ reflects it. This file does not duplicate their contents.
   the voice re-skin of generic event content, tutorial mode, and the DQ-22
   aggro-midgame ADR workshop.
 
-## Quarterly pins to v0.15 (indicative beyond v0.13)
+## Monthly Themes (the release spine)
 
-| Quarter | Version | Theme | Headline contents |
-|---|---|---|---|
-| Q3 2026 | v0.12 | First Contact | Public alpha live (channel decision below); onboarding; share loop; leaderboard on; monthly league v0; grant applications out |
-| Q4 2026 | v0.13 | Rivals and News | Rival surfaces + News feedline; voice content pass; tutorial; DQ-22 designed |
-| Q1 2027 | v0.14 | The World Shoots Back | DQ-22 aggro midgame built; player-facing Liability Ledger UI (#528); content-pool ladder v1 (DQ-33) + monthly world-diff metabolism (ADR-0016); damper economy beat (DQ-23) |
-| Q2 2027 | v0.15 | Beta / Steam Coming Soon | Steam page + wishlists; press kit; character creation (DQ-19); balance calibration pass (DQ-8/13); phase vocabulary surfaced (DQ-28) |
+Each month is a named Theme = a minor-version bump = a forking Epoch (first
+Friday; see RELEASE_NOMENCLATURE.md). Theme names beyond v0.13 are PROVISIONAL.
 
-Confidence: v0.12 committed, v0.13 planned, v0.14-v0.15 indicative pins --
-they exist to be steered, and to make the shape of the ask legible to funders.
+| Version | Ships | Ladder | Theme | Headline |
+|---|---|---|---|---|
+| v0.13 | Jul 24 | L2 | Launch epoch (shipped) | hiring pipeline, onboarding cold-open, office visuals, league live, legibility + stability, v0.13.1 honesty pass |
+| v0.14 | Aug 7 | L3 | Per-tick & People (prov.) | per-tick resolution + people & money cohesion (roles / salary / manager / payroll) |
+| v0.15 | Sep 4 | L4 | (unnamed) | onboarding-as-mechanic + public-alpha hardening (leaderboard, install ping, bug reporter, test builds) |
+| v0.16 | Oct 2 | L5 | Sightings (prov.) | rivals begin -- Developments / procedural presence; wider event pool from pdoom-data |
+| v0.17 | Nov 6 | L6 | The World Shoots Back (prov.) | News feedline + rival midgame pressure (poaching, litigation, funding attacks); DQ-22 aggro built |
+| v0.18 | Dec 4 | L7 | (unnamed) | rival direct confrontation + News v1 + voice re-skin of event content |
+
+Further out (unscheduled, folded from the retired quarterly pins): player-facing
+Liability Ledger UI (#528); content-pool ladder v1 (DQ-33) + monthly world-diff
+metabolism (ADR-0016); damper economy (DQ-23); then the Beta / Steam "coming
+soon" beat -- Steam page + wishlists, press kit, character creation (DQ-19),
+balance calibration (DQ-8/13), phase vocabulary (DQ-28).
+
+Confidence: v0.14-v0.15 grounded in existing design; v0.16+ is direction to
+steer, not commitment (WS-3 will reshape). The two Big Milestones (First Contact,
+Rivals & News) are the coarse groupings that make the shape legible to funders.
 
 ## Cadence ruling (2026-07-21)
 
@@ -96,7 +108,15 @@ org's work management.
 
 ## Cross-repo
 
-The website (pdoom1-website) carries the player-facing projection of this
-roadmap (public/docs/roadmap.md, synced -- see issues #723/#724/#545) plus
-the funding-ask surface (website issues #78-#87: donor page, budget, press
-kit, metrics). The data lake (pdoom-data) feeds the content-pool ladder.
+The website (pdoom1-website) carries the player-facing / funder-facing projection
+of this roadmap plus the funding-ask surface (website issues #78-#87: donor page,
+budget, press kit, metrics). The data lake (pdoom-data) feeds the content-pool ladder.
+
+**Upward-comms protocol (roadmap -> website).** Per the source/publisher contract
+(`docs/copy/README.md`): `pdoom1` is SOURCE, `pdoom1-website` PULLS. This
+`ROADMAP.md` is the canonical roadmap; the website's `public/docs/roadmap.md` is a
+PROJECTION it derives (audience-shaped, funder-legible), never the source of truth.
+When the roadmap changes materially, the pdoom1-website agent PULLS this file +
+`RELEASE_NOMENCLATURE.md` and re-projects. The signal is the roadmap commit; for a
+big re-cast, a cross-repo issue is filed in pdoom1-website. Prior sync threads:
+#723 / #724 / #545.

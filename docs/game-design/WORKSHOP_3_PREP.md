@@ -184,7 +184,7 @@ the open DQ register. Issue numbers verified via `gh`.
   the player's visible impact threatens their interests, then active attacks
   begin (litigation, funding cuts, rep attacks, poaching, leak-seeking) -- "the
   sign we're entering the midgame." Backlog tags it an ADR-candidate; **milestone
-  v0.13 "Rivals and News" explicitly schedules a "DQ-22 ADR workshop"**
+  "Rivals & News" explicitly schedules a "DQ-22 ADR workshop"**
   (verified via `gh api milestones`). **DQ-12** (rival narrative presence --
   rival still "narratively invisible") is its companion.
 - This is the one cluster the roadmap has ALREADY assigned its own workshop. So
@@ -213,7 +213,7 @@ Four coherent groupings. They are NOT all one workshop -- WS-3 should pick 1-2
   decide the first lever to teach; decide character-creation surface (DQ-19).
 - **Absorbs:** #801, `ONBOARDING_STORY_DESIGN.md`, DQ-18, DQ-19, #802 (as a UX
   comfort note), #722/#721 (tutorial mode / contextual hints).
-- **Serves:** milestone v0.12 "First Contact" (the live playtest pain). This is
+- **Serves:** milestone "First Contact" (the live playtest pain). This is
   the most time-urgent because it is what the one real tester hit first.
 - **BACKBONE LENS -- Design-Philosophy + Crisp/Clarity pass (Pip ruling, 2026-07-23):**
   run WS-3 through one thesis -- **"crisp parts, brutal decisions"** (the Factorio
@@ -283,7 +283,7 @@ scheduled DQ-22 workshop" unless Pip pulls it forward.)
 ## 5. Decisions for Pip (to scope WS-3)
 
 **THE single scoping decision (do this first):**
-> **Which milestone does WS-3 serve -- v0.12 "First Contact" or v0.13 "Rivals
+> **Which milestone does WS-3 serve -- "First Contact" or v0.13 "Rivals
 > and News"?** Everything else falls out of this. If v0.12: run Themes A + D
 > (legibility + meta-integrity), both cheap, both time-urgent, both feed the
 > live tester + launch. If v0.13: WS-3 becomes the DQ-22 rivals workshop the
