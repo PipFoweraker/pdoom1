@@ -62,3 +62,34 @@ data-driven design needs its degrade-path tested, not just its happy path.
 - **The desperation lever is a trap that reads as help.** The solver proved it:
   pulling it is monotonically worse, and it silently converts doom deaths into ledger
   deaths -- ADR-0003's "every mitigation is a loan" proving itself in the sweep data.
+
+## 2026-07-25 -- session seeds
+
+- **"The bug only a human mashing keys could find."** A modal soft-lock -- open
+  the ledger while an event fires, and the ledger ends up orphaned and
+  un-closeable -- sailed through EVERY automated unit test. The tests asked "does
+  `close()` work?" and never "can we reach a state where `close()` is
+  unreachable?". A human playtester found it by flailing. The response, an
+  adversarial FUZZ harness, then caught a SECOND shipping soft-lock plus the whole
+  antipattern class. Thematic resonance: a game *about* the gap between
+  verification and reality, whose own testing just re-taught that exact lesson --
+  passing tests are not the same as a safe system.
+
+- **"One missing queue_free()."** Both soft-locks were the same root shape: modal
+  state lived in TWO places -- a tracked slot and the visible scene tree -- kept in
+  sync BY HAND across a dozen handlers, and one handler forgot. Not a bug so much
+  as a bug-factory: an architecture that makes correctness a thing you must
+  remember N times instead of a thing that can't be gotten wrong. The fix was 3
+  lines; the lesson is invariants-over-conventions.
+
+- **"Curation before generation."** Built browser triage tools for ~1,668
+  generated art assets and formed 650+ opinions in an evening -- then the analyzer
+  showed the truth: 72 cat-walks promoted, and ZERO windows or floor tiles. You
+  cannot build an office out of things you never chose. The discipline: review and
+  surface the GAPS before generating more, not after.
+
+- **"Hero hardcore, game cozy."** An art-direction thesis that crystallized
+  mid-session: push the hero images to a hardcore high-fidelity ceiling,
+  deliberately downscale the in-game art toward cozy, and let the CONTRAST between
+  the two carry both the humour and the dread. Downscaling as a choice, not a
+  compromise.
