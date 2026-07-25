@@ -166,3 +166,8 @@ tools/music/**/*.wav
 
 # Claude Code worktrees (scratch working dirs -- never tracked)
 .claude/worktrees/
+
+# Build-stamp freshness markers (tools/write_build_stamp.py) -- generated per
+# build with a random name; the .gd is cleaned up but Godot leaves .uid litter.
+godot/buildstamp*.gd
+godot/buildstamp*.gd.uid
