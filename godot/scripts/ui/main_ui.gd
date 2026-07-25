@@ -122,7 +122,10 @@ const COMING_SOON_TOOLTIP_SUFFIX := " -- COMING SOON (spawns a random specializa
 # correctly, so hide the generic drivers from the player-facing action list and steer
 # players to that panel instead. The action ids stay wired in core.json / actions.gd --
 # bots and tests still exercise interview_next/hire_best directly.
-const HIDDEN_FROM_ACTION_BAR_IDS := ["interview_next", "hire_best"]
+# office_maintenance (v0.13.1): charged $5000 and did nothing (no handler, promised a "morale"
+# non-stat). Pip's ruling -- take it OFF the board but keep it replay-safe: it stays in
+# operations.json so execute_action still resolves the id for old replays; only the bar hides it.
+const HIDDEN_FROM_ACTION_BAR_IDS := ["interview_next", "hire_best", "office_maintenance"]
 
 # P0 feed filter (playtest 2026-07-17): the arxiv/technical-research flavour deck floods the
 # feed. Each logged line is recorded here with its channel; the "flavour" channel is hidden

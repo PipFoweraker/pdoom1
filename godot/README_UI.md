@@ -5,20 +5,20 @@
 ```
 FOLDER godot/
 |--- FOLDER scenes/
-|   |--- 🎬 welcome.tscn              [Main menu - Start here]
-|   |--- 🎬 settings_menu.tscn        [Audio, graphics, gameplay settings]
-|   |--- 🎬 pregame_setup.tscn        [Player name, lab name, seed, difficulty]
-|   |--- 🎬 player_guide.tscn         [Tutorial and help]
-|   |--- 🎬 main.tscn                 [Main game scene]
-|   `--- 🎬 end_game_screen.tscn      [Victory/defeat screen]
+|   |--- welcome.tscn              [Main menu - Start here]
+|   |--- settings_menu.tscn        [Audio, graphics, gameplay settings]
+|   |--- pregame_setup.tscn        [Player name, lab name, seed, difficulty]
+|   |--- player_guide.tscn         [Tutorial and help]
+|   |--- main.tscn                 [Main game scene]
+|   `--- end_game_screen.tscn      [Victory/defeat screen]
 |
 `--- FOLDER scripts/ui/
-    |--- 📜 welcome_screen.gd          [Main menu logic]
-    |--- 📜 settings_menu.gd           [Settings management]
-    |--- 📜 pregame_setup.gd           [Game configuration]
-    |--- 📜 player_guide.gd            [Guide display]
-    |--- 📜 main_ui.gd                 [In-game UI controller]
-    `--- 📜 end_game_screen.gd         [End game display + celebration]
+    |--- welcome_screen.gd          [Main menu logic]
+    |--- settings_menu.gd           [Settings management]
+    |--- pregame_setup.gd           [Game configuration]
+    |--- player_guide.gd            [Guide display]
+    |--- main_ui.gd                 [In-game UI controller]
+    `--- end_game_screen.gd         [End game display + celebration]
 ```
 
 ## Quick Start Testing
@@ -45,7 +45,7 @@ FOLDER godot/
 
 ## Screen Descriptions
 
-### 🎮 Welcome Screen
+### Welcome Screen
 **Purpose:** Main menu entry point
 **Buttons:**
 - Launch Lab
@@ -62,7 +62,7 @@ FOLDER godot/
 
 ---
 
-### ⚙ Settings Menu
+### Settings Menu
 **Purpose:** Configure game settings
 **Sections:**
 - Audio (Master volume, SFX volume)
@@ -76,11 +76,11 @@ FOLDER godot/
 
 ---
 
-### 🛠 Pre-Game Setup
+### Pre-Game Setup
 **Purpose:** Configure new game
 **Fields:**
 - Player Name (required)
-- Lab Name (required, with 🎲 random button)
+- Lab Name (required, with random button)
 - Seed (optional, weekly challenge by default)
 - Difficulty (Easy/Standard/Hard)
 
@@ -136,7 +136,7 @@ FOLDER godot/
 ### ACHIEVEMENT End Game Screen
 **Purpose:** Victory/defeat celebration
 **Features:**
-- Title with emoji (ACHIEVEMENT/CHECKED/☠)
+- Title with emoji (ACHIEVEMENT/CHECKED/SKULL)
 - Color-coded based on outcome
 - Stats display with rank highlighting
 - Final resources
@@ -205,9 +205,12 @@ func _input(event: InputEvent):
 ```
 
 ### Scene Transition Pattern
-All navigation uses:
+Navigate ONLY through the `SceneTransition` autoload -- never call
+`get_tree().change_scene_to_file()` directly (it segfaulted the release build
+from inside input handlers; see `../docs/LEADERBOARD_CRASH_DIAGNOSIS.md`):
 ```gdscript
-get_tree().change_scene_to_file("res://scenes/TARGET.tscn")
+SceneTransition.go_to("res://scenes/TARGET.tscn")
+SceneTransition.reload()
 ```
 
 ---
@@ -300,16 +303,10 @@ get_tree().change_scene_to_file("res://scenes/TARGET.tscn")
 
 ## Credits
 
-**Ported from Pygame:**
-- Settings menu structure  ->  `src/ui/settings_menus.py`
-- Pre-game setup logic  ->  `src/ui/pre_game_settings.py`
-- Menu styling  ->  `src/ui/menus.py`
-- End game celebration  ->  `src/ui/modular_end_game_menu.py`
-
 **Godot Implementation:**
-- All `.tscn` and `.gd` files created fresh for Godot
+- All `.tscn` and `.gd` files are native Godot (pure GDScript, no Python runtime)
 - Styled to match P(Doom) bureaucracy theme
-- Adapted for Godot's node-based UI system
+- Built on Godot's node-based UI system
 
 ---
 
