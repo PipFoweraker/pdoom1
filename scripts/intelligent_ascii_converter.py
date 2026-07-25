@@ -573,14 +573,29 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  python intelligent_ascii_converter.py --dry-run
-  python intelligent_ascii_converter.py --file README.md
-  python intelligent_ascii_converter.py --directory docs/
+  python intelligent_ascii_converter.py                 # dry-run report (default; writes nothing)
+  python intelligent_ascii_converter.py --apply         # actually rewrite files
+  python intelligent_ascii_converter.py --file README.md --apply
+  python intelligent_ascii_converter.py --directory docs/ --apply
         """,
     )
 
+    # SAFETY DEFAULT (issue #773): a bare invocation is now DRY-RUN. Writing the
+    # whole tree used to be the default, so an accidental or hooked run -- or a
+    # later `git add -A` -- silently sprayed transliterated churn across ~190
+    # files and corrupted files whose Unicode is load-bearing (the python mapping
+    # tables). Files are rewritten ONLY when --apply is passed explicitly.
+    # Detection is unchanged: the dry run still reports every violation and
+    # returns non-zero, which is what CI (--dry-run) gates on.
     parser.add_argument(
-        "--dry-run", action="store_true", help="Show what would be changed without making changes"
+        "--apply",
+        action="store_true",
+        help="Actually rewrite files (default is a report-only dry run)",
+    )
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Report only, make no changes (this is the default; kept for explicitness)",
     )
     parser.add_argument("--file", type=Path, help="Process a specific file")
     parser.add_argument(
@@ -595,6 +610,11 @@ Examples:
     )
 
     args = parser.parse_args()
+
+    # Resolve the effective mode: write ONLY when --apply is given without --dry-run.
+    # Everything downstream reads args.dry_run, so normalise onto it -- a bare run
+    # and an explicit --dry-run both stay read-only.
+    args.dry_run = args.dry_run or not args.apply
 
     # Initialize converter with logging
     converter = IntelligentASCIIConverter(verbose=args.verbose)
@@ -653,7 +673,7 @@ Examples:
                     print(f"  {message}")
 
             if args.dry_run:
-                print("\nDry run complete. Run without --dry-run to apply changes.")
+                print("\nDry run complete. Run with --apply to write these changes.")
                 converter.logger.info(
                     "Dry run completed", extra_data={"files_with_changes": len(results)}
                 )

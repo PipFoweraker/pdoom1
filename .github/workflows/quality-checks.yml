@@ -38,7 +38,7 @@ jobs:
         python scripts/intelligent_ascii_converter.py --dry-run
         if [ $? -ne 0 ]; then
           echo "ASCII compliance violations found!"
-          echo "Run: python scripts/intelligent_ascii_converter.py to fix"
+          echo "Run: python scripts/intelligent_ascii_converter.py --apply to fix"
           exit 1
         fi
 
