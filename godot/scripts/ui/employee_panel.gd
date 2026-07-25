@@ -196,11 +196,15 @@ func show_staff_id_card(data: Dictionary) -> void:
 	blocker.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	blocker.z_index = 998
 
-	# Click on blocker closes panel
+	# Click on blocker closes panel. Free the blocker FIRST (and guard both frees) so a
+	# panel that was already freed out from under us can't strand the blocker (see the
+	# tree_exited tie-off below -- this lambda is the belt to that suspenders).
 	blocker.gui_input.connect(func(event):
 		if event is InputEventMouseButton and event.pressed:
-			perks_panel.queue_free()
-			blocker.queue_free()
+			if is_instance_valid(blocker):
+				blocker.queue_free()
+			if is_instance_valid(perks_panel):
+				perks_panel.queue_free()
 			dialog_closed.emit()
 	)
 
@@ -211,10 +215,23 @@ func show_staff_id_card(data: Dictionary) -> void:
 	perks_panel.z_index = 999
 	perks_panel.visible = true
 
+	# Tie the blocker's lifetime to the panel it belongs to. When the panel leaves the
+	# tree via ANY path -- ESC (host's _close_active_submenu frees active_dialog only),
+	# a replacing dialog's queue_free, or the close/click lambdas below -- free the
+	# blocker too. Without this the ESC path frees perks_panel but leaves the z=998
+	# MOUSE_FILTER_STOP blocker swallowing every click forever (dead UI). Mirrors
+	# main_ui.gd _present_modal_dialog's `dialog.tree_exited.connect(barrier.queue_free)`.
+	perks_panel.tree_exited.connect(func():
+		if is_instance_valid(blocker):
+			blocker.queue_free()
+	)
+
 	# Connect signals
 	perks_panel.close_requested.connect(func():
-		perks_panel.queue_free()
-		blocker.queue_free()
+		if is_instance_valid(blocker):
+			blocker.queue_free()
+		if is_instance_valid(perks_panel):
+			perks_panel.queue_free()
 		dialog_closed.emit()
 	)
 
