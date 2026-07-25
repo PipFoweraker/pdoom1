@@ -176,7 +176,7 @@ class StandardsEnforcer:
                             print("[SUCCESS] All files are already ASCII compliant")
                         else:
                             print("[ACTION] Unicode characters found. Run the following to fix:")
-                            print(f"  python {converter_path}")
+                            print(f"  python {converter_path} --apply")
                             self.warnings.append(
                                 "Unicode content can be auto-fixed with intelligent ASCII converter"
                             )

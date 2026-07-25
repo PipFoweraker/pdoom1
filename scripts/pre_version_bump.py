@@ -94,8 +94,10 @@ class PreVersionBumpChecker:
 
                     if self.auto_fix:
                         print("INFO Applying automatic ASCII fixes...")
+                        # --apply is required to write since #773 (the converter
+                        # is dry-run by default now); this is an explicit opt-in.
                         fix_result = subprocess.run(
-                            [sys.executable, str(converter_path)],
+                            [sys.executable, str(converter_path), "--apply"],
                             capture_output=True,
                             text=True,
                             cwd=self.project_root,
@@ -109,7 +111,7 @@ class PreVersionBumpChecker:
                             print(f"ERROR ASCII fix failed: {fix_result.stderr}")
                             return False
                     else:
-                        print("ACTION Run: python scripts/intelligent_ascii_converter.py")
+                        print("ACTION Run: python scripts/intelligent_ascii_converter.py --apply")
                         return False
             else:
                 print(f"ERROR ASCII check failed: {result.stderr}")
