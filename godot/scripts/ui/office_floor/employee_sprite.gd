@@ -19,12 +19,46 @@ class_name OfficeEmployeeSprite
 ##   walking  -> "aimless" isn't just drift: picks drift / window-gaze (a long
 ##               stare out the window) / spin-on-the-spot, so disengagement reads.
 
+# Tier-0 blob DRAW radius only (the drawn circle really is 11px). The movement/
+# bounds footprint no longer uses this for tier 1 -- see FOOTPRINT_RATIO below.
 const BODY_RADIUS := 11.0
 const ARRIVE_EPS := 4.0
-# #770: integer nearest-neighbor upscale of the tier-1 character art so employees
-# read at a sensible size in the WATCH office strip (the pixellab frames are ~24x32,
-# which drew tiny). Movement/bounds are unchanged -- this only scales the drawn art.
-const SPRITE_SCALE := Vector2(2.0, 2.0)
+
+# --- Character scale derivation (#899 scale pass) ---------------------------
+# Floor tiles are 32px art drawn at FLOOR_TILE_SCALE 2 (office_floor.gd), so one
+# tile is 64px on screen. A worker should read ~2 tiles tall = 128px.
+# The real artloop_char frames are 180x180 canvas with an opaque subject of
+# ~52w x 140h px (alpha bbox (65,18)-(117,158) on walking_0). 128 / 140 = 0.914;
+# 0.9 is the clean value -> drawn subject ~126px.
+# (The old 2.0 was tuned against a WRONG comment claiming the frames were ~24x32;
+# at 2.0 the 140px subject drew ~280px tall in a ~260px room.)
+const TILE_PX := 64.0                        # one floor tile on screen
+const CHAR_TARGET_H := TILE_PX * 2.0         # 128px: target on-screen worker height
+const ART_CANVAS_H := 180.0                  # artloop_char frame canvas
+const ART_SUBJECT_H := 140.0                 # opaque subject height in that canvas
+const ART_FEET_Y := 158.0                    # bottom of the opaque bbox (the feet)
+const SPRITE_SCALE := Vector2(0.9, 0.9)      # ~= CHAR_TARGET_H / ART_SUBJECT_H
+
+# Feet anchor: AnimatedSprite2D / Sprite2D are centre-anchored by default, while
+# props are feet-anchored (office_floor.gd _draw_prop), so characters floated.
+# Shift the texture up so the subject's feet sit on the node origin:
+# canvas centre y = 90, feet y = 158 -> offset (0, 90 - 158) = (0, -68) art px
+# (offset is texture-space, applied before the node scale).
+const SPRITE_FEET_OFFSET := Vector2(0.0, ART_CANVAS_H * 0.5 - ART_FEET_Y)
+
+# The GENERATED placeholder frames (_make_char_texture) are 24x32 with the
+# subject filling the canvas: scale 128 / 32 = 4.0; feet at the canvas bottom
+# -> offset 32/2 - 32 = -16. Which family is in use is detected per-frames by
+# canvas height in _apply_art_transform().
+const PLACEHOLDER_CANVAS_H := 32.0
+const PLACEHOLDER_SCALE := Vector2(4.0, 4.0)
+const PLACEHOLDER_FEET_OFFSET := Vector2(0.0, PLACEHOLDER_CANVAS_H * 0.5 - PLACEHOLDER_CANVAS_H)
+
+# Movement/bounds footprint radius derives from the DRAWN character height
+# (~0.15 * 128 ~= 19px) instead of the old hardcoded 11.0 (a leftover from the
+# 24x32-blob era that let the bigger art clip through the room bounds).
+const FOOTPRINT_RATIO := 0.15
+const FEET_BOTTOM_PAD := 2.0                 # feet stay just off the bottom wall line
 
 # Micro-behavior tuning (seconds / per-second chances; all cosmetic).
 const BREAK_CHANCE_PER_SEC := 0.14      # once off cooldown, chance/sec to start a break
@@ -117,13 +151,12 @@ func _ready() -> void:
 	_anim.visible = false
 	# Crisp pixel art, no blur, regardless of per-file .import filter settings.
 	_anim.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	_anim.scale = SPRITE_SCALE   # #770: draw the character art larger in the WATCH strip
 	add_child(_anim)
 	_facing_sprite = Sprite2D.new()
 	_facing_sprite.visible = false
 	_facing_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	_facing_sprite.scale = SPRITE_SCALE   # #770: match the animated-clip scale
 	add_child(_facing_sprite)
+	_apply_art_transform()   # scale + feet-anchor for both art nodes (#899)
 	_label = Label.new()
 	_label.add_theme_font_size_override("font_size", 10)
 	_label.position = Vector2(-BODY_RADIUS - 2.0, BODY_RADIUS + 2.0)
@@ -167,6 +200,7 @@ func set_tier(t: int) -> void:
 func set_sprite_frames(frames: SpriteFrames) -> void:
 	if _anim:
 		_anim.sprite_frames = frames
+		_apply_art_transform()
 		_refresh_visual()
 
 func _apply_tier() -> void:
@@ -179,8 +213,54 @@ func _apply_tier() -> void:
 		_anim.visible = false
 		if _facing_sprite:
 			_facing_sprite.visible = false
+	_apply_art_transform()
 	_refresh_visual()
 	queue_redraw()
+
+## Set scale + feet-anchor offset on both tier-1 art nodes (#899 scale pass).
+## Which art family the animated frames belong to is detected by canvas height
+## (real artloop frames are 180px tall; generated placeholders 32px) so real art
+## and colour-skin placeholders BOTH land at ~CHAR_TARGET_H on screen with their
+## feet on the node origin. The static _facing_sprite always uses the real-art
+## constants: its default textures are the 180x180 rotation_*.png frames.
+func _apply_art_transform() -> void:
+	var use_placeholder := false
+	if _anim and _anim.sprite_frames:
+		var names := _anim.sprite_frames.get_animation_names()
+		if names.size() > 0 and _anim.sprite_frames.get_frame_count(names[0]) > 0:
+			var tex := _anim.sprite_frames.get_frame_texture(names[0], 0)
+			if tex != null and tex.get_height() < 100:
+				use_placeholder = true
+	if _anim:
+		_anim.scale = PLACEHOLDER_SCALE if use_placeholder else SPRITE_SCALE
+		_anim.offset = PLACEHOLDER_FEET_OFFSET if use_placeholder else SPRITE_FEET_OFFSET
+	if _facing_sprite:
+		_facing_sprite.scale = SPRITE_SCALE
+		_facing_sprite.offset = SPRITE_FEET_OFFSET
+
+## Radius of the walkable footprint around the feet (bounds clamping + wander
+## targets). Tier 1: derived from the drawn height; tier 0: the blob radius.
+func _footprint_radius() -> float:
+	if tier == 1:
+		return FOOTPRINT_RATIO * CHAR_TARGET_H   # ~19px
+	return BODY_RADIUS
+
+## Rect the FEET may occupy inside `bounds`. Feet-anchored art extends UP from
+## the origin, so the top inset is the full drawn height (keeps heads inside the
+## room) and the bottom inset is just a small pad. Degenerate (too-small) bounds
+## collapse to the vertical centre instead of inverting the clamp.
+func _feet_rect() -> Rect2:
+	var r := _footprint_radius()
+	var top_pad := CHAR_TARGET_H if tier == 1 else BODY_RADIUS
+	var bottom_pad := FEET_BOTTOM_PAD if tier == 1 else BODY_RADIUS
+	var y_min := bounds.position.y + top_pad
+	var y_max := bounds.end.y - bottom_pad
+	if y_min > y_max:
+		y_min = bounds.position.y + bounds.size.y * 0.5
+		y_max = y_min
+	var x_min := bounds.position.x + r
+	var x_max := maxf(x_min, bounds.end.x - r)
+	return Rect2(Vector2(x_min, y_min), Vector2(x_max - x_min, y_max - y_min))
 
 ## Optional: override the static per-direction reference art (default: the
 ## committed rotation_{south,east,north,west}.png). Same seam shape as
@@ -242,13 +322,26 @@ static func facing_from_vector(v: Vector2) -> String:
 func _set_facing(f: String) -> void:
 	_facing = f
 
-## Move toward target and face the direction actually travelled this frame.
-## Marks _facing_active so the directional art (rather than the south-only
-## animated clip) is shown while translating.
+## Clamp a movement target into the walkable feet rect (#899 feet-anchor pass).
+## Landmarks/desks laid out near the top wall stay valid destinations -- feet
+## stop at the closest legal point (head overlapping the wall art reads as
+## standing AT it) -- and arrival checks agree with the clamped point instead
+## of never triggering.
+func _clamp_target(p: Vector2) -> Vector2:
+	var walk := _feet_rect()
+	return p.clamp(walk.position, walk.end)
+
+## True when the feet are at (the walkable projection of) `target`.
+func _arrived(target: Vector2) -> bool:
+	return position.distance_to(_clamp_target(target)) <= ARRIVE_EPS
+
+## Move toward target (clamped into the walkable rect) and face the direction
+## actually travelled this frame. Marks _facing_active so the directional art
+## (rather than the south-only animated clip) is shown while translating.
 func _move_toward_and_face(target: Vector2, delta: float) -> void:
 	_facing_active = true
 	var before := position
-	position = position.move_toward(target, speed * delta)
+	position = position.move_toward(_clamp_target(target), speed * delta)
 	var moved := position - before
 	if moved.length_squared() > 0.0001:
 		_set_facing(facing_from_vector(moved))
@@ -285,13 +378,13 @@ func _process_working(delta: float) -> void:
 	match _work_sub:
 		"desk":
 			_move_toward_and_face(desk_pos, delta)
-			if position.distance_to(desk_pos) <= ARRIVE_EPS:
+			if _arrived(desk_pos):
 				_break_cooldown -= delta
 				if _break_cooldown <= 0.0 and _rng.randf() < BREAK_CHANCE_PER_SEC * delta:
 					_start_break()
 		"to_break":
 			_move_toward_and_face(_break_target, delta)
-			if position.distance_to(_break_target) <= ARRIVE_EPS:
+			if _arrived(_break_target):
 				_work_sub = "on_break"
 				_aimless_timer = _rng.randf_range(BREAK_DWELL_RANGE.x, BREAK_DWELL_RANGE.y)
 		"on_break":
@@ -302,7 +395,7 @@ func _process_working(delta: float) -> void:
 			# stand just beside the peer's desk, not on top of it
 			var beside := _collab_target + Vector2(BODY_RADIUS * 1.6, 0.0)
 			_move_toward_and_face(beside, delta)
-			if position.distance_to(beside) <= ARRIVE_EPS:
+			if _arrived(beside):
 				_work_sub = "collaborating"
 				_aimless_timer = _rng.randf_range(BREAK_DWELL_RANGE.x, BREAK_DWELL_RANGE.y)
 		"collaborating":
@@ -311,7 +404,7 @@ func _process_working(delta: float) -> void:
 				_work_sub = "returning"
 		"returning":
 			_move_toward_and_face(desk_pos, delta)
-			if position.distance_to(desk_pos) <= ARRIVE_EPS:
+			if _arrived(desk_pos):
 				_work_sub = "desk"
 				_break_kind = ""
 				_break_cooldown = _rng.randf_range(BREAK_COOLDOWN_RANGE.x, BREAK_COOLDOWN_RANGE.y)
@@ -350,13 +443,13 @@ func _process_aimless(delta: float) -> void:
 	_aimless_timer -= delta
 	match _aimless:
 		"drift":
-			if position.distance_to(_target) <= ARRIVE_EPS:
+			if _arrived(_target):
 				_pick_wander_target()
 			_move_toward_and_face(_target, delta)
 			if _aimless_timer <= 0.0:
 				_pick_aimless()
 		"window":
-			if position.distance_to(window_pos) > ARRIVE_EPS:
+			if not _arrived(window_pos):
 				_move_toward_and_face(window_pos, delta)
 				_aimless_timer += delta   # don't burn gaze time until we've arrived
 			elif _aimless_timer <= 0.0:
@@ -396,14 +489,16 @@ func _pick_aimless() -> void:
 			_spin_step_timer = 0.0   # turn immediately on entering spin
 
 func _pick_wander_target() -> void:
+	var walk := _feet_rect()
 	_target = Vector2(
-		_rng.randf_range(bounds.position.x + BODY_RADIUS, bounds.end.x - BODY_RADIUS),
-		_rng.randf_range(bounds.position.y + BODY_RADIUS, bounds.end.y - BODY_RADIUS)
+		_rng.randf_range(walk.position.x, walk.end.x),
+		_rng.randf_range(walk.position.y, walk.end.y)
 	)
 
 func _clamp_to_bounds() -> void:
-	position.x = clampf(position.x, bounds.position.x + BODY_RADIUS, bounds.end.x - BODY_RADIUS)
-	position.y = clampf(position.y, bounds.position.y + BODY_RADIUS, bounds.end.y - BODY_RADIUS)
+	var walk := _feet_rect()
+	position.x = clampf(position.x, walk.position.x, walk.end.x)
+	position.y = clampf(position.y, walk.position.y, walk.end.y)
 
 # --- Tier 0 rendering: blob + hat ------------------------------------------
 func _draw() -> void:

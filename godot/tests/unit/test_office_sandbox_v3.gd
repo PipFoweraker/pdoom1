@@ -140,6 +140,34 @@ func test_destructive_calls_on_empty_are_noops():
 	pass_test("destructive-on-empty did not crash")
 
 
+func test_compare_view_toggles_and_builds_second_floor():
+	# #899/#793 scale-compare view: [V] builds a second starter OfficeFloor (LEFT)
+	# and tops the main floor up to a complex office (RIGHT); toggling off tears the
+	# starter floor down and restores the full-rect layout.
+	var s := _sandbox()
+	await get_tree().process_frame
+	s._toggle_compare()
+	await get_tree().process_frame
+	assert_true(s._compare_mode, "compare mode on")
+	assert_not_null(s._floor_b, "starter (left) floor exists")
+	assert_eq(s._roster_b.size(), 3, "starter floor has 3 staff")
+	assert_true(s._roster.size() >= 7, "complex floor topped up to 7+ staff")
+	assert_true(s._cats.size() >= 2, "complex floor has cats")
+	await get_tree().process_frame   # starter props spawn deferred (need a layout pass)
+	assert_true(s._furniture_b.size() > 0, "starter floor got sparse props")
+	s._toggle_compare()
+	assert_false(s._compare_mode, "compare mode off")
+	assert_null(s._floor_b, "starter floor torn down")
+
+
+func test_nearest_person_pick_radius_bounds_selection():
+	# #899: the per-sprite scale keys must NOT silently retarget a far-away sprite.
+	var s := _sandbox()
+	await get_tree().process_frame
+	assert_null(s._nearest_person(Vector2(-10000.0, -10000.0)),
+		"no sprite picked outside PICK_RADIUS")
+
+
 func test_cat_walk_cycle_preview_data_is_well_formed():
 	# The walk-cycle PREVIEW pixels need a human's eyes; the DATA behind it does not.
 	# When art_source is present (git-tracked cat_walk_cat1/2), assert the SpriteFrames a
