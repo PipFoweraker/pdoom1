@@ -134,10 +134,13 @@ func _create_researcher_button(data: Dictionary) -> Control:
 	name_label.add_theme_font_size_override("separation", 8)
 	hbox.add_child(name_label)
 
-	# Productivity Indicator (simple bar or percentage)
-	var productivity = data.get("base_productivity", 1.0)
+	# Productivity Indicator. feat/quirk-skeleton display fix: the old inline formula
+	# (1 - burnout/200) disagreed with the model (researcher.gd get_effective_productivity:
+	# burnout/100 * 0.5, plus quirk/jet-lag/onboarding). Rebuild the Researcher and read
+	# the ONE formula.
+	var model := _researcher_from_data(data)
 	var burnout = data.get("burnout", 0.0)
-	var effective_prod = productivity * (1.0 - min(burnout / 200.0, 0.5))
+	var effective_prod = model.get_effective_productivity()
 
 	var prod_label := Label.new()
 	prod_label.text = "%.0f%%" % (effective_prod * 100)
@@ -156,9 +159,18 @@ func _create_researcher_button(data: Dictionary) -> Control:
 	# Burnout warning if high
 	if burnout >= 60:
 		var burnout_icon = Label.new()
-		burnout_icon.text = ""
-		#burnout_icon.add_theme_font_size_override("font_size", 8)
+		burnout_icon.text = "[!]"
+		burnout_icon.add_theme_color_override("font_color", Color(0.9, 0.6, 0.2))
 		hbox.add_child(burnout_icon)
+
+	# Known-quirk marker (feat/quirk-skeleton): a [Q] chip once the quirk surfaced; the
+	# tooltip carries the name. Hidden quirks show nothing (A2). Icon art: issue #903.
+	if bool(data.get("quirk_known", false)) and str(data.get("quirk", "")) != "":
+		var quirk_chip = Label.new()
+		quirk_chip.text = "[Q]"
+		quirk_chip.add_theme_color_override("font_color", Color(0.78, 0.72, 0.54))
+		hbox.add_child(quirk_chip)
+		btn.tooltip_text = "Quirk: %s" % QuirkCatalogue.display_name(str(data.get("quirk", "")))
 
 	# When staff button is pressed, show extra detail
 	btn.pressed.connect(
@@ -167,27 +179,24 @@ func _create_researcher_button(data: Dictionary) -> Control:
 
 	return btn
 
-func show_staff_id_card(data: Dictionary) -> void:
-	"""Show the full staff perks panel for a researcher"""
-	print("[EmployeePanel] Opening staff perks panel for: %s" % data.get("name", "Unknown"))
+func _researcher_from_data(data: Dictionary) -> Researcher:
+	"""Rebuild a FULL Researcher from a state dict. from_dict restores every layer --
+	including quirk/quirk_known/appetites -- so the ID card shows the real person
+	(feat/quirk-skeleton: the old hand-copied field list silently DROPPED the quirk layer)."""
+	var r := Researcher.new()
+	r.from_dict(data)
+	return r
 
-	# Load and instance the perks panel scene
+func show_staff_id_card(data: Dictionary) -> void:
+	"""Show the staff ID card (dossier) for a researcher"""
+	print("[EmployeePanel] Opening staff ID card for: %s" % data.get("name", "Unknown"))
+
+	# Load and instance the dossier panel scene
 	var perks_panel_scene = preload("res://scenes/ui/staff_perks_panel.tscn")
 	var perks_panel = perks_panel_scene.instantiate()
 
-	# Create a Researcher object from the dictionary data
-	var researcher = Researcher.new(data.get("specialization", "safety"), data.get("name", ""))
-	researcher.skill_level = data.get("skill_level", 5)
-	researcher.current_salary = data.get("current_salary", 60000)
-	researcher.base_productivity = data.get("base_productivity", 1.0)
-	researcher.burnout = data.get("burnout", 0.0)
-	researcher.loyalty = data.get("loyalty", 50)
-	researcher.turns_employed = data.get("turns_employed", 0)
-	researcher.jet_lag_turns = data.get("jet_lag_turns", 0)
-	researcher.jet_lag_severity = data.get("jet_lag_severity", 0.0)
-
-	# (Legacy traits retired -> the hidden quirk layer is restored via Researcher.from_dict
-	# on the real load path; this lightweight card builder just skips it.)
+	# Full-fidelity rebuild -- keeps the quirk/appetite layer the old builder skipped.
+	var researcher := _researcher_from_data(data)
 
 	# Add blocker behind panel
 	var blocker = ColorRect.new()
@@ -218,19 +227,11 @@ func show_staff_id_card(data: Dictionary) -> void:
 		dialog_closed.emit()
 	)
 
-	perks_panel.perk_hovered.connect(func(perk_data):
-		var perk_name = perk_data.get("name", "Unknown")
-		var perk_desc = perk_data.get("description", "")
-		info_text_changed.emit("[b][color=cyan]%s[/color][/b] -- %s\n[color=gray]Perk selection coming in future update[/color]" % [perk_name, perk_desc])
-	)
-
-	perks_panel.perk_unhovered.connect(func():
-		info_text_changed.emit("[color=gray]Hover over actions to see details...\n [/color]")
-	)
+	# (Perk hover signals retired with the dead perk grid -- the dossier panel is static.)
 
 	# Set researcher data
 	perks_panel.set_researcher(researcher)
 
 	# Track as active dialog (host closes any prior dialog and adopts this one)
 	dialog_opened.emit(perks_panel)
-	print("[EmployeePanel] Staff perks panel opened")
+	print("[EmployeePanel] Staff ID card opened")

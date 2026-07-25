@@ -112,16 +112,18 @@ func _update_stats(state: Dictionary):
 	stats += "[color=red]* Capability Researchers:[/color] %d\n" % capability
 	stats += "[color=blue]* Compute Engineers:[/color] %d\n\n" % compute_eng
 
-	# Add productivity info from researchers
+	# Add productivity info from researchers. feat/quirk-skeleton display fix: read the
+	# MODEL's effective productivity (burnout + quirk + onboarding via
+	# get_effective_productivity) instead of raw base_productivity.
 	var researchers = state.get("researchers", [])
 	var productive = 0
 	var unproductive = 0
 
 	for researcher in researchers:
-		var productivity = researcher.get("base_productivity", 1.0)
+		var r := _researcher_from_data(researcher)
 		var burnout = researcher.get("burnout", 0)
-		# Consider productive if productivity > 0 and not burned out
-		if productivity > 0 and burnout < 90:
+		# Consider productive if effectively working and not burned out
+		if r.get_effective_productivity() > 0.1 and burnout < 90:
 			productive += 1
 		else:
 			unproductive += 1
@@ -302,12 +304,15 @@ func _create_employee_card(researcher: Dictionary, number: int, researcher_index
 	spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	header.add_child(spacer)
 
-	# Status indicator
+	# Status indicator. feat/quirk-skeleton display fix: this card previously showed raw
+	# base_productivity; rebuild the full Researcher (from_dict restores the quirk layer)
+	# and show the MODEL's effective productivity -- one burnout formula, not a UI re-derive.
+	var model := _researcher_from_data(researcher)
 	var status_label = Label.new()
-	var productivity = researcher.get("base_productivity", 1.0)
+	var productivity = model.get_effective_productivity()
 	var burnout = researcher.get("burnout", 0)
 
-	if productivity > 0 and burnout < 70:
+	if productivity > 0.1 and burnout < 70:
 		status_label.text = "[OK] Productive"
 		status_label.add_theme_color_override("font_color", Color.LIME_GREEN)
 	elif burnout >= 70:
@@ -336,13 +341,20 @@ func _create_employee_card(researcher: Dictionary, number: int, researcher_index
 	var skill_level = researcher.get("skill_level", 5)
 	details_text += "[color=gray]Skill Level:[/color] %d/10  " % skill_level
 
-	# Show productivity
+	# Show EFFECTIVE productivity (model formula -- includes burnout/quirk/onboarding)
 	var productivity_pct = int(productivity * 100)
 	details_text += "[color=gray]Productivity:[/color] %d%%" % productivity_pct
 
 	# Show burnout if significant
 	if burnout > 30:
 		details_text += "\n[color=orange]Burnout:[/color] %d%%" % int(burnout)
+
+	# Quirk (feat/quirk-skeleton): shown ONLY once an exposure/tenure reveal flipped
+	# quirk_known -- the card never leaks a hidden rider (A2 contract).
+	if bool(researcher.get("quirk_known", false)) and str(researcher.get("quirk", "")) != "":
+		var quirk_id: String = str(researcher.get("quirk", ""))
+		details_text += "\n[color=#c8b98a]Quirk:[/color] %s -- [color=gray]%s[/color]" % [
+			QuirkCatalogue.display_name(quirk_id), QuirkCatalogue.flavour(quirk_id)]
 
 	details.text = details_text
 	vbox.add_child(details)
@@ -375,6 +387,13 @@ func _on_fire_button_pressed(button: Button):
 	var researcher_index = button.get_meta("researcher_index")
 	var researcher_data = button.get_meta("researcher_data")
 	_request_fire_employee(researcher_index, researcher_data)
+
+func _researcher_from_data(data: Dictionary) -> Researcher:
+	"""Rebuild a full Researcher from a state dict (from_dict restores the quirk layer),
+	so the screen reads the MODEL's formulas instead of re-deriving them (feat/quirk-skeleton)."""
+	var r := Researcher.new()
+	r.from_dict(data)
+	return r
 
 func refresh_display():
 	"""Refresh employee data when screen becomes visible"""
