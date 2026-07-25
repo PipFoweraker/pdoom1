@@ -25,8 +25,10 @@ Grounding (decided things this doc builds ON, not re-decides):
   day/week founder ops budget) + `docs/adr/0004-self-describing-data.md`
   (files declare their schema; tooling dispatches on the declaration).
 - `docs/CAPABILITY_UPLIFT_SCAN.md` BET 3 -- "close the telemetry loop":
-  run artifacts flowing home, landing in pdoom-data as the first real
-  ingestion feed. This proposal folds that in as the RETURN leg.
+  run artifacts flowing home. This proposal folds that in as the RETURN
+  leg -- RE-SCOPED 2026-07-25 (Pip ruling): the public leg is
+  confirmations + error-correction only; run summaries land in a PRIVATE
+  lake, not in pdoom-data. See "Data-openness posture" below.
 
 ---
 
@@ -37,12 +39,15 @@ AI-safety events (the public, fact-only data lake); **pdoom1** ingests a
 curated monthly pack and balance-shapes it into in-game content (opinion
 layer: weights, doom modifiers, event framing -- all of which stay HERE);
 **pdoom1-website** pulls the voice seam + roadmap + release notes and
-publishes the outward presentation. The RETURN leg closes the loop:
-anonymized run artifacts (seed, version, turns survived, death attribution,
-which events fired) flow home from players to pdoom-data, so next month's
-curation is steered by what actually happened in play. One full turn of the
-cycle = one Epoch month. Reality becomes the map generator; play becomes
-the curation signal.
+publishes the outward presentation. The RETURN leg closes the loop -- but
+RE-SCOPED (Pip ruling 2026-07-25, section "Data-openness posture" below):
+for now only CONFIRMATIONS + ERROR-CORRECTION flow up publicly (bug
+reports, install ping, "pack event X rendered wrongly" corrections), while
+anonymized run summaries accumulate in a PRIVATE lake that steers next
+month's curation internally. Broad publishing of aggregate play data is
+DEFERRED to ~1.0. One full turn of the cycle = one Epoch month. Reality
+becomes the map generator; play becomes the (privately held) curation
+signal.
 
 ## 2. The cycle diagram
 
@@ -58,9 +63,9 @@ the curation signal.
 +-----------+                                            +-----------+
       ^                                                        |
       |                                                        | HOP B:
-      | RETURN LEG: Run Artifact feed                          | voice seam +
-      | (anonymized telemetry,                                 | roadmap +
-      |  event-in-play signals)                                | release notes
+      | RETURN LEG (re-scoped 2026-07-25):                     | voice seam +
+      | confirmations + error-correction UP;                   | roadmap +
+      | run summaries -> PRIVATE lake only                     | release notes
       |                                                        v
       |                                                  +-----------+
       +--------------------------------------------------|  pdoom1-  |
@@ -134,32 +139,74 @@ contracts and adds the monthly rhythm:
   pdoom-data's serveable layer directly [INFERRED -- pdoom-data has a
   `serveable/` dir that looks built for exactly this; confirm with Pip].
 
-### Contract 3 -- the Run Artifact feed (pdoom1 -> pdoom-data, the RETURN leg)
+### Contract 3 -- the Return leg (pdoom1 -> home), RE-SCOPED 2026-07-25
 
-**What crosses:** the capability scan's BET 3, made a standing organ.
-The engine already computes, per run, deterministically: seed, version,
-ladder, turns survived, death-attribution root cause, replay hash
-(ADR-0006). Today those die on the player's disk. [PROPOSED]:
+**Re-scoped per Pip's data-openness ruling (see the "Data-openness
+posture" section below).** The original proposal routed anonymized run
+artifacts into pdoom-data as an ingestion feed. The ruling narrows the
+PUBLIC leg and privatizes the rest:
 
-- **Payload v0:** the run summary only (no full replays yet) --
-  `{seed, ladder_version, game_version, turns_survived, outcome,
-  death_root_cause, events_fired[], replay_hash}` -- anonymous by default,
-  riding the same consent posture as the #799 install ping.
+**What flows UP publicly, for now: confirmations + error-correction
+ONLY.**
+
+- Bug reports transmitting for real (#800 honest-transmit fix) and the
+  install ping / update check (#799).
+- Crash/error artifacts and content corrections ("pack event X displays
+  wrongly", broken source url) -- i.e. signals that help FIX things, not
+  signals that describe the meta.
+
+**What accumulates PRIVATELY: the run-summary lake.**
+
+- **Payload v0 (unchanged shape):** `{seed, ladder_version, game_version,
+  turns_survived, outcome, death_root_cause, events_fired[], replay_hash}`
+  (all already computed deterministically per ADR-0006) -- anonymous by
+  default, riding the same consent posture as the #799 install ping, with
+  the consent line written NOW to permit future aggregate publication.
 - **Transport:** the same phone-home path `leaderboard_sync.gd` already
-  uses [INFERRED -- endpoint design is exactly the open question the scan
-  says to start early]. Landing zone: a `telemetry/` (or `runs/`) inlet in
-  pdoom-data, schema-validated on arrival, SEPARATE from the fact lake
-  (`raw/` vs curated facts -- run data is evidence about the GAME, not
-  about reality; it must never leak into the fact layer).
-- **What it feeds:** the monthly curation. "Which events fired and how
-  runs ended" tells next month's pack author which content is load-bearing,
-  stale, or never-seen. Bot sweeps say what is POSSIBLE; telemetry says
-  what is HAPPENING (scan's framing). Together they are the league's
-  steering signal.
+  uses [INFERRED -- endpoint design still the open question]. Landing
+  zone: a PRIVATE store owned by pdoom1 (private repo/bucket -- location
+  TBD with the #800 endpoint decision). Explicitly NOT an inlet in the
+  public pdoom-data repo: run data is fingerprint-adjacent at current
+  playerbase size, changes meaning with every daily balance change, and
+  must never leak into the public fact lake (the firewall applies here
+  too -- run telemetry is game-opinion data, never AI-safety fact).
+- **What it feeds:** the monthly curation, INTERNALLY. "Which events
+  fired and how runs ended" tells next month's pack author which content
+  is load-bearing, stale, or never-seen. Bot sweeps say what is POSSIBLE;
+  telemetry says what is HAPPENING (scan's framing). The digest is an
+  internal artifact, not a publication.
 
-**Privacy note:** anonymized, aggregate-oriented, opt-in-visible. The
-firewall applies here too -- run telemetry is game-opinion data and is
-never presented as AI-safety fact.
+## 3b. Data-openness posture (Pip ruling 2026-07-25)
+
+The ruling that re-scopes Contract 3, written down so pipeline convenience
+cannot erode it (full reasoning: `docs/strategy/IP_AND_OPENNESS_PREMORTEM.md`
+section 5):
+
+1. **No auto-publishing of gameplay metadata while in dev.** Three
+   independent reasons: balances change daily, so published play data is
+   instantly stale and misleading; the playerbase is small enough that run
+   rows (seed + version + events_fired) are FINGERPRINTABLE; and the
+   surface-then-retract trap -- data once published becomes an
+   entitlement, and withdrawing it costs more community trust than never
+   publishing (the Path of Exile lesson).
+2. **The downward flow (pdoom-data -> game) runs at full speed.** Hop A
+   is unaffected; world-update packs are public facts already.
+3. **The public return leg is confirmations + error-correction only**
+   (Contract 3 above) for now.
+4. **pdoom1 accumulates a slowly-growing PRIVATE lake of run summaries.**
+   Broad publishing of aggregate play data is DEFERRED to ~1.0, once the
+   sim has real strategic depth and the numbers mean something durable.
+5. **The meta-display / ladder-analytics layer is HOPED to emerge from
+   the community** (the Path of Building pattern: the definitive solver
+   was community-built), not pushed from the center. Seeds laid now to
+   enable that without committing: a stable, documented run-artifact
+   schema; versioned payloads; a consent line that already permits future
+   aggregate publication; and a local "export my own runs" facility so
+   players can share their OWN data voluntarily -- player-chosen openness
+   is immune to the retract trap.
+
+Amending this posture follows the same ratification loop as the rest of
+this doc (change proposed here, legs confirm).
 
 ## 4. The monthly beat (Aug-Oct 2026, on the Epoch clock)
 
@@ -172,13 +219,13 @@ The cycle turns once per league month. Within a month [PROPOSED]:
 | E-2..E-0 | pdoom1 pulls pack, balance-shapes, PR, fast gate green | pdoom1 lane |
 | E (first Friday) | Epoch ships: minor+ladder bump, new baseline seed, league notes | pdoom1 (existing train) |
 | E+1..E+4 | Website pulls release notes + league notes + any voice-seam changes; publishes the monthly post | pdoom1-website lane |
-| continuous | Run artifacts trickle home (once Contract 3 is live) | players -> pdoom-data |
-| E-9 (approx) | Telemetry digest of the CLOSING month summarized for the next pack draft | pdoom-data lane |
+| continuous | Confirmations/error-corrections up; run summaries -> PRIVATE lake (once Contract 3 is live) | players -> private lake |
+| E-9 (approx) | INTERNAL telemetry digest of the CLOSING month (from the private lake) summarized for the next pack draft | pdoom1/pdoom-data lane |
 
 Who pulls what: every arrow is a PULL by the downstream repo (pdoom1 pulls
-the pack; website pulls the copy; pdoom-data receives pushed telemetry but
-PULLS nothing from the game repo). Signals are commits + cross-repo issues,
-same as the roadmap protocol.
+the pack; website pulls the copy; the PRIVATE lake receives pushed
+confirmations/run summaries but nothing pulls from the game repo). Signals
+are commits + cross-repo issues, same as the roadmap protocol.
 
 ### The three months, concretely
 
@@ -205,27 +252,30 @@ build the organs. Confidence: Aug is grounded; Sep ~70%; Oct is direction
 **September (v0.15, ships Sep 4, L4 -- public-alpha hardening month):**
 
 - pdoom-data: first REAL pack (August's events), Pip-approved on the E-2
-  beat. Stand up the telemetry landing zone (schema + inlet dir), even if
-  nothing flows yet.
+  beat. (The telemetry landing zone moves OFF pdoom-data per the re-scoped
+  Contract 3 -- the private lake stands up wherever the #800 endpoint
+  decision lands, not as a pdoom-data inlet.)
 - pdoom1: consume the pilot/September pack into the event pool as a
   low-stakes trial (a handful of shaped events, clearly provenance-tagged).
   v0.15 is the hardening month (leaderboard, install ping #799, bug
   reporter #800) -- exactly the infrastructure the return leg rides. If
   #799/#800 land, run-summary telemetry v0 goes live behind the same
-  consent.
+  consent, flowing to the PRIVATE lake (with the
+  future-aggregate-publication consent line included from day one).
 - pdoom1-website: monthly post now includes "real events that entered the
   world" as a section -- the outward face of the reality-tether.
 
 **October (v0.16 "Sightings" prov., ships Oct 2, L5 -- first full turn):**
 
-- pdoom-data: September pack drafted WITH the first telemetry digest
-  (if v0 flowed) -- the loop's first closed turn. Pack now the roadmap's
-  promised "wider event pool" feedstock.
+- pdoom-data: September pack drafted WITH the first INTERNAL telemetry
+  digest from the private lake (if v0 flowed) -- the loop's first closed
+  turn. Pack now the roadmap's promised "wider event pool" feedstock.
 - pdoom1: v0.16 ships with the pdoom-data-fed pool expansion (roadmap
   commitment). Frontier advances; league notes name the real events.
-- pdoom1-website: full-cycle monthly post: new Theme + new world events +
-  (if presentable) first aggregate play stats. By now the post has a
-  stable template -- candidate for the copy corpus.
+- pdoom1-website: full-cycle monthly post: new Theme + new world events.
+  (NO aggregate play stats -- publishing play data is deferred to ~1.0
+  per the data-openness posture.) By now the post has a stable template --
+  candidate for the copy corpus.
 
 ## 5. Manual-first vs automatable
 
@@ -266,9 +316,10 @@ Modeled on the roadmap -> website signal that already worked
 2. **Two cross-repo issues** (filed AFTER Pip merges, not before):
    - pdoom-data: "Confirm your leg of the triumvirate metabolic cycle" --
      links this doc; asks: fact-schema + pack-schema ownership, firewall
-     cleanup, pilot pack in Aug, telemetry landing zone in Sep. pdoom-data
-     answers with ITS OWN doc/issue-plan; disagreements come back as
-     comments on this doc.
+     cleanup, pilot pack in Aug. (Telemetry landing zone REMOVED from the
+     ask per the re-scoped Contract 3 -- the private lake is not a
+     pdoom-data concern.) pdoom-data answers with ITS OWN doc/issue-plan;
+     disagreements come back as comments on this doc.
    - pdoom1-website: same shape -- monthly post beat, league-notes pull,
      doom-clock question. Website already carries #164's re-projection
      habit; this extends it to a monthly rhythm.
@@ -298,11 +349,15 @@ Modeled on the roadmap -> website signal that already worked
    feature work, the ramp stretches (Oct full-turn slips to Nov) --
    probability of exactly that slip: ~40% [INFERRED from the scan's ~60%
    slip estimate on BET 3 alone].
-3. **Telemetry privacy posture is undecided.** Anonymous-by-default is
-   the #799 framing; run telemetry proposed to ride the same consent. But
-   `events_fired[]` + seed + version is fingerprint-adjacent for a tiny
-   playerbase. Needs a ruling before Contract 3 goes live: what fields,
-   what retention, where stated to players.
+3. **Telemetry privacy posture -- RULED 2026-07-25** (was: undecided).
+   The fingerprint risk (`events_fired[]` + seed + version on a tiny
+   playerbase) is one of the three reasons the return leg got re-scoped:
+   run summaries go to a PRIVATE lake only, nothing play-derived is
+   published before ~1.0. Still owed before Contract 3 goes live: exact
+   field list, retention window, and the player-facing consent wording
+   (which must already permit future aggregate publication) -- see
+   `docs/strategy/IP_AND_OPENNESS_PREMORTEM.md` section 5; wording is a
+   check-with-a-professional item.
 4. **League-notes format is still owed** (ADR-0016 open question). Hop B's
    monthly post depends on it. Cheap to settle: one template, first used
    at the v0.15 or v0.16 Epoch.
@@ -322,11 +377,12 @@ Modeled on the roadmap -> website signal that already worked
    namespace" is my proposal [INFERRED as the natural firewall-preserving
    split]; pdoom-data's confirming issue should explicitly accept or
    counter it.
-8. **Which repo hosts the telemetry endpoint?** The scan says
-   "website/endpoint + pdoom-data landing zone + client" -- three moving
-   parts across all three repos. The website relaying to pdoom-data keeps
-   the game repo out of ops [INFERRED]; but Pip may prefer the leaderboard
-   server host it since that path already exists. Decide with the #800 fix.
+8. **Where does the private lake live?** The scan's original shape was
+   "website/endpoint + pdoom-data landing zone + client"; the re-scoped
+   Contract 3 rules OUT a pdoom-data landing zone (the lake is private,
+   pdoom-data is public). Remaining options: the leaderboard server path
+   (already exists) writing to private storage, or a private repo/bucket
+   the website endpoint relays into [INFERRED]. Decide with the #800 fix.
 
 ---
 
