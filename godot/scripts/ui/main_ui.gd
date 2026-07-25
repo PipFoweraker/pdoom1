@@ -2730,6 +2730,13 @@ func _show_ledger_screen():
 	"""BL-1/#601: open the full Liability Ledger screen. #622 L10: the panel itself is
 	built by LedgerScreen; this stays the single entry point (L key, summary click,
 	financing submenu, dev overlay) and owns the active_dialog bookkeeping."""
+	# fix/ledger-stacked-modal: the Bug Report panel is an independent modal with a
+	# focused LineEdit/TextEdit. The #575 text-focus gate suppresses global keys
+	# (Esc/L) while that field is focused, so a ledger stacked ON TOP of an open bug
+	# report becomes un-closeable (soft-lock). Dismiss the bug report first, releasing
+	# its text focus, so the ledger's own close keys keep working.
+	if bug_report_panel and bug_report_panel.visible:
+		bug_report_panel.hide_panel()
 	if active_dialog != null and is_instance_valid(active_dialog):
 		active_dialog.queue_free()
 		active_dialog = null
