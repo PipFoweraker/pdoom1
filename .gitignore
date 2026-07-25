@@ -132,11 +132,17 @@ generated_icons/
 asset_gallery.html
 # Local art-review app state (per-reviewer verdicts/notes; written by serve_review.py)
 tools/art_review/review_state.json
+# Office-sandbox v2 dev-tool state (promote list + per-reviewer feedback; local only).
+# These live only in the owner's working copy; the sandbox loader degrades gracefully
+# when they are absent (see godot/scripts/ui/office_floor/office_sandbox.gd).
+art_source/promote_list.txt
+art_source/pixellab_verdicts.json
+art_source/sandbox_feedback.json
 test_output.png
 test_openai_api.py
 generate_icons.py
 
-# Third-party visual references (Pip mind-dump 2026-07-16) — NOT committed (copyright).
+# Third-party visual references (Pip mind-dump 2026-07-16) -- NOT committed (copyright).
 # Aesthetic notes derived from these live in docs/game-design/WORLD_AND_LORE.md.
 art_prompts/16-july-2-26-dump/
 
