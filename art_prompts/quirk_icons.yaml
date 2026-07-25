@@ -1,0 +1,317 @@
+schema_version: '1.0'
+_meta: 'Quirk icon set for the employee surfaces (issue #903). 14 quirk icons (ids
+  match godot/data/researchers/quirks.json exactly) + 2 state glyphs (quirk_unrevealed,
+  quirk_none). Valence colour language taken from godot/autoload/theme_manager.gd:
+  positive -> green (theme "success" #33CC4D, same family as the employee_status_active
+  check), negative -> crimson red (theme "error" #E64D33 toward "doom_critical" #B31A1A),
+  double_edged -> violet purple (theme "category_research" #B380E6, the step-above-red
+  doom purple family), state glyphs -> desaturated grey-teal neutral. Lock-base +
+  colour-via-effects pattern (SEED_ART_DIRECTION section 2): one base circular indicator
+  treatment reused from the employee_status family in ui_icons.yaml; ONLY the accent
+  hue tells valence. Promoted 64px files land in godot/assets/icons/quirks/<id>_64.png.'
+asset_type: quirk_icons
+default_size: 1024x1024
+output_sizes:
+- 1024
+- 512
+- 256
+- 128
+- 64
+background: opaque
+styles:
+  global_icon_base: 'high-res 1024x1024 square game icon, single central symbol, soft
+    but detailed digital painting with slightly cartoony shapes, StarCraft 2 / early-2000s
+    XCOM ability icon feel, plain or softly graded background with a subtle vignette,
+    no full scene or environment, no text, strong chunky silhouette that reads clearly
+    at 64x64, limited color palette, high contrast lighting, centered composition
+
+    '
+  surface_tarkov: Tarkov-style worn metal and dirty surfaces but simplified
+themes:
+  valence_positive:
+    style_overrides:
+    - global_icon_base
+    - surface_tarkov
+    color_bias: valence colour POSITIVE -- the single saturated accent is a healthy
+      green glow (#33CC4D family), dark desaturated teal-grey ground, no other saturated
+      hue
+  valence_negative:
+    style_overrides:
+    - global_icon_base
+    - surface_tarkov
+    color_bias: 'valence colour NEGATIVE -- the single saturated accent is an ominous
+      crimson red glow (#E64D33 toward deep #B31A1A), dark desaturated grey-brown
+      ground, no other saturated hue'
+  valence_double_edged:
+    style_overrides:
+    - global_icon_base
+    - surface_tarkov
+    color_bias: valence colour DOUBLE-EDGED -- the single saturated accent is a violet
+      purple glow (#B380E6 family), dark desaturated aubergine-grey ground, no other
+      saturated hue
+  valence_neutral:
+    style_overrides:
+    - global_icon_base
+    - surface_tarkov
+    color_bias: neutral state glyph -- desaturated grey-teal tones only, dim off-white
+      highlight, NO saturated accent colour
+assets:
+- id: lab_parent
+  category: quirks
+  display_name: Lab Parent
+  status: generated
+  theme: valence_positive
+  prompt_tail: 'circular indicator with a large gentle hand sheltering a small simple
+    human figure beneath it, soft protective glow, plain dark background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-25T23:34:12.627954+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 5b531be95ffb
+    file_path: art_generated\quirk_icons\v1\lab_parent_1024.png
+    cost_usd: 0.06
+- id: sponge
+  category: quirks
+  display_name: Sponge
+  status: generated
+  theme: valence_positive
+  prompt_tail: 'circular indicator with a simple rounded rectangular sponge soaking
+    up three falling droplets, clean crisp edges, plain dark background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-25T23:34:28.147932+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 9806e5d2ff3a
+    file_path: art_generated\quirk_icons\v1\sponge_1024.png
+    cost_usd: 0.06
+- id: cat_whisperer
+  category: quirks
+  display_name: Cat Whisperer
+  status: generated
+  theme: valence_positive
+  prompt_tail: 'circular indicator with a simple content cat face with closed happy
+    eyes and small whiskers, soft calm glow, plain dark background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-25T23:34:59.217544+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 86ecac0982cc
+    file_path: art_generated\quirk_icons\v1\cat_whisperer_1024.png
+    cost_usd: 0.06
+- id: true_believer
+  category: quirks
+  display_name: True Believer
+  status: generated
+  theme: valence_positive
+  prompt_tail: 'circular indicator with a simple rounded shield bearing a small heart
+    emblem in its center, steady glow, plain dark background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-25T23:35:31.187125+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: a754b61230d1
+    file_path: art_generated\quirk_icons\v1\true_believer_1024.png
+    cost_usd: 0.06
+- id: secret_successionist
+  category: quirks
+  display_name: Secret Successionist
+  status: generated
+  theme: valence_negative
+  prompt_tail: 'circular indicator with a simple angular crown formed from circuit-board
+    traces with small node dots, quietly ominous glow, plain dark background with
+    vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-25T23:35:45.900472+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 7b4ff79ec3e7
+    file_path: art_generated\quirk_icons\v1\secret_successionist_1024.png
+    cost_usd: 0.06
+- id: e_acc_sympathizer
+  category: quirks
+  display_name: e/acc Sympathizer
+  status: generated
+  theme: valence_negative
+  prompt_tail: 'circular indicator with a simple stylized rocket climbing steeply
+    with a short exhaust flame, reckless upward motion, plain dark background with
+    vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-25T23:36:05.468689+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 35fefc3ea613
+    file_path: art_generated\quirk_icons\v1\e_acc_sympathizer_1024.png
+    cost_usd: 0.06
+- id: loose_lips
+  category: quirks
+  display_name: Loose Lips
+  status: generated
+  theme: valence_negative
+  prompt_tail: 'circular indicator with a simple speech bubble leaking three droplets
+    from its bottom edge, clean crisp edges, plain dark background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-25T23:36:22.926704+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 21026a0ab1a8
+    file_path: art_generated\quirk_icons\v1\loose_lips_1024.png
+    cost_usd: 0.06
+- id: glory_hound
+  category: quirks
+  display_name: Glory Hound
+  status: generated
+  theme: valence_negative
+  prompt_tail: 'circular indicator with a simple trophy cup gripped tightly by a single
+    grasping hand from the side, plain dark background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-25T23:36:56.905439+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 0e683f2ba71c
+    file_path: art_generated\quirk_icons\v1\glory_hound_1024.png
+    cost_usd: 0.06
+- id: quiet_quitter
+  category: quirks
+  display_name: Quiet Quitter
+  status: generated
+  theme: valence_negative
+  prompt_tail: 'circular indicator with a simple battery symbol showing one dim low
+    bar remaining, flat lifeless glow, plain dark background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-25T23:37:28.475659+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 632e817c0004
+    file_path: art_generated\quirk_icons\v1\quiet_quitter_1024.png
+    cost_usd: 0.06
+- id: doom_absolutist
+  category: quirks
+  display_name: Doom Absolutist
+  status: generated
+  theme: valence_double_edged
+  prompt_tail: 'circular indicator with a simple round gauge dial with its needle
+    pinned hard at maximum, small radiating alarm ticks, plain dark background with
+    vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-25T23:37:59.141613+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: abbe429480fa
+    file_path: art_generated\quirk_icons\v1\doom_absolutist_1024.png
+    cost_usd: 0.06
+- id: open_science_zealot
+  category: quirks
+  display_name: Open-Science Zealot
+  status: generated
+  theme: valence_double_edged
+  prompt_tail: 'circular indicator with a simple open unlocked padlock radiating short
+    light rays, shackle swung open, plain dark background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-25T23:38:16.901695+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 627a17c43996
+    file_path: art_generated\quirk_icons\v1\open_science_zealot_1024.png
+    cost_usd: 0.06
+- id: secrecy_maximalist
+  category: quirks
+  display_name: Secrecy Maximalist
+  status: generated
+  theme: valence_double_edged
+  prompt_tail: 'circular indicator with a simple closed padlock clamped over a plain
+    document folder, sealed and tight, plain dark background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-25T23:38:33.762269+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: b8ef83c4bc58
+    file_path: art_generated\quirk_icons\v1\secrecy_maximalist_1024.png
+    cost_usd: 0.06
+- id: empire_builder
+  category: quirks
+  display_name: Empire Builder
+  status: generated
+  theme: valence_double_edged
+  prompt_tail: 'circular indicator with a simple three-tier org-chart of small connected
+    boxes growing downward from one box, plain dark background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-25T23:39:25.891356+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 1c6ff623fb48
+    file_path: art_generated\quirk_icons\v1\empire_builder_1024.png
+    cost_usd: 0.06
+- id: runs_hot
+  category: quirks
+  display_name: Runs Hot
+  status: generated
+  theme: valence_double_edged
+  prompt_tail: 'circular indicator with a simple thermometer with its column surging
+    and bursting at the top bulb, plain dark background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-25T23:39:42.555695+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: e44969344e14
+    file_path: art_generated\quirk_icons\v1\runs_hot_1024.png
+    cost_usd: 0.06
+- id: quirk_unrevealed
+  category: quirks
+  display_name: Unrevealed Quirk
+  status: generated
+  theme: valence_neutral
+  prompt_tail: 'circular indicator with a single large bold question mark symbol,
+    dim and muted, plain dark background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-25T23:39:57.190167+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: afdc46b6bc3c
+    file_path: art_generated\quirk_icons\v1\quirk_unrevealed_1024.png
+    cost_usd: 0.06
+- id: quirk_none
+  category: quirks
+  display_name: No Quirk (confirmed)
+  status: generated
+  theme: valence_neutral
+  prompt_tail: 'circular indicator with a thin empty circle outline crossed by one
+    short diagonal dash, minimal and calm, plain dark background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-25T23:40:12.957270+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 81e90f8be23a
+    file_path: art_generated\quirk_icons\v1\quirk_none_1024.png
+    cost_usd: 0.06
