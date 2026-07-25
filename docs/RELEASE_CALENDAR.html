@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>P(Doom)1 -- release calendar</title>
+<style>
+  :root{--bg:#17120e;--panel:#211a14;--panel2:#2b221a;--ink:#ece0cf;--dim:#a9977f;--faint:#6f6250;
+    --amber:#e8a33d;--amber2:#c07a1f;--win:#6fae86;--line:#3a2e22;--fork:#d8695a;--seed:#6fae86;}
+  @media (prefers-color-scheme:light){:root{--bg:#efe6d6;--panel:#f7efe0;--panel2:#fbf5e9;--ink:#2b2116;
+    --dim:#6b5b45;--faint:#9a876c;--amber:#b9741a;--amber2:#8f5710;--win:#3f8a5c;--line:#ddccb0;
+    --fork:#c14a3a;--seed:#3f8a5c;}}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);line-height:1.5;
+    font-family:ui-sans-serif,system-ui,"Segoe UI",Helvetica,Arial,sans-serif}
+  .wrap{max-width:840px;margin:0 auto;padding:2.2rem 1.4rem 5rem}
+  .eyebrow{font-family:ui-monospace,Consolas,monospace;font-size:.7rem;letter-spacing:.22em;
+    text-transform:uppercase;color:var(--amber);margin:0 0 .5rem}
+  h1{font-family:ui-monospace,"Cascadia Code",Consolas,monospace;font-weight:700;
+    font-size:clamp(1.5rem,3.4vw,2.1rem);margin:0 0 .3rem}
+  .sub{color:var(--dim);font-size:.92rem;margin:0 0 1.6rem;max-width:66ch}
+  .legend{display:flex;flex-wrap:wrap;gap:.5rem 1.1rem;font-family:ui-monospace,Consolas,monospace;
+    font-size:.72rem;color:var(--dim);margin:0 0 1.8rem;padding-bottom:1.2rem;border-bottom:1px solid var(--line)}
+  .dot{display:inline-block;width:.7em;height:.7em;border-radius:50%;margin-right:.35em;vertical-align:middle}
+  .d-epoch{background:var(--fork)}.d-seed{background:var(--seed)}.d-mile{background:var(--amber)}.d-design{background:#8a7bd8}
+  .month{font-family:ui-monospace,Consolas,monospace;font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--faint);margin:1.8rem 0 .7rem;padding-top:.3rem}
+  .row{display:grid;grid-template-columns:5.2rem 1fr;gap:.9rem;padding:.5rem 0;border-bottom:1px solid var(--line);align-items:baseline}
+  .when{font-family:ui-monospace,Consolas,monospace;font-size:.78rem;color:var(--dim);white-space:nowrap}
+  .when b{color:var(--ink)}
+  .what{font-size:.92rem}
+  .what .tag{font-family:ui-monospace,Consolas,monospace;font-size:.64rem;letter-spacing:.06em;text-transform:uppercase;
+    border-radius:4px;padding:.1rem .4rem;margin-right:.5rem;white-space:nowrap}
+  .t-epoch{background:var(--fork);color:#2a1210}.t-seed{background:var(--seed);color:#12251a}
+  .t-mile{background:var(--amber);color:#20140a}.t-design{background:#8a7bd8;color:#141021}.t-patch{border:1px solid var(--line);color:var(--dim)}
+  .what .meta{color:var(--faint);font-size:.8rem;font-family:ui-monospace,Consolas,monospace}
+  .now{background:var(--panel2);border-left:3px solid var(--amber);border-radius:6px;
+    padding:.5rem .7rem;margin:.3rem 0 .3rem;font-family:ui-monospace,Consolas,monospace;font-size:.8rem;color:var(--amber)}
+  .theme{color:var(--ink)}
+  footer{margin-top:2.5rem;padding-top:1rem;border-top:1px solid var(--line);
+    color:var(--faint);font-size:.76rem;font-family:ui-monospace,Consolas,monospace}
+</style></head><body>
+<div class="wrap">
+  <p class="eyebrow">P(Doom)1 &middot; release &amp; league calendar</p>
+  <h1>The next three months</h1>
+  <p class="sub">Two clocks: a <b>forking monthly Epoch</b> on the first Friday (new minor version + ladder bump + Theme), and a <b>weekly Seed</b> every Friday (fresh board, same rules). Dates verified against the 2026 calendar.</p>
+  <div class="legend">
+    <span><span class="dot d-epoch"></span>Epoch (forks: minor + ladder)</span>
+    <span><span class="dot d-seed"></span>Weekly seed (no fork)</span>
+    <span><span class="dot d-mile"></span>Big Milestone</span>
+    <span><span class="dot d-design"></span>Design</span>
+  </div>
+
+  <div class="now">&gt;&gt; You are here: Sat 26 Jul 2026 &middot; build 0.13.1 &middot; ladder L2</div>
+
+  <div class="month">July 2026</div>
+  <div class="row"><div class="when">Mon-Tue<br>27-28</div><div class="what"><span class="tag t-patch">patch</span><span class="theme">v0.13.1 build</span> <span class="meta">-- from release/v0.13; honesty pass; ladder stays L2</span></div></div>
+  <div class="row"><div class="when"><b>Wed 29</b></div><div class="what"><span class="tag t-design">WS-3</span><span class="theme">Workshop 3 -- mechanics</span> <span class="meta">-- crisp parts, brutal decisions (#811)</span></div></div>
+  <div class="row"><div class="when">Fri 31</div><div class="what"><span class="tag t-seed">seed</span>weekly seed rotation <span class="meta">-- L2</span></div></div>
+
+  <div class="month">August 2026</div>
+  <div class="row"><div class="when"><b>Fri 7</b></div><div class="what"><span class="tag t-epoch">epoch -> L3</span><span class="theme">v0.14 "Per-tick &amp; People"</span> <span class="meta">(prov.) -- per-tick resolution + people &amp; money cohesion</span></div></div>
+  <div class="row"><div class="when">Fri 14</div><div class="what"><span class="tag t-seed">seed</span>weekly seed <span class="meta">-- L3</span></div></div>
+  <div class="row"><div class="when">Fri 21</div><div class="what"><span class="tag t-seed">seed</span>weekly seed <span class="meta">-- L3</span></div></div>
+  <div class="row"><div class="when">Fri 28</div><div class="what"><span class="tag t-seed">seed</span>weekly seed <span class="meta">-- L3</span></div></div>
+
+  <div class="month">September 2026</div>
+  <div class="row"><div class="when"><b>Fri 4</b></div><div class="what"><span class="tag t-epoch">epoch -> L4</span><span class="theme">v0.15 (unnamed)</span> <span class="meta">-- onboarding-as-mechanic + public-alpha hardening</span></div></div>
+  <div class="row"><div class="when">Fri 11 / 18 / 25</div><div class="what"><span class="tag t-seed">seed</span>weekly seeds <span class="meta">-- L4</span></div></div>
+  <div class="row"><div class="when"><b>Tue 29</b></div><div class="what"><span class="tag t-mile">milestone</span><span class="theme">First Contact target</span> <span class="meta">-- public-alpha readiness (spans v0.13-v0.15)</span></div></div>
+
+  <div class="month">October 2026</div>
+  <div class="row"><div class="when"><b>Fri 2</b></div><div class="what"><span class="tag t-epoch">epoch -> L5</span><span class="theme">v0.16 "Sightings"</span> <span class="meta">(prov.) -- rivals begin; wider event pool from pdoom-data</span></div></div>
+  <div class="row"><div class="when">Fri 9 / 16 / 23 / 30</div><div class="what"><span class="tag t-seed">seed</span>weekly seeds <span class="meta">-- L5</span></div></div>
+
+  <footer>Provisional Theme names beyond v0.13 are unblessed (no-lies standard). Source: RELEASE_NOMENCLATURE.md + ROADMAP.md &middot; rendered 2026-07-25.</footer>
+</div>
+</body></html>

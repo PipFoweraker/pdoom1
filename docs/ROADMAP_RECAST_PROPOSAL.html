@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>P(Doom)1 -- ROADMAP re-cast (proposed)</title>
+<style>
+  :root{
+    --bg:#17120e;--panel:#211a14;--panel2:#2b221a;--ink:#ece0cf;--dim:#a9977f;--faint:#6f6250;
+    --amber:#e8a33d;--amber2:#c07a1f;--win:#6fae86;--line:#3a2e22;--fork:#d8695a;
+  }
+  @media (prefers-color-scheme:light){:root{
+    --bg:#efe6d6;--panel:#f7efe0;--panel2:#fbf5e9;--ink:#2b2116;--dim:#6b5b45;--faint:#9a876c;
+    --amber:#b9741a;--amber2:#8f5710;--win:#3f8a5c;--line:#ddccb0;--fork:#c14a3a;}}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);line-height:1.55;
+    font-family:ui-sans-serif,system-ui,"Segoe UI",Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:920px;margin:0 auto;padding:2.2rem 1.4rem 5rem}
+  .eyebrow{font-family:ui-monospace,Consolas,monospace;font-size:.7rem;letter-spacing:.22em;
+    text-transform:uppercase;color:var(--amber);margin:0 0 .5rem}
+  h1{font-family:ui-monospace,"Cascadia Code",Consolas,monospace;font-weight:700;
+    font-size:clamp(1.5rem,3.4vw,2.1rem);line-height:1.1;margin:0 0 .3rem}
+  .sub{color:var(--dim);font-size:.95rem;margin:0 0 .3rem;max-width:70ch}
+  .badge{display:inline-block;font-family:ui-monospace,Consolas,monospace;font-size:.66rem;
+    letter-spacing:.1em;text-transform:uppercase;color:#20140a;background:var(--amber);
+    border-radius:5px;padding:.2rem .55rem;margin:.6rem 0 1.6rem}
+  h2{font-family:ui-monospace,Consolas,monospace;font-size:1.05rem;margin:2.4rem 0 .3rem;
+    padding-bottom:.4rem;border-bottom:1px solid var(--line)}
+  .note{color:var(--faint);font-size:.82rem;margin:.2rem 0 1rem}
+  table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.6rem 0}
+  th,td{text-align:left;padding:.55rem .6rem;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-family:ui-monospace,Consolas,monospace;font-size:.66rem;letter-spacing:.08em;
+    text-transform:uppercase;color:var(--faint)}
+  td.v{font-family:ui-monospace,Consolas,monospace;color:var(--amber);white-space:nowrap;font-weight:600}
+  td.d{font-family:ui-monospace,Consolas,monospace;color:var(--dim);white-space:nowrap;font-size:.82rem}
+  .ladder{font-family:ui-monospace,Consolas,monospace;color:var(--fork);font-size:.8rem}
+  .prov{color:var(--faint);font-style:italic}
+  .shipped{color:var(--win);font-family:ui-monospace,Consolas,monospace;font-size:.72rem}
+  .arc{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--amber);
+    border-radius:9px;padding:.9rem 1.1rem;margin:.8rem 0}
+  .arc h3{margin:0 0 .25rem;font-family:ui-monospace,Consolas,monospace;font-size:1rem}
+  .arc .span{font-family:ui-monospace,Consolas,monospace;font-size:.72rem;color:var(--faint)}
+  .arc p{margin:.4rem 0 0;color:var(--dim);font-size:.88rem}
+  .retired{opacity:.55}
+  .retired table td,.retired table th{text-decoration:line-through}
+  .retired .why{text-decoration:none;color:var(--fork);font-size:.82rem;margin:.3rem 0 0;font-family:ui-monospace,Consolas,monospace}
+  .callout{background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:.9rem 1.1rem;margin:1.4rem 0;font-size:.9rem}
+  .callout b{color:var(--amber)}
+  code{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--panel2);padding:.05rem .3rem;border-radius:4px}
+  footer{margin-top:2.5rem;padding-top:1rem;border-top:1px solid var(--line);
+    color:var(--faint);font-size:.78rem;font-family:ui-monospace,Consolas,monospace}
+</style></head><body>
+<div class="wrap">
+  <p class="eyebrow">P(Doom)1 &middot; roadmap &middot; nomenclature v2</p>
+  <h1>ROADMAP re-cast -- monthly Themes</h1>
+  <p class="sub">Replaces the old "one minor version per quarter" table with the canonical model
+  (<code>RELEASE_NOMENCLATURE.md</code>): each month is a named Theme = a minor bump = a forking epoch;
+  two Big Milestones are the only multi-month groupings.</p>
+  <span class="badge">Proposed -- for your blessing (nothing written to ROADMAP.md yet)</span>
+
+  <h2>Monthly Themes</h2>
+  <p class="note">Epoch = first Friday of the month. Theme names beyond v0.13 are PROVISIONAL -- yours to name.</p>
+  <table>
+    <tr><th>Version</th><th>Ships</th><th>Ladder</th><th>Theme</th><th>Headline</th></tr>
+    <tr><td class="v">v0.13</td><td class="d">Jul 24</td><td class="ladder">L2</td>
+        <td>Launch epoch <span class="shipped">SHIPPED</span></td>
+        <td>Hiring pipeline, onboarding cold-open, office visuals, league live, legibility + stability, v0.13.1 honesty pass</td></tr>
+    <tr><td class="v">v0.14</td><td class="d">Aug 7</td><td class="ladder">L3</td>
+        <td>"Per-tick &amp; People" <span class="prov">(prov.)</span></td>
+        <td>Per-tick resolution + people &amp; money cohesion (roles / salary / manager / payroll)</td></tr>
+    <tr><td class="v">v0.15</td><td class="d">Sep 4</td><td class="ladder">L4</td>
+        <td><span class="prov">(unnamed)</span></td>
+        <td>Onboarding-as-mechanic + public-alpha hardening (leaderboard, install ping, bug reporter, test builds)</td></tr>
+    <tr><td class="v">v0.16</td><td class="d">Oct 2</td><td class="ladder">L5</td>
+        <td>"Sightings" <span class="prov">(prov.)</span></td>
+        <td>Rivals begin -- Developments / procedural presence; wider event pool from pdoom-data</td></tr>
+    <tr><td class="v">v0.17</td><td class="d">Nov 6</td><td class="ladder">L6</td>
+        <td>"The World Shoots Back" <span class="prov">(prov.)</span></td>
+        <td>News feedline + rival midgame pressure (poaching, litigation, funding attacks)</td></tr>
+    <tr><td class="v">v0.18</td><td class="d">Dec 4</td><td class="ladder">L7</td>
+        <td><span class="prov">(unnamed)</span></td>
+        <td>Rival direct confrontation + News v1 + voice re-skin of event content</td></tr>
+  </table>
+  <p class="note">Confidence decays with distance: v0.14-v0.15 grounded in existing design; v0.16+ is direction to steer, not commitment. WS-3 (Wed Jul 29) will reshape.</p>
+
+  <h2>Big Milestones (the only multi-month objects)</h2>
+  <div class="arc">
+    <h3>First Contact <span class="span">&middot; target Sep 29 &middot; spans v0.13-v0.15</span></h3>
+    <p>Public-alpha readiness: onboarding, the share loop, leaderboard hardened, monthly league v0, first-contact UX.</p>
+  </div>
+  <div class="arc">
+    <h3>Rivals &amp; News <span class="span">&middot; target Dec 30 &middot; spans v0.16-v0.18</span></h3>
+    <p>Rivals become a strategic surface: intel/capability-race, poaching rework, News channel v1, the DQ-22 aggro-midgame, voice content pass.</p>
+  </div>
+
+  <h2>Retired: the old quarterly table</h2>
+  <div class="retired">
+    <table>
+      <tr><th>Quarter</th><th>Version</th><th>Theme</th></tr>
+      <tr><td>Q3 2026</td><td>v0.12</td><td>First Contact</td></tr>
+      <tr><td>Q4 2026</td><td>v0.13</td><td>Rivals and News</td></tr>
+      <tr><td>Q1 2027</td><td>v0.14</td><td>The World Shoots Back</td></tr>
+      <tr><td>Q2 2027</td><td>v0.15</td><td>Beta / Steam Coming Soon</td></tr>
+    </table>
+    <p class="why">Doubly stale: v0.13.1 already shipped (versions move monthly, not quarterly), and First Contact / Rivals &amp; News are Big Milestones spanning several Themes, not single versions.</p>
+  </div>
+
+  <div class="callout">
+    <b>Two decisions for you:</b> (1) name the upcoming Themes (v0.14+ shown provisional) -- or leave them unnamed until closer; (2) "The World Shoots Back" has no home in the new model -- I've provisionally parked it as v0.17's Theme name; keep it there, promote it, or retire it. On your nod I'll write the blessed version into <code>ROADMAP.md</code> and sweep the two downstream docs that still say <code>v0.12 "First Contact"</code>.
+  </div>
+
+  <footer>Proposed 2026-07-25 &middot; source: RELEASE_NOMENCLATURE.md + coherence sweep (#860) &middot; not yet in ROADMAP.md</footer>
+</div>
+</body></html>

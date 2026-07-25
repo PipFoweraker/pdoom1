@@ -1,6 +1,8 @@
-# Workshop 3 -- Running Order (2026-07-30) + Prep Pack
+# Workshop 3 -- Running Order (2026-07-29) + Prep Pack
 
-> Status: RUNNING ORDER for WS-3 (Wed 2026-07-30, issue #811), written 2026-07-25.
+> Status: RUNNING ORDER for WS-3 (Wed 2026-07-29, 0800-1800 AEST, issue #811),
+> written 2026-07-25. Date pinned 2026-07-26 (earlier copies said "Wed 07-30",
+> but 07-30 is a Thursday; may move EARLIER at Pip's call, not later).
 > Sections R0-R6 are the day-of agenda. Sections 0-6 further down are the original
 > prep pack (2026-07-23) that fed this agenda -- BACKGROUND, partially superseded;
 > read the reconciliation note at the head of the appendix before trusting a detail
@@ -128,7 +130,7 @@ now RESOLVED -- do not treat them as live:
   WS-3 is a deep-mechanics workshop feeding the v0.14+ Epochs, not a milestone-anchor
   choice. See ROADMAP.md + RELEASE_NOMENCLATURE.md.
 - **"No WS-3 mechanics session is scheduled" / "the Friday unknown" (Section 5):
-  RESOLVED.** WS-3 is scheduled Wed 2026-07-30 (issue #811), separate from the old
+  RESOLVED.** WS-3 is scheduled Wed 2026-07-29 (issue #811), separate from the old
   Friday #758 slot.
 - **"Office economy proposal does not exist" (Theme B gate, Sections 3b/5/6):
   RESOLVED.** `OFFICE_ECONOMY_PROPOSAL.md` now exists -- it is R3's input.
