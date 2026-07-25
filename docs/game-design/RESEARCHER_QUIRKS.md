@@ -60,7 +60,7 @@ A quirk's effect is a small fixed set of keys the sim reads through
 |---------|---------|----------------|--------------|
 | `self_productivity_mult` | 1.0 | `get_effective_productivity()` | >1 faster, <1 slower |
 | `burnout_per_turn_add` | 0.0 | `process_turn()` (on top of base 0.5) | + burns, - relieves |
-| `doom_mod_add` | 0.0 | `get_doom_modifier()` | + raises doom, - lowers |
+| `doom_mod_add` | 0.0 | DoomSystem `quirk` stream (`_compute_streams`, whole productive roster; `W_quirk_doom`) | + raises doom, - lowers |
 | `leak_chance` | 0.0 | `turn_manager` roster loop | per-turn leak probability |
 | `team_productivity_add` | 0.0 | `turn_manager` team bonus | + lifts team, - drags it |
 | `skill_growth_mult` | 1.0 | `process_turn()` skill roll | >1 grows faster |
@@ -126,10 +126,24 @@ per-quirk burnout), `pessimist` (flat morale hit, no depth), `media_savvy` (pape
 reputation bonus -- a press-facing quirk can re-add it later via a dedicated channel),
 `road_warrior` (jet-lag-specific; the jet-lag system stands on its own).
 
+## feat/quirk-skeleton updates (WS-3 prototype)
+
+- `doom_mod_add` is now UNIVERSAL: DoomSystem's `quirk` stream sums the channel over the
+  whole productive roster (was: one log-only call in the capabilities arm). Signed stream,
+  Balance-priced (`doom.streams.W_quirk_doom`), no rng.
+- Appetites are read POST-hire: `process_turn(rng, lab_context)` runs a deterministic
+  per-turn satisfaction check (strong hungers vs lab-state proxies) that nudges loyalty
+  (see `_appetite_satisfaction` constants in researcher.gd).
+- Ledger promises now settle KEPT (loyalty credit to the named promisee) or BROKEN
+  (loyalty hit) instead of lapsing silently (`Ledger._settle_promise`).
+- The staff ID card (`staff_perks_panel.gd/.tscn`) was rebuilt on the quirk layer;
+  `staff_perks_compact` was deleted (orphaned). Perk flavour harvested to
+  `PERK_FLAVOUR_HARVEST.md`. Tenure reveals + skill-ups now narrate in the turn feed.
+
 ## Follow-ups (not in this pass)
 
 - Bespoke exposure *events* per `incident` quirk (currently tenure-fallback only).
-- The placeholder staff-perks panels (`staff_perks_panel.gd`, `staff_perks_compact.gd`)
-  are decoupled from the removed `traits` field and now show empty slots; a future pass can
-  rebuild them on the quirk layer (or delete them).
-- A press/reputation channel to re-home the retired `media_savvy` effect.
+- A press/reputation channel to re-home the retired `media_savvy` effect (see
+  `press_darling` seed in PERK_FLAVOUR_HARVEST.md).
+- New-quirk seeds from the perk harvest (WS-3 content review decides adoption).
+- Quirk icon set for the employee surfaces (issue #903).
