@@ -1784,6 +1784,12 @@ func _on_event_dialog_opened(dialog: Control, buttons: Array) -> void:
 	"""EventDialog put its modal up (#622) -- route MainUI keyboard shortcuts to it.
 	The dialog carries the is_event_dialog meta, so ESC handling keeps refusing to
 	close it (#452)."""
+	# An event can fire while a submenu/ledger is already open. Overwriting active_dialog
+	# without freeing the prior panel ORPHANS it (visible with its input barrier, but
+	# untracked -> Esc/L/N no longer close it). Free it first so the visible overlay and
+	# the tracked slot can never diverge. (Mirrors _on_employee_dialog_opened.)
+	if active_dialog != null and is_instance_valid(active_dialog) and active_dialog != dialog:
+		active_dialog.queue_free()
 	active_dialog = dialog
 	active_dialog_buttons = buttons
 

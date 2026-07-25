@@ -1,0 +1,1362 @@
+{
+  "action_icons_missing/v1/grant_proposal_v2_1024.png": [
+    "like",
+    "promote"
+  ],
+  "action_icons_missing/v1/take_loan_v2_1024.png": [
+    "like",
+    "promote"
+  ],
+  "action_icons_missing/v1/team_building_v2_1024.png": [
+    "like",
+    "promote"
+  ],
+  "action_icons_missing/v1/take_loan_v1_1024.png": [
+    "favour"
+  ],
+  "action_icons_missing/v1/grant_proposal_v1_1024.png": [
+    "favour"
+  ],
+  "action_icons_missing/v1/team_building_v1_1024.png": [
+    "dislike"
+  ],
+  "action_icons_missing/v1/lobby_government_v1_1024.png": [
+    "like",
+    "promote"
+  ],
+  "action_icons_missing/v1/lobby_government_v2_1024.png": [
+    "like"
+  ],
+  "action_icons_missing/v1/sabotage_competitor_v1_1024.png": [
+    "like",
+    "promote"
+  ],
+  "action_icons_missing/v1/sabotage_competitor_v2_1024.png": [
+    "like",
+    "promote"
+  ],
+  "crt_frame_overlay/v1/crt_frame_vignette_light_1536.png": [
+    "promote"
+  ],
+  "crt_frame_overlay/v1/crt_frame_curved_glass_1536.png": [
+    "promote"
+  ],
+  "crt_frame_overlay/v1/crt_frame_bezel_heavy_1536.png": [
+    "promote"
+  ],
+  "env_scenes/v1/env_bg_doom_abstract_v3_1536.png": [
+    "like",
+    "promote"
+  ],
+  "env_scenes/v1/env_bg_doom_abstract_v1_1536.png": [
+    "dislike"
+  ],
+  "env_scenes/v1/env_bg_doom_abstract_v2_1536.png": [
+    "like"
+  ],
+  "env_scenes/v1/env_bg_doom_abstract_v4_1536.png": [
+    "like"
+  ],
+  "env_scenes/v1/env_loading_cat_v3_1536.png": [
+    "like",
+    "promote"
+  ],
+  "env_scenes/v1/env_loading_cat_v1_1536.png": [
+    "like"
+  ],
+  "env_scenes/v1/env_loading_cat_v2_1536.png": [
+    "like"
+  ],
+  "env_scenes/v1/env_loading_cat_v4_1536.png": [
+    "dislike"
+  ],
+  "env_scenes/v1/env_loading_title_v2_1536.png": [
+    "like",
+    "promote"
+  ],
+  "env_scenes/v1/env_loading_title_v1_1536.png": [
+    "dislike"
+  ],
+  "env_scenes/v1/env_loading_title_v3_1536.png": [
+    "dislike"
+  ],
+  "env_scenes/v1/env_loading_title_v4_1536.png": [
+    "dislike"
+  ],
+  "env_scenes/v1/env_window_band0_cosy_v4_1536.png": [
+    "like",
+    "promote"
+  ],
+  "env_scenes/v1/env_window_band0_cosy_v1_1536.png": [
+    "like",
+    "promote"
+  ],
+  "env_scenes/v1/env_window_band0_cosy_v3_1536.png": [
+    "dislike"
+  ],
+  "env_scenes/v1/env_window_band1_uneasy_v1_1536.png": [
+    "like",
+    "promote"
+  ],
+  "env_scenes/v1/env_window_band1_uneasy_v4_1536.png": [
+    "like",
+    "promote"
+  ],
+  "env_scenes/v1/env_window_band1_uneasy_v3_1536.png": [
+    "dislike"
+  ],
+  "env_scenes/v1/env_window_band2_spooky_v2_1536.png": [
+    "like",
+    "promote"
+  ],
+  "env_scenes/v1/env_window_band2_spooky_v3_1536.png": [
+    "like"
+  ],
+  "env_scenes/v1/env_window_band2_spooky_v4_1536.png": [
+    "favour",
+    "like",
+    "promote"
+  ],
+  "env_scenes/v1/env_window_band3_eldritch_v4_1536.png": [
+    "like",
+    "promote"
+  ],
+  "env_scenes/v1/env_window_band3_eldritch_v1_1536.png": [
+    "like"
+  ],
+  "env_scenes/v1/env_window_band3_eldritch_v2_1536.png": [
+    "like",
+    "promote"
+  ],
+  "env_scenes/v1/env_window_band3_eldritch_v3_1536.png": [
+    "dislike"
+  ],
+  "env_scenes/v1/env_window_band4_terminal_v4_1536.png": [
+    "dislike"
+  ],
+  "env_scenes/v1/env_window_band4_terminal_v3_1536.png": [
+    "like",
+    "promote"
+  ],
+  "env_scenes/v1/env_window_band4_terminal_v1_1536.png": [
+    "dislike"
+  ],
+  "env_scenes/v1/env_window_band4_terminal_v2_1536.png": [
+    "like",
+    "promote"
+  ],
+  "env_textures/v1/tex_dark_panel_v1_1024.png": [
+    "like",
+    "promote"
+  ],
+  "env_textures/v1/tex_dark_panel_v2_1024.png": [
+    "like",
+    "promote"
+  ],
+  "env_textures/v1/tex_dark_panel_v3_1024.png": [
+    "like",
+    "promote"
+  ],
+  "env_textures/v1/tex_dark_panel_v4_1024.png": [
+    "like",
+    "promote"
+  ],
+  "env_textures/v1/tex_paper_grain_v1_1024.png": [
+    "like",
+    "promote"
+  ],
+  "env_textures/v1/tex_paper_grain_v2_1024.png": [
+    "like",
+    "promote"
+  ],
+  "env_textures/v1/tex_paper_grain_v3_1024.png": [
+    "like",
+    "promote"
+  ],
+  "env_textures/v1/tex_paper_grain_v4_1024.png": [
+    "like",
+    "promote"
+  ],
+  "env_textures/v1/tex_terminal_crt_v1_1024.png": [
+    "like",
+    "promote"
+  ],
+  "env_textures/v1/tex_terminal_crt_v2_1024.png": [
+    "like",
+    "promote"
+  ],
+  "env_textures/v1/tex_terminal_crt_v3_1024.png": [
+    "like",
+    "promote"
+  ],
+  "env_textures/v1/tex_terminal_crt_v4_1024.png": [
+    "like",
+    "promote"
+  ],
+  "env_textures/v1/tex_terminal_void_v1_1024.png": [
+    "like",
+    "promote"
+  ],
+  "env_textures/v1/tex_terminal_void_v2_1024.png": [
+    "like",
+    "promote"
+  ],
+  "env_textures/v1/tex_terminal_void_v3_1024.png": [
+    "like",
+    "promote"
+  ],
+  "env_textures/v1/tex_terminal_void_v4_1024.png": [
+    "like",
+    "promote"
+  ],
+  "game_icons/v1/ui_config_date_v1_1024.png": [
+    "like",
+    "promote"
+  ],
+  "game_icons/v1/ui_config_date_v3_1024.png": [
+    "like",
+    "promote"
+  ],
+  "game_icons/v1/ui_config_random_v2_1024.png": [
+    "like",
+    "promote"
+  ],
+  "game_icons/v1/ui_config_seed_v1_1024.png": [
+    "like",
+    "promote"
+  ],
+  "game_icons/v1/ui_difficulty_easy_v1_1024.png": [
+    "like",
+    "promote"
+  ],
+  "game_icons/v1/ui_difficulty_easy_v2_1024.png": [
+    "like",
+    "promote"
+  ],
+  "game_icons/v1/ui_difficulty_easy_v3_1024.png": [
+    "like",
+    "promote"
+  ],
+  "game_icons/v1/ui_difficulty_standard_v1_1024.png": [
+    "like",
+    "promote"
+  ],
+  "game_icons/v1/doom_bg_critical_v1_1024.png": [
+    "like",
+    "promote"
+  ],
+  "game_icons/v1/doom_bg_safe_v1_1024.png": [
+    "like",
+    "promote"
+  ],
+  "game_icons/v1/doom_bg_safe_v2_1024.png": [
+    "like",
+    "promote"
+  ],
+  "game_icons/v1/doom_bg_critical_v2_1024.png": [
+    "like",
+    "promote"
+  ],
+  "game_icons/v1/doom_meter_frame_v3_1024.png": [
+    "like",
+    "promote"
+  ],
+  "game_icons/v1/ui_frame_bottom_v1_1024.png": [
+    "like",
+    "promote"
+  ],
+  "game_icons/v1/ui_frame_bottom_v2_1024.png": [
+    "like",
+    "promote"
+  ],
+  "game_icons/v1/ui_frame_corner_bl_v1_1024.png": [
+    "like",
+    "promote"
+  ],
+  "game_icons/v1/ui_frame_corner_bl_v2_1024.png": [
+    "like",
+    "promote"
+  ],
+  "game_icons/v1/ui_frame_corner_br_v1_1024.png": [
+    "like",
+    "promote"
+  ],
+  "game_icons/v1/ui_frame_corner_br_v2_1024.png": [
+    "like",
+    "promote"
+  ],
+  "game_icons/v1/ui_frame_corner_tl_v2_1024.png": [
+    "like",
+    "promote"
+  ],
+  "game_icons/v1/ui_frame_corner_tl_v1_1024.png": [
+    "like",
+    "promote"
+  ],
+  "game_icons/v1/ui_frame_corner_br_v3_1024.png": [
+    "like",
+    "promote"
+  ],
+  "game_icons/v1/ui_frame_left_v3_1024.png": [
+    "like",
+    "promote"
+  ],
+  "game_icons/v1/ui_frame_left_v2_1024.png": [
+    "like",
+    "promote"
+  ],
+  "game_icons/v1/ui_frame_right_v1_1024.png": [
+    "like",
+    "promote"
+  ],
+  "game_icons/v1/ui_frame_right_v2_1024.png": [
+    "like",
+    "promote"
+  ],
+  "game_icons/v1/ui_frame_right_v3_1024.png": [
+    "like",
+    "promote"
+  ],
+  "game_icons/v1/ui_frame_top_v2_1024.png": [
+    "like",
+    "promote"
+  ],
+  "game_icons/v1/ui_separator_vertical_v3_1024.png": [
+    "like",
+    "promote"
+  ],
+  "game_icons/v1/ui_separator_vertical_v2_1024.png": [
+    "like",
+    "promote"
+  ],
+  "game_icons/v1/ui_separator_vertical_v1_1024.png": [
+    "like",
+    "promote"
+  ],
+  "game_icons/v1/ui_separator_horizontal_v1_1024.png": [
+    "like",
+    "promote"
+  ],
+  "game_icons/v1/icon_acquire_startup_v1_1024.png": [
+    "dislike",
+    "disfavour"
+  ],
+  "game_icons/v1/icon_acquire_startup_v2_1024.png": [
+    "dislike",
+    "disfavour"
+  ],
+  "game_icons/v1/icon_acquire_startup_v3_1024.png": [
+    "dislike",
+    "disfavour"
+  ],
+  "game_icons/v1/icon_acquire_startup_v4_1024.png": [
+    "dislike",
+    "disfavour"
+  ],
+  "game_icons/v1/icon_action_points_v1_1024.png": [
+    "dislike",
+    "disfavour"
+  ],
+  "game_icons/v1/icon_action_points_v2_1024.png": [
+    "dislike",
+    "disfavour"
+  ],
+  "game_icons/v1/icon_action_points_v3_1024.png": [
+    "dislike",
+    "disfavour"
+  ],
+  "game_icons/v1/icon_action_points_v4_1024.png": [
+    "dislike",
+    "disfavour"
+  ],
+  "game_icons/v1/icon_audit_safety_v1_1024.png": [
+    "dislike",
+    "disfavour"
+  ],
+  "game_icons/v1/icon_audit_safety_v2_1024.png": [
+    "dislike",
+    "disfavour"
+  ],
+  "game_icons/v1/icon_audit_safety_v3_1024.png": [
+    "dislike",
+    "disfavour"
+  ],
+  "game_icons/v1/icon_audit_safety_v4_1024.png": [
+    "dislike",
+    "disfavour"
+  ],
+  "game_icons/v1/icon_buy_compute_v1_1024.png": [
+    "like"
+  ],
+  "game_icons/v1/icon_buy_compute_v2_1024.png": [
+    "like"
+  ],
+  "game_icons/v1/icon_buy_compute_v3_1024.png": [
+    "like"
+  ],
+  "game_icons/v1/icon_buy_compute_v4_1024.png": [
+    "like"
+  ],
+  "game_icons/v1/icon_capability_research_v1_1024.png": [
+    "like"
+  ],
+  "game_icons/v1/icon_capability_research_v2_1024.png": [
+    "like"
+  ],
+  "game_icons/v1/icon_capability_research_v3_1024.png": [
+    "like"
+  ],
+  "game_icons/v1/icon_capability_research_v4_1024.png": [
+    "like"
+  ],
+  "game_icons/v1/icon_compute_v2_1024.png": [
+    "like"
+  ],
+  "game_icons/v1/icon_compute_1024.png": [
+    "dislike"
+  ],
+  "game_icons/v1/icon_compute_v1_1024.png": [
+    "dislike"
+  ],
+  "game_icons/v1/icon_compute_v3_1024.png": [
+    "dislike"
+  ],
+  "game_icons/v1/icon_doom_v2_1024.png": [
+    "dislike"
+  ],
+  "game_icons/v1/icon_doom_v3_1024.png": [
+    "dislike"
+  ],
+  "game_icons/v1/icon_doom_v4_1024.png": [
+    "dislike"
+  ],
+  "game_icons/v1/icon_emergency_pivot_v1_1024.png": [
+    "dislike"
+  ],
+  "game_icons/v1/icon_emergency_pivot_v2_1024.png": [
+    "dislike"
+  ],
+  "game_icons/v1/icon_financing_v3_1024.png": [
+    "dislike"
+  ],
+  "game_icons/v1/icon_financing_v4_1024.png": [
+    "dislike"
+  ],
+  "game_icons/v1/icon_fundraise_v1_1024.png": [
+    "dislike"
+  ],
+  "game_icons/v1/icon_fundraise_v2_1024.png": [
+    "dislike"
+  ],
+  "game_icons/v1/icon_fundraise_v3_1024.png": [
+    "dislike"
+  ],
+  "game_icons/v1/icon_fundraise_v4_1024.png": [
+    "dislike"
+  ],
+  "game_icons/v1/icon_hire_staff_v1_1024.png": [
+    "like"
+  ],
+  "game_icons/v1/icon_lobby_government_v4_1024.png": [
+    "like"
+  ],
+  "game_icons/v1/icon_media_campaign_v1_1024.png": [
+    "like"
+  ],
+  "game_icons/v1/icon_hire_staff_v4_1024.png": [
+    "like"
+  ],
+  "game_icons/v1/icon_open_source_v1_1024.png": [
+    "like"
+  ],
+  "game_icons/v1/icon_papers_1024.png": [
+    "dislike"
+  ],
+  "game_icons/v1/icon_papers_v1_1024.png": [
+    "dislike"
+  ],
+  "game_icons/v1/icon_papers_v2_1024.png": [
+    "dislike"
+  ],
+  "game_icons/v1/icon_papers_v3_1024.png": [
+    "dislike"
+  ],
+  "game_icons/v1/icon_papers_v4_1024.png": [
+    "dislike"
+  ],
+  "game_icons/v1/icon_publicity_v1_1024.png": [
+    "dislike"
+  ],
+  "game_icons/v1/icon_publicity_v2_1024.png": [
+    "dislike"
+  ],
+  "game_icons/v1/icon_publicity_v3_1024.png": [
+    "dislike"
+  ],
+  "game_icons/v1/icon_publicity_v4_1024.png": [
+    "dislike"
+  ],
+  "game_icons/v1/icon_publish_paper_v1_1024.png": [
+    "dislike"
+  ],
+  "game_icons/v1/icon_publish_paper_v2_1024.png": [
+    "dislike"
+  ],
+  "game_icons/v1/icon_publish_paper_v3_1024.png": [
+    "dislike"
+  ],
+  "game_icons/v1/icon_publish_paper_v4_1024.png": [
+    "dislike"
+  ],
+  "game_icons/v1/icon_reputation_1024.png": [
+    "dislike"
+  ],
+  "game_icons/v1/icon_reputation_v1_1024.png": [
+    "dislike"
+  ],
+  "game_icons/v1/icon_reputation_v2_1024.png": [
+    "dislike"
+  ],
+  "game_icons/v1/icon_reputation_v3_1024.png": [
+    "dislike"
+  ],
+  "game_icons/v1/icon_reputation_v4_1024.png": [
+    "dislike"
+  ],
+  "game_icons/v1/icon_research_v3_1024.png": [
+    "like"
+  ],
+  "game_icons/v1/icon_research_v4_1024.png": [
+    "like"
+  ],
+  "game_icons/v1/icon_sabotage_v1_1024.png": [
+    "like"
+  ],
+  "game_icons/v1/icon_sabotage_v4_1024.png": [
+    "like"
+  ],
+  "game_icons/v1/icon_strategic_v1_1024.png": [
+    "dislike"
+  ],
+  "game_icons/v1/icon_strategic_v2_1024.png": [
+    "dislike"
+  ],
+  "game_icons/v1/icon_strategic_v3_1024.png": [
+    "dislike"
+  ],
+  "game_icons/v1/icon_strategic_v4_1024.png": [
+    "dislike"
+  ],
+  "game_icons/v1/icon_supplies_v1_1024.png": [
+    "like"
+  ],
+  "game_icons/v1/icon_technical_debt_v1_1024.png": [
+    "like"
+  ],
+  "game_icons/v1/icon_travel_v2_1024.png": [
+    "like"
+  ],
+  "game_icons/v1/icon_technical_debt_v4_1024.png": [
+    "like"
+  ],
+  "game_icons/v1/icon_technical_debt_v3_1024.png": [
+    "like"
+  ],
+  "game_icons/v1/ui_guide_strategy_v1_1024.png": [
+    "disfavour"
+  ],
+  "game_icons/v1/ui_guide_strategy_v2_1024.png": [
+    "disfavour"
+  ],
+  "game_icons/v1/ui_guide_strategy_v3_1024.png": [
+    "disfavour"
+  ],
+  "game_icons/v1/indicator_status_active_v1_1024.png": [
+    "like"
+  ],
+  "game_icons/v1/indicator_status_active_v2_1024.png": [
+    "like"
+  ],
+  "game_icons/v1/indicator_status_active_v3_1024.png": [
+    "like",
+    "promote"
+  ],
+  "game_icons/v1/indicator_status_critical_v1_1024.png": [
+    "promote"
+  ],
+  "game_icons/v1/ui_leaderboard_filter_v1_1024.png": [
+    "promote",
+    "like"
+  ],
+  "game_icons/v1/ui_leaderboard_sort_desc_v2_1024.png": [
+    "dislike"
+  ],
+  "game_icons/v1/ui_leaderboard_sort_asc_v3_1024.png": [
+    "dislike"
+  ],
+  "game_icons/v1/ui_leaderboard_sort_asc_v1_1024.png": [
+    "dislike"
+  ],
+  "game_icons/v1/ui_leaderboard_trophy_v1_1024.png": [
+    "like",
+    "promote"
+  ],
+  "game_icons/v1/ui_rank_crown_v3_1024.png": [
+    "like",
+    "promote"
+  ],
+  "game_icons/v1/ui_leaderboard_sort_desc_v3_1024.png": [
+    "like",
+    "promote"
+  ],
+  "game_icons/v1/ui_rank_gold_v2_1024.png": [
+    "promote"
+  ],
+  "game_icons/v1/ui_rank_silver_v1_1024.png": [
+    "promote"
+  ],
+  "game_icons/v1/resource_doom_small_v1_1024.png": [
+    "promote"
+  ],
+  "game_icons/v1/resource_compute_small_v3_1024.png": [
+    "like",
+    "promote"
+  ],
+  "game_icons/v1/resource_compute_small_v1_1024.png": [
+    "like",
+    "promote"
+  ],
+  "game_icons/v1/resource_ap_small_v1_1024.png": [
+    "like"
+  ],
+  "game_icons/v1/resource_ap_small_v2_1024.png": [
+    "like"
+  ],
+  "game_icons/v1/resource_ap_small_v3_1024.png": [
+    "dislike"
+  ],
+  "game_icons/v1/resource_doom_small_v3_1024.png": [
+    "like"
+  ],
+  "game_icons/v1/resource_research_small_v1_1024.png": [
+    "like"
+  ],
+  "game_icons/v1/resource_turn_small_v3_1024.png": [
+    "like"
+  ],
+  "game_icons/v1/ui_settings_accessibility_v2_1024.png": [
+    "promote"
+  ],
+  "game_icons/v1/ui_settings_gameplay_v3_1024.png": [
+    "like"
+  ],
+  "game_icons/v1/ui_settings_gameplay_v1_1024.png": [
+    "dislike"
+  ],
+  "game_icons/v1/ui_settings_gameplay_v2_1024.png": [
+    "dislike"
+  ],
+  "game_icons/v1/ui_settings_controls_v3_1024.png": [
+    "dislike"
+  ],
+  "game_icons/v1/ui_settings_graphics_v3_1024.png": [
+    "like",
+    "promote"
+  ],
+  "game_icons/v1/ui_settings_reset_v1_1024.png": [
+    "like",
+    "promote"
+  ],
+  "game_icons/v1/ui_settings_theme_v1_1024.png": [
+    "promote",
+    "like"
+  ],
+  "game_icons/v1/ui_settings_theme_v2_1024.png": [
+    "like"
+  ],
+  "game_icons/v1/ui_control_bug_v1_1024.png": [
+    "like"
+  ],
+  "game_icons/v1/ui_control_bug_v3_1024.png": [
+    "like",
+    "promote"
+  ],
+  "game_icons/v1/ui_control_cancel_v1_1024.png": [
+    "like",
+    "promote"
+  ],
+  "game_icons/v1/ui_control_clear_v1_1024.png": [
+    "like",
+    "promote"
+  ],
+  "game_icons/v1/ui_control_confirm_v1_1024.png": [
+    "like"
+  ],
+  "game_icons/v1/ui_control_help_v1_1024.png": [
+    "like"
+  ],
+  "game_icons/v1/ui_control_load_v1_1024.png": [
+    "like",
+    "promote"
+  ],
+  "game_icons/v1/ui_control_load_v2_1024.png": [
+    "like"
+  ],
+  "game_icons/v1/ui_control_play_v2_1024.png": [
+    "like",
+    "promote"
+  ],
+  "game_icons/v1/ui_control_play_v3_1024.png": [
+    "like"
+  ],
+  "game_icons/v1/ui_control_save_v1_1024.png": [
+    "like"
+  ],
+  "game_icons/v1/ui_control_save_v3_1024.png": [
+    "like",
+    "promote"
+  ],
+  "hero_banners/v1/banner_doom_rising_v1_1536.png": [
+    "like"
+  ],
+  "hero_banners/v1/banner_doom_rising_v3_1536.png": [
+    "like",
+    "promote"
+  ],
+  "hero_banners/v1/fanfare_strategic_moves_v3_1536.png": [
+    "like",
+    "promote"
+  ],
+  "hero_banners/v1/fanfare_strategic_moves_v2_1536.png": [
+    "dislike"
+  ],
+  "hero_banners/v1/fanfare_strategic_moves_v1_1536.png": [
+    "dislike"
+  ],
+  "hero_banners/v1/hero_office_at_dusk_v1_1536.png": [
+    "like"
+  ],
+  "hero_banners/v1/hero_office_at_dusk_v4_1536.png": [
+    "like",
+    "promote"
+  ],
+  "hero_banners/v1/hero_server_doom_altar_v3_1536.png": [
+    "like",
+    "promote"
+  ],
+  "hero_banners/v1/hero_server_doom_altar_v4_1536.png": [
+    "like"
+  ],
+  "hero_banners/v1/hero_server_doom_altar_v2_1536.png": [
+    "like"
+  ],
+  "hero_banners/v1/hero_server_doom_altar_v1_1536.png": [
+    "dislike"
+  ],
+  "hero_banners/v1/hero_whiteboard_war_room_v1_1536.png": [
+    "like"
+  ],
+  "hero_banners/v1/banner_title_hero_v1_1536.png": [
+    "like"
+  ],
+  "hero_banners/v1/banner_title_hero_v2_1536.png": [
+    "like",
+    "promote"
+  ],
+  "iconset_round2/v1/gen_dial_doom_semi_v2_512.png": [
+    "like"
+  ],
+  "iconset_round2/v1/gen_type_pdoom_v2_512.png": [
+    "like"
+  ],
+  "iconset_round2/v1/gen_type_pdoom_us_v1_512.png": [
+    "like"
+  ],
+  "iconset_round2/v1/gen_type_pdoom_inaction_v2_512.png": [
+    "like"
+  ],
+  "iconset_round2/v1/gen_type_pdoom_us_v2_512.png": [
+    "like"
+  ],
+  "iconset_round2/v1/render_latex_pdoom_bayes_512.png": [
+    "like"
+  ],
+  "iconset_round2/v1/render_latex_pdoom_inaction_512.png": [
+    "like"
+  ],
+  "iconset_round2/v1/gen_cat_evil_v1_512.png": [
+    "dislike"
+  ],
+  "iconset_round2/v1/gen_cat_evil_v2_512.png": [
+    "dislike"
+  ],
+  "iconset_round2/v1/gen_cat_evil_v3_512.png": [
+    "dislike"
+  ],
+  "iconset_round2/v1/gen_cat_evil_v4_512.png": [
+    "dislike"
+  ],
+  "round3_rerolls_banners/v1/banner_doom_rising_r3_v2_768.png": [
+    "like",
+    "promote"
+  ],
+  "round3_rerolls_banners/v1/banner_doom_rising_r3_v1_768.png": [
+    "like"
+  ],
+  "round3_rerolls_banners/v1/fanfare_strategic_moves_r3_v1_768.png": [
+    "like",
+    "promote"
+  ],
+  "round3_rerolls_banners/v1/banner_title_hero_r3_v1_768.png": [
+    "like",
+    "promote"
+  ],
+  "scene_art_wave2/v1/event_board_v1.webp": [
+    "like",
+    "promote"
+  ],
+  "scene_art_wave2/v1/event_board_v4.webp": [
+    "like"
+  ],
+  "scene_art_wave2/v1/event_crisis_v1.webp": [
+    "like",
+    "promote"
+  ],
+  "scene_art_wave2/v1/event_opportunity_v2.webp": [
+    "like"
+  ],
+  "scene_art_wave2/v1/event_opportunity_v3.webp": [
+    "like",
+    "promote"
+  ],
+  "scene_art_wave2/v1/event_opportunity_v4.webp": [
+    "like"
+  ],
+  "scene_art_wave2/v1/event_secret_v1.webp": [
+    "like",
+    "promote"
+  ],
+  "scene_art_wave2/v1/office_corner_dusk.webp": [
+    "like",
+    "promote"
+  ],
+  "scene_art_wave2/v1/office_desk_forward_night.webp": [
+    "like",
+    "promote"
+  ],
+  "scene_art_wave2/v1/office_lab_aisle.webp": [
+    "like",
+    "promote"
+  ],
+  "scene_art_wave2/v1/office_mezzanine.webp": [
+    "like",
+    "promote"
+  ],
+  "scene_art_wave2/v1/office_wide_dawn.webp": [
+    "like",
+    "promote"
+  ],
+  "scene_art_wave2/v1/office_wide_day.webp": [
+    "like",
+    "promote"
+  ],
+  "scene_art_wave2/v1/records_crt_ranktable.webp": [
+    "like",
+    "promote"
+  ],
+  "scene_art_wave2/v1/records_microfiche.webp": [
+    "like",
+    "promote"
+  ],
+  "scene_art_wave2/v1/records_stacks.webp": [
+    "like",
+    "promote"
+  ],
+  "scene_art_wave2/v1/records_trophy_terminal.webp": [
+    "like",
+    "promote"
+  ],
+  "scene_art_wave2/v1/records_vault.webp": [
+    "like",
+    "promote"
+  ],
+  "scene_art_wave2/v1/records_brass_plaques.webp": [
+    "like",
+    "promote"
+  ],
+  "screen_backgrounds/v1/bg_defeat_1024.png": [
+    "dislike"
+  ],
+  "screen_backgrounds/v1/bg_main_grid_1024.png": [
+    "dislike"
+  ],
+  "screen_backgrounds/v1/bg_settings_1024.png": [
+    "dislike"
+  ],
+  "screen_backgrounds/v1/bg_victory_1024.png": [
+    "dislike"
+  ],
+  "screen_backgrounds/v1/bg_welcome_lab_1024.png": [
+    "dislike"
+  ],
+  "screen_backgrounds/v1/bg_tartan_stripe_1024.png": [
+    "dislike"
+  ],
+  "screen_backgrounds/v1/bg_panel_texture_1024.png": [
+    "dislike"
+  ],
+  "screen_backgrounds/v1/tex_bakelite_cracked_1024.png": [
+    "like",
+    "promote"
+  ],
+  "screen_backgrounds/v1/tex_concrete_institutional_1024.png": [
+    "like",
+    "promote"
+  ],
+  "screen_backgrounds/v1/tex_crt_burnin_1024.png": [
+    "like",
+    "promote"
+  ],
+  "screen_backgrounds/v1/tex_grid_circuit_trace_1024.png": [
+    "like",
+    "promote"
+  ],
+  "screen_backgrounds/v1/tex_grid_graphpaper_aged_1024.png": [
+    "like",
+    "promote"
+  ],
+  "screen_backgrounds/v1/tex_grid_perforated_metal_1024.png": [
+    "like",
+    "promote"
+  ],
+  "screen_backgrounds/v1/tex_linoleum_damaged_1024.png": [
+    "like",
+    "promote"
+  ],
+  "screen_backgrounds/v1/tex_oxidized_copper_1024.png": [
+    "like",
+    "promote"
+  ],
+  "screen_backgrounds/v1/tex_painted_metal_panel_1024.png": [
+    "like",
+    "promote"
+  ],
+  "screen_backgrounds/v1/tex_plywood_stained_1024.png": [
+    "like",
+    "promote"
+  ],
+  "terminal_textures/v1/tex_amber_noise_v1_1024.png": [
+    "like",
+    "promote"
+  ],
+  "terminal_textures/v1/tex_amber_noise_v2_1024.png": [
+    "like",
+    "promote"
+  ],
+  "terminal_textures/v1/tex_amber_noise_v3_1024.png": [
+    "like",
+    "promote"
+  ],
+  "terminal_textures/v1/tex_amber_scanlines_v1_1024.png": [
+    "like",
+    "promote"
+  ],
+  "terminal_textures/v1/tex_amber_scanlines_v2_1024.png": [
+    "like",
+    "promote"
+  ],
+  "terminal_textures/v1/tex_amber_scanlines_v3_1024.png": [
+    "like",
+    "promote"
+  ],
+  "terminal_textures/v1/tex_blue_bsod_pattern_v1_1024.png": [
+    "like",
+    "promote"
+  ],
+  "terminal_textures/v1/tex_blue_bsod_pattern_v2_1024.png": [
+    "like",
+    "promote"
+  ],
+  "terminal_textures/v1/tex_blue_bsod_pattern_v3_1024.png": [
+    "like",
+    "promote"
+  ],
+  "terminal_textures/v1/tex_blue_dos_bg_v1_1024.png": [
+    "like",
+    "promote"
+  ],
+  "terminal_textures/v1/tex_blue_dos_bg_v2_1024.png": [
+    "like",
+    "promote"
+  ],
+  "terminal_textures/v1/tex_blue_dos_bg_v3_1024.png": [
+    "like",
+    "promote"
+  ],
+  "terminal_textures/v1/tex_cyan_border_v1_1024.png": [
+    "like",
+    "promote"
+  ],
+  "terminal_textures/v1/tex_cyan_border_v2_1024.png": [
+    "like",
+    "promote"
+  ],
+  "terminal_textures/v1/tex_cyan_border_v3_1024.png": [
+    "like",
+    "promote"
+  ],
+  "terminal_textures/v1/tex_cyan_ispf_v1_1024.png": [
+    "like",
+    "promote"
+  ],
+  "terminal_textures/v1/tex_cyan_ispf_v2_1024.png": [
+    "like",
+    "promote"
+  ],
+  "terminal_textures/v1/tex_cyan_ispf_v3_1024.png": [
+    "like",
+    "promote"
+  ],
+  "terminal_textures/v1/tex_gray_dither_v1_1024.png": [
+    "like",
+    "promote"
+  ],
+  "terminal_textures/v1/tex_gray_dither_v2_1024.png": [
+    "like",
+    "promote"
+  ],
+  "terminal_textures/v1/tex_gray_dither_v3_1024.png": [
+    "like",
+    "promote"
+  ],
+  "terminal_textures/v1/tex_gray_lowcontrast_v1_1024.png": [
+    "like",
+    "promote"
+  ],
+  "terminal_textures/v1/tex_gray_lowcontrast_v2_1024.png": [
+    "like",
+    "promote"
+  ],
+  "terminal_textures/v1/tex_gray_lowcontrast_v3_1024.png": [
+    "like",
+    "promote"
+  ],
+  "terminal_textures/v1/tex_green_grid_v1_1024.png": [
+    "like",
+    "promote"
+  ],
+  "terminal_textures/v1/tex_green_grid_v2_1024.png": [
+    "like",
+    "promote"
+  ],
+  "terminal_textures/v1/tex_green_grid_v3_1024.png": [
+    "like",
+    "promote"
+  ],
+  "terminal_textures/v1/tex_green_scanlines_v1_1024.png": [
+    "like",
+    "promote"
+  ],
+  "terminal_textures/v1/tex_green_scanlines_v2_1024.png": [
+    "like",
+    "promote"
+  ],
+  "terminal_textures/v1/tex_green_scanlines_v3_1024.png": [
+    "like",
+    "promote"
+  ],
+  "ui_frames/v1/frame_button_v1_1024.png": [
+    "like",
+    "promote"
+  ],
+  "ui_frames/v1/frame_button_v2_1024.png": [
+    "like",
+    "promote"
+  ],
+  "ui_frames/v1/frame_button_v3_1024.png": [
+    "like",
+    "promote"
+  ],
+  "ui_frames/v1/frame_button_v4_1024.png": [
+    "like",
+    "promote"
+  ],
+  "ui_frames/v1/frame_panel_ornate_v1_1024.png": [
+    "like",
+    "promote"
+  ],
+  "ui_frames/v1/frame_panel_ornate_v2_1024.png": [
+    "like",
+    "promote"
+  ],
+  "ui_frames/v1/frame_panel_ornate_v3_1024.png": [
+    "like",
+    "promote"
+  ],
+  "ui_frames/v1/frame_panel_ornate_v4_1024.png": [
+    "like",
+    "promote"
+  ],
+  "ui_frames/v1/frame_panel_plain_v1_1024.png": [
+    "like",
+    "promote"
+  ],
+  "ui_frames/v1/frame_panel_plain_v2_1024.png": [
+    "like",
+    "promote"
+  ],
+  "ui_frames/v1/frame_panel_plain_v3_1024.png": [
+    "like",
+    "promote"
+  ],
+  "ui_frames/v1/frame_panel_plain_v4_1024.png": [
+    "like",
+    "promote"
+  ],
+  "ui_icons/v1/action_facility_build_lab_1024.png": [
+    "like",
+    "promote"
+  ],
+  "ui_icons/v1/action_facility_data_center_1024.png": [
+    "like",
+    "promote"
+  ],
+  "ui_icons/v1/action_facility_emergency_shutdown_1024.png": [
+    "like",
+    "promote"
+  ],
+  "ui_icons/v1/action_facility_emergency_shutdown_v2_1024.png": [
+    "like",
+    "promote"
+  ],
+  "ui_icons/v1/action_facility_expand_office_1024.png": [
+    "like",
+    "promote"
+  ],
+  "ui_icons/v1/action_facility_expand_office_v2_1024.png": [
+    "like",
+    "promote"
+  ],
+  "ui_icons/v1/action_facility_security_upgrade_1024.png": [
+    "like",
+    "promote"
+  ],
+  "ui_icons/v1/action_facility_upgrade_compute_1024.png": [
+    "like",
+    "promote"
+  ],
+  "ui_icons/v1/action_policy_audit_requirement_1024.png": [
+    "like",
+    "promote"
+  ],
+  "ui_icons/v1/action_policy_capability_limit_v2_1024.png": [
+    "like",
+    "promote"
+  ],
+  "ui_icons/v1/action_policy_ethics_board_1024.png": [
+    "like",
+    "promote"
+  ],
+  "ui_icons/v1/action_policy_international_cooperation_v2_1024.png": [
+    "like",
+    "promote"
+  ],
+  "ui_icons/v1/action_policy_transparency_1024.png": [
+    "like",
+    "promote"
+  ],
+  "ui_icons/v1/action_policy_whistleblower_1024.png": [
+    "like",
+    "promote"
+  ],
+  "ui_icons/v1/action_policy_whistleblower_v2_1024.png": [
+    "like",
+    "promote"
+  ],
+  "ui_icons/v1/action_research_alignment_v2_1024.png": [
+    "dislike"
+  ],
+  "ui_icons/v1/action_research_alignment_1024.png": [
+    "dislike"
+  ],
+  "ui_icons/v1/action_research_capability_control_1024.png": [
+    "like",
+    "promote"
+  ],
+  "ui_icons/v1/action_research_capability_control_v2_1024.png": [
+    "dislike"
+  ],
+  "ui_icons/v1/action_research_formal_verification_1024.png": [
+    "like",
+    "promote"
+  ],
+  "ui_icons/v1/action_research_formal_verification_v2_1024.png": [
+    "promote"
+  ],
+  "ui_icons/v1/action_research_interpretability_1024.png": [
+    "like",
+    "promote"
+  ],
+  "ui_icons/v1/action_research_ml_fundamentals_1024.png": [
+    "like",
+    "promote"
+  ],
+  "ui_icons/v1/action_research_robustness_1024.png": [
+    "promote"
+  ],
+  "ui_icons/v1/action_research_red_teaming_v2_1024.png": [
+    "dislike"
+  ],
+  "ui_icons/v1/action_research_red_teaming_1024.png": [
+    "dislike"
+  ],
+  "ui_icons/v1/action_research_monitoring_v2_1024.png": [
+    "like"
+  ],
+  "ui_icons/v1/action_research_monitoring_1024.png": [
+    "like",
+    "promote"
+  ],
+  "ui_icons/v1/indicator_alert_error_1024.png": [
+    "like",
+    "promote"
+  ],
+  "ui_icons/v1/indicator_alert_error_v2_1024.png": [
+    "like",
+    "promote"
+  ],
+  "ui_icons/v1/indicator_alert_info_1024.png": [
+    "like",
+    "promote"
+  ],
+  "ui_icons/v1/indicator_alert_info_v2_1024.png": [
+    "like",
+    "promote"
+  ],
+  "ui_icons/v1/indicator_alert_success_1024.png": [
+    "like",
+    "promote"
+  ],
+  "ui_icons/v1/indicator_alert_success_v2_1024.png": [
+    "like",
+    "promote"
+  ],
+  "ui_icons/v1/indicator_alert_warning_1024.png": [
+    "like",
+    "promote"
+  ],
+  "ui_icons/v1/indicator_alert_warning_v2_1024.png": [
+    "like",
+    "promote"
+  ],
+  "ui_icons/v1/button_action_disabled_1024.png": [
+    "like",
+    "promote"
+  ],
+  "ui_icons/v1/button_action_disabled_v2_1024.png": [
+    "like",
+    "promote"
+  ],
+  "ui_icons/v1/button_cancel_disabled_1024.png": [
+    "like",
+    "promote"
+  ],
+  "ui_icons/v1/button_cancel_disabled_v2_1024.png": [
+    "like",
+    "promote"
+  ],
+  "ui_icons/v1/button_confirm_disabled_1024.png": [
+    "like",
+    "promote"
+  ],
+  "ui_icons/v1/button_confirm_disabled_v2_1024.png": [
+    "like",
+    "promote"
+  ],
+  "ui_icons/v1/button_fire_disabled_1024.png": [
+    "like",
+    "promote"
+  ],
+  "ui_icons/v1/button_fire_disabled_v2_1024.png": [
+    "like",
+    "promote"
+  ],
+  "ui_icons/v1/button_hire_disabled_1024.png": [
+    "like",
+    "promote"
+  ],
+  "ui_icons/v1/button_hire_disabled_v2_1024.png": [
+    "like",
+    "promote"
+  ],
+  "ui_icons/v1/button_upgrade_disabled_1024.png": [
+    "like",
+    "promote"
+  ],
+  "ui_icons/v1/button_upgrade_disabled_v2_1024.png": [
+    "like",
+    "promote"
+  ],
+  "ui_icons/v1/button_action_hover_1024.png": [
+    "like",
+    "promote"
+  ],
+  "ui_icons/v1/button_action_hover_v2_1024.png": [
+    "like",
+    "promote"
+  ],
+  "ui_icons/v1/button_cancel_hover_1024.png": [
+    "like",
+    "promote"
+  ],
+  "ui_icons/v1/button_cancel_hover_v2_1024.png": [
+    "like",
+    "promote"
+  ],
+  "ui_icons/v1/button_confirm_hover_1024.png": [
+    "like",
+    "promote"
+  ],
+  "ui_icons/v1/button_confirm_hover_v2_1024.png": [
+    "like",
+    "promote"
+  ],
+  "ui_icons/v1/button_fire_hover_1024.png": [
+    "like",
+    "promote"
+  ],
+  "ui_icons/v1/button_fire_hover_v2_1024.png": [
+    "like",
+    "promote"
+  ],
+  "ui_icons/v1/button_hire_hover_1024.png": [
+    "like",
+    "promote"
+  ],
+  "ui_icons/v1/button_hire_hover_v2_1024.png": [
+    "like",
+    "promote"
+  ],
+  "ui_icons/v1/button_upgrade_hover_1024.png": [
+    "like",
+    "promote"
+  ],
+  "ui_icons/v1/button_upgrade_hover_v2_1024.png": [
+    "like",
+    "promote"
+  ],
+  "ui_icons/v1/ui_divider_horizontal_1024.png": [
+    "promote"
+  ],
+  "ui_icons/v1/ui_divider_vertical_1024.png": [
+    "promote"
+  ],
+  "ui_icons/v1/ui_panel_frame_1024.png": [
+    "promote"
+  ],
+  "ui_icons/v1/ui_panel_frame_v2_1024.png": [
+    "promote",
+    "favour",
+    "like"
+  ]
+}
