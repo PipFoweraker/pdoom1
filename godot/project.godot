@@ -19,6 +19,7 @@ config/features=PackedStringArray("4.5")
 [autoload]
 
 ErrorHandler="*res://autoload/error_handler.gd"
+PerfLog="*res://autoload/perf_log.gd"
 GameConfig="*res://autoload/game_config.gd"
 LeaderboardSync="*res://autoload/leaderboard_sync.gd"
 Balance="*res://autoload/balance.gd"

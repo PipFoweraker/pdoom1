@@ -561,6 +561,11 @@ func end_month():
 	print("[GameManager] Committing month plan (%d actions)..." % state.queued_actions.size())
 	turn_phase_changed.emit("turn_end")
 
+	# Dev-mode observability only (no-op in a release cut): time the synchronous month-commit
+	# (the CPU-heavy plan execution -- day-tick playback below is timer-paced, not worth timing).
+	# stop() runs on BOTH exit paths (game-over early return + normal). Zero sim/RNG effect.
+	var _perf := PerfLog.time_section("month_commit", {"turn": state.turn})
+
 	# Execute the OPEN plan turn (started at the previous boundary / game start).
 	# L2 (ADR-0011): Attention was spent at queue time; per-action self-charging (the hiring
 	# pipeline, etc.) also debits Attention HERE, at execution. No per-turn AP pool debit.
@@ -570,6 +575,7 @@ func end_month():
 			action_executed.emit(action_result)
 	game_state_updated.emit(state.to_dict())
 	if state.game_over:
+		_perf.stop()
 		return
 
 	# Implicit reserve (v1): every Attention point NOT spent by this month's executed actions
@@ -582,6 +588,7 @@ func end_month():
 	if state.month_plan != null:
 		state.month_plan.set_reserve(state.month_plan.attention_total - state.month_plan.attention_spent)
 
+	_perf.stop()
 	month_playback_active = true
 	_run_month_playback()  # async -- runs day ticks until window-pause or month boundary
 
@@ -590,7 +597,14 @@ func _run_month_playback() -> void:
 	"""Advance visible day ticks until a window pauses playback or the month boundary is
 	reached. Feed items surface as log lines (pull, no acknowledgment); only windows
 	interrupt. Resumes from resolve_event when a pause is answered."""
+	# Dev-mode tripwire (observation only, no-op in a release cut): a month is ~28-31 day
+	# ticks and windows/boundaries end playback. If this loop ever runs away (a divide-by-one
+	# / never-reaches-boundary "infi-glitch"), PerfLog flags it LOUD. It does NOT break the
+	# loop -- steering game flow from the logger would fork behavior.
+	var _tick_iters := 0
 	while month_playback_active and state != null and not state.game_over:
+		_tick_iters += 1
+		PerfLog.check_iterations("month_playback", _tick_iters, 400, {"turn": state.turn})
 		await get_tree().create_timer(day_tick_seconds).timeout
 		if not month_playback_active or state == null or state.game_over:
 			break

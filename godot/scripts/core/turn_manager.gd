@@ -444,6 +444,9 @@ func execute_turn() -> Dictionary:
 	L0 (#620): split into named, movable step functions with NO behavior change.
 	L1 (ADR-0009) will redistribute these consequence steps across day ticks.
 	STEP ORDER IS LOAD-BEARING (deterministic RNG stream -- see start_turn)."""
+	# Dev-mode observability only (no-op in a release cut): time the whole step sequence so a
+	# runaway turn is visible. PerfLog reads a clock only -- zero sim/RNG effect.
+	PerfLog.begin("turn_resolution", {"turn": state.turn})
 	var results = []
 	var all_success: bool = _step_execute_queued_actions(results)
 	_step_publish_papers(results)
@@ -454,6 +457,7 @@ func execute_turn() -> Dictionary:
 	# NOTE: event checking happens in start_turn() (FIX #418) -- before actions, not after.
 	_step_process_risk_pools(results)
 	_step_finalize_turn(results)
+	PerfLog.end("turn_resolution")
 
 	return {
 		"success": all_success,
