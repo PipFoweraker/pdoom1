@@ -164,3 +164,42 @@ a larger office/team, tying it to the startup->office era shift above. The
 current `office_maintenance` action (pays $5000, does nothing) is being REMOVED
 from the action board in v0.13.1; this note preserves the idea for a real
 implementation later.
+
+---
+
+## Wave 2 -- rival mechanics + a narrative example (Pip, 2026-07-25)
+
+**A narrative EXAMPLE of the rival's visible advantage (the CLASS, not the literal scene).** [PIP]
+> "Imagine a player gets 3 suitcases and a letter. They go to select one suitcase. A
+> gust of wind blows the letter, they chase it to see it's gifts from their future
+> selves. They return to see the rival's silhouette (cloaked) running away carrying
+> the other two briefcases. Whatever the player opens, we infer the other player got 2x."
+> "Obviously not a great example BUT we can do something more clever with bitcoin, bank
+> accounts, paper wallets, things coming to you in a dream, vague 2-boxing in-jokes,
+> whatever."
+
+[CLAUDE-note] The mechanic underneath: a beat where the player makes a choice and the
+rival is INFERRED to have taken the larger/other share -- a legibly-unfair, mentally-
+modellable advantage. Ties Wave-1's "visible baked-in advantage" to the time-travel /
+foreknowledge motif (the "gifts from future selves" is the diegetic frame for the
+player's own foreknowledge too).
+
+**Rival design -- WS-3 early takes** [PIP]:
+- **One rival, high fluency.** "we have one rival but they can do things like spawn
+  labs (which implies we might be able to do that later) or take actions all over the
+  game-space, probably with some more fluency than us (or maybe just decent play and a
+  better starting position -- there are ways of tying this into the game given we
+  invoke time-travel at least once)." A single rival acting across the whole game-space,
+  either more fluent or better-positioned; its capabilities foreshadow the player's later ones.
+- **Developments carry era-relative teeth + COMPOUND.** "Developments I would say carry
+  real teeth relative to the era either that they spawn in or that indicates a threat
+  level... Mostly they add to things that compound over time -- Developments might
+  heighten the severity or impact or the pool of future Developments." A Development's
+  bite scales to era/threat-level; its main role is to COMPOUND -- raising severity, or
+  enlarging the pool of FUTURE Developments (positive feedback on the narrative-pressure engine).
+- **Polyvirate, NOT triumvirate.** "I'm not sold on that as a triumvirate at all and
+  that number was picked at random... polyvirate could be better, makes it harder to map
+  for minmaxers." The Politics/Money/Technology triad is NOT fixed -- more axes may be
+  better precisely because harder to min-max. Supersedes Wave-1's "triumvirate"; the
+  RESEARCH_STREAMS_PROPOSAL 3-stock model is illustrative, not fixed.
+- Items 4 & 5 (violence trigger detail, etc.): deferred to the workshop.
