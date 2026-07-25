@@ -25,7 +25,7 @@ Grounded in the actual function inventory (2026-07-25). `main_ui.gd` conflates:
 | **R3** | Game-state reading | scattered `GameState`/`game_manager` reads inside render + handlers | No single read surface |
 | **R4** | **Planning / attention / queue** | `_on_commit_plan_button_pressed`, `_on_clear_queue_button_pressed`, `_remove_queued_action`, `_calculate_queued_costs`, `update_queued_actions_display`, `_on_action_executed`, `_on_actions_available`, `_setup_plan_watch_scaffold` | **DOMAIN LOGIC in the UI -- the hotpatch-bleed** |
 | **R5** | Submenu / dialog orchestration | `_show_hiring_submenu`, `_show_fundraising_submenu`, `_show_financing_submenu`, `_show_publicity_submenu`, `_show_strategic_submenu`, `_show_travel_submenu`, `_show_operations_submenu` + 7 matching `_on_*_option_selected` + `_decorate_active_submenu` / `_close_active_submenu` | **7 copy-pasted builders -- the single biggest line bloat** |
-| **R6** | Event / result presentation | `_hiring_action_result`, `_on_action_executed` (presentation half) | Presentation mixed with mutation |
+| **R6** | Event / result presentation -- **CARVED (CARVE 6 -> `event_result_presenter.gd`)** | `_hiring_action_result` (moved earlier w/ CARVE 3), `_on_action_executed` + `_on_achievement_unlocked` + `_on_error_occurred` (presentation) | Presentation mixed with mutation |
 
 ## 2. Target architecture
 
@@ -72,7 +72,19 @@ lane needs a new submenu.**
   Developments feed) from being an 8th copy-paste. Whichever WS-3 lane first adds
   a panel triggers this -- they build the generic component instead of copy #8.
 
-**CARVES 3+ -- R1/R2/R3/R6 opportunistic.** No speculative extraction. Each WS-3
+**CARVE 6 -- R6 -> EventResultPresenter. DONE.**
+- The event/result PRESENTATION (executed-action result, achievement unlock, engine
+  error -> feed-log lines + the PLAN error toast) pulled out of `main_ui` into
+  `godot/scripts/ui/event_result_presenter.gd` (RefCounted, holds a `host` ref back to
+  the view, matching the CARVE 1-5 controller pattern). `main_ui` keeps thin signal
+  shims (`_on_action_executed` / `_on_achievement_unlocked` / `_on_error_occurred`)
+  that forward to the presenter, and still owns the feed MODEL (`log_message` +
+  filters) the presenter writes through. `_hiring_action_result` was already moved with
+  CARVE 3 (HiringPanelController), so R6's remaining target was the three signal
+  handlers + the `_format_deltas` helper. Pure NON-FORKING move; fast gate green
+  (647 tests, 0 fail) before and after. `main_ui.gd`: 1974 -> 1940 lines.
+
+**CARVES 3+ -- R1/R2/R3 opportunistic.** No speculative extraction. Each WS-3
 lane that touches rendering/input tidies its own patch toward the thin-view target
 (boy-scout rule), guided by this map. Revisit for a formal pass only if a seam
 proves painful again after WS-3.
