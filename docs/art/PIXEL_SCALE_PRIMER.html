@@ -57,7 +57,8 @@
 </head>
 <body>
 
-<h1>P(Doom) Pixel Scale Primer</h1>
+<p class="dim" style="margin-bottom:-0.5rem; font-family:'Segoe UI',Verdana,sans-serif; letter-spacing:.06em;">P(DOOM) CRAFT PRIMERS</p>
+<h1>Pixel Scale Primer</h1>
 <p class="dim">From a pixel in a PNG to a spot on your retina, with every number in between.
 Written 2026-07-26 against the codebase as it stood that morning; the constants cited
 (<code>SPRITE_SCALE</code> etc.) may drift, but the <em>method</em> -- follow one pixel down the
@@ -416,31 +417,30 @@ tour of what that instinct is actually about.</p>
 
 <h3>The organizing frame: two dials, not one word</h3>
 
-<p>What gets mentally filed as "isometricity" is really <strong>two independent
-dials</strong> under one projection rule. The projection rule first: 2D game art uses
-<em>parallel projection</em> -- no vanishing points, no things shrinking with distance.
-A tile at the top of the room is drawn the same size as a tile at the bottom. (That
-is why sprite sheets work at all: one drawing serves every position on screen.)
-Within parallel projection:</p>
+<p>What gets mentally filed as "isometricity" is really a small generator.
+2D games almost never use true perspective projection. They use <strong>parallel
+projection</strong> -- no vanishing points, no size falloff -- which is why a sprite
+can be drawn once and placed anywhere on screen. That leaves exactly <strong>two
+dials</strong>:</p>
 
 <ul>
-<li><strong>ELEVATION</strong> -- how far above the scene the implied camera sits, from
-0&deg; (side-on, platformer) to 90&deg; (straight overhead, floor plan). This is the
-dial that matters for cuteness, and the one this section walks through.</li>
-<li><strong>AZIMUTH</strong> -- whether the camera faces the room's grid square-on
-(walls horizontal/vertical on screen) or rotated ~45&deg; so the grid becomes
-diamonds. "Isometric" games are mostly just a rotated azimuth plus a lowish
-elevation.</li>
+<li><strong>ELEVATION</strong> -- 0&deg; side-on to 90&deg; overhead: how far above the
+scene the implied camera sits. This is the dial that matters for cuteness, and the
+one this section walks through.</li>
+<li><strong>AZIMUTH</strong> -- grid square-on (walls horizontal/vertical on screen) vs
+rotated ~45&deg; so you see two faces of everything and the grid becomes
+diamonds.</li>
 </ul>
 
+<p>Every named 2D style is a point in that two-dial space. Once you hold the two
+dials, the zoo of genre labels collapses into coordinates.</p>
+
 <div class="box rule">
-<strong>The licence to cheat.</strong> Almost no beloved 2D game draws everything at one
-honest angle. The classic JRPG look draws <em>floors</em> from nearly overhead (so the
-room reads as a plan) while <em>characters</em> are drawn nearly frontal (so faces and
-costumes read) -- two incompatible cameras in one frame, and nobody has ever
-complained. Per-entity angle cheating is not a hack; it is the genre's standard
-practice, and it is the technical basis for treating cats differently from
-furniture.
+<strong>The dirty secret: almost nobody uses one consistent angle.</strong> Pokemon
+draws its floors from ~75&deg; and its characters nearly front-on -- two incompatible
+camera positions in one frame, and no player in thirty years has complained.
+Per-entity angle cheating is the standard, genre-proven move, and it is the
+technical basis for treating cats differently from furniture.
 </div>
 
 <h3>The graduations, with the same scene at each stop</h3>
@@ -530,11 +530,10 @@ crude -- what matters is what each angle <em>reveals and hides</em>.</figcaption
 Maximum floor-plan clarity, maximum tactical readability; characters become heads
 with shoulders. Great for violence-at-a-glance, hopeless for charm.</p>
 
-<p><strong>~70&deg; -- high top-down, the JRPG cheat</strong> <span class="dim">(Pokemon,
+<p><strong>~70-75&deg; -- high top-down, the JRPG cheat</strong> <span class="dim">(Pokemon,
 Zelda: A Link to the Past)</span>. Floors drawn from nearly overhead; characters drawn
 nearly frontal and squat (big heads, short bodies). This is the most-cheated view in
-games -- the floor camera and the character camera disagree by ~50&deg; and it reads
-as perfectly natural.</p>
+games -- the dirty-secret box above, as a whole genre's house style.</p>
 
 <p><strong>~45&deg; -- three-quarter, our current "low top-down"</strong>
 <span class="dim">(Stardew Valley; all 651 triaged P(Doom) sprites)</span>. The
@@ -546,6 +545,9 @@ fronts, characters get taller and more expressive than at 70&deg;.</p>
 rotates to diamonds. Game "isometric" is almost always the <strong>2:1 dimetric</strong>
 convention: tile edges run exactly 2 px across per 1 px down -- an angle of
 atan(1/2) = 26.57&deg; -- because that stair-step is pixel-perfect with no jaggies.
+The 2:1 ratio was chosen <em>because</em> it renders as clean pixel stairs with no
+jaggies -- <strong>the projection was chosen by the pixels, not the geometry</strong>.
+(True isometric's 30&deg; would need a 1.73:1 ratio that pixels can't draw cleanly.)
 Handsome, spatial, and expensive: diamond tilesets, more complex draw-order, and
 usually 8 walk directions instead of 4.</p>
 
@@ -581,16 +583,17 @@ reference point for what elevation costs you in charm.</p>
 character.</figcaption>
 </figure>
 
-<p>A standing human is a <em>vertical</em> silhouette: even from a high camera you keep
-the head-shoulders-body stack, so humans survive high elevations. A cat is a
-<em>horizontal</em> silhouette: its identity lives in the side profile -- the arched
-back, the tail curve, the head-forward stalk, the ears against the skyline. Raise
-the camera and all of that projects down to an ellipse. Every degree of elevation
-converts cat-shape into blob-shape, which is why "top-down cat" and "cute cat" pull
-in opposite directions, and why the cuteness Pip is missing is not a rendering
-problem -- it is a <em>projection</em> problem. Walk-cycle detail follows the same
-rule: a side-on gait shows legs alternating and the spine flexing; an overhead gait
-shows a blob oscillating.</p>
+<p>The mechanical rule: <strong>projection punishes entities in proportion to how
+horizontal their long axis is.</strong> A human is vertical -- even at 75&deg; you still
+see a readable person, because the head-shoulders-body stack survives the
+projection. A cat is horizontal -- its identity lives along the axis the camera
+flattens: the arched back, the tail curve, the head-forward stalk. At 75&deg; it
+collapses into an ellipse with ears. <strong>Elevation IS the cuteness dial -- for
+quadrupeds specifically.</strong> That is why the missing cuteness is not a rendering
+problem but a <em>projection</em> problem, and no amount of art effort at the wrong
+elevation buys it back. Walk-cycle detail obeys the same rule: a side-on gait shows
+legs alternating and the spine flexing; an overhead gait shows a blob
+oscillating.</p>
 
 <h3>What each graduation trades</h3>
 
@@ -608,42 +611,41 @@ change orphans the 651-triaged sprite library, the 15-promoted tileset set, and 
 72 promoted cat-walk frames. That is the number any whole-scene re-angle must argue
 against.</p>
 
-<h3>The cat-anchor decision: three ways to honour the instinct</h3>
+<h3>The cat-anchor decision: three options, ascending cost</h3>
 
-<p><strong>(a) Lower the whole scene.</strong> Move everything -- tiles, props, humans,
-cats -- to a lower elevation (or full iso). Maximum coherence, and the entire
-651-sprite library plus tilesets regenerates. This is the section-5 one-way door
-taken deliberately: a restart of the art programme in exchange for a globally
-lower, more character-forward look.</p>
+<p><strong>(a) Keep the scene angles; cheat the cats one step more side-on.</strong>
+Floors, props, and humans stay at low top-down; cats get regenerated at a visibly
+lower, more profile-forward angle (PixelLab's view parameter makes this a
+generation setting, not a hand-redraw). This is the standard JRPG mixed-perspective
+move applied one entity-family deep, and <strong>it orphans nothing</strong> -- the rest
+of the 651-triaged library is untouched. It also matches Pip's own phrasing: humans
+end up "subtly different in how we scale them" relative to cats, because cats are
+the ones drawn for charm. Cost: one generation batch (cat families + walk
+cycles).</p>
 
-<p><strong>(b) Keep the scene; cheat the cats one step more side-on.</strong> Floors,
-props, and humans stay at low top-down; cats get regenerated at a visibly lower,
-more profile-forward angle (PixelLab's view parameter makes this a generation
-setting, not a hand-redraw). This is exactly the JRPG mixed-perspective move --
-floors from above, characters frontal -- applied one entity-family deep, and it
-matches Pip's own phrasing: humans end up "subtly different in how we scale them"
-relative to cats, because cats are the ones drawn for charm. Cost: regenerate the
-cat families and their walk cycles (~a generation batch, not a programme); the rest
-of the library is untouched.</p>
+<p><strong>(b) ...plus cuteness concentrated in close-ups and portraits.</strong> The
+Hades approach: modest field sprites, gorgeous portraits. The floor cat does its
+job at floor scale while charm is delivered through the hero layer -- portrait
+moments, event art, the cat doom-oracle beats, and <code>cat_closeup.png</code>, which
+already exists. Cost on top of (a): near zero, since the hero pipeline already
+runs.</p>
 
-<p><strong>(c) Keep all scene angles; put the cuteness in close-ups.</strong> The floor
-cat stays a functional low-top-down marker; charm is delivered through the hero
-layer -- portrait moments, event art, the existing <code>cat_closeup.png</code>, the
-planned cat doom-oracle beats. Zero floor-art cost; the office itself stays exactly
-as charming as it is today, which is the complaint.</p>
+<p><strong>(c) Lower the whole scene toward 45&deg; or below and regenerate
+everything.</strong> Maximum coherence, globally more character-forward -- and it
+orphans the 651-triaged sprite library, the tilesets, and the 72 promoted cat-walk
+frames. This is the section-5 one-way door taken deliberately: a restart of the art
+programme.</p>
 
 <div class="box rule">
-<strong>Recommendation: (b), with (c) as a free complement -- decided before the
-round-2 art ramp.</strong> The reasoning: elevation is the cuteness dial and cats are
-a horizontal-silhouette animal, so no amount of rendering effort fixes a top-down
-cat (rules out (c) alone); per-entity cheating is genre-proven invisible, so (b)
-buys nearly all of (a)'s charm for roughly 1/10th of its cost and none of its
-tileset/code consequences; and it is reversible per-family in a way (a) never is.
-The one discipline it demands: settle the cat angle <em>before</em> the #900 round-2
-mass generation, or the walk cycles and gap-fill sprites get generated twice. Write
-the ruling into the art direction doc as "cats are drawn one graduation more
-side-on than the scene; humans hold the scene angle" -- one sentence, and the
-generation pipeline enforces it from then on.
+<strong>Recommendation: (a), possibly plus (b) -- essentially all the cuteness for
+roughly 1/20th the cost.</strong> Elevation is the cuteness dial for quadrupeds, so
+close-ups alone can't fix the floor cat; per-entity cheating is genre-proven
+invisible and reversible per-family in a way (c) never is. The one discipline it
+demands: <strong>the decision settles before the #900 round-2 mass generation</strong>,
+or the walk cycles and gap-fill sprites get generated twice. Write the ruling into
+the art direction doc as one sentence -- "cats are drawn one graduation more
+side-on than the scene; humans hold the scene angle" -- and the generation pipeline
+enforces it from then on.
 </div>
 
 <h2 id="composition">7. Composition and readability at small sizes</h2>
@@ -769,7 +771,16 @@ palette) -- and treat the bottom row as settled unless you are prepared to resta
 the art programme.
 </div>
 
-<p class="dim" style="margin-top:3rem">Verified against: office_floor.gd /
+<div class="box" style="margin-top:3rem">
+<strong>Why this document exists.</strong> This primer is the first entry in what is
+intended to grow into a small theoretical body of knowledge that reinforces the
+<em>why's</em> behind our ADRs -- the craft reasoning that decision records compress
+away. When a scale, art, or perspective ADR cites a ruling, the derivation should
+live in a primer like this one. No index yet, deliberately; if a second primer
+earns its existence, give the series a home then.
+</div>
+
+<p class="dim" style="margin-top:1.5rem">Verified against: office_floor.gd /
 employee_sprite.gd / office_sandbox.gd audit of 2026-07-26, project.godot stretch
 settings, PixelLab generation manifests, SEED_ART_DIRECTION. Display/vision figures
 (panel geometry, 1-arcminute acuity, 60 cm viewing distance) are standard values;
