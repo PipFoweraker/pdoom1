@@ -86,7 +86,7 @@ docs/strategy/HOSTING_AND_RELEASE.md.
 ## Later -- the design horizon
 
 Not listed here on purpose. The design question register is
-[docs/game-design/DQ_INDEX.md](game-design/DQ_INDEX.md) (generated; 27 open),
+[docs/game-design/DQ_INDEX.md](game-design/DQ_INDEX.md) (generated; 32 open),
 sourced from WORKSHOP_2_BACKLOG.md. Design advances through workshop beats
 (next candidates: DQ-19 + DQ-23; DQ-22 + DQ-31 + DQ-32 as one conversation).
 Longer-horizon intents that have pins above: content-pool ladder (DQ-33),
