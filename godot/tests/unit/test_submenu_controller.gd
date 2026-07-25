@@ -110,7 +110,10 @@ func test_main_ui_no_longer_declares_the_collapsed_builders():
 
 
 func test_main_ui_keeps_the_genuinely_bespoke_builders():
+	# CARVE 3 moved the hiring candidate-card pipeline into HiringPanelController; the view keeps a
+	# one-line _show_hiring_submenu() SHIM (so SubmenuController.open("hire_staff") is unchanged) but
+	# no longer declares the card builders. Travel stays fully bespoke in the view for now.
 	var src: String = FileAccess.get_file_as_string("res://scripts/ui/main_ui.gd")
-	assert_true(src.contains("func _show_hiring_submenu"), "hiring pipeline stays in the view (bespoke)")
+	assert_true(src.contains("func _show_hiring_submenu"), "hiring entry point (now a shim) stays in the view")
 	assert_true(src.contains("func _show_travel_submenu"), "travel submenu stays in the view (bespoke)")
-	assert_true(src.contains("func _build_candidate_card"), "candidate-card rendering stays in the view")
+	assert_false(src.contains("func _build_candidate_card"), "candidate-card rendering moved to HiringPanelController (CARVE 3)")
