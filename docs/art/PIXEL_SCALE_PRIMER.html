@@ -71,8 +71,9 @@ perspective, or art resolution.</p>
 <a href="#integer">3. Integer scaling, and why 0.91x is a compromise</a><br>
 <a href="#world">4. World proportions: the tile is the unit</a><br>
 <a href="#perspective">5. Perspective: what "low top-down" buys and costs</a><br>
-<a href="#composition">6. Composition and readability at small sizes</a><br>
-<a href="#dials">7. The dials, and what each one costs to turn</a>
+<a href="#graduations">6. Perspective graduations -- the elevation dial</a><br>
+<a href="#composition">7. Composition and readability at small sizes</a><br>
+<a href="#dials">8. The dials, and what each one costs to turn</a>
 </div>
 
 <h2 id="stack">1. The stack: one pixel's journey</h2>
@@ -129,7 +130,7 @@ the game's canvas. Floor tiles: 32 px source x <code>FLOOR_TILE_SCALE = 2</code>
 in the whole system -- section 4 builds everything from it. Characters get
 <code>SPRITE_SCALE</code>, cats get their own factor. (That these are scattered constants
 rather than one system is a known limitation; a Camera2D would make this stage a
-single tunable. See section 7.)</p>
+single tunable. See section 8.)</p>
 
 <p><strong>Stage 3 -- the virtual viewport.</strong> The game declares a
 <strong>1920x1080</strong> design canvas (<code>project.godot</code>: stretch mode
@@ -400,10 +401,252 @@ sprite. Switching to true top-down, side view, or isometric means <em>regenerati
 the entire library</em> -- every character, prop, tile, and animation frame. Palette
 can be shifted cheaply, scale constants are one-line edits, but the camera angle is
 close to a full restart of the art programme. If a different angle ever tempts you,
-prototype it on three sprites in the sandbox before deciding anything.
+prototype it on three sprites in the sandbox before deciding anything. There is one
+honest escape hatch -- cheating the angle for a single entity family rather than the
+scene -- and section 6 is entirely about it.
 </div>
 
-<h2 id="composition">6. Composition and readability at small sizes</h2>
+<h2 id="graduations">6. Perspective graduations -- the elevation dial</h2>
+
+<p class="dim">Added after Pip's 2026-07-26 leaning: cats may deserve main-character
+pixel complexity, humans derived from cats -- "even if it means we make the humans
+subtly different in how we scale them" -- because a top-down cat loses "way too much
+potential cuteness, animation detail". This section is the tourist-to-informed-tourist
+tour of what that instinct is actually about.</p>
+
+<h3>The organizing frame: two dials, not one word</h3>
+
+<p>What gets mentally filed as "isometricity" is really <strong>two independent
+dials</strong> under one projection rule. The projection rule first: 2D game art uses
+<em>parallel projection</em> -- no vanishing points, no things shrinking with distance.
+A tile at the top of the room is drawn the same size as a tile at the bottom. (That
+is why sprite sheets work at all: one drawing serves every position on screen.)
+Within parallel projection:</p>
+
+<ul>
+<li><strong>ELEVATION</strong> -- how far above the scene the implied camera sits, from
+0&deg; (side-on, platformer) to 90&deg; (straight overhead, floor plan). This is the
+dial that matters for cuteness, and the one this section walks through.</li>
+<li><strong>AZIMUTH</strong> -- whether the camera faces the room's grid square-on
+(walls horizontal/vertical on screen) or rotated ~45&deg; so the grid becomes
+diamonds. "Isometric" games are mostly just a rotated azimuth plus a lowish
+elevation.</li>
+</ul>
+
+<div class="box rule">
+<strong>The licence to cheat.</strong> Almost no beloved 2D game draws everything at one
+honest angle. The classic JRPG look draws <em>floors</em> from nearly overhead (so the
+room reads as a plan) while <em>characters</em> are drawn nearly frontal (so faces and
+costumes read) -- two incompatible cameras in one frame, and nobody has ever
+complained. Per-entity angle cheating is not a hack; it is the genre's standard
+practice, and it is the technical basis for treating cats differently from
+furniture.
+</div>
+
+<h3>The graduations, with the same scene at each stop</h3>
+
+<figure>
+<svg viewBox="0 0 840 230" role="img" aria-label="The same desk, human, and cat drawn at five camera elevations">
+  <g font-family="Segoe UI, Verdana, sans-serif" font-size="11" fill="#d7dae0">
+    <!-- panel frames -->
+    <g stroke="#343a45" fill="none">
+      <rect x="4"   y="24" width="158" height="170" rx="4"/>
+      <rect x="172" y="24" width="158" height="170" rx="4"/>
+      <rect x="340" y="24" width="158" height="170" rx="4"/>
+      <rect x="508" y="24" width="158" height="170" rx="4"/>
+      <rect x="676" y="24" width="158" height="170" rx="4"/>
+    </g>
+    <text x="83"  y="16" text-anchor="middle" fill="#7fd4a8">90&deg; overhead</text>
+    <text x="251" y="16" text-anchor="middle" fill="#7fd4a8">~70&deg; high top-down</text>
+    <text x="419" y="16" text-anchor="middle" fill="#7fd4a8">~45&deg; three-quarter</text>
+    <text x="587" y="16" text-anchor="middle" fill="#7fd4a8">"isometric" (2:1)</text>
+    <text x="755" y="16" text-anchor="middle" fill="#7fd4a8">0&deg; side-on</text>
+
+    <!-- 90 overhead: pure plan -->
+    <rect x="24" y="44" width="60" height="36" fill="#8a6d4a"/>
+    <text x="54" y="92" text-anchor="middle" class="dim" fill="#9aa1ad">desk (plan)</text>
+    <circle cx="120" cy="70" r="9" fill="#7fd4a8"/>
+    <ellipse cx="120" cy="70" rx="15" ry="6" fill="none" stroke="#7fd4a8"/>
+    <text x="120" y="96" text-anchor="middle" fill="#9aa1ad">head+shoulders</text>
+    <ellipse cx="60" cy="140" rx="13" ry="9" fill="#9aa1ad"/>
+    <polygon points="50,134 47,126 55,131" fill="#9aa1ad"/>
+    <polygon points="70,134 73,126 65,131" fill="#9aa1ad"/>
+    <text x="60" y="166" text-anchor="middle" fill="#d98080">cat = blob + ears</text>
+
+    <!-- 70 high top-down: JRPG -->
+    <rect x="192" y="48" width="60" height="26" fill="#8a6d4a"/>
+    <rect x="192" y="74" width="60" height="7" fill="#6b543a"/>
+    <circle cx="290" cy="72" r="9" fill="#7fd4a8"/>
+    <rect x="283" y="81" width="14" height="22" fill="#7fd4a8"/>
+    <text x="290" y="118" text-anchor="middle" fill="#9aa1ad">frontal, squat</text>
+    <ellipse cx="225" cy="140" rx="14" ry="8" fill="#9aa1ad"/>
+    <circle cx="238" cy="136" r="5" fill="#9aa1ad"/>
+    <text x="225" y="166" text-anchor="middle" fill="#e0b060">hint of a cat</text>
+
+    <!-- 45 three-quarter: current -->
+    <rect x="360" y="52" width="60" height="18" fill="#8a6d4a"/>
+    <rect x="360" y="70" width="60" height="16" fill="#6b543a"/>
+    <circle cx="458" cy="62" r="9" fill="#7fd4a8"/>
+    <rect x="450" y="71" width="16" height="34" fill="#7fd4a8"/>
+    <text x="458" y="122" text-anchor="middle" fill="#9aa1ad">taller, front+top</text>
+    <ellipse cx="395" cy="142" rx="16" ry="8" fill="#9aa1ad"/>
+    <circle cx="410" cy="136" r="6" fill="#9aa1ad"/>
+    <path d="M 380 140 q -8 -8 -4 -14" fill="none" stroke="#9aa1ad" stroke-width="2"/>
+    <text x="398" y="168" text-anchor="middle" fill="#e0b060">cat-ish (current)</text>
+
+    <!-- isometric: diamond -->
+    <polygon points="588,58 628,78 588,98 548,78" fill="#8a6d4a"/>
+    <polygon points="548,78 588,98 588,112 548,92" fill="#6b543a"/>
+    <polygon points="628,78 588,98 588,112 628,92" fill="#5c4832"/>
+    <text x="588" y="128" text-anchor="middle" fill="#9aa1ad">2:1 diamond top</text>
+    <circle cx="640" cy="140" r="8" fill="#7fd4a8"/>
+    <rect x="633" y="148" width="14" height="28" fill="#7fd4a8"/>
+    <ellipse cx="548" cy="156" rx="15" ry="8" fill="#9aa1ad"/>
+    <circle cx="562" cy="150" r="6" fill="#9aa1ad"/>
+    <text x="588" y="188" text-anchor="middle" fill="#9aa1ad">edges rise 1px per 2px</text>
+
+    <!-- side-on -->
+    <line x1="690" y1="170" x2="826" y2="170" stroke="#9aa1ad" stroke-width="2"/>
+    <rect x="694" y="128" width="44" height="8" fill="#8a6d4a"/>
+    <rect x="697" y="136" width="5" height="34" fill="#6b543a"/>
+    <rect x="730" y="136" width="5" height="34" fill="#6b543a"/>
+    <circle cx="762" cy="106" r="9" fill="#7fd4a8"/>
+    <rect x="755" y="115" width="14" height="40" fill="#7fd4a8"/>
+    <rect x="757" y="155" width="4" height="15" fill="#7fd4a8"/>
+    <rect x="765" y="155" width="4" height="15" fill="#7fd4a8"/>
+    <ellipse cx="806" cy="158" rx="17" ry="8" fill="#9aa1ad"/>
+    <circle cx="821" cy="150" r="6" fill="#9aa1ad"/>
+    <polygon points="818,145 816,139 822,142" fill="#9aa1ad"/>
+    <polygon points="826,146 829,140 823,143" fill="#9aa1ad"/>
+    <path d="M 790 154 q -9 -10 -5 -18" fill="none" stroke="#9aa1ad" stroke-width="2"/>
+    <text x="762" y="188" text-anchor="middle" fill="#7fd4a8">unmistakably cat</text>
+  </g>
+</svg>
+<figcaption>The same desk, human, and cat at five elevations. Shapes are deliberately
+crude -- what matters is what each angle <em>reveals and hides</em>.</figcaption>
+</figure>
+
+<p><strong>90&deg; -- straight overhead</strong> <span class="dim">(Hotline Miami)</span>.
+Maximum floor-plan clarity, maximum tactical readability; characters become heads
+with shoulders. Great for violence-at-a-glance, hopeless for charm.</p>
+
+<p><strong>~70&deg; -- high top-down, the JRPG cheat</strong> <span class="dim">(Pokemon,
+Zelda: A Link to the Past)</span>. Floors drawn from nearly overhead; characters drawn
+nearly frontal and squat (big heads, short bodies). This is the most-cheated view in
+games -- the floor camera and the character camera disagree by ~50&deg; and it reads
+as perfectly natural.</p>
+
+<p><strong>~45&deg; -- three-quarter, our current "low top-down"</strong>
+<span class="dim">(Stardew Valley; all 651 triaged P(Doom) sprites)</span>. The
+management-sim sweet spot: floors still read as area, objects show tops <em>and</em>
+fronts, characters get taller and more expressive than at 70&deg;.</p>
+
+<p><strong>"Isometric" -- ~30&deg; elevation + 45&deg; azimuth</strong>
+<span class="dim">(SimCity 2000, Baldur's Gate, RollerCoaster Tycoon)</span>. The grid
+rotates to diamonds. Game "isometric" is almost always the <strong>2:1 dimetric</strong>
+convention: tile edges run exactly 2 px across per 1 px down -- an angle of
+atan(1/2) = 26.57&deg; -- because that stair-step is pixel-perfect with no jaggies.
+Handsome, spatial, and expensive: diamond tilesets, more complex draw-order, and
+usually 8 walk directions instead of 4.</p>
+
+<p><strong>0&deg; -- side-on</strong> <span class="dim">(every platformer)</span>. Maximum
+character expressiveness -- full profiles, real gaits -- and no floor plan at all: the
+world collapses to a lane. Wrong genre for an office you manage spatially, but the
+reference point for what elevation costs you in charm.</p>
+
+<h3>Why elevation is the cuteness dial -- especially for cats</h3>
+
+<figure>
+<svg viewBox="0 0 560 130" role="img" aria-label="Cat from overhead versus cat from the side">
+  <g font-family="Segoe UI, Verdana, sans-serif" font-size="12" fill="#d7dae0">
+    <rect x="10" y="14" width="250" height="96" rx="4" fill="none" stroke="#343a45"/>
+    <text x="135" y="34" text-anchor="middle" fill="#d98080">from above: blob with ears</text>
+    <ellipse cx="135" cy="70" rx="26" ry="16" fill="#9aa1ad"/>
+    <polygon points="117,58 111,44 125,52" fill="#9aa1ad"/>
+    <polygon points="153,58 159,44 145,52" fill="#9aa1ad"/>
+    <rect x="300" y="14" width="250" height="96" rx="4" fill="none" stroke="#343a45"/>
+    <text x="425" y="34" text-anchor="middle" fill="#7fd4a8">from the side: cat</text>
+    <ellipse cx="420" cy="76" rx="34" ry="14" fill="#9aa1ad"/>
+    <circle cx="456" cy="62" r="12" fill="#9aa1ad"/>
+    <polygon points="449,53 446,42 455,47" fill="#9aa1ad"/>
+    <polygon points="463,53 467,42 458,47" fill="#9aa1ad"/>
+    <path d="M 388 72 q -16 -14 -10 -30" fill="none" stroke="#9aa1ad" stroke-width="4"/>
+    <rect x="398" y="88 " width="5" height="14" fill="#9aa1ad"/>
+    <rect x="412" y="88" width="5" height="14" fill="#9aa1ad"/>
+    <rect x="428" y="88" width="5" height="14" fill="#9aa1ad"/>
+    <rect x="442" y="88" width="5" height="14" fill="#9aa1ad"/>
+  </g>
+</svg>
+<figcaption>The identical animal at two elevations. One is furniture; one is a
+character.</figcaption>
+</figure>
+
+<p>A standing human is a <em>vertical</em> silhouette: even from a high camera you keep
+the head-shoulders-body stack, so humans survive high elevations. A cat is a
+<em>horizontal</em> silhouette: its identity lives in the side profile -- the arched
+back, the tail curve, the head-forward stalk, the ears against the skyline. Raise
+the camera and all of that projects down to an ellipse. Every degree of elevation
+converts cat-shape into blob-shape, which is why "top-down cat" and "cute cat" pull
+in opposite directions, and why the cuteness Pip is missing is not a rendering
+problem -- it is a <em>projection</em> problem. Walk-cycle detail follows the same
+rule: a side-on gait shows legs alternating and the spine flexing; an overhead gait
+shows a blob oscillating.</p>
+
+<h3>What each graduation trades</h3>
+
+<table>
+<tr><th>View</th><th>Floor-plan / management readability</th><th>Character expressiveness</th><th>Occlusion complexity</th><th>Walk dirs needed</th><th>Tileset type</th><th>Fits existing library?</th></tr>
+<tr><td>90&deg; overhead</td><td class="good">Best</td><td class="bad">Worst (blobs)</td><td class="good">Trivial</td><td>4 (often fewer)</td><td>Square</td><td class="bad">No -- full regen</td></tr>
+<tr><td>~70&deg; high top-down</td><td class="good">Excellent</td><td class="warn">Good via the frontal cheat</td><td class="good">Simple y-sort</td><td>4</td><td>Square</td><td class="bad">No -- full regen (it is a different drawn angle)</td></tr>
+<tr><td>~45&deg; three-quarter (current)</td><td class="good">Good</td><td class="warn">Moderate</td><td class="good">Simple y-sort</td><td>4 (already have)</td><td>Square (already have)</td><td class="good">Yes -- 100%</td></tr>
+<tr><td>Iso 2:1 (~30&deg; + 45&deg; azimuth)</td><td class="warn">Good but rotated grid</td><td class="warn">Moderate</td><td class="bad">Hard (diamond sort, tall props)</td><td>8 (typically)</td><td class="bad">Diamond 2:1 -- all new</td><td class="bad">No -- full regen + real tilemap work</td></tr>
+<tr><td>0&deg; side-on</td><td class="bad">None (a lane, not a room)</td><td class="good">Best</td><td>n/a</td><td>2 mirrored</td><td>None (platform strips)</td><td class="bad">No -- and wrong genre</td></tr>
+</table>
+
+<p class="dim">"Fits existing library" is the expensive column: a full-scene angle
+change orphans the 651-triaged sprite library, the 15-promoted tileset set, and the
+72 promoted cat-walk frames. That is the number any whole-scene re-angle must argue
+against.</p>
+
+<h3>The cat-anchor decision: three ways to honour the instinct</h3>
+
+<p><strong>(a) Lower the whole scene.</strong> Move everything -- tiles, props, humans,
+cats -- to a lower elevation (or full iso). Maximum coherence, and the entire
+651-sprite library plus tilesets regenerates. This is the section-5 one-way door
+taken deliberately: a restart of the art programme in exchange for a globally
+lower, more character-forward look.</p>
+
+<p><strong>(b) Keep the scene; cheat the cats one step more side-on.</strong> Floors,
+props, and humans stay at low top-down; cats get regenerated at a visibly lower,
+more profile-forward angle (PixelLab's view parameter makes this a generation
+setting, not a hand-redraw). This is exactly the JRPG mixed-perspective move --
+floors from above, characters frontal -- applied one entity-family deep, and it
+matches Pip's own phrasing: humans end up "subtly different in how we scale them"
+relative to cats, because cats are the ones drawn for charm. Cost: regenerate the
+cat families and their walk cycles (~a generation batch, not a programme); the rest
+of the library is untouched.</p>
+
+<p><strong>(c) Keep all scene angles; put the cuteness in close-ups.</strong> The floor
+cat stays a functional low-top-down marker; charm is delivered through the hero
+layer -- portrait moments, event art, the existing <code>cat_closeup.png</code>, the
+planned cat doom-oracle beats. Zero floor-art cost; the office itself stays exactly
+as charming as it is today, which is the complaint.</p>
+
+<div class="box rule">
+<strong>Recommendation: (b), with (c) as a free complement -- decided before the
+round-2 art ramp.</strong> The reasoning: elevation is the cuteness dial and cats are
+a horizontal-silhouette animal, so no amount of rendering effort fixes a top-down
+cat (rules out (c) alone); per-entity cheating is genre-proven invisible, so (b)
+buys nearly all of (a)'s charm for roughly 1/10th of its cost and none of its
+tileset/code consequences; and it is reversible per-family in a way (a) never is.
+The one discipline it demands: settle the cat angle <em>before</em> the #900 round-2
+mass generation, or the walk cycles and gap-fill sprites get generated twice. Write
+the ruling into the art direction doc as "cats are drawn one graduation more
+side-on than the scene; humans hold the scene angle" -- one sentence, and the
+generation pipeline enforces it from then on.
+</div>
+
+<h2 id="composition">7. Composition and readability at small sizes</h2>
 
 <p>Everything above is geometry. This section is the craft layer on top -- how to
 make a 30-pixel-wide thing <em>legible</em>.</p>
@@ -447,7 +690,7 @@ is the highest-value channel at small sizes -- which is why the walk cycles and 
 fidgets planned for the office floor will add more perceived life than any amount
 of static detail.</p>
 
-<h2 id="dials">7. The dials, and what each one costs to turn</h2>
+<h2 id="dials">8. The dials, and what each one costs to turn</h2>
 
 <p>Every scale decision in the game, sorted by how expensive it is to change your
 mind later. Cheap dials you can turn on a whim in the sandbox; the bottom row is a
@@ -504,7 +747,13 @@ one-way door.</p>
   <td class="warn">Moderate -- regenerate affected art; style tags make it batchable</td>
 </tr>
 <tr>
-  <td>Perspective / camera angle</td>
+  <td>Per-entity angle cheat (e.g. cats one step more side-on)</td>
+  <td>undecided -- see section 6</td>
+  <td>generation view parameter, per family</td>
+  <td class="warn">Moderate -- regenerate ONE family; genre-proven invisible; decide before round-2 gen</td>
+</tr>
+<tr>
+  <td>Perspective / camera angle (whole scene)</td>
   <td>low top-down (~30-45&deg;)</td>
   <td>baked into every sprite</td>
   <td class="bad">Near-total -- regenerate the entire library. One-way door.</td>
