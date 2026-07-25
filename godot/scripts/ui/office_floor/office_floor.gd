@@ -71,6 +71,7 @@ var _shared_frames: SpriteFrames = null   # optional real art shared across spri
 var _rng := RandomNumberGenerator.new()   # cosmetic-only (collaboration timing); NOT the game RNG
 var _collab_timer := 0.0
 var _floor_tile: Texture2D = null   # base concrete tile cropped from the Wang atlas (cosmetic)
+var _wall_strip_tex: Texture2D = null   # ADDITIVE dev-hook override for the top wall strip (cosmetic)
 
 func _ready() -> void:
 	custom_minimum_size = Vector2(360, 260)
@@ -179,6 +180,26 @@ func set_sprite_frames(frames: SpriteFrames) -> void:
 	for id in _sprites:
 		_sprites[id].set_sprite_frames(frames)
 
+# ---------------------------------------------------------------------------
+# ADDITIVE DEV HOOKS (office sandbox v2). PURELY COSMETIC + backward-compatible:
+# they only override the private floor/wall tile textures consumed by _draw().
+# Passing null restores the built-in look. The LIVE WATCH integration
+# (watch_screen.gd / main_ui.gd) NEVER calls these, so its behaviour is byte-for-
+# byte unchanged. They read nothing and write no game state (ADR-0006 pure view).
+# Used by office_sandbox.gd to preview promoted tilesets loaded from art_source at
+# dev time. Callers supply an already-tileable tile texture (crop/scale is theirs).
+# ---------------------------------------------------------------------------
+## Override the tiled floor texture. Pass null to restore the built-in concrete tile.
+func set_floor_tile_texture(tex: Texture2D) -> void:
+	_floor_tile = tex if tex != null else _build_floor_tile()
+	queue_redraw()
+
+## Override the top wall strip with a (tileable) texture. Pass null to restore the
+## flat procedural strip drawn by _draw().
+func set_wall_strip_texture(tex: Texture2D) -> void:
+	_wall_strip_tex = tex
+	queue_redraw()
+
 func _relayout_desks() -> void:
 	var b := _bounds()
 	var z := _zones(b)
@@ -278,7 +299,13 @@ func _draw() -> void:
 	# props stand in for the water/fridge markers + add a server-cluster decor piece; the
 	# window strip + cat corner stay procedural (cat art deferred to the #758 identity pass).
 	var z := _zones(b)
-	draw_rect(Rect2(Vector2(b.position.x + 6, b.position.y + 2), Vector2(b.size.x - 12, 5)), Color(0.45, 0.6, 0.75, 0.45))  # window strip (top wall)
+	# window strip (top wall). Dev-hook: if a promoted wall texture was supplied via
+	# set_wall_strip_texture() it tiles across a slightly taller strip; default (null)
+	# draws the original flat blue rect unchanged.
+	if _wall_strip_tex != null:
+		draw_texture_rect(_wall_strip_tex, Rect2(Vector2(b.position.x + 6, b.position.y + 2), Vector2(b.size.x - 12, 12)), true, FLOOR_DIM)
+	else:
+		draw_rect(Rect2(Vector2(b.position.x + 6, b.position.y + 2), Vector2(b.size.x - 12, 5)), Color(0.45, 0.6, 0.75, 0.45))
 	draw_circle(z["cat_pos"], 9.0, Color(0.9, 0.5, 0.7, 0.4))            # cat corner (pink)
 	_draw_prop(PROP_WATER_COOLER, z["water_pos"])                       # water cooler (top-right)
 	_draw_prop(PROP_FILING_CABINET, z["fridge_pos"])                    # filing cabinet appliance (bottom-right)
