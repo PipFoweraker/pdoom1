@@ -61,6 +61,17 @@ jobs:
 
     - name: Analyze changes and determine if blog entry needed
       id: analysis
+      env:
+        EVENT_NAME: ${{ github.event_name }}
+        EVENT_ACTION: ${{ github.event.action }}
+        PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        PR_TITLE: ${{ github.event.pull_request.title }}
+        PR_BODY: ${{ github.event.pull_request.body }}
+        PR_MERGED: ${{ github.event.pull_request.merged }}
+        INPUT_ENTRY_TYPE: ${{ github.event.inputs.entry_type }}
+        INPUT_TITLE: ${{ github.event.inputs.title }}
+        INPUT_FORCE_CREATE: ${{ github.event.inputs.force_create }}
       run: |
         python << 'EOF'
         import git
@@ -72,10 +83,10 @@ jobs:
         repo = git.Repo('.')
 
         # Get recent commits (last 24 hours for push, or PR commits)
-        if "${{ github.event_name }}" == "pull_request":
+        if os.environ.get("EVENT_NAME", "") == "pull_request":
             # Analyze PR commits
-            base_sha = "${{ github.event.pull_request.base.sha }}"
-            head_sha = "${{ github.event.pull_request.head.sha }}"
+            base_sha = os.environ.get("PR_BASE_SHA", "")
+            head_sha = os.environ.get("PR_HEAD_SHA", "")
             commits = list(repo.iter_commits(f"{base_sha}..{head_sha}"))
         else:
             # Analyze recent commits on main
@@ -113,17 +124,17 @@ jobs:
         major_changes = lines_changed > 500
 
         # Manual trigger override
-        if "${{ github.event_name }}" == "workflow_dispatch":
+        if os.environ.get("EVENT_NAME", "") == "workflow_dispatch":
             should_create = True
-            entry_type = "${{ github.event.inputs.entry_type }}"
-            title = "${{ github.event.inputs.title }}" or "Development Update"
+            entry_type = os.environ.get("INPUT_ENTRY_TYPE", "")
+            title = os.environ.get("INPUT_TITLE", "") or "Development Update"
 
-        elif "${{ github.event_name }}" == "pull_request" and "${{ github.event.action }}" == "closed":
-            if "${{ github.event.pull_request.merged }}" == "true":
+        elif os.environ.get("EVENT_NAME", "") == "pull_request" and os.environ.get("EVENT_ACTION", "") == "closed":
+            if os.environ.get("PR_MERGED", "") == "true":
                 should_create = True
                 entry_type = "feature-release"
-                title = f"Feature Complete: ${{ github.event.pull_request.title }}"
-                summary = "${{ github.event.pull_request.body }}"[:200]
+                title = f"Feature Complete: {os.environ.get('PR_TITLE', '')}"
+                summary = os.environ.get("PR_BODY", "")[:200]
                 tags = ["feature", "merge", "pr"]
 
         elif significant_files and (significant_commits or major_changes):
@@ -141,7 +152,7 @@ jobs:
                 tags.append("testing")
 
         # Override for force create
-        if "${{ github.event.inputs.force_create }}" == "true":
+        if os.environ.get("INPUT_FORCE_CREATE", "") == "true":
             should_create = True
 
         with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as _gh:
@@ -172,6 +183,13 @@ jobs:
         python-version: '3.11'
 
     - name: Create development blog entry
+      env:
+        ENTRY_TYPE: ${{ needs.analyze-changes.outputs.entry_type }}
+        ENTRY_TITLE: ${{ needs.analyze-changes.outputs.title }}
+        SUMMARY: ${{ needs.analyze-changes.outputs.summary }}
+        TAGS: ${{ needs.analyze-changes.outputs.tags }}
+        REF_NAME: ${{ github.ref_name }}
+        EVENT_NAME: ${{ github.event_name }}
       run: |
         python << 'EOF'
         import os
@@ -180,10 +198,10 @@ jobs:
         import git
 
         # Get data from previous job
-        entry_type = "${{ needs.analyze-changes.outputs.entry_type }}"
-        title = "${{ needs.analyze-changes.outputs.title }}"
-        summary = "${{ needs.analyze-changes.outputs.summary }}"
-        tags = json.loads('${{ needs.analyze-changes.outputs.tags }}')
+        entry_type = os.environ.get("ENTRY_TYPE", "")
+        title = os.environ.get("ENTRY_TITLE", "")
+        summary = os.environ.get("SUMMARY", "")
+        tags = json.loads(os.environ.get("TAGS", "[]"))
 
         # Generate content based on recent commits
         repo = git.Repo('.')
@@ -242,8 +260,8 @@ jobs:
 
         ## Development Context
 
-        - **Branch**: ${{ github.ref_name }}
-        - **Event**: ${{ github.event_name }}
+        - **Branch**: {os.environ.get('REF_NAME', '')}
+        - **Event**: {os.environ.get('EVENT_NAME', '')}
         - **Generated**: {datetime.now().strftime('%Y-%m-%d %H:%M:%S UTC')}
 
         ## Next Steps
@@ -270,13 +288,15 @@ jobs:
         EOF
 
     - name: Commit and push blog entry
+      env:
+        BLOG_TITLE: ${{ needs.analyze-changes.outputs.title }}
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         git add dev-blog/
 
         if ! git diff --cached --quiet; then
-          git commit -m "docs: Automated dev blog entry for ${{ needs.analyze-changes.outputs.title }} [skip ci]"
+          git commit -m "docs: Automated dev blog entry for $BLOG_TITLE [skip ci]"
           git push
           echo "Blog entry created and pushed"
         else
