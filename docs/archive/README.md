@@ -48,6 +48,10 @@ For "what is this game and why," start at:
   `session-handoffs-2025-09/`, `ui-fixes-and-improvements/` — pre-existing archive
   subtrees from an earlier (2025-09) cleanup pass; left as-is, not re-organized by this
   sweep.
+- `godot-handover-notes-2025-10/` -- finished-work "COMPLETE"/handover scratch notes
+  swept out of the loose `godot/` project root by the #810 repo-slim pass (2026-07-25).
+  Godot-era, not pygame-era; superseded by shipped code and the live `docs/`. See that
+  subdir's `README.md`.
 
 There is also a much larger, older `archive/` directory (and `legacy/`) at the **repo
 root** (not under `docs/`) containing the full legacy pygame codebase, scripts, and
