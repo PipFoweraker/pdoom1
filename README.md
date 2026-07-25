@@ -6,9 +6,9 @@
 
 ## Download & Play
 
-**Latest version: v0.11.0** -- Windows build:
+Grab the **[latest release](https://github.com/PipFoweraker/pdoom1/releases/latest)** -- Windows build:
 
-- **[Windows](https://github.com/PipFoweraker/pdoom1/releases/download/v0.11.0/PDoom.exe)** -- download and run. No installer.
+- **[Windows](https://github.com/PipFoweraker/pdoom1/releases/latest/download/PDoom.exe)** -- download and run. No installer.
 
 Linux and macOS builds are not published yet. Until they are, run from source with Godot 4.5.1 (see [For Developers](#for-developers)).
 
@@ -31,7 +31,7 @@ You run an underfunded AI safety lab while better-resourced competitors race tow
 - BOOK **[How to Play](docs/PLAYERGUIDE.md)** - Game mechanics and strategy
 - HELP **[Discussions](https://github.com/PipFoweraker/pdoom1/discussions)** - Questions and community
 - GLOBAL **[Website](https://pdoom1.com)** - Guides, community, and updates
-- MAP **[Roadmap](docs/ROADMAP.md)** - Where the game is headed (milestones + quarterly pins)
+- MAP **[Roadmap](docs/ROADMAP.md)** - Where the game is headed (milestones + monthly Themes)
 - **Report a Bug** -- Press **`N`** in-game (or use the on-screen Report Bug button), or [open an issue](https://github.com/PipFoweraker/pdoom1/issues)
 
 ## Community & Contributing
@@ -53,7 +53,7 @@ Learn more: **[Contributor Rewards Program](docs/CONTRIBUTOR_REWARDS.md)**
 Want to contribute or build from source?
 
 - **[Contributing](CONTRIBUTING.md)** - Get started
-- **[Architecture](docs/developer/ARCHITECTURE.md)** - Codebase overview
+- **[Architecture](docs/ARCHITECTURE.md)** - Codebase overview
 - **[Full Changelog](CHANGELOG.md)** - Version history
 
 **Built with Godot 4.5.1** | **Source-available -- see [LICENSE](LICENSE)**
