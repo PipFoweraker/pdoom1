@@ -170,7 +170,15 @@ mounted in `_ready`). Follow it; do not invent a new pattern.
 - Art masters live outside git (G:/tmp staging -> Pip's hosting per
   docs/art/ART_MASTERS_POLICY.md) -- a dependency on non-repo storage,
   accepted deliberately over LFS.
-- enforce_standards still sprays whole-tree unstaged transliteration
-  churn during pre-commit (#773) -- known landmine until fixed.
 - Squash-merge closes-keywords do not auto-close issues here -- check and
   close manually at merge (5 stale-open found 2026-07-22).
+
+**Debt RETIRED (2026-07-25):**
+- enforce_standards whole-tree transliteration churn (#773) -- FIXED via
+  PR #849. Two halves: the pre-commit CHECK was already incremental
+  (`enforce_standards.py --incremental`, read-only, changed-files-only,
+  a274a09d), and `intelligent_ascii_converter.py` is now a report-only DRY
+  RUN by default -- it rewrites files ONLY with an explicit `--apply`
+  (00adece3). The landmine that produced the 2026-07-21/22 worktree-pollution
+  incidents is gone; enforcement is not weakened (detection + CI exit codes
+  unchanged), only the silent whole-tree mutation is now opt-in.
