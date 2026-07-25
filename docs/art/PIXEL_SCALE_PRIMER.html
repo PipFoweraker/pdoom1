@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>P(Doom) Pixel Scale Primer -- from source pixels to your eyeball</title>
+<style>
+  :root {
+    --bg: #14161a; --panel: #1c1f26; --panel2: #22262f;
+    --ink: #d7dae0; --dim: #9aa1ad; --accent: #7fd4a8;
+    --warn: #e0b060; --bad: #d98080; --line: #343a45;
+    --code: #b8e0c8;
+  }
+  html { background: var(--bg); }
+  body {
+    color: var(--ink);
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 17px; line-height: 1.55;
+    max-width: 880px; margin: 0 auto; padding: 2rem 1.2rem 6rem;
+  }
+  h1, h2, h3 { font-family: "Segoe UI", Verdana, sans-serif; line-height: 1.2; }
+  h1 { font-size: 1.7rem; color: #fff; border-bottom: 2px solid var(--accent); padding-bottom: .4rem; }
+  h2 { font-size: 1.3rem; color: var(--accent); margin-top: 2.6rem; border-bottom: 1px solid var(--line); padding-bottom: .25rem;}
+  h3 { font-size: 1.05rem; color: var(--ink); margin-top: 1.8rem; }
+  code, .n {
+    font-family: Consolas, "Courier New", monospace; font-size: .88em;
+    background: var(--panel2); color: var(--code);
+    padding: .08em .35em; border-radius: 3px;
+  }
+  .math {
+    font-family: Consolas, "Courier New", monospace; font-size: .92em;
+    background: var(--panel); border-left: 3px solid var(--accent);
+    padding: .7em 1em; margin: 1em 0; overflow-x: auto; white-space: pre;
+    border-radius: 0 4px 4px 0; color: var(--ink);
+  }
+  table { border-collapse: collapse; margin: 1.2em 0; width: 100%; font-size: .92em;
+          font-family: "Segoe UI", Verdana, sans-serif; }
+  th, td { border: 1px solid var(--line); padding: .45em .6em; text-align: left; vertical-align: top; }
+  th { background: var(--panel2); color: #fff; }
+  td { background: var(--panel); }
+  .good { color: var(--accent); } .warn { color: var(--warn); } .bad { color: var(--bad); }
+  .box {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 6px;
+    padding: 1em 1.2em; margin: 1.4em 0;
+  }
+  .box.rule { border-left: 4px solid var(--accent); }
+  .box.trap { border-left: 4px solid var(--bad); }
+  .dim { color: var(--dim); font-size: .92em; }
+  figure { margin: 1.5em 0; text-align: center; }
+  figcaption { color: var(--dim); font-size: .85em; margin-top: .5em; font-family: "Segoe UI", Verdana, sans-serif; }
+  svg { max-width: 100%; height: auto; }
+  a { color: var(--accent); }
+  .toc { columns: 2; font-family: "Segoe UI", Verdana, sans-serif; font-size: .92em; }
+  .toc a { text-decoration: none; }
+  @media (max-width: 640px) { .toc { columns: 1; } body { font-size: 16px; } }
+</style>
+</head>
+<body>
+
+<p class="dim" style="margin-bottom:-0.5rem; font-family:'Segoe UI',Verdana,sans-serif; letter-spacing:.06em;">P(DOOM) CRAFT PRIMERS</p>
+<h1>Pixel Scale Primer</h1>
+<p class="dim">From a pixel in a PNG to a spot on your retina, with every number in between.
+Written 2026-07-26 against the codebase as it stood that morning; the constants cited
+(<code>SPRITE_SCALE</code> etc.) may drift, but the <em>method</em> -- follow one pixel down the
+whole stack -- is the permanent part. Re-read this before changing tile size, zoom,
+perspective, or art resolution.</p>
+
+<div class="toc box">
+<strong>Contents</strong><br>
+<a href="#stack">1. The stack: one pixel's journey</a><br>
+<a href="#eye">2. The eye math</a><br>
+<a href="#integer">3. Integer scaling, and why 0.91x is a compromise</a><br>
+<a href="#world">4. World proportions: the tile is the unit</a><br>
+<a href="#perspective">5. Perspective: what "low top-down" buys and costs</a><br>
+<a href="#graduations">6. Perspective graduations -- the elevation dial</a><br>
+<a href="#composition">7. Composition and readability at small sizes</a><br>
+<a href="#dials">8. The dials, and what each one costs to turn</a>
+</div>
+
+<h2 id="stack">1. The stack: one pixel's journey</h2>
+
+<p>Nothing about game art scale makes sense as a single number. A sprite passes through
+five distinct coordinate systems between the file on disk and your perception of it,
+and each hop multiplies or divides. The whole craft of "getting zoom right" is making
+those multiplications land on numbers the eye likes.</p>
+
+<figure>
+<svg viewBox="0 0 840 120" role="img" aria-label="Pipeline: source art to scale constants to viewport to monitor to eye">
+  <g font-family="Segoe UI, Verdana, sans-serif" font-size="13" fill="#d7dae0">
+    <rect x="5"   y="30" width="140" height="56" rx="6" fill="#22262f" stroke="#7fd4a8"/>
+    <text x="75"  y="52" text-anchor="middle">SOURCE ART</text>
+    <text x="75"  y="70" text-anchor="middle" fill="#9aa1ad" font-size="11">68x68 px PNG</text>
+    <rect x="175" y="30" width="140" height="56" rx="6" fill="#22262f" stroke="#7fd4a8"/>
+    <text x="245" y="52" text-anchor="middle">GAME SCALE</text>
+    <text x="245" y="70" text-anchor="middle" fill="#9aa1ad" font-size="11">x2 constants</text>
+    <rect x="345" y="30" width="140" height="56" rx="6" fill="#22262f" stroke="#7fd4a8"/>
+    <text x="415" y="52" text-anchor="middle">VIEWPORT</text>
+    <text x="415" y="70" text-anchor="middle" fill="#9aa1ad" font-size="11">1920x1080 canvas</text>
+    <rect x="515" y="30" width="140" height="56" rx="6" fill="#22262f" stroke="#7fd4a8"/>
+    <text x="585" y="52" text-anchor="middle">MONITOR</text>
+    <text x="585" y="70" text-anchor="middle" fill="#9aa1ad" font-size="11">physical mm</text>
+    <rect x="685" y="30" width="140" height="56" rx="6" fill="#22262f" stroke="#7fd4a8"/>
+    <text x="755" y="52" text-anchor="middle">EYE</text>
+    <text x="755" y="70" text-anchor="middle" fill="#9aa1ad" font-size="11">arcminutes</text>
+    <g stroke="#7fd4a8" fill="#7fd4a8">
+      <line x1="145" y1="58" x2="170" y2="58"/><polygon points="170,58 162,54 162,62"/>
+      <line x1="315" y1="58" x2="340" y2="58"/><polygon points="340,58 332,54 332,62"/>
+      <line x1="485" y1="58" x2="510" y2="58"/><polygon points="510,58 502,54 502,62"/>
+      <line x1="655" y1="58" x2="680" y2="58"/><polygon points="680,58 672,54 672,62"/>
+    </g>
+  </g>
+</svg>
+<figcaption>Five systems, four conversions. Change any one stage and every stage
+downstream moves with it.</figcaption>
+</figure>
+
+<h3>The five stages, with our real numbers</h3>
+
+<p><strong>Stage 1 -- source art.</strong> The house standard (set by our PixelLab
+generation convention: <code>create_character</code>, size 64, "low top-down") emits
+<strong>68x68 px</strong> PNGs, of which the opaque subject -- the actual cat or person,
+not the transparent padding -- is roughly 34-50 px tall. Floor tilesets arrive as
+128x128 atlases of <strong>32 px tiles</strong>. One orphan exception: the current office
+worker (<code>artloop_char</code>) is <strong>180x180</strong> with a ~140 px subject, matching
+nothing else in the library. That mismatch caused this morning's giant-person bug,
+and section 3 explains the cleanup plan.</p>
+
+<p><strong>Stage 2 -- game scale constants.</strong> Code multiplies source pixels onto
+the game's canvas. Floor tiles: 32 px source x <code>FLOOR_TILE_SCALE = 2</code> =
+<strong>64 px on the canvas</strong>. That "64 px tile" is the single most important number
+in the whole system -- section 4 builds everything from it. Characters get
+<code>SPRITE_SCALE</code>, cats get their own factor. (That these are scattered constants
+rather than one system is a known limitation; a Camera2D would make this stage a
+single tunable. See section 8.)</p>
+
+<p><strong>Stage 3 -- the virtual viewport.</strong> The game declares a
+<strong>1920x1080</strong> design canvas (<code>project.godot</code>: stretch mode
+<code>canvas_items</code>, aspect <code>expand</code>). Everything in stage 2 is positioned in
+these "virtual pixels". This canvas is what screenshots capture and what all our
+numbers so far live in.</p>
+
+<p><strong>Stage 4 -- the monitor.</strong> The viewport gets stretched to the player's
+actual screen. On a 1080p monitor the mapping is 1:1 -- one virtual pixel is one
+physical pixel. On a 1440p monitor everything is scaled x1.333 uniformly. Physical
+pixel size depends on the panel: a 24-inch 1080p panel has pixels
+<strong>~0.277 mm</strong> wide; a 27-inch 1440p panel <strong>~0.233 mm</strong>. (Worked in
+section 2.)</p>
+
+<p><strong>Stage 5 -- the eye.</strong> What the eye cares about is not millimetres but
+<em>visual angle</em>: how much of your field of view the thing occupies, measured in
+degrees and arcminutes (1 degree = 60 arcminutes). A 20/20 eye resolves detail down
+to about <strong>1 arcminute</strong> -- that is the floor under every readability decision
+we make.</p>
+
+<h3>One number, all the way down</h3>
+
+<p>Follow a 2-tile-tall character (our post-fix target) through every stage, assuming
+a 24-inch 1080p monitor at 60 cm viewing distance:</p>
+
+<div class="math">source subject   ~68 px canvas, subject ~64 px tall  (regenerated at house standard)
+game scale       64 x 2.0            = 128 canvas px   (= exactly 2 floor tiles)
+viewport         128 px of 1080      = 11.9% of screen height
+monitor          128 x 0.277 mm      = ~35 mm tall on the glass
+eye              35.4 / 600 rad      = ~3.4 degrees of visual angle
+per source pixel 2 physical px       = ~0.55 mm = ~3.2 arcminutes  -- comfortably readable</div>
+
+<p>Every design question in this document is some version of: <em>pick the stage,
+do this arithmetic, check the bottom line against what eyes can actually see.</em></p>
+
+<h2 id="eye">2. The eye math</h2>
+
+<p>Two facts about hardware, one about biology, and everything else follows.</p>
+
+<h3>Fact 1: physical pixel size</h3>
+
+<p>A 16:9 monitor's width is its diagonal x 16/&radic;(16&sup2;+9&sup2;) = diagonal x 0.8716.
+Divide by horizontal resolution:</p>
+
+<div class="math">24" 1080p:  609.6 mm x 0.8716 = 531 mm wide / 1920 px = 0.277 mm per px
+27" 1440p:  685.8 mm x 0.8716 = 598 mm wide / 2560 px = 0.233 mm per px</div>
+
+<h3>Fact 2: visual angle at desk distance</h3>
+
+<p>At a typical desktop viewing distance of ~60 cm <span class="dim">(approximate --
+people sit anywhere from 50 to 75 cm)</span>, one physical pixel subtends:</p>
+
+<div class="math">angle = pixel_size / distance   (radians, small-angle)
+24" 1080p:  0.277 / 600 = 4.6e-4 rad = ~1.6 arcminutes
+27" 1440p:  0.233 / 600 = 3.9e-4 rad = ~1.3 arcminutes</div>
+
+<h3>Fact 3: the eye's resolution</h3>
+
+<p>Normal (20/20) acuity resolves about <strong>1 arcminute</strong> of detail. So on common
+desktop setups, <em>a single physical pixel sits just above the threshold of
+perception</em> -- visible as a dot, but carrying almost no shape information. For a
+feature to read as a <em>shape</em> (an eye, a coffee mug handle, a cat's ear) it needs
+to span roughly 2-3 physical pixels minimum.</p>
+
+<div class="box rule">
+<strong>The craft consequences.</strong>
+<ul>
+<li><strong>1 source pixel at x2 = ~3 arcminutes.</strong> This is why pixel art shown at
+2x feels crisp rather than either mushy or strained: each art pixel is a fat,
+clearly-visible chunk, ~3x the eye's threshold.</li>
+<li><strong>A character eye drawn as 1 source pixel</strong> (2 physical px at our scale)
+is at the edge of reading as a feature. Expressions are impossible at in-game scale;
+identity must come from silhouette, palette, and animation. Faces are the hero
+library's job (the SEED_ART_DIRECTION "fidelity split": hero-hardcore for close-ups,
+in-game-cozy for the floor).</li>
+<li><strong>Below ~48 screen px of character height, silhouette carries identity</strong>
+<span class="dim">(craft rule of thumb, not a law)</span>. Our 128 px characters are
+safely above this; our old ~15 px cat was far below it -- it read as a smudge.</li>
+</ul>
+</div>
+
+<h2 id="integer">3. Integer scaling, and why 0.91x is a compromise</h2>
+
+<p>Pixel art has a property photographs don't: every pixel is a deliberate decision,
+and the grid itself is part of the aesthetic. That makes the <em>scale factor</em>
+between source and screen matter enormously.</p>
+
+<h3>Why whole numbers are magic</h3>
+
+<p>Nearest-neighbour scaling (the only correct filter for pixel art -- anything
+smoothing turns crisp art to blur) works by mapping each screen pixel back to
+whichever source pixel it lands on. At <strong>2x</strong>, every source pixel becomes an
+exact 2x2 block: the art is simply bigger, perfectly faithful. At a non-integer
+factor like <strong>1.5x</strong>, the mapping cannot be even: some source pixels become
+2 screen px wide and their neighbours only 1. Straight lines get lumpy. Worse, the
+lumps <em>move</em>: as a sprite walks across the screen, which pixels get doubled
+depends on where the sprite sits on the grid, so edges shimmer and "swim" frame to
+frame. The eye is exquisitely sensitive to that kind of crawling motion.</p>
+
+<figure>
+<svg viewBox="0 0 720 150" role="img" aria-label="Integer versus non-integer scaling diagram">
+  <g font-family="Segoe UI, Verdana, sans-serif" font-size="12" fill="#d7dae0">
+    <text x="10" y="18">Source row (4 px):</text>
+    <g stroke="#343a45">
+      <rect x="180" y="6"  width="16" height="16" fill="#7fd4a8"/>
+      <rect x="196" y="6"  width="16" height="16" fill="#22262f"/>
+      <rect x="212" y="6"  width="16" height="16" fill="#7fd4a8"/>
+      <rect x="228" y="6"  width="16" height="16" fill="#22262f"/>
+    </g>
+    <text x="10" y="63">At 2x -- uniform:</text>
+    <g stroke="#343a45">
+      <rect x="180" y="48" width="32" height="16" fill="#7fd4a8"/>
+      <rect x="212" y="48" width="32" height="16" fill="#22262f"/>
+      <rect x="244" y="48" width="32" height="16" fill="#7fd4a8"/>
+      <rect x="276" y="48" width="32" height="16" fill="#22262f"/>
+    </g>
+    <text x="320" y="63" fill="#7fd4a8">every px doubled -- clean</text>
+    <text x="10" y="108">At 1.5x -- uneven:</text>
+    <g stroke="#343a45">
+      <rect x="180" y="93" width="32" height="16" fill="#7fd4a8"/>
+      <rect x="212" y="93" width="16" height="16" fill="#22262f"/>
+      <rect x="228" y="93" width="32" height="16" fill="#7fd4a8"/>
+      <rect x="260" y="93" width="16" height="16" fill="#22262f"/>
+    </g>
+    <text x="320" y="108" fill="#e0b060">2px, 1px, 2px, 1px -- lumpy, and the lumps crawl when it moves</text>
+  </g>
+</svg>
+<figcaption>The same 4-pixel pattern at 2x and at 1.5x. Non-integer factors cannot
+distribute pixels evenly.</figcaption>
+</figure>
+
+<h3>Downscaling is worse: rows simply vanish</h3>
+
+<p>Scaling <em>down</em> past 1x doesn't squeeze pixels, it <em>deletes</em> them. The
+interim fix for the giant office worker runs the 180 px orphan art at ~0.91x:
+180 rows of source have to land on ~164 rows of screen, so roughly <strong>1 row in
+every 11 is silently dropped</strong>. Which rows drop depends on grid position -- so a
+walking character's outline boils slightly, and hand-placed single-pixel details
+(a tie clip, an eye highlight) can blink out of existence entirely.</p>
+
+<div class="box trap">
+<strong>Honest status of today's fix.</strong> Setting <code>SPRITE_SCALE</code> to ~0.91 on
+the 180 px art chooses <em>correct world size</em> (a 2-tile person) at the cost of
+<em>pixel integrity</em> (dropped rows, mild shimmer). On a small inset office view this
+is an acceptable interim. The clean end-state is already agreed: <strong>regenerate the
+office worker at the 68 px house standard and display at exactly 2x</strong> (= 136 px,
+~2.1 tiles), same as the cats, the cast characters, and the tiles. One art family,
+one integer factor, no orphans.
+</div>
+
+<h3>The stretch layer on top</h3>
+
+<p>There is one more scaling stage you don't control: the player's monitor. Our
+1920x1080 viewport maps 1:1 on a 1080p panel, but on 1440p the OS/engine stretches
+the <em>whole frame</em> x1.333 -- a non-integer factor again. Why is this tolerable
+when per-sprite 1.5x isn't? Because it is <em>global and uniform</em>: everything on
+screen shares the same distortion, nothing shimmers <em>relative to</em> anything else,
+and the sprite never moves across a fixed sampling grid -- the grid moves with the
+frame. It softens the image slightly; it doesn't make it crawl. Games that care to
+the last percent offer integer-scaling display modes with black borders; ours is a
+UI-heavy strategy game and the <code>canvas_items</code> stretch is the right default.
+<span class="dim">Know the layer exists, then stop worrying about it.</span></p>
+
+<h2 id="world">4. World proportions: the tile is the unit</h2>
+
+<p>Stop thinking in pixels for a moment. Inside the game world the natural unit is
+the <strong>floor tile</strong> (64 canvas px). Every object's size should be a deliberate
+number of tiles, because the eye judges scale <em>relationally</em> -- a person is "the
+right size" only relative to the door, the desk, the cat.</p>
+
+<table>
+<tr><th>Thing</th><th>Real world</th><th>In tiles (target)</th><th>Canvas px</th></tr>
+<tr><td>Floor tile</td><td>~0.9 m of floor</td><td>1.0</td><td>64</td></tr>
+<tr><td>Human</td><td>~1.75 m</td><td><strong>2.0</strong></td><td>128</td></tr>
+<tr><td>Desk / table</td><td>~0.75 m</td><td>~1.0</td><td>~64</td></tr>
+<tr><td>Water cooler</td><td>~1.1 m</td><td>~1.3</td><td>~83</td></tr>
+<tr><td>Server rack</td><td>~1.8 m</td><td>~2.0</td><td>~128</td></tr>
+<tr><td>Cat</td><td>~0.3 m standing</td><td><strong>~0.5</strong></td><td>~32</td></tr>
+</table>
+
+<p class="dim">The "2-tile human" is the top-down genre convention (classic RPGs run
+1.5-2 tiles; farm-sim era settled near 2) -- convention, not law, but a strong prior:
+players' eyes are calibrated to it.</p>
+
+<h3>What we had this morning, and why it screamed</h3>
+
+<div class="math">BEFORE (audit numbers)                      AFTER (target)
+human   280 px = 4.4 tiles                  128 px = 2.0 tiles
+cooler   42 px = 0.7 tiles (force-scaled)   ~83 px = 1.3 tiles (manifest height)
+cat      15 px = 0.23 tiles                 ~32 px = 0.5 tiles
+person : cooler = 6.7 : 1                   1.5 : 1  (real world ~1.6 : 1)
+cat : person    = 1 : 19                    1 : 4    (real world ~1 : 6)</div>
+
+<p>No player consciously computes "6.7 cooler-heights"; they just feel <em>doll-house</em>
+-- giants in a miniature room. The ensemble ratio is what reads, which is also why
+fixing only the human without re-proportioning props would still feel wrong: scale
+is a property of the <em>scene</em>, not of any sprite.</p>
+
+<div class="box rule">
+<strong>Where the numbers live going forward.</strong> The prop manifest (in flight)
+records each prop's <code>height_tiles</code> and <code>footprint_tiles</code>, replacing the
+old force-everything-to-46px rule. Character and cat scale reduce to one shared
+"pixels per tile" logic. When your eye disagrees with a number in the compare
+sandbox, change the manifest value -- not a scattered constant.
+</div>
+
+<h3>A tension to keep one eye on: pixel density</h3>
+
+<p>If cats (68 px source, ~34 px subject) display near 1x while humans (68 px source,
+~64 px subject) display at 2x, then a cat's art-pixels are physically <em>half the
+size</em> of a human's art-pixels on screen. Mixed pixel grain is a classic pixel-art
+smell -- it reads as "assets from two different games". Options, in rising effort:
+accept it (small objects get away with finer grain more than large ones do);
+generate small creatures on proportionally smaller canvases so everything displays
+at the same 2x; or treat 1x-vs-2x as a deliberate two-density system (background
+grain vs foreground grain). This is exactly the "pixel-density review" flagged in
+the pre-WS-3 art ramp -- decide it once, write it in the art direction doc, and the
+generation pipeline enforces it thereafter.</p>
+
+<h2 id="perspective">5. Perspective: what "low top-down" buys and costs</h2>
+
+<p>Our art is generated in PixelLab's <strong>"low top-down"</strong> view -- the classic
+3/4 perspective of 2D RPGs and sims. It is worth understanding what that actually
+encodes, because it is baked into every sprite pixel and is therefore the single
+most expensive thing to ever change.</p>
+
+<figure>
+<svg viewBox="0 0 720 200" role="img" aria-label="Side view of the implied camera angle in low top-down perspective">
+  <g font-family="Segoe UI, Verdana, sans-serif" font-size="12" fill="#d7dae0">
+    <line x1="60" y1="160" x2="560" y2="160" stroke="#9aa1ad" stroke-width="2"/>
+    <text x="300" y="180" text-anchor="middle" fill="#9aa1ad">floor</text>
+    <rect x="330" y="90" width="26" height="70" fill="#7fd4a8" opacity="0.85"/>
+    <text x="343" y="82" text-anchor="middle">person</text>
+    <circle cx="120" cy="40" r="10" fill="#e0b060"/>
+    <text x="120" y="24" text-anchor="middle" fill="#e0b060">implied camera</text>
+    <line x1="130" y1="46" x2="330" y2="150" stroke="#e0b060" stroke-dasharray="5,4"/>
+    <line x1="130" y1="44" x2="330" y2="95"  stroke="#e0b060" stroke-dasharray="5,4"/>
+    <path d="M 200 84 A 60 60 0 0 1 208 118" fill="none" stroke="#e0b060"/>
+    <text x="235" y="110" fill="#e0b060">~30-45&deg; down</text>
+    <text x="590" y="100">you see BOTH the top of</text>
+    <text x="590" y="118">the floor AND the front</text>
+    <text x="590" y="136">face of the person</text>
+  </g>
+</svg>
+<figcaption>Low top-down: the camera looks down at roughly 30-45 degrees, so floors
+read as area and objects read as fronts. <span class="dim">(Angle approximate -- pixel
+art fakes it rather than projecting exactly.)</span></figcaption>
+</figure>
+
+<p><strong>What it buys.</strong> Floors become visible area (you can see <em>where things
+are</em> -- essential for an office sim), while characters and props still show their
+recognisable front faces. Verticals are compressed -- a 1.75 m person does not get a
+full 1.75 m worth of pixels, because part of their screen height budget is "spent"
+on the viewing angle -- and that compression is why a 2-tile person over a 1-tile
+floor footprint looks natural rather than stretched.</p>
+
+<p><strong>How the code fakes depth.</strong> Two tricks complete the illusion.
+<em>Feet-anchoring</em>: every object's position is where it touches the floor, so
+its sprite grows upward from a believable ground point (this is the anchor
+convention fixed in today's scale pass -- previously characters were centre-anchored
+and floated). <em>Draw order</em> (y-sort): things lower on screen draw later, so a
+person standing "in front of" a desk correctly covers it. Anchor + draw order is
+the entire 3D engine of a 2D office.</p>
+
+<div class="box trap">
+<strong>The one-way door.</strong> Perspective is not a setting; it is drawn into every
+sprite. Switching to true top-down, side view, or isometric means <em>regenerating
+the entire library</em> -- every character, prop, tile, and animation frame. Palette
+can be shifted cheaply, scale constants are one-line edits, but the camera angle is
+close to a full restart of the art programme. If a different angle ever tempts you,
+prototype it on three sprites in the sandbox before deciding anything. There is one
+honest escape hatch -- cheating the angle for a single entity family rather than the
+scene -- and section 6 is entirely about it.
+</div>
+
+<h2 id="graduations">6. Perspective graduations -- the elevation dial</h2>
+
+<p class="dim">Added after Pip's 2026-07-26 leaning: cats may deserve main-character
+pixel complexity, humans derived from cats -- "even if it means we make the humans
+subtly different in how we scale them" -- because a top-down cat loses "way too much
+potential cuteness, animation detail". This section is the tourist-to-informed-tourist
+tour of what that instinct is actually about.</p>
+
+<h3>The organizing frame: two dials, not one word</h3>
+
+<p>What gets mentally filed as "isometricity" is really a small generator.
+2D games almost never use true perspective projection. They use <strong>parallel
+projection</strong> -- no vanishing points, no size falloff -- which is why a sprite
+can be drawn once and placed anywhere on screen. That leaves exactly <strong>two
+dials</strong>:</p>
+
+<ul>
+<li><strong>ELEVATION</strong> -- 0&deg; side-on to 90&deg; overhead: how far above the
+scene the implied camera sits. This is the dial that matters for cuteness, and the
+one this section walks through.</li>
+<li><strong>AZIMUTH</strong> -- grid square-on (walls horizontal/vertical on screen) vs
+rotated ~45&deg; so you see two faces of everything and the grid becomes
+diamonds.</li>
+</ul>
+
+<p>Every named 2D style is a point in that two-dial space. Once you hold the two
+dials, the zoo of genre labels collapses into coordinates.</p>
+
+<div class="box rule">
+<strong>The dirty secret: almost nobody uses one consistent angle.</strong> Pokemon
+draws its floors from ~75&deg; and its characters nearly front-on -- two incompatible
+camera positions in one frame, and no player in thirty years has complained.
+Per-entity angle cheating is the standard, genre-proven move, and it is the
+technical basis for treating cats differently from furniture.
+</div>
+
+<h3>The graduations, with the same scene at each stop</h3>
+
+<figure>
+<svg viewBox="0 0 840 230" role="img" aria-label="The same desk, human, and cat drawn at five camera elevations">
+  <g font-family="Segoe UI, Verdana, sans-serif" font-size="11" fill="#d7dae0">
+    <!-- panel frames -->
+    <g stroke="#343a45" fill="none">
+      <rect x="4"   y="24" width="158" height="170" rx="4"/>
+      <rect x="172" y="24" width="158" height="170" rx="4"/>
+      <rect x="340" y="24" width="158" height="170" rx="4"/>
+      <rect x="508" y="24" width="158" height="170" rx="4"/>
+      <rect x="676" y="24" width="158" height="170" rx="4"/>
+    </g>
+    <text x="83"  y="16" text-anchor="middle" fill="#7fd4a8">90&deg; overhead</text>
+    <text x="251" y="16" text-anchor="middle" fill="#7fd4a8">~70&deg; high top-down</text>
+    <text x="419" y="16" text-anchor="middle" fill="#7fd4a8">~45&deg; three-quarter</text>
+    <text x="587" y="16" text-anchor="middle" fill="#7fd4a8">"isometric" (2:1)</text>
+    <text x="755" y="16" text-anchor="middle" fill="#7fd4a8">0&deg; side-on</text>
+
+    <!-- 90 overhead: pure plan -->
+    <rect x="24" y="44" width="60" height="36" fill="#8a6d4a"/>
+    <text x="54" y="92" text-anchor="middle" class="dim" fill="#9aa1ad">desk (plan)</text>
+    <circle cx="120" cy="70" r="9" fill="#7fd4a8"/>
+    <ellipse cx="120" cy="70" rx="15" ry="6" fill="none" stroke="#7fd4a8"/>
+    <text x="120" y="96" text-anchor="middle" fill="#9aa1ad">head+shoulders</text>
+    <ellipse cx="60" cy="140" rx="13" ry="9" fill="#9aa1ad"/>
+    <polygon points="50,134 47,126 55,131" fill="#9aa1ad"/>
+    <polygon points="70,134 73,126 65,131" fill="#9aa1ad"/>
+    <text x="60" y="166" text-anchor="middle" fill="#d98080">cat = blob + ears</text>
+
+    <!-- 70 high top-down: JRPG -->
+    <rect x="192" y="48" width="60" height="26" fill="#8a6d4a"/>
+    <rect x="192" y="74" width="60" height="7" fill="#6b543a"/>
+    <circle cx="290" cy="72" r="9" fill="#7fd4a8"/>
+    <rect x="283" y="81" width="14" height="22" fill="#7fd4a8"/>
+    <text x="290" y="118" text-anchor="middle" fill="#9aa1ad">frontal, squat</text>
+    <ellipse cx="225" cy="140" rx="14" ry="8" fill="#9aa1ad"/>
+    <circle cx="238" cy="136" r="5" fill="#9aa1ad"/>
+    <text x="225" y="166" text-anchor="middle" fill="#e0b060">hint of a cat</text>
+
+    <!-- 45 three-quarter: current -->
+    <rect x="360" y="52" width="60" height="18" fill="#8a6d4a"/>
+    <rect x="360" y="70" width="60" height="16" fill="#6b543a"/>
+    <circle cx="458" cy="62" r="9" fill="#7fd4a8"/>
+    <rect x="450" y="71" width="16" height="34" fill="#7fd4a8"/>
+    <text x="458" y="122" text-anchor="middle" fill="#9aa1ad">taller, front+top</text>
+    <ellipse cx="395" cy="142" rx="16" ry="8" fill="#9aa1ad"/>
+    <circle cx="410" cy="136" r="6" fill="#9aa1ad"/>
+    <path d="M 380 140 q -8 -8 -4 -14" fill="none" stroke="#9aa1ad" stroke-width="2"/>
+    <text x="398" y="168" text-anchor="middle" fill="#e0b060">cat-ish (current)</text>
+
+    <!-- isometric: diamond -->
+    <polygon points="588,58 628,78 588,98 548,78" fill="#8a6d4a"/>
+    <polygon points="548,78 588,98 588,112 548,92" fill="#6b543a"/>
+    <polygon points="628,78 588,98 588,112 628,92" fill="#5c4832"/>
+    <text x="588" y="128" text-anchor="middle" fill="#9aa1ad">2:1 diamond top</text>
+    <circle cx="640" cy="140" r="8" fill="#7fd4a8"/>
+    <rect x="633" y="148" width="14" height="28" fill="#7fd4a8"/>
+    <ellipse cx="548" cy="156" rx="15" ry="8" fill="#9aa1ad"/>
+    <circle cx="562" cy="150" r="6" fill="#9aa1ad"/>
+    <text x="588" y="188" text-anchor="middle" fill="#9aa1ad">edges rise 1px per 2px</text>
+
+    <!-- side-on -->
+    <line x1="690" y1="170" x2="826" y2="170" stroke="#9aa1ad" stroke-width="2"/>
+    <rect x="694" y="128" width="44" height="8" fill="#8a6d4a"/>
+    <rect x="697" y="136" width="5" height="34" fill="#6b543a"/>
+    <rect x="730" y="136" width="5" height="34" fill="#6b543a"/>
+    <circle cx="762" cy="106" r="9" fill="#7fd4a8"/>
+    <rect x="755" y="115" width="14" height="40" fill="#7fd4a8"/>
+    <rect x="757" y="155" width="4" height="15" fill="#7fd4a8"/>
+    <rect x="765" y="155" width="4" height="15" fill="#7fd4a8"/>
+    <ellipse cx="806" cy="158" rx="17" ry="8" fill="#9aa1ad"/>
+    <circle cx="821" cy="150" r="6" fill="#9aa1ad"/>
+    <polygon points="818,145 816,139 822,142" fill="#9aa1ad"/>
+    <polygon points="826,146 829,140 823,143" fill="#9aa1ad"/>
+    <path d="M 790 154 q -9 -10 -5 -18" fill="none" stroke="#9aa1ad" stroke-width="2"/>
+    <text x="762" y="188" text-anchor="middle" fill="#7fd4a8">unmistakably cat</text>
+  </g>
+</svg>
+<figcaption>The same desk, human, and cat at five elevations. Shapes are deliberately
+crude -- what matters is what each angle <em>reveals and hides</em>.</figcaption>
+</figure>
+
+<p><strong>90&deg; -- straight overhead</strong> <span class="dim">(Hotline Miami)</span>.
+Maximum floor-plan clarity, maximum tactical readability; characters become heads
+with shoulders. Great for violence-at-a-glance, hopeless for charm.</p>
+
+<p><strong>~70-75&deg; -- high top-down, the JRPG cheat</strong> <span class="dim">(Pokemon,
+Zelda: A Link to the Past)</span>. Floors drawn from nearly overhead; characters drawn
+nearly frontal and squat (big heads, short bodies). This is the most-cheated view in
+games -- the dirty-secret box above, as a whole genre's house style.</p>
+
+<p><strong>~45&deg; -- three-quarter, our current "low top-down"</strong>
+<span class="dim">(Stardew Valley; all 651 triaged P(Doom) sprites)</span>. The
+management-sim sweet spot: floors still read as area, objects show tops <em>and</em>
+fronts, characters get taller and more expressive than at 70&deg;.</p>
+
+<p><strong>"Isometric" -- ~30&deg; elevation + 45&deg; azimuth</strong>
+<span class="dim">(SimCity 2000, Baldur's Gate, RollerCoaster Tycoon)</span>. The grid
+rotates to diamonds. Game "isometric" is almost always the <strong>2:1 dimetric</strong>
+convention: tile edges run exactly 2 px across per 1 px down -- an angle of
+atan(1/2) = 26.57&deg; -- because that stair-step is pixel-perfect with no jaggies.
+The 2:1 ratio was chosen <em>because</em> it renders as clean pixel stairs with no
+jaggies -- <strong>the projection was chosen by the pixels, not the geometry</strong>.
+(True isometric's 30&deg; would need a 1.73:1 ratio that pixels can't draw cleanly.)
+Handsome, spatial, and expensive: diamond tilesets, more complex draw-order, and
+usually 8 walk directions instead of 4.</p>
+
+<p><strong>0&deg; -- side-on</strong> <span class="dim">(every platformer)</span>. Maximum
+character expressiveness -- full profiles, real gaits -- and no floor plan at all: the
+world collapses to a lane. Wrong genre for an office you manage spatially, but the
+reference point for what elevation costs you in charm.</p>
+
+<h3>Why elevation is the cuteness dial -- especially for cats</h3>
+
+<figure>
+<svg viewBox="0 0 560 130" role="img" aria-label="Cat from overhead versus cat from the side">
+  <g font-family="Segoe UI, Verdana, sans-serif" font-size="12" fill="#d7dae0">
+    <rect x="10" y="14" width="250" height="96" rx="4" fill="none" stroke="#343a45"/>
+    <text x="135" y="34" text-anchor="middle" fill="#d98080">from above: blob with ears</text>
+    <ellipse cx="135" cy="70" rx="26" ry="16" fill="#9aa1ad"/>
+    <polygon points="117,58 111,44 125,52" fill="#9aa1ad"/>
+    <polygon points="153,58 159,44 145,52" fill="#9aa1ad"/>
+    <rect x="300" y="14" width="250" height="96" rx="4" fill="none" stroke="#343a45"/>
+    <text x="425" y="34" text-anchor="middle" fill="#7fd4a8">from the side: cat</text>
+    <ellipse cx="420" cy="76" rx="34" ry="14" fill="#9aa1ad"/>
+    <circle cx="456" cy="62" r="12" fill="#9aa1ad"/>
+    <polygon points="449,53 446,42 455,47" fill="#9aa1ad"/>
+    <polygon points="463,53 467,42 458,47" fill="#9aa1ad"/>
+    <path d="M 388 72 q -16 -14 -10 -30" fill="none" stroke="#9aa1ad" stroke-width="4"/>
+    <rect x="398" y="88 " width="5" height="14" fill="#9aa1ad"/>
+    <rect x="412" y="88" width="5" height="14" fill="#9aa1ad"/>
+    <rect x="428" y="88" width="5" height="14" fill="#9aa1ad"/>
+    <rect x="442" y="88" width="5" height="14" fill="#9aa1ad"/>
+  </g>
+</svg>
+<figcaption>The identical animal at two elevations. One is furniture; one is a
+character.</figcaption>
+</figure>
+
+<p>The mechanical rule: <strong>projection punishes entities in proportion to how
+horizontal their long axis is.</strong> A human is vertical -- even at 75&deg; you still
+see a readable person, because the head-shoulders-body stack survives the
+projection. A cat is horizontal -- its identity lives along the axis the camera
+flattens: the arched back, the tail curve, the head-forward stalk. At 75&deg; it
+collapses into an ellipse with ears. <strong>Elevation IS the cuteness dial -- for
+quadrupeds specifically.</strong> That is why the missing cuteness is not a rendering
+problem but a <em>projection</em> problem, and no amount of art effort at the wrong
+elevation buys it back. Walk-cycle detail obeys the same rule: a side-on gait shows
+legs alternating and the spine flexing; an overhead gait shows a blob
+oscillating.</p>
+
+<h3>What each graduation trades</h3>
+
+<table>
+<tr><th>View</th><th>Floor-plan / management readability</th><th>Character expressiveness</th><th>Occlusion complexity</th><th>Walk dirs needed</th><th>Tileset type</th><th>Fits existing library?</th></tr>
+<tr><td>90&deg; overhead</td><td class="good">Best</td><td class="bad">Worst (blobs)</td><td class="good">Trivial</td><td>4 (often fewer)</td><td>Square</td><td class="bad">No -- full regen</td></tr>
+<tr><td>~70&deg; high top-down</td><td class="good">Excellent</td><td class="warn">Good via the frontal cheat</td><td class="good">Simple y-sort</td><td>4</td><td>Square</td><td class="bad">No -- full regen (it is a different drawn angle)</td></tr>
+<tr><td>~45&deg; three-quarter (current)</td><td class="good">Good</td><td class="warn">Moderate</td><td class="good">Simple y-sort</td><td>4 (already have)</td><td>Square (already have)</td><td class="good">Yes -- 100%</td></tr>
+<tr><td>Iso 2:1 (~30&deg; + 45&deg; azimuth)</td><td class="warn">Good but rotated grid</td><td class="warn">Moderate</td><td class="bad">Hard (diamond sort, tall props)</td><td>8 (typically)</td><td class="bad">Diamond 2:1 -- all new</td><td class="bad">No -- full regen + real tilemap work</td></tr>
+<tr><td>0&deg; side-on</td><td class="bad">None (a lane, not a room)</td><td class="good">Best</td><td>n/a</td><td>2 mirrored</td><td>None (platform strips)</td><td class="bad">No -- and wrong genre</td></tr>
+</table>
+
+<p class="dim">"Fits existing library" is the expensive column: a full-scene angle
+change orphans the 651-triaged sprite library, the 15-promoted tileset set, and the
+72 promoted cat-walk frames. That is the number any whole-scene re-angle must argue
+against.</p>
+
+<h3>The cat-anchor decision: three options, ascending cost</h3>
+
+<p><strong>(a) Keep the scene angles; cheat the cats one step more side-on.</strong>
+Floors, props, and humans stay at low top-down; cats get regenerated at a visibly
+lower, more profile-forward angle (PixelLab's view parameter makes this a
+generation setting, not a hand-redraw). This is the standard JRPG mixed-perspective
+move applied one entity-family deep, and <strong>it orphans nothing</strong> -- the rest
+of the 651-triaged library is untouched. It also matches Pip's own phrasing: humans
+end up "subtly different in how we scale them" relative to cats, because cats are
+the ones drawn for charm. Cost: one generation batch (cat families + walk
+cycles).</p>
+
+<p><strong>(b) ...plus cuteness concentrated in close-ups and portraits.</strong> The
+Hades approach: modest field sprites, gorgeous portraits. The floor cat does its
+job at floor scale while charm is delivered through the hero layer -- portrait
+moments, event art, the cat doom-oracle beats, and <code>cat_closeup.png</code>, which
+already exists. Cost on top of (a): near zero, since the hero pipeline already
+runs.</p>
+
+<p><strong>(c) Lower the whole scene toward 45&deg; or below and regenerate
+everything.</strong> Maximum coherence, globally more character-forward -- and it
+orphans the 651-triaged sprite library, the tilesets, and the 72 promoted cat-walk
+frames. This is the section-5 one-way door taken deliberately: a restart of the art
+programme.</p>
+
+<div class="box rule">
+<strong>Recommendation: (a), possibly plus (b) -- essentially all the cuteness for
+roughly 1/20th the cost.</strong> Elevation is the cuteness dial for quadrupeds, so
+close-ups alone can't fix the floor cat; per-entity cheating is genre-proven
+invisible and reversible per-family in a way (c) never is. The one discipline it
+demands: <strong>the decision settles before the #900 round-2 mass generation</strong>,
+or the walk cycles and gap-fill sprites get generated twice. Write the ruling into
+the art direction doc as one sentence -- "cats are drawn one graduation more
+side-on than the scene; humans hold the scene angle" -- and the generation pipeline
+enforces it from then on.
+</div>
+
+<h2 id="composition">7. Composition and readability at small sizes</h2>
+
+<p>Everything above is geometry. This section is the craft layer on top -- how to
+make a 30-pixel-wide thing <em>legible</em>.</p>
+
+<h3>Silhouette first</h3>
+<p>Below ~48 screen px (section 2), identity is carried by outline shape, not
+interior detail. The working test: fill the sprite solid black -- can you still tell
+the water cooler from the filing cabinet, the tabby from the eldritch cat? If not,
+no amount of interior rendering will save it. This is the first gate when triaging
+generated sprites, ahead of "is it pretty".</p>
+
+<h3>Palette density scales with size</h3>
+<p>A 34 px cat has maybe 300 visible pixels; spend them on 4-6 well-separated colours
+and it reads instantly. The same sprite rendered with 20 subtle shades turns to
+noise -- adjacent low-contrast pixels blur together at ~3 arcminutes each. Rule of
+thumb: <em>the smaller the sprite, the fewer and more contrasty its colours.</em> Save
+gradient subtlety for the hero library where a portrait gets 400 px of height. This
+is the mechanical basis of the fidelity split: <strong>in-game-cozy</strong> = few colours,
+strong silhouettes, 68 px grid; <strong>hero-hardcore</strong> = full rendering for
+close-ups where the eye has pixels to spend.</p>
+
+<h3>Contrast against the floor</h3>
+<p>Characters live <em>on top of</em> floor tiles, so their palettes must separate in
+<em>value</em> (light/dark), not just hue, from carpet and lino mid-tones -- value is
+what survives small sizes and peripheral vision. The cheap insurance is the genre's
+1 px dark outline around characters: it buys separation from any floor without
+per-floor tuning, and it is part of the cozy house style already.</p>
+
+<h3>Cluster, don't scatter</h3>
+<p>Five props in a tight desk-cluster read as "a workstation" -- one perceptual
+object. The same five scattered evenly read as clutter and destroy the room's
+legibility (where can I walk? what belongs together?). Compose the office in
+<em>groups with gaps</em>: furniture islands, clear lanes. The eye parses the room by
+its negative space. This becomes doubly true once walk paths exist -- lanes are
+where the cats and staff will visibly travel.</p>
+
+<h3>Animation is detail you get for free</h3>
+<p>A feature too small to draw can still be <em>shown</em>: a 2 px coffee steam wisp
+that moves reads clearly even though a static 2 px wisp would be invisible. Motion
+is the highest-value channel at small sizes -- which is why the walk cycles and idle
+fidgets planned for the office floor will add more perceived life than any amount
+of static detail.</p>
+
+<h2 id="dials">8. The dials, and what each one costs to turn</h2>
+
+<p>Every scale decision in the game, sorted by how expensive it is to change your
+mind later. Cheap dials you can turn on a whim in the sandbox; the bottom row is a
+one-way door.</p>
+
+<table>
+<tr><th>Dial</th><th>Current value</th><th>Where it lives</th><th>Cost to change</th></tr>
+<tr>
+  <td>Character height in tiles</td>
+  <td>2.0 (post-fix)</td>
+  <td><code>SPRITE_SCALE</code> constant</td>
+  <td class="good">Trivial -- one number, instant</td>
+</tr>
+<tr>
+  <td>Per-prop size</td>
+  <td>manifest <code>height_tiles</code> (in flight)</td>
+  <td>prop manifest JSON</td>
+  <td class="good">Trivial per prop -- data edit</td>
+</tr>
+<tr>
+  <td>Tile on-screen size</td>
+  <td>64 px (32 x <code>FLOOR_TILE_SCALE</code> 2)</td>
+  <td>constant</td>
+  <td class="good">Cheap, but reflows the whole room -- retune landmarks/desks after</td>
+</tr>
+<tr>
+  <td>Zoom as a live control</td>
+  <td>none (no Camera2D)</td>
+  <td>would be new code</td>
+  <td class="warn">Medium -- build once, then zoom becomes a free runtime dial</td>
+</tr>
+<tr>
+  <td>Viewport resolution</td>
+  <td>1920x1080, canvas_items/expand</td>
+  <td><code>project.godot</code></td>
+  <td class="warn">Medium -- cheap to set, but every UI layout assumption reflows</td>
+</tr>
+<tr>
+  <td>Art source resolution</td>
+  <td>68 px house standard (one 180 px orphan)</td>
+  <td>generation pipeline</td>
+  <td class="warn">Moderate -- regenerate affected families (PixelLab batch + triage)</td>
+</tr>
+<tr>
+  <td>Pixel-density policy</td>
+  <td>undecided (cats ~1x vs humans 2x tension)</td>
+  <td>art direction doc</td>
+  <td class="warn">Moderate -- a ruling plus regeneration of whichever side loses</td>
+</tr>
+<tr>
+  <td>Palette / outline style</td>
+  <td>cozy house style, 1 px outlines</td>
+  <td>art direction + generation prompts</td>
+  <td class="warn">Moderate -- regenerate affected art; style tags make it batchable</td>
+</tr>
+<tr>
+  <td>Per-entity angle cheat (e.g. cats one step more side-on)</td>
+  <td>undecided -- see section 6</td>
+  <td>generation view parameter, per family</td>
+  <td class="warn">Moderate -- regenerate ONE family; genre-proven invisible; decide before round-2 gen</td>
+</tr>
+<tr>
+  <td>Perspective / camera angle (whole scene)</td>
+  <td>low top-down (~30-45&deg;)</td>
+  <td>baked into every sprite</td>
+  <td class="bad">Near-total -- regenerate the entire library. One-way door.</td>
+</tr>
+</table>
+
+<div class="box rule">
+<strong>How to use this table.</strong> When something on the office floor looks wrong,
+find the <em>cheapest dial that could explain it</em> and turn that first in the
+compare sandbox. Nine times out of ten the answer is a tiles-value or a manifest
+number, not new art. Reserve regeneration asks for when a ruling changes (density,
+palette) -- and treat the bottom row as settled unless you are prepared to restart
+the art programme.
+</div>
+
+<div class="box" style="margin-top:3rem">
+<strong>Why this document exists.</strong> This primer is the first entry in what is
+intended to grow into a small theoretical body of knowledge that reinforces the
+<em>why's</em> behind our ADRs -- the craft reasoning that decision records compress
+away. When a scale, art, or perspective ADR cites a ruling, the derivation should
+live in a primer like this one. No index yet, deliberately; if a second primer
+earns its existence, give the series a home then.
+</div>
+
+<p class="dim" style="margin-top:1.5rem">Verified against: office_floor.gd /
+employee_sprite.gd / office_sandbox.gd audit of 2026-07-26, project.godot stretch
+settings, PixelLab generation manifests, SEED_ART_DIRECTION. Display/vision figures
+(panel geometry, 1-arcminute acuity, 60 cm viewing distance) are standard values;
+distances marked approximate vary by setup. General craft rules (2-tile humans,
+48 px silhouette threshold, palette density) are genre conventions -- strong priors,
+not laws.</p>
+
+</body>
+</html>
