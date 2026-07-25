@@ -66,6 +66,12 @@ var hiring_panel: HiringPanelController
 # upcoming-conferences sections, submit-paper / attend-conference sub-dialogs) -- the last
 # bespoke submenu -- lives in its own view module. main_ui keeps only a _show_travel_submenu() shim.
 var travel_panel: TravelPanelController
+# CARVE 5 (R1, docs/MAIN_UI_SEAM_MAP.md): the ACTION-BAR RENDERING (the flat icon grid + the P9
+# grouped collapsible sections) lives in ActionBarRenderer now -- a variant-ready seam so a
+# dev-mode display variant can plug in with minimal surgery. main_ui keeps a thin
+# _on_actions_available() shim (stores _last_actions for layout flips) and still owns input
+# (_on_dynamic_action_pressed), hover (_on_action_hover), and the shared delegates.
+var action_bar: ActionBarRenderer
 var research_quality_selector  # Issue #500
 var doom_trend_graph  # #512 doom trend sparkline (script-instantiated)
 var doom_breakdown  # #578 colour-coded per-source doom "blow-by-blow" (script-instantiated)
@@ -86,23 +92,10 @@ var _prev_turn_snapshot: Dictionary = {}
 var _last_delta_turn: int = -1
 const _DELTA_GOOD := Color(0.35, 0.85, 0.40)
 const _DELTA_BAD := Color(0.95, 0.30, 0.25)
-# P9 proposed-layout category headers: each grouping renders with its accent colour PLUS a
-# real navigation icon (was falling through IconLoader.get_action_icon(category_key) -> neon
-# placeholder, since a category key is not an action id). Single source for the mapping; loads
-# are guarded so a missing file degrades to no-icon, never a crash. (influence/other are
-# stand-ins pending #795.)
-const CATEGORY_HEADER_ICONS := {
-	"hiring": "res://assets/icons/main_navigation/ui_staff_management_64.png",
-	"resources": "res://assets/icons/main_navigation/ui_guide_resources_64.png",
-	"research": "res://assets/icons/main_navigation/ui_research_tech_64.png",
-	"funding": "res://assets/icons/main_navigation/ui_budget_finance_64.png",
-	"management": "res://assets/icons/main_navigation/ui_governance_oversight_64.png",
-	"influence": "res://assets/icons/main_navigation/ui_guide_objective_64.png",
-	"strategic": "res://assets/icons/main_navigation/ui_guide_strategy_64.png",
-	"other": "res://assets/icons/main_navigation/ui_guide_book_64.png",
-}
-var _seen_unlocked_actions: Dictionary = {}  # #578: action ids seen unlocked, to detect NEW unlocks for fanfare
-var _actions_primed: bool = false  # skip fanfare on the very first action population (baseline)
+# CARVE 5 (R1): the action-bar render config + new-unlock tracking (CATEGORY_HEADER_ICONS,
+# COMING_SOON_*, HIDDEN_FROM_ACTION_BAR_IDS, _seen_unlocked_actions, _actions_primed) moved into
+# ActionBarRenderer with the rendering that used them. FIRST_LEVER_* stays here -- it drives the
+# cold-open nudge (_apply_first_lever_nudge), which is view-owned, not render config.
 var current_turn_phase: String = "NOT_STARTED"
 
 # First-lever nudge (#801 cold-open handoff). When GameConfig.show_first_lever_hint is set
@@ -113,27 +106,9 @@ const FIRST_LEVER_ACTION_ID := "hire_staff"
 const FIRST_LEVER_HINT_TEXT := "Advisor: doom is rising -- hire a researcher to lower it (the glowing button)."
 var _first_lever_pulse_tween: Tween
 
-# Right-size the promise (hiring rightsize pass): "advertise" currently spawns candidates
-# with a RANDOM specialization -- it over-promises a targeted role. Real fix (spawn
-# role-interested candidates) is a forking mechanic for a later patch, so grey the button
-# out and label it coming-soon everywhere it renders (action bar + hiring submenu) instead
-# of shipping a button that lies about what it does.
-const COMING_SOON_ACTION_IDS := ["advertise"]
-const COMING_SOON_TOOLTIP_SUFFIX := " -- COMING SOON (spawns a random specialization for now; targeted-role hiring is not available yet)"
-
-# "Interview a Candidate" / "Make an Offer" were meant as per-candidate STEPS in the
-# recruitment epic ("interview [candidate]", "offer to [candidate]"), never standalone
-# generic verbs -- the target is chosen at random by the underlying no-target menu
-# drivers (interview_next / hire_best, see actions.gd), which reads as confusing/
-# stateless from the player-facing action bar. The per-candidate hiring submenu panel
-# (HiringPanelController._build_candidate_card) already binds Interview/Make Offer to a
-# specific candidate correctly, so hide the generic drivers from the action list and steer
-# players to that panel instead. The action ids stay wired in core.json / actions.gd --
-# bots and tests still exercise interview_next/hire_best directly.
-# office_maintenance (v0.13.1): charged $5000 and did nothing (no handler, promised a "morale"
-# non-stat). Pip's ruling -- take it OFF the board but keep it replay-safe: it stays in
-# operations.json so execute_action still resolves the id for old replays; only the bar hides it.
-const HIDDEN_FROM_ACTION_BAR_IDS := ["interview_next", "hire_best", "office_maintenance"]
+# CARVE 5 (R1): COMING_SOON_ACTION_IDS / COMING_SOON_TOOLTIP_SUFFIX / HIDDEN_FROM_ACTION_BAR_IDS
+# moved into ActionBarRenderer (they are action-bar RENDER config -- grey-out + hidden ids -- used
+# only by the rendering that now lives there).
 
 # P0 feed filter (playtest 2026-07-17): the arxiv/technical-research flavour deck floods the
 # feed. Each logged line is recorded here with its channel; the "flavour" channel is hidden
@@ -178,6 +153,13 @@ func _ready():
 	# upcoming-conferences sections, submit-paper / attend-conference sub-dialogs). It composes
 	# this view's shared shell + cost helpers.
 	travel_panel = TravelPanelController.new(self)
+
+	# CARVE 5 (R1): stand up the action-bar renderer (flat icon grid + P9 grouped sections). It
+	# composes this view: reads actions_list / game_manager / _ui_layout, wires each button's press
+	# to _on_dynamic_action_pressed and hover to _on_action_hover, and calls back for upgrades /
+	# first-lever nudge / strategic-unlock fanfare. Variant-ready: a dev-mode display variant plugs
+	# into render()'s layout dispatch (see action_bar_renderer.gd VARIANT PLUG POINT).
+	action_bar = ActionBarRenderer.new(self)
 
 	# P0 rage-quit friction (playtest 2026-07-17): during a run, a window-close (X / Alt+F4)
 	# should return to the Main Menu instead of quitting straight to desktop. We take over the
@@ -1279,186 +1261,14 @@ func _on_rivals_filter_changed(hide_rivals: bool) -> void:
 	_render_feed()
 
 func _on_actions_available(actions: Array):
-	"""Populate action list with icon buttons in a grid layout"""
-	print("[MainUI] Populating ", actions.size(), " actions as icon buttons")
-
+	"""CARVE 5 (R1, docs/MAIN_UI_SEAM_MAP.md): thin view shim. The action-bar RENDERING lives in
+	ActionBarRenderer now; the view keeps only _last_actions (so a live A/B layout flip can
+	re-render the same payload -- see _apply_ui_layout) and forwards to the renderer. Input
+	(_on_dynamic_action_pressed), hover (_on_action_hover), upgrades, the first-lever nudge and the
+	strategic-unlock fanfare stay in the view and are called back through host."""
 	# Remember the payload so a live layout flip can re-render the hand (P9).
 	_last_actions = actions
-
-	# Clear existing action buttons
-	for child in actions_list.get_children():
-		child.queue_free()
-
-	# Get current state for affordability and unlock checking
-	var current_state = game_manager.get_game_state()
-
-	# Filter actions by unlock status (Issue #415: Action Discovery)
-	var unlocked_count = 0
-	var locked_count = 0
-
-	# Group actions by category, filtering out locked actions
-	var categories = {}
-	var unlocked_ids := {}  # #578: track which ids are unlocked this pass (for new-unlock fanfares)
-	for action in actions:
-		# Right-size the promise: interview_next/hire_best are no-target menu drivers that
-		# pick a candidate at random -- never show them as generic action-bar items, the
-		# per-candidate hiring submenu is the correct path (see HIDDEN_FROM_ACTION_BAR_IDS).
-		if HIDDEN_FROM_ACTION_BAR_IDS.has(action.get("id", "")):
-			continue
-
-		# Check if action is unlocked based on game state
-		if not GameActions.is_action_unlocked(action, current_state):
-			locked_count += 1
-			continue  # Skip locked actions - they won't be shown
-
-		unlocked_count += 1
-		unlocked_ids[action.get("id", "")] = true
-		var category = action.get("category", "other")
-		if not categories.has(category):
-			categories[category] = []
-		categories[category].append(action)
-
-	if locked_count > 0:
-		print("[MainUI] Action Discovery: %d unlocked, %d locked (hidden)" % [unlocked_count, locked_count])
-
-	# #578: momentous-unlock fanfare. When Strategic Moves first becomes available, fade a
-	# Civ-style reveal up over the screen instead of the button just silently appearing.
-	# This is the ONE wired proof trigger; the same FanfarePopup API can front other unlocks.
-	if _actions_primed and unlocked_ids.has("strategic") and not _seen_unlocked_actions.has("strategic"):
-		_show_strategic_unlock_fanfare()
-	for id in unlocked_ids:
-		_seen_unlocked_actions[id] = true
-	_actions_primed = true
-
-	# Define category order
-	var category_order = ["hiring", "resources", "research", "funding", "management", "influence", "strategic", "other"]
-
-	# Define category colors
-	var category_colors = {
-		"hiring": ThemeManager.get_category_color("hiring"),
-		"resources": ThemeManager.get_category_color("resources"),
-		"research": ThemeManager.get_category_color("research"),
-		"management": ThemeManager.get_category_color("management"),
-		"influence": ThemeManager.get_category_color("influence"),
-		"strategic": ThemeManager.get_category_color("strategic"),
-		"funding": ThemeManager.get_category_color("funding"),
-		"other": Color(0.8, 0.8, 0.8)
-	}
-
-	# P9 (proposed layout): render the hand GROUPED -- one collapsible category section per the
-	# ABBBCCC sketch -- instead of the flat concatenated icon column. Classic falls through to the
-	# untouched flat renderer below, so it stays pixel-identical.
-	if _ui_layout == "proposed":
-		_render_actions_grouped(categories, category_order, category_colors, current_state)
-		_populate_upgrades()
-		return
-
-	# Create a single-column vertical stack for icons on left edge
-	var icon_stack = VBoxContainer.new()
-	icon_stack.add_theme_constant_override("separation", 1)  # #594: tighter vertical packing for 11+ icons
-	icon_stack.alignment = BoxContainer.ALIGNMENT_BEGIN  # P2/#768: pack to the top, no vertical float
-	actions_list.add_child(icon_stack)
-
-	# Create icon buttons - single column layout
-	var action_index = 0  # Track index for keyboard shortcuts
-
-	for category_key in category_order:
-		if not categories.has(category_key):
-			continue
-
-		var category_actions = categories[category_key]
-		if category_actions.is_empty():
-			continue
-
-		# Create icon buttons for actions in this category
-		for action in category_actions:
-			var action_id = action.get("id", "")
-			var action_name = action.get("name", "Unknown")
-			var action_cost = action.get("costs", {})
-			var is_coming_soon: bool = COMING_SOON_ACTION_IDS.has(action_id)
-
-			# Create icon-only button (square, fills width)
-			var icon_button = Button.new()
-			icon_button.custom_minimum_size = Vector2(70, 70)  # square icon tiles
-			# #594: hug the 70px icon instead of ballooning across the wide left panel -- this
-			# reclaims the empty padding around each icon (and stops expand_icon distorting them).
-			# P2/#768: bind to the LEFT (was SHRINK_CENTER) so icons pack against the column edge
-			# instead of floating centred with wide side margins (Pip's "white gaps" complaint).
-			icon_button.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
-			icon_button.focus_mode = Control.FOCUS_NONE
-
-			# Get icon texture
-			var icon_texture = IconLoader.get_action_icon(action_id)
-			if icon_texture:
-				icon_button.icon = icon_texture
-				icon_button.expand_icon = true
-				icon_button.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
-
-			# Add keyboard shortcut number badge (prominent for discoverability), unless the
-			# button is coming-soon -- badge that slot with "SOON" instead so the greyed-out
-			# state is visible without hovering for the tooltip.
-			if is_coming_soon:
-				icon_button.text = "SOON"
-				icon_button.add_theme_font_size_override("font_size", 10)
-				icon_button.add_theme_color_override("font_color", Color(0.85, 0.85, 0.85, 1))
-				icon_button.add_theme_color_override("font_outline_color", Color(0, 0, 0, 1))
-				icon_button.add_theme_constant_override("outline_size", 2)
-			elif action_index < 9:
-				icon_button.text = str(action_index + 1)
-				icon_button.add_theme_font_size_override("font_size", 14)  # Increased from 9
-				icon_button.add_theme_color_override("font_color", Color(1, 1, 1, 1))  # Full opacity
-				icon_button.add_theme_color_override("font_outline_color", Color(0, 0, 0, 1))
-				icon_button.add_theme_constant_override("outline_size", 2)
-
-			action_index += 1
-
-			# Check if player can afford this action
-			var can_afford = true
-			var missing_resources = []
-
-			for resource in action_cost.keys():
-				var cost = action_cost[resource]
-				var available = current_state.get(resource, 0)
-
-				if available < cost:
-					can_afford = false
-					missing_resources.append("%s (need %s, have %s)" % [resource, cost, available])
-
-			# Style based on affordability and category. Coming-soon always wins: it's
-			# disabled regardless of whether the player could otherwise afford it.
-			if is_coming_soon:
-				icon_button.disabled = true
-				icon_button.modulate = Color(0.35, 0.35, 0.35)  # Darker gray than plain unaffordable
-			elif not can_afford:
-				icon_button.disabled = true
-				icon_button.modulate = Color(0.4, 0.4, 0.4)  # Dark gray for unaffordable
-			else:
-				# Apply category color tint
-				var button_color = category_colors.get(category_key, Color(1.0, 1.0, 1.0))
-				icon_button.modulate = Color(0.9, 0.9, 0.9).lerp(button_color, 0.4)
-
-			# Simple tooltip for accessibility
-			icon_button.tooltip_text = (action_name + COMING_SOON_TOOLTIP_SUFFIX) if is_coming_soon else action_name
-
-			# Tag with action_id so submenus can align to the button that opened them (#510)
-			icon_button.set_meta("action_id", action_id)
-
-			# Connect button press
-			icon_button.pressed.connect(func(): _on_dynamic_action_pressed(action_id, action_name))
-
-			# Connect mouse hover for info bar
-			icon_button.mouse_entered.connect(func(): _on_action_hover(action, can_afford, missing_resources))
-			icon_button.mouse_exited.connect(func(): _on_action_unhover())
-
-			# Add to stack
-			icon_stack.add_child(icon_button)
-
-	# Also populate upgrades
-	_populate_upgrades()
-
-	# #801: re-apply the first-lever pulse each rebuild (buttons are recreated above, so a
-	# tween on the old button would dangle). No-op unless the cold-open set the flag.
-	_apply_first_lever_nudge()
+	action_bar.render(actions)
 
 ## #801 cold-open handoff: pulse the hire button and point the hint at the lever.
 ## Guarded + minimal -- does nothing unless GameConfig.show_first_lever_hint is set.
@@ -1486,101 +1296,6 @@ func _clear_first_lever_nudge() -> void:
 	if _first_lever_pulse_tween != null and _first_lever_pulse_tween.is_valid():
 		_first_lever_pulse_tween.kill()
 	_first_lever_pulse_tween = null
-func _render_actions_grouped(categories: Dictionary, category_order: Array, category_colors: Dictionary, current_state: Dictionary) -> void:
-	"""P9 grouped hand (proposed layout only): each category is one A-header that expands/collapses
-	a B-list of its actions -- Pip's ABBBCCC sketch as inline collapsible sections. Fewer top-level
-	entries, real grouping, hiring folded into its own category (fixes D3/D4). The C context stays
-	the shared InfoBar on hover. VIEW-only: same press/hover handlers as the flat renderer."""
-	var stack := VBoxContainer.new()
-	stack.add_theme_constant_override("separation", 3)
-	stack.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	actions_list.add_child(stack)
-
-	var display_names := {
-		"hiring": "Hiring", "resources": "Resources", "research": "Research",
-		"funding": "Funding", "management": "Management", "influence": "Influence",
-		"strategic": "Strategic", "other": "Other",
-	}
-
-	for category_key in category_order:
-		if not categories.has(category_key):
-			continue
-		var category_actions: Array = categories[category_key]
-		if category_actions.is_empty():
-			continue
-		var accent: Color = category_colors.get(category_key, Color(0.8, 0.8, 0.8))
-		var label_name: String = display_names.get(category_key, String(category_key).capitalize())
-
-		# B-list built first so the header's toggle closure can capture it.
-		var blist := VBoxContainer.new()
-		blist.add_theme_constant_override("separation", 1)
-		blist.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-
-		# A-header: category name + count, toggles the B-list open/closed.
-		var header := Button.new()
-		header.toggle_mode = true
-		header.button_pressed = true
-		header.focus_mode = Control.FOCUS_NONE
-		header.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		header.alignment = HORIZONTAL_ALIGNMENT_LEFT
-		# Category header icon: pull the mapped navigation icon (not IconLoader, which keys on
-		# action ids and returned the neon placeholder for a category key). Guard the load so a
-		# missing asset degrades to an icon-less (but still colour-coded) header, never a crash.
-		var cat_icon_path: String = CATEGORY_HEADER_ICONS.get(category_key, "")
-		if cat_icon_path != "" and ResourceLoader.exists(cat_icon_path):
-			var cat_icon := load(cat_icon_path) as Texture2D
-			if cat_icon:
-				header.icon = cat_icon
-		header.text = "v %s (%d)" % [label_name, category_actions.size()]
-		header.add_theme_color_override("font_color", accent)
-		header.tooltip_text = "Show / hide %s actions" % label_name
-		header.toggled.connect(func(on: bool):
-			blist.visible = on
-			header.text = "%s %s (%d)" % ["v" if on else ">", label_name, category_actions.size()])
-		stack.add_child(header)
-		stack.add_child(blist)
-
-		for action in category_actions:
-			var action_id: String = action.get("id", "")
-			var action_name: String = action.get("name", "Unknown")
-			var action_cost: Dictionary = action.get("costs", {})
-			var is_coming_soon: bool = COMING_SOON_ACTION_IDS.has(action_id)
-
-			# Affordability -- same rule as the flat renderer.
-			var can_afford := true
-			var missing_resources := []
-			for resource in action_cost.keys():
-				var cost = action_cost[resource]
-				var available = current_state.get(resource, 0)
-				if available < cost:
-					can_afford = false
-					missing_resources.append("%s (need %s, have %s)" % [resource, cost, available])
-
-			var row := Button.new()
-			row.focus_mode = Control.FOCUS_NONE
-			row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-			row.alignment = HORIZONTAL_ALIGNMENT_LEFT
-			row.clip_text = true
-			row.text = ("  " + action_name + " [SOON]") if is_coming_soon else ("  " + action_name)
-			var icon_texture := IconLoader.get_action_icon(action_id)
-			if icon_texture:
-				row.icon = icon_texture
-			row.set_meta("action_id", action_id)  # submenu alignment (#510) + button lookup
-			# Coming-soon always wins: disabled regardless of affordability (see FIRST_LEVER
-			# block above for the "advertise" over-promise this right-sizes).
-			if is_coming_soon:
-				row.disabled = true
-				row.modulate = Color(0.35, 0.35, 0.35)
-			elif not can_afford:
-				row.disabled = true
-				row.modulate = Color(0.4, 0.4, 0.4)
-			else:
-				row.modulate = Color(0.9, 0.9, 0.9).lerp(accent, 0.4)
-			row.tooltip_text = (action_name + COMING_SOON_TOOLTIP_SUFFIX) if is_coming_soon else action_name
-			row.pressed.connect(func(): _on_dynamic_action_pressed(action_id, action_name))
-			row.mouse_entered.connect(func(): _on_action_hover(action, can_afford, missing_resources))
-			row.mouse_exited.connect(func(): _on_action_unhover())
-			blist.add_child(row)
 
 func _populate_upgrades():
 	"""Populate upgrades list"""
