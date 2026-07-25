@@ -15,15 +15,16 @@ Exit codes:
     1 - Validation errors found
 """
 
+import argparse
 import json
 import sys
-from pathlib import Path
 from datetime import datetime
-from typing import List, Dict, Tuple, Optional
-import argparse
+from pathlib import Path
+from typing import Dict, List, Optional, Tuple
+
 try:
-    import jsonschema
     from jsonschema import Draft7Validator
+
     HAS_JSONSCHEMA = True
 except ImportError:
     HAS_JSONSCHEMA = False
@@ -31,12 +32,13 @@ except ImportError:
 
 class Colors:
     """ANSI color codes for terminal output"""
-    GREEN = '\033[92m'
-    RED = '\033[91m'
-    YELLOW = '\033[93m'
-    BLUE = '\033[94m'
-    RESET = '\033[0m'
-    BOLD = '\033[1m'
+
+    GREEN = "\033[92m"
+    RED = "\033[91m"
+    YELLOW = "\033[93m"
+    BLUE = "\033[94m"
+    RESET = "\033[0m"
+    BOLD = "\033[1m"
 
 
 # Cache for loaded schemas
@@ -53,7 +55,7 @@ def load_schema(schema_name: str) -> Optional[Dict]:
         return None
 
     try:
-        with open(schema_path, 'r', encoding='utf-8') as f:
+        with open(schema_path, "r", encoding="utf-8") as f:
             schema = json.load(f)
         _SCHEMA_CACHE[schema_name] = schema
         return schema
@@ -67,7 +69,9 @@ def validate_with_schema(data: Dict, schema_name: str, file_path: Path) -> List[
     errors = []
 
     if not HAS_JSONSCHEMA:
-        errors.append(f"{file_path.name}: jsonschema library not installed, skipping schema validation")
+        errors.append(
+            f"{file_path.name}: jsonschema library not installed, skipping schema validation"
+        )
         return errors
 
     schema = load_schema(schema_name)
@@ -82,9 +86,7 @@ def validate_with_schema(data: Dict, schema_name: str, file_path: Path) -> List[
         for error in validation_errors:
             # Build path to the error
             path = ".".join(str(p) for p in error.path) if error.path else "root"
-            errors.append(
-                f"{file_path.name}/{path}: {error.message}"
-            )
+            errors.append(f"{file_path.name}/{path}: {error.message}")
     except Exception as e:
         errors.append(f"{file_path.name}: Schema validation failed: {e}")
 
@@ -95,7 +97,7 @@ def validate_json_file(file_path: Path) -> Tuple[bool, List[str]]:
     """Validate that a file contains valid JSON"""
     errors = []
     try:
-        with open(file_path, 'r', encoding='utf-8') as f:
+        with open(file_path, "r", encoding="utf-8") as f:
             json.load(f)
         return True, []
     except json.JSONDecodeError as e:
@@ -109,24 +111,28 @@ def validate_json_file(file_path: Path) -> Tuple[bool, List[str]]:
 def validate_timeline_event(event: Dict, year_file: Path) -> List[str]:
     """Validate a single timeline event"""
     errors = []
-    event_id = event.get('event_id', 'unknown')
+    event_id = event.get("event_id", "unknown")
 
     # Required fields
     required_fields = [
-        'event_id', 'trigger_date', 'type', 'name', 'description',
-        'game_effect', 'historical_fact', 'source'
+        "event_id",
+        "trigger_date",
+        "type",
+        "name",
+        "description",
+        "game_effect",
+        "historical_fact",
+        "source",
     ]
 
     for field in required_fields:
         if field not in event:
-            errors.append(
-                f"{year_file.name}/{event_id}: Missing required field '{field}'"
-            )
+            errors.append(f"{year_file.name}/{event_id}: Missing required field '{field}'")
 
     # Validate date format
-    if 'trigger_date' in event:
+    if "trigger_date" in event:
         try:
-            datetime.fromisoformat(event['trigger_date'])
+            datetime.fromisoformat(event["trigger_date"])
         except ValueError:
             errors.append(
                 f"{year_file.name}/{event_id}: Invalid date format "
@@ -135,28 +141,28 @@ def validate_timeline_event(event: Dict, year_file: Path) -> List[str]:
 
     # Validate event type
     valid_types = [
-        'paper_publication', 'conference', 'org_founding',
-        'funding', 'capability', 'governance'
+        "paper_publication",
+        "conference",
+        "org_founding",
+        "funding",
+        "capability",
+        "governance",
     ]
-    if event.get('type') not in valid_types:
+    if event.get("type") not in valid_types:
         errors.append(
             f"{year_file.name}/{event_id}: Invalid type '{event.get('type')}' "
             f"(must be one of {valid_types})"
         )
 
     # Validate game_effect structure
-    if 'game_effect' in event:
-        effect = event['game_effect']
+    if "game_effect" in event:
+        effect = event["game_effect"]
         if not isinstance(effect, dict):
-            errors.append(
-                f"{year_file.name}/{event_id}: 'game_effect' must be a dictionary"
-            )
+            errors.append(f"{year_file.name}/{event_id}: 'game_effect' must be a dictionary")
 
     # Validate source URL
-    if 'source' in event and not event['source'].startswith('http'):
-        errors.append(
-            f"{year_file.name}/{event_id}: 'source' must be a valid URL"
-        )
+    if "source" in event and not event["source"].startswith("http"):
+        errors.append(f"{year_file.name}/{event_id}: 'source' must be a valid URL")
 
     return errors
 
@@ -170,36 +176,33 @@ def validate_timeline_file(file_path: Path) -> List[str]:
     if not valid_json:
         return json_errors
 
-    with open(file_path, 'r', encoding='utf-8') as f:
+    with open(file_path, "r", encoding="utf-8") as f:
         data = json.load(f)
 
     # Validate top-level structure
-    if 'year' not in data:
+    if "year" not in data:
         errors.append(f"{file_path.name}: Missing 'year' field")
 
-    if 'default_timeline_events' not in data:
+    if "default_timeline_events" not in data:
         errors.append(f"{file_path.name}: Missing 'default_timeline_events'")
 
     # Validate year matches filename
-    if 'year' in data:
+    if "year" in data:
         expected_year = int(file_path.stem)
-        if data['year'] != expected_year:
+        if data["year"] != expected_year:
             errors.append(
-                f"{file_path.name}: Year mismatch "
-                f"(file: {expected_year}, data: {data['year']})"
+                f"{file_path.name}: Year mismatch " f"(file: {expected_year}, data: {data['year']})"
             )
 
     # Validate each event
-    for event in data.get('default_timeline_events', []):
+    for event in data.get("default_timeline_events", []):
         errors.extend(validate_timeline_event(event, file_path))
 
     # Validate background events if present
-    if 'background_events' in data:
-        for event in data['background_events']:
-            if 'event_id' not in event or 'date' not in event:
-                errors.append(
-                    f"{file_path.name}: Background event missing id or date"
-                )
+    if "background_events" in data:
+        for event in data["background_events"]:
+            if "event_id" not in event or "date" not in event:
+                errors.append(f"{file_path.name}: Background event missing id or date")
 
     return errors
 
@@ -213,11 +216,22 @@ def validate_researcher_file(file_path: Path) -> List[str]:
     if not valid_json:
         return json_errors
 
-    with open(file_path, 'r', encoding='utf-8') as f:
+    with open(file_path, "r", encoding="utf-8") as f:
         data = json.load(f)
 
+    # Not every *.json in godot/data/researchers is a researcher roster. quirks.json is a
+    # quirk CATALOGUE (top-level 'quirks'), not a researcher list, so validating it against
+    # researcher.schema.json (which requires top-level 'researchers') hard-fails every PR.
+    # Skip any file that lacks a top-level 'researchers' key -- it is not a researcher file.
+    if not isinstance(data, dict) or "researchers" not in data:
+        print(
+            f"{Colors.YELLOW}  Skipping non-researcher file {file_path.name} "
+            f"(no top-level 'researchers' key){Colors.RESET}"
+        )
+        return errors
+
     # Use JSON Schema validation if available
-    schema_errors = validate_with_schema(data, 'researcher', file_path)
+    schema_errors = validate_with_schema(data, "researcher", file_path)
     if schema_errors:
         errors.extend(schema_errors)
         # If schema validation passed, skip legacy checks
@@ -225,24 +239,30 @@ def validate_researcher_file(file_path: Path) -> List[str]:
             return errors
 
     # Legacy validation (fallback if schema unavailable)
-    if 'researchers' not in data:
+    if "researchers" not in data:
         errors.append(f"{file_path.name}: Missing 'researchers' array")
         return errors
 
-    for researcher in data.get('researchers', []):
-        researcher_id = researcher.get('id', 'unknown')
+    for researcher in data.get("researchers", []):
+        researcher_id = researcher.get("id", "unknown")
 
         # Required fields
-        required = ['id', 'name', 'specialization']
+        required = ["id", "name", "specialization"]
         for field in required:
             if field not in researcher:
-                errors.append(
-                    f"{file_path.name}/{researcher_id}: Missing required field '{field}'"
-                )
+                errors.append(f"{file_path.name}/{researcher_id}: Missing required field '{field}'")
 
         # Validate specialization
-        valid_specs = ['safety', 'capabilities', 'interpretability', 'alignment', 'governance', 'policy', 'theory']
-        if researcher.get('specialization') not in valid_specs:
+        valid_specs = [
+            "safety",
+            "capabilities",
+            "interpretability",
+            "alignment",
+            "governance",
+            "policy",
+            "theory",
+        ]
+        if researcher.get("specialization") not in valid_specs:
             errors.append(
                 f"{file_path.name}/{researcher_id}: Invalid specialization "
                 f"(must be one of {valid_specs})"
@@ -260,11 +280,11 @@ def validate_organization_file(file_path: Path) -> List[str]:
     if not valid_json:
         return json_errors
 
-    with open(file_path, 'r', encoding='utf-8') as f:
+    with open(file_path, "r", encoding="utf-8") as f:
         data = json.load(f)
 
     # Use JSON Schema validation if available
-    schema_errors = validate_with_schema(data, 'organization', file_path)
+    schema_errors = validate_with_schema(data, "organization", file_path)
     if schema_errors:
         errors.extend(schema_errors)
         # If schema validation passed, skip legacy checks
@@ -272,27 +292,24 @@ def validate_organization_file(file_path: Path) -> List[str]:
             return errors
 
     # Legacy validation (fallback if schema unavailable)
-    if 'organizations' not in data:
+    if "organizations" not in data:
         errors.append(f"{file_path.name}: Missing 'organizations' array")
         return errors
 
-    for org in data.get('organizations', []):
-        org_id = org.get('id', 'unknown')
+    for org in data.get("organizations", []):
+        org_id = org.get("id", "unknown")
 
         # Required fields
-        required = ['id', 'name', 'type', 'description']
+        required = ["id", "name", "type", "description"]
         for field in required:
             if field not in org:
-                errors.append(
-                    f"{file_path.name}/{org_id}: Missing required field '{field}'"
-                )
+                errors.append(f"{file_path.name}/{org_id}: Missing required field '{field}'")
 
         # Validate type
-        valid_types = ['safety', 'frontier', 'governance', 'academic', 'nonprofit']
-        if org.get('type') not in valid_types:
+        valid_types = ["safety", "frontier", "governance", "academic", "nonprofit"]
+        if org.get("type") not in valid_types:
             errors.append(
-                f"{file_path.name}/{org_id}: Invalid type "
-                f"(must be one of {valid_types})"
+                f"{file_path.name}/{org_id}: Invalid type " f"(must be one of {valid_types})"
             )
 
     return errors
@@ -313,7 +330,7 @@ def run_validation(verbose: bool = False) -> Tuple[int, int, List[str]]:
     print(f"{Colors.BLUE}Validating timeline events...{Colors.RESET}")
     timeline_dirs = [
         Path("shared/data/historical_timeline"),
-        Path("godot/data/historical_timeline")
+        Path("godot/data/historical_timeline"),
     ]
 
     for timeline_dir in timeline_dirs:
@@ -329,17 +346,16 @@ def run_validation(verbose: bool = False) -> Tuple[int, int, List[str]]:
                 files_with_errors += 1
                 all_errors.extend(errors)
                 if verbose:
-                    print(f"  {Colors.RED}[X] {year_file.name}: {len(errors)} error(s){Colors.RESET}")
+                    print(
+                        f"  {Colors.RED}[X] {year_file.name}: {len(errors)} error(s){Colors.RESET}"
+                    )
             else:
                 if verbose:
                     print(f"  {Colors.GREEN}[OK] {year_file.name}{Colors.RESET}")
 
     # Validate researchers
     print(f"{Colors.BLUE}Validating researcher profiles...{Colors.RESET}")
-    researcher_dirs = [
-        Path("shared/data/researchers"),
-        Path("godot/data/researchers")
-    ]
+    researcher_dirs = [Path("shared/data/researchers"), Path("godot/data/researchers")]
 
     for researcher_dir in researcher_dirs:
         if not researcher_dir.exists():
@@ -361,10 +377,7 @@ def run_validation(verbose: bool = False) -> Tuple[int, int, List[str]]:
 
     # Validate organizations
     print(f"{Colors.BLUE}Validating organizations...{Colors.RESET}")
-    org_dirs = [
-        Path("shared/data/organizations"),
-        Path("godot/data/organizations")
-    ]
+    org_dirs = [Path("shared/data/organizations"), Path("godot/data/organizations")]
 
     for org_dir in org_dirs:
         if not org_dir.exists():
@@ -388,18 +401,12 @@ def run_validation(verbose: bool = False) -> Tuple[int, int, List[str]]:
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description='Validate historical data for P(Doom) game'
+    parser = argparse.ArgumentParser(description="Validate historical data for P(Doom) game")
+    parser.add_argument(
+        "-v", "--verbose", action="store_true", help="Show detailed validation output"
     )
     parser.add_argument(
-        '-v', '--verbose',
-        action='store_true',
-        help='Show detailed validation output'
-    )
-    parser.add_argument(
-        '--fix',
-        action='store_true',
-        help='Attempt to fix common issues (future feature)'
+        "--fix", action="store_true", help="Attempt to fix common issues (future feature)"
     )
     args = parser.parse_args()
 
@@ -409,7 +416,9 @@ def main():
     if HAS_JSONSCHEMA:
         print(f"{Colors.GREEN}JSON Schema validation: ENABLED{Colors.RESET}")
     else:
-        print(f"{Colors.YELLOW}JSON Schema validation: DISABLED (install jsonschema: pip install jsonschema){Colors.RESET}")
+        print(
+            f"{Colors.YELLOW}JSON Schema validation: DISABLED (install jsonschema: pip install jsonschema){Colors.RESET}"
+        )
     print()
 
     total_files, files_with_errors, all_errors = run_validation(args.verbose)
@@ -417,7 +426,9 @@ def main():
     print()
 
     if not all_errors:
-        print(f"{Colors.GREEN}{Colors.BOLD}[SUCCESS] All historical data validated successfully{Colors.RESET}")
+        print(
+            f"{Colors.GREEN}{Colors.BOLD}[SUCCESS] All historical data validated successfully{Colors.RESET}"
+        )
         print(f"   Files checked: {total_files}")
         return 0
     else:
