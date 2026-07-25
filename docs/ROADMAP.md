@@ -11,17 +11,26 @@
 > effort-days per week (Friday/Saturday project days plus agent-assisted
 > weekday increments). Pins are sized to that cadence, not to burst weeks.
 
+> **Nomenclature (2026-07-25):** precise definitions of Theme / Epoch / Seed and
+> the version numbers live in [`RELEASE_NOMENCLATURE.md`](RELEASE_NOMENCLATURE.md).
+> Ruling: the game evolves on a **MONTHLY** rhythm -- each month is a named Theme
+> = a minor-version bump = a forking Epoch. Quarterly planning is retired (it slows
+> the real ~feature-a-week pace). The "Quarterly pins" table below is therefore
+> **pending re-cast** into monthly Themes; only the two Big Milestones (First
+> Contact, Rivals & News) survive as coarse multi-month groupings. Left for Pip
+> to re-cast + name the upcoming Themes (`v0.14`+).
+
 ## Now (committed) -- GitHub milestones
 
 The live execution roadmap is the milestone pages; issues move, the milestone
 reflects it. This file does not duplicate their contents.
 
-- [v0.12 -- First Contact](https://github.com/PipFoweraker/pdoom1/milestone/12)
+- [First Contact](https://github.com/PipFoweraker/pdoom1/milestone/12)
   (target: end Q3 2026). Public alpha readiness: first-contact UX fixes
   (SmartScreen metadata, commit-always-advances, first-launch help), onboarding
   phases 0-2, the share loop (copy result + seed), remote leaderboard enabled
   and hardened, monthly league v0.
-- [v0.13 -- Rivals and News](https://github.com/PipFoweraker/pdoom1/milestone/13)
+- [Rivals & News](https://github.com/PipFoweraker/pdoom1/milestone/13)
   (target: end Q4 2026). Rivals become a strategic surface: intel panel,
   capability-race display, poaching rework (#648), News channel v1 (DQ-32),
   the voice re-skin of generic event content, tutorial mode, and the DQ-22

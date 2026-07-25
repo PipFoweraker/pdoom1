@@ -1,5 +1,16 @@
 # P(Doom) Content Distribution System
 
+> **STATUS: OUTDATED (flagged 2026-07-25).** This document predates the
+> `pdoom1` <-> `pdoom1-website` split. It proposes running the *publishing
+> engine itself* (Reddit/forum/website pipelines, `content_publisher.py`) from
+> inside `pdoom1`, which now contradicts the agreed direction: publishing lives
+> in `pdoom1-website`, which PULLS raw material from `pdoom1`. See the active
+> contract at `docs/copy/README.md`.
+>
+> **Pip to revise** during doc uplift and approve the updated version; may be
+> moved to `pdoom1-website` if that turns out correct. Retained meanwhile
+> because its diff history is useful. Do NOT build from this as-is.
+
 **Status**: Design Phase
 **Created**: 2025-11-25
 **Purpose**: Automated content publishing to Reddit, Forums, Dashboard, and Website
