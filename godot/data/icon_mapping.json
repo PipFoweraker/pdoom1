@@ -314,5 +314,88 @@
     "bug": "res://assets/icons/ui_controls/ui_control_bug_64.png",
     "save": "res://assets/icons/main_navigation/ui_control_save_64.png",
     "load": "res://assets/icons/main_navigation/ui_control_load_64.png"
+  },
+  "quirks": {
+    "_doc": "Researcher quirk icons (issue #903). Ids match godot/data/researchers/quirks.json; quirk_unrevealed / quirk_none are UI state glyphs. Valence colour language (theme_manager.gd): positive=green (success), negative=crimson (error), double_edged=violet purple (category_research), neutral=grey-teal.",
+    "secret_successionist": {
+      "icon": "res://assets/icons/quirks/secret_successionist_64.png",
+      "status": "mapped",
+      "valence": "negative"
+    },
+    "doom_absolutist": {
+      "icon": "res://assets/icons/quirks/doom_absolutist_64.png",
+      "status": "mapped",
+      "valence": "double_edged"
+    },
+    "e_acc_sympathizer": {
+      "icon": "res://assets/icons/quirks/e_acc_sympathizer_64.png",
+      "status": "mapped",
+      "valence": "negative"
+    },
+    "open_science_zealot": {
+      "icon": "res://assets/icons/quirks/open_science_zealot_64.png",
+      "status": "mapped",
+      "valence": "double_edged"
+    },
+    "secrecy_maximalist": {
+      "icon": "res://assets/icons/quirks/secrecy_maximalist_64.png",
+      "status": "mapped",
+      "valence": "double_edged"
+    },
+    "empire_builder": {
+      "icon": "res://assets/icons/quirks/empire_builder_64.png",
+      "status": "mapped",
+      "valence": "double_edged"
+    },
+    "runs_hot": {
+      "icon": "res://assets/icons/quirks/runs_hot_64.png",
+      "status": "mapped",
+      "valence": "double_edged"
+    },
+    "lab_parent": {
+      "icon": "res://assets/icons/quirks/lab_parent_64.png",
+      "status": "mapped",
+      "valence": "positive"
+    },
+    "loose_lips": {
+      "icon": "res://assets/icons/quirks/loose_lips_64.png",
+      "status": "mapped",
+      "valence": "negative"
+    },
+    "sponge": {
+      "icon": "res://assets/icons/quirks/sponge_64.png",
+      "status": "mapped",
+      "valence": "positive"
+    },
+    "cat_whisperer": {
+      "icon": "res://assets/icons/quirks/cat_whisperer_64.png",
+      "status": "mapped",
+      "valence": "positive"
+    },
+    "glory_hound": {
+      "icon": "res://assets/icons/quirks/glory_hound_64.png",
+      "status": "mapped",
+      "valence": "negative"
+    },
+    "quiet_quitter": {
+      "icon": "res://assets/icons/quirks/quiet_quitter_64.png",
+      "status": "mapped",
+      "valence": "negative"
+    },
+    "true_believer": {
+      "icon": "res://assets/icons/quirks/true_believer_64.png",
+      "status": "mapped",
+      "valence": "positive"
+    },
+    "quirk_unrevealed": {
+      "icon": "res://assets/icons/quirks/quirk_unrevealed_64.png",
+      "status": "mapped",
+      "valence": "neutral"
+    },
+    "quirk_none": {
+      "icon": "res://assets/icons/quirks/quirk_none_64.png",
+      "status": "mapped",
+      "valence": "neutral"
+    }
   }
 }
