@@ -2,8 +2,8 @@
 
 > Single source of truth for where the game is headed. Kept deliberately thin
 > so it cannot rot: everything volatile is LINKED (milestones, the DQ index),
-> not copied. The quarterly pins are the only hand-maintained forecast and are
-> revisited at each release. Predecessor roadmaps (pygame-era alpha/beta plan,
+> not copied. The Monthly Themes table is the only hand-maintained forecast and
+> is revisited at each release. Predecessor roadmaps (pygame-era alpha/beta plan,
 > the 2025 Steam integration doc) are archived -- their status claims no
 > longer described the project.
 >
@@ -70,10 +70,9 @@ scenario), never curation or balance. Rollover validation
 (pdoom1-website#126) applies to the monthly boundary.
 
 RELEASES ride the same train: whatever is merged and green ships as a point
-release each league month, with notes, alongside the world-update. The
-quarterly pins above are THEME MILESTONES (when a named theme completes),
-not the release cadence -- a quarter's theme lands as two to three monthly
-increments, not one drop.
+release each league month (one per monthly Theme), with notes, alongside the
+world-update. The two Big Milestones (First Contact, Rivals & News) complete
+ACROSS several monthly Themes -- they are named arcs, not the release cadence.
 
 ## Decision owed: public-alpha distribution channel (2026-07-21)
 
@@ -86,11 +85,12 @@ builds plus platform discovery, at the cost of one more outward surface;
 COOP/COEP headers for threading; small but real ops work).
 docs/strategy/HOSTING_AND_RELEASE.md argues for (b); Pip's instinct is
 website -> Steam with web-pivot optionality held in reserve. Decide before
-the v0.12 public alpha ships. The pins above are channel-neutral.
+the public alpha ships (the First Contact milestone). The Themes above are
+channel-neutral.
 
 ## Next -- the release ladder
 
-Private alpha (friends and family, v0.11 -- HERE) -> public alpha (free;
+Private alpha (friends and family, v0.13 -- HERE) -> public alpha (free;
 channel per the open decision above) -> Steam "coming soon" page while in
 beta -> 1.0. Rationale and hosting details:
 docs/strategy/HOSTING_AND_RELEASE.md.
@@ -101,7 +101,7 @@ Not listed here on purpose. The design question register is
 [docs/game-design/DQ_INDEX.md](game-design/DQ_INDEX.md) (generated; 32 open),
 sourced from WORKSHOP_2_BACKLOG.md. Design advances through workshop beats
 (next candidates: DQ-19 + DQ-23; DQ-22 + DQ-31 + DQ-32 as one conversation).
-Longer-horizon intents that have pins above: content-pool ladder (DQ-33),
+Longer-horizon intents listed above: content-pool ladder (DQ-33),
 league metabolism (ADR-0016). Jira adoption is deliberately deferred until
 the project is funded and housed in an org, at which point it follows that
 org's work management.
