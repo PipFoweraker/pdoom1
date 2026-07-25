@@ -5,11 +5,21 @@ It serves both art tracks in a single gallery:
   * pixellab sprites/office-sim under  art_source/**            (committed)
   * gpt-image icons/banners/bg/textures under art_generated/**  (gitignored, ~1.1 GB)
 
-Per asset you get a clickable keep / maybe / reroll verdict, a free-text NOTE
+Per asset you get a clickable keep / iterate / discard verdict, a free-text NOTE
 field and optional comma-separated TAGS. Every edit AUTO-PERSISTS to a real file
 on disk -- tools/art_review/review_state.json -- via a POST endpoint, so a review
 survives across sittings, can be revised over many sessions, and is a clean input
-for promote/reroll tooling. (No browser localStorage: too fragile for multi-session.)
+for promote/regenerate tooling. (No browser localStorage: too fragile for multi-session.)
+
+Verdict model (v2):
+  * keep    -- accept it (green).
+  * iterate -- on-brief but not final; regenerate to compare/hone. The DEFAULT
+               "slight reject". (amber)
+  * discard -- OFF-brief / wrong direction; note is prompted-for. NOT regenerated
+               -- it signals the brief itself needs reconsidering. (red)
+"Decided" = keep OR discard (moves to the Decisions archive). iterate stays live
+(it expects a fresh variant). Old "maybe" and "reroll" verdicts migrate to
+"iterate" transparently on load.
 
 Nothing is embedded or copied: PNGs stream live from disk through /img?p=<relpath>,
 so the big gitignored art_generated/ tree is never duplicated or committed.
@@ -24,7 +34,7 @@ Run (stdlib only -- no Flask/deps):
 State file shape (the pipeline contract):
     {
       "<asset_id>": {
-        "verdict": "keep" | "maybe" | "reroll" | null,
+        "verdict": "keep" | "iterate" | "discard" | null,
         "note":    "free text",
         "tags":    ["tag", ...],
         "updated_at": "2026-07-19T10:11:12.345678+00:00"
@@ -36,6 +46,7 @@ asset_id conventions (stable + pipeline-friendly):
     gen:<category>:<base_id>:<variant>   e.g. gen:game_icons:icon_doom:v2
     px:<relpath under art_source>        e.g. px:pixellab_2026-07-16/style_matrix/baseline__desk
 """
+
 import argparse
 import html
 import json
@@ -60,7 +71,18 @@ _ROT_RE = re.compile(r"_(north|south|east|west|north-east|north-west|south-east|
 # prefer a mid size to show; fall back to whatever exists
 _SIZE_PREF = ["512", "256", "1024", "128", "64"]
 
-VALID_VERDICTS = {"keep", "maybe", "reroll"}
+VALID_VERDICTS = {"keep", "iterate", "discard"}
+# old verdicts -> new; applied on every state load so pre-v2 files just work.
+_VERDICT_MIGRATE = {"maybe": "iterate", "reroll": "iterate"}
+
+
+def migrate_verdict(v):
+    """Map a stored verdict onto the v2 model. keep/iterate/discard pass through;
+    legacy maybe/reroll fold into iterate; anything else -> None."""
+    if v in VALID_VERDICTS:
+        return v
+    return _VERDICT_MIGRATE.get(v)
+
 
 # ordered generated categories (label); any other dirs found are appended
 _GEN_CATS = [
@@ -226,10 +248,23 @@ _LOCK = threading.Lock()
 def load_state():
     if STATE_PATH.is_file():
         try:
-            return json.loads(STATE_PATH.read_text(encoding="utf-8"))
+            state = json.loads(STATE_PATH.read_text(encoding="utf-8"))
         except (ValueError, OSError):
             return {}
+        return _migrate_state(state)
     return {}
+
+
+def _migrate_state(state):
+    """In-memory migration of legacy verdicts (maybe/reroll -> iterate). Lossless
+    for the reviewer's intent: keep stays keep, everything soft folds to iterate,
+    discard is new. Persisted opportunistically the next time an entry is saved."""
+    if not isinstance(state, dict):
+        return {}
+    for entry in state.values():
+        if isinstance(entry, dict) and "verdict" in entry:
+            entry["verdict"] = migrate_verdict(entry.get("verdict"))
+    return state
 
 
 def save_state(state):
@@ -285,33 +320,76 @@ def apply_patch(patch):
 
 
 # ------------------------------------------------------------------ rendering
-def render_cell(c):
+def render_cell(c, in_set=False):
     aid = esc(c["asset_id"])
     src = "/img?p=" + quote(c["img"], safe="/")
     meta = f'<span class="meta">{esc(c["meta"])}</span>' if c["meta"] else ""
+    # winner button only appears for cells that are part of a comparison set:
+    # pick this variant -> it becomes keep, the rest of the set -> discard.
+    win = (
+        '<button type="button" class="winbtn" title="Pick this variant as the set '
+        'winner (this -> keep, others -> discard)">[*] winner</button>'
+        if in_set
+        else ""
+    )
     return f"""
       <div class="cell" data-asset="{aid}" data-base="{esc(c.get('base',''))}">
         <div class="stage"><img loading="lazy" src="{esc(src)}" alt="{esc(c['label'])}"></div>
         <div class="cap"><span class="lbl">{esc(c['label'])}</span>{meta}</div>
         <div class="idline">{aid}</div>
+        {win}
         <div class="verdict" role="group" aria-label="Verdict">
           <button type="button" class="vbtn" data-v="keep" title="Keep (K)">keep</button>
-          <button type="button" class="vbtn" data-v="maybe" title="Maybe (M)">maybe</button>
-          <button type="button" class="vbtn" data-v="reroll" title="Re-roll (R)">re-roll</button>
+          <button type="button" class="vbtn" data-v="iterate" title="Iterate (I)">iterate</button>
+          <button type="button" class="vbtn" data-v="discard" title="Discard (D)">discard</button>
         </div>
         <textarea class="note" rows="2" placeholder="note... (N)" aria-label="Note"></textarea>
         <input type="text" class="tags" placeholder="tags, comma, separated" aria-label="Tags">
       </div>"""
 
 
+def _group_cells(cells):
+    """Split a section's cells into runs of the same base_id, preserving order.
+    A run with >1 cell is a comparison set (one base, several variants)."""
+    groups = []
+    for c in cells:
+        b = c.get("base", "")
+        if b and groups and groups[-1][0] == b:
+            groups[-1][1].append(c)
+        else:
+            groups.append((b, [c]))
+    return groups
+
+
 def render_section(s):
-    cells = "".join(render_cell(c) for c in s["cells"])
+    parts = []
+    for base, members in _group_cells(s["cells"]):
+        if len(members) > 1:
+            inner = "".join(render_cell(c, in_set=True) for c in members)
+            ids = ",".join(m["asset_id"] for m in members)
+            parts.append(
+                f'<div class="setframe" data-set-base="{esc(base)}" '
+                f'data-set-ids="{esc(ids)}">'
+                f'<div class="setbar"><span class="setlbl">SET // {esc(base)} '
+                f"<b>{len(members)}</b> variants</span>"
+                f'<span class="setspacer"></span>'
+                f'<button type="button" class="setbtn" data-set="iterate" '
+                f'title="Iterate the whole set">iterate set</button>'
+                f'<button type="button" class="setbtn" data-set="discard" '
+                f'title="Discard the whole set">discard set</button>'
+                f'<span class="sethint">pick a winner below, or decide the set</span>'
+                f"</div>"
+                f'<div class="grid setgrid">{inner}</div></div>'
+            )
+        else:
+            parts.append(render_cell(members[0]))
+    body = "".join(parts)
     home = f'<p class="sechome">{esc(s.get("home", ""))}</p>' if s.get("home") else ""
     return f"""
     <section id="{esc(s['id'])}" class="sec" data-section="{esc(s['id'])}">
       <h2>{esc(s['title'])} <span class="seccount">{len(s['cells'])}</span> <span class="secprog"></span></h2>
       {home}
-      <div class="grid">{cells}</div>
+      <div class="grid">{body}</div>
     </section>"""
 
 
@@ -428,12 +506,12 @@ _TEMPLATE = r"""<!doctype html><html lang="en"><head><meta charset="utf-8">
   :root{
     --ground:#17120e;--panel:#211a14;--panel-2:#2b221a;--ink:#ece0cf;--ink-dim:#a9977f;--ink-faint:#6f6250;
     --amber:#e8a33d;--amber-deep:#c07a1f;--win:#6fae86;--line:#3a2e22;--checker-a:#201811;--checker-b:#180f09;
-    --field:#120d09;--shadow:rgba(0,0,0,.45);--keep:#6fae86;--maybe:#e8a33d;--reroll:#d8695a;
+    --field:#120d09;--shadow:rgba(0,0,0,.45);--keep:#6fae86;--iterate:#e8a33d;--discard:#d8695a;
   }
   @media (prefers-color-scheme:light){:root{
     --ground:#efe6d6;--panel:#f7efe0;--panel-2:#fbf5e9;--ink:#2b2116;--ink-dim:#6b5b45;--ink-faint:#9a876c;
     --amber:#b9741a;--amber-deep:#8f5710;--win:#3f8a5c;--line:#ddccb0;--checker-a:#e6dac4;--checker-b:#ded1b8;
-    --field:#fffaf0;--shadow:rgba(80,55,20,.18);--keep:#3f8a5c;--maybe:#b9741a;--reroll:#c14a3a;}}
+    --field:#fffaf0;--shadow:rgba(80,55,20,.18);--keep:#3f8a5c;--iterate:#b9741a;--discard:#c14a3a;}}
   *{box-sizing:border-box}
   body{margin:0;background:var(--ground);color:var(--ink);font-family:ui-sans-serif,system-ui,"Segoe UI",Helvetica,Arial,sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased}
   img{image-rendering:pixelated;image-rendering:crisp-edges;max-width:100%;height:auto;display:block}
@@ -453,16 +531,28 @@ _TEMPLATE = r"""<!doctype html><html lang="en"><head><meta charset="utf-8">
     border:1px solid var(--line);border-radius:20px;padding:.22rem .6rem;display:inline-flex;gap:.35rem;align-items:center;white-space:nowrap}
   .chip:hover{color:var(--ink);border-color:var(--ink-faint)}
   .chip b{color:var(--amber);font-weight:600}
-  .chip.done{opacity:.3;text-decoration:line-through}
-  body.show-done .chip.done{opacity:.7;text-decoration:none}
+  .chip.done{opacity:.35;text-decoration:line-through}
   .sechome{margin:-.5rem 0 1rem;font-size:.73rem;color:var(--ink-dim);font-family:ui-monospace,Consolas,monospace}
   .sechome::before{content:"-> shows up: ";color:var(--amber);font-size:.62rem;letter-spacing:.08em}
   .secprog{font-size:.66rem;color:var(--ink-faint);font-family:ui-monospace,Consolas,monospace;margin-left:auto;font-weight:400}
-  .sec.done{display:none}
-  body.show-done .sec.done{display:block;opacity:.55}
-  .cell.setcell{border-left:3px solid var(--amber-deep)}
-  .cell.setcell.grp1{background:var(--panel-2)}
-  #showdone[aria-pressed="true"]{background:var(--panel-2);color:var(--ink);border-color:var(--ink-faint)}
+  /* set comparison frame -- one bordered block spanning the outer grid */
+  .setframe{grid-column:1/-1;border:1px solid var(--amber-deep);border-radius:12px;
+    padding:.6rem;background:color-mix(in srgb,var(--panel-2) 60%,transparent)}
+  .setbar{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin:0 .1rem .55rem}
+  .setlbl{font-family:ui-monospace,Consolas,monospace;font-size:.72rem;color:var(--amber);letter-spacing:.03em}
+  .setlbl b{color:var(--ink)}
+  .setspacer{flex:1}
+  .sethint{font-family:ui-monospace,Consolas,monospace;font-size:.62rem;color:var(--ink-faint);flex-basis:100%;text-align:right}
+  .setbtn{font-family:ui-monospace,Consolas,monospace;font-size:.66rem;text-transform:uppercase;letter-spacing:.03em;
+    padding:.28rem .55rem;border-radius:6px;border:1px solid var(--line);background:var(--field);color:var(--ink-dim);cursor:pointer}
+  .setbtn:hover{color:var(--ink);border-color:var(--ink-faint)}
+  .setbtn[data-set="iterate"]:hover{border-color:var(--iterate);color:var(--iterate)}
+  .setbtn[data-set="discard"]:hover{border-color:var(--discard);color:var(--discard)}
+  .setgrid{grid-template-columns:repeat(auto-fill,minmax(190px,1fr))}
+  .winbtn{font-family:ui-monospace,Consolas,monospace;font-size:.64rem;text-transform:uppercase;letter-spacing:.03em;
+    padding:.28rem .1rem;border-radius:5px;border:1px dashed var(--amber-deep);background:transparent;color:var(--amber);cursor:pointer}
+  .winbtn:hover{background:var(--amber);border-style:solid;color:#20140a}
+  .cell.iswinner .winbtn{background:var(--keep);border-color:var(--keep);border-style:solid;color:#12251a}
   .sec{margin:2.2rem 0;scroll-margin-top:70px}
   .sec h2{font-family:ui-monospace,Consolas,monospace;font-size:1rem;letter-spacing:.02em;margin:0 0 .9rem;
     display:flex;align-items:center;gap:.7rem;padding-bottom:.4rem;border-bottom:1px solid var(--line)}
@@ -471,9 +561,35 @@ _TEMPLATE = r"""<!doctype html><html lang="en"><head><meta charset="utf-8">
   .cell{display:flex;flex-direction:column;gap:.4rem;background:var(--panel);border:1px solid var(--line);
     border-radius:12px;padding:.7rem;scroll-margin:80px}
   .cell.v-keep{border-color:var(--keep);box-shadow:0 0 0 1px var(--keep)}
-  .cell.v-maybe{border-color:var(--maybe);box-shadow:0 0 0 1px var(--maybe)}
-  .cell.v-reroll{border-color:var(--reroll);box-shadow:0 0 0 1px var(--reroll)}
+  .cell.v-iterate{border-color:var(--iterate);box-shadow:0 0 0 1px var(--iterate)}
+  .cell.v-discard{border-color:var(--discard);box-shadow:0 0 0 1px var(--discard)}
   .cell.focused{outline:2px solid var(--amber);outline-offset:2px}
+  /* decided (keep/discard) cells are physically MOVED into #archive; a section or
+     set frame left with no live cells collapses out of the live flow */
+  .sec.empty{display:none}
+  .setframe.empty{display:none}
+  .stage img{cursor:zoom-in}
+  /* decisions archive panel */
+  #archive{margin:2.5rem 0;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
+  #archive>summary{cursor:pointer;list-style:none;padding:.85rem 1.1rem;font-family:ui-monospace,Consolas,monospace;
+    font-size:.85rem;color:var(--ink-dim);display:flex;align-items:center;gap:.6rem}
+  #archive>summary::-webkit-details-marker{display:none}
+  #archive>summary::before{content:"[+]";color:var(--amber)}
+  #archive[open]>summary::before{content:"[-]"}
+  #archive>summary b{color:var(--ink)}
+  #archive .archwrap{padding:0 1.1rem 1.1rem}
+  #archive .archnote{font-family:ui-monospace,Consolas,monospace;font-size:.68rem;color:var(--ink-faint);margin:0 0 .8rem}
+  #archive .grid{margin-top:.4rem}
+  /* image lightbox */
+  #lightbox{position:fixed;inset:0;z-index:80;display:none;place-items:center;padding:3vmin;
+    background:rgba(0,0,0,.82);backdrop-filter:blur(3px);cursor:zoom-out}
+  #lightbox.open{display:grid}
+  #lightbox img{image-rendering:pixelated;max-width:94vw;max-height:88vh;width:auto;height:auto;
+    border:1px solid var(--line);border-radius:8px;box-shadow:0 8px 40px rgba(0,0,0,.6);background:var(--checker-a)}
+  #lightbox .lbcap{position:fixed;bottom:2vmin;left:0;right:0;text-align:center;color:var(--ink-dim);
+    font-family:ui-monospace,Consolas,monospace;font-size:.78rem;pointer-events:none}
+  #lightbox .lbclose{position:fixed;top:2vmin;right:2.4vmin;color:var(--ink);font-family:ui-monospace,Consolas,monospace;
+    font-size:.9rem;border:1px solid var(--line);border-radius:6px;padding:.3rem .6rem;background:var(--panel)}
   .stage{background-color:var(--checker-a);background-image:linear-gradient(45deg,var(--checker-b) 25%,transparent 25%),linear-gradient(-45deg,var(--checker-b) 25%,transparent 25%),linear-gradient(45deg,transparent 75%,var(--checker-b) 75%),linear-gradient(-45deg,transparent 75%,var(--checker-b) 75%);background-size:14px 14px;background-position:0 0,0 7px,7px -7px,-7px 0;border:1px solid var(--line);border-radius:8px;padding:.6rem;display:grid;place-items:center;min-height:150px}
   .stage img{width:auto;max-height:180px}
   .cap{display:flex;align-items:baseline;justify-content:space-between;gap:.4rem}
@@ -486,8 +602,8 @@ _TEMPLATE = r"""<!doctype html><html lang="en"><head><meta charset="utf-8">
   .vbtn:hover{color:var(--ink);border-color:var(--ink-faint)}
   .vbtn:focus-visible{outline:2px solid var(--amber);outline-offset:1px}
   .vbtn.on[data-v="keep"]{background:var(--keep);border-color:var(--keep);color:#12251a}
-  .vbtn.on[data-v="maybe"]{background:var(--maybe);border-color:var(--maybe);color:#2a1e08}
-  .vbtn.on[data-v="reroll"]{background:var(--reroll);border-color:var(--reroll);color:#2a1210}
+  .vbtn.on[data-v="iterate"]{background:var(--iterate);border-color:var(--iterate);color:#2a1e08}
+  .vbtn.on[data-v="discard"]{background:var(--discard);border-color:var(--discard);color:#2a1210}
   .note,.tags{width:100%;background:var(--field);color:var(--ink);border:1px solid var(--line);border-radius:6px;
     padding:.35rem .5rem;font-size:.74rem;font-family:ui-sans-serif,system-ui,sans-serif}
   .note{resize:vertical;min-height:2.2rem;line-height:1.4}
@@ -507,9 +623,9 @@ _TEMPLATE = r"""<!doctype html><html lang="en"><head><meta charset="utf-8">
     display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
   .tally{font-family:ui-monospace,Consolas,monospace;font-size:.78rem;color:var(--ink-dim)}
   .tally b{color:var(--ink)}
-  .tally .k{color:var(--keep)}.tally .m{color:var(--maybe)}.tally .r{color:var(--reroll)}
+  .tally .k{color:var(--keep)}.tally .m{color:var(--iterate)}.tally .r{color:var(--discard)}
   .save{font-family:ui-monospace,Consolas,monospace;font-size:.72rem;color:var(--ink-faint)}
-  .save.ok{color:var(--keep)}.save.err{color:var(--reroll)}
+  .save.ok{color:var(--keep)}.save.err{color:var(--discard)}
   .spacer{flex:1}
   .btn{font-family:ui-monospace,Consolas,monospace;font-size:.78rem;padding:.45rem .85rem;border-radius:7px;
     border:1px solid var(--amber);background:var(--amber);color:#20140a;font-weight:700;cursor:pointer}
@@ -529,7 +645,7 @@ _TEMPLATE = r"""<!doctype html><html lang="en"><head><meta charset="utf-8">
 </style></head><body>
 <div class="kbd-legend" aria-hidden="true">
   <span><kbd>&larr;</kbd><kbd>&rarr;</kbd> move focus</span>
-  <span><b>K</b> keep &middot; <b>M</b> maybe &middot; <b>R</b> re-roll</span>
+  <span><b>K</b> keep &middot; <b>I</b> iterate &middot; <b>D</b> discard</span>
   <span><kbd>N</kbd> note &middot; <kbd>Esc</kbd> back</span>
 </div>
 <div class="wrap">
@@ -538,15 +654,28 @@ _TEMPLATE = r"""<!doctype html><html lang="en"><head><meta charset="utf-8">
   <p class="lede">{{SUBTITLE}}</p>
   <nav class="nav">{{NAV}}</nav>
   {{BODY}}
+  <details id="archive">
+    <summary>Decisions archive <b class="archcount">0</b> decided <span class="archbreak"></span></summary>
+    <div class="archwrap">
+      <p class="archnote">Kept + discarded assets live here, out of the live queue. Change a verdict back to
+      iterate (or clear it) to send an item back up to the live flow.</p>
+      <div class="grid" id="archivegrid"></div>
+    </div>
+  </details>
   <div class="bar">
     <div class="tally" id="tally"></div>
     <div class="save" id="save">state file: tools/art_review/review_state.json</div>
     <div class="spacer"></div>
-    <button type="button" class="btn ghost" id="showdone" aria-pressed="false">show completed (<b>0</b>)</button>
+    <button type="button" class="btn ghost" id="archivebtn">Decisions archive (<b>0</b>)</button>
     <button type="button" class="btn ghost" id="exportbtn">View state JSON</button>
   </div>
   <footer>Every verdict / note / tag POSTs to the local server and is written to
   <b>review_state.json</b> on disk -- reload any time, across sessions, and your review is still here.</footer>
+</div>
+<div id="lightbox" aria-hidden="true">
+  <span class="lbclose">[ESC] close</span>
+  <img alt="">
+  <div class="lbcap"></div>
 </div>
 <dialog id="exportdlg">
   <div class="modal-head"><h3>// review_state.json</h3><button type="button" class="btn ghost" id="copybtn">copy</button></div>
@@ -556,8 +685,11 @@ _TEMPLATE = r"""<!doctype html><html lang="en"><head><meta charset="utf-8">
 (function(){
   "use strict";
   var SEED={{SEED}};
+  var VERDICTS=['keep','iterate','discard'];
   var CELLS=[].slice.call(document.querySelectorAll('.cell'));
-  var cur=-1, timers={};
+  var cellById={};CELLS.forEach(function(c){cellById[c.getAttribute('data-asset')]=c;});
+  var archGrid=document.getElementById('archivegrid');
+  var timers={},focusCell=null;
 
   function saveMsg(txt,cls){var s=document.getElementById('save');s.textContent=txt;s.className='save '+(cls||'');}
 
@@ -575,105 +707,192 @@ _TEMPLATE = r"""<!doctype html><html lang="en"><head><meta charset="utf-8">
   }
   function debounce(id,patch){clearTimeout(timers[id]);timers[id]=setTimeout(function(){persist(id,patch);},450);}
 
+  // -- verdict state on a cell --
   function applyVerdict(cell,v){
-    cell.classList.remove('v-keep','v-maybe','v-reroll');
+    cell.classList.remove('v-keep','v-iterate','v-discard');
     if(v)cell.classList.add('v-'+v);
+    if(v!=='keep')cell.classList.remove('iswinner');
+    cell.classList.toggle('decided',v==='keep'||v==='discard');
     cell.querySelectorAll('.vbtn').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-v')===v);});
   }
   function curVerdict(cell){
     if(cell.classList.contains('v-keep'))return 'keep';
-    if(cell.classList.contains('v-maybe'))return 'maybe';
-    if(cell.classList.contains('v-reroll'))return 'reroll';
+    if(cell.classList.contains('v-iterate'))return 'iterate';
+    if(cell.classList.contains('v-discard'))return 'discard';
     return null;
   }
-  function setVerdict(cell,v){
+  function isDecided(cell){var v=curVerdict(cell);return v==='keep'||v==='discard';}
+  function getNote(cell){var n=cell.querySelector('.note');return n?n.value.trim():'';}
+  function setNoteField(cell,val){var n=cell.querySelector('.note');if(n)n.value=val;}
+
+  // commit a verdict (and optionally a note) to a cell + server, then re-place it
+  function commitVerdict(cell,v,note){
     var id=cell.getAttribute('data-asset');
-    if(curVerdict(cell)===v)v=null;    // toggle off
     applyVerdict(cell,v);
-    refreshSections();
-    persist(id,{verdict:v});
+    var patch={verdict:v};
+    if(note!=null){setNoteField(cell,note);patch.note=note;}
+    persist(id,patch);
+    placeCell(cell);
+    refreshLayout();
+  }
+  // interactive verdict from a button/key: toggles off, prompts a discard note
+  function setVerdict(cell,v){
+    if(curVerdict(cell)===v)v=null;               // toggle off -> undecided
+    if(v==='discard'&&!getNote(cell)){
+      var r=window.prompt('Discard note -- why is this OFF-brief / wrong direction?\n(a discard says the BRIEF needs a rethink, not a re-roll. Blank = skip.)','');
+      if(r===null)return;                         // cancelled -> leave as-is
+      commitVerdict(cell,'discard',r.trim());
+      advanceFrom(cell);return;
+    }
+    commitVerdict(cell,v,null);
+    if(isDecided(cell))advanceFrom(cell);
   }
   function parseTags(str){return (str||'').split(',').map(function(t){return t.trim();}).filter(Boolean);}
 
-  // hydrate every cell from the on-disk state the server embedded
-  CELLS.forEach(function(cell,idx){
+  // -- archive placement: decided cells physically move into #archivegrid; an
+  // anchor comment marks each cell's live home so it restores in place --
+  function placeCell(cell){
+    var dec=isDecided(cell),inArch=cell.parentNode===archGrid;
+    if(dec&&!inArch){archGrid.appendChild(cell);}
+    else if(!dec&&inArch){cell._anchor.parentNode.insertBefore(cell,cell._anchor);}
+  }
+
+  // -- lightbox --
+  var lb=document.getElementById('lightbox'),lbImg=lb.querySelector('img'),lbCap=lb.querySelector('.lbcap');
+  function openLightbox(src,cap){lbImg.src=src;lbCap.textContent=cap||'';lb.classList.add('open');lb.setAttribute('aria-hidden','false');}
+  function closeLightbox(){lb.classList.remove('open');lb.setAttribute('aria-hidden','true');lbImg.removeAttribute('src');}
+  lb.addEventListener('click',closeLightbox);
+
+  // hydrate every cell + wire it up
+  CELLS.forEach(function(cell){
     var id=cell.getAttribute('data-asset'), s=SEED[id]||{};
+    // anchor marks the live slot so a de-archived cell returns to its exact place
+    var anchor=document.createComment('a:'+id);
+    cell.parentNode.insertBefore(anchor,cell.nextSibling);
+    cell._anchor=anchor;
     applyVerdict(cell,s.verdict||null);
     var note=cell.querySelector('.note'); if(note)note.value=s.note||'';
     var tags=cell.querySelector('.tags'); if(tags)tags.value=(s.tags||[]).join(', ');
     cell.querySelectorAll('.vbtn').forEach(function(btn){
-      btn.addEventListener('click',function(){setFocus(idx,false);setVerdict(cell,btn.getAttribute('data-v'));});
+      btn.addEventListener('click',function(){focusOn(cell,false);setVerdict(cell,btn.getAttribute('data-v'));});
     });
+    var win=cell.querySelector('.winbtn');
+    if(win)win.addEventListener('click',function(){focusOn(cell,false);pickWinner(cell);});
+    var img=cell.querySelector('.stage img');
+    if(img)img.addEventListener('click',function(){openLightbox(img.src,cell.getAttribute('data-asset'));});
     if(note)note.addEventListener('input',function(e){debounce(id,{note:e.target.value});});
     if(tags)tags.addEventListener('input',function(e){debounce(id,{tags:parseTags(e.target.value)});});
-    cell.addEventListener('mousedown',function(){setFocus(idx,false);});
+    cell.addEventListener('mousedown',function(){focusOn(cell,false);});
   });
 
-  // keyboard nav (deferred polish, but cheap + the dev likes it)
-  function setFocus(i,scroll){
-    if(i<0||i>=CELLS.length)return;
-    if(cur>=0&&CELLS[cur])CELLS[cur].classList.remove('focused');
-    cur=i;var c=CELLS[cur];c.classList.add('focused');
-    if(scroll)c.scrollIntoView({block:'nearest',inline:'nearest'});
+  // -- comparison sets (server-marked) for one-decision handling --
+  var SETS=[];
+  [].slice.call(document.querySelectorAll('.setframe')).forEach(function(frame){
+    var ids=(frame.getAttribute('data-set-ids')||'').split(',').filter(Boolean);
+    var cells=ids.map(function(i){return cellById[i];}).filter(Boolean);
+    if(!cells.length)return;
+    var set={base:frame.getAttribute('data-set-base'),cells:cells,frame:frame};
+    cells.forEach(function(c){c._set=set;});
+    SETS.push(set);
+    frame.querySelectorAll('.setbtn').forEach(function(btn){
+      btn.addEventListener('click',function(){setDecision(set,btn.getAttribute('data-set'));});
+    });
+  });
+  function pickWinner(cell){
+    var set=cell._set; if(!set)return;
+    cell.classList.add('iswinner');
+    set.cells.forEach(function(c){
+      if(c===cell){commitVerdict(c,'keep',null);}
+      else{c.classList.remove('iswinner');
+        var note=getNote(c)||('not chosen -- set winner: '+set.base);
+        commitVerdict(c,'discard',note);}
+    });
   }
-  function move(d){var i=cur<0?0:cur+d;if(i<0)i=0;if(i>=CELLS.length)i=CELLS.length-1;setFocus(i,true);}
+  function setDecision(set,kind){
+    if(kind==='iterate'){set.cells.forEach(function(c){c.classList.remove('iswinner');commitVerdict(c,'iterate',null);});return;}
+    if(kind==='discard'){
+      var r=window.prompt('Discard the WHOLE set -- why is this direction OFF-brief?\n(blank = skip; applied to variants without their own note)','');
+      if(r===null)return; var msg=r.trim();
+      set.cells.forEach(function(c){c.classList.remove('iswinner');
+        var note=getNote(c)||msg; commitVerdict(c,'discard',note);});
+    }
+  }
+
+  // -- focus + keyboard nav over the LIVE queue (archived cells excluded) --
+  function liveCells(){return CELLS.filter(function(c){return c.parentNode!==archGrid;});}
+  function focusOn(cell,scroll){
+    if(focusCell&&focusCell!==cell)focusCell.classList.remove('focused');
+    focusCell=cell;
+    if(cell){cell.classList.add('focused');if(scroll)cell.scrollIntoView({block:'nearest',inline:'nearest'});}
+  }
+  function move(d){
+    var list=liveCells(); if(!list.length)return;
+    var i=focusCell?list.indexOf(focusCell):-1;
+    if(i<0){i=d>0?0:list.length-1;}else{i+=d;}
+    if(i<0)i=0; if(i>=list.length)i=list.length-1;
+    focusOn(list[i],true);
+  }
+  function advanceFrom(cell){ // after a decide archives `cell`, land focus on the next live one
+    var list=liveCells();
+    if(!list.length){focusCell=null;return;}
+    focusOn(list[0],true);
+  }
   document.addEventListener('keydown',function(e){
+    if(e.key==='Escape'&&lb.classList.contains('open')){closeLightbox();e.preventDefault();return;}
     var t=e.target,tag=(t.tagName||'').toLowerCase();
     if(tag==='input'||tag==='textarea'||t.isContentEditable){if(e.key==='Escape')t.blur();return;}
     if(e.ctrlKey||e.metaKey||e.altKey)return;
     var k=e.key;
     if(k==='ArrowRight'||k==='ArrowDown'){move(1);e.preventDefault();}
     else if(k==='ArrowLeft'||k==='ArrowUp'){move(-1);e.preventDefault();}
-    else if(k==='k'||k==='K'){if(cur>=0){setVerdict(CELLS[cur],'keep');e.preventDefault();}}
-    else if(k==='m'||k==='M'){if(cur>=0){setVerdict(CELLS[cur],'maybe');e.preventDefault();}}
-    else if(k==='r'||k==='R'){if(cur>=0){setVerdict(CELLS[cur],'reroll');e.preventDefault();}}
-    else if(k==='n'||k==='N'||k==='Enter'){if(cur<0)setFocus(0,true);var n=CELLS[cur].querySelector('.note');if(n){n.focus();}e.preventDefault();}
-    else if(k==='Escape'){if(cur>=0){CELLS[cur].classList.remove('focused');cur=-1;}}
+    else if(k==='k'||k==='K'){if(focusCell){setVerdict(focusCell,'keep');e.preventDefault();}}
+    else if(k==='i'||k==='I'){if(focusCell){setVerdict(focusCell,'iterate');e.preventDefault();}}
+    else if(k==='d'||k==='D'){if(focusCell){setVerdict(focusCell,'discard');e.preventDefault();}}
+    else if(k==='n'||k==='N'||k==='Enter'){if(!focusCell)move(1);if(focusCell){var n=focusCell.querySelector('.note');if(n)n.focus();}e.preventDefault();}
+    else if(k==='Escape'){if(focusCell){focusCell.classList.remove('focused');focusCell=null;}}
   });
 
   function tally(){
     var k=0,m=0,r=0,notes=0;
-    for(var id in SEED){var s=SEED[id]||{};if(s.verdict==='keep')k++;else if(s.verdict==='maybe')m++;else if(s.verdict==='reroll')r++;
+    for(var id in SEED){var s=SEED[id]||{};if(s.verdict==='keep')k++;else if(s.verdict==='iterate')m++;else if(s.verdict==='discard')r++;
       if(s.note&&s.note.trim())notes++;}
     document.getElementById('tally').innerHTML='<span class="k">keep '+k+'</span> &middot; '+
-      '<span class="m">maybe '+m+'</span> &middot; <span class="r">re-roll '+r+'</span> &middot; '+
+      '<span class="m">iterate '+m+'</span> &middot; <span class="r">discard '+r+'</span> &middot; '+
       '<b>'+notes+'</b> notes';
   }
-  tally();
 
-  // section progress: hide a bunch once every cell is decided (keep/reroll),
-  // show an x/n counter, and subtly delineate multi-variant comparison sets.
-  var SECS=[].slice.call(document.querySelectorAll('.sec'));
-  function cellDecided(cell){var v=curVerdict(cell);return v==='keep'||v==='reroll';}
-  function refreshSections(){
-    var doneCount=0;
-    SECS.forEach(function(sec){
-      var cells=[].slice.call(sec.querySelectorAll('.cell'));
-      var counts={};
-      cells.forEach(function(c){var b=c.getAttribute('data-base')||'';counts[b]=(counts[b]||0)+1;});
-      var n=cells.length,dec=0,base=null,parity=0;
-      cells.forEach(function(cell){
-        if(cellDecided(cell))dec++;
-        var b=cell.getAttribute('data-base')||'';
-        if(b!==base){if(counts[b]>1)parity^=1;base=b;}
-        cell.classList.toggle('setcell',counts[b]>1);
-        cell.classList.toggle('grp1',counts[b]>1&&parity===1);
-      });
-      var done=(n>0&&dec===n);
-      sec.classList.toggle('done',done);if(done)doneCount++;
-      var prog=sec.querySelector('.secprog');if(prog)prog.textContent=dec+' / '+n+' decided';
-      var id=sec.getAttribute('data-section');
-      var chip=document.querySelector('.chip[data-navfor="'+id+'"]');
-      if(chip)chip.classList.toggle('done',done);
-    });
-    var tog=document.getElementById('showdone');if(tog){var b=tog.querySelector('b');if(b)b.textContent=doneCount;}
-  }
-  var showdone=document.getElementById('showdone');
-  if(showdone)showdone.addEventListener('click',function(){
-    var on=document.body.classList.toggle('show-done');
-    showdone.setAttribute('aria-pressed',on?'true':'false');
+  // capture each section's ORIGINAL cell list up front (before archive moves it)
+  var SECS=[].slice.call(document.querySelectorAll('.sec')).map(function(sec){
+    return {el:sec,id:sec.getAttribute('data-section'),cells:[].slice.call(sec.querySelectorAll('.cell'))};
   });
-  refreshSections();
+  function refreshLayout(){
+    // hide set frames + sections that have no live cells left
+    [].slice.call(document.querySelectorAll('.setframe')).forEach(function(f){
+      f.classList.toggle('empty',!f.querySelector('.grid > .cell'));
+    });
+    SECS.forEach(function(sec){
+      var n=sec.cells.length,dec=0;
+      sec.cells.forEach(function(c){if(isDecided(c))dec++;});
+      var live=n-dec;
+      sec.el.classList.toggle('empty',live===0);
+      var prog=sec.el.querySelector('.secprog');if(prog)prog.textContent=dec+' / '+n+' decided';
+      var chip=document.querySelector('.chip[data-navfor="'+sec.id+'"]');
+      if(chip)chip.classList.toggle('done',live===0&&n>0);
+    });
+    var decided=archGrid.querySelectorAll('.cell').length;
+    var ac=document.querySelector('#archive .archcount');if(ac)ac.textContent=decided;
+    var ab=document.querySelector('#archivebtn b');if(ab)ab.textContent=decided;
+  }
+
+  // move already-decided cells into the archive on first paint
+  CELLS.forEach(placeCell);
+  tally();
+  refreshLayout();
+
+  document.getElementById('archivebtn').addEventListener('click',function(){
+    var d=document.getElementById('archive');d.open=!d.open;
+    if(d.open)d.scrollIntoView({block:'start'});
+  });
 
   var dlg=document.getElementById('exportdlg'),txt=document.getElementById('exporttext');
   document.getElementById('exportbtn').addEventListener('click',function(){
