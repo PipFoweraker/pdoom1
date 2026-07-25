@@ -32,11 +32,12 @@ func start_turn() -> Dictionary:
 	var ledger_result: Dictionary = _step_ledger_tick_and_bill()
 	var total_staff: int = state.get_total_staff()
 	var max_ap: int = _step_grant_action_points(total_staff)
-	_step_process_researcher_lifecycles()
+	var lifecycle_notes: Array = _step_process_researcher_lifecycles()
 	var staff_salaries: float = _step_pay_salaries(total_staff)
 	var prod: Dictionary = _step_researcher_productivity()
 	var stationery: Dictionary = _step_consume_stationery()
 	var messages: Array = _build_start_turn_messages(max_ap, total_staff, staff_salaries, prod, stationery, ledger_result)
+	messages.append_array(lifecycle_notes)
 	var triggered_events: Array[Dictionary] = _step_check_events(messages)
 
 	return {
@@ -91,11 +92,45 @@ func _step_grant_action_points(total_staff: int) -> int:
 	state.reset_turn_ap()
 	return max_ap
 
-func _step_process_researcher_lifecycles() -> void:
+func _step_process_researcher_lifecycles() -> Array:
 	"""=== RESEARCHER TURN PROCESSING ===
-	Per-researcher upkeep: burnout, skill growth, loyalty (consumes state.rng)."""
+	Per-researcher upkeep: burnout, skill growth, loyalty, appetite satisfaction (consumes
+	state.rng -- SAME draws as before; the lab_context adds no rng, ADR-0006). Returns feed
+	NOTES (skill-ups, tenure quirk reveals) so the turn message list can narrate them --
+	the 5%/turn skill roll used to fire silently (feat/quirk-skeleton surfacing)."""
+	var notes: Array = []
+	var ctx := _build_lab_context()
 	for researcher in state.researchers:
-		researcher.process_turn(state.rng)
+		var summary: Dictionary = researcher.process_turn(state.rng, ctx)
+		if summary.get("skilled_up", false):
+			notes.append("%s levels up: skill %d -> %d" % [
+				researcher.researcher_name, int(summary["new_skill"]) - 1, int(summary["new_skill"])])
+		if summary.get("quirk_revealed", false):
+			# The tenure fallback surfaced a hidden rider -- narrate with the catalogue's
+			# deadpan hint (register: 'bother', no numbers).
+			notes.append("Quirk surfaced -- %s: %s. %s" % [
+				researcher.researcher_name,
+				QuirkCatalogue.display_name(researcher.quirk),
+				QuirkCatalogue.hint(researcher.quirk)])
+	return notes
+
+func _build_lab_context() -> Dictionary:
+	"""Lab-state proxies for the per-researcher appetite check (researcher.gd
+	_appetite_satisfaction). Pure reads of existing state -- no rng, no mutation."""
+	var roster_size: int = state.researchers.size()
+	var senior_count := 0
+	for r in state.researchers:
+		if r.skill_level >= Researcher.SENIOR_SKILL_LEVEL:
+			senior_count += 1
+	return {
+		"compute_per_researcher": (state.compute / float(roster_size)) if roster_size > 0 else state.compute,
+		"papers": state.papers,
+		"reputation": state.reputation,
+		"roster_size": roster_size,
+		"junior_count": roster_size - senior_count,
+		# Trajectory DIRECTION, not the level (no printed doom): the most recent rate.
+		"doom_rate": state.doom_system.doom_rate if state.doom_system != null else 0.0,
+	}
 
 func _step_pay_salaries(total_staff: int) -> float:
 	"""Staff maintenance costs - use actual salaries for individual researchers.
@@ -188,8 +223,12 @@ func _step_researcher_productivity() -> Dictionary:
 					"capabilities":
 						# +25% research speed
 						base_research *= 1.25
-						# But adds doom
-						doom_from_capabilities += researcher.get_doom_modifier() * productivity
+						# But adds doom (ADR-0015: log-only tally -- see the block comment
+						# below). SPEC-only here: the quirk doom_mod_add channel now routes
+						# UNIVERSALLY through the DoomSystem 'quirk' stream
+						# (feat/quirk-skeleton), so reading get_doom_modifier() here would
+						# double-narrate a capabilities carrier's quirk.
+						doom_from_capabilities += Researcher.SPECIALIZATIONS["capabilities"]["doom_per_research"] * productivity
 					"safety":
 						# Safety research reduces doom
 						doom_reduction_from_safety += 0.3 * productivity
@@ -335,6 +374,18 @@ func _build_start_turn_messages(max_ap: int, total_staff: int, staff_salaries: f
 		messages.append("Ledger bill due: '%s' -- %s" % [e.source, amt_txt])
 	for c in state.cause_log:
 		if int(c.turn) == state.turn and str(c.kind).begins_with("ledger"):
+			# Promise settlement (feat/quirk-skeleton): kept/broken get their own legible
+			# lines -- a kept promise is NOT "fallout". No numbers beyond loyalty.
+			if str(c.kind) == "ledger_promise_kept":
+				messages.append("Promise kept: %s -- %s remembers. (+%d loyalty)" % [
+					str(c.source), str(c.effects.get("promisee", "the promisee")),
+					int(c.effects.get("loyalty", 0))])
+				continue
+			if str(c.kind) == "ledger_promise_broken":
+				messages.append("WARNING: Promise BROKEN: %s -- %s will not forget. (-%d loyalty)" % [
+					str(c.source), str(c.effects.get("promisee", "the promisee")),
+					-int(c.effects.get("loyalty", 0))])
+				continue
 			var fx: Dictionary = c.effects
 			var parts := []
 			if fx.has("money_shortfall"):

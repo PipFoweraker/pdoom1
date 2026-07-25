@@ -196,7 +196,12 @@ func _build_candidate_card(cand) -> PanelContainer:
 	else:
 		appetite_txt = str(c["appetites"])
 	var loyalty_txt = ("%d%%" % int(round(float(c["loyalty_risk"]) * 100.0))) if c["loyalty_risk"] is float else str(c["loyalty_risk"])
-	deep.text = "Appetites: %s\nLoyalty risk: %s   Quirk: %s" % [appetite_txt, loyalty_txt, str(c["quirk"])]
+	# feat/quirk-skeleton: show the catalogue display name, not the raw id ("Loose Lips",
+	# not "loose_lips"). Placeholder/"none" strings pass through untouched.
+	var quirk_txt := str(c["quirk"])
+	if QuirkCatalogue.has(quirk_txt):
+		quirk_txt = QuirkCatalogue.display_name(quirk_txt)
+	deep.text = "Appetites: %s\nLoyalty risk: %s   Quirk: %s" % [appetite_txt, loyalty_txt, quirk_txt]
 	vb.add_child(deep)
 
 	var status_txt := _hiring_job_status(cand.candidate_id)

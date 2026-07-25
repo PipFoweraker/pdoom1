@@ -77,6 +77,13 @@ static func flavour(id: String) -> String:
 	_ensure_loaded()
 	return String(_defs.get(id, {}).get("flavour", ""))
 
+static func hint(id: String) -> String:
+	"""The reveal HINT -- the deadpan one-liner narrating how the quirk surfaced (used by
+	the turn feed on a tenure reveal)."""
+	_ensure_loaded()
+	var rv: Dictionary = _defs.get(id, {}).get("reveal", {})
+	return String(rv.get("hint", ""))
+
 static func pick_id(rng: RandomNumberGenerator) -> String:
 	"""Deterministically draw a quirk id from the seeded rng (sorted-index, ADR-0006)."""
 	_ensure_loaded()
