@@ -88,3 +88,40 @@ Papers-Please deadpan early, thriller late.
 ("the world shoots back", desperation-as-trap), ADR-0002 (survival spine), ADR-0011
 (research/effort), RESEARCH_IDEA_PAPER_PIPELINE_GAP.md, ADR-0016 (league metabolism /
 reality-tether), the DIAL5 attention-scarcity proposals.
+
+---
+
+## Wave 2 -- endgame stays emergent + the CROSSOVER beat (Pip, 2026-07-25)
+
+**Endgame = multiple overlapping clusters, NOT fixed mechanisms.** [PIP]
+> "I suspect there might be multiple likely end-game-state clusters that will emerge --
+> I think we'll try not to get tied down in particular endgame mechanisms the same way
+> we tried not to get tied down to rigid tech tree development -- I imagine a lot of
+> clusters in probability space starting to overlap until something eventuates -- we'll see."
+
+[CLAUDE-note] Same anti-rigidity stance as the fluid-influence progression model: don't
+hardcode THE endgame; let several end-state clusters coexist and overlap until a run
+resolves into one. The violence proposal (military-as-trap-or-path) is ONE such cluster,
+not the whole endgame.
+
+**CROSSOVER -- the historical -> forward-looking temporal switch (placeholder name).** [PIP]
+> "The part of the game that will get purely predictive i.e. after CROSSOVER (placeholder
+> until we find name for temporal switch from historical to forward-looking) -- at that
+> point we want to lock in a probability set or something that's visible and then the
+> players can battle out to end-game... a nice weird WARP or something around the
+> now-moment in time, then everything has weirdly different names and the money's called
+> Schmekels or something -- this has slipped us into an alternate timeline, and we can't
+> rely on our knowledge of the past any more!"
+
+[CLAUDE-note] A structural beat + tone shift, and it does DOUBLE duty:
+- Until CROSSOVER the game runs on curated REAL history (reality-tether / ADR-0016,
+  trailing reality by ~a month). At CROSSOVER (the game catches up to "now") it switches
+  to purely SPECULATIVE / forward-looking: lock in a visible probability set; players
+  battle to end-game on it. This is the clean handoff from deterministic-historical to
+  speculative-forward -- and where a forward probability set (cf. #236 prediction-market
+  doom) would live.
+- The alternate-timeline reskin (renamed money "Schmekels", weird names, "can't rely on
+  the past") is also the real-world-slander SOLVENT: post-CROSSOVER events are overtly
+  fictional, not claims about real actors. A fun narrative rupture AND a legal/tone
+  guardrail in one beat.
+- Nominal target to reach CROSSOVER: ~1.0 [INFERRED from Pip's data-sharing pacing note].
