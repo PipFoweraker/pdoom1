@@ -88,6 +88,31 @@ proposals.
   -- it can stay a later beat rather than being forced into this day.
 - **New scope stacked on unbuilt ADR-0010/0014/0016** -- R1 is finish-or-drop only.
 
+## Pip's pre-read leanings (2026-07-25, banked before the workshop)
+
+Captured after Pip read the six proposals. These are LEANINGS to enter the room with,
+not rulings (no-lies: priors, not decisions) -- except the polyvirate, which Pip locked.
+
+- **Polyvirate: LOCKED.** Not a triumvirate. [PIP] "polyvirate for definite" -- a fixed
+  small race-set (StarCraft-style) would invite an all-in-on-one-race imbalance; more
+  axes keeps it harder to map / min-max.
+- **Military branch (R3 endgame): build-for-both.** [PIP] "both / neither / a third,
+  more subtle thing, but build for both of these." -> engineer the substrate so the
+  military path's moral valence (genuine branch vs desperation-trap vs subtle third) is
+  a TUNABLE, not a hardcode. Do not resolve the morality in code; keep it a dial.
+- **Research streams (R2 substrate): the centre of gravity.** [PIP] "where the meat of
+  our economic sinks are ... the best possible version we can design will override
+  convenience or speed ... care, consideration, and deliberate iteration, so let's get
+  it built and in." Pre-committing ~40 of 100 effort-units across the whole body of work
+  to this. Implication: R2 gets the deliberate-iteration treatment, not a fast MVP.
+- **Build ~90% of the proposals, mostly as they emergently unfold.** [PIP] Little math
+  needed to kill the vestigial old-engine translation + early action-point systems;
+  framing the game as DECISIONS + ATTENTION (not AP) is the individuating move -- [PIP]
+  "not sure how many other bureaucracy simulators play to this point."
+- **Inject weird.** [PIP] looking forward to drawing on his esoteric + colourful literary
+  background -- the CROSSOVER / Schmekels / alternate-timeline register
+  (SEED_ENDGAME_AND_VIOLENCE) is the licensed home for it.
+
 ---
 
 # Appendix -- original prep pack (2026-07-23), partially superseded
