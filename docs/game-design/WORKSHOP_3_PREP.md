@@ -1,12 +1,125 @@
-# Workshop 3 -- Prep Pack (DRAFT, decisions-for-Pip)
+# Workshop 3 -- Running Order (2026-07-30) + Prep Pack
 
-> Status: PREP MATERIAL, not design. Drafted 2026-07-23 by a research agent at
-> Pip's request. Everything below is framed as questions, candidate options, and
-> decisions-FOR-PIP. Nothing here is ratified. Where a claim is inferred rather
-> than verified in code/docs, it is marked [INFERRED] or [UNVERIFIED].
->
-> Job of this doc: help Pip decide what Workshop 3 (WS-3) should COVER before he
-> runs it. It does not pre-decide the ADRs.
+> Status: RUNNING ORDER for WS-3 (Wed 2026-07-30, issue #811), written 2026-07-25.
+> Sections R0-R6 are the day-of agenda. Sections 0-6 further down are the original
+> prep pack (2026-07-23) that fed this agenda -- BACKGROUND, partially superseded;
+> read the reconciliation note at the head of the appendix before trusting a detail
+> there.
+
+## The frame -- this is a CONVERGENCE workshop, not an exploration
+
+WS-1 and WS-2 were divergent: generate options. WS-3 is different. The design
+proposals commissioned this week ARE the divergence, done async and off the clock:
+
+- `WS3_FINISH_OR_DROP.md`
+- `RESEARCH_STREAMS_PROPOSAL.md`
+- `OFFICE_ECONOMY_PROPOSAL.md`
+- `ENDGAME_VIOLENCE_PROPOSAL.md`
+- `CAPABILITY_UPLIFT_SCAN.md`
+- `OLD_ISSUE_TRIAGE.md`
+- (plus Pip's two raw captures: `SEED_RIVAL_AND_DEVELOPMENTS.md`, `SEED_ENDGAME_AND_VIOLENCE.md`)
+
+So WS-3's job is NOT to hunt for more ideas. It is to CARVE the meat already on the
+table into build-ready lanes. The meat is decided in the room; the exploring already
+happened in the proposals.
+
+**The one discipline that makes it converge:** every agenda item exits with a RULING
+-- ship / kill / defer -- never "let's think more". A genuine can't-decide is
+DEFERRED with what is needed to unblock it (pendingness marked, not pretended-
+resolved -- the no-lies standard applied to the workshop itself). If a block starts
+going exploratory again, that is the signal a proposal did not give enough to decide;
+capture THAT gap and defer, do not re-open divergence mid-workshop.
+
+**The standing lens (carried from the Theme A ruling, 2026-07-23):** "crisp parts,
+brutal decisions" (the Factorio / MaRo / Rams thesis). The game's hardness lives in
+the DECISIONS, not the INTERFACE. For every mechanic ruled in, ask: does it add
+INTERFACE complexity (reject / simplify) or DECISION complexity (the only kind that
+earns its keep)? Claude runs this as a standing MaRo-Rosewater / Rams check across
+every block.
+
+## Running order (timed; start early)
+
+| Block | ~Time | What happens | Exit artifact |
+|---|---|---|---|
+| **R0 -- Frame** | 20m | State the win condition: by end of day every candidate mechanic is a scoped, Epoch-tagged build lane OR explicitly killed/deferred with a reason -- nothing leaves in "exploratory" status. | the decision queue |
+| **R1 -- Finish-or-drop the inheritance** | 45m | Walk `WS3_FINISH_OR_DROP.md` against the WS-2 ADR status table (Appendix Section 2). Each unbuilt/half-built WS-2 decision (0010 adoption, 0011 workstreams, 0014 conference-shape, 0016 league pipeline) + the ADR-0015 data-strip trap: ship / kill / defer. Clear the deck before adding new meat. | kill-list + keep-list |
+| **R2 -- The substrate** | 60m | `RESEARCH_STREAMS_PROPOSAL.md` (= the ADR-0011 L2 workstream substrate). Lock or reject the compute / non-compute stream model + the polyvirate axis set. FOUNDATIONAL: the rival RPS and the endgame both hang off the axes, so protect this timebox above all others. | ADR: research substrate + axes |
+| **R3 -- Economy + endgame** | 60m | `OFFICE_ECONOMY_PROPOSAL.md` (near-term money loop / upkeep; the office-era cost), then `ENDGAME_VIOLENCE_PROPOSAL.md` (the far tent-pole). The sharp ruling in endgame: is military a genuine winning branch or another desperation-trap? And what fires "violence arrives"? | rulings + endgame/violence ADR |
+| **R4 -- Scope + prioritise into lanes** | 45m | Every keep/build ruling -> a lane: size (S/M/L), dependencies, Epoch target (v0.14 vs v0.15), which carve-seam it lands on (the monolith is now carved to ~1940 lines; the R1-R6 controllers exist). This is where the roadmap epoch-assignments deferred as "pending WS-3" get filled in for real. | lane manifest + roadmap epochs |
+| **R5 -- Emit + commit** | 30m | Fable fans out: one build-brief agent per locked lane -> `BUILD_BRIEF_*` docs; the ADRs get written; roadmap updated; DQ index regenerated (`scripts/generate_dq_index.py`); WORKSHOP_2_BACKLOG parked-items updated; all committed. | stack of build-ready briefs |
+
+Two cross-cutting threads, not their own blocks:
+- **`CAPABILITY_UPLIFT_SCAN.md`** is the FEASIBILITY lens -- keep it open through R2-R4
+  and gut-check every "build" ruling against what the engine can actually carry near-term.
+- **`OLD_ISSUE_TRIAGE.md`** is housekeeping -- its consolidate/close calls fold into R1
+  (drop) and R5 (commit); it does not need floor time.
+
+## Idealised outputs (the things that feed build lanes)
+
+1. **Decisions ledger** -- every mechanic: ship / kill / defer + reason. ADRs for the
+   big three (substrate, economy, endgame/violence). Confirm the ADR numbering before
+   assigning the range (see the workshop-numbering note in the appendix).
+2. **Lane manifest** -- scoped, prioritised, Epoch-tagged, dependency-graphed. The
+   single source build agents execute from.
+3. **Build briefs** -- one per greenlit lane, agent-executable (`BUILD_BRIEF_*`).
+4. **Updated roadmap** -- real epoch assignments filled in (closes the "pending WS-3"
+   gap in ROADMAP.md).
+
+## Fable orchestration pattern
+
+Per the orchestration lessons (push-per-step, narrow fan-out, tier the model): Fable
+does NOT pre-spawn a fleet. It runs the agenda WITH Pip and spins ONE scoped agent at
+each convergence point -- an ADR-drafter when a decision locks (R2-R3), then the only
+real fan-out at R5 (build-brief-per-lane), which is safe because by then the targets
+are decided, not speculative. The inversion from WS-1/2: the fan-out moves from the
+FRONT (explore) to the BACK (emit), because the exploring already happened in the
+proposals.
+
+## What is explicitly OUT of WS-3 (so it stays convergent)
+
+- **Onboarding / legibility build (old Theme A).** It is presentation-tier and
+  hotpatch-safe (advisor persona + lever-pointer, #801 / ONBOARDING_STORY_DESIGN.md).
+  It does not need a workshop block -- it runs as hotpatch execution. Its LENS (crisp
+  interface, brutal decisions) survives as the standing check above. Pull it into a
+  block only if Pip wants to re-open it.
+- **Re-designing anything already ruled.** The workstream substrate is RULED
+  (ADR-0011); R2 SCOPES and SCHEDULES it, it does not re-litigate it.
+- **DQ-22 rival aggro deep-build**, if R3's endgame work does not naturally reach it
+  -- it can stay a later beat rather than being forced into this day.
+- **New scope stacked on unbuilt ADR-0010/0014/0016** -- R1 is finish-or-drop only.
+
+---
+
+# Appendix -- original prep pack (2026-07-23), partially superseded
+
+## Reconciliation -- what changed since this pack was drafted
+
+The prep pack below is preserved for its analysis (especially the Section 2 WS-2
+ADR-status table, which is the R1 ammunition). But several of its OPEN QUESTIONS are
+now RESOLVED -- do not treat them as live:
+
+- **"v0.12 vs v0.13 anchor" / "which milestone does WS-3 serve" (Section 5 headline):
+  RESOLVED.** The quarterly model was retired for monthly Themes; v0.13.1 is live;
+  WS-3 is a deep-mechanics workshop feeding the v0.14+ Epochs, not a milestone-anchor
+  choice. See ROADMAP.md + RELEASE_NOMENCLATURE.md.
+- **"No WS-3 mechanics session is scheduled" / "the Friday unknown" (Section 5):
+  RESOLVED.** WS-3 is scheduled Wed 2026-07-30 (issue #811), separate from the old
+  Friday #758 slot.
+- **"Office economy proposal does not exist" (Theme B gate, Sections 3b/5/6):
+  RESOLVED.** `OFFICE_ECONOMY_PROPOSAL.md` now exists -- it is R3's input.
+- **"Build-vs-ladder version split must land first" (Theme D / Section 3d): SHIPPED.**
+  build version vs ladder version (L2) is live; board key is (seed, ladder_version).
+- **main_ui monolith:** CARVES 1-6 have landed (PlanController, SubmenuController,
+  HiringPanelController, TravelPanelController, ActionBarRenderer, EventResultPresenter);
+  main_ui.gd is ~1940 lines. New WS-3 UI lands on these controllers, not the monolith
+  (see MAIN_UI_SEAM_MAP.md).
+- **Workshop numbering** (Section 6) is still worth confirming before the ADR range is
+  assigned -- carried forward as an R0/R5 checklist item.
+
+The A/B/C/D "candidate themes" framing in Section 4 is SUPERSEDED by the proposals and
+the R0-R6 running order above; it remains as the reasoning trail that produced them
+(Theme C -> RESEARCH_STREAMS, Theme B -> OFFICE_ECONOMY, Theme A -> the standing lens,
+Theme D -> the shipped version split).
 
 ---
 
