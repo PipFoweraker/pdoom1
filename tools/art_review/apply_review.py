@@ -11,20 +11,34 @@ The review app writes a verdict-state file (default
         rotation directory of PNGs)
 
 Each value is ``{verdict, note, tags, updated_at}`` with verdict in
-{keep, maybe, reroll} (the review app's tri-state).
+{keep, iterate, discard} (the review app's v2 tri-state). Legacy files still
+carrying the old {keep, maybe, reroll} model are migrated on read: maybe and
+reroll both fold into ``iterate``; ``discard`` is new.
+
+Verdict semantics:
+    keep     accept the asset as-is.
+    iterate  on-brief but not final -> REGENERATE to compare/hone (the reroll
+             action emits these). The old maybe/reroll both land here.
+    discard  OFF-brief / wrong direction -> NOT regenerated; it signals the brief
+             itself needs reconsidering. The report lists these (with notes) as a
+             brief-reconsideration list; they never enter the regenerate manifest.
 
 Three actions, all supporting --dry-run and --art-root (default "."):
 
-    report    Count + list keep/maybe/reroll verdicts.
+    report    Count + list keep/iterate/discard verdicts. Discards are surfaced
+              WITH their notes as a brief-reconsideration list.
     promote   Copy each KEEP asset's PNG (largest size for generated art) into
               the correct godot/assets/ destination, creating dirs as needed.
     reroll    Emit tools/assets/manifests/reroll_<YYYY-MM-DD>.json describing each
-              REROLL asset (id, category, source_file, note, original_prompt),
+              ITERATE asset (id, category, source_file, note, original_prompt),
               split by pipeline (gpt vs pixellab) to feed the next generation run.
+              (Discards are deliberately excluded -- they are brief problems, not
+              re-roll fodder.)
 
 Stdlib only; no third-party deps. Godot must run an --import pass after a promote
 to register the new files -- this tool never launches Godot.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -59,7 +73,18 @@ PX_CATEGORY_TOKENS = ["props", "characters", "tilesets", "cats"]
 
 DEFAULT_STATE = "tools/art_review/review_state.json"
 MANIFEST_DIR = "tools/assets/manifests"
-VERDICTS = ("keep", "maybe", "reroll")
+VERDICTS = ("keep", "iterate", "discard")
+# legacy -> v2; applied on read so pre-v2 state files still work.
+VERDICT_MIGRATE = {"maybe": "iterate", "reroll": "iterate"}
+
+
+def migrate_verdict(raw):
+    """Normalise a stored verdict to the v2 model. keep/iterate/discard pass
+    through; legacy maybe/reroll fold into iterate; anything else -> ''."""
+    v = (raw or "").strip().lower()
+    if v in VERDICTS:
+        return v
+    return VERDICT_MIGRATE.get(v, "")
 
 
 # --- asset_id parsing / resolution -----------------------------------------
@@ -219,7 +244,7 @@ def parse_assets(state: dict, art_root: Path):
     for asset_id, val in state.items():
         if not isinstance(val, dict):
             continue
-        verdict = (val.get("verdict") or "").strip().lower()
+        verdict = migrate_verdict(val.get("verdict"))
         if verdict not in VERDICTS:
             continue
         assets.append(Asset(asset_id, verdict, val.get("note"), val.get("tags"), art_root))
@@ -263,10 +288,11 @@ def action_report(assets):
         groups[a.verdict].append(a)
     print("== review verdict report ==")
     print(
-        "counts: keep={} maybe={} reroll={} (total {})".format(
-            len(groups["keep"]), len(groups["maybe"]), len(groups["reroll"]), len(assets)
+        "counts: keep={} iterate={} discard={} (total {})".format(
+            len(groups["keep"]), len(groups["iterate"]), len(groups["discard"]), len(assets)
         )
     )
+    print("  keep    -> promote     iterate -> regenerate (reroll)     discard -> rethink brief")
     for v in VERDICTS:
         print(f"\n-- {v} ({len(groups[v])}) --")
         for a in groups[v]:
@@ -276,6 +302,19 @@ def action_report(assets):
             print(f"      pipeline={a.pipeline} category={a.category} -> {loc}")
             if a.note:
                 print(f"      note: {a.note}")
+    # a dedicated brief-reconsideration list: discards are the loudest signal
+    # that a brief is wrong, so spotlight them (with notes) at the end.
+    discards = groups["discard"]
+    print(f"\n== brief-reconsideration list (discards: {len(discards)}) ==")
+    if not discards:
+        print("  none -- no OFF-brief assets flagged.")
+    else:
+        print("  These are OFF-brief / wrong-direction. They are NOT regenerated;")
+        print("  treat each as a prompt to reconsider the brief itself.")
+        for a in discards:
+            note = a.note.strip() if a.note else "(no note given)"
+            print(f"  - {a.id}")
+            print(f"      {note}")
     return 0
 
 
@@ -325,16 +364,17 @@ def action_promote(assets, dry_run):
 
 
 def action_reroll(assets, prompt_index, art_root, dry_run):
-    rerolls = [a for a in assets if a.verdict == "reroll"]
-    print("== reroll manifest ==")
+    rerolls = [a for a in assets if a.verdict == "iterate"]
+    print("== regenerate (iterate) manifest ==")
     if not rerolls:
-        print("no reroll verdicts -- nothing to emit.")
+        print("no iterate verdicts -- nothing to emit.")
         return 0
     manifest = {
         "generated_at": _dt.datetime.now().isoformat(timespec="seconds"),
-        "note": "Rejected assets + review notes, split by pipeline. Feed the "
-        "note-refined prompts into the next generate_images.py run (gpt) "
-        "or pixellab regen list.",
+        "note": "ITERATE assets + review notes, split by pipeline. These are "
+        "on-brief but not final -- feed the note-refined prompts into the next "
+        "generate_images.py run (gpt) or pixellab regen list to compare/hone. "
+        "Discards are excluded (they are brief problems, see `report`).",
         "gpt": [],
         "pixellab": [],
     }
@@ -413,8 +453,9 @@ def build_parser():
     p.add_argument(
         "action",
         choices=["report", "promote", "reroll"],
-        help="report: counts+list; promote: copy keeps into godot/assets; "
-        "reroll: emit reroll_<date>.json for rejects.",
+        help="report: counts+list (+ discard brief-reconsideration list); "
+        "promote: copy keeps into godot/assets; reroll: emit reroll_<date>.json "
+        "of ITERATE assets to regenerate (discards excluded).",
     )
     p.add_argument(
         "--art-root",
@@ -452,7 +493,7 @@ def main(argv=None):
 
     assets = parse_assets(state, art_root)
     if not assets:
-        print("no verdicts yet -- state has no keep/maybe/reroll entries.")
+        print("no verdicts yet -- state has no keep/iterate/discard entries.")
         return 0
 
     if args.action == "report":
