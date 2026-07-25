@@ -71,6 +71,28 @@ _GEN_CATS = [
     ("terminal_textures", "Terminal textures"),
 ]
 
+# where each generated category shows up in-game -- batch-level context so the
+# reviewer knows what they are approving FOR and where it will appear.
+_GEN_HOME = {
+    "game_icons": "Action / resource icons on the PLAN buttons + the resource bar",
+    "ui_icons": "UI controls -- buttons, toggles, window chrome",
+    "hero_banners": "Wide hero banners behind menu / screen titles",
+    "screen_backgrounds": "Full-screen backdrops -- menus, office floor, records room",
+    "terminal_textures": "CRT / terminal surface textures + frame overlays",
+}
+
+
+def _px_home(rel):
+    r = rel.lower()
+    if "tileset" in r or "tiles" in r:
+        return "Office-sim floor / wall tilesets"
+    if "portrait" in r:
+        return "Researcher / staff portraits"
+    if "style_matrix" in r or "baseline" in r:
+        return "Style exploration -- direction-finding, not a shipped asset"
+    return "Pixellab office-sim sprites / props"
+
+
 GROUP_GEN = "Generated (gpt-image)"
 GROUP_PX = "Pixellab (art_source)"
 
@@ -138,6 +160,7 @@ def scan_generated(art_root):
                     "label": f"{base_id}  {var}",
                     "img": rel,
                     "meta": f"{size}px",
+                    "base": base_id,
                 }
             )
         sections.append(
@@ -145,6 +168,7 @@ def scan_generated(art_root):
                 "id": "gen-" + slug(cat),
                 "group": GROUP_GEN,
                 "title": title,
+                "home": _GEN_HOME.get(cat, ""),
                 "cells": cells,
             }
         )
@@ -173,6 +197,7 @@ def scan_pixellab(art_root):
                     "label": stem,
                     "img": rel,
                     "meta": "",
+                    "base": stem,
                 }
             )
         parts = rel_under_src.split("/")
@@ -182,6 +207,7 @@ def scan_pixellab(art_root):
                 "id": "px-" + slug(rel_under_src),
                 "group": GROUP_PX,
                 "title": title,
+                "home": _px_home(rel_under_src),
                 "cells": cells,
             }
         )
@@ -264,7 +290,7 @@ def render_cell(c):
     src = "/img?p=" + quote(c["img"], safe="/")
     meta = f'<span class="meta">{esc(c["meta"])}</span>' if c["meta"] else ""
     return f"""
-      <div class="cell" data-asset="{aid}">
+      <div class="cell" data-asset="{aid}" data-base="{esc(c.get('base',''))}">
         <div class="stage"><img loading="lazy" src="{esc(src)}" alt="{esc(c['label'])}"></div>
         <div class="cap"><span class="lbl">{esc(c['label'])}</span>{meta}</div>
         <div class="idline">{aid}</div>
@@ -280,9 +306,11 @@ def render_cell(c):
 
 def render_section(s):
     cells = "".join(render_cell(c) for c in s["cells"])
+    home = f'<p class="sechome">{esc(s.get("home", ""))}</p>' if s.get("home") else ""
     return f"""
-    <section id="{esc(s['id'])}" class="sec">
-      <h2>{esc(s['title'])} <span class="seccount">{len(s['cells'])}</span></h2>
+    <section id="{esc(s['id'])}" class="sec" data-section="{esc(s['id'])}">
+      <h2>{esc(s['title'])} <span class="seccount">{len(s['cells'])}</span> <span class="secprog"></span></h2>
+      {home}
       <div class="grid">{cells}</div>
     </section>"""
 
@@ -295,7 +323,7 @@ def render_nav(sections):
             out.append(f'<span class="navtitle">{esc(s["group"])}</span>')
             last_group = s["group"]
         out.append(
-            f'<a class="chip" href="#{esc(s["id"])}">{esc(s["title"])}'
+            f'<a class="chip" data-navfor="{esc(s["id"])}" href="#{esc(s["id"])}">{esc(s["title"])}'
             f'<b>{len(s["cells"])}</b></a>'
         )
     return "".join(out)
@@ -417,7 +445,7 @@ _TEMPLATE = r"""<!doctype html><html lang="en"><head><meta charset="utf-8">
   /* sticky section nav */
   .nav{position:sticky;top:0;z-index:40;display:flex;flex-wrap:wrap;align-items:center;gap:.35rem;
     padding:.6rem .3rem;margin:1rem 0 1.4rem;background:color-mix(in srgb,var(--ground) 90%,transparent);
-    backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+    backdrop-filter:blur(8px);border-bottom:1px solid var(--line);max-height:24vh;overflow-y:auto}
   .navtitle{font-family:ui-monospace,Consolas,monospace;font-size:.64rem;letter-spacing:.14em;text-transform:uppercase;
     color:var(--ink-faint);margin:0 .3rem 0 .5rem;flex-basis:100%}
   .navtitle:first-child{margin-top:0}
@@ -425,6 +453,16 @@ _TEMPLATE = r"""<!doctype html><html lang="en"><head><meta charset="utf-8">
     border:1px solid var(--line);border-radius:20px;padding:.22rem .6rem;display:inline-flex;gap:.35rem;align-items:center;white-space:nowrap}
   .chip:hover{color:var(--ink);border-color:var(--ink-faint)}
   .chip b{color:var(--amber);font-weight:600}
+  .chip.done{opacity:.3;text-decoration:line-through}
+  body.show-done .chip.done{opacity:.7;text-decoration:none}
+  .sechome{margin:-.5rem 0 1rem;font-size:.73rem;color:var(--ink-dim);font-family:ui-monospace,Consolas,monospace}
+  .sechome::before{content:"-> shows up: ";color:var(--amber);font-size:.62rem;letter-spacing:.08em}
+  .secprog{font-size:.66rem;color:var(--ink-faint);font-family:ui-monospace,Consolas,monospace;margin-left:auto;font-weight:400}
+  .sec.done{display:none}
+  body.show-done .sec.done{display:block;opacity:.55}
+  .cell.setcell{border-left:3px solid var(--amber-deep)}
+  .cell.setcell.grp1{background:var(--panel-2)}
+  #showdone[aria-pressed="true"]{background:var(--panel-2);color:var(--ink);border-color:var(--ink-faint)}
   .sec{margin:2.2rem 0;scroll-margin-top:70px}
   .sec h2{font-family:ui-monospace,Consolas,monospace;font-size:1rem;letter-spacing:.02em;margin:0 0 .9rem;
     display:flex;align-items:center;gap:.7rem;padding-bottom:.4rem;border-bottom:1px solid var(--line)}
@@ -504,6 +542,7 @@ _TEMPLATE = r"""<!doctype html><html lang="en"><head><meta charset="utf-8">
     <div class="tally" id="tally"></div>
     <div class="save" id="save">state file: tools/art_review/review_state.json</div>
     <div class="spacer"></div>
+    <button type="button" class="btn ghost" id="showdone" aria-pressed="false">show completed (<b>0</b>)</button>
     <button type="button" class="btn ghost" id="exportbtn">View state JSON</button>
   </div>
   <footer>Every verdict / note / tag POSTs to the local server and is written to
@@ -551,6 +590,7 @@ _TEMPLATE = r"""<!doctype html><html lang="en"><head><meta charset="utf-8">
     var id=cell.getAttribute('data-asset');
     if(curVerdict(cell)===v)v=null;    // toggle off
     applyVerdict(cell,v);
+    refreshSections();
     persist(id,{verdict:v});
   }
   function parseTags(str){return (str||'').split(',').map(function(t){return t.trim();}).filter(Boolean);}
@@ -600,6 +640,40 @@ _TEMPLATE = r"""<!doctype html><html lang="en"><head><meta charset="utf-8">
       '<b>'+notes+'</b> notes';
   }
   tally();
+
+  // section progress: hide a bunch once every cell is decided (keep/reroll),
+  // show an x/n counter, and subtly delineate multi-variant comparison sets.
+  var SECS=[].slice.call(document.querySelectorAll('.sec'));
+  function cellDecided(cell){var v=curVerdict(cell);return v==='keep'||v==='reroll';}
+  function refreshSections(){
+    var doneCount=0;
+    SECS.forEach(function(sec){
+      var cells=[].slice.call(sec.querySelectorAll('.cell'));
+      var counts={};
+      cells.forEach(function(c){var b=c.getAttribute('data-base')||'';counts[b]=(counts[b]||0)+1;});
+      var n=cells.length,dec=0,base=null,parity=0;
+      cells.forEach(function(cell){
+        if(cellDecided(cell))dec++;
+        var b=cell.getAttribute('data-base')||'';
+        if(b!==base){if(counts[b]>1)parity^=1;base=b;}
+        cell.classList.toggle('setcell',counts[b]>1);
+        cell.classList.toggle('grp1',counts[b]>1&&parity===1);
+      });
+      var done=(n>0&&dec===n);
+      sec.classList.toggle('done',done);if(done)doneCount++;
+      var prog=sec.querySelector('.secprog');if(prog)prog.textContent=dec+' / '+n+' decided';
+      var id=sec.getAttribute('data-section');
+      var chip=document.querySelector('.chip[data-navfor="'+id+'"]');
+      if(chip)chip.classList.toggle('done',done);
+    });
+    var tog=document.getElementById('showdone');if(tog){var b=tog.querySelector('b');if(b)b.textContent=doneCount;}
+  }
+  var showdone=document.getElementById('showdone');
+  if(showdone)showdone.addEventListener('click',function(){
+    var on=document.body.classList.toggle('show-done');
+    showdone.setAttribute('aria-pressed',on?'true':'false');
+  });
+  refreshSections();
 
   var dlg=document.getElementById('exportdlg'),txt=document.getElementById('exporttext');
   document.getElementById('exportbtn').addEventListener('click',function(){
