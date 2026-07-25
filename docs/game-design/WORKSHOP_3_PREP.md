@@ -10,6 +10,29 @@
 
 ---
 
+## 0. Steering docs added since drafting (WS-3 lanes MUST read)
+
+Added 2026-07-25 after the prep pack. Any WS-3 build lane reads these before
+starting so refactors and new UI land along agreed seams, not on the monolith:
+
+- **`docs/MAIN_UI_SEAM_MAP.md`** -- the incremental de-monolithing plan for
+  `main_ui.gd`. CARVE 1 (R4 planning/attention/queue -> `PlanController`) is
+  slated for the quiet pre-WS-3 window and is the prerequisite for the per-tick
+  spike. CARVE 2 (the 7 copy-pasted submenus -> one data-driven
+  `SubmenuController`) triggers the first time a lane adds a panel -- build the
+  generic component, do NOT copy-paste an 8th submenu. All carves are non-forking
+  and test-gated.
+- **`docs/game-design/SEED_RIVAL_AND_DEVELOPMENTS.md`** -- captured design seed for
+  the rival system + narrative-pressure layer ("Developments" umbrella,
+  "Sightings" rival subtype). Feeds the DQ-22 rivals cluster (Theme E / the
+  midgame lane). Note the structural synergy: the rival is revealed on the same
+  "go outside to recruit" surface as the people & money spine (#833).
+- **`docs/adr/0004-self-describing-data.md`** -- data files declare their own
+  schema; tooling never infers schema from directory. Relevant to any lane adding
+  new data files (events/actions): self-declare the type.
+
+---
+
 ## 1. Purpose + how these workshops work
 
 Pip runs periodic **mechanics-design workshops**. Each produces a batch of ADRs
