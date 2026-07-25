@@ -132,6 +132,14 @@ generated_icons/
 asset_gallery.html
 # Local art-review app state (per-reviewer verdicts/notes; written by serve_review.py)
 tools/art_review/review_state.json
+# Art-review pipeline regenerable artifacts (see tools/art_review/README.md).
+# The generators + analyzer + art_source/pixellab_verdicts.json ARE tracked;
+# these outputs are re-created by re-running the tools, so keep them out of git.
+art_source/pixellab_contact_sheet.html
+art_source/promote_list.txt
+art_source/favour_list.txt
+art_source/disfavour_dislike_list.txt
+art_generated/hero_gallery.html
 test_output.png
 test_openai_api.py
 generate_icons.py
