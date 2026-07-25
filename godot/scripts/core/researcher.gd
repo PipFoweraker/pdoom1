@@ -281,7 +281,11 @@ func get_effective_productivity() -> float:
 	return max(effective, 0.1)
 
 func get_doom_modifier() -> float:
-	"""Get doom modification from this researcher's specialization and quirk"""
+	"""Get doom modification from this researcher's specialization and quirk.
+	NOTE (feat/quirk-skeleton): the sim consumes the QUIRK part via the DoomSystem 'quirk'
+	stream (doom_system.gd _compute_streams reads quirk_effect('doom_mod_add') over the whole
+	productive roster). This combined read remains for display/tests -- do not also feed it
+	into a doom path or the quirk channel double-counts."""
 	var modifier = 0.0
 
 	# Specialization effects
@@ -401,8 +405,70 @@ func maybe_reveal_quirk_by_tenure() -> bool:
 # TURN PROCESSING
 # ============================================================================
 
-func process_turn(rng: RandomNumberGenerator = null):
-	"""Called each turn - handle burnout, skill growth, jet lag recovery, etc."""
+# --- Appetite satisfaction (feat/quirk-skeleton, WS-3 prototype) -----------------------
+# The five appetites were priced into OFFERS (hiring_pipeline self_worth_floor) and then
+# never read again post-hire. This closes the loop: each turn, a STRONG hunger is checked
+# against a cheap lab-state proxy and nudges loyalty. Deterministic comparisons only -- NO
+# rng draws (ADR-0006); loyalty already has teeth (poach targeting hits least-loyal first).
+# Tuning intent: GENTLE. Baseline loyalty drift is +-1..2/turn (salary); appetites add a
+# net clamped +-APPETITE_NET_CAP so a well-fed hungry hire gains ~1-2/turn and a starved
+# one bleeds ~1-2/turn -- felt over months, never a one-turn cliff.
+const APPETITE_HUNGRY_THRESHOLD := 0.6  # only strong hungers (top ~40% of draws) move loyalty
+const APPETITE_FED_LOYALTY := 1         # per fed hungry appetite, per turn
+const APPETITE_STARVED_LOYALTY := 1     # per starved hungry appetite, per turn
+const APPETITE_NET_CAP := 2             # net appetite drift clamp per turn (keeps it gentle)
+const APPETITE_COMPUTE_FED := 2.0       # compute per researcher counted as "well fed" (2x the 1.0/turn burn)
+const APPETITE_PRESTIGE_REPUTATION := 55.0  # lab reputation that feeds prestige hunger (start is 50)
+const SENIOR_SKILL_LEVEL := 7           # skill at/above which a researcher counts as senior (Staff+ band)
+
+func _appetite_satisfaction(lab_context: Dictionary, salary_ratio: float) -> Dictionary:
+	"""Compare each STRONG appetite against its lab-state proxy. Returns {fed: [keys],
+	starved: [keys], loyalty_delta: int}. Pure function of inputs -- no rng, no mutation."""
+	var fed: Array[String] = []
+	var starved: Array[String] = []
+	for key in APPETITE_KEYS:
+		if float(appetites.get(key, 0.0)) < APPETITE_HUNGRY_THRESHOLD:
+			continue
+		var is_fed := false
+		match key:
+			"money":
+				# Paid at/above expectation feeds the money hunger (same ratio the base
+				# loyalty drift uses).
+				is_fed = salary_ratio >= 1.0
+			"compute":
+				# Slack compute per head reads as "my runs never queue".
+				is_fed = float(lab_context.get("compute_per_researcher", 0.0)) >= APPETITE_COMPUTE_FED
+			"prestige":
+				# A lab with published papers or above-baseline reputation is one worth
+				# being seen at.
+				is_fed = float(lab_context.get("papers", 0.0)) >= 1.0 \
+					or float(lab_context.get("reputation", 0.0)) >= APPETITE_PRESTIGE_REPUTATION
+			"mentees":
+				# A mentee-hungry SENIOR needs juniors around; a junior with the hunger is
+				# content just having peers (roster of 2+).
+				if skill_level >= SENIOR_SKILL_LEVEL:
+					is_fed = int(lab_context.get("junior_count", 0)) > 0
+				else:
+					is_fed = int(lab_context.get("roster_size", 0)) >= 2
+			"mission_purity":
+				# The mission reads as on-track while the doom RATE is flat/falling
+				# (trajectory direction, not the level -- ADR-0015 two-instrument reading).
+				is_fed = float(lab_context.get("doom_rate", 0.0)) <= 0.0
+		if is_fed:
+			fed.append(key)
+		else:
+			starved.append(key)
+	var delta: int = clampi(
+		fed.size() * APPETITE_FED_LOYALTY - starved.size() * APPETITE_STARVED_LOYALTY,
+		-APPETITE_NET_CAP, APPETITE_NET_CAP)
+	return {"fed": fed, "starved": starved, "loyalty_delta": delta}
+
+func process_turn(rng: RandomNumberGenerator = null, lab_context: Dictionary = {}) -> Dictionary:
+	"""Called each turn - handle burnout, skill growth, jet lag recovery, etc.
+	`lab_context` (feat/quirk-skeleton) carries the lab-state proxies for the appetite
+	check; an EMPTY context skips appetites entirely (keeps legacy callers/tests
+	byte-identical). Returns a summary dict so the turn feed can narrate what happened:
+	{skilled_up, new_skill, quirk_revealed, appetite_fed, appetite_starved, appetite_loyalty_delta}."""
 	turns_employed += 1
 
 	# Base burnout accumulation (working is stressful!) plus any quirk burnout drift
@@ -416,8 +482,11 @@ func process_turn(rng: RandomNumberGenerator = null):
 	# Skill growth (very slow - 1 point per ~20 turns). The sponge quirk multiplies the roll
 	# chance (skill_growth_mult).
 	# WS-0 determinism: use provided seeded RNG only; no global-RNG fallback (1.0 => no growth)
+	var skilled_up := false
 	var skill_roll: float = rng.randf() if rng != null else 1.0
 	if skill_roll < 0.05 * float(quirk_effect("skill_growth_mult", 1.0)):  # base 5% chance per turn
+		if skill_level < 10:
+			skilled_up = true
 		skill_level = min(skill_level + 1, 10)
 		base_productivity = 0.5 + (skill_level * 0.1)
 
@@ -430,9 +499,25 @@ func process_turn(rng: RandomNumberGenerator = null):
 		loyalty = max(loyalty - 2, 0)
 	loyalty = clampi(loyalty + int(quirk_effect("loyalty_per_turn_add", 0)), 0, 100)
 
+	# Appetite satisfaction drift (feat/quirk-skeleton): deterministic, gated on a non-empty
+	# context so legacy callers (and pre-existing tests) see unchanged behaviour.
+	var appetite := {"fed": [], "starved": [], "loyalty_delta": 0}
+	if not lab_context.is_empty():
+		appetite = _appetite_satisfaction(lab_context, salary_ratio)
+		loyalty = clampi(loyalty + int(appetite["loyalty_delta"]), 0, 100)
+
 	# Tenure reveal (deterministic fallback): time on the team eventually surfaces the quirk
 	# even absent a bespoke incident, so a hidden rider never stays invisible forever (ADR-0006).
-	maybe_reveal_quirk_by_tenure()
+	var quirk_revealed := maybe_reveal_quirk_by_tenure()
+
+	return {
+		"skilled_up": skilled_up,
+		"new_skill": skill_level,
+		"quirk_revealed": quirk_revealed,
+		"appetite_fed": appetite["fed"],
+		"appetite_starved": appetite["starved"],
+		"appetite_loyalty_delta": appetite["loyalty_delta"],
+	}
 
 # ============================================================================
 # UTILITY FUNCTIONS

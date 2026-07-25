@@ -246,6 +246,7 @@ func _bill(e: Entry, state) -> void:
 			# Governance is a resource the ledger reads/writes (ADR-0003). Its
 			# player-facing design is parked (workshop #2). Below zero, corroded
 			# governance leaks into doom -- the bribery/blackmail pressure surface.
+			var gov_covered: bool = state.governance >= e.principal
 			state.governance -= e.principal
 			if state.governance < 0.0:
 				var deficit: float = -state.governance
@@ -255,23 +256,31 @@ func _bill(e: Entry, state) -> void:
 				_attribute(e, deficit, state)
 				_note(state, "ledger_governance_deficit", e.source,
 					{"governance_deficit": deficit, "doom": doom_hit})
+			_settle_promise(e, gov_covered, state)
 		"doom":
 			var applied: float = _apply_capped_doom(e, e.principal, state)
 			_attribute(e, applied, state)
 			_note(state, "ledger_doom_bill", e.source, {"doom": applied})
 		"papers":
 			# fix/promise-currency: a first-authorship OWED. Honoured out of produced papers when
-			# it lands; a shortfall lapses (no doom/rep teeth) -- a promise is a survivable future
-			# obligation in its OWN domain, never a mortality lever (the rep-bomb is gone).
+			# it lands; a shortfall lapses on the MONEY side (no doom/rep teeth) -- a promise is a
+			# survivable future obligation in its OWN domain, never a mortality lever (the
+			# rep-bomb is gone). feat/quirk-skeleton: the shortfall is no longer SILENT -- the
+			# named promisee's loyalty takes the hit (see _settle_promise).
+			var papers_covered: bool = state.papers >= e.principal
 			var papers_paid: float = minf(state.papers, e.principal)
 			state.papers = max(0.0, state.papers - e.principal)
 			_note(state, "ledger_papers_bill", e.source, {"papers": -papers_paid})
+			_settle_promise(e, papers_covered, state)
 		"compute":
 			# fix/promise-currency: compute committed to this hire, drawn from the fleet when due.
-			# Survivable (compute is not a death condition); any shortfall simply lapses.
+			# Survivable (compute is not a death condition); a shortfall lapses on the resource
+			# side but costs the promisee's loyalty (feat/quirk-skeleton, _settle_promise).
+			var compute_covered: bool = state.compute >= e.principal
 			var compute_paid: float = minf(state.compute, e.principal)
 			state.compute = max(0.0, state.compute - e.principal)
 			_note(state, "ledger_compute_bill", e.source, {"compute": -compute_paid})
+			_settle_promise(e, compute_covered, state)
 		"action_points":
 			state.action_points = max(0, state.action_points - int(e.principal))
 		"equity", "board_seat", "agenda":
@@ -305,6 +314,45 @@ func _apply_capped_doom(e: Entry, raw_doom: float, state) -> float:
 		roll.id = e.id
 		_rollover_queue.append(roll)
 	return applied
+
+
+## Promise KEPT/BROKEN semantics (feat/quirk-skeleton, WS-3 prototype). An appetite promise
+## ("promise:<id>:<name>", minted in appetite_promise) used to bill unconditionally and lapse
+## SILENTLY on a shortfall -- the person it was made to never noticed. Now the billing arm
+## reports whether the obligation was COVERED (the resource fully paid the principal):
+##   covered   -> clean settle + a small loyalty CREDIT to the named promisee (they saw you
+##                deliver; retention teeth already exist -- poaching targets least-loyal).
+##   shortfall -> a loyalty HIT on that promisee instead of the silent lapse (the promise
+##                was broken TO SOMEONE). Money-settlement rules are untouched; this only
+##                adds the interpersonal ledger. Magnitudes are Balance-priced (gentle:
+##                kept +3 vs the resentful-accept penalty of 15; broken -8 bites harder
+##                than kept credits, loss-aversion shaped). No rng (ADR-0006).
+func _settle_promise(e: Entry, covered: bool, state) -> void:
+	if not e.source.begins_with("promise:"):
+		return
+	# source = "promise:<promise_id>:<researcher name>" (appetite_promise). Limit the split so
+	# a name containing ':' can't shear (names are "First Last" today; defensive anyway).
+	var parts: PackedStringArray = e.source.split(":", true, 2)
+	if parts.size() < 3:
+		return
+	var promisee: String = parts[2]
+	if not ("researchers" in state):
+		return  # lightweight test doubles without a roster
+	for r in state.researchers:
+		if r.researcher_name != promisee:
+			continue
+		if covered:
+			var credit: int = Balance.inum("ledger.promise.kept_loyalty_credit", 3)
+			r.loyalty = mini(100, r.loyalty + credit)
+			_note(state, "ledger_promise_kept", e.source, {"loyalty": credit, "promisee": promisee})
+		else:
+			var hit: int = Balance.inum("ledger.promise.broken_loyalty_hit", 8)
+			r.loyalty = maxi(0, r.loyalty - hit)
+			_note(state, "ledger_promise_broken", e.source, {"loyalty": -hit, "promisee": promisee})
+		return
+	# Promisee no longer on the roster (departed/fired): the promise dies with the tenure --
+	# no loyalty to move, and we deliberately add no new liability (WS-3 may want a
+	# disgruntled-alumni rider here; see staff_rider's departure flip).
 
 
 ## Route a ledger bill's doom into the `ledger` STREAM (ADR-0015 single-authority discipline).

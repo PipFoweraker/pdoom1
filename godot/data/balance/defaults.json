@@ -40,11 +40,13 @@
 		"blackmail": { "principal_multiplier": 1.5, "fuse_turns": 22, "interest_rate": 0.02 },
 		"expose": { "rep_per_1000": 2.5, "governance_multiplier": 0.5 },
 		"promise": {
-			"_description": "fix/promise-currency (Option B): appetite promises cost a FUTURE OBLIGATION IN THEIR OWN DOMAIN, never raw reputation. The old reputation-currency principal vs a starting rep of 50 (death at rep<=0) was an instant-death trap. Magnitudes are small/survivable; interest 0.0 (obligations, not compounding mortality levers). first_authorship->papers, compute_budget->compute, mission/mentorship->governance.",
+			"_description": "fix/promise-currency (Option B): appetite promises cost a FUTURE OBLIGATION IN THEIR OWN DOMAIN, never raw reputation. The old reputation-currency principal vs a starting rep of 50 (death at rep<=0) was an instant-death trap. Magnitudes are small/survivable; interest 0.0 (obligations, not compounding mortality levers). first_authorship->papers, compute_budget->compute, mission/mentorship->governance. feat/quirk-skeleton: billing now branches on COVERED vs SHORTFALL -- a covered promise credits the named promisee kept_loyalty_credit loyalty; a shortfall costs them broken_loyalty_hit (loyalty already has poach teeth). Money-settlement rules unchanged.",
 			"first_authorship": { "principal": 1.0, "fuse_turns": 10, "interest_rate": 0.0 },
 			"compute_budget": { "principal": 20.0, "fuse_turns": 8, "interest_rate": 0.0 },
 			"mission_charter": { "principal": 6.0, "fuse_turns": 12, "interest_rate": 0.0 },
-			"mentorship": { "principal": 4.0, "fuse_turns": 10, "interest_rate": 0.0 }
+			"mentorship": { "principal": 4.0, "fuse_turns": 10, "interest_rate": 0.0 },
+			"kept_loyalty_credit": 3,
+			"broken_loyalty_hit": 8
 		},
 		"resentment_debt": { "principal": 1500.0, "fuse_turns": 6, "interest_rate": 0.02 }
 	},
@@ -88,7 +90,8 @@
 			"diffusion_gain": 0.00006,
 			"alarm_decay": 0.985,
 			"panic_decay": 0.97,
-			"leak_panic_scale": 0.02
+			"leak_panic_scale": 0.02,
+			"W_quirk_doom": 0.5
 		}
 	},
 	"salaries": {

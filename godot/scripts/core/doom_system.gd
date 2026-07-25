@@ -53,6 +53,7 @@ var doom_sources: Dictionary = {
 	"alarm": 0.0,          # -global_alarm (small standing relief)
 	"ledger": 0.0,         # routed ledger-bill stream input (ADR-0003 teeth)
 	"technical_debt": 0.0, # GameState tech-debt coupling (migrated from a direct write)
+	"quirk": 0.0,          # researcher disposition (quirk doom_mod_add over the productive roster)
 	"momentum": 0.0,       # gated trend modifier on the sum (not an intermediary)
 }
 
@@ -276,7 +277,20 @@ func _compute_streams(state: GameState) -> Dictionary:
 	#     before formal governance lands). Small by design; heavy lifting is in dampers.
 	s["alarm"] = -_w("W_alarm", 0.02) * state.global_alarm
 
-	# (g) scheduled pulses -- ADR-0005 schedule entries inject time-shaped rate bumps. v1 ships
+	# (g) quirk -- researcher DISPOSITION stream (feat/quirk-skeleton, WS-3 prototype). The
+	#     quirk doom_mod_add channel summed over the PRODUCTIVE roster -- previously this
+	#     channel only fed the log-only capabilities arm in turn_manager, so a safety-lane
+	#     secret_successionist had zero effect. Now every productive carrier's disposition
+	#     leaks into the world: e_acc_sympathizer/secret_successionist push up,
+	#     true_believer/doom_absolutist pull down. Deterministic sum, NO rng (ADR-0006).
+	#     Natively SIGNED like the alarm stream (deliberately exempt from the R2-Q9 v1
+	#     hazard clamp -- a doom-lowering conviction is genuine relief). Balance-priced.
+	var quirk_sum := 0.0
+	for r in _productive_researchers(state):
+		quirk_sum += float(r.quirk_effect("doom_mod_add", 0.0))
+	s["quirk"] = _w("W_quirk_doom", 0.5) * quirk_sum
+
+	# (h) scheduled pulses -- ADR-0005 schedule entries inject time-shaped rate bumps. v1 ships
 	#     no pulse content; the hook is wired so the schema addition (R2-Q6) has a landing site.
 	for pulse in _active_pulses(state):
 		s["pulse:" + str(pulse.get("id", "?"))] = float(pulse.get("rate", 0.0))
