@@ -399,7 +399,7 @@ and how wrong.
 2. **`_website_export/docs/index.md` -- wrong win condition + stale version
    (HIGH, it's the website).** "Try to reach turn 100 with P(Doom) at 0%"
    CONTRADICTS ADR-0002 (no turn limit; survival/high-score; victory is rare).
-   Also "Download v0.10.1", "Current Version: v0.10.1" (SSOT is 0.11.0), and
+   Also "Download v0.10.1", "Current Version: v0.10.1" (SSOT is 0.13.1), and
    frontmatter `description: "A satirical strategy game"` -- re-introduces the
    "satirical" word the project deliberately dropped.
 
