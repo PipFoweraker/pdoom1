@@ -72,6 +72,11 @@ var travel_panel: TravelPanelController
 # _on_actions_available() shim (stores _last_actions for layout flips) and still owns input
 # (_on_dynamic_action_pressed), hover (_on_action_hover), and the shared delegates.
 var action_bar: ActionBarRenderer
+# CARVE 6 (R6, docs/MAIN_UI_SEAM_MAP.md): the event/result PRESENTATION -- turning an executed
+# action's result, an achievement unlock, or an engine error into feed-log lines (+ the PLAN
+# error toast) -- lives in EventResultPresenter now. main_ui keeps thin signal shims that forward
+# here and still owns the feed MODEL/rendering (log_message) the presenter writes through.
+var event_result_presenter: EventResultPresenter
 var research_quality_selector  # Issue #500
 var doom_trend_graph  # #512 doom trend sparkline (script-instantiated)
 var doom_breakdown  # #578 colour-coded per-source doom "blow-by-blow" (script-instantiated)
@@ -160,6 +165,11 @@ func _ready():
 	# first-lever nudge / strategic-unlock fanfare. Variant-ready: a dev-mode display variant plugs
 	# into render()'s layout dispatch (see action_bar_renderer.gd VARIANT PLUG POINT).
 	action_bar = ActionBarRenderer.new(self)
+
+	# CARVE 6 (R6): stand up the event/result presenter (executed-action result, achievement
+	# unlock, engine error -> feed feedback). It composes this view: it writes through
+	# host.log_message() and reaches host.plan_screen for the error toast.
+	event_result_presenter = EventResultPresenter.new(self)
 
 	# P0 rage-quit friction (playtest 2026-07-17): during a run, a window-close (X / Alt+F4)
 	# should return to the Main Menu instead of quitting straight to desktop. We take over the
@@ -1087,24 +1097,6 @@ func _render_delta_chip(key: String, d: float) -> void:
 	chip.add_theme_color_override("font_color", _DELTA_GOOD if good else _DELTA_BAD)
 
 
-func _format_deltas(deltas: Dictionary) -> String:
-	"""EE-7: BBCode-coloured 'money +$20k, doom +3.0' summary for the message log --
-	resource-affecting events state their deltas instead of burying them in prose."""
-	var order := ["money", "compute", "research", "papers", "reputation", "doom"]
-	var parts := []
-	for key in order:
-		if not deltas.has(key):
-			continue
-		var d: float = float(deltas[key])
-		var txt: String
-		if key == "money":
-			txt = ("+" if d > 0.0 else "-") + GameConfig.format_money(absf(d))
-		else:
-			txt = "%+.1f" % d
-		var good: bool = (d < 0.0) if key == "doom" else (d > 0.0)
-		parts.append("[color=%s]%s %s[/color]" % ["lime" if good else "red", key, txt])
-	return ", ".join(parts)
-
 func _on_turn_phase_changed(phase_name: String):
 	print("[MainUI] Phase changed: ", phase_name)
 
@@ -1142,43 +1134,17 @@ func _on_turn_phase_changed(phase_name: String):
 	log_message("[color=magenta]Turn Phase: " + phase_name + "[/color]")
 
 func _on_action_executed(result: Dictionary):
-	print("[MainUI] Action executed: ", result)
-
-	var message = result.get("message", "Action completed")
-	# P0: FEED items carry a channel ("flavour" for the arxiv stream) so the feed filter can
-	# collapse the spam. FEED lines are already BBCode-coloured; don't re-wrap them in lime.
-	var channel := String(result.get("channel", "normal"))
-	if channel != "normal":
-		log_message(message, channel)
-	else:
-		log_message("[color=lime]" + message + "[/color]")
-
-	# EE-7: resource-affecting events/actions state their applied deltas explicitly
-	var deltas: Dictionary = result.get("deltas", {})
-	if not deltas.is_empty():
-		log_message("[color=gray]  `- delta[/color] " + _format_deltas(deltas))
-
-	# Show any additional messages from action
-	if result.has("messages"):
-		for msg in result.get("messages", []):
-			log_message("[color=white]  " + str(msg) + "[/color]")
-
-	# Note: GameManager now handles auto-starting next turn
+	# CARVE 6 (R6): thin view shim. Result -> feed presentation lives in EventResultPresenter now.
+	event_result_presenter.present_action_result(result)
 
 func _on_achievement_unlocked(achievement: Dictionary) -> void:
-	"""L8 (#619): surface unlocks in the message log. Recognition only (ADR-0002)."""
-	log_message("[color=gold]* Achievement -- %s:[/color] [color=gray]%s[/color]" % [
-		achievement.get("title", "?"), achievement.get("flavor", "")])
+	# CARVE 6 (R6): thin view shim. Unlock -> feed presentation lives in EventResultPresenter now.
+	event_result_presenter.present_achievement(achievement)
 
 func _on_error_occurred(error_msg: String):
-	print("[MainUI] Error: ", error_msg)
-	log_message("[color=red]ERROR: " + error_msg + "[/color]")
-	# Also surface it ON the PLAN screen where the player is acting (playtest 2026-07-24): the
-	# feed above is WATCH-only (hidden in PLAN mode), so an action-queue rejection like "Not
-	# enough Attention" / "Cannot afford ..." was previously invisible while planning. The toast
-	# is hidden unless PLAN is the active screen, so this is additive, not duplicate noise.
-	if plan_screen != null and is_instance_valid(plan_screen):
-		plan_screen.flash_error(error_msg)
+	# CARVE 6 (R6): thin view shim. Error -> feed + PLAN-toast presentation lives in
+	# EventResultPresenter now.
+	event_result_presenter.present_error(error_msg)
 
 func _notification(what: int) -> void:
 	# P0 rage-quit friction: intercept the window-manager close during a run and route to the
