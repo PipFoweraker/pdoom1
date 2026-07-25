@@ -15,7 +15,7 @@ A bootstrap strategy game about managing a scrappy AI safety lab with realistic 
 - **Paper Review Process**: Multi-turn paper submission with acceptance decisions
 - **Calendar Integration**: Conferences occur at historically accurate times
 
-**Current Version**: v0.11.0 'Travel & Conferences' - Academic publishing and travel system
+**Current Version**: v0.13.1
 
 **Strategic Challenge**: Experience the real constraints of running an AI safety nonprofit - manage weekly cash flow, make strategic funding decisions, and scale your team efficiently while keeping doom levels low. With extended gameplay, you now have time to build meaningful strategies and recover from setbacks!
 
@@ -675,7 +675,7 @@ Your AI safety lab can gain reputation and reduce doom by publishing papers at a
    - Quality depends on: research invested + researcher skill + traits
 
 2. **Acceptance Decision**
-   - Formula: `quality - (prestige × 0.8) + (reputation/100 × 0.15)`
+   - Formula: `quality - (prestige x 0.8) + (reputation/100 x 0.15)`
    - Higher prestige conferences are harder to get into
    - Better reputation improves your chances
 
@@ -691,11 +691,11 @@ Your AI safety lab can gain reputation and reduce doom by publishing papers at a
 - **Domestic** (Tier 2): $500 flight + $150/day accommodation
 - **International** (Tier 3): $2,500 flight + $300/day accommodation
 
-**Total Cost** = Flight + (Accommodation × Days) + Registration
+**Total Cost** = Flight + (Accommodation x Days) + Registration
 
 **Example**: Attending NeurIPS (International, 4 days, $800 reg)
-- Economy: $2,500 + ($300 × 4) + $800 = **$4,500**
-- Business: $5,000 + ($500 × 4) + $800 = **$7,800**
+- Economy: $2,500 + ($300 x 4) + $800 = **$4,500**
+- Business: $5,000 + ($500 x 4) + $800 = **$7,800**
 
 ### Jet Lag System
 
@@ -710,7 +710,7 @@ Traveling researchers experience jet lag that temporarily reduces productivity.
 
 **Recovery:**
 - Jet lag automatically recovers 1 level per turn
-- Severity decreases: High → Medium → Low → None
+- Severity decreases: High -> Medium -> Low -> None
 - Plan important research projects around travel schedules
 
 **Strategic Tips:**

@@ -137,13 +137,13 @@ If a critical bug is discovered after release:
   - Incompatible gameplay mechanics changes
   - Save file format changes that break compatibility
   - Major UI/UX overhauls that change core interaction patterns
-  
+
 - **MINOR** version changes:
   - New game features (events, actions, upgrades, opponents)
   - New game modes or options
   - Backwards-compatible enhancements
   - New documentation or guides
-  
+
 - **PATCH** version changes:
   - Bug fixes that don't change functionality
   - Performance improvements
@@ -159,7 +159,7 @@ If a critical bug is discovered after release:
 
 - **Patch releases**: As needed for critical bugs (within days/weeks)
 - **Minor releases**: Monthly or bi-monthly for new features
-- **Major releases**: Quarterly or as needed for significant changes
+- **Major releases**: monthly Themes (first Friday) or as needed for significant changes
 
 ## Tools and Commands Reference
 

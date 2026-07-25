@@ -10,7 +10,6 @@ Implementation guides, how-tos, and integration documentation:
 - **[Asset Integration Guide](guides/ASSET_INTEGRATION_GUIDE.md)** - How to integrate assets into the game
 - **[Terminal Messages Implementation](guides/TERMINAL_MESSAGES_IMPLEMENTATION.md)** - Terminal message system guide
 - **[P(Doom) Data Integration Plan](guides/PDOOM_DATA_INTEGRATION_PLAN.md)** - Data integration architecture
-- **[Copilot Instructions Update Analysis](guides/COPILOT_INSTRUCTIONS_UPDATE_ANALYSIS.md)** - AI assistance configuration
 
 ---
 
