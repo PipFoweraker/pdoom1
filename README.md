@@ -56,7 +56,7 @@ Want to contribute or build from source?
 - **[Architecture](docs/developer/ARCHITECTURE.md)** - Codebase overview
 - **[Full Changelog](CHANGELOG.md)** - Version history
 
-**Built with Godot 4.5.1** | **Open Source (MIT License)**
+**Built with Godot 4.5.1** | **Source-available -- see [LICENSE](LICENSE)**
 
 ---
 

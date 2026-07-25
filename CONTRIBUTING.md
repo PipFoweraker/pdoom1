@@ -285,6 +285,14 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/):
   proves a freshness marker is in the `.pck` before emitting. NEVER hand-run a
   raw `godot --export` (stale-cache risk that burned many cycles in v0.11.0).
 
+## License of contributions
+
+By submitting a contribution (code, content, or assets) you grant the project a
+perpetual, irrevocable license to use, modify, and relicense it under whatever
+license the project later adopts. The current interim terms are in the root
+[LICENSE](LICENSE) file; a formal open-source license for the engine is planned
+around the 1.0 release.
+
 ## Getting Help
 
 - **Questions**: Open a [Discussion](https://github.com/PipFoweraker/pdoom1/discussions)
