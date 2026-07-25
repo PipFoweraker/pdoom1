@@ -39,8 +39,11 @@ The canonical SOURCE of P(Doom)1's voice, positioning, and copy raw material.
   the B2B/public-good framing.
 - `docs/game-design/WORLD_AND_LORE.md` -- personas (Mogul/Hustler/Operator),
   tone north star, Antagonist_Lab.
+- `docs/ROADMAP.md` (+ `RELEASE_NOMENCLATURE.md`) -- the canonical roadmap; the
+  website derives an audience-shaped projection (`public/docs/roadmap.md`), never
+  the source. Pull + re-project on material change. See ROADMAP.md "Cross-repo".
 
-These four are the seam. If a fifth source becomes load-bearing for public
+These five are the seam. If a further source becomes load-bearing for public
 copy, add it here so the website agent knows it is fair game.
 
 ## Pull mechanism

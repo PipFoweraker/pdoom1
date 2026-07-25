@@ -1,7 +1,7 @@
 # Cat, cosmetics & the doom-oracle -- idea capture (v0.13+ / next-epoch)
 
 > Raw design ideas from Pip (2026-07-23, transcribed on a walk). NOT Friday-critical --
-> next-epoch material, feeds the v0.13 "Rivals and News" / DQ-22 rivals workshop + a
+> next-epoch material, feeds the "Rivals & News" / DQ-22 rivals workshop + a
 > cosmetics-system thread. Builds on the existing `office_cat.gd`. Captured so it is not lost.
 
 ## 1. The cat as a DOOM-ORACLE (the standout -- ties to doom-legibility / foresight)
@@ -50,5 +50,5 @@
   shoggoth in once era-appropriate + permission" note). Ties to the CRT / redaction aesthetic.
 
 ## Where these live
-Next-epoch: v0.13 "Rivals and News" / the DQ-22 rivals workshop + a cosmetics-system thread.
+Next-epoch: "Rivals & News" / the DQ-22 rivals workshop + a cosmetics-system thread.
 NOT the Friday epoch. Graduate to issues/ADRs in that workshop.
