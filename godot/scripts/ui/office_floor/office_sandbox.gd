@@ -48,17 +48,24 @@ const WANG_BASE_REGION := Rect2i(64, 32, 32, 32)
 const TILE_UPSCALE := 2
 
 # --- v3 tuning --------------------------------------------------------------
-# Global OCCUPANT scale default. The v2 sprites drew at EmployeeSprite.SPRITE_SCALE (2.0);
-# on a small floor that reads too big ("spawn one person, it's relatively huge"). 0.65 makes
-# a spawned worker a sane fraction of the floor. Tunable live with [-]/[=]. Applied as a NODE
-# transform scale onto occupants (people/cats/props) -- never touches the sprites' art scale.
-const OCCUPANT_SCALE_DEFAULT := 0.65
+# Global OCCUPANT scale default. Since the #899 scale pass fixed the BASE art scale
+# (EmployeeSprite.SPRITE_SCALE now lands a worker at ~128px = 2 floor tiles), the sandbox
+# default multiplier is NEUTRAL: 1.0 shows the real in-game scale. (The old 0.65 existed
+# only to compensate for the oversized 2.0 base scale.) Tunable live with [-]/[=]. Applied
+# as a NODE transform scale onto occupants -- never touches the sprites' art scale.
+const OCCUPANT_SCALE_DEFAULT := 1.0
 const OCCUPANT_SCALE_MIN := 0.2
 const OCCUPANT_SCALE_MAX := 3.0
 const OCCUPANT_SCALE_STEP := 1.12       # multiplicative per keypress
-const PER_SPRITE_STEP := 1.1            # per-selected-sprite scale step
+# #899: per-sprite step raised 1.1 -> 1.25. A 10% step was easy to read as "the keys are
+# dead" on art that overflowed the room; 25% per press is unambiguous.
+const PER_SPRITE_STEP := 1.25           # per-selected-sprite scale step
 const PER_SPRITE_MIN := 0.25
 const PER_SPRITE_MAX := 4.0
+# #899: max cursor->sprite distance for the per-sprite pick ([,]/[.] and the marker ring).
+# Previously _nearest_person had NO pick radius, so the keys silently retargeted whichever
+# sprite happened to be nearest anywhere on the floor between presses.
+const PICK_RADIUS := 64.0
 
 # POPULATE-UP sequence: cumulative TARGET totals per press (level 1..10). Level 0 = empty.
 # Each press advances one stage (people via set_roster, cats wandering, furniture on walls).
@@ -186,6 +193,20 @@ var _overlays: Array = []                  # Sprite2D transparent wall overlays 
 var _poster_texs: Array = []               # placeholder/promoted poster textures
 var _poster_idx: int = 0
 var _marker: SandboxMarker = null          # highlights the per-sprite / overlay selection target
+var _last_msg: String = ""                 # #899: transient feedback line shown in the status
+
+# --- compare view (side-by-side scale check) ---------------------------------
+# [V] renders TWO OfficeFloor instances at once: LEFT a small starter room (2-3
+# staff, sparse props), RIGHT the main floor as a larger complex office (6+
+# staff, cats, dense props). Same rendering path + the same shared scale
+# constants on both -- the point is compare-and-contrast of one scale ruling in
+# two room sizes. Dev-only, pure composition, zero game-state writes.
+var _compare_mode := false
+var _floor_b: OfficeFloor = null           # LEFT starter office
+var _roster_b: Array = []
+var _furniture_b: Array = []               # starter-floor placeholder props
+var _caption_a: Label = null
+var _caption_b: Label = null
 
 func _ready() -> void:
 	_rng.randomize()
@@ -233,9 +254,10 @@ func _build_overlay() -> void:
 	_legend.add_theme_font_size_override("font_size", 13)
 	_legend.text = "OFFICE SANDBOX v3  --  dev toy (no game state)\n" \
 		+ "[1]/[2] spawn/despawn person   [S] skin   [B] mood   [C]/[X] add/remove cat   [R] randomize   [0] clear   [ESC] quit\n" \
-		+ "SCALE:  [-]/[=] all occupants   [,]/[.] the sprite under the cursor   |   POPULATE:  [U] up a stage   [I] down a stage\n" \
+		+ "SCALE:  [-]/[=] all occupants   [,]/[.] the sprite under the cursor (within 64px)   |   POPULATE:  [U] up a stage   [I] down a stage\n" \
+		+ "[V] COMPARE: side-by-side starter (small) vs complex (large) office\n" \
 		+ "[T] office STATE (scummy/decent)   [P] cycle prop/poster   [LMB] place   [RMB] remove nearest   [K] clear props\n" \
-		+ "DOOM-GLOW on cats:  [ [ ] decrease   [ ] ] increase   |   OVERLAY POC:  [V] toggle poster-on-wall mode   [;]/['] selected overlay opacity\n" \
+		+ "DOOM-GLOW on cats:  [ [ ] decrease   [ ] ] increase   |   OVERLAY POC:  [O] toggle poster-on-wall mode   [;]/['] selected overlay opacity\n" \
 		+ "feedback on current prop:  [L]ike  [J] dislike  [F]avour  [G] disfavour  [M] promote  [N] note"
 	vb.add_child(_legend)
 
@@ -359,7 +381,9 @@ func _input(event: InputEvent) -> void:
 		KEY_BRACKETRIGHT:
 			_nudge_doom(DOOM_STEP)
 		KEY_V:
-			_toggle_overlay_mode()
+			_toggle_compare()
+		KEY_O:
+			_toggle_overlay_mode()   # was [V]; V now toggles the compare view
 		KEY_SEMICOLON:
 			_nudge_overlay_opacity(-0.1)
 		KEY_APOSTROPHE:
@@ -420,18 +444,23 @@ func _cycle_skin() -> void:
 
 func _apply_skin(idx: int) -> void:
 	_skin_idx = idx
-	var s: Dictionary = _skins[idx]
+	_apply_skin_to_floor(_floor)
+	if _floor_b != null and is_instance_valid(_floor_b):
+		_apply_skin_to_floor(_floor_b)   # compare view mirrors the skin (same render path)
+	_apply_occupant_scale()
+
+func _apply_skin_to_floor(f: OfficeFloor) -> void:
+	var s: Dictionary = _skins[_skin_idx]
 	match String(s.get("kind", "")):
 		"art":
-			_floor.set_sprite_frames(RealSpriteFrames)
-			_floor.set_tier(1)
+			f.set_sprite_frames(RealSpriteFrames)
+			f.set_tier(1)
 		"color":
 			var frames: SpriteFrames = EmployeeSpriteScript._build_placeholder_frames(s["body"], HAT)
-			_floor.set_sprite_frames(frames)
-			_floor.set_tier(1)
+			f.set_sprite_frames(frames)
+			f.set_tier(1)
 		_:
-			_floor.set_tier(0)                     # "blob"
-	_apply_occupant_scale()
+			f.set_tier(0)                     # "blob"
 
 # --- Mood / lighting --------------------------------------------------------
 func _cycle_mood() -> void:
@@ -441,6 +470,8 @@ func _cycle_mood() -> void:
 func _apply_mood(idx: int) -> void:
 	_mood_idx = idx
 	_floor.modulate = _moods[idx]["tint"]
+	if _floor_b != null and is_instance_valid(_floor_b):
+		_floor_b.modulate = _moods[idx]["tint"]
 
 # --- Office STATE (prototype "reflects game state") -------------------------
 func _cycle_state() -> void:
@@ -457,6 +488,9 @@ func _apply_state(idx: int) -> void:
 	# Additive dev hooks (default null restores built-in look for the live integration).
 	_floor.set_floor_tile_texture(floor_tex)
 	_floor.set_wall_strip_texture(wall_tex)
+	if _floor_b != null and is_instance_valid(_floor_b):
+		_floor_b.set_floor_tile_texture(floor_tex)
+		_floor_b.set_wall_strip_texture(wall_tex)
 
 # Find a promoted tileset whose id contains `key`, crop its Wang base tile, upscale,
 # and return a tileable texture. Returns null if no promoted tileset matched.
@@ -669,7 +703,10 @@ func _remove_cat() -> void:
 		cat.queue_free()
 
 func _floor_bounds() -> Rect2:
-	var s := _floor.size
+	return _bounds_of(_floor)
+
+func _bounds_of(f: Control) -> Rect2:
+	var s := f.size
 	if s.x < 40.0 or s.y < 40.0:
 		s = Vector2(360, 260)
 	return Rect2(Vector2(16, 16), s - Vector2(32, 32))
@@ -679,10 +716,9 @@ func _floor_bounds() -> Rect2:
 # every occupant the sandbox owns: employee sprites (NODE transform only -- never the art
 # scale the live view sets), cats, populate-furniture, and manually-placed props.
 func _apply_occupant_scale() -> void:
-	for c in _floor.get_children():
-		if c is OfficeEmployeeSprite:
-			var m := float((c as Node).get_meta("sb_scale_mult", 1.0))
-			(c as Node2D).scale = Vector2(_occupant_scale * m, _occupant_scale * m)
+	_scale_people_on(_floor)
+	if _floor_b != null and is_instance_valid(_floor_b):
+		_scale_people_on(_floor_b)   # compare view: SAME scale constants both sides
 	for cat in _cats:
 		if is_instance_valid(cat):
 			cat.scale = Vector2(_occupant_scale, _occupant_scale)
@@ -690,11 +726,21 @@ func _apply_occupant_scale() -> void:
 		if is_instance_valid(f):
 			var base: Vector2 = f.get_meta("base_scale", Vector2.ONE)
 			f.scale = base * _occupant_scale
+	for f2 in _furniture_b:
+		if is_instance_valid(f2):
+			var base_b: Vector2 = f2.get_meta("base_scale", Vector2.ONE)
+			f2.scale = base_b * _occupant_scale
 	for spr in _placed_props:
 		if is_instance_valid(spr):
 			var base2: Vector2 = spr.get_meta("base_scale", Vector2.ONE)
 			spr.scale = base2 * _occupant_scale
 	_refresh_ghost_texture()
+
+func _scale_people_on(f: OfficeFloor) -> void:
+	for c in f.get_children():
+		if c is OfficeEmployeeSprite:
+			var m := float((c as Node).get_meta("sb_scale_mult", 1.0))
+			(c as Node2D).scale = Vector2(_occupant_scale * m, _occupant_scale * m)
 
 func _nudge_occupant_scale(mult: float) -> void:
 	_occupant_scale = clampf(_occupant_scale * mult, OCCUPANT_SCALE_MIN, OCCUPANT_SCALE_MAX)
@@ -703,13 +749,22 @@ func _nudge_occupant_scale(mult: float) -> void:
 func _scale_nearest_person(mult: float) -> void:
 	var sp := _nearest_person(_floor.get_local_mouse_position())
 	if sp == null:
+		# #899: previously this silently no-opped (or silently retargeted a far-away
+		# sprite) -- now the status line says why nothing visibly changed.
+		_last_msg = "per-sprite scale: no sprite within %dpx of the cursor" % int(PICK_RADIUS)
 		return
 	var m := float(sp.get_meta("sb_scale_mult", 1.0))
 	m = clampf(m * mult, PER_SPRITE_MIN, PER_SPRITE_MAX)
 	sp.set_meta("sb_scale_mult", m)
+	var nm := "sprite"
+	if sp is OfficeEmployeeSprite:
+		nm = (sp as OfficeEmployeeSprite).emp_name
+	_last_msg = "per-sprite scale: %s -> x%.2f" % [nm, m]
 	_apply_occupant_scale()
 
-func _nearest_person(at: Vector2) -> Node2D:
+# #899: picks the nearest employee sprite WITHIN max_dist of `at` (was unbounded,
+# which made [,]/[.] retarget invisibly-distant sprites between presses).
+func _nearest_person(at: Vector2, max_dist: float = PICK_RADIUS) -> Node2D:
 	var best: Node2D = null
 	var best_d := INF
 	for c in _floor.get_children():
@@ -718,7 +773,7 @@ func _nearest_person(at: Vector2) -> Node2D:
 			if d < best_d:
 				best_d = d
 				best = c
-	return best
+	return best if best_d <= max_dist else null
 
 # --- v3: POPULATE-UP sequence + placement logic -----------------------------
 func _populate_up() -> void:
@@ -839,6 +894,124 @@ func _furniture_tex(kind: String) -> Texture2D:
 		img.set_pixel(0, y, col.darkened(0.5))
 		img.set_pixel(w - 1, y, col.darkened(0.5))
 	return ImageTexture.create_from_image(img)
+
+# --- COMPARE VIEW: side-by-side starter vs complex office (#899 / #793) ------
+# [V] splits the sandbox into TWO OfficeFloor instances rendered through the
+# IDENTICAL path with the IDENTICAL scale constants:
+#   LEFT  = small starter environment: small bounds, 3 staff, sparse props.
+#   RIGHT = the main sandbox floor, topped up to a larger complex office:
+#           7+ staff, 2 cats, 8+ wall furniture (plus whatever was placed).
+# Purpose: visually judge one scale ruling (worker ~2 tiles, cat ~0.5 tile) in
+# two room sizes at once. Pure composition; no game-state writes.
+func _toggle_compare() -> void:
+	_compare_mode = not _compare_mode
+	if _compare_mode:
+		_enter_compare()
+	else:
+		_exit_compare()
+
+func _enter_compare() -> void:
+	# LEFT starter floor: same scene, same skin/mood/state, its own small roster.
+	_floor_b = OfficeFloorScene.instantiate()
+	add_child(_floor_b)
+	move_child(_floor_b, _floor.get_index() + 1)   # keep the legend/status panel on top
+	_apply_skin_to_floor(_floor_b)
+	_floor_b.modulate = _moods[_mood_idx]["tint"]
+	var st: Dictionary = _states[_state_idx]
+	_floor_b.set_floor_tile_texture(_tileset_tile_for(String(st.get("floor_key", ""))))
+	_floor_b.set_wall_strip_texture(_tileset_tile_for(String(st.get("wall_key", ""))))
+	_roster_b = []
+	for _i in range(3):
+		_roster_b.append(_make_person(_next_id))
+		_next_id += 1
+	_floor_b.set_roster(_roster_b)
+	# RIGHT complex floor: top up the EXISTING sandbox population (reuses the
+	# normal spawn machinery; never shrinks anything Pip already placed).
+	while _roster.size() < 7 and _roster.size() < MAX_PEOPLE:
+		_roster.append(_make_person(_next_id))
+		_next_id += 1
+	_push_roster()
+	while _cats.size() < 2 and _cats.size() < MAX_CATS:
+		_add_cat()
+	while _furniture.size() < 8:
+		if not _spawn_furniture():
+			break
+	_layout_floors()
+	_caption_a = _make_caption(_floor, "COMPLEX (large office)")
+	_caption_b = _make_caption(_floor_b, "STARTER (small office)")
+	# Starter props spawn deferred: the left floor's size is 0 until the first
+	# layout pass, and the wall spots derive from its real bounds.
+	call_deferred("_spawn_starter_props")
+	_apply_occupant_scale()
+	_last_msg = "compare ON: same render path + scale constants on both floors"
+
+func _exit_compare() -> void:
+	if _caption_a != null and is_instance_valid(_caption_a):
+		_caption_a.queue_free()
+	_caption_a = null
+	_caption_b = null                      # child of _floor_b; freed with it
+	if _floor_b != null and is_instance_valid(_floor_b):
+		_floor_b.queue_free()
+	_floor_b = null
+	_roster_b.clear()
+	_furniture_b.clear()
+	_layout_floors()
+	_last_msg = "compare OFF"
+
+func _layout_floors() -> void:
+	if _compare_mode:
+		# LEFT starter: deliberately small room. RIGHT complex: the wide remainder.
+		_set_floor_anchors(_floor_b, 0.02, 0.32, 0.36, 0.96)
+		_set_floor_anchors(_floor, 0.40, 0.04, 0.99, 0.98)
+	else:
+		_floor.set_anchors_preset(Control.PRESET_FULL_RECT)
+
+func _set_floor_anchors(f: Control, l: float, t: float, r: float, b: float) -> void:
+	if f == null or not is_instance_valid(f):
+		return
+	f.anchor_left = l
+	f.anchor_top = t
+	f.anchor_right = r
+	f.anchor_bottom = b
+	f.offset_left = 0.0
+	f.offset_top = 0.0
+	f.offset_right = 0.0
+	f.offset_bottom = 0.0
+
+func _make_caption(parent_floor: Control, text: String) -> Label:
+	var cap := Label.new()
+	cap.text = text
+	cap.add_theme_font_size_override("font_size", 12)
+	cap.modulate = Color(1.0, 0.9, 0.4)
+	cap.position = Vector2(12, 12)
+	cap.z_index = 4
+	parent_floor.add_child(cap)
+	return cap
+
+# Sparse starter furnishing: a desk / plant / cabinet against the left floor's
+# walls, via the same placeholder _furniture_tex path POPULATE uses.
+func _spawn_starter_props() -> void:
+	if _floor_b == null or not is_instance_valid(_floor_b):
+		return
+	var b := _bounds_of(_floor_b)
+	var spots: Array = [
+		Vector2(b.position.x + GRID * 0.5, b.position.y + GRID * 0.5),
+		Vector2(b.end.x - GRID * 0.5, b.position.y + GRID * 0.5),
+		Vector2(b.position.x + GRID * 0.5, b.end.y - GRID * 0.5),
+	]
+	var kinds: Array = ["desk", "plant", "cabinet"]
+	for i in range(spots.size()):
+		var tex := _furniture_tex(String(kinds[i]))
+		var spr := Sprite2D.new()
+		spr.texture = tex
+		spr.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		var base := _prop_scale(tex)
+		spr.set_meta("base_scale", base)
+		spr.scale = base * _occupant_scale
+		spr.position = spots[i]
+		spr.z_index = 2
+		_floor_b.add_child(spr)
+		_furniture_b.append(spr)
 
 # --- v3: DOOM-GLOW on cats (prototype) --------------------------------------
 func _nudge_doom(d: float) -> void:
@@ -994,6 +1167,9 @@ func _randomize() -> void:
 	_apply_occupant_scale()
 
 func _clear_all() -> void:
+	if _compare_mode:
+		_compare_mode = false
+		_exit_compare()
 	_roster.clear()
 	_push_roster()
 	for cat in _cats:
@@ -1008,13 +1184,22 @@ func _clear_all() -> void:
 func _update_status() -> void:
 	if _status == null:
 		return
-	_status.text = "skin: %s   |   people: %d   |   cats: %d   |   mood: %s   |   scale: %d%%   |   populate: %d/%d" % [
+	# #899: surface the SELECTED sprite's per-sprite multiplier so [,]/[.] have
+	# visible feedback (the old status only printed the GLOBAL scale, so a
+	# working per-sprite nudge looked like dead keys).
+	var sel := _nearest_person(_floor.get_local_mouse_position())
+	var sel_txt := "none in range"
+	if sel != null:
+		sel_txt = "x%.2f" % float(sel.get_meta("sb_scale_mult", 1.0))
+	_status.text = "skin: %s   |   people: %d   |   cats: %d   |   mood: %s   |   scale: %d%%   |   sel sprite: %s   |   populate: %d/%d%s" % [
 		_skins[_skin_idx]["name"], _roster.size(), _cats.size(), _moods[_mood_idx]["name"],
-		int(round(_occupant_scale * 100.0)), _pop_level, _POP_STAGES.size()]
+		int(round(_occupant_scale * 100.0)), sel_txt, _pop_level, _POP_STAGES.size(),
+		("" if _last_msg == "" else "\n>> " + _last_msg)]
 	if _asset_status == null:
 		return
-	var mode_line := "MODE: %s   |   doom-glow: %d%%   |   overlays: %d" % [
+	var mode_line := "MODE: %s   |   compare: %s   |   doom-glow: %d%%   |   overlays: %d" % [
 		("OVERLAY (poster on wall)" if _overlay_mode else "prop placement"),
+		("ON" if _compare_mode else "off"),
 		int(round(_doom_level * 100.0)), _overlays.size()]
 	var cur := _current_prop()
 	var cur_line: String
@@ -1383,7 +1568,14 @@ class SandboxCat extends SandboxCatBase:
 
 # Real walk-cycle cat (AnimatedSprite2D playing loaded pixellab frames).
 class RealCat extends SandboxCatBase:
-	const ART_SCALE := 0.45                    # 68px source -> ~30px on floor
+	# #899 scale unification: cat and human sizes derive from the SAME on-screen
+	# tile unit (OfficeEmployeeSprite.TILE_PX = 64px; humans target CHAR_TARGET_H
+	# = 2 tiles = 128px). Cat art: 68x68 canvas, opaque subject ~34px tall.
+	# Target: a cat reads ~0.5 tile (32px) beside a 2-tile human.
+	# ART_SCALE = 32 / 34 ~= 0.94 (was a magic 0.45 -> ~15px, a quarter-tile cat).
+	const CAT_SUBJECT_H := 34.0
+	const CAT_TARGET_H := OfficeEmployeeSprite.TILE_PX * 0.5   # 32px on screen
+	const ART_SCALE := CAT_TARGET_H / CAT_SUBJECT_H            # ~0.94
 	var _frames: SpriteFrames = null
 	var _anim: AnimatedSprite2D = null
 
