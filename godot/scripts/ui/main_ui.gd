@@ -50,8 +50,10 @@ extends VBoxContainer
 # Reference to GameManager
 var game_manager: Node
 
-# Track queued actions
-var queued_actions: Array = []
+# CARVE 1 (R4, docs/MAIN_UI_SEAM_MAP.md): the plan/attention/queue LOGIC lives in
+# PlanController now. main_ui is the thin view -- it renders plan_controller.queued_actions
+# and wires buttons to plan_controller.* calls; it owns no queue/cost/commit math.
+var plan_controller: PlanController
 var research_quality_selector  # Issue #500
 var doom_trend_graph  # #512 doom trend sparkline (script-instantiated)
 var doom_breakdown  # #578 colour-coded per-source doom "blow-by-blow" (script-instantiated)
@@ -144,6 +146,9 @@ func _ready():
 	# Get GameManager reference -- the autoload singleton is the ONE GameManager
 	# (L0 #620/#608: the duplicate scene-local node was removed from main.tscn)
 	game_manager = GameManager
+
+	# CARVE 1 (R4): stand up the plan/queue/attention controller over the same GameManager.
+	plan_controller = PlanController.new(game_manager)
 
 	# P0 rage-quit friction (playtest 2026-07-17): during a run, a window-close (X / Alt+F4)
 	# should return to the Main Menu instead of quitting straight to desktop. We take over the
@@ -646,7 +651,7 @@ func _refresh_gantt() -> void:
 	if queue_gantt == null or _ui_layout != "proposed":
 		return
 	var state: Dictionary = game_manager.get_game_state() if game_manager else {}
-	var rows := QueueGantt.rows_from_state(state, queued_actions)
+	var rows := QueueGantt.rows_from_state(state, plan_controller.queued_actions)
 	var watch_mode := screen_mode != null and screen_mode.current_mode == ScreenModeController.Mode.WATCH
 	queue_gantt.update_rows(rows, watch_mode)
 
@@ -688,11 +693,11 @@ func _on_reserve_ap_button_pressed():
 
 func _on_undo_last_button_pressed():
 	"""Undo (remove) the last queued action"""
-	if queued_actions.size() == 0:
+	if plan_controller.queued_actions.size() == 0:
 		return
 
 	# Get the last action
-	var last_action = queued_actions[-1]
+	var last_action = plan_controller.queued_actions[-1]
 	var action_id = last_action.get("id", "")
 	var action_name = last_action.get("name", "Unknown")
 
@@ -700,60 +705,40 @@ func _on_undo_last_button_pressed():
 	_remove_queued_action(action_id, action_name)
 
 func _on_clear_queue_button_pressed():
-	"""Clear all queued actions and refund AP"""
-	if queued_actions.size() == 0:
-		return
-
-	# Call GameManager to clear queue (refunds AP)
-	game_manager.clear_action_queue()
+	"""Clear all queued actions and refund AP. Queue mutation + refund is PlanController's job
+	(R4); the view keeps the empty-queue guard, the log line, and the redraw."""
+	if not plan_controller.clear_queue():
+		return  # already empty -- nothing to clear
 
 	# Update local display
-	queued_actions.clear()
 	update_queued_actions_display()
 
 	log_message("[color=yellow]Action queue cleared - AP refunded[/color]")
 
 func _remove_queued_action(action_id: String, action_name: String):
-	"""Remove a specific action from the queue"""
+	"""Remove a specific action from the queue. The queue mutation + Attention refund live in
+	PlanController (R4); the view keeps the debug/log lines and the redraw."""
 	print("[MainUI] Removing queued action: %s (id: %s)" % [action_name, action_id])
 
-	# Find and remove from local queue
-	var removed_index = -1
-	for i in range(queued_actions.size()):
-		if queued_actions[i].get("id") == action_id:
-			removed_index = i
-			break
-
-	if removed_index >= 0:
-		queued_actions.remove_at(removed_index)
-
-		# Tell GameManager to remove and refund AP
-		game_manager.remove_queued_action(action_id)
-
-		# Get AP cost for logging
-		var action_def = _get_action_by_id(action_id)
-		var ap_cost = action_def.get("costs", {}).get("action_points", 0)
-
+	var result := plan_controller.remove_action(action_id)
+	if result.get("removed", false):
+		var ap_cost: int = result.get("attention_cost", 0)
 		log_message("[color=yellow]Removed: %s (+%d AP)[/color]" % [action_name, ap_cost])
 		update_queued_actions_display()
 	else:
 		print("[MainUI] ERROR: Could not find action to remove: %s" % action_id)
 
 func _on_end_turn_button_pressed():
-	if queued_actions.size() == 0 or (game_manager.state != null and game_manager.state.queued_actions.is_empty()):
+	if plan_controller.needs_pass_fallback():
 		# Issue #733 (+ overbook soft-lock): an empty ACCEPTED queue no longer hard-errors --
-		# phantom UI tiles could previously suppress this net. Route through the existing
+		# phantom UI tiles could previously suppress this net. PlanController routes the existing
 		# pass-action path (identical to the Do Nothing button) so COMMIT THE MONTH always
 		# advances. Determinism-safe: no new RNG and no turn-step reordering -- select_action()
 		# only queues the canonical pass id, and end_month() below plays it out exactly as a
 		# planned month would.
 		log_message("[color=gray]Nothing planned -- the month proceeds.[/color]")
-		var pass_action := GameActions.get_pass_action()
-		var pass_id: String = pass_action.get("id", GameActions.PASS_ACTION_ID)
-		var pass_name: String = pass_action.get("name", "Do Nothing")
-		queued_actions.append({"id": pass_id, "name": pass_name})
+		plan_controller.queue_pass_fallback()
 		update_queued_actions_display()
-		game_manager.select_action(pass_id)
 
 	# Check for danger zones and warn player
 	var current_state = game_manager.state
@@ -791,16 +776,18 @@ func _on_end_turn_button_pressed():
 		log_message("[color=gray]Press Space/Enter again to confirm, or C to revise queue[/color]")
 		# Note: Simplified version - in full implementation, would require double-confirm
 
-	log_message("[color=cyan]Committing month plan (%d actions) -- playing the month out...[/color]" % queued_actions.size())
+	log_message("[color=cyan]Committing month plan (%d actions) -- playing the month out...[/color]" % plan_controller.queue_size())
 
-	# Clear queued actions (will be repopulated after turn processes)
-	queued_actions.clear()
+	# Clear the UI mirror (NO refund -- the backend queue is consumed by the commit below;
+	# repopulated after the turn processes). reset_mirror() is the commit-path clear, distinct
+	# from the clear-queue button's refunding path.
+	plan_controller.reset_mirror()
 	update_queued_actions_display()
 
 	# L1 (ADR-0009): End Turn commits the MONTH plan and hands control to day-tick
 	# playback (auto-pause on response windows, month review at the boundary). The old
 	# single day-step lives on ONLY behind the DEV MODE overlay ("Day step (dev)").
-	game_manager.end_month()
+	plan_controller.commit_month()
 	# Phase A: COMMIT THE MONTH is the PLAN->WATCH transition.
 	if screen_mode:
 		screen_mode.enter_watch()
@@ -811,34 +798,22 @@ func _on_commit_plan_button_pressed():
 	var available_ap = current_state.get("available_ap", 0)
 
 	# If there are queued actions, commit them + reserve balance
-	if queued_actions.size() > 0:
-		log_message("[color=cyan]Committing %d queued actions + reserving %d remaining AP...[/color]" % [queued_actions.size(), available_ap])
+	if plan_controller.queue_size() > 0:
+		log_message("[color=cyan]Committing %d queued actions + reserving %d remaining AP...[/color]" % [plan_controller.queue_size(), available_ap])
 	else:
-		# No queued actions - just reserve all AP (reactive strategy)
+		# No queued actions - just reserve all AP (reactive strategy). PlanController owns the
+		# reserve-all queue mutation (mirror entry + backend pass id); the view just logs + redraws.
 		log_message("[color=cyan]Committing plan: Reserving all %d AP for reactive responses...[/color]" % available_ap)
-
-		# Queue the pass action to represent reactive strategy (L0 #620: was the
-		# twin id "pass_turn"; ONE id now -- GameActions.PASS_ACTION_ID)
-		var reserve_action = {
-			"id": GameActions.PASS_ACTION_ID,
-			"name": "Reserve All AP",
-			"description": "No planned actions - keep all AP available for responding to events",
-			"ap_cost": 0,
-			"money_cost": 0
-		}
-		queued_actions.append(reserve_action)
+		plan_controller.append_reserve_all()
 		update_queued_actions_display()
 
-		# Directly append to game state queue (bypass select_action validation)
-		# -- a virtual "reserve all AP" entry; pass costs {} so no AP is committed
-		game_manager.state.queued_actions.append(GameActions.PASS_ACTION_ID)
-
-	# Clear local queue (will be repopulated after turn processes)
-	queued_actions.clear()
+	# Clear the UI mirror (NO refund -- backend consumed by the commit; repopulated after the
+	# turn processes). Commit-path clear, distinct from the clear-queue button's refunding path.
+	plan_controller.reset_mirror()
 	update_queued_actions_display()
 
 	# Commit the plan -- the L1 month path (see _on_end_turn_button_pressed).
-	game_manager.end_month()
+	plan_controller.commit_month()
 	# Phase A: committing the plan is the PLAN->WATCH transition.
 	if screen_mode:
 		screen_mode.enter_watch()
@@ -1136,10 +1111,10 @@ func _on_turn_phase_changed(phase_name: String):
 		phase_color = "lime"
 		phase_display = "SELECT ACTIONS - Click actions or press 1-9"
 		# End turn requires actions, commit plan is always available
-		end_turn_button.disabled = (queued_actions.size() == 0)
+		end_turn_button.disabled = plan_controller.is_queue_empty()
 		commit_plan_button.disabled = false
-		undo_last_button.disabled = (queued_actions.size() == 0)
-		clear_queue_button.disabled = (queued_actions.size() == 0)
+		undo_last_button.disabled = plan_controller.is_queue_empty()
+		clear_queue_button.disabled = plan_controller.is_queue_empty()
 		# Phase A: reaching the plan phase (game start / after month review) returns to PLAN.
 		# Mid-month window pauses emit "turn_start", not "action_selection", so WATCH is kept.
 		if screen_mode:
@@ -1715,8 +1690,8 @@ func _on_dynamic_action_pressed(action_id: String, action_name: String):
 	# Track queued action -- #821: only add the UI tile when the backend accepts
 	# (select_action returns false on Attention overbook + emits the error), so a
 	# rejected action no longer leaves a phantom queue tile.
-	if game_manager.select_action(action_id):
-		queued_actions.append({"id": action_id, "name": action_name})
+	if plan_controller.select_action(action_id):
+		plan_controller.queue_action(action_id, action_name)
 		update_queued_actions_display()
 
 func _get_action_by_id(action_id: String) -> Dictionary:
@@ -1857,23 +1832,8 @@ func _show_doom_trend_expanded() -> void:
 	dialog.z_index = 1000
 	dialog.z_as_relative = false
 
-func _calculate_queued_costs() -> Dictionary:
-	"""Calculate total costs of all queued actions for turn preview"""
-	var total_costs: Dictionary = {}
-
-	for queued_action in queued_actions:
-		var action_id = queued_action.get("id", "")
-		var action_def = _get_action_by_id(action_id)
-		var costs = action_def.get("costs", {})
-
-		for resource in costs.keys():
-			if resource == "action_points":
-				continue  # AP is already tracked separately
-			if not total_costs.has(resource):
-				total_costs[resource] = 0
-			total_costs[resource] += costs[resource]
-
-	return total_costs
+# CARVE 1 (R4): _calculate_queued_costs moved verbatim to
+# PlanController.calculate_queued_costs(). The view calls it in update_queued_actions_display.
 
 func _show_hiring_submenu():
 	"""Phase-B hiring pipeline panel (source -> interview -> offer -> onboard). PURE VIEW:
@@ -2620,8 +2580,8 @@ func _on_fundraising_option_selected(action_id: String, action_name: String, dia
 	# backend accepts (select_action returns false on Attention overbook), so a
 	# rejected action no longer leaves a phantom queue tile.
 	print("[MainUI] Calling game_manager.select_action(%s)" % action_id)
-	if game_manager.select_action(action_id):
-		queued_actions.append({"id": action_id, "name": action_name})
+	if plan_controller.select_action(action_id):
+		plan_controller.queue_action(action_id, action_name)
 		update_queued_actions_display()
 
 func _show_financing_submenu():
@@ -2719,8 +2679,8 @@ func _on_financing_option_selected(action_id: String, action_name: String, dialo
 	log_message("[color=cyan]Financing: %s[/color]" % action_name)
 	# #821: only add the UI tile when the backend accepts (select_action returns
 	# false on Attention overbook), so a rejected action leaves no phantom tile.
-	if game_manager.select_action(action_id):
-		queued_actions.append({"id": action_id, "name": action_name})
+	if plan_controller.select_action(action_id):
+		plan_controller.queue_action(action_id, action_name)
 		update_queued_actions_display()
 
 func _show_ledger_screen():
@@ -2926,8 +2886,8 @@ func _on_publicity_option_selected(action_id: String, action_name: String, dialo
 	# backend accepts (select_action returns false on Attention overbook), so a
 	# rejected action no longer leaves a phantom queue tile.
 	print("[MainUI] Calling game_manager.select_action(%s)" % action_id)
-	if game_manager.select_action(action_id):
-		queued_actions.append({"id": action_id, "name": action_name})
+	if plan_controller.select_action(action_id):
+		plan_controller.queue_action(action_id, action_name)
 		update_queued_actions_display()
 
 func _show_strategic_unlock_fanfare() -> void:
@@ -3102,8 +3062,8 @@ func _on_strategic_option_selected(action_id: String, action_name: String, dialo
 	# backend accepts (select_action returns false on Attention overbook), so a
 	# rejected action no longer leaves a phantom queue tile.
 	print("[MainUI] Calling game_manager.select_action(%s)" % action_id)
-	if game_manager.select_action(action_id):
-		queued_actions.append({"id": action_id, "name": action_name})
+	if plan_controller.select_action(action_id):
+		plan_controller.queue_action(action_id, action_name)
 		update_queued_actions_display()
 
 # === TRAVEL & CONFERENCES SUBMENU (Issue #468) ===
@@ -3732,12 +3692,12 @@ func update_queued_actions_display():
 		if child != queue_hint:
 			child.queue_free()
 
-	if queued_actions.size() > 0:
+	if plan_controller.queue_size() > 0:
 		# Hide hint, show queue items
 		queue_hint.visible = false
 
 		# Create visual queue items
-		for action in queued_actions:
+		for action in plan_controller.queued_actions:
 			var action_name = action.get("name", "Unknown")
 			var action_id = action.get("id", "")
 
@@ -3782,8 +3742,8 @@ func update_queued_actions_display():
 
 			queue_container.add_child(item)
 
-		# Calculate and display turn preview (total costs from queued actions)
-		var total_costs = _calculate_queued_costs()
+		# Calculate and display turn preview (total costs from queued actions -- R4 logic in PlanController)
+		var total_costs = plan_controller.calculate_queued_costs()
 		if not total_costs.is_empty():
 			var preview_panel = PanelContainer.new()
 			preview_panel.custom_minimum_size = Vector2(150, 60)
@@ -3817,9 +3777,9 @@ func update_queued_actions_display():
 
 		# Log message
 		var action_names = []
-		for action in queued_actions:
+		for action in plan_controller.queued_actions:
 			action_names.append(action.get("name", "Unknown"))
-		log_message("[color=lime]Queued actions (%d): %s[/color]" % [queued_actions.size(), ", ".join(action_names)])
+		log_message("[color=lime]Queued actions (%d): %s[/color]" % [plan_controller.queue_size(), ", ".join(action_names)])
 	else:
 		# Show hint, hide items
 		queue_hint.visible = true
@@ -3828,11 +3788,11 @@ func update_queued_actions_display():
 	# Update button states based on queue (case-insensitive phase check)
 	var phase_upper = current_turn_phase.to_upper()
 	if phase_upper == "ACTION_SELECTION":
-		var queue_empty = queued_actions.size() == 0
+		var queue_empty = plan_controller.is_queue_empty()
 		undo_last_button.disabled = queue_empty
 		clear_queue_button.disabled = queue_empty
 		end_turn_button.disabled = queue_empty
-		print("[MainUI] Updated button states: queue_size=%d, buttons_disabled=%s" % [queued_actions.size(), queue_empty])
+		print("[MainUI] Updated button states: queue_size=%d, buttons_disabled=%s" % [plan_controller.queue_size(), queue_empty])
 
 	# P10 gantt: mirror the tentative plan-time queue into the operations tracker. No-op in classic.
 	_refresh_gantt()
@@ -4123,8 +4083,8 @@ func _on_operations_option_selected(action_id: String, action_name: String, dial
 	# (select_action returns false on Attention overbook), so a rejected action
 	# no longer leaves a phantom queue tile.
 	print("[MainUI] Calling game_manager.select_action(%s)" % action_id)
-	if game_manager.select_action(action_id):
-		queued_actions.append({"id": action_id, "name": action_name})
+	if plan_controller.select_action(action_id):
+		plan_controller.queue_action(action_id, action_name)
 		update_queued_actions_display()
 
 # === COMMAND ZONE - PASS ACTION ===
@@ -4157,6 +4117,6 @@ func _on_pass_button_pressed():
 	# (select_action returns false if e.g. events are pending), so a rejected pass
 	# no longer leaves a phantom queue tile. Pass is free, so overbook never blocks it.
 	print("[MainUI] Calling game_manager.select_action(%s)" % action_id)
-	if game_manager.select_action(action_id):
-		queued_actions.append({"id": action_id, "name": action_name})
+	if plan_controller.select_action(action_id):
+		plan_controller.queue_action(action_id, action_name)
 		update_queued_actions_display()
