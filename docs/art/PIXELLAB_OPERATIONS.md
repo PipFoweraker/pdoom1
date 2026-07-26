@@ -165,6 +165,27 @@ is steered by description language only (MEASURED: heft + kawaii probes,
 - **8-dir object tool for characters:** reference sprite loses the salience
   contest against placeholder characters; output resembles a generic
   character. Use `create_character(mode="v3", reference_image_base64=...)`.
+- **White-flash matting under paws/feet (HOUSE PROMPT RULE, ruled
+  2026-07-26):** walk frames can carry stray near-white background pixels
+  under the body mid-stride. EVERY walk/action prompt for characters and
+  cats carries clean-alpha language ("clean transparent background under
+  paws/feet in every frame, no white halo"), and lanes verify with a PIL
+  scan (near-white pixels in the lower third under the silhouette) before
+  accepting; violations re-roll. Applies to workers AND cats.
+
+## 5b. Skeleton keypoints (raw API, outside the MCP surface)
+
+`POST /estimate-skeleton` (verified in the pixellab-python SDK source,
+2026-07-26): one transparent-background character image in ->
+`keypoints: [{x, y, label, z_index}]` out, over an 18-label set (NOSE,
+NECK, L/R SHOULDER/ELBOW/ARM/HIP/KNEE/LEG, L/R EYE, L/R EAR). Powers the
+anchor-track harvest for effect sockets (see
+docs/art/ANCHORS_AND_EFFECTS_PRIMER.html section 5). Notes: bills in USD
+API credits, NOT subscription generations (SDK usage type "usd"); label
+set is humanoid-shaped -- no TAIL keypoint (tail tracks come from
+annotation); what labels a quadruped/cat frame returns needs one live
+probe before a bulk harvest; needs the PixelLab API key (raw HTTP, not
+available through the MCP tools).
 
 ## 6. HOW LANES SHOULD RUN -- checklist
 
