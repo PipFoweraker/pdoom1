@@ -1,7 +1,10 @@
 # WS-3 finish-or-drop: the four unbuilt WS-2 ADRs
 
-> Status: DECISION PREP for Workshop 3 (Wed 2026-07-29). Drafted 2026-07-25 by a
-> research agent at Pip's request. Companion to `WORKSHOP_3_PREP.md` Section 2
+> Status: DECISION PREP for W-3a (Mon 2026-07-27) -- the opening RATIFY BLOCK
+> of the three-day W-3 structure (Mon W-3a / Tue build day / Wed W-3b-W-4;
+> restructured 2026-07-26, see `WORKSHOP_3_PREP.md` + the runsheet). Drafted
+> 2026-07-25 by a research agent at Pip's request. Companion to
+> `WORKSHOP_3_PREP.md` Section 2
 > (Decision-for-Pip 2A/2B) -- this doc turns "finish or formally drop the unbuilt
 > WS-2 ADRs" into five ratify-in-minutes questions.
 >
