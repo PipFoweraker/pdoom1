@@ -27,6 +27,15 @@ const WELCOME_OVERLAY_SCENE = preload("res://scenes/ui/welcome_overlay.tscn")
 var menu_buttons: Array[Button] = []
 var selected_index: int = 0
 
+# Update notice (#799) + patch-cadence notice (#939), built in code near the
+# version label. The update notice stays hidden until UpdateCheck reports a
+# newer remote version; the cadence label self-retires at
+# UpdateCheck.PATCH_CADENCE_SUNSET (delete _setup_launch_notices' label block
+# after that date -- it already renders nothing).
+var update_notice: HBoxContainer = null
+var update_notice_button: Button = null
+var patch_cadence_label: Label = null
+
 func _ready():
 	print("[WelcomeScreen] Initializing...")
 
@@ -77,6 +86,10 @@ func _ready():
 	# confirm which build he's on right from the welcome/loading screen.
 	add_child(DevBuildBadge.new())
 
+	# Quiet launch notices next to the version label (#799 update check, #939
+	# patch-cadence). Never blocks, never pops a modal.
+	_setup_launch_notices()
+
 	# Initialize the first-launch onboarding overlays (welcome + What's New).
 	# The welcome overlay (issue #720) takes priority on a genuine first launch so the
 	# two modals never stack; What's New handles returning players after an update.
@@ -115,6 +128,14 @@ func _input(event: InputEvent):
 			var viewport = get_viewport()
 			if viewport:
 				viewport.set_input_as_handled()
+
+		# [U] opens the update page while the update notice is showing (#799)
+		elif event.keycode == KEY_U:
+			if update_notice and update_notice.visible:
+				_on_update_notice_pressed()
+				var viewport = get_viewport()
+				if viewport:
+					viewport.set_input_as_handled()
 
 		# Number keys 1-5 for direct selection
 		elif event.keycode >= KEY_1 and event.keycode <= KEY_5:
@@ -217,6 +238,81 @@ func _setup_onboarding_overlays():
 		# Delay slightly to ensure UI is ready
 		await get_tree().create_timer(0.3).timeout
 		whats_new_modal.show_modal(true)  # true = mark as seen
+
+func _setup_launch_notices():
+	"""Build the bottom-right notice stack above the version label.
+
+	Two quiet, themed, ASCII-chrome lines (#799 / #939):
+	  [!] Patching frequently right now -- updates land often   (until sunset)
+	  v0.13.2 available >> [U]pdate page  [x]                   (when newer)
+	No modals, no auto-download, no re-nag after dismiss."""
+	var stack := VBoxContainer.new()
+	stack.name = "LaunchNotices"
+	stack.anchor_left = 1.0
+	stack.anchor_top = 1.0
+	stack.anchor_right = 1.0
+	stack.anchor_bottom = 1.0
+	stack.offset_left = -560.0
+	stack.offset_top = -150.0
+	stack.offset_right = -16.0
+	stack.offset_bottom = -48.0
+	stack.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+	stack.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	stack.alignment = BoxContainer.ALIGNMENT_END
+	add_child(stack)
+
+	# --- #939: patch-cadence notice. Auto-sunsets via the dated constant so
+	# removal cannot be forgotten; after the date this whole block renders
+	# nothing and SHOULD be deleted.
+	if UpdateCheck.is_patch_notice_active(
+			Time.get_date_string_from_system(), UpdateCheck.PATCH_CADENCE_SUNSET):
+		patch_cadence_label = Label.new()
+		patch_cadence_label.text = "[!] Patching frequently right now -- updates land often"
+		patch_cadence_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+		patch_cadence_label.add_theme_font_size_override("font_size", 16)
+		patch_cadence_label.add_theme_color_override("font_color", Color(1.0, 0.78, 0.35, 0.9))
+		stack.add_child(patch_cadence_label)
+
+	# --- #799: update-available notice (hidden until UpdateCheck says newer).
+	update_notice = HBoxContainer.new()
+	update_notice.visible = false
+	update_notice.alignment = BoxContainer.ALIGNMENT_END
+	update_notice.add_theme_constant_override("separation", 8)
+	update_notice_button = Button.new()
+	update_notice_button.add_theme_font_size_override("font_size", 16)
+	update_notice_button.tooltip_text = "Open the release page in your browser"
+	update_notice_button.pressed.connect(_on_update_notice_pressed)
+	update_notice.add_child(update_notice_button)
+	var dismiss_button := Button.new()
+	dismiss_button.text = "[x]"
+	dismiss_button.add_theme_font_size_override("font_size", 16)
+	dismiss_button.tooltip_text = "Dismiss (won't show again for this version)"
+	dismiss_button.pressed.connect(_on_update_notice_dismissed)
+	update_notice.add_child(dismiss_button)
+	stack.add_child(update_notice)
+
+	# The HTTP response can land before OR after this scene's _ready: read the
+	# cached result now, and listen for a late arrival. (Fresh instance per
+	# scene load; Godot drops the connection when this node is freed.)
+	UpdateCheck.update_available.connect(_on_update_available)
+	if UpdateCheck.available_version != "":
+		_on_update_available(UpdateCheck.available_version)
+
+func _on_update_available(remote_version: String):
+	if update_notice_button == null:
+		return
+	update_notice_button.text = "v%s available >> [U]pdate page" % remote_version
+	update_notice.visible = true
+
+func _on_update_notice_pressed():
+	print("[WelcomeScreen] Opening update page...")
+	OS.shell_open(UpdateCheck.UPDATE_PAGE_URL)
+
+func _on_update_notice_dismissed():
+	print("[WelcomeScreen] Update notice dismissed for v%s" % UpdateCheck.available_version)
+	UpdateCheck.dismiss_current_notice()
+	if update_notice:
+		update_notice.visible = false
 
 func _on_whats_new_closed():
 	"""Handle modal close - restore button focus"""
