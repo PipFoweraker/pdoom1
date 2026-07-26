@@ -481,14 +481,19 @@ static func inside_any_rect(p: Vector2, rects: Array) -> bool:
 ## only, no RNG. Exactly-coincident neighbours contribute nothing (no direction
 ## is derivable from positions alone); the intentional case -- shared desk slots --
 ## is handled by the arrival damping instead. Result magnitude is capped at 1.
-static func separation_vector(pos: Vector2, neighbors: Array, radius: float = SEPARATION_RADIUS) -> Vector2:
+## Pass 3: optional per-neighbour `weights` (index-aligned with `neighbors`;
+## missing entries default to 1.0) scale each neighbour's contribution BEFORE
+## the cap -- OfficeFloor uses this for the asymmetric cat-worker avoidance
+## (a worker barely deflects for a cat; a cat yields readily to a worker).
+static func separation_vector(pos: Vector2, neighbors: Array, radius: float = SEPARATION_RADIUS, weights: Array = []) -> Vector2:
 	var out := Vector2.ZERO
-	for n in neighbors:
-		var d: Vector2 = pos - (n as Vector2)
+	for i in range(neighbors.size()):
+		var d: Vector2 = pos - (neighbors[i] as Vector2)
 		var dist := d.length()
 		if dist >= radius or dist <= 0.0001:
 			continue
-		out += (d / dist) * (1.0 - dist / radius)
+		var w := float(weights[i]) if i < weights.size() else 1.0
+		out += (d / dist) * (1.0 - dist / radius) * w
 	if out.length() > 1.0:
 		out = out.normalized()
 	return out
@@ -521,11 +526,13 @@ func current_destination() -> Variant:
 			return null           # idle / stressed hold position
 
 ## Apply one frame of separation steering away from `neighbor_positions`
-## (positions of the OTHER walkers, snapshotted by OfficeFloor so update order
-## cannot matter). Push fades to zero within SEPARATION_DAMP_RADIUS of the
-## current nav target -- separation must not fight arrival.
-func apply_separation(neighbor_positions: Array, delta: float) -> void:
-	var sep := separation_vector(position, neighbor_positions, SEPARATION_RADIUS)
+## (positions of the OTHER walkers/cats, snapshotted by OfficeFloor so update
+## order cannot matter). Push fades to zero within SEPARATION_DAMP_RADIUS of the
+## current nav target -- separation must not fight arrival. Optional `weights`
+## (pass 3) index-align with `neighbor_positions`: cats push workers at a
+## reduced weight so a worker only shoulder-turns for a cat.
+func apply_separation(neighbor_positions: Array, delta: float, weights: Array = []) -> void:
+	var sep := separation_vector(position, neighbor_positions, SEPARATION_RADIUS, weights)
 	if sep == Vector2.ZERO:
 		return
 	var damp := 1.0
@@ -616,18 +623,31 @@ func _process_working(delta: float) -> void:
 				_break_cooldown = _rng.randf_range(BREAK_COOLDOWN_RANGE.x, BREAK_COOLDOWN_RANGE.y)
 
 func _start_break() -> void:
-	# get-food -> fridge or water cooler; or pat the cat.
+	# get-food -> fridge or water cooler; or pat the cat. Landmark targets route
+	# through the floor's approach-slot resolution (pass 3): a prop declaring
+	# manifest `approach_px` slots hands out a free side slot; everything else
+	# comes back unchanged (pass-2 nearest-outside-footprint behaviour).
 	match _rng.randi() % 3:
 		0:
 			_break_kind = "fridge"
-			_break_target = fridge_pos
+			_break_target = _landmark_break_target(fridge_pos)
 		1:
 			_break_kind = "water"
-			_break_target = water_pos
+			_break_target = _landmark_break_target(water_pos)
 		_:
 			_break_kind = "cat"
-			_break_target = cat_pos
+			_break_target = _landmark_break_target(cat_pos)
 	_work_sub = "to_break"
+
+## Pass-3 approach slots: ask the owning floor (duck-typed -- sprites also run
+## detached in unit tests) to resolve a landmark point to a free approach slot.
+## Falls back to the raw landmark point when there is no floor above us or the
+## landmark's prop declares no slots -- identical to the pass-2 behaviour.
+func _landmark_break_target(landmark: Vector2) -> Vector2:
+	var par := get_parent()
+	if par != null and par.has_method("approach_point_for"):
+		return par.approach_point_for(landmark, entity_id)
+	return landmark
 
 ## True when this employee is working AND parked at its own desk (available to
 ## be pulled into a collaboration). Read-only.

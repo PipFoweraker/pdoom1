@@ -16,7 +16,13 @@ class_name OfficeFloor
 ##   set_sprite_frames(frames)     # optional: FALLBACK shared art for Tier 1
 ##   set_use_variant_pool(on)      # per-worker appearance variants (WorkerVariantPool); default ON
 ##   set_extra_blocked_rects(a)    # additive dev hook: extra no-stand prop footprints (sandbox)
+##   approach_point_for(landmark, requester_id) -> Vector2  # pass 3: free approach slot, or landmark unchanged
 ##   OfficeFloor.snapshot_from_state(state) -> Array   # static, read-only GameState adapter
+##
+## Cats (pass 3): any Node2D child in group CAT_GROUP ("office_floor_cats")
+## joins the separation pass -- cats and workers avoid each other with the
+## asymmetric weights below. The sandbox cats register themselves; a future
+## live cat only needs add_to_group(OfficeFloor.CAT_GROUP).
 ##
 ## Employee snapshot dict fields (ALL optional; unknown fields ignored; see
 ## EmployeeFSM for the state mapping and graceful-degrade rules):
@@ -74,11 +80,44 @@ const HAT_COLOR := Color(0.14, 0.14, 0.18)
 const COLLAB_CHECK_RANGE := Vector2(2.5, 5.0)   # seconds between collaboration attempts
 const COLLAB_START_CHANCE := 0.5                # chance to actually pair when eligible
 
-# #913 water-cooler bubbles: tiny procedural 3-frame loop drawn over the jug
-# (no new art). ~2 fps and low alpha so it reads as ambient life, not a beacon.
+# --- Pass 3: cat-worker mutual avoidance -------------------------------------
+# Cats and workers repel each other through the SAME deterministic separation
+# pass as worker-worker (positions only, order-independent snapshot, no RNG).
+# Cats participate by group membership: any Node2D child of the floor in
+# CAT_GROUP is steered directly by the floor each frame.
+# ASYMMETRIC weights (a weight scales how hard THAT neighbour pushes THIS mover):
+#   WORKER_FOR_CAT 0.25 -- a worker barely deflects for a cat: max push
+#     0.25 * SEPARATION_STRENGTH(40) = 10 px/s vs walk speed 42 -- a visible
+#     shoulder-turn that can never stall an arrival.
+#   CAT_FOR_WORKER 1.6 -- a cat yields readily: 1.6 * 40 = 64 px/s exceeds the
+#     cat wander speed (30), so the worker's personal space wins and the cat
+#     detours around instead of clipping through.
+#   CAT_FOR_CAT 1.0 -- cats keep out of each other at the plain worker weight.
+const CAT_GROUP := "office_floor_cats"
+const SEP_WEIGHT_WORKER_FOR_CAT := 0.25
+const SEP_WEIGHT_CAT_FOR_WORKER := 1.6
+const SEP_WEIGHT_CAT_FOR_CAT := 1.0
+
+# #913 water-cooler bubbles -> pass-3 ORGANIC bursts (Pip 2026-07-26: "make
+# them way more intermittent and seemingly-random -- if you have 2 firing on
+# slightly off-kilter timers, it seems organic."). Bubble EVENTS are sparse:
+# each of TWO independent emitters fires one short BUBBLE_FRAMES-frame rise per
+# period, then stays quiet.
+# NO-COMMON-MULTIPLE PRINCIPLE (copy this pattern for future ambient juice):
+# the two base periods 7.3 s and 11.9 s are incommensurate -- they share no
+# short common multiple (the joint pattern realigns only every
+# 7.3 * 11.9 ~= 86.9 s), so the combined burst rhythm never visibly repeats
+# inside a sitting. Each emitter also gets a DETERMINISTIC per-prop phase
+# offset hashed from the prop's position (ADR-0006: cosmetic yet reproducible,
+# no RNG draws), so two coolers on screen would not fire in sync either.
 const BUBBLE_FRAMES := 3
-const BUBBLE_FRAME_TIME := 0.5                  # seconds per frame
+const BUBBLE_FRAME_TIME := 0.35                 # burst = 3 * 0.35 ~= 1 s of rise
+const BUBBLE_EMITTER_PERIODS: Array[float] = [7.3, 11.9]
 const BUBBLE_COLOR := Color(0.85, 0.95, 1.0, 0.38)
+
+# Pass 3 approach slots (prop manifest v1.2 `approach_px`): a slot is taken
+# when another sprite stands within this radius of it (or is navigating to it).
+const APPROACH_SLOT_CLAIM_RADIUS := 10.0
 
 var _sprites: Dictionary = {}   # id -> OfficeEmployeeSprite
 var _shared_frames: SpriteFrames = null   # FALLBACK art shared across sprites
@@ -93,8 +132,13 @@ var _appearance: Dictionary = {}          # sprite id -> appearance_id (for reap
 # footprints (PropCatalogue) + any extra rects a host supplies (sandbox props).
 var _blocked_rects: Array = []
 var _extra_blocked_rects: Array = []
-var _bubble_frame := 0
-var _bubble_t := 0.0
+# Landmark props on this floor: [{id, feet}] -- rebuilt with the blocked rects;
+# feeds the pass-3 approach-slot resolution (approach_point_for).
+var _landmark_props: Array = []
+# Pass-3 organic bubbles: one monotonic clock; per-emitter last-drawn frame so
+# _tick_bubbles only redraws on an actual frame transition.
+var _bubble_clock := 0.0
+var _bubble_frames_drawn: Array = [-1, -1]
 var _rng := RandomNumberGenerator.new()   # cosmetic-only (collaboration timing); NOT the game RNG
 var _collab_timer := 0.0
 var _floor_tile: Texture2D = null   # base concrete tile cropped from the Wang atlas (cosmetic)
@@ -128,30 +172,90 @@ func _process(delta: float) -> void:
 	_apply_separation(delta)
 	_tick_bubbles(delta)
 
-# Tier-1 collision: one separation pass per frame. Positions are SNAPSHOTTED
-# before any sprite moves, so the result is independent of iteration order --
-# fully deterministic from positions alone (no RNG; see EmployeeSprite).
-# O(n^2) is fine at the 1..24-walker scale this floor is scoped to.
+# Tier-1 collision: one separation pass per frame over workers AND cats
+# (pass 3). Positions are SNAPSHOTTED before anything moves, so the result is
+# independent of iteration order -- fully deterministic from positions alone
+# (no RNG; see EmployeeSprite). Workers get the full damped treatment
+# (apply_separation); cats -- plain Node2D wanderers with no floor-known nav
+# target -- are displaced directly and clamped into the bounds. O(n^2) is fine
+# at the 1..24-walker + few-cats scale this floor is scoped to.
 func _apply_separation(delta: float) -> void:
-	if _sprites.size() < 2:
-		return
 	var ids := _sprites.keys()
+	var cats := _cat_nodes()
+	var n := ids.size() + cats.size()
+	if n < 2:
+		return
+	# Snapshot: workers first (roster order), then cats (child order).
 	var pts: Array = []
+	var is_cat: Array = []
 	for id in ids:
 		pts.append((_sprites[id] as Node2D).position)
-	for i in range(ids.size()):
+		is_cat.append(false)
+	for c in cats:
+		pts.append((c as Node2D).position)
+		is_cat.append(true)
+	for i in range(n):
 		var others: Array = []
-		for j in range(ids.size()):
-			if j != i:
-				others.append(pts[j])
-		(_sprites[ids[i]] as OfficeEmployeeSprite).apply_separation(others, delta)
+		var weights: Array = []
+		for j in range(n):
+			if j == i:
+				continue
+			others.append(pts[j])
+			if is_cat[i]:
+				weights.append(SEP_WEIGHT_CAT_FOR_CAT if is_cat[j] else SEP_WEIGHT_CAT_FOR_WORKER)
+			else:
+				weights.append(SEP_WEIGHT_WORKER_FOR_CAT if is_cat[j] else 1.0)
+		if is_cat[i]:
+			var cat := cats[i - ids.size()] as Node2D
+			var sep := OfficeEmployeeSprite.separation_vector(
+				pts[i], others, OfficeEmployeeSprite.SEPARATION_RADIUS, weights)
+			if sep != Vector2.ZERO:
+				var b := _bounds()
+				cat.position = (cat.position
+					+ sep * OfficeEmployeeSprite.SEPARATION_STRENGTH * delta).clamp(b.position, b.end)
+		else:
+			(_sprites[ids[i]] as OfficeEmployeeSprite).apply_separation(others, delta, weights)
 
+## Node2D children registered as cats (CAT_GROUP). Child order -- deterministic.
+func _cat_nodes() -> Array:
+	var out: Array = []
+	for c in get_children():
+		if c is Node2D and (c as Node).is_in_group(CAT_GROUP):
+			out.append(c)
+	return out
+
+# Pass-3 organic bubbles: advance the emitter clock; redraw only when an
+# emitter's burst frame actually changes (sparse events, not a constant loop).
 func _tick_bubbles(delta: float) -> void:
-	_bubble_t += delta
-	if _bubble_t >= BUBBLE_FRAME_TIME:
-		_bubble_t = fmod(_bubble_t, BUBBLE_FRAME_TIME)
-		_bubble_frame = (_bubble_frame + 1) % BUBBLE_FRAMES
+	_bubble_clock += delta
+	var feet: Vector2 = _zones(_bounds())["water_pos"]
+	var changed := false
+	for i in range(BUBBLE_EMITTER_PERIODS.size()):
+		var f := bubble_frame_at(_bubble_clock, BUBBLE_EMITTER_PERIODS[i],
+			bubble_phase_for(feet, BUBBLE_EMITTER_PERIODS[i], i))
+		if f != int(_bubble_frames_drawn[i]):
+			_bubble_frames_drawn[i] = f
+			changed = true
+	if changed:
 		queue_redraw()
+
+## Deterministic per-prop phase for bubble emitter `emitter_idx` at prop feet
+## `pos`: a pure hash of the (whole-pixel) position -- NO RNG draws (ADR-0006).
+## The same cooler in the same spot always fires on the same schedule; a second
+## cooler elsewhere desyncs automatically. Result is in [0, period).
+static func bubble_phase_for(pos: Vector2, period: float, emitter_idx: int = 0) -> float:
+	var h := ("bubbles|%d|%.0f,%.0f" % [emitter_idx, pos.x, pos.y]).hash()
+	return float(posmod(h, 1000)) / 1000.0 * period
+
+## Pure emitter clock -> burst frame. Returns -1 while the emitter is quiet, or
+## 0..BUBBLE_FRAMES-1 during the one short rise it fires per period. A pure
+## function of time (no state, no RNG) -- deterministic and unit-testable.
+static func bubble_frame_at(t: float, period: float, phase: float) -> int:
+	if period <= 0.0:
+		return -1
+	var local := fposmod(t + phase, period)
+	var idx := int(local / BUBBLE_FRAME_TIME)
+	return idx if idx < BUBBLE_FRAMES else -1
 
 func _maybe_start_collaboration() -> void:
 	var available: Array = []
@@ -319,16 +423,79 @@ func blocked_rects() -> Array:
 	return _blocked_rects.duplicate()
 
 # Landmark props whose PropCatalogue footprints become no-stand rects. The cat
-# corner and window strip stay procedural (no prop, nothing to block).
+# corner and window strip stay procedural (no prop, nothing to block). Also
+# records the id+feet of each landmark prop for approach-slot resolution.
 func _rebuild_blocked_rects() -> void:
 	_blocked_rects = []
+	_landmark_props = []
 	var b := _bounds()
 	var z := _zones(b)
-	_blocked_rects.append(_footprint_rect("water_cooler", z["water_pos"]))
-	_blocked_rects.append(_footprint_rect("filing_cabinet", z["fridge_pos"]))
-	_blocked_rects.append(_footprint_rect("server_cluster",
-		b.position + Vector2(b.size.x * 0.12, b.size.y * 0.18)))
+	_add_landmark_prop("water_cooler", z["water_pos"])
+	_add_landmark_prop("filing_cabinet", z["fridge_pos"])
+	_add_landmark_prop("server_cluster",
+		b.position + Vector2(b.size.x * 0.12, b.size.y * 0.18))
 	_blocked_rects.append_array(_extra_blocked_rects)
+
+func _add_landmark_prop(id: String, feet: Vector2) -> void:
+	_blocked_rects.append(_footprint_rect(id, feet))
+	_landmark_props.append({"id": id, "feet": feet})
+
+# --- Pass 3: prop approach slots ---------------------------------------------
+# Prop manifest v1.2: a prop may declare `approach_px` -- preferred standing
+# spots as offsets from its feet anchor, in SOURCE px. Landmark destinations
+# resolve to the first FREE slot, so walkers stand at the water cooler's SIDES
+# instead of stacking "slightly in front" of it (Pip, 2026-07-26). Props
+# without slots keep the pass-2 behaviour EXACTLY: the raw landmark point,
+# which the sprite's nearest-outside-footprint clamp then resolves.
+
+## Resolve a landmark feet-point into a standing spot for `requester_id`.
+## Deterministic: slots are tried in authored (manifest) order; a slot is free
+## when no OTHER sprite stands within APPROACH_SLOT_CLAIM_RADIUS of it or is
+## currently navigating to it. All busy -> the first slot (walkers share).
+## Landmarks without slot data return unchanged (fallback identical to pass 2).
+func approach_point_for(landmark: Vector2, requester_id: String = "") -> Vector2:
+	var slots := _approach_slots_at(landmark)
+	if slots.is_empty():
+		return landmark
+	for s in slots:
+		if _slot_free(s, requester_id):
+			return s
+	return slots[0]
+
+# Display-space approach slots of the landmark prop whose feet sit at
+# `landmark` (empty when no prop is there or it declares none). Offsets scale
+# by the same subject-height factor _draw_prop renders with, so the slots
+# track the drawn art.
+func _approach_slots_at(landmark: Vector2) -> Array:
+	for lp in _landmark_props:
+		if (lp["feet"] as Vector2).distance_to(landmark) > 0.5:
+			continue
+		var id := String(lp["id"])
+		var offs := PropCatalogue.approach_points(id)
+		if offs.is_empty():
+			return []
+		var subj: Array = PropCatalogue.get_entry(id).get("subject_px", [])
+		var subject_h := float(subj[1]) if subj.size() == 2 else 0.0
+		if subject_h <= 0.0:
+			return []
+		var scl := PropCatalogue.height_px(id, DISPLAY_TILE_PX) / subject_h
+		var out: Array = []
+		for o in offs:
+			out.append(landmark + (o as Vector2) * scl)
+		return out
+	return []
+
+func _slot_free(slot: Vector2, requester_id: String) -> bool:
+	for id in _sprites:
+		if str(id) == requester_id:
+			continue
+		var spr: OfficeEmployeeSprite = _sprites[id]
+		if spr.position.distance_to(slot) < APPROACH_SLOT_CLAIM_RADIUS:
+			return false
+		var dest = spr.current_destination()
+		if dest != null and (dest as Vector2).distance_to(slot) < 1.0:
+			return false
+	return true
 
 # Floor area a feet-anchored prop occupies: footprint_tiles wide, extending UP
 # from the feet point (same convention as the sandbox occupancy pass, #907).
@@ -488,19 +655,26 @@ func _draw() -> void:
 	_draw_landmark_prop("server_cluster", PROP_SERVER,
 		b.position + Vector2(b.size.x * 0.12, b.size.y * 0.18))                     # top-left decor
 
-# #913: subtle 3-frame procedural bubble loop over the water-cooler jug (drawn,
-# no art). Two bubbles rise a step per frame inside the jug (the top ~third of
-# the manifest-scaled prop); the second lags a frame so the loop reads organic.
+# Pass-3 organic bubbles (#913 evolved): draw whichever emitters are mid-burst
+# right now. Two emitters on incommensurate timers (constants above) each rise
+# one bubble through the jug (the top ~third of the manifest-scaled prop) over
+# a short 3-frame burst; between bursts the jug is still. Pure function of the
+# emitter clock -- sparse, never visibly repeating, no RNG.
 func _draw_water_bubbles(feet: Vector2) -> void:
 	var h := PropCatalogue.height_px("water_cooler", DISPLAY_TILE_PX)
 	if h <= 0.0:
 		return
 	var rise := h * 0.05                                   # px climbed per frame
 	var base_y := feet.y - h * 0.72                        # bottom of the jug water line
-	var y_a := base_y - float(_bubble_frame) * rise
-	var y_b := base_y - float((_bubble_frame + BUBBLE_FRAMES - 1) % BUBBLE_FRAMES) * rise
-	draw_circle(Vector2(feet.x - h * 0.02, y_a), 1.6, BUBBLE_COLOR)
-	draw_circle(Vector2(feet.x + h * 0.025, y_b + h * 0.03), 1.1, BUBBLE_COLOR)
+	# Emitter 0 sits slightly left and larger; emitter 1 right and smaller.
+	var xs: Array = [feet.x - h * 0.02, feet.x + h * 0.025]
+	var radii: Array = [1.6, 1.1]
+	for i in range(BUBBLE_EMITTER_PERIODS.size()):
+		var f := bubble_frame_at(_bubble_clock, BUBBLE_EMITTER_PERIODS[i],
+			bubble_phase_for(feet, BUBBLE_EMITTER_PERIODS[i], i))
+		if f < 0:
+			continue
+		draw_circle(Vector2(float(xs[i]), base_y - float(f) * rise), float(radii[i]), BUBBLE_COLOR)
 
 # ---------------------------------------------------------------------------
 # READ-ONLY GameState adapter. Static so callers can build a snapshot without

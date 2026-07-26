@@ -127,3 +127,78 @@ func test_floor_hands_blocked_rects_to_sprites_and_extras_propagate():
 	f.set_extra_blocked_rects([Rect2(10, 10, 20, 20)])
 	assert_eq(f.blocked_rects().size(), 4, "sandbox extras are additive")
 	assert_eq(spr.blocked_rects.size(), 4, "existing sprites are re-armed with the extras")
+
+
+# --- Pass 3: approach slots (prop manifest v1.2 approach_px) ------------------
+
+func _make_floor() -> OfficeFloor:
+	var f: OfficeFloor = OfficeFloorScene.instantiate()
+	add_child_autofree(f)
+	return f
+
+
+func test_water_cooler_landmark_resolves_to_a_side_slot():
+	var f := _make_floor()
+	var z: Dictionary = f._zones(f._bounds())
+	var water: Vector2 = z["water_pos"]
+	var p: Vector2 = f.approach_point_for(water, "w1")
+	assert_ne(p, water, "water cooler declares approach_px -> not the raw landmark point")
+	assert_gt(absf(p.x - water.x), 30.0, "slot stands to the SIDE of the cooler, not in front")
+	assert_false(OfficeEmployeeSprite.inside_any_rect(p, f.blocked_rects()),
+		"slot is a legal standing spot, outside every footprint")
+
+
+func test_second_walker_gets_the_other_free_slot():
+	var f := _make_floor()
+	var z: Dictionary = f._zones(f._bounds())
+	var water: Vector2 = z["water_pos"]
+	var slot1: Vector2 = f.approach_point_for(water, "nobody")
+	# Park a walker ON the first slot; the next requester must get the other one.
+	f.set_roster([{"id": 0, "name": "A", "loyalty": 8}])   # loyalty 8 -> idle, holds position
+	var spr: OfficeEmployeeSprite = f._sprites[0]
+	spr.position = slot1
+	var slot2: Vector2 = f.approach_point_for(water, "someone_else")
+	assert_ne(slot2, slot1, "occupied slot skipped -> the free side slot is handed out")
+	assert_ne(slot2, water, "still a slot, not the raw landmark")
+	# The occupant itself keeps its own slot (requester is never its own blocker).
+	assert_eq(f.approach_point_for(water, "0"), slot1, "occupant re-resolves to its own slot")
+
+
+func test_all_slots_busy_falls_back_to_first_slot():
+	var f := _make_floor()
+	var z: Dictionary = f._zones(f._bounds())
+	var water: Vector2 = z["water_pos"]
+	var slot1: Vector2 = f.approach_point_for(water, "nobody")
+	f.set_roster([
+		{"id": 0, "name": "A", "loyalty": 8},
+		{"id": 1, "name": "B", "loyalty": 8},
+	])
+	f._sprites[0].position = slot1
+	f._sprites[1].position = f.approach_point_for(water, "y")   # the remaining free slot
+	var occupied: Vector2 = f.approach_point_for(water, "late_arrival")
+	assert_eq(occupied, slot1, "all slots taken -> deterministic first slot (walkers share)")
+
+
+func test_props_without_slots_fall_back_unchanged():
+	var f := _make_floor()
+	var z: Dictionary = f._zones(f._bounds())
+	assert_eq(f.approach_point_for(z["fridge_pos"], "x"), Vector2(z["fridge_pos"]),
+		"filing cabinet declares no approach_px -> landmark unchanged (pass-2 path)")
+	assert_eq(f.approach_point_for(Vector2(50, 50), "x"), Vector2(50, 50),
+		"a non-landmark point passes through untouched")
+
+
+func test_sprite_break_target_routes_through_floor_slots():
+	var f := _make_floor()
+	var z: Dictionary = f._zones(f._bounds())
+	f.set_roster([{"id": 0, "name": "A", "assigned": true}])
+	var spr: OfficeEmployeeSprite = f._sprites[0]
+	var t: Vector2 = spr._landmark_break_target(z["water_pos"])
+	assert_ne(t, Vector2(z["water_pos"]), "sprite's water-break target is an approach slot")
+	assert_eq(t, f.approach_point_for(z["water_pos"], "0"),
+		"sprite resolves via its owning floor with its own entity id")
+	# Detached sprite (no floor parent): raw landmark, exactly the pass-2 path.
+	var lone: OfficeEmployeeSprite = EmployeeSpriteScript.new()
+	add_child_autofree(lone)
+	assert_eq(lone._landmark_break_target(Vector2(70, 80)), Vector2(70, 80),
+		"no floor above the sprite -> landmark unchanged")
