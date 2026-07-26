@@ -108,7 +108,8 @@ class ThemeData:
 		"glow_button_shader": "res://assets/ui/buttons/glowcat/GlowButton.shader",
 		"glow_button_script": "res://assets/ui/buttons/glowcat/GlowButton.gd",
 
-		# Icons (placeholders - not yet created)
+		# Icons (promoted core resource set, art_generated/core_resource_icons/v1;
+		# icons are the 64px derivatives, logo is the 256px derivative)
 		"logo": "res://assets/images/logo.png",
 		"icon_money": "res://assets/icons/money.png",
 		"icon_compute": "res://assets/icons/compute.png",
