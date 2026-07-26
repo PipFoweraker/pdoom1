@@ -1,0 +1,2 @@
+tag,last_pr_merged_utc,tag_pushed_utc,ci_run_start_utc,ci_run_end_utc,ci_minutes,release_published_utc,initial_asset_count,late_asset_count,last_late_asset_utc,sync_fail_count,sync_green_utc,l_minutes_after_publish,m_utc,n_utc
+v0.13.1,2026-07-25T12:23:46Z,2026-07-26T00:03:15Z,2026-07-26T00:03:15Z,2026-07-26T00:07:49Z,4.6,2026-07-26T00:07:25Z,7,2,2026-07-26T02:42:39Z,6,2026-07-26T03:16:37Z,189.2,,
