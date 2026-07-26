@@ -1,0 +1,67 @@
+name: Release Sync Monitor
+
+# Belt-and-braces LOUD failure detector for the version-sync pipeline.
+#
+# The primary sync path (sync-game-version.yml, driven from enhanced-release.yml
+# via workflow_call) can still silently no-op if someone changes how releases
+# are cut. This job independently compares the latest PUBLISHED game release
+# against what the website currently advertises, and FAILS RED (plus ::error::)
+# when they diverge -- which means the primary path did not run. A red scheduled
+# run is the loud signal; re-fire the sync with:
+#   gh workflow run sync-game-version.yml -f target_version=vX.Y.Z
+#
+# Read-only: no writes to any repo. Uses CROSS_REPO_TOKEN only to READ the
+# (possibly private) website file.
+
+on:
+  schedule:
+    - cron: '17 6 * * *'  # daily 06:17 UTC, offset off the hour
+  workflow_dispatch: {}
+
+jobs:
+  check-website-in-sync:
+    runs-on: ubuntu-latest
+    if: github.repository == 'PipFoweraker/pdoom1'
+    steps:
+      - name: Compare latest release against website current version
+        env:
+          # GITHUB_TOKEN reads this repo's releases; CROSS_REPO_TOKEN reads the
+          # website repo. Both used read-only.
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          WEBSITE_TOKEN: ${{ secrets.CROSS_REPO_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          # Latest non-draft, non-prerelease release tag on the game repo
+          LATEST_TAG=$(gh api repos/${GITHUB_REPOSITORY}/releases \
+            --jq 'map(select(.draft == false and .prerelease == false)) | .[0].tag_name')
+          LATEST="${LATEST_TAG#v}"
+
+          if [ -z "$LATEST" ] || [ "$LATEST" = "null" ]; then
+            echo "No published stable release found; nothing to check."
+            exit 0
+          fi
+
+          # What the website currently advertises. Read-only; tolerate a missing
+          # file (warn, do not fail) so a first-time setup does not false-alarm.
+          WEB_RAW=$(GH_TOKEN="$WEBSITE_TOKEN" gh api \
+            repos/PipFoweraker/pdoom1-website/contents/data/current-game-version.json \
+            --jq '.content' 2>/dev/null | base64 -d 2>/dev/null || true)
+
+          if [ -z "$WEB_RAW" ]; then
+            echo "::warning::Could not read website current-game-version.json (missing or unreadable); skipping strict check."
+            exit 0
+          fi
+
+          WEB_VERSION=$(printf '%s' "$WEB_RAW" | jq -r '.current_version // empty')
+
+          echo "Latest published release: $LATEST"
+          echo "Website current version:  $WEB_VERSION"
+
+          if [ "$WEB_VERSION" = "$LATEST" ]; then
+            echo "IN SYNC: website matches the latest published release."
+            exit 0
+          fi
+
+          echo "::error::Website version ($WEB_VERSION) does not match latest published release ($LATEST). The version-sync pipeline did not run for this release. Re-fire: gh workflow run sync-game-version.yml -f target_version=v$LATEST"
+          exit 1

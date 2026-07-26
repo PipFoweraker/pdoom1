@@ -332,6 +332,21 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+  # Explicitly drive the website version sync. Required because this workflow
+  # publishes the release with GITHUB_TOKEN, and a release published by a
+  # GITHUB_TOKEN-authored action does NOT fire the `release: published` event
+  # that sync-game-version.yml otherwise listens on (GitHub loop-prevention).
+  # workflow_call runs it in-line (no event, no suppression) and inherits
+  # CROSS_REPO_TOKEN -- no new PAT, least privilege.
+  sync-website-version:
+    name: Sync Version to Website
+    needs: create-github-release
+    if: needs.create-github-release.result == 'success'
+    uses: ./.github/workflows/sync-game-version.yml
+    with:
+      target_version: ${{ github.event.inputs.version || github.ref_name }}
+    secrets: inherit
+
   deploy-feeds:
     name: Deploy Feeds to Website
     runs-on: ubuntu-latest

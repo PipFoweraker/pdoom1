@@ -14,6 +14,25 @@ on:
         required: false
         type: boolean
         default: false
+  # Reusable entrypoint: the Enhanced Release workflow calls this directly at
+  # the end of a CI-published release. Necessary because a release PUBLISHED by
+  # a GITHUB_TOKEN-authored action does NOT fire the `release: published` event
+  # (GitHub loop-prevention), so the event trigger above silently never runs for
+  # CI releases -- confirmed for v0.13.1 (published by github-actions[bot]).
+  workflow_call:
+    inputs:
+      target_version:
+        description: 'Game version to sync (e.g., v0.6.0)'
+        required: true
+        type: string
+      force_sync:
+        description: 'Force sync even if version already exists'
+        required: false
+        type: boolean
+        default: false
+    secrets:
+      CROSS_REPO_TOKEN:
+        required: true
 
 env:
   WEBSITE_REPO: 'PipFoweraker/pdoom1-website'
@@ -49,7 +68,9 @@ jobs:
         RELEASE_BODY_IN: ${{ github.event.release.body }}
         RELEASE_URL_IN: ${{ github.event.release.html_url }}
         IS_PRERELEASE_IN: ${{ github.event.release.prerelease }}
-        INPUT_TARGET_VERSION: ${{ github.event.inputs.target_version }}
+        # inputs.* is populated for BOTH workflow_dispatch and workflow_call
+        # (null for release events, where the release.* fields above are used)
+        INPUT_TARGET_VERSION: ${{ inputs.target_version }}
       run: |
         # Extract version from release or input
         if [ "$GITHUB_EVENT_NAME" = "release" ]; then
@@ -292,7 +313,7 @@ jobs:
         RELEASE_DATE: ${{ steps.version_info.outputs.release_date }}
         RELEASE_URL: ${{ steps.version_info.outputs.release_url }}
         IS_PRERELEASE: ${{ steps.version_info.outputs.is_prerelease }}
-        FORCE_SYNC: ${{ github.event.inputs.force_sync }}
+        FORCE_SYNC: ${{ inputs.force_sync }}
       run: |
         cd website-repo
 
