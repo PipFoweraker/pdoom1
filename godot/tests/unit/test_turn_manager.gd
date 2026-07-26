@@ -489,3 +489,48 @@ func test_starting_pool_does_not_grow_across_turns():
 		turn_manager.execute_turn()
 	assert_eq(state.candidate_pool.size(), start_size,
 		"pool size is unchanged across turns without sourcing (no free refill)")
+
+func test_stranded_pending_hire_returns_to_pool():
+	# #952: a queued hire whose action fails at execution (cash ran dry mid-turn) used
+	# to leave the candidate stuck in pending_hire_queue forever -- out of the pool,
+	# never employed, invisible. The action step must drain the queue back to the pool.
+	var cand := Researcher.new()
+	cand.generate_random(state.rng)
+	cand.specialization = "safety"
+	# Simulate game_manager.queue_candidate_hire: into the queue (candidate was
+	# removed from the pool at queue time, so we only append to the queue here).
+	state.pending_hire_queue.append(cand)
+	var pool_before: int = state.candidate_pool.size()
+	var staff_before: int = state.researchers.size()
+	state.money = 0.0  # hire_safety_researcher costs $60k -> affordability bail
+	state.queued_actions.append("hire_safety_researcher")
+	var results := []
+	turn_manager._step_execute_queued_actions(results)
+	assert_eq(state.pending_hire_queue.size(), 0, "queue must drain every action step")
+	assert_eq(state.candidate_pool.size(), pool_before + 1,
+		"stranded candidate returns to the pool")
+	assert_eq(state.researchers.size(), staff_before, "failed hire employs nobody")
+
+func test_stranded_hire_with_full_pool_walks_away_visibly():
+	# #952 edge: if the pool refilled to cap while the hire was queued, the stranded
+	# candidate cannot be re-admitted -- they walk, but with a visible log line, never
+	# a silent vanish.
+	while state.candidate_pool.size() < state.MAX_CANDIDATES:
+		var filler := Researcher.new()
+		filler.generate_random(state.rng)
+		state.candidate_pool.append(filler)
+	var cand := Researcher.new()
+	cand.generate_random(state.rng)
+	cand.specialization = "safety"
+	state.pending_hire_queue.append(cand)
+	state.money = 0.0
+	state.queued_actions.append("hire_safety_researcher")
+	var results := []
+	turn_manager._step_execute_queued_actions(results)
+	assert_eq(state.pending_hire_queue.size(), 0, "queue must drain even at pool cap")
+	assert_eq(state.candidate_pool.size(), state.MAX_CANDIDATES, "cap still respected")
+	var narrated := false
+	for r in results:
+		if String(r.get("message", "")).find("took another offer") != -1:
+			narrated = true
+	assert_true(narrated, "the walk-away is narrated, not silent")
