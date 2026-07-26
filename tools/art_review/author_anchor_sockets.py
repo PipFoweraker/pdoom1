@@ -80,6 +80,13 @@ CLIPS = {
             "view": "rear",
             "frames": [2, 8],
         },
+        # idle = frame 0 of the south walk (the sandbox idle convention), so
+        # anchors keep resolving while a wandering cat pauses.
+        "idle": {
+            "dir": f"{SW}/cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/south",
+            "view": "front",
+            "frames": [0, 0],
+        },
     },
     "cat_black_v1": {
         "walk_east": {
@@ -92,6 +99,12 @@ CLIPS = {
             "view": "side_w",
             "eye_hue": AMBER_EYES,
         },
+        "idle": {
+            "dir": f"{SW}/cat_sweep_black_side_heft/animations/walk_ew/east",
+            "view": "side_e",
+            "eye_hue": AMBER_EYES,
+            "frames": [0, 0],
+        },
     },
     "cat_purple_v1": {
         "walk_east": {
@@ -103,6 +116,12 @@ CLIPS = {
             "dir": f"{SW}/cat_sweep_purple_side_heft/animations/walking/west",
             "view": "side_w",
             "eye_hue": AMBER_EYES,
+        },
+        "idle": {
+            "dir": f"{SW}/cat_sweep_purple_side_heft/animations/walking/east",
+            "view": "side_e",
+            "eye_hue": AMBER_EYES,
+            "frames": [0, 0],
         },
     },
 }
@@ -364,7 +383,7 @@ def author_clip(sprite, clip, spec):
         "source_dir": spec["dir"],
         "subject_px": [sub_w, sub_h],
         "feet_px": [feet_x, feet_y],
-        "footfall_frames": detect_footfalls(frames, bboxes),
+        "footfall_frames": detect_footfalls(frames, bboxes) if len(frames) > 1 else [],
         "footfall_review": True,
         "sockets": sockets,
     }
@@ -413,7 +432,34 @@ def debug_sheet(rows):
     return sheet
 
 
+def load_corrections(argv):
+    """--apply corrections.json: the anchor-lab click-to-adjust paste-back path.
+
+    Shape (what the lab's textarea emits): {sprite_set: {clip: {socket: [x, y]}}}
+    with [x, y] the corrected offset from feet_px. Applied AFTER measurement:
+    the clicked socket's px is overridden, its review flag cleared, provenance
+    noted. Everything un-clicked is re-measured as usual.
+    """
+    if len(argv) >= 2 and argv[0] == "--apply":
+        return json.loads(Path(argv[1]).read_text(encoding="ascii"))
+    return {}
+
+
+def apply_corrections(entry, sprite, clip, corrections):
+    fixes = corrections.get(sprite, {}).get(clip, {})
+    n = 0
+    for sk in entry["sockets"]:
+        if sk["name"] in fixes:
+            sk["px"] = [int(v) for v in fixes[sk["name"]]]
+            sk.pop("review", None)
+            sk["notes"] = "adjusted via the anchor-lab click-to-adjust (Pip)"
+            n += 1
+    return n
+
+
 def main():
+    corrections = load_corrections(sys.argv[1:])
+    n_applied = 0
     sprites = {}
     rows = []
     n_review = 0
@@ -422,6 +468,7 @@ def main():
         centry = {}
         for clip, spec in clips.items():
             entry, frames = author_clip(sprite, clip, spec)
+            n_applied += apply_corrections(entry, sprite, clip, corrections)
             centry[clip] = entry
             canvas = list(frames[0].size)
             mid = frames[len(frames) // 2]
@@ -450,6 +497,8 @@ def main():
     OUT_JSON.write_text(json.dumps(doc, indent=2) + "\n", encoding="ascii", newline="\n")
     print("wrote %s (%d sprite sets)" % (OUT_JSON, len(sprites)))
     print("review-flagged sockets: %d" % n_review)
+    if n_applied:
+        print("lab corrections applied: %d" % n_applied)
     OUT_SHEET.parent.mkdir(parents=True, exist_ok=True)
     debug_sheet(rows).save(OUT_SHEET)
     print("wrote %s" % OUT_SHEET)
