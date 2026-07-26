@@ -82,20 +82,25 @@ jobs:
       - name: Create triage issue on validation failure
         if: failure() && !inputs.skip_validation
         uses: actions/github-script@v7
+        env:
+          # SECURITY: user-influenced (dispatch input / tag name) -- must not
+          # be templated into the script text; read via process.env as data
+          RELEASE_VERSION: ${{ github.event.inputs.version || github.ref_name }}
         with:
           script: |
             const fs = require('fs');
             const report = fs.readFileSync('validation_report.txt', 'utf8');
+            const version = process.env.RELEASE_VERSION;
 
             await github.rest.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              title: `🚨 Data Validation Failed for Release ${{ github.event.inputs.version || github.ref_name }}`,
+              title: `[!] Data Validation Failed for Release ${version}`,
               body: `## Validation Failure
 
             The release pipeline has halted due to data validation errors.
 
-            **Version:** ${{ github.event.inputs.version || github.ref_name }}
+            **Version:** ${version}
             **Workflow Run:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
             ### Validation Report
@@ -153,9 +158,11 @@ jobs:
           echo "SUCCESS All validation checks passed!"
 
       - name: Build all platforms
+        env:
+          RELEASE_VERSION: ${{ github.event.inputs.version || github.ref_name }}
         run: |
-          VERSION="${{ github.event.inputs.version || github.ref_name }}"
-          echo "🎮 Building P(Doom) $VERSION for all platforms..."
+          VERSION="$RELEASE_VERSION"
+          echo "Building P(Doom) $VERSION for all platforms..."
           python scripts/build_all_platforms.py --version "$VERSION" --godot-path "$(which godot)"
 
       - name: Upload Windows build
@@ -196,8 +203,10 @@ jobs:
           pip install -r requirements.txt
 
       - name: Generate release metadata
+        env:
+          RELEASE_VERSION: ${{ github.event.inputs.version || github.ref_name }}
         run: |
-          VERSION="${{ github.event.inputs.version || github.ref_name }}"
+          VERSION="$RELEASE_VERSION"
           echo "MEMO Generating metadata for $VERSION..."
           python scripts/generate_release_metadata.py --version "$VERSION"
 
@@ -218,8 +227,10 @@ jobs:
 
       - name: Generate release manifest
         id: manifest
+        env:
+          RELEASE_VERSION: ${{ github.event.inputs.version || github.ref_name }}
         run: |
-          VERSION="${{ github.event.inputs.version || github.ref_name }}"
+          VERSION="$RELEASE_VERSION"
           COMMIT_HASH="${{ github.sha }}"
           DATA_HASH="${{ needs.validate-data.outputs.validation_hash }}"
           BUILD_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
@@ -280,8 +291,10 @@ jobs:
 
       - name: Extract changelog
         id: changelog
+        env:
+          RELEASE_VERSION: ${{ github.event.inputs.version || github.ref_name }}
         run: |
-          VERSION="${{ github.event.inputs.version || github.ref_name }}"
+          VERSION="$RELEASE_VERSION"
           VERSION_NUM="${VERSION#v}"
 
           # Extract changelog (simplified version)
@@ -319,6 +332,21 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+  # Explicitly drive the website version sync. Required because this workflow
+  # publishes the release with GITHUB_TOKEN, and a release published by a
+  # GITHUB_TOKEN-authored action does NOT fire the `release: published` event
+  # that sync-game-version.yml otherwise listens on (GitHub loop-prevention).
+  # workflow_call runs it in-line (no event, no suppression) and inherits
+  # CROSS_REPO_TOKEN -- no new PAT, least privilege.
+  sync-website-version:
+    name: Sync Version to Website
+    needs: create-github-release
+    if: needs.create-github-release.result == 'success'
+    uses: ./.github/workflows/sync-game-version.yml
+    with:
+      target_version: ${{ github.event.inputs.version || github.ref_name }}
+    secrets: inherit
+
   deploy-feeds:
     name: Deploy Feeds to Website
     runs-on: ubuntu-latest
@@ -348,13 +376,17 @@ jobs:
     steps:
       - name: Release Success Notification
         if: needs.create-github-release.result == 'success'
+        env:
+          RELEASE_VERSION: ${{ github.event.inputs.version || github.ref_name }}
         run: |
-          echo "SUCCESS Release ${{ github.event.inputs.version || github.ref_name }} published successfully!"
-          echo "🎮 Game builds created for Windows, Linux, and macOS"
-          echo "📡 Feeds generated and ready for website consumption"
+          echo "SUCCESS Release $RELEASE_VERSION published successfully!"
+          echo "Game builds created for Windows, Linux, and macOS"
+          echo "Feeds generated and ready for website consumption"
 
       - name: Release Failure Notification
         if: needs.create-github-release.result == 'failure'
+        env:
+          RELEASE_VERSION: ${{ github.event.inputs.version || github.ref_name }}
         run: |
-          echo "ERROR Release ${{ github.event.inputs.version || github.ref_name }} failed!"
+          echo "ERROR Release $RELEASE_VERSION failed!"
           echo "Check the workflow logs for details"
