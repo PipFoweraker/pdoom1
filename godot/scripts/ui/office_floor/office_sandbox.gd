@@ -1842,6 +1842,10 @@ class SandboxCatBase extends Node2D:
 		_rng.randomize()
 		_target = position
 		z_index = 5
+		# Pass 3 cat-worker avoidance: registering in the floor's cat group opts
+		# this cat into OfficeFloor's deterministic separation pass (workers
+		# barely deflect for cats; cats yield more -- see office_floor.gd).
+		add_to_group(OfficeFloor.CAT_GROUP)
 		texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 		_glow = Sprite2D.new()
 		_glow.texture = _get_glow_tex()

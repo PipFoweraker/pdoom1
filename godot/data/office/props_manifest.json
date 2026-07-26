@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "version": "1.1",
+    "version": "1.2",
     "description": "Per-asset metadata for office floor props. Consumed by office_floor.gd / office_sandbox.gd (integrated 2026-07-26): manifested props render at authored proportions, feet-anchored at anchor_px, and occupy footprint_tiles. Loaded by scripts/core/prop_catalogue.gd. Measurements taken from the real PNGs (alpha bounding box) -- see docs/art/PROP_MANIFEST.md for how to add a prop.",
     "measured_with": "python PIL alpha-channel getbbox(), 2026-07-26"
   },
@@ -10,6 +10,7 @@
     "subject_px": "[w, h] opaque-subject bounding box size in pixels (alpha bbox).",
     "anchor_px": "[x, y] feet anchor in CANVAS coordinates: bottom-centre of the opaque bbox. x may be a .5 half-pixel for even-width subjects; y is the exclusive bottom of the opaque bbox (the baseline row the feet sit on).",
     "footprint_tiles": "[w, h] floor tiles occupied for placement/collision, at the 32px art-tile scale (floor tile art is 32px, displayed at 64px). h (depth) is a judgement call -- front-view art carries no depth information.",
+    "approach_px": "v1.2, OPTIONAL: list of [x, y] approach-slot offsets from anchor_px, in SOURCE px (+x right, +y down = in front). Landmark destination resolution (office_floor.gd approach_point_for) prefers the first FREE slot over the raw landmark point, so walkers stand at a prop's sides instead of stacking in front of it. Slots are tried in authored order (deterministic). Omit for props without preferred approach spots -- resolution then falls back to the nearest-outside-footprint point unchanged.",
     "height_tiles": "subject height / 32, rounded to the nearest 0.25 (ties round up).",
     "style_tags": "office quality tiers this art serves, from the canonical ladder [\"scummy\", \"decent\", \"premium\"] (ruled 2026-07-26; see docs/game-design/SEED_ASSET_REGISTRY_AND_VERDICTS.md). Tag only the tiers the art was AUTHORED for. Renderers fall back to the decent art unchanged where a tier-variant is missing (no tinting hacks). Tier-variant entries use the id convention <base_id>_<tier>, e.g. water_cooler_scummy.",
     "sockets": "SCHEMA PLACEHOLDER, always [] for now. Future attachment points for cosmetics/paper-doll layers. Each socket will be {\"name\": String, \"px\": [x, y] canvas coords, \"layer\": \"front\"|\"behind\" draw order relative to the prop}. No consumer exists yet -- do not populate until one does.",
@@ -47,11 +48,12 @@
       "subject_px": [37, 109],
       "anchor_px": [31.5, 114],
       "footprint_tiles": [1, 1],
+      "approach_px": [[-26, 2], [26, 2]],
       "height_tiles": 3.5,
       "style_tags": ["decent"],
       "sockets": [],
       "review": true,
-      "notes": "Tier inferred as decent (no tier-variant art exists); Pip to confirm in the next review sweep. Footprint confident (37px subject fits one 32px tile)."
+      "notes": "Tier inferred as decent (no tier-variant art exists); Pip to confirm in the next review sweep. Footprint confident (37px subject fits one 32px tile). approach_px: left/right side slots ~26 source px (~1.4x subject half-width) from the anchor, 2px front-biased -- walkers queue at the cooler's sides instead of standing in front (Pip, 2026-07-26)."
     }
   }
 }
