@@ -17,6 +17,10 @@ extends Control
 # Built programmatically (no .tscn row): global-leaderboard opt-out (default ON).
 var global_leaderboard_checkbox: CheckButton = null
 
+# Built programmatically (no .tscn row): anonymous launch-ping opt-out (#799).
+# Honest label -- the ping carries a random install UUID + version + OS only.
+var launch_ping_checkbox: CheckButton = null
+
 # Built programmatically (no .tscn row): story-intro toggle (#801). The reversible
 # ESCAPE HATCH for the "auto-flip on player signal + reversible settings toggle" pattern
 # (see GameConfig.play_intros): a hold-to-skip auto-flips play_intros off; this re-enables.
@@ -41,6 +45,8 @@ func _ready():
 
 	# Add the global-leaderboard opt-out under Gameplay (built in code, not the .tscn)
 	_add_global_leaderboard_toggle()
+	# Add the anonymous launch-ping opt-out right below it (#799)
+	_add_launch_ping_toggle()
 
 	# Add the story-intro toggle under Gameplay (built in code, not the .tscn)
 	_add_play_intros_toggle()
@@ -152,27 +158,65 @@ func _on_difficulty_changed(index: int):
 	GameConfig.set_setting("difficulty", index, false)
 
 func _add_global_leaderboard_toggle():
-	"""Append a 'Submit Scores to Global Leaderboard' toggle to the Gameplay section.
-	Respects the player's choice (LeaderboardSync.should_submit reads this). Default ON."""
+	"""Append the global-leaderboard IDENTITY-CONSENT toggle to the Gameplay section
+	(privacy ruling 2026-07-26). Submitting shares player + lab name + score, so it
+	is an explicit opt-in: shown OFF until the player has actually made the choice
+	(consent_asked), and flipping the toggle here COUNTS as that explicit choice.
+	LeaderboardSync.should_submit reads both flags. Reversible any time."""
 	var gameplay = get_node_or_null("VBox/Scroll/SettingsContainer/GameplaySettings")
 	if gameplay == null:
 		return
 	var row = HBoxContainer.new()
 	var label = Label.new()
-	label.text = "Submit Scores to Global Leaderboard"
+	label.text = "Submit scores to global leaderboard (shares player + lab name)"
 	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	row.add_child(label)
 	global_leaderboard_checkbox = CheckButton.new()
-	global_leaderboard_checkbox.button_pressed = GameConfig.submit_scores_global
+	# Display the EFFECTIVE state: un-consented (never asked) renders OFF even if a
+	# legacy config persisted submit_scores_global=true from the old default-ON era.
+	global_leaderboard_checkbox.button_pressed = (
+		GameConfig.submit_scores_global and GameConfig.leaderboard_consent_asked
+	)
 	global_leaderboard_checkbox.toggled.connect(_on_global_leaderboard_toggled)
 	row.add_child(global_leaderboard_checkbox)
 	gameplay.add_child(row)
 
 func _on_global_leaderboard_toggled(pressed: bool):
-	"""Handle global-leaderboard opt-out toggle"""
+	"""Identity-consent toggle: flipping it IS the explicit one-time choice, so it
+	also marks consent as asked (no game-over prompt afterwards)."""
 	print("[SettingsMenu] Submit scores to global leaderboard: ", pressed)
+	GameConfig.leaderboard_consent_asked = true
 	GameConfig.set_setting("submit_scores_global", pressed, false)
 	NotificationManager.info("Global leaderboard submission " + ("enabled" if pressed else "disabled"))
+
+func _add_launch_ping_toggle():
+	"""Append the 'Anonymous launch ping' opt-out under Gameplay (#799).
+	Honestly labelled: one event on boot with a random install UUID + version + OS,
+	nothing else (UpdateCheck.build_ping_body is the whitelist). Default ON.
+	DECOUPLED from the leaderboard toggle above (coordinator ruling 2026-07-26,
+	flagged in PR #942 for Pip's veto): that toggle now means IDENTITY consent,
+	and the ping carries no identity, so only THIS toggle gates it
+	(UpdateCheck.should_send_ping). The update CHECK is separate again and
+	carries no identifiers at all, so it sits behind no toggle."""
+	var gameplay = get_node_or_null("VBox/Scroll/SettingsContainer/GameplaySettings")
+	if gameplay == null:
+		return
+	var row = HBoxContainer.new()
+	var label = Label.new()
+	label.text = "Anonymous launch ping (counts installs; no personal data)"
+	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	row.add_child(label)
+	launch_ping_checkbox = CheckButton.new()
+	launch_ping_checkbox.button_pressed = GameConfig.send_launch_ping
+	launch_ping_checkbox.toggled.connect(_on_launch_ping_toggled)
+	row.add_child(launch_ping_checkbox)
+	gameplay.add_child(row)
+
+func _on_launch_ping_toggled(pressed: bool):
+	"""Handle the anonymous launch-ping opt-out toggle (#799)."""
+	print("[SettingsMenu] Anonymous launch ping: ", pressed)
+	GameConfig.set_setting("send_launch_ping", pressed, false)
+	NotificationManager.info("Anonymous launch ping " + ("enabled" if pressed else "disabled"))
 
 func _add_play_intros_toggle():
 	"""Append a 'Play story intros' toggle to the Gameplay section (#801). Reversible escape

@@ -80,15 +80,39 @@ func is_configured() -> bool:
 func can_fetch() -> bool:
 	return enabled and is_configured()
 
-## Gate for uploading a score: enabled + configured + the player has NOT opted out.
-## The opt-out lives on GameConfig (default ON for alpha).
+## Gate for uploading a score: enabled + configured + IDENTITY CONSENT (privacy
+## ruling 2026-07-26). Submission shares player name + lab name + score, so it
+## requires the player to have EXPLICITLY made the choice once
+## (GameConfig.leaderboard_consent_asked) AND that choice being yes
+## (GameConfig.submit_scores_global). Both reversible any time in Settings.
 func should_submit() -> bool:
 	if not (enabled and is_configured()):
 		return false
 	# Defensive: if GameConfig isn't present (isolated unit test), treat as opted-in.
-	if typeof(GameConfig) == TYPE_OBJECT and "submit_scores_global" in GameConfig:
-		return bool(GameConfig.submit_scores_global)
+	if typeof(GameConfig) == TYPE_OBJECT:
+		if "leaderboard_consent_asked" in GameConfig and not bool(GameConfig.leaderboard_consent_asked):
+			return false
+		if "submit_scores_global" in GameConfig:
+			return bool(GameConfig.submit_scores_global)
 	return true
+
+## Decide what the game-over screen does at the score-submission moment
+## (privacy ruling 2026-07-26 -- the identity-consent flow). PURE; unit-tested
+## directly. Note the local score save is NEVER gated by any of this -- consent
+## covers only the remote upload of identity + score.
+## Returns one of:
+##   "submit" -- consent granted earlier: upload as normal
+##   "ask"    -- first time at submission with a usable identity: show the
+##               one-time explicit opt-in prompt
+##   "remind" -- first time at submission, anonymous (empty name/lab): show ONE
+##               gracious nudge, then never again (reminded flag persists)
+##   "silent" -- remembered decline, or anonymous + already nudged: do nothing
+static func consent_flow_state(asked: bool, opted_in: bool, has_identity: bool, reminded: bool) -> String:
+	if asked:
+		return "submit" if opted_in else "silent"
+	if not has_identity:
+		return "remind" if not reminded else "silent"
+	return "ask"
 
 # --------------------------------------------------------------------------
 # Pure helpers (no HTTP, no state) -- this is where the contract bugs hide,

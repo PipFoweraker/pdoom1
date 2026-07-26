@@ -48,10 +48,47 @@ var show_hints: bool = true
 var ui_layout: String = "classic"
 const UI_LAYOUTS := ["classic", "proposed"]
 
-# Leaderboard Settings
-# Opt-out for uploading scores to the global leaderboard (LeaderboardSync).
-# Default ON for alpha; players who flip it off keep local scores only.
-var submit_scores_global: bool = true
+# Leaderboard Settings -- IDENTITY CONSENT model (privacy ruling 2026-07-26).
+# Submitting to the global board shares PLAYER NAME + LAB NAME + score publicly,
+# so it requires an EXPLICIT one-time opt-in: submit_scores_global is the
+# remembered choice, leaderboard_consent_asked records that the player actually
+# MADE that choice (via the game-over prompt or the Settings toggle -- flipping
+# the toggle counts as the explicit click). The effective gate is asked AND
+# opted-in (LeaderboardSync.should_submit). Both reversible any time in Settings.
+# MIGRATION: pre-ruling configs persisted submit_scores_global=true (the old
+# default-ON alpha posture) without any explicit click; consent_asked defaults
+# false, so those players get the one-time prompt at their next game over.
+var submit_scores_global: bool = false
+var leaderboard_consent_asked: bool = false
+# One-time gracious nudge (privacy ruling): an ANONYMOUS player (empty name/lab)
+# who reaches score submission without having opted in gets exactly ONE friendly
+# reminder that the global board exists; this flag persists so later
+# playthroughs stay silent. See LeaderboardSync.consent_flow_state.
+var leaderboard_reminder_shown: bool = false
+
+# Privacy: anonymous launch ping opt-out (#799). The ping is a single Plausible
+# event on boot carrying ONLY a random install UUID + version + OS + first_launch
+# -- no hardware ids, no PII (UpdateCheck.build_ping_body is the whitelist).
+# DECOUPLED from the leaderboard gate (coordinator ruling 2026-07-26, flagged in
+# PR #942 for Pip's Tuesday veto): the leaderboard gate above now means IDENTITY
+# consent specifically, and the ping carries no identity, so it honours only
+# this default-ON toggle (UpdateCheck.should_send_ping).
+var send_launch_ping: bool = true
+
+# PRIVACY POSTURE SSOT: docs/PRIVACY_POSTURE.md (two-tier model, ruled
+# 2026-07-26). Repo-root user_privacy.json is the machine-readable posture
+# record (rewritten to match the ruling; legacy Python-era keys preserved
+# there under legacy_python_era, unread by this build):
+#   tier 1 (identity: leaderboard) -> leaderboard_consent_asked AND
+#     submit_scores_global above (legacy opt_in_leaderboard maps here; the
+#     opt-in-default-OFF postures agree)
+#   tier 2 (anonymous: launch ping) -> send_launch_ping above, default ON,
+#     decoupled from tier 1 (approved by Pip 2026-07-26).
+
+# Update notice: the remote version the player dismissed on the welcome screen
+# (#799 "don't re-nag every launch for the same version"). Stored WITHOUT the
+# v prefix. A future release newer than this shows the notice again.
+var dismissed_update_version: String = ""
 
 # Game State
 var current_game_active: bool = false
@@ -174,8 +211,14 @@ func save_config() -> void:
 	# Onboarding section (issue #720)
 	config.set_value("onboarding", "welcome_seen", welcome_seen)
 
-	# Leaderboard section
+	# Leaderboard section (identity consent, privacy ruling 2026-07-26)
 	config.set_value("leaderboard", "submit_scores_global", submit_scores_global)
+	config.set_value("leaderboard", "consent_asked", leaderboard_consent_asked)
+	config.set_value("leaderboard", "reminder_shown", leaderboard_reminder_shown)
+
+	# Privacy + updates section (#799)
+	config.set_value("privacy", "send_launch_ping", send_launch_ping)
+	config.set_value("updates", "dismissed_update_version", dismissed_update_version)
 
 	# Save to file
 	var err = config.save(CONFIG_FILE)
@@ -232,8 +275,14 @@ func load_config() -> void:
 	# Load onboarding settings (issue #720)
 	welcome_seen = config.get_value("onboarding", "welcome_seen", welcome_seen)
 
-	# Load leaderboard settings
+	# Load leaderboard settings (identity consent, privacy ruling 2026-07-26)
 	submit_scores_global = config.get_value("leaderboard", "submit_scores_global", submit_scores_global)
+	leaderboard_consent_asked = config.get_value("leaderboard", "consent_asked", leaderboard_consent_asked)
+	leaderboard_reminder_shown = config.get_value("leaderboard", "reminder_shown", leaderboard_reminder_shown)
+
+	# Load privacy + updates settings (#799)
+	send_launch_ping = config.get_value("privacy", "send_launch_ping", send_launch_ping)
+	dismissed_update_version = config.get_value("updates", "dismissed_update_version", dismissed_update_version)
 
 	print("[GameConfig] Configuration loaded successfully")
 	config_loaded.emit()
@@ -306,6 +355,8 @@ func set_setting(key: String, value, save_immediately: bool = false) -> void:
 			show_hints = value
 		"submit_scores_global":
 			submit_scores_global = value
+		"send_launch_ping":
+			send_launch_ping = value
 		"play_intros":
 			play_intros = value
 		"ui_layout":

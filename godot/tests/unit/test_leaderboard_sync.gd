@@ -143,25 +143,48 @@ func test_unconfigured_never_submits():
 	assert_false(s.should_submit())
 	assert_false(s.can_fetch())
 
-func test_enabled_configured_optin_submits():
+func test_enabled_configured_consented_submits():
 	var prev = GameConfig.submit_scores_global
+	var prev_asked = GameConfig.leaderboard_consent_asked
 	GameConfig.submit_scores_global = true
+	GameConfig.leaderboard_consent_asked = true  # identity consent (ruling 2026-07-26)
 	var s = _make_sync()
 	s.enabled = true
 	s.base_url = "https://api.pdoom1.com"
 	s.token = "realtoken"
 	assert_true(s.is_configured())
 	assert_true(s.can_fetch(), "enabled+configured can fetch the global board")
-	assert_true(s.should_submit(), "enabled+configured+opted-in submits")
+	assert_true(s.should_submit(), "enabled+configured+explicitly-consented submits")
 	GameConfig.submit_scores_global = prev
+	GameConfig.leaderboard_consent_asked = prev_asked
 
-func test_opt_out_blocks_submit_but_not_fetch():
+func test_unasked_consent_blocks_submit_but_not_fetch():
+	# Identity-consent ruling 2026-07-26: submission requires the EXPLICIT
+	# one-time opt-in; a legacy opted-in-looking flag without the consent click
+	# must not submit.
 	var prev = GameConfig.submit_scores_global
-	GameConfig.submit_scores_global = false
+	var prev_asked = GameConfig.leaderboard_consent_asked
+	GameConfig.submit_scores_global = true
+	GameConfig.leaderboard_consent_asked = false
 	var s = _make_sync()
 	s.enabled = true
 	s.base_url = "https://api.pdoom1.com"
 	s.token = "realtoken"
-	assert_false(s.should_submit(), "opt-out must block uploads")
+	assert_false(s.should_submit(), "no explicit consent click -> no upload, even with the legacy flag on")
+	assert_true(s.can_fetch(), "viewing the global board stays un-gated")
+	GameConfig.submit_scores_global = prev
+	GameConfig.leaderboard_consent_asked = prev_asked
+
+func test_opt_out_blocks_submit_but_not_fetch():
+	var prev = GameConfig.submit_scores_global
+	var prev_asked = GameConfig.leaderboard_consent_asked
+	GameConfig.submit_scores_global = false
+	GameConfig.leaderboard_consent_asked = true  # explicitly declined
+	var s = _make_sync()
+	s.enabled = true
+	s.base_url = "https://api.pdoom1.com"
+	s.token = "realtoken"
+	assert_false(s.should_submit(), "remembered decline must block uploads")
 	assert_true(s.can_fetch(), "opt-out still lets you VIEW the global board")
 	GameConfig.submit_scores_global = prev
+	GameConfig.leaderboard_consent_asked = prev_asked
