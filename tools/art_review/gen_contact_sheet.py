@@ -38,6 +38,8 @@ def categorize(rel_parts):
         return "cats"
     if has("cosmetic", "overlay"):
         return "cosmetics"
+    if has("wheelchair"):
+        return "characters"
     if has(
         "window",
         "prop",
