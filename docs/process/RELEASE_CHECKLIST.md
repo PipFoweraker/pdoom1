@@ -89,6 +89,37 @@ This document provides a comprehensive checklist for releasing new versions of P
 - [ ] Confirm version number displays correctly in released version
 - [ ] Check that all documentation links work correctly
 
+### 7.5 Stage-Gate Verification (G..N timing model)
+
+Per [RELEASE_TIMING_MODEL.md](RELEASE_TIMING_MODEL.md): every stage must emit a LOUD,
+checkable artifact -- verify each one explicitly. Silence is never evidence of success
+(on v0.13.1 the website sync failed 6 times with zero signal).
+
+- [ ] **I (gate)**: go/no-go decision recorded (issue comment or this checklist) before tagging
+- [ ] **J/K (CI build + upload)**: release workflow run is green for the tag:
+  ```bash
+  gh run list --workflow=enhanced-release.yml --limit 1
+  ```
+- [ ] **K (assets)**: ALL expected platform zips present with plausible sizes (~80-130 MB each) --
+  count them, do not assume:
+  ```bash
+  gh release view v0.1.0 --json assets --jq '.assets[] | "\(.name) \(.size)"'
+  ```
+- [ ] **L (cross-repo sync)**: a GREEN `sync-game-version` run exists at-or-after publish.
+  Note: a release published by CI's own `GITHUB_TOKEN` does NOT fire the `published`
+  trigger -- if no run appears, dispatch manually:
+  ```bash
+  gh run list --workflow=sync-game-version.yml --limit 5
+  gh workflow run sync-game-version.yml -f target_version=v0.1.0
+  ```
+- [ ] **L (website)**: website actually shows the new version (look at it, not the workflow)
+- [ ] **M (deploy + social)**: announcement posted; record the post URL
+- [ ] **N (league functioning)**: league shows fresh activity on the new version's board-key
+- [ ] **Timing row**: append this release's measured timings and commit the CSV:
+  ```bash
+  python tools/release_timeline.py v0.1.0 --append
+  ```
+
 ## Post-Release Tasks
 
 ### 8. Communication & Documentation
