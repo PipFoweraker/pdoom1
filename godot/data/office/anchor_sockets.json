@@ -236,6 +236,45 @@
             2,
             8
           ]
+        },
+        "idle": {
+          "source_dir": "art_source/pixellab_2026-07-26_cat_sweep/cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/south",
+          "subject_px": [
+            16,
+            35
+          ],
+          "feet_px": [
+            34.0,
+            49
+          ],
+          "footfall_frames": [],
+          "footfall_review": true,
+          "sockets": [
+            {
+              "name": "eyes",
+              "px": [
+                0,
+                -26
+              ],
+              "layer": "front",
+              "review": true,
+              "notes": "dark-dot centroid on the face; muzzle/nose confusable -- Pip to nudge in the lab"
+            },
+            {
+              "name": "spine_mid",
+              "px": [
+                0,
+                -23
+              ],
+              "layer": "front",
+              "review": true,
+              "notes": "reserve anchor, pure bbox geometry (centre x, 35% down)"
+            }
+          ],
+          "frames": [
+            0,
+            0
+          ]
         }
       }
     },
@@ -318,6 +357,44 @@
               "notes": "reserve anchor, pure bbox geometry (centre x, 35% down)"
             }
           ]
+        },
+        "idle": {
+          "source_dir": "art_source/pixellab_2026-07-26_cat_sweep/cat_sweep_black_side_heft/animations/walk_ew/east",
+          "subject_px": [
+            44,
+            33
+          ],
+          "feet_px": [
+            30.0,
+            48
+          ],
+          "footfall_frames": [],
+          "footfall_review": true,
+          "sockets": [
+            {
+              "name": "eyes",
+              "px": [
+                16,
+                -22
+              ],
+              "layer": "front",
+              "notes": "colour-blob centroid of the iris pixels, avg across frames"
+            },
+            {
+              "name": "spine_mid",
+              "px": [
+                0,
+                -21
+              ],
+              "layer": "front",
+              "review": true,
+              "notes": "reserve anchor, pure bbox geometry (centre x, 35% down)"
+            }
+          ],
+          "frames": [
+            0,
+            0
+          ]
         }
       }
     },
@@ -399,6 +476,44 @@
               "review": true,
               "notes": "reserve anchor, pure bbox geometry (centre x, 35% down)"
             }
+          ]
+        },
+        "idle": {
+          "source_dir": "art_source/pixellab_2026-07-26_cat_sweep/cat_sweep_purple_side_heft/animations/walking/east",
+          "subject_px": [
+            46,
+            33
+          ],
+          "feet_px": [
+            30.0,
+            48
+          ],
+          "footfall_frames": [],
+          "footfall_review": true,
+          "sockets": [
+            {
+              "name": "eyes",
+              "px": [
+                16,
+                -22
+              ],
+              "layer": "front",
+              "notes": "colour-blob centroid of the iris pixels, avg across frames"
+            },
+            {
+              "name": "spine_mid",
+              "px": [
+                0,
+                -21
+              ],
+              "layer": "front",
+              "review": true,
+              "notes": "reserve anchor, pure bbox geometry (centre x, 35% down)"
+            }
+          ],
+          "frames": [
+            0,
+            0
           ]
         }
       }

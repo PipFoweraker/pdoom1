@@ -104,9 +104,23 @@ const _CAT_WALK_DIRS: Array[String] = [
 ]
 # Cat art sets that exist as rotation-only (static) frames and STILL NEED walk-cycles
 # generated (pixellab) before they can become real walkers. Reported on-screen/stdout.
-const _CAT_SETS_NEEDING_WALKS := ["cat_black", "cat_tabby", "cat_eldritch(x4)", "cat_purple(x4)"]
+const _CAT_SETS_NEEDING_WALKS := ["cat_eldritch(x4)"]
 
 const DOOM_STEP := 0.1
+
+# --- Anchor Sockets V2 demo (#894): doom-glow attached to sprite PARTS -------
+# Anchored cat sets are built from res://data/office/anchor_sockets.json (the
+# SSOT lists each promoted clip's frames dir), so the walkers and the anchors
+# can never drift apart. Glow art = the closest hue variants of the existing
+# doom overlay families (art_source/pixellab_2026-07-26_doom_overlays) per
+# Pip's interim colour mapping (2026-07-26, W3 circle-back may override):
+# blue = technical weirdness, purple = eldritch, red = conventional
+# catastrophe. INTENSITY carries the doom level; subtle at nominal.
+const _GLOW_FLAVOURS := [
+	{"name": "purple (eldritch)", "rel": "pixellab_2026-07-26_doom_overlays/aura/glowdisc"},
+	{"name": "red (catastrophe)", "rel": "pixellab_2026-07-26_doom_overlays/states/aura_red"},
+	{"name": "blue (weirdness)", "rel": "pixellab_2026-07-26_doom_overlays/arc/radialweb"},
+]
 
 # Skins the sandbox rotates through. "art" = real pixellab frames; "color" = a generated
 # animated placeholder tinted body+hat (Tier 1); "blob" = Tier 0 procedural blob+hat.
@@ -210,8 +224,12 @@ var _pop_level: int = 0
 var _pop_level_b: int = 0                  # v4: the small floor has its own populate level
 var _furniture: Array = []                 # Sprite2D furniture placed by POPULATE (wall-affinity)
 var _occupied_cells: Dictionary = {}       # str(cell centre) -> true (furniture no-overlap)
-var _cat_frame_sets: Array = []            # [{name, frames}] real walk-cycle SpriteFrames
+var _cat_frame_sets: Array = []            # [{name, frames, anchored_set?}] real walk-cycle SpriteFrames
 var _cat_walk_report: String = ""
+# Anchor Sockets V2 demo state: glow toggle + doom-flavour hue selection.
+var _anchor_glow_on: bool = true
+var _glow_flavour_idx: int = 0
+var _glow_flavour_frames: Array = []       # SpriteFrames per _GLOW_FLAVOURS entry (null = missing art)
 var _doom_level: float = 0.0
 var _overlay_mode: bool = false            # false = prop placement, true = poster overlay
 var _overlays: Array = []                  # Sprite2D transparent wall overlays (stackable)
@@ -251,6 +269,7 @@ func _ready() -> void:
 	_load_feedback()
 	_load_promoted()
 	_load_cat_walks()
+	_load_glow_flavours()
 	_build_poster_pool()
 	_rebuild_prop_pool()
 
@@ -289,6 +308,7 @@ func _build_overlay() -> void:
 		+ "[V] toggle COMPARE (DEFAULT ON): small=SCUMMY vs large=DECENT office\n" \
 		+ "[T] office TIER (scummy/decent; pinned per floor while compare is on)   [P] cycle prop/poster   [LMB] place   [RMB] remove nearest   [K] clear props\n" \
 		+ "DOOM-GLOW on cats:  [ [ ] decrease   [ ] ] increase   |   OVERLAY POC:  [O] toggle poster-on-wall mode   [;]/['] selected overlay opacity\n" \
+		+ "ANCHOR SOCKETS V2:  [A] toggle part-anchored glow (eyes; butt on rear walks + butt-flash)   [D] doom flavour hue (purple/red/blue)\n" \
 		+ "feedback on current prop:  [L]ike  [J] dislike  [F]avour  [G] disfavour  [M] promote  [N] note"
 	vb.add_child(_legend)
 
@@ -447,6 +467,10 @@ func _input(event: InputEvent) -> void:
 			_nudge_doom(-DOOM_STEP)
 		KEY_BRACKETRIGHT:
 			_nudge_doom(DOOM_STEP)
+		KEY_A:
+			_toggle_anchor_glow()
+		KEY_D:
+			_cycle_glow_flavour()
 		KEY_V:
 			_toggle_compare()
 		KEY_O:
@@ -928,8 +952,13 @@ func _add_cat(target: OfficeFloor = null) -> void:
 	if not _cat_frame_sets.is_empty():
 		var rc := RealCat.new()
 		# Stable per-cat id phase-offsets the deterministic alt-clip splice (#913).
-		rc.setup(_cat_frame_sets[_cat_color_idx % _cat_frame_sets.size()]["frames"],
-			"cat_%d" % _cat_color_idx)
+		var set_info: Dictionary = _cat_frame_sets[_cat_color_idx % _cat_frame_sets.size()]
+		rc.setup(set_info["frames"], "cat_%d" % _cat_color_idx)
+		# Anchor Sockets V2: sets built from anchor_sockets.json get part-anchored
+		# doom glow (eyes everywhere; butt on rear walks + butt-flash splices).
+		var aset := String(set_info.get("anchored_set", ""))
+		if aset != "":
+			rc.configure_anchor_glow(aset, _current_glow_frames(), _anchor_glow_on)
 		cat = rc
 	else:
 		var sc := SandboxCat.new()
@@ -1552,11 +1581,14 @@ func _update_status() -> void:
 		("" if _last_msg == "" else "\n>> " + _last_msg)]
 	if _asset_status == null:
 		return
-	var mode_line := "ACTIVE FLOOR (under cursor): %s   |   MODE: %s   |   compare: %s   |   doom-glow: %d%%   |   overlays: %d" % [
+	var mode_line := "ACTIVE FLOOR (under cursor): %s   |   MODE: %s   |   compare: %s   |   doom-glow: %d%%   |   anchor glow: %s @ %s   |   overlays: %d" % [
 		_floor_label(af),
 		("OVERLAY (poster on wall)" if _overlay_mode else "prop placement"),
 		("ON" if _compare_mode else "off"),
-		int(round(_doom_level * 100.0)), _overlays.size()]
+		int(round(_doom_level * 100.0)),
+		("ON" if _anchor_glow_on else "off"),
+		String(_GLOW_FLAVOURS[_glow_flavour_idx % _GLOW_FLAVOURS.size()]["name"]),
+		_overlays.size()]
 	var cur := _current_prop()
 	var cur_line: String
 	if _overlay_mode:
@@ -1716,6 +1748,13 @@ func _infer_category(rel: String) -> String:
 func _load_cat_walks() -> void:
 	_cat_frame_sets.clear()
 	var loaded: Array = []
+	# Anchor Sockets V2 sets FIRST (so the first spawned cats demo the anchors),
+	# then the legacy 2026-07-16 walkers.
+	for aset in AnchoredOverlay.sprite_sets():
+		var asf := _build_anchored_cat_frames(String(aset))
+		if asf != null:
+			_cat_frame_sets.append({"name": String(aset), "frames": asf, "anchored_set": String(aset)})
+			loaded.append(String(aset) + "*")
 	if DirAccess.dir_exists_absolute(_art_root):
 		for rel in _CAT_WALK_DIRS:
 			var d := (_art_root + "/" + rel).simplify_path()
@@ -1728,7 +1767,7 @@ func _load_cat_walks() -> void:
 	if loaded.is_empty():
 		_cat_walk_report = "REAL cat walkers: none (art_source absent) -- using procedural cats. Generate walk frames (pixellab) for: " + ", ".join(_CAT_SETS_NEEDING_WALKS)
 	else:
-		_cat_walk_report = "REAL cat walkers: %s   |   still NEED walk-frames (pixellab): %s" % [
+		_cat_walk_report = "REAL cat walkers: %s (* = anchor-socket set)   |   still NEED walk-frames (pixellab): %s" % [
 			", ".join(loaded), ", ".join(_CAT_SETS_NEEDING_WALKS)]
 	print("[office_sandbox] ", _cat_walk_report)
 
@@ -1790,6 +1829,109 @@ func _build_cat_frames(dir_abs: String) -> SpriteFrames:
 		sf.set_animation_speed("idle", 1.0)
 		sf.add_frame("idle", south0)
 	return sf
+
+# ===========================================================================
+# ANCHOR SOCKETS V2 (#894): promoted-clip walkers + part-anchored doom glow.
+# ===========================================================================
+# Build a walker SpriteFrames for one anchor_sockets.json sprite set. The JSON
+# is the SSOT for WHERE each promoted clip's frames live (source_dir, repo-root
+# relative) and which frame range is used (butt-flash splices 2..8), so the
+# walker and its anchors cannot drift apart. Returns null when the art is
+# absent (fresh checkout without art_source) -- degrades like the legacy path.
+func _build_anchored_cat_frames(sprite_set: String) -> SpriteFrames:
+	var repo_root := (_art_root + "/..").simplify_path()
+	var clips: Dictionary = AnchoredOverlay.sprite_entry(sprite_set).get("clips", {})
+	if clips.is_empty():
+		return null
+	var sf := SpriteFrames.new()
+	var made_any := false
+	var first := true
+	for clip in clips.keys():
+		var entry: Dictionary = clips[clip]
+		var dir_abs := (repo_root + "/" + String(entry.get("source_dir", ""))).simplify_path()
+		var lo := 0
+		var hi := 9999
+		var rng: Array = entry.get("frames", [])
+		if rng.size() == 2:
+			lo = int(rng[0])
+			hi = int(rng[1])
+		var added := 0
+		for i in range(lo, hi + 1):
+			var p := "%s/frame_%03d.png" % [dir_abs, i]
+			if not FileAccess.file_exists(p):
+				break
+			var tex := _load_texture(p)
+			if tex == null:
+				break
+			if first:
+				sf.rename_animation("default", String(clip))
+				first = false
+			elif not sf.has_animation(String(clip)):
+				sf.add_animation(String(clip))
+			sf.set_animation_loop(String(clip), true)
+			# 8 fps = the cat-sweep review-sheet playback convention.
+			sf.set_animation_speed(String(clip), 8.0 if String(clip) != "idle" else 1.0)
+			sf.add_frame(String(clip), tex)
+			added += 1
+		if added > 0:
+			made_any = true
+	return sf if made_any else null
+
+# Load one looping SpriteFrames per glow flavour (Pip's interim colour mapping
+# 2026-07-26). Missing art -> null slot; the demo skips it.
+func _load_glow_flavours() -> void:
+	_glow_flavour_frames.clear()
+	for fl in _GLOW_FLAVOURS:
+		_glow_flavour_frames.append(_build_overlay_frames(
+			(_art_root + "/" + String(fl["rel"])).simplify_path()))
+
+# Overlay loop dir -> SpriteFrames ("glow" anim; loop/frame_*.png, idle.png
+# fallback for loop-less variants).
+func _build_overlay_frames(dir_abs: String) -> SpriteFrames:
+	var sf := SpriteFrames.new()
+	sf.rename_animation("default", "glow")
+	sf.set_animation_loop("glow", true)
+	sf.set_animation_speed("glow", 8.0)
+	var i := 0
+	while true:
+		var p := "%s/loop/frame_%03d.png" % [dir_abs, i]
+		if not FileAccess.file_exists(p):
+			break
+		var tex := _load_texture(p)
+		if tex == null:
+			break
+		sf.add_frame("glow", tex)
+		i += 1
+	if sf.get_frame_count("glow") == 0:
+		var idle_tex := _load_texture(dir_abs + "/idle.png")
+		if idle_tex == null:
+			return null
+		sf.add_frame("glow", idle_tex)
+	return sf
+
+func _current_glow_frames() -> SpriteFrames:
+	if _glow_flavour_frames.is_empty():
+		return null
+	return _glow_flavour_frames[_glow_flavour_idx % _glow_flavour_frames.size()]
+
+func _toggle_anchor_glow() -> void:
+	_anchor_glow_on = not _anchor_glow_on
+	for cat in _cats:
+		if is_instance_valid(cat) and cat is RealCat:
+			(cat as RealCat).set_anchor_glow_enabled(_anchor_glow_on)
+	_last_msg = "anchor-socket glow %s" % ("ON" if _anchor_glow_on else "off")
+
+func _cycle_glow_flavour() -> void:
+	if _GLOW_FLAVOURS.is_empty():
+		return
+	_glow_flavour_idx = (_glow_flavour_idx + 1) % _GLOW_FLAVOURS.size()
+	var frames := _current_glow_frames()
+	for cat in _cats:
+		if is_instance_valid(cat) and cat is RealCat:
+			(cat as RealCat).set_glow_frames(frames)
+	_last_msg = "doom glow flavour: %s%s" % [
+		String(_GLOW_FLAVOURS[_glow_flavour_idx]["name"]),
+		"" if frames != null else " (art missing -- glow hidden)"]
 
 # ===========================================================================
 # FEEDBACK PERSISTENCE (<art_source>/sandbox_feedback.json; merges on load).
@@ -1958,6 +2100,19 @@ class RealCat extends SandboxCatBase:
 	var cat_id: String = "cat"           # stable id seeding the alt-clip splice hash
 	var _frames: SpriteFrames = null
 	var _anim: AnimatedSprite2D = null
+	# Anchor Sockets V2 (#894): part-anchored doom glow. Intensity carries the
+	# doom level (Pip interim colour ruling 2026-07-26): SUBTLE at nominal.
+	const EYE_GLOW_MIN := 0.14
+	const EYE_GLOW_MAX := 0.85
+	const BUTT_GLOW_MIN := 0.22
+	const BUTT_GLOW_MAX := 0.95
+	const EYE_GLOW_SCALE := 0.20         # overlay is a 64px canvas; ~13px over the eyes
+	const BUTT_GLOW_SCALE := 0.40
+	var anchored_set: String = ""
+	var _glow_frames: SpriteFrames = null
+	var _glow_enabled := true
+	var _eye_ov: AnchoredOverlay = null
+	var _butt_ov: AnchoredOverlay = null
 	# #913 alt-clip splice (cat contract: "walk_<dir>_alt", e.g. walk_north_alt --
 	# the butt-flash loop). Same deterministic 1-in-N mechanism as the workers
 	# (OfficeEmployeeSprite.should_play_alt); art arrives from the cat sweep later.
@@ -1968,6 +2123,26 @@ class RealCat extends SandboxCatBase:
 	func setup(frames: SpriteFrames, id: String = "cat") -> void:
 		_frames = frames
 		cat_id = id
+
+	## Anchor Sockets V2: opt this cat into part-anchored glow (call before the
+	## cat enters the tree; overlays are built in _build_visual).
+	func configure_anchor_glow(set_id: String, glow_frames: SpriteFrames, enabled: bool) -> void:
+		anchored_set = set_id
+		_glow_frames = glow_frames
+		_glow_enabled = enabled
+
+	func set_anchor_glow_enabled(on: bool) -> void:
+		_glow_enabled = on
+		for ov in [_eye_ov, _butt_ov]:
+			if ov != null:
+				ov.set_enabled(on)
+
+	## Swap the glow hue flavour (Pip interim colour mapping) live.
+	func set_glow_frames(glow_frames: SpriteFrames) -> void:
+		_glow_frames = glow_frames
+		for ov in [_eye_ov, _butt_ov]:
+			if ov != null:
+				ov.set_overlay_frames(glow_frames)
 
 	func _build_visual() -> void:
 		_anim = AnimatedSprite2D.new()
@@ -1981,6 +2156,26 @@ class RealCat extends SandboxCatBase:
 			_anim.play("idle")
 		elif _frames != null and _frames.get_animation_names().size() > 0:
 			_anim.play(_frames.get_animation_names()[0])
+		# Anchor Sockets V2 overlays: eyes on every clip with an 'eyes' socket;
+		# butt auto-appears ONLY on clips carrying a 'butt' socket (rear-facing
+		# walks + butt-flash splices) -- AnchoredOverlay hides itself otherwise.
+		if anchored_set != "" and _glow_frames != null:
+			_eye_ov = AnchoredOverlay.new()
+			_eye_ov.attach(_anim, anchored_set, "eyes", _glow_frames,
+				{"scale": EYE_GLOW_SCALE, "opacity": EYE_GLOW_MIN, "blend": "add",
+				"pulse": true, "z_offset": 1})
+			_butt_ov = AnchoredOverlay.new()
+			_butt_ov.attach(_anim, anchored_set, "butt", _glow_frames,
+				{"scale": BUTT_GLOW_SCALE, "opacity": BUTT_GLOW_MIN, "blend": "add",
+				"pulse": true, "z_offset": 1})
+			set_anchor_glow_enabled(_glow_enabled)
+			_apply_glow_doom()
+
+	func _apply_glow_doom() -> void:
+		if _eye_ov != null:
+			_eye_ov.set_base_opacity(lerpf(EYE_GLOW_MIN, EYE_GLOW_MAX, _doom))
+		if _butt_ov != null:
+			_butt_ov.set_base_opacity(lerpf(BUTT_GLOW_MIN, BUTT_GLOW_MAX, _doom))
 
 	func _on_tick(dirv: Vector2, moving: bool, _delta: float) -> void:
 		if _anim == null or _frames == null:
@@ -2034,6 +2229,7 @@ class RealCat extends SandboxCatBase:
 	func _on_doom() -> void:
 		if _anim != null:
 			_anim.self_modulate = Color(1, 1, 1, 1).lerp(Color(1.0, 0.35, 0.28, 1.0), _doom * 0.7)
+		_apply_glow_doom()
 
 	func _dir_name(v: Vector2) -> String:
 		if absf(v.x) >= absf(v.y):
