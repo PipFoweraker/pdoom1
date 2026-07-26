@@ -53,6 +53,19 @@ const UI_LAYOUTS := ["classic", "proposed"]
 # Default ON for alpha; players who flip it off keep local scores only.
 var submit_scores_global: bool = true
 
+# Privacy: anonymous launch ping opt-out (#799). The ping is a single Plausible
+# event on boot carrying ONLY a random install UUID + version + OS + first_launch
+# -- no hardware ids, no PII (UpdateCheck.build_ping_body is the whitelist).
+# Default ON, matching the alpha posture of submit_scores_global above; the ping
+# is ALSO suppressed when submit_scores_global is off (UpdateCheck.should_send_ping
+# honours the stricter of the two, per #799 "if opted out, do not send at all").
+var send_launch_ping: bool = true
+
+# Update notice: the remote version the player dismissed on the welcome screen
+# (#799 "don't re-nag every launch for the same version"). Stored WITHOUT the
+# v prefix. A future release newer than this shows the notice again.
+var dismissed_update_version: String = ""
+
 # Game State
 var current_game_active: bool = false
 var games_played: int = 0
@@ -177,6 +190,10 @@ func save_config() -> void:
 	# Leaderboard section
 	config.set_value("leaderboard", "submit_scores_global", submit_scores_global)
 
+	# Privacy + updates section (#799)
+	config.set_value("privacy", "send_launch_ping", send_launch_ping)
+	config.set_value("updates", "dismissed_update_version", dismissed_update_version)
+
 	# Save to file
 	var err = config.save(CONFIG_FILE)
 	if err != OK:
@@ -234,6 +251,10 @@ func load_config() -> void:
 
 	# Load leaderboard settings
 	submit_scores_global = config.get_value("leaderboard", "submit_scores_global", submit_scores_global)
+
+	# Load privacy + updates settings (#799)
+	send_launch_ping = config.get_value("privacy", "send_launch_ping", send_launch_ping)
+	dismissed_update_version = config.get_value("updates", "dismissed_update_version", dismissed_update_version)
 
 	print("[GameConfig] Configuration loaded successfully")
 	config_loaded.emit()
@@ -306,6 +327,8 @@ func set_setting(key: String, value, save_immediately: bool = false) -> void:
 			show_hints = value
 		"submit_scores_global":
 			submit_scores_global = value
+		"send_launch_ping":
+			send_launch_ping = value
 		"play_intros":
 			play_intros = value
 		"ui_layout":
