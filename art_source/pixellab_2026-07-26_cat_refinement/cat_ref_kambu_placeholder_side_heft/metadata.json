@@ -1,0 +1,59 @@
+{
+  "group_id": null,
+  "states": [
+    {
+      "character": {
+        "id": "5cc3c3a8-17e5-409d-bb51-42557d56d6c5",
+        "name": "cat_ref_kambu_placeholder_side_heft",
+        "prompt": "stocky chunky cat with large irregular white blotches and patches over a dark grey coat, patchy piebald bicolor pattern, solid heavy body mass, thick barrel-shaped torso, broad chest, short sturdy legs, weighty stance, pink nose, cozy pet cat, warm bright colors, cartoony retro RPG style, pixel art",
+        "size": {
+          "width": 68,
+          "height": 68
+        },
+        "template_id": "cat",
+        "directions": 8,
+        "view": "side",
+        "created_at": "2026-07-26T04:57:24.411350+00:00"
+      },
+      "folder": "cat_ref_kambu_placeholder_side_heft",
+      "frames": {
+        "rotations": {
+          "south": "cat_ref_kambu_placeholder_side_heft/rotations/south.png",
+          "south-east": "cat_ref_kambu_placeholder_side_heft/rotations/south-east.png",
+          "east": "cat_ref_kambu_placeholder_side_heft/rotations/east.png",
+          "north-east": "cat_ref_kambu_placeholder_side_heft/rotations/north-east.png",
+          "north": "cat_ref_kambu_placeholder_side_heft/rotations/north.png",
+          "north-west": "cat_ref_kambu_placeholder_side_heft/rotations/north-west.png",
+          "west": "cat_ref_kambu_placeholder_side_heft/rotations/west.png",
+          "south-west": "cat_ref_kambu_placeholder_side_heft/rotations/south-west.png"
+        },
+        "animations": {
+          "walk_ew": {
+            "east": [
+              "cat_ref_kambu_placeholder_side_heft/animations/walk_ew/east/frame_000.png",
+              "cat_ref_kambu_placeholder_side_heft/animations/walk_ew/east/frame_001.png",
+              "cat_ref_kambu_placeholder_side_heft/animations/walk_ew/east/frame_002.png",
+              "cat_ref_kambu_placeholder_side_heft/animations/walk_ew/east/frame_003.png",
+              "cat_ref_kambu_placeholder_side_heft/animations/walk_ew/east/frame_004.png",
+              "cat_ref_kambu_placeholder_side_heft/animations/walk_ew/east/frame_005.png",
+              "cat_ref_kambu_placeholder_side_heft/animations/walk_ew/east/frame_006.png",
+              "cat_ref_kambu_placeholder_side_heft/animations/walk_ew/east/frame_007.png"
+            ],
+            "west": [
+              "cat_ref_kambu_placeholder_side_heft/animations/walk_ew/west/frame_000.png",
+              "cat_ref_kambu_placeholder_side_heft/animations/walk_ew/west/frame_001.png",
+              "cat_ref_kambu_placeholder_side_heft/animations/walk_ew/west/frame_002.png",
+              "cat_ref_kambu_placeholder_side_heft/animations/walk_ew/west/frame_003.png",
+              "cat_ref_kambu_placeholder_side_heft/animations/walk_ew/west/frame_004.png",
+              "cat_ref_kambu_placeholder_side_heft/animations/walk_ew/west/frame_005.png",
+              "cat_ref_kambu_placeholder_side_heft/animations/walk_ew/west/frame_006.png",
+              "cat_ref_kambu_placeholder_side_heft/animations/walk_ew/west/frame_007.png"
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "export_version": "3.1",
+  "export_date": "2026-07-26T05:30:02.581189"
+}

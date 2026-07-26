@@ -15,9 +15,13 @@ Read this BEFORE running any PixelLab generation lane. Companion docs:
 
 | Fact | Value | Source |
 |---|---|---|
-| Tier | Tier 1 "Pixel Apprentice", subscription active | get_balance 2026-07-26 |
-| Monthly generation pool | 2000/month | get_balance (`generations_total`) |
-| Standing (2026-07-26) | 625 remaining, 1375 used this cycle | get_balance MEASURED |
+| Tier | **Tier 3 "Pixel Architect"** since 2026-07-26 (upgraded mid cat-sweep; rows below predate it) | get_balance MEASURED |
+| Tier 3 pool | 7419 total this cycle; 5884 remaining after the cat-refinement lane | get_balance 2026-07-26 MEASURED |
+| Tier 3 concurrency | **20 jobs confirmed** -- over-cap calls atomically rejected with "need N job slots but only M available (K/20 used)"; nothing partial, refire when free | MEASURED cat-refinement lane |
+| Tier 3 queue latency | near zero this session (jobs returned in ~1-3 min even 15+ deep); the warm-ramp/priority-slot dance below did not bite | MEASURED cat-refinement lane |
+| (pre-upgrade) Tier | Tier 1 "Pixel Apprentice" | get_balance 2026-07-26 |
+| (pre-upgrade) Monthly generation pool | 2000/month | get_balance (`generations_total`) |
+| (pre-upgrade) Standing (2026-07-26) | 625 remaining, 1375 used this cycle | get_balance MEASURED |
 | Pay-as-you-go credits | $0.00 (subscription generations only) | get_balance MEASURED |
 | Tier 1 price | $12/month; loyalty discount trends to $9/month | [verify -- third-party reviews] |
 | Tier 1 max image size | 320x320 px | [verify -- flowtools review] |
@@ -81,7 +85,7 @@ Nominal = SCHEMA (tool descriptions). Measured = balance-bracketed deltas.
 | create_character, standard | 1 gen | 1 gen/character (2026-07-26, x5) | 4 or 8 dirs, ~2-5 min |
 | create_character, v3 | 2-9 gens (scales with size) | -- | always 8 dirs; only mode taking reference_image_base64 |
 | create_character, pro | 20-40 gens | -- | always 8 dirs; ignores style params |
-| animate_character, template | 1 gen/direction | **~2.1 gens/direction** (17 gens for 8 dir-jobs, isolated 2026-07-26) | plan at 2/dir, not 1 |
+| animate_character, template | 1 gen/direction | **~2.1 gens/direction** (17 gens for 8 dir-jobs, isolated 2026-07-26); cat-sweep lane later measured 1.0, but the cat-refinement lane (Tier 3, 2026-07-26) billed 141 vs 76 nominal with 30 template dirs the prime suspect -- NOT isolated | plan at 2/dir; next lane bracket one 8-dir group alone and settle this |
 | animate_character, v3 custom | ceil(w*h*frames/65536)/dir; ~1/dir <= 96px, 128px ~2, 160px ~4, 256px ~8 | 1 gen/dir at 68x68 canvas (2026-07-26) | at house 68px canvas, v3 custom costs the SAME as template -- description control is free |
 | animate_character, pro | 20-40 gens/direction | -- | frame count fixed by size; requires confirm_cost dance |
 | create_character_state | ~20-40 gens/state (quoted by tool) | **21 gens for one state** (2026-07-26 pilot) | NOT a cheap pose source; 3-pose set ~60+ gens |
@@ -162,6 +166,11 @@ is steered by description language only (MEASURED: heft + kawaii probes,
   views of a ~34px quadruped hide the leg pairs and the model verticalizes.
   Prompt language ("all four paws on the ground") does NOT fix it. Fix: hybrid
   per-direction views (low top-down for N/S, side for E/W).
+- **v3 action-prefix dedupe:** a new v3 animation whose action_description
+  OPENS with the same phrase as an existing group on the same character +
+  direction is rejected as "already queued or complete (nothing re-queued)"
+  even when the rest of the description differs. Reword the opening words,
+  not the tail. Rejections are unbilled (MEASURED 2026-07-26 refinement).
 - **8-dir object tool for characters:** reference sprite loses the salience
   contest against placeholder characters; output resembles a generic
   character. Use `create_character(mode="v3", reference_image_base64=...)`.
