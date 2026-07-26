@@ -1,9 +1,26 @@
 {
-  'opt_in_leaderboard': false,
-  'pseudonym': '',
-  'allow_detailed_logging': true,
-  'share_game_statistics': false,
-  'user_id': '789d6739-b91d-4f54-800f-d65cf4380c5a',
-  'created': '2025-09-16T17:39:26.792548',
-  'logging_level': 4
+  "_comment": "Machine-readable privacy posture record. Canonical doc: docs/PRIVACY_POSTURE.md (two-tier model, ruled 2026-07-26). The Godot build persists LIVE player choices in user://config.cfg; this file records the shipped defaults plus legacy Python-era values for provenance. Formerly a stray artifact of the retired Python build's PrivacyManager (single-quoted pseudo-JSON); rewritten as valid JSON when the posture was ruled.",
+  "posture_version": 2,
+  "ruled": "2026-07-26",
+  "tier1_identity": {
+    "_comment": "Global leaderboard: shares player name + lab name + score. EXPLICIT opt-in at first score submission (or the Settings toggle); one gracious empty-name reminder ever; both choices remembered locally and reversible in Settings.",
+    "opt_in_leaderboard_default": false,
+    "consent_point": "first score submission (game-over prompt) or Settings toggle",
+    "reminder_policy": "one reminder ever for anonymous players, then silent"
+  },
+  "tier2_anonymous_telemetry": {
+    "_comment": "Launch ping (#799): random install UUIDv4 + game version + OS + first_launch ONLY; never machine-derived; payload whitelist pinned by godot/tests/unit/test_update_check.gd. Decoupled from tier 1 (approved by Pip 2026-07-26): only its own toggle gates it.",
+    "send_launch_ping_default": true,
+    "settings_toggle": "Anonymous launch ping (counts installs; no personal data)"
+  },
+  "legacy_python_era": {
+    "_comment": "Historical keys from the retired Python build, preserved unchanged for provenance; unread by the Godot build. opt_in_leaderboard maps to the tier-1 identity opt-in (defaults still agree: off until consented).",
+    "opt_in_leaderboard": false,
+    "pseudonym": "",
+    "allow_detailed_logging": true,
+    "share_game_statistics": false,
+    "user_id": "789d6739-b91d-4f54-800f-d65cf4380c5a",
+    "created": "2025-09-16T17:39:26.792548",
+    "logging_level": 4
+  }
 }

@@ -1,5 +1,12 @@
 # P(Doom) Privacy Policy & Technical Documentation
 
+> **Posture SSOT:** the shipped consent model (what is actually sent, under
+> what consent) is [`PRIVACY_POSTURE.md`](PRIVACY_POSTURE.md) -- the two-tier
+> model ruled 2026-07-26: tier 1 identity data (leaderboard) = explicit
+> opt-in; tier 2 anonymous telemetry (launch ping) = default ON with an
+> honest Settings opt-out. Where this older, broader document disagrees with
+> the posture file, the posture file wins.
+
 ## Our Privacy Commitment
 
 P(Doom) is designed with **privacy-first principles**. We believe that your gameplay data, choices, and strategies should remain under your control. This document outlines how we protect your privacy and what data practices we follow.
