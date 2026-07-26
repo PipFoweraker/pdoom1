@@ -1,0 +1,103 @@
+{
+  "group_id": null,
+  "states": [
+    {
+      "character": {
+        "id": "2f14fada-c496-44fa-b32a-368ccfefa53f",
+        "name": "worker_grey_f_64",
+        "prompt": "older woman office worker with short grey hair, reading glasses hanging on a cord around her neck, slate cardigan over dark teal blouse, olive trousers, ID lanyard, muted teal-olive-slate palette with warm amber accent, lived-in AI lab worker",
+        "size": {
+          "width": 92,
+          "height": 92
+        },
+        "template_id": "mannequin",
+        "directions": 8,
+        "view": "low top-down",
+        "created_at": "2026-07-26T05:43:05.497759+00:00"
+      },
+      "folder": "worker_grey_f_64",
+      "frames": {
+        "rotations": {
+          "south": "worker_grey_f_64/rotations/south.png",
+          "south-east": "worker_grey_f_64/rotations/south-east.png",
+          "east": "worker_grey_f_64/rotations/east.png",
+          "north-east": "worker_grey_f_64/rotations/north-east.png",
+          "north": "worker_grey_f_64/rotations/north.png",
+          "north-west": "worker_grey_f_64/rotations/north-west.png",
+          "west": "worker_grey_f_64/rotations/west.png",
+          "south-west": "worker_grey_f_64/rotations/south-west.png"
+        },
+        "animations": {
+          "walk": {
+            "north": [
+              "worker_grey_f_64/animations/walk/north/frame_000.png",
+              "worker_grey_f_64/animations/walk/north/frame_001.png",
+              "worker_grey_f_64/animations/walk/north/frame_002.png",
+              "worker_grey_f_64/animations/walk/north/frame_003.png",
+              "worker_grey_f_64/animations/walk/north/frame_004.png",
+              "worker_grey_f_64/animations/walk/north/frame_005.png"
+            ],
+            "north-east": [
+              "worker_grey_f_64/animations/walk/north-east/frame_000.png",
+              "worker_grey_f_64/animations/walk/north-east/frame_001.png",
+              "worker_grey_f_64/animations/walk/north-east/frame_002.png",
+              "worker_grey_f_64/animations/walk/north-east/frame_003.png",
+              "worker_grey_f_64/animations/walk/north-east/frame_004.png",
+              "worker_grey_f_64/animations/walk/north-east/frame_005.png"
+            ],
+            "south-east": [
+              "worker_grey_f_64/animations/walk/south-east/frame_000.png",
+              "worker_grey_f_64/animations/walk/south-east/frame_001.png",
+              "worker_grey_f_64/animations/walk/south-east/frame_002.png",
+              "worker_grey_f_64/animations/walk/south-east/frame_003.png",
+              "worker_grey_f_64/animations/walk/south-east/frame_004.png",
+              "worker_grey_f_64/animations/walk/south-east/frame_005.png"
+            ],
+            "south": [
+              "worker_grey_f_64/animations/walk/south/frame_000.png",
+              "worker_grey_f_64/animations/walk/south/frame_001.png",
+              "worker_grey_f_64/animations/walk/south/frame_002.png",
+              "worker_grey_f_64/animations/walk/south/frame_003.png",
+              "worker_grey_f_64/animations/walk/south/frame_004.png",
+              "worker_grey_f_64/animations/walk/south/frame_005.png"
+            ],
+            "east": [
+              "worker_grey_f_64/animations/walk/east/frame_000.png",
+              "worker_grey_f_64/animations/walk/east/frame_001.png",
+              "worker_grey_f_64/animations/walk/east/frame_002.png",
+              "worker_grey_f_64/animations/walk/east/frame_003.png",
+              "worker_grey_f_64/animations/walk/east/frame_004.png",
+              "worker_grey_f_64/animations/walk/east/frame_005.png"
+            ],
+            "north-west": [
+              "worker_grey_f_64/animations/walk/north-west/frame_000.png",
+              "worker_grey_f_64/animations/walk/north-west/frame_001.png",
+              "worker_grey_f_64/animations/walk/north-west/frame_002.png",
+              "worker_grey_f_64/animations/walk/north-west/frame_003.png",
+              "worker_grey_f_64/animations/walk/north-west/frame_004.png",
+              "worker_grey_f_64/animations/walk/north-west/frame_005.png"
+            ],
+            "west": [
+              "worker_grey_f_64/animations/walk/west/frame_000.png",
+              "worker_grey_f_64/animations/walk/west/frame_001.png",
+              "worker_grey_f_64/animations/walk/west/frame_002.png",
+              "worker_grey_f_64/animations/walk/west/frame_003.png",
+              "worker_grey_f_64/animations/walk/west/frame_004.png",
+              "worker_grey_f_64/animations/walk/west/frame_005.png"
+            ],
+            "south-west": [
+              "worker_grey_f_64/animations/walk/south-west/frame_000.png",
+              "worker_grey_f_64/animations/walk/south-west/frame_001.png",
+              "worker_grey_f_64/animations/walk/south-west/frame_002.png",
+              "worker_grey_f_64/animations/walk/south-west/frame_003.png",
+              "worker_grey_f_64/animations/walk/south-west/frame_004.png",
+              "worker_grey_f_64/animations/walk/south-west/frame_005.png"
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "export_version": "3.1",
+  "export_date": "2026-07-26T06:26:27.292384"
+}

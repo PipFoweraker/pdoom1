@@ -1,0 +1,103 @@
+{
+  "group_id": null,
+  "states": [
+    {
+      "character": {
+        "id": "20705f27-8678-4491-9f0b-d4297b87f4ba",
+        "name": "worker_headphones_m_64",
+        "prompt": "young Latino man office worker with dark curly hair and trimmed short beard, charcoal over-ear headphones resting around his neck, muted olive t-shirt, slate trousers, ID lanyard with amber badge clip, muted teal-olive-slate palette with warm amber accent, lived-in AI lab worker",
+        "size": {
+          "width": 92,
+          "height": 92
+        },
+        "template_id": "mannequin",
+        "directions": 8,
+        "view": "low top-down",
+        "created_at": "2026-07-26T05:43:05.982252+00:00"
+      },
+      "folder": "worker_headphones_m_64",
+      "frames": {
+        "rotations": {
+          "south": "worker_headphones_m_64/rotations/south.png",
+          "south-east": "worker_headphones_m_64/rotations/south-east.png",
+          "east": "worker_headphones_m_64/rotations/east.png",
+          "north-east": "worker_headphones_m_64/rotations/north-east.png",
+          "north": "worker_headphones_m_64/rotations/north.png",
+          "north-west": "worker_headphones_m_64/rotations/north-west.png",
+          "west": "worker_headphones_m_64/rotations/west.png",
+          "south-west": "worker_headphones_m_64/rotations/south-west.png"
+        },
+        "animations": {
+          "walk": {
+            "south": [
+              "worker_headphones_m_64/animations/walk/south/frame_000.png",
+              "worker_headphones_m_64/animations/walk/south/frame_001.png",
+              "worker_headphones_m_64/animations/walk/south/frame_002.png",
+              "worker_headphones_m_64/animations/walk/south/frame_003.png",
+              "worker_headphones_m_64/animations/walk/south/frame_004.png",
+              "worker_headphones_m_64/animations/walk/south/frame_005.png"
+            ],
+            "north-west": [
+              "worker_headphones_m_64/animations/walk/north-west/frame_000.png",
+              "worker_headphones_m_64/animations/walk/north-west/frame_001.png",
+              "worker_headphones_m_64/animations/walk/north-west/frame_002.png",
+              "worker_headphones_m_64/animations/walk/north-west/frame_003.png",
+              "worker_headphones_m_64/animations/walk/north-west/frame_004.png",
+              "worker_headphones_m_64/animations/walk/north-west/frame_005.png"
+            ],
+            "east": [
+              "worker_headphones_m_64/animations/walk/east/frame_000.png",
+              "worker_headphones_m_64/animations/walk/east/frame_001.png",
+              "worker_headphones_m_64/animations/walk/east/frame_002.png",
+              "worker_headphones_m_64/animations/walk/east/frame_003.png",
+              "worker_headphones_m_64/animations/walk/east/frame_004.png",
+              "worker_headphones_m_64/animations/walk/east/frame_005.png"
+            ],
+            "west": [
+              "worker_headphones_m_64/animations/walk/west/frame_000.png",
+              "worker_headphones_m_64/animations/walk/west/frame_001.png",
+              "worker_headphones_m_64/animations/walk/west/frame_002.png",
+              "worker_headphones_m_64/animations/walk/west/frame_003.png",
+              "worker_headphones_m_64/animations/walk/west/frame_004.png",
+              "worker_headphones_m_64/animations/walk/west/frame_005.png"
+            ],
+            "north": [
+              "worker_headphones_m_64/animations/walk/north/frame_000.png",
+              "worker_headphones_m_64/animations/walk/north/frame_001.png",
+              "worker_headphones_m_64/animations/walk/north/frame_002.png",
+              "worker_headphones_m_64/animations/walk/north/frame_003.png",
+              "worker_headphones_m_64/animations/walk/north/frame_004.png",
+              "worker_headphones_m_64/animations/walk/north/frame_005.png"
+            ],
+            "south-west": [
+              "worker_headphones_m_64/animations/walk/south-west/frame_000.png",
+              "worker_headphones_m_64/animations/walk/south-west/frame_001.png",
+              "worker_headphones_m_64/animations/walk/south-west/frame_002.png",
+              "worker_headphones_m_64/animations/walk/south-west/frame_003.png",
+              "worker_headphones_m_64/animations/walk/south-west/frame_004.png",
+              "worker_headphones_m_64/animations/walk/south-west/frame_005.png"
+            ],
+            "north-east": [
+              "worker_headphones_m_64/animations/walk/north-east/frame_000.png",
+              "worker_headphones_m_64/animations/walk/north-east/frame_001.png",
+              "worker_headphones_m_64/animations/walk/north-east/frame_002.png",
+              "worker_headphones_m_64/animations/walk/north-east/frame_003.png",
+              "worker_headphones_m_64/animations/walk/north-east/frame_004.png",
+              "worker_headphones_m_64/animations/walk/north-east/frame_005.png"
+            ],
+            "south-east": [
+              "worker_headphones_m_64/animations/walk/south-east/frame_000.png",
+              "worker_headphones_m_64/animations/walk/south-east/frame_001.png",
+              "worker_headphones_m_64/animations/walk/south-east/frame_002.png",
+              "worker_headphones_m_64/animations/walk/south-east/frame_003.png",
+              "worker_headphones_m_64/animations/walk/south-east/frame_004.png",
+              "worker_headphones_m_64/animations/walk/south-east/frame_005.png"
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "export_version": "3.1",
+  "export_date": "2026-07-26T06:26:31.713526"
+}

@@ -1,0 +1,190 @@
+{
+  "group_id": "4d85d2cb-3f00-4b97-b6dc-ce30c180a712",
+  "states": [
+    {
+      "character": {
+        "id": "692cdbd7-925d-4dc2-86e5-38035f2fccb1",
+        "name": "worker_black_m_64",
+        "prompt": "Black man office worker with short natural hair, slate-blue button-up shirt with rolled sleeves, dark olive trousers, ID lanyard, muted teal-olive-slate palette with warm amber accent, lived-in AI lab worker",
+        "size": {
+          "width": 92,
+          "height": 92
+        },
+        "template_id": "mannequin",
+        "directions": 8,
+        "view": "low top-down",
+        "created_at": "2026-07-26T05:41:58.399575+00:00"
+      },
+      "folder": "worker_black_m_64",
+      "frames": {
+        "rotations": {
+          "south": "worker_black_m_64/rotations/south.png",
+          "south-east": "worker_black_m_64/rotations/south-east.png",
+          "east": "worker_black_m_64/rotations/east.png",
+          "north-east": "worker_black_m_64/rotations/north-east.png",
+          "north": "worker_black_m_64/rotations/north.png",
+          "north-west": "worker_black_m_64/rotations/north-west.png",
+          "west": "worker_black_m_64/rotations/west.png",
+          "south-west": "worker_black_m_64/rotations/south-west.png"
+        },
+        "animations": {
+          "walk": {
+            "south-east": [
+              "worker_black_m_64/animations/walk/south-east/frame_000.png",
+              "worker_black_m_64/animations/walk/south-east/frame_001.png",
+              "worker_black_m_64/animations/walk/south-east/frame_002.png",
+              "worker_black_m_64/animations/walk/south-east/frame_003.png",
+              "worker_black_m_64/animations/walk/south-east/frame_004.png",
+              "worker_black_m_64/animations/walk/south-east/frame_005.png"
+            ],
+            "west": [
+              "worker_black_m_64/animations/walk/west/frame_000.png",
+              "worker_black_m_64/animations/walk/west/frame_001.png",
+              "worker_black_m_64/animations/walk/west/frame_002.png",
+              "worker_black_m_64/animations/walk/west/frame_003.png",
+              "worker_black_m_64/animations/walk/west/frame_004.png",
+              "worker_black_m_64/animations/walk/west/frame_005.png"
+            ],
+            "north": [
+              "worker_black_m_64/animations/walk/north/frame_000.png",
+              "worker_black_m_64/animations/walk/north/frame_001.png",
+              "worker_black_m_64/animations/walk/north/frame_002.png",
+              "worker_black_m_64/animations/walk/north/frame_003.png",
+              "worker_black_m_64/animations/walk/north/frame_004.png",
+              "worker_black_m_64/animations/walk/north/frame_005.png"
+            ],
+            "north-west": [
+              "worker_black_m_64/animations/walk/north-west/frame_000.png",
+              "worker_black_m_64/animations/walk/north-west/frame_001.png",
+              "worker_black_m_64/animations/walk/north-west/frame_002.png",
+              "worker_black_m_64/animations/walk/north-west/frame_003.png",
+              "worker_black_m_64/animations/walk/north-west/frame_004.png",
+              "worker_black_m_64/animations/walk/north-west/frame_005.png"
+            ],
+            "north-east": [
+              "worker_black_m_64/animations/walk/north-east/frame_000.png",
+              "worker_black_m_64/animations/walk/north-east/frame_001.png",
+              "worker_black_m_64/animations/walk/north-east/frame_002.png",
+              "worker_black_m_64/animations/walk/north-east/frame_003.png",
+              "worker_black_m_64/animations/walk/north-east/frame_004.png",
+              "worker_black_m_64/animations/walk/north-east/frame_005.png"
+            ],
+            "south-west": [
+              "worker_black_m_64/animations/walk/south-west/frame_000.png",
+              "worker_black_m_64/animations/walk/south-west/frame_001.png",
+              "worker_black_m_64/animations/walk/south-west/frame_002.png",
+              "worker_black_m_64/animations/walk/south-west/frame_003.png",
+              "worker_black_m_64/animations/walk/south-west/frame_004.png",
+              "worker_black_m_64/animations/walk/south-west/frame_005.png"
+            ],
+            "south": [
+              "worker_black_m_64/animations/walk/south/frame_000.png",
+              "worker_black_m_64/animations/walk/south/frame_001.png",
+              "worker_black_m_64/animations/walk/south/frame_002.png",
+              "worker_black_m_64/animations/walk/south/frame_003.png",
+              "worker_black_m_64/animations/walk/south/frame_004.png",
+              "worker_black_m_64/animations/walk/south/frame_005.png"
+            ],
+            "east": [
+              "worker_black_m_64/animations/walk/east/frame_000.png",
+              "worker_black_m_64/animations/walk/east/frame_001.png",
+              "worker_black_m_64/animations/walk/east/frame_002.png",
+              "worker_black_m_64/animations/walk/east/frame_003.png",
+              "worker_black_m_64/animations/walk/east/frame_004.png",
+              "worker_black_m_64/animations/walk/east/frame_005.png"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "character": {
+        "id": "fc1096a7-2ccc-4b72-a23e-c3b663d30817",
+        "name": "seated typing pose,",
+        "prompt": "Black man office worker with short natural hair, slate-blue button-up shirt with rolled sleeves, dark olive trousers, ID lanyard, muted teal-olive-slate palette with warm amber accent, lived-in AI lab worker",
+        "size": {
+          "width": 92,
+          "height": 92
+        },
+        "template_id": "mannequin",
+        "directions": 8,
+        "view": "low top-down",
+        "created_at": "2026-07-26T05:51:01.865262+00:00"
+      },
+      "folder": "seated_typing_pose",
+      "frames": {
+        "rotations": {
+          "south": "seated_typing_pose/rotations/south.png",
+          "south-east": "seated_typing_pose/rotations/south-east.png",
+          "east": "seated_typing_pose/rotations/east.png",
+          "north-east": "seated_typing_pose/rotations/north-east.png",
+          "north": "seated_typing_pose/rotations/north.png",
+          "north-west": "seated_typing_pose/rotations/north-west.png",
+          "west": "seated_typing_pose/rotations/west.png",
+          "south-west": "seated_typing_pose/rotations/south-west.png"
+        },
+        "animations": {}
+      }
+    },
+    {
+      "character": {
+        "id": "961258e7-61ea-4629-ac26-2b0ed3e719b0",
+        "name": "standing idle, relax",
+        "prompt": "Black man office worker with short natural hair, slate-blue button-up shirt with rolled sleeves, dark olive trousers, ID lanyard, muted teal-olive-slate palette with warm amber accent, lived-in AI lab worker",
+        "size": {
+          "width": 92,
+          "height": 92
+        },
+        "template_id": "mannequin",
+        "directions": 8,
+        "view": "low top-down",
+        "created_at": "2026-07-26T05:51:03.314881+00:00"
+      },
+      "folder": "standing_idle_relax",
+      "frames": {
+        "rotations": {
+          "south": "standing_idle_relax/rotations/south.png",
+          "south-east": "standing_idle_relax/rotations/south-east.png",
+          "east": "standing_idle_relax/rotations/east.png",
+          "north-east": "standing_idle_relax/rotations/north-east.png",
+          "north": "standing_idle_relax/rotations/north.png",
+          "north-west": "standing_idle_relax/rotations/north-west.png",
+          "west": "standing_idle_relax/rotations/west.png",
+          "south-west": "standing_idle_relax/rotations/south-west.png"
+        },
+        "animations": {}
+      }
+    },
+    {
+      "character": {
+        "id": "d599571f-69c5-4f44-8386-347d7eea3255",
+        "name": "stressed slumped pos",
+        "prompt": "Black man office worker with short natural hair, slate-blue button-up shirt with rolled sleeves, dark olive trousers, ID lanyard, muted teal-olive-slate palette with warm amber accent, lived-in AI lab worker",
+        "size": {
+          "width": 92,
+          "height": 92
+        },
+        "template_id": "mannequin",
+        "directions": 8,
+        "view": "low top-down",
+        "created_at": "2026-07-26T05:51:04.691209+00:00"
+      },
+      "folder": "stressed_slumped_pos",
+      "frames": {
+        "rotations": {
+          "south": "stressed_slumped_pos/rotations/south.png",
+          "south-east": "stressed_slumped_pos/rotations/south-east.png",
+          "east": "stressed_slumped_pos/rotations/east.png",
+          "north-east": "stressed_slumped_pos/rotations/north-east.png",
+          "north": "stressed_slumped_pos/rotations/north.png",
+          "north-west": "stressed_slumped_pos/rotations/north-west.png",
+          "west": "stressed_slumped_pos/rotations/west.png",
+          "south-west": "stressed_slumped_pos/rotations/south-west.png"
+        },
+        "animations": {}
+      }
+    }
+  ],
+  "export_version": "3.1",
+  "export_date": "2026-07-26T06:23:48.968449"
+}
