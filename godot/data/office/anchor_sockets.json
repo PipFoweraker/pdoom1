@@ -1,0 +1,522 @@
+{
+  "_meta": {
+    "version": "2.0",
+    "description": "Anchor Sockets V2 -- per-clip-direction named anchor points on animated sprites, so effects attach to PARTS (eyes, butt, spine_mid) instead of sprite centres. Covers the PROMOTED cat sweep clips (Pip triage 2026-07-26). Consumed by scripts/ui/office_floor/anchored_overlay.gd; authored by tools/art_review/author_anchor_sockets.py; adjusted via the layering lab click-to-adjust flow. See docs/art/PROP_MANIFEST.md (Anchor sockets section).",
+    "measured_with": "tools/art_review/author_anchor_sockets.py (python PIL), 2026-07-26"
+  },
+  "_schema": {
+    "sprites": "sprite-set id -> {canvas_px, clips}. Ids match the SpriteFrames sets the office sandbox builds from the promoted cat sweep clips (art_source/pixellab_verdicts.json 'promote' entries, Pip 2026-07-26).",
+    "canvas_px": "[w, h] full frame canvas in pixels (all clips of a set share it).",
+    "clips": "clip name (runtime AnimatedSprite2D animation name, e.g. walk_east; walk_north_alt = the #913 butt-flash splice) -> per-clip anchor data.",
+    "source_dir": "repo-root-relative dir holding the clip's frame_NNN.png files.",
+    "frames": "OPTIONAL [first, last] inclusive frame-index range used from source_dir (butt-flash splices 2..8 per the sweep MANIFEST); absent = all frames.",
+    "subject_px": "[w, h] opaque-subject bbox averaged across the clip's frames (rounded).",
+    "feet_px": "[x, y] feet anchor in CANVAS coords: bottom-centre of the average alpha bbox (same convention as props_manifest anchor_px, #906/#915). The sprite origin sockets are measured from.",
+    "footfall_frames": "clip-local frame indices (0-based) where a paw strikes the floor -- the deterministic hook for footfall-anchored overlay pulses (Pip ruling 2026-07-26). Measured as stride-extreme frames; review flags apply.",
+    "sockets": "list of {name, px, layer} -- the UNIFIED socket convention shared with props_manifest.json sockets. px = [x, y] OFFSET FROM feet_px in source px (+x right, +y down; eyes are negative y). layer: 'front'|'behind' draw order relative to the host sprite. Optional review/notes. Ruled anchor set for cats: eyes (every direction), butt (rear-facing + butt-flash only), spine_mid (reserve).",
+    "review": "optional bool: true = anchor needs Pip's judgement (see notes).",
+    "notes": "optional free-text provenance / uncertainty notes.",
+    "v3_future": "V2 stores per-direction STATIC offsets only. V3 adds OPTIONAL per-frame tracks alongside px: 'tracks': {socket_name: [[x, y] per clip frame]}; consumers prefer tracks when present and fall back to px. The layering lab's click-to-adjust flow is the intended authoring path."
+  },
+  "sprites": {
+    "cat_tabby_v1": {
+      "canvas_px": [
+        68,
+        68
+      ],
+      "clips": {
+        "walk_east": {
+          "source_dir": "art_source/pixellab_2026-07-26_cat_sweep/cat_b2_tabby_side_heft/animations/walk_side_diag_probe/east",
+          "subject_px": [
+            46,
+            31
+          ],
+          "feet_px": [
+            29.0,
+            48
+          ],
+          "footfall_frames": [
+            0,
+            4
+          ],
+          "footfall_review": true,
+          "sockets": [
+            {
+              "name": "eyes",
+              "px": [
+                18,
+                -21
+              ],
+              "layer": "front",
+              "notes": "colour-blob centroid of the iris pixels, avg across frames"
+            },
+            {
+              "name": "spine_mid",
+              "px": [
+                0,
+                -20
+              ],
+              "layer": "front",
+              "review": true,
+              "notes": "reserve anchor, pure bbox geometry (centre x, 35% down)"
+            }
+          ]
+        },
+        "walk_west": {
+          "source_dir": "art_source/pixellab_2026-07-26_cat_sweep/cat_b2_tabby_side_heft/animations/walk_side_diag_probe/west",
+          "subject_px": [
+            45,
+            31
+          ],
+          "feet_px": [
+            38.5,
+            48
+          ],
+          "footfall_frames": [
+            2,
+            4
+          ],
+          "footfall_review": true,
+          "sockets": [
+            {
+              "name": "eyes",
+              "px": [
+                -18,
+                -21
+              ],
+              "layer": "front",
+              "notes": "colour-blob centroid of the iris pixels, avg across frames"
+            },
+            {
+              "name": "spine_mid",
+              "px": [
+                0,
+                -20
+              ],
+              "layer": "front",
+              "review": true,
+              "notes": "reserve anchor, pure bbox geometry (centre x, 35% down)"
+            }
+          ]
+        },
+        "walk_north": {
+          "source_dir": "art_source/pixellab_2026-07-26_cat_sweep/cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/north",
+          "subject_px": [
+            16,
+            36
+          ],
+          "feet_px": [
+            34.0,
+            50
+          ],
+          "footfall_frames": [
+            1,
+            3
+          ],
+          "footfall_review": true,
+          "sockets": [
+            {
+              "name": "eyes",
+              "px": [
+                0,
+                -31
+              ],
+              "layer": "behind",
+              "review": true,
+              "notes": "eyes NOT visible from the rear -- anchored at the head centroid so a glow halos the head; layer behind"
+            },
+            {
+              "name": "butt",
+              "px": [
+                0,
+                -8
+              ],
+              "layer": "front",
+              "review": true,
+              "notes": "rump centre from bbox geometry (~78% down the subject) -- Pip to nudge in the lab"
+            },
+            {
+              "name": "spine_mid",
+              "px": [
+                0,
+                -23
+              ],
+              "layer": "front",
+              "review": true,
+              "notes": "reserve anchor, pure bbox geometry (centre x, 35% down)"
+            }
+          ]
+        },
+        "walk_south": {
+          "source_dir": "art_source/pixellab_2026-07-26_cat_sweep/cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/south",
+          "subject_px": [
+            15,
+            35
+          ],
+          "feet_px": [
+            34.0,
+            48
+          ],
+          "footfall_frames": [
+            1,
+            5
+          ],
+          "footfall_review": true,
+          "sockets": [
+            {
+              "name": "eyes",
+              "px": [
+                0,
+                -25
+              ],
+              "layer": "front",
+              "review": true,
+              "notes": "dark-dot centroid on the face; muzzle/nose confusable -- Pip to nudge in the lab"
+            },
+            {
+              "name": "spine_mid",
+              "px": [
+                0,
+                -22
+              ],
+              "layer": "front",
+              "review": true,
+              "notes": "reserve anchor, pure bbox geometry (centre x, 35% down)"
+            }
+          ]
+        },
+        "walk_north_alt": {
+          "source_dir": "art_source/pixellab_2026-07-26_cat_sweep/cat_b2_tabby_lowtd_heft/animations/butt_flash_north/north",
+          "subject_px": [
+            17,
+            38
+          ],
+          "feet_px": [
+            34.0,
+            53
+          ],
+          "footfall_frames": [
+            1,
+            3
+          ],
+          "footfall_review": true,
+          "sockets": [
+            {
+              "name": "eyes",
+              "px": [
+                0,
+                -33
+              ],
+              "layer": "behind",
+              "review": true,
+              "notes": "eyes NOT visible from the rear -- anchored at the head centroid so a glow halos the head; layer behind"
+            },
+            {
+              "name": "butt",
+              "px": [
+                0,
+                -8
+              ],
+              "layer": "front",
+              "review": true,
+              "notes": "rump centre from bbox geometry (~78% down the subject) -- Pip to nudge in the lab"
+            },
+            {
+              "name": "spine_mid",
+              "px": [
+                0,
+                -25
+              ],
+              "layer": "front",
+              "review": true,
+              "notes": "reserve anchor, pure bbox geometry (centre x, 35% down)"
+            }
+          ],
+          "frames": [
+            2,
+            8
+          ]
+        },
+        "idle": {
+          "source_dir": "art_source/pixellab_2026-07-26_cat_sweep/cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/south",
+          "subject_px": [
+            16,
+            35
+          ],
+          "feet_px": [
+            34.0,
+            49
+          ],
+          "footfall_frames": [],
+          "footfall_review": true,
+          "sockets": [
+            {
+              "name": "eyes",
+              "px": [
+                0,
+                -26
+              ],
+              "layer": "front",
+              "review": true,
+              "notes": "dark-dot centroid on the face; muzzle/nose confusable -- Pip to nudge in the lab"
+            },
+            {
+              "name": "spine_mid",
+              "px": [
+                0,
+                -23
+              ],
+              "layer": "front",
+              "review": true,
+              "notes": "reserve anchor, pure bbox geometry (centre x, 35% down)"
+            }
+          ],
+          "frames": [
+            0,
+            0
+          ]
+        }
+      }
+    },
+    "cat_black_v1": {
+      "canvas_px": [
+        68,
+        68
+      ],
+      "clips": {
+        "walk_east": {
+          "source_dir": "art_source/pixellab_2026-07-26_cat_sweep/cat_sweep_black_side_heft/animations/walk_ew/east",
+          "subject_px": [
+            44,
+            32
+          ],
+          "feet_px": [
+            30.0,
+            47
+          ],
+          "footfall_frames": [
+            0,
+            2
+          ],
+          "footfall_review": true,
+          "sockets": [
+            {
+              "name": "eyes",
+              "px": [
+                16,
+                -21
+              ],
+              "layer": "front",
+              "notes": "colour-blob centroid of the iris pixels, avg across frames"
+            },
+            {
+              "name": "spine_mid",
+              "px": [
+                0,
+                -21
+              ],
+              "layer": "front",
+              "review": true,
+              "notes": "reserve anchor, pure bbox geometry (centre x, 35% down)"
+            }
+          ]
+        },
+        "walk_west": {
+          "source_dir": "art_source/pixellab_2026-07-26_cat_sweep/cat_sweep_black_side_heft/animations/walk_ew/west",
+          "subject_px": [
+            42,
+            32
+          ],
+          "feet_px": [
+            36.5,
+            48
+          ],
+          "footfall_frames": [
+            1,
+            4
+          ],
+          "footfall_review": true,
+          "sockets": [
+            {
+              "name": "eyes",
+              "px": [
+                -16,
+                -21
+              ],
+              "layer": "front",
+              "notes": "colour-blob centroid of the iris pixels, avg across frames"
+            },
+            {
+              "name": "spine_mid",
+              "px": [
+                0,
+                -21
+              ],
+              "layer": "front",
+              "review": true,
+              "notes": "reserve anchor, pure bbox geometry (centre x, 35% down)"
+            }
+          ]
+        },
+        "idle": {
+          "source_dir": "art_source/pixellab_2026-07-26_cat_sweep/cat_sweep_black_side_heft/animations/walk_ew/east",
+          "subject_px": [
+            44,
+            33
+          ],
+          "feet_px": [
+            30.0,
+            48
+          ],
+          "footfall_frames": [],
+          "footfall_review": true,
+          "sockets": [
+            {
+              "name": "eyes",
+              "px": [
+                16,
+                -22
+              ],
+              "layer": "front",
+              "notes": "colour-blob centroid of the iris pixels, avg across frames"
+            },
+            {
+              "name": "spine_mid",
+              "px": [
+                0,
+                -21
+              ],
+              "layer": "front",
+              "review": true,
+              "notes": "reserve anchor, pure bbox geometry (centre x, 35% down)"
+            }
+          ],
+          "frames": [
+            0,
+            0
+          ]
+        }
+      }
+    },
+    "cat_purple_v1": {
+      "canvas_px": [
+        68,
+        68
+      ],
+      "clips": {
+        "walk_east": {
+          "source_dir": "art_source/pixellab_2026-07-26_cat_sweep/cat_sweep_purple_side_heft/animations/walking/east",
+          "subject_px": [
+            46,
+            32
+          ],
+          "feet_px": [
+            29.5,
+            47
+          ],
+          "footfall_frames": [
+            4,
+            7
+          ],
+          "footfall_review": true,
+          "sockets": [
+            {
+              "name": "eyes",
+              "px": [
+                16,
+                -21
+              ],
+              "layer": "front",
+              "notes": "colour-blob centroid of the iris pixels, avg across frames"
+            },
+            {
+              "name": "spine_mid",
+              "px": [
+                0,
+                -21
+              ],
+              "layer": "front",
+              "review": true,
+              "notes": "reserve anchor, pure bbox geometry (centre x, 35% down)"
+            }
+          ]
+        },
+        "walk_west": {
+          "source_dir": "art_source/pixellab_2026-07-26_cat_sweep/cat_sweep_purple_side_heft/animations/walking/west",
+          "subject_px": [
+            46,
+            32
+          ],
+          "feet_px": [
+            38.0,
+            47
+          ],
+          "footfall_frames": [
+            1,
+            3
+          ],
+          "footfall_review": true,
+          "sockets": [
+            {
+              "name": "eyes",
+              "px": [
+                -18,
+                -21
+              ],
+              "layer": "front",
+              "notes": "colour-blob centroid of the iris pixels, avg across frames"
+            },
+            {
+              "name": "spine_mid",
+              "px": [
+                0,
+                -21
+              ],
+              "layer": "front",
+              "review": true,
+              "notes": "reserve anchor, pure bbox geometry (centre x, 35% down)"
+            }
+          ]
+        },
+        "idle": {
+          "source_dir": "art_source/pixellab_2026-07-26_cat_sweep/cat_sweep_purple_side_heft/animations/walking/east",
+          "subject_px": [
+            46,
+            33
+          ],
+          "feet_px": [
+            30.0,
+            48
+          ],
+          "footfall_frames": [],
+          "footfall_review": true,
+          "sockets": [
+            {
+              "name": "eyes",
+              "px": [
+                16,
+                -22
+              ],
+              "layer": "front",
+              "notes": "colour-blob centroid of the iris pixels, avg across frames"
+            },
+            {
+              "name": "spine_mid",
+              "px": [
+                0,
+                -21
+              ],
+              "layer": "front",
+              "review": true,
+              "notes": "reserve anchor, pure bbox geometry (centre x, 35% down)"
+            }
+          ],
+          "frames": [
+            0,
+            0
+          ]
+        }
+      }
+    }
+  }
+}

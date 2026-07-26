@@ -27,6 +27,7 @@ Output: art_generated/cat_sweep_sheet.html (gitignored derived output)
 
 import base64
 import io
+import json
 import sys
 from pathlib import Path
 
@@ -39,6 +40,10 @@ ROOT = Path(__file__).resolve().parents[2]
 SW = ROOT / "art_source" / "pixellab_2026-07-26_cat_sweep"
 OV = ROOT / "art_source" / "pixellab_2026-07-26_doom_overlays"
 FLOOR_ATLAS = ROOT / "godot" / "assets" / "office_floor" / "tilesets" / "floor_concrete.png"
+# Anchor Sockets V2 SSOT (#894): the anchor lab (section 8) composites overlays
+# AT these anchors and click-to-adjust emits corrected JSON for paste-back via
+# author_anchor_sockets.py --apply.
+ANCHORS_JSON = ROOT / "godot" / "data" / "office" / "anchor_sockets.json"
 OUT = ROOT / "art_generated" / "cat_sweep_sheet.html"
 
 REL_BASE = "art_source/pixellab_2026-07-26_cat_sweep"
@@ -245,6 +250,19 @@ font-size:10px;color:#9a9081;}
 .lab-ctl input[type=range]{flex:1;accent-color:#e0a34a;}
 .lab-ctl select{background:#252019;color:#e8e0d2;border:1px solid #3a332a;
 font-family:monospace;font-size:10px;border-radius:4px;}
+/* anchor lab (Anchor Sockets V2, #894) */
+.anchor-stage{cursor:crosshair;}
+.anchor-stage img.aov{position:absolute;image-rendering:pixelated;z-index:3;
+pointer-events:none;}
+.anchor-stage img.aov.behind{z-index:1;}
+.amark{position:absolute;width:11px;height:11px;margin:-5px 0 0 -5px;z-index:4;
+pointer-events:none;}
+.amark:before,.amark:after{content:"";position:absolute;background:#4dff7a;}
+.amark:before{left:5px;top:0;width:1px;height:11px;}
+.amark:after{left:0;top:5px;width:11px;height:1px;}
+.amark.review:before,.amark.review:after{background:#ffb84d;}
+#anchor-json{width:100%;height:140px;background:#181410;color:#cfe6c8;
+border:1px solid #3a332a;font-family:monospace;font-size:10px;}
 """
 
 ANIM_JS_TEMPLATE = """
@@ -576,6 +594,193 @@ def main() -> int:
             "})(li);\n" % lab_idx
         )
 
+    # ---- section 8: ANCHOR LAB (Anchor Sockets V2, #894) ------------------
+    # Composites overlays AT the JSON anchors over each promoted walker, and a
+    # click-to-adjust mode: clicking the stage moves the selected anchor and
+    # emits corrected anchor JSON for paste-back (the V3-lite authoring path
+    # -- Pip clicking IS the tool). Apply with:
+    #   python tools/art_review/author_anchor_sockets.py --apply corrections.json
+    sec8 = ""
+    anchor_js = ""
+    if ANCHORS_JSON.exists():
+        anchors_doc = json.loads(ANCHORS_JSON.read_text(encoding="ascii"))
+        ov_keys = sorted(k for k in ANIMS if k.split("_", 1)[0] in OVERLAYS)
+        default_ov = (
+            "aura_glowdisc" if "aura_glowdisc" in ANIMS else (ov_keys[0] if ov_keys else "")
+        )
+        stages = []
+        cells = []
+        for sid, sentry in anchors_doc.get("sprites", {}).items():
+            for clip, centry in sentry.get("clips", {}).items():
+                src = ROOT / centry["source_dir"]
+                paths = sorted(src.glob("frame_*.png"))
+                rng = centry.get("frames")
+                if rng:
+                    paths = paths[rng[0] : rng[1] + 1]
+                if not paths:
+                    continue
+                key = f"anchor_{sid}_{clip}"
+                ANIMS[key] = [b64(p) for p in paths]
+                i = len(stages)
+                cid = f"acat{i}"
+                oid = f"aov{i}"
+                PLAYER_BINDINGS.append((cid, key))
+                if default_ov:
+                    PLAYER_BINDINGS.append((oid, default_ov))
+                sockets = {
+                    str(sk["name"]): {
+                        "px": list(sk["px"]),
+                        "layer": str(sk.get("layer", "front")),
+                        "review": bool(sk.get("review", False)),
+                    }
+                    for sk in centry.get("sockets", [])
+                }
+                stages.append(
+                    {
+                        "i": i,
+                        "set": sid,
+                        "clip": clip,
+                        "feet": list(centry["feet_px"]),
+                        "sockets": sockets,
+                        "k": 2,
+                    }
+                )
+                an_opts = "".join(
+                    f'<option value="{esc(nm)}">{esc(nm)}'
+                    + (" [review]" if sockets[nm]["review"] else "")
+                    + "</option>"
+                    for nm in sockets
+                )
+                ov_opts = "".join(
+                    f'<option value="{esc(k)}"{" selected" if k == default_ov else ""}>{esc(k)}</option>'
+                    for k in ov_keys
+                )
+                review_n = sum(1 for s in sockets.values() if s["review"])
+                cells.append(
+                    f'<div class="rs-cell" style="width:240px">'
+                    f'<div class="lab-stage anchor-stage" id="astage{i}" '
+                    f'style="background-image:url({FLOOR})">'
+                    f'<img id="{cid}" class="cat" src="{ANIMS[key][0]}">'
+                    + (
+                        f'<img id="{oid}" class="aov" src="{ANIMS[default_ov][0]}">'
+                        if default_ov
+                        else ""
+                    )
+                    + f'<div class="amark" id="amark{i}"></div>'
+                    "</div>"
+                    f'<div class="rs-label">{esc(sid)} / {esc(clip)}'
+                    + (f" -- {review_n} review" if review_n else "")
+                    + "</div>"
+                    f'<div class="lab-ctl">'
+                    f'<label>anchor <select id="aan{i}">{an_opts}</select>'
+                    f' overlay <select id="aok{i}">{ov_opts}</select></label>'
+                    f'<label>opacity <input type="range" id="aop{i}" min="0" max="100" '
+                    f'value="60"> size <input type="range" id="asz{i}" min="6" max="60" '
+                    f'value="20"></label>'
+                    f'<label>blend <select id="abl{i}">'
+                    '<option value="normal">normal</option>'
+                    '<option value="screen" selected>screen (~additive)</option>'
+                    '<option value="lighten">lighten</option>'
+                    '<option value="hard-light">hard-light</option></select>'
+                    f' <label><input type="checkbox" id="abh{i}"> behind</label></label>'
+                    "</div>"
+                    f'<p class="rs-blurb" id="ainfo{i}">click the stage to move this anchor</p>'
+                    "</div>"
+                )
+        if stages:
+            sec8 = section(
+                "8. Anchor lab -- overlays AT the V2 sockets + click-to-adjust (2x)",
+                '<p class="intro">Each stage composites the overlay at the anchor '
+                "authored in godot/data/office/anchor_sockets.json (green cross = "
+                "authored anchor; ORANGE cross = flagged review:true -- these are "
+                "the calls left for Pip). CLICK a stage to move the selected "
+                "anchor; every click updates the corrections JSON below. Paste it "
+                "back with: save as corrections.json, then run "
+                "<code>python tools/art_review/author_anchor_sockets.py --apply "
+                "corrections.json</code> (re-measures everything else, overrides "
+                "clicked sockets, clears their review flags).</p>"
+                '<div class="rs-grid">' + "".join(cells) + "</div>"
+                '<div class="cat-row-label">corrected anchor JSON (auto-updates on click)</div>'
+                '<textarea id="anchor-json" readonly>{}</textarea> '
+                '<button class="rs-btn" id="anchor-copy">copy JSON</button>',
+                count=f"{len(stages)} clips",
+                accent="#4dff7a",
+            )
+            anchor_js = (
+                "var STAGES = %s;\n" % json.dumps(stages)
+                + """
+var corrections = {};
+function stageState(s) {
+  var an = document.getElementById('aan' + s.i).value;
+  var sk = s.sockets[an];
+  var corr = (corrections[s.set] || {})[s.clip] || {};
+  var px = corr[an] || sk.px;
+  return {an: an, sk: sk, px: px};
+}
+function aplace(s) {
+  var st = stageState(s);
+  var cx = (s.feet[0] + st.px[0]) * s.k;
+  var cy = (s.feet[1] + st.px[1]) * s.k;
+  var mark = document.getElementById('amark' + s.i);
+  mark.style.left = cx + 'px';
+  mark.style.top = cy + 'px';
+  mark.className = 'amark' + (st.sk.review ? ' review' : '');
+  var ov = document.getElementById('aov' + s.i);
+  if (ov) {
+    var px = Math.round(136 * document.getElementById('asz' + s.i).value / 100);
+    ov.style.width = px + 'px';
+    ov.style.height = px + 'px';
+    ov.style.left = (cx - px / 2) + 'px';
+    ov.style.top = (cy - px / 2) + 'px';
+    ov.style.opacity = document.getElementById('aop' + s.i).value / 100;
+    ov.style.mixBlendMode = document.getElementById('abl' + s.i).value;
+    ov.classList.toggle('behind',
+      document.getElementById('abh' + s.i).checked || st.sk.layer === 'behind');
+  }
+  var info = document.getElementById('ainfo' + s.i);
+  info.textContent = st.an + ' px [' + st.px[0] + ', ' + st.px[1] + ']'
+    + (corrections[s.set] && corrections[s.set][s.clip] && corrections[s.set][s.clip][st.an]
+       ? ' (ADJUSTED)' : (st.sk.review ? ' [review]' : ''));
+}
+function refreshJson() {
+  document.getElementById('anchor-json').value =
+    JSON.stringify(corrections, null, 2);
+}
+STAGES.forEach(function (s) {
+  ['aan', 'aok', 'aop', 'asz', 'abl', 'abh'].forEach(function (p) {
+    var el = document.getElementById(p + s.i);
+    if (!el) return;
+    el.addEventListener(p === 'aop' || p === 'asz' ? 'input' : 'change', function () {
+      if (p === 'aok') {
+        for (var bi = 0; bi < bindings.length; bi++)
+          if (bindings[bi][0] === 'aov' + s.i) bindings[bi][1] = el.value;
+      }
+      aplace(s);
+    });
+  });
+  document.getElementById('astage' + s.i).addEventListener('click', function (e) {
+    var r = this.getBoundingClientRect();
+    var ax = Math.round((e.clientX - r.left) / s.k - s.feet[0]);
+    var ay = Math.round((e.clientY - r.top) / s.k - s.feet[1]);
+    var an = document.getElementById('aan' + s.i).value;
+    corrections[s.set] = corrections[s.set] || {};
+    corrections[s.set][s.clip] = corrections[s.set][s.clip] || {};
+    corrections[s.set][s.clip][an] = [ax, ay];
+    aplace(s);
+    refreshJson();
+  });
+  aplace(s);
+});
+var acopy = document.getElementById('anchor-copy');
+if (acopy) acopy.addEventListener('click', function () {
+  var ta = document.getElementById('anchor-json');
+  ta.select();
+  document.execCommand('copy');
+});
+refreshJson();
+"""
+            )
+
     # ---- page -------------------------------------------------------------
     n_clips = len(ANIMS)
     intro = (
@@ -590,7 +795,7 @@ def main() -> int:
         "Sources: art_source/pixellab_2026-07-26_cat_sweep/ and "
         "art_source/pixellab_2026-07-26_doom_overlays/ (MANIFEST.md in each)."
     )
-    body = sec1 + sec2 + sec3 + sec4 + sec5 + sec5b + sec6 + sec7
+    body = sec1 + sec2 + sec3 + sec4 + sec5 + sec5b + sec6 + sec7 + sec8
     anim_js = ANIM_JS_TEMPLATE.replace(
         "%ANIMS%",
         "\n".join(
@@ -607,7 +812,7 @@ def main() -> int:
         badges=(("cats", "4"), ("clips", str(n_clips)), ("fps", "8")),
         intro_html=intro,
         extra_css=EXTRA_CSS,
-        extra_js=anim_js + "\n" + lab_js,
+        extra_js=anim_js + "\n" + lab_js + "\n" + anchor_js,
         verdict_key="cat_sweep:verdicts",
         export_name="cat_sweep_verdicts.json",
         footer_note=(

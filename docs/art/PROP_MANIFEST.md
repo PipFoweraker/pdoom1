@@ -76,10 +76,44 @@ NOTE: authored proportions are BIGGER than the old force-scale (a 3.5-tile
 water cooler now renders 224 px at the 64 px display tile, vs 46 px before).
 Entries carry `review: true` where the measured geometry needs Pip's ruling.
 
-## Sockets are schema-only
+## Sockets are schema-only (for PROPS)
 
 `sockets` defines the FUTURE attachment-point shape
 (`{"name", "px": [x, y], "layer": "front"|"behind"}`) for the cosmetics sprite
 category in `art_source/` (paper-doll layers, e.g. a poster taped to a server
-rack). No consumer exists; keep every `sockets` array empty until one does --
-the unit test validates the shape only if populated.
+rack). No PROP consumer exists; keep every prop `sockets` array empty until one
+does -- the unit test validates the shape only if populated.
+
+## Anchor sockets V2 -- the same convention on ANIMATED CLIPS
+
+The socket shape above is now LIVE for animated sprites (Anchor Sockets V2,
+2026-07-26, issues #894 #900 #913): effects attach to sprite PARTS (a cat's
+eyes, its butt) instead of the sprite centre.
+
+- **Data:** `godot/data/office/anchor_sockets.json` (SSOT; `_schema` inside is
+  authoritative). Keyed `sprites -> <sprite set id> -> clips -> <clip name>`
+  (runtime `AnimatedSprite2D` animation names, e.g. `walk_east`;
+  `walk_north_alt` = the #913 butt-flash splice).
+- **Per clip:** `source_dir` (repo-root-relative frames dir), optional `frames`
+  `[first, last]` range, `subject_px`, `feet_px` (canvas coords, same
+  bottom-centre-of-bbox convention as `anchor_px` here), `footfall_frames`
+  (paw-strike frame indices -- the deterministic footfall-pulse hook), and
+  `sockets`: the SAME `{name, px, layer}` shape, where `px` is the OFFSET FROM
+  `feet_px` in source px (`+x` right, `+y` down; eyes are negative `y`) --
+  mirroring `approach_px`. Canvas position of a socket = `feet_px + px`.
+- **Ruled anchor set (cats):** `eyes` every direction, `butt` rear-facing +
+  butt-flash clips only, `spine_mid` reserve. `review: true` marks anchors
+  needing Pip's judgement.
+- **Consumer:** `godot/scripts/ui/office_floor/anchored_overlay.gd`
+  (`AnchoredOverlay`) -- positions an overlay `SpriteFrames` at the named
+  anchor of a host `AnimatedSprite2D`, re-resolving on clip/direction change;
+  blend / opacity / z-offset / scale dials; deterministic footfall pulse.
+- **Authoring:** `python tools/art_review/author_anchor_sockets.py` (PIL
+  measurement + marker proof sheet `art_generated/anchor_debug_sheet.png`);
+  fine-tuning via the layering lab's click-to-adjust mode
+  (`tools/art_review/build_cat_sweep_sheet.py`), which emits corrected JSON for
+  paste-back. Pip clicking IS the tool.
+- **Tests:** `godot/tests/unit/test_anchor_sockets.gd`.
+- **V2 = per-direction STATIC offsets only.** V3 (documented future in the
+  `_schema`) adds optional per-frame `tracks` alongside the static `px`;
+  consumers prefer tracks when present.
