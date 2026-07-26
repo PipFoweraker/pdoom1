@@ -1,0 +1,83 @@
+{
+  "group_id": null,
+  "states": [
+    {
+      "character": {
+        "id": "0a231b6f-244d-459f-aa17-3727be0074a6",
+        "name": "worker_wheelchair_f_64",
+        "prompt": "middle-aged white woman office worker seated in a manual wheelchair with visible wheels, olive-teal blouse, ID lanyard, hands on wheel rims, muted teal-olive-slate palette with warm amber accent, lived-in AI lab worker",
+        "size": {
+          "width": 92,
+          "height": 92
+        },
+        "template_id": "mannequin",
+        "directions": 8,
+        "view": "low top-down",
+        "created_at": "2026-07-26T05:42:00.950895+00:00"
+      },
+      "folder": "worker_wheelchair_f_64",
+      "frames": {
+        "rotations": {
+          "south": "worker_wheelchair_f_64/rotations/south.png",
+          "south-east": "worker_wheelchair_f_64/rotations/south-east.png",
+          "east": "worker_wheelchair_f_64/rotations/east.png",
+          "north-east": "worker_wheelchair_f_64/rotations/north-east.png",
+          "north": "worker_wheelchair_f_64/rotations/north.png",
+          "north-west": "worker_wheelchair_f_64/rotations/north-west.png",
+          "west": "worker_wheelchair_f_64/rotations/west.png",
+          "south-west": "worker_wheelchair_f_64/rotations/south-west.png"
+        },
+        "animations": {
+          "roll": {
+            "west": [
+              "worker_wheelchair_f_64/animations/roll/west/frame_000.png",
+              "worker_wheelchair_f_64/animations/roll/west/frame_001.png",
+              "worker_wheelchair_f_64/animations/roll/west/frame_002.png",
+              "worker_wheelchair_f_64/animations/roll/west/frame_003.png",
+              "worker_wheelchair_f_64/animations/roll/west/frame_004.png",
+              "worker_wheelchair_f_64/animations/roll/west/frame_005.png",
+              "worker_wheelchair_f_64/animations/roll/west/frame_006.png",
+              "worker_wheelchair_f_64/animations/roll/west/frame_007.png",
+              "worker_wheelchair_f_64/animations/roll/west/frame_008.png"
+            ],
+            "south": [
+              "worker_wheelchair_f_64/animations/roll/south/frame_000.png",
+              "worker_wheelchair_f_64/animations/roll/south/frame_001.png",
+              "worker_wheelchair_f_64/animations/roll/south/frame_002.png",
+              "worker_wheelchair_f_64/animations/roll/south/frame_003.png",
+              "worker_wheelchair_f_64/animations/roll/south/frame_004.png",
+              "worker_wheelchair_f_64/animations/roll/south/frame_005.png",
+              "worker_wheelchair_f_64/animations/roll/south/frame_006.png",
+              "worker_wheelchair_f_64/animations/roll/south/frame_007.png",
+              "worker_wheelchair_f_64/animations/roll/south/frame_008.png"
+            ],
+            "east": [
+              "worker_wheelchair_f_64/animations/roll/east/frame_000.png",
+              "worker_wheelchair_f_64/animations/roll/east/frame_001.png",
+              "worker_wheelchair_f_64/animations/roll/east/frame_002.png",
+              "worker_wheelchair_f_64/animations/roll/east/frame_003.png",
+              "worker_wheelchair_f_64/animations/roll/east/frame_004.png",
+              "worker_wheelchair_f_64/animations/roll/east/frame_005.png",
+              "worker_wheelchair_f_64/animations/roll/east/frame_006.png",
+              "worker_wheelchair_f_64/animations/roll/east/frame_007.png",
+              "worker_wheelchair_f_64/animations/roll/east/frame_008.png"
+            ],
+            "north": [
+              "worker_wheelchair_f_64/animations/roll/north/frame_000.png",
+              "worker_wheelchair_f_64/animations/roll/north/frame_001.png",
+              "worker_wheelchair_f_64/animations/roll/north/frame_002.png",
+              "worker_wheelchair_f_64/animations/roll/north/frame_003.png",
+              "worker_wheelchair_f_64/animations/roll/north/frame_004.png",
+              "worker_wheelchair_f_64/animations/roll/north/frame_005.png",
+              "worker_wheelchair_f_64/animations/roll/north/frame_006.png",
+              "worker_wheelchair_f_64/animations/roll/north/frame_007.png",
+              "worker_wheelchair_f_64/animations/roll/north/frame_008.png"
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "export_version": "3.1",
+  "export_date": "2026-07-26T05:55:07.963876"
+}
