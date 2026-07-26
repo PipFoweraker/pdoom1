@@ -1,0 +1,119 @@
+{
+  "group_id": null,
+  "states": [
+    {
+      "character": {
+        "id": "c82bf943-9a0e-4531-bc3d-8d940750889d",
+        "name": "cat_purple_r2b",
+        "prompt": "a shadowy black cat wreathed in intense purple-violet glow, glowing purple eyes and a bright collar emblem, terminal void doom cat, heavy black outline, deep contrast shadows",
+        "size": {
+          "width": 68,
+          "height": 68
+        },
+        "template_id": "cat",
+        "directions": 8,
+        "view": "low top-down",
+        "created_at": "2026-07-21T00:37:25.510655+00:00"
+      },
+      "folder": "cat_purple_r2b",
+      "frames": {
+        "rotations": {
+          "south": "cat_purple_r2b/rotations/south.png",
+          "south-east": "cat_purple_r2b/rotations/south-east.png",
+          "east": "cat_purple_r2b/rotations/east.png",
+          "north-east": "cat_purple_r2b/rotations/north-east.png",
+          "north": "cat_purple_r2b/rotations/north.png",
+          "north-west": "cat_purple_r2b/rotations/north-west.png",
+          "west": "cat_purple_r2b/rotations/west.png",
+          "south-west": "cat_purple_r2b/rotations/south-west.png"
+        },
+        "animations": {
+          "walking": {
+            "south-west": [
+              "cat_purple_r2b/animations/walking/south-west/frame_000.png",
+              "cat_purple_r2b/animations/walking/south-west/frame_001.png",
+              "cat_purple_r2b/animations/walking/south-west/frame_002.png",
+              "cat_purple_r2b/animations/walking/south-west/frame_003.png",
+              "cat_purple_r2b/animations/walking/south-west/frame_004.png",
+              "cat_purple_r2b/animations/walking/south-west/frame_005.png",
+              "cat_purple_r2b/animations/walking/south-west/frame_006.png",
+              "cat_purple_r2b/animations/walking/south-west/frame_007.png"
+            ],
+            "south-east": [
+              "cat_purple_r2b/animations/walking/south-east/frame_000.png",
+              "cat_purple_r2b/animations/walking/south-east/frame_001.png",
+              "cat_purple_r2b/animations/walking/south-east/frame_002.png",
+              "cat_purple_r2b/animations/walking/south-east/frame_003.png",
+              "cat_purple_r2b/animations/walking/south-east/frame_004.png",
+              "cat_purple_r2b/animations/walking/south-east/frame_005.png",
+              "cat_purple_r2b/animations/walking/south-east/frame_006.png",
+              "cat_purple_r2b/animations/walking/south-east/frame_007.png"
+            ],
+            "north": [
+              "cat_purple_r2b/animations/walking/north/frame_000.png",
+              "cat_purple_r2b/animations/walking/north/frame_001.png",
+              "cat_purple_r2b/animations/walking/north/frame_002.png",
+              "cat_purple_r2b/animations/walking/north/frame_003.png",
+              "cat_purple_r2b/animations/walking/north/frame_004.png",
+              "cat_purple_r2b/animations/walking/north/frame_005.png",
+              "cat_purple_r2b/animations/walking/north/frame_006.png",
+              "cat_purple_r2b/animations/walking/north/frame_007.png"
+            ],
+            "south": [
+              "cat_purple_r2b/animations/walking/south/frame_000.png",
+              "cat_purple_r2b/animations/walking/south/frame_001.png",
+              "cat_purple_r2b/animations/walking/south/frame_002.png",
+              "cat_purple_r2b/animations/walking/south/frame_003.png",
+              "cat_purple_r2b/animations/walking/south/frame_004.png",
+              "cat_purple_r2b/animations/walking/south/frame_005.png",
+              "cat_purple_r2b/animations/walking/south/frame_006.png",
+              "cat_purple_r2b/animations/walking/south/frame_007.png"
+            ],
+            "east": [
+              "cat_purple_r2b/animations/walking/east/frame_000.png",
+              "cat_purple_r2b/animations/walking/east/frame_001.png",
+              "cat_purple_r2b/animations/walking/east/frame_002.png",
+              "cat_purple_r2b/animations/walking/east/frame_003.png",
+              "cat_purple_r2b/animations/walking/east/frame_004.png",
+              "cat_purple_r2b/animations/walking/east/frame_005.png",
+              "cat_purple_r2b/animations/walking/east/frame_006.png",
+              "cat_purple_r2b/animations/walking/east/frame_007.png"
+            ],
+            "north-east": [
+              "cat_purple_r2b/animations/walking/north-east/frame_000.png",
+              "cat_purple_r2b/animations/walking/north-east/frame_001.png",
+              "cat_purple_r2b/animations/walking/north-east/frame_002.png",
+              "cat_purple_r2b/animations/walking/north-east/frame_003.png",
+              "cat_purple_r2b/animations/walking/north-east/frame_004.png",
+              "cat_purple_r2b/animations/walking/north-east/frame_005.png",
+              "cat_purple_r2b/animations/walking/north-east/frame_006.png",
+              "cat_purple_r2b/animations/walking/north-east/frame_007.png"
+            ],
+            "west": [
+              "cat_purple_r2b/animations/walking/west/frame_000.png",
+              "cat_purple_r2b/animations/walking/west/frame_001.png",
+              "cat_purple_r2b/animations/walking/west/frame_002.png",
+              "cat_purple_r2b/animations/walking/west/frame_003.png",
+              "cat_purple_r2b/animations/walking/west/frame_004.png",
+              "cat_purple_r2b/animations/walking/west/frame_005.png",
+              "cat_purple_r2b/animations/walking/west/frame_006.png",
+              "cat_purple_r2b/animations/walking/west/frame_007.png"
+            ],
+            "north-west": [
+              "cat_purple_r2b/animations/walking/north-west/frame_000.png",
+              "cat_purple_r2b/animations/walking/north-west/frame_001.png",
+              "cat_purple_r2b/animations/walking/north-west/frame_002.png",
+              "cat_purple_r2b/animations/walking/north-west/frame_003.png",
+              "cat_purple_r2b/animations/walking/north-west/frame_004.png",
+              "cat_purple_r2b/animations/walking/north-west/frame_005.png",
+              "cat_purple_r2b/animations/walking/north-west/frame_006.png",
+              "cat_purple_r2b/animations/walking/north-west/frame_007.png"
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "export_version": "3.1",
+  "export_date": "2026-07-26T02:46:48.928733"
+}

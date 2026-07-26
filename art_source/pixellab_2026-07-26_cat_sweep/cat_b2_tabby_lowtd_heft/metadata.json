@@ -1,0 +1,132 @@
+{
+  "group_id": null,
+  "states": [
+    {
+      "character": {
+        "id": "3bd14ec5-56d2-417e-ba15-293cec950089",
+        "name": "cat_b2_tabby_lowtd_heft",
+        "prompt": "stocky chunky orange tabby cat with darker orange stripes, solid heavy body mass, thick barrel-shaped torso, broad chest, short sturdy legs, weighty stance, faintly singed fur, cream muzzle and paws, cozy pet cat, warm bright colors, cartoony retro RPG style, pixel art",
+        "size": {
+          "width": 68,
+          "height": 68
+        },
+        "template_id": "cat",
+        "directions": 8,
+        "view": "low top-down",
+        "created_at": "2026-07-26T00:28:21.641906+00:00"
+      },
+      "folder": "cat_b2_tabby_lowtd_heft",
+      "frames": {
+        "rotations": {
+          "south": "cat_b2_tabby_lowtd_heft/rotations/south.png",
+          "south-east": "cat_b2_tabby_lowtd_heft/rotations/south-east.png",
+          "east": "cat_b2_tabby_lowtd_heft/rotations/east.png",
+          "north-east": "cat_b2_tabby_lowtd_heft/rotations/north-east.png",
+          "north": "cat_b2_tabby_lowtd_heft/rotations/north.png",
+          "north-west": "cat_b2_tabby_lowtd_heft/rotations/north-west.png",
+          "west": "cat_b2_tabby_lowtd_heft/rotations/west.png",
+          "south-west": "cat_b2_tabby_lowtd_heft/rotations/south-west.png"
+        },
+        "animations": {
+          "walk_ns_lowtd": {
+            "south": [
+              "cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/south/frame_000.png",
+              "cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/south/frame_001.png",
+              "cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/south/frame_002.png",
+              "cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/south/frame_003.png",
+              "cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/south/frame_004.png",
+              "cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/south/frame_005.png",
+              "cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/south/frame_006.png",
+              "cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/south/frame_007.png"
+            ],
+            "east": [
+              "cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/east/frame_000.png",
+              "cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/east/frame_001.png",
+              "cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/east/frame_002.png",
+              "cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/east/frame_003.png",
+              "cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/east/frame_004.png",
+              "cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/east/frame_005.png",
+              "cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/east/frame_006.png",
+              "cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/east/frame_007.png"
+            ],
+            "south-west": [
+              "cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/south-west/frame_000.png",
+              "cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/south-west/frame_001.png",
+              "cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/south-west/frame_002.png",
+              "cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/south-west/frame_003.png",
+              "cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/south-west/frame_004.png",
+              "cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/south-west/frame_005.png",
+              "cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/south-west/frame_006.png",
+              "cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/south-west/frame_007.png"
+            ],
+            "north": [
+              "cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/north/frame_000.png",
+              "cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/north/frame_001.png",
+              "cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/north/frame_002.png",
+              "cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/north/frame_003.png",
+              "cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/north/frame_004.png",
+              "cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/north/frame_005.png",
+              "cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/north/frame_006.png",
+              "cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/north/frame_007.png"
+            ],
+            "west": [
+              "cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/west/frame_000.png",
+              "cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/west/frame_001.png",
+              "cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/west/frame_002.png",
+              "cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/west/frame_003.png",
+              "cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/west/frame_004.png",
+              "cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/west/frame_005.png",
+              "cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/west/frame_006.png",
+              "cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/west/frame_007.png"
+            ],
+            "north-east": [
+              "cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/north-east/frame_000.png",
+              "cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/north-east/frame_001.png",
+              "cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/north-east/frame_002.png",
+              "cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/north-east/frame_003.png",
+              "cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/north-east/frame_004.png",
+              "cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/north-east/frame_005.png",
+              "cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/north-east/frame_006.png",
+              "cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/north-east/frame_007.png"
+            ],
+            "south-east": [
+              "cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/south-east/frame_000.png",
+              "cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/south-east/frame_001.png",
+              "cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/south-east/frame_002.png",
+              "cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/south-east/frame_003.png",
+              "cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/south-east/frame_004.png",
+              "cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/south-east/frame_005.png",
+              "cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/south-east/frame_006.png",
+              "cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/south-east/frame_007.png"
+            ],
+            "north-west": [
+              "cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/north-west/frame_000.png",
+              "cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/north-west/frame_001.png",
+              "cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/north-west/frame_002.png",
+              "cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/north-west/frame_003.png",
+              "cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/north-west/frame_004.png",
+              "cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/north-west/frame_005.png",
+              "cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/north-west/frame_006.png",
+              "cat_b2_tabby_lowtd_heft/animations/walk_ns_lowtd/north-west/frame_007.png"
+            ]
+          },
+          "butt_flash_north": {
+            "north": [
+              "cat_b2_tabby_lowtd_heft/animations/butt_flash_north/north/frame_000.png",
+              "cat_b2_tabby_lowtd_heft/animations/butt_flash_north/north/frame_001.png",
+              "cat_b2_tabby_lowtd_heft/animations/butt_flash_north/north/frame_002.png",
+              "cat_b2_tabby_lowtd_heft/animations/butt_flash_north/north/frame_003.png",
+              "cat_b2_tabby_lowtd_heft/animations/butt_flash_north/north/frame_004.png",
+              "cat_b2_tabby_lowtd_heft/animations/butt_flash_north/north/frame_005.png",
+              "cat_b2_tabby_lowtd_heft/animations/butt_flash_north/north/frame_006.png",
+              "cat_b2_tabby_lowtd_heft/animations/butt_flash_north/north/frame_007.png",
+              "cat_b2_tabby_lowtd_heft/animations/butt_flash_north/north/frame_008.png"
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "export_version": "3.1",
+  "export_date": "2026-07-26T02:46:38.873715"
+}
