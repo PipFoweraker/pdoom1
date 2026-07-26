@@ -1,0 +1,125 @@
+{
+  "group_id": null,
+  "states": [
+    {
+      "character": {
+        "id": "42976b8d-6b3c-4fb0-ab9e-4acbb90abb43",
+        "name": "cat_b2_tabby_side_heft",
+        "prompt": "stocky chunky orange tabby cat with darker orange stripes, solid heavy body mass, thick barrel-shaped torso, broad chest, short sturdy legs, weighty stance, faintly singed fur, cream muzzle and paws, cozy pet cat, warm bright colors, cartoony retro RPG style, pixel art",
+        "size": {
+          "width": 68,
+          "height": 68
+        },
+        "template_id": "cat",
+        "directions": 8,
+        "view": "side",
+        "created_at": "2026-07-26T00:28:19.380595+00:00"
+      },
+      "folder": "cat_b2_tabby_side_heft",
+      "frames": {
+        "rotations": {
+          "south": "cat_b2_tabby_side_heft/rotations/south.png",
+          "south-east": "cat_b2_tabby_side_heft/rotations/south-east.png",
+          "east": "cat_b2_tabby_side_heft/rotations/east.png",
+          "north-east": "cat_b2_tabby_side_heft/rotations/north-east.png",
+          "north": "cat_b2_tabby_side_heft/rotations/north.png",
+          "north-west": "cat_b2_tabby_side_heft/rotations/north-west.png",
+          "west": "cat_b2_tabby_side_heft/rotations/west.png",
+          "south-west": "cat_b2_tabby_side_heft/rotations/south-west.png"
+        },
+        "animations": {
+          "walk_side_diag_probe": {
+            "south-east": [
+              "cat_b2_tabby_side_heft/animations/walk_side_diag_probe/south-east/frame_000.png",
+              "cat_b2_tabby_side_heft/animations/walk_side_diag_probe/south-east/frame_001.png",
+              "cat_b2_tabby_side_heft/animations/walk_side_diag_probe/south-east/frame_002.png",
+              "cat_b2_tabby_side_heft/animations/walk_side_diag_probe/south-east/frame_003.png",
+              "cat_b2_tabby_side_heft/animations/walk_side_diag_probe/south-east/frame_004.png",
+              "cat_b2_tabby_side_heft/animations/walk_side_diag_probe/south-east/frame_005.png",
+              "cat_b2_tabby_side_heft/animations/walk_side_diag_probe/south-east/frame_006.png",
+              "cat_b2_tabby_side_heft/animations/walk_side_diag_probe/south-east/frame_007.png"
+            ],
+            "north-east": [
+              "cat_b2_tabby_side_heft/animations/walk_side_diag_probe/north-east/frame_000.png",
+              "cat_b2_tabby_side_heft/animations/walk_side_diag_probe/north-east/frame_001.png",
+              "cat_b2_tabby_side_heft/animations/walk_side_diag_probe/north-east/frame_002.png",
+              "cat_b2_tabby_side_heft/animations/walk_side_diag_probe/north-east/frame_003.png",
+              "cat_b2_tabby_side_heft/animations/walk_side_diag_probe/north-east/frame_004.png",
+              "cat_b2_tabby_side_heft/animations/walk_side_diag_probe/north-east/frame_005.png",
+              "cat_b2_tabby_side_heft/animations/walk_side_diag_probe/north-east/frame_006.png",
+              "cat_b2_tabby_side_heft/animations/walk_side_diag_probe/north-east/frame_007.png"
+            ],
+            "north-west": [
+              "cat_b2_tabby_side_heft/animations/walk_side_diag_probe/north-west/frame_000.png",
+              "cat_b2_tabby_side_heft/animations/walk_side_diag_probe/north-west/frame_001.png",
+              "cat_b2_tabby_side_heft/animations/walk_side_diag_probe/north-west/frame_002.png",
+              "cat_b2_tabby_side_heft/animations/walk_side_diag_probe/north-west/frame_003.png",
+              "cat_b2_tabby_side_heft/animations/walk_side_diag_probe/north-west/frame_004.png",
+              "cat_b2_tabby_side_heft/animations/walk_side_diag_probe/north-west/frame_005.png",
+              "cat_b2_tabby_side_heft/animations/walk_side_diag_probe/north-west/frame_006.png",
+              "cat_b2_tabby_side_heft/animations/walk_side_diag_probe/north-west/frame_007.png"
+            ],
+            "east": [
+              "cat_b2_tabby_side_heft/animations/walk_side_diag_probe/east/frame_000.png",
+              "cat_b2_tabby_side_heft/animations/walk_side_diag_probe/east/frame_001.png",
+              "cat_b2_tabby_side_heft/animations/walk_side_diag_probe/east/frame_002.png",
+              "cat_b2_tabby_side_heft/animations/walk_side_diag_probe/east/frame_003.png",
+              "cat_b2_tabby_side_heft/animations/walk_side_diag_probe/east/frame_004.png",
+              "cat_b2_tabby_side_heft/animations/walk_side_diag_probe/east/frame_005.png",
+              "cat_b2_tabby_side_heft/animations/walk_side_diag_probe/east/frame_006.png",
+              "cat_b2_tabby_side_heft/animations/walk_side_diag_probe/east/frame_007.png"
+            ],
+            "west": [
+              "cat_b2_tabby_side_heft/animations/walk_side_diag_probe/west/frame_000.png",
+              "cat_b2_tabby_side_heft/animations/walk_side_diag_probe/west/frame_001.png",
+              "cat_b2_tabby_side_heft/animations/walk_side_diag_probe/west/frame_002.png",
+              "cat_b2_tabby_side_heft/animations/walk_side_diag_probe/west/frame_003.png",
+              "cat_b2_tabby_side_heft/animations/walk_side_diag_probe/west/frame_004.png",
+              "cat_b2_tabby_side_heft/animations/walk_side_diag_probe/west/frame_005.png",
+              "cat_b2_tabby_side_heft/animations/walk_side_diag_probe/west/frame_006.png",
+              "cat_b2_tabby_side_heft/animations/walk_side_diag_probe/west/frame_007.png"
+            ],
+            "south-west": [
+              "cat_b2_tabby_side_heft/animations/walk_side_diag_probe/south-west/frame_000.png",
+              "cat_b2_tabby_side_heft/animations/walk_side_diag_probe/south-west/frame_001.png",
+              "cat_b2_tabby_side_heft/animations/walk_side_diag_probe/south-west/frame_002.png",
+              "cat_b2_tabby_side_heft/animations/walk_side_diag_probe/south-west/frame_003.png",
+              "cat_b2_tabby_side_heft/animations/walk_side_diag_probe/south-west/frame_004.png",
+              "cat_b2_tabby_side_heft/animations/walk_side_diag_probe/south-west/frame_005.png",
+              "cat_b2_tabby_side_heft/animations/walk_side_diag_probe/south-west/frame_006.png",
+              "cat_b2_tabby_side_heft/animations/walk_side_diag_probe/south-west/frame_007.png"
+            ]
+          },
+          "walk_north_side_v3_grounded": {
+            "north": [
+              "cat_b2_tabby_side_heft/animations/walk_north_side_v3_grounded/north/frame_000.png",
+              "cat_b2_tabby_side_heft/animations/walk_north_side_v3_grounded/north/frame_001.png",
+              "cat_b2_tabby_side_heft/animations/walk_north_side_v3_grounded/north/frame_002.png",
+              "cat_b2_tabby_side_heft/animations/walk_north_side_v3_grounded/north/frame_003.png",
+              "cat_b2_tabby_side_heft/animations/walk_north_side_v3_grounded/north/frame_004.png",
+              "cat_b2_tabby_side_heft/animations/walk_north_side_v3_grounded/north/frame_005.png",
+              "cat_b2_tabby_side_heft/animations/walk_north_side_v3_grounded/north/frame_006.png",
+              "cat_b2_tabby_side_heft/animations/walk_north_side_v3_grounded/north/frame_007.png",
+              "cat_b2_tabby_side_heft/animations/walk_north_side_v3_grounded/north/frame_008.png"
+            ]
+          },
+          "walk_south_side_v3_grounded": {
+            "south": [
+              "cat_b2_tabby_side_heft/animations/walk_south_side_v3_grounded/south/frame_000.png",
+              "cat_b2_tabby_side_heft/animations/walk_south_side_v3_grounded/south/frame_001.png",
+              "cat_b2_tabby_side_heft/animations/walk_south_side_v3_grounded/south/frame_002.png",
+              "cat_b2_tabby_side_heft/animations/walk_south_side_v3_grounded/south/frame_003.png",
+              "cat_b2_tabby_side_heft/animations/walk_south_side_v3_grounded/south/frame_004.png",
+              "cat_b2_tabby_side_heft/animations/walk_south_side_v3_grounded/south/frame_005.png",
+              "cat_b2_tabby_side_heft/animations/walk_south_side_v3_grounded/south/frame_006.png",
+              "cat_b2_tabby_side_heft/animations/walk_south_side_v3_grounded/south/frame_007.png",
+              "cat_b2_tabby_side_heft/animations/walk_south_side_v3_grounded/south/frame_008.png"
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "export_version": "3.1",
+  "export_date": "2026-07-26T02:46:35.625672"
+}
