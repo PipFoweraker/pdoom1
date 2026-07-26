@@ -530,9 +530,14 @@ func _apply_skin_to_floor(f: OfficeFloor) -> void:
 	var s: Dictionary = _skins[_skin_idx]
 	match String(s.get("kind", "")):
 		"art":
+			# Real art goes through the variant pool (variant 0 == this same asset,
+			# so the render is unchanged until new worker variants are triaged in).
+			f.set_use_variant_pool(true)
 			f.set_sprite_frames(RealSpriteFrames)
 			f.set_tier(1)
 		"color":
+			# Colour-skin preview must apply UNIFORMLY -> bypass the variant pool.
+			f.set_use_variant_pool(false)
 			var frames: SpriteFrames = EmployeeSpriteScript._build_placeholder_frames(s["body"], HAT)
 			f.set_sprite_frames(frames)
 			f.set_tier(1)
@@ -744,6 +749,7 @@ func _place_prop() -> void:
 	af.add_child(spr)
 	_placed_props.append(spr)
 	_occupy_prop_footprint(spr, af, id)
+	_sync_blocked_rects()
 
 # #907: a manifested prop OCCUPIES its footprint_tiles cells (display tiles are 64px =
 # 2x2 sandbox grid cells each) so POPULATE furniture will not overlap it. Unmanifested
@@ -774,6 +780,40 @@ func _release_prop_footprint(spr: Sprite2D) -> void:
 	for key in spr.get_meta("occupied_keys", []):
 		_occupied_cells.erase(String(key))
 
+# --- Tier-1 collision: feed prop/furniture footprints to the floors ----------
+# Walkers must never STAND inside furniture. Each floor gets the no-stand rects
+# of the props parented to it via OfficeFloor.set_extra_blocked_rects (additive
+# dev hook; the floor adds its own landmark-prop footprints itself).
+func _blocked_rect_for(spr: Sprite2D) -> Rect2:
+	var mid := _manifest_id_for(spr.texture, String(spr.get_meta("asset_id", "")))
+	if mid != "":
+		# Manifested: authored footprint, feet-anchored (extends up from the feet).
+		var fp := PropCatalogue.footprint(mid)
+		var w := fp.x * DISPLAY_TILE_PX
+		var d := fp.y * DISPLAY_TILE_PX
+		return Rect2(spr.position - Vector2(w * 0.5, d), Vector2(w, d))
+	# Unmanifested (placeholder furniture / legacy props): the drawn sprite rect.
+	var base: Vector2 = spr.get_meta("base_scale", Vector2.ONE)
+	var sz: Vector2 = spr.texture.get_size() * base if spr.texture != null else Vector2(GRID, GRID)
+	if spr.centered:
+		return Rect2(spr.position - sz * 0.5, sz)
+	return Rect2(spr.position + spr.offset * base, sz)
+
+func _sync_blocked_rects() -> void:
+	var rects_a: Array = []
+	var rects_b: Array = []
+	for spr in _placed_props + _furniture + _furniture_b:
+		if not is_instance_valid(spr):
+			continue
+		var r: Rect2 = _blocked_rect_for(spr)
+		if _floor_b != null and is_instance_valid(_floor_b) and spr.get_parent() == _floor_b:
+			rects_b.append(r)
+		elif spr.get_parent() == _floor:
+			rects_a.append(r)
+	_floor.set_extra_blocked_rects(rects_a)
+	if _floor_b != null and is_instance_valid(_floor_b):
+		_floor_b.set_extra_blocked_rects(rects_b)
+
 func _remove_nearest_prop(at: Vector2) -> void:
 	if _placed_props.is_empty():
 		return
@@ -794,6 +834,7 @@ func _remove_nearest_prop(at: Vector2) -> void:
 			_release_prop_footprint(spr)
 			spr.queue_free()
 		_placed_props.remove_at(best)
+		_sync_blocked_rects()
 
 func _clear_props() -> void:
 	for spr in _placed_props:
@@ -801,6 +842,7 @@ func _clear_props() -> void:
 			_release_prop_footprint(spr)
 			spr.queue_free()
 	_placed_props.clear()
+	_sync_blocked_rects()
 
 func _snap_to_grid(pos: Vector2) -> Vector2:
 	return Vector2(
@@ -885,7 +927,9 @@ func _add_cat(target: OfficeFloor = null) -> void:
 	var cat: SandboxCatBase
 	if not _cat_frame_sets.is_empty():
 		var rc := RealCat.new()
-		rc.setup(_cat_frame_sets[_cat_color_idx % _cat_frame_sets.size()]["frames"])
+		# Stable per-cat id phase-offsets the deterministic alt-clip splice (#913).
+		rc.setup(_cat_frame_sets[_cat_color_idx % _cat_frame_sets.size()]["frames"],
+			"cat_%d" % _cat_color_idx)
 		cat = rc
 	else:
 		var sc := SandboxCat.new()
@@ -1062,6 +1106,7 @@ func _apply_pop_stage(f: OfficeFloor = null) -> void:
 	while furn.size() > want_furn:
 		_remove_furniture(af)
 	_apply_occupant_scale()
+	_sync_blocked_rects()
 
 # Place one furniture piece on a free perimeter (wall) grid cell of floor `f`. Returns
 # false if the floor is full. Demonstrates the first "space logic" slice: furniture hugs
@@ -1230,6 +1275,7 @@ func _exit_compare() -> void:
 	_apply_floor_styles()   # restore the single-view tier
 	_rebuild_prop_pool()
 	_layout_floors()
+	_sync_blocked_rects()
 	_last_msg = "compare OFF (single floor; [V] to bring it back)"
 
 func _layout_floors() -> void:
@@ -1271,6 +1317,7 @@ func _spawn_compare_furniture() -> void:
 		if not _spawn_furniture(_floor):
 			break
 	_apply_occupant_scale()
+	_sync_blocked_rects()
 
 # Sparse starter furnishing: a desk / plant / cabinet against the left floor's
 # walls, via the same placeholder _furniture_tex path POPULATE uses. Registers each
@@ -1300,6 +1347,7 @@ func _spawn_starter_props() -> void:
 		_occupied_cells[key] = true
 		_floor_b.add_child(spr)
 		_furniture_b.append(spr)
+	_sync_blocked_rects()
 
 # --- v3: DOOM-GLOW on cats (prototype) --------------------------------------
 func _nudge_doom(d: float) -> void:
@@ -1447,6 +1495,7 @@ func _clear_furniture() -> void:
 			spr.queue_free()
 	_furniture_b.clear()
 	_occupied_cells.clear()
+	_sync_blocked_rects()
 
 # --- Bulk toys --------------------------------------------------------------
 func _randomize() -> void:
@@ -1713,6 +1762,24 @@ func _build_cat_frames(dir_abs: String) -> SpriteFrames:
 			i += 1
 		if added > 0:
 			made_any = true
+		# #913 splice seam: optional alternate loop frames (walk_<facing>_alt_<n>.png,
+		# e.g. the butt-flash strut) load into "walk_<facing>_alt"; RealCat splices
+		# them in deterministically when present. No files -> no clip -> hook dormant.
+		var alt_clip := clip + "_alt"
+		var ai := 0
+		while true:
+			var ap := "%s/walk_%s_alt_%d.png" % [dir_abs, facing, ai]
+			if not FileAccess.file_exists(ap):
+				break
+			var atex := _load_texture(ap)
+			if atex == null:
+				break
+			if not sf.has_animation(alt_clip):
+				sf.add_animation(alt_clip)
+				sf.set_animation_loop(alt_clip, true)
+				sf.set_animation_speed(alt_clip, 10.0)
+			sf.add_frame(alt_clip, atex)
+			ai += 1
 	if not made_any:
 		return null
 	var south0 := _load_texture(dir_abs + "/walk_south_0.png")
@@ -1879,22 +1946,32 @@ class RealCat extends SandboxCatBase:
 	# #899 scale unification: cat and human sizes derive from the SAME on-screen
 	# tile unit (OfficeEmployeeSprite.TILE_PX = 64px; humans target CHAR_TARGET_H
 	# = 2 tiles = 128px). Cat art: 68x68 canvas, opaque subject ~34px tall.
-	# Target: a cat reads ~0.5 tile (32px) beside a 2-tile human.
-	# ART_SCALE = 32 / 34 ~= 0.94 (was a magic 0.45 -> ~15px, a quarter-tile cat).
+	# Target height comes from the SHARED cat ratio (#913 sneaky 1.1x: 0.5 ->
+	# 0.55 tile via OfficeEmployeeSprite.CAT_TILE_RATIO -- one constant, all cats).
 	const CAT_SUBJECT_H := 34.0
-	const CAT_TARGET_H := OfficeEmployeeSprite.TILE_PX * 0.5   # 32px on screen
-	const ART_SCALE := CAT_TARGET_H / CAT_SUBJECT_H            # ~0.94
+	const CAT_TARGET_H := OfficeEmployeeSprite.TILE_PX * OfficeEmployeeSprite.CAT_TILE_RATIO
+	const ART_SCALE := CAT_TARGET_H / CAT_SUBJECT_H
+	var cat_id: String = "cat"           # stable id seeding the alt-clip splice hash
 	var _frames: SpriteFrames = null
 	var _anim: AnimatedSprite2D = null
+	# #913 alt-clip splice (cat contract: "walk_<dir>_alt", e.g. walk_north_alt --
+	# the butt-flash loop). Same deterministic 1-in-N mechanism as the workers
+	# (OfficeEmployeeSprite.should_play_alt); art arrives from the cat sweep later.
+	var _loops := 0
+	var _alt_active := false
+	var _alt_base := ""
 
-	func setup(frames: SpriteFrames) -> void:
+	func setup(frames: SpriteFrames, id: String = "cat") -> void:
 		_frames = frames
+		cat_id = id
 
 	func _build_visual() -> void:
 		_anim = AnimatedSprite2D.new()
 		_anim.sprite_frames = _frames
 		_anim.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 		_anim.scale = Vector2(ART_SCALE, ART_SCALE)
+		_anim.animation_looped.connect(_on_anim_looped)
+		_anim.animation_finished.connect(_on_anim_finished)
 		add_child(_anim)
 		if _frames != null and _frames.has_animation("idle"):
 			_anim.play("idle")
@@ -1904,14 +1981,51 @@ class RealCat extends SandboxCatBase:
 	func _on_tick(dirv: Vector2, moving: bool, _delta: float) -> void:
 		if _anim == null or _frames == null:
 			return
+		var wanted := ""
 		if not moving:
-			if _frames.has_animation("idle") and _anim.animation != "idle":
-				_anim.play("idle")
+			if _frames.has_animation("idle"):
+				wanted = "idle"
+		else:
+			var clip := "walk_" + _dir_name(dirv)
+			if _frames.has_animation(clip):
+				wanted = clip
+		if wanted == "":
 			return
-		var clip := "walk_" + _dir_name(dirv)
-		if _frames.has_animation(clip):
-			if _anim.animation != clip:
-				_anim.play(clip)
+		if _alt_active:
+			if wanted == _alt_base:
+				return               # let the spliced alt play its one pass
+			_alt_active = false      # direction/idle change cancels the splice
+			_alt_base = ""
+		if _anim.animation != wanted:
+			_anim.play(wanted)
+
+	# #913 splice: on each completed base loop, deterministically (hash of cat id
+	# + loop count, ~1-in-6) play "<clip>_alt" once, then return to the base clip.
+	func _on_anim_looped() -> void:
+		if _alt_active:
+			_end_alt()
+			return
+		_loops += 1
+		var base := String(_anim.animation)
+		if base.ends_with(OfficeEmployeeSprite.ALT_CLIP_SUFFIX):
+			return
+		var alt := base + OfficeEmployeeSprite.ALT_CLIP_SUFFIX
+		if _frames != null and _frames.has_animation(alt) \
+				and OfficeEmployeeSprite.should_play_alt(cat_id, _loops):
+			_alt_active = true
+			_alt_base = base
+			_anim.play(alt)
+
+	func _on_anim_finished() -> void:
+		if _alt_active:
+			_end_alt()
+
+	func _end_alt() -> void:
+		_alt_active = false
+		var back := _alt_base
+		_alt_base = ""
+		if _frames != null and _frames.has_animation(back):
+			_anim.play(back)
 
 	func _on_doom() -> void:
 		if _anim != null:
