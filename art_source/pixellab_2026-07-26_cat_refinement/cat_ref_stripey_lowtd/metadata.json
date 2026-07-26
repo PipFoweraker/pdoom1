@@ -1,0 +1,174 @@
+{
+  "group_id": null,
+  "states": [
+    {
+      "character": {
+        "id": "c17642a3-552e-4e0c-9f38-7fe6dc57dd77",
+        "name": "cat_ref_stripey_lowtd",
+        "prompt": "stocky chunky brown striped cat with bold dark chocolate brown stripes over a warm tan-brown coat, distinct brown tabby striping, solid heavy body mass, thick barrel-shaped torso, broad chest, short sturdy legs, weighty stance, cream muzzle and paws, cozy pet cat, warm bright colors, cartoony retro RPG style, pixel art",
+        "size": {
+          "width": 68,
+          "height": 68
+        },
+        "template_id": "cat",
+        "directions": 8,
+        "view": "low top-down",
+        "created_at": "2026-07-26T04:57:21.595285+00:00"
+      },
+      "folder": "cat_ref_stripey_lowtd",
+      "frames": {
+        "rotations": {
+          "south": "cat_ref_stripey_lowtd/rotations/south.png",
+          "south-east": "cat_ref_stripey_lowtd/rotations/south-east.png",
+          "east": "cat_ref_stripey_lowtd/rotations/east.png",
+          "north-east": "cat_ref_stripey_lowtd/rotations/north-east.png",
+          "north": "cat_ref_stripey_lowtd/rotations/north.png",
+          "north-west": "cat_ref_stripey_lowtd/rotations/north-west.png",
+          "west": "cat_ref_stripey_lowtd/rotations/west.png",
+          "south-west": "cat_ref_stripey_lowtd/rotations/south-west.png"
+        },
+        "animations": {
+          "sitting_v2": {
+            "south": [
+              "cat_ref_stripey_lowtd/animations/sitting_v2/south/frame_000.png",
+              "cat_ref_stripey_lowtd/animations/sitting_v2/south/frame_001.png",
+              "cat_ref_stripey_lowtd/animations/sitting_v2/south/frame_002.png",
+              "cat_ref_stripey_lowtd/animations/sitting_v2/south/frame_003.png",
+              "cat_ref_stripey_lowtd/animations/sitting_v2/south/frame_004.png",
+              "cat_ref_stripey_lowtd/animations/sitting_v2/south/frame_005.png",
+              "cat_ref_stripey_lowtd/animations/sitting_v2/south/frame_006.png",
+              "cat_ref_stripey_lowtd/animations/sitting_v2/south/frame_007.png",
+              "cat_ref_stripey_lowtd/animations/sitting_v2/south/frame_008.png",
+              "cat_ref_stripey_lowtd/animations/sitting_v2/south/frame_009.png",
+              "cat_ref_stripey_lowtd/animations/sitting_v2/south/frame_010.png",
+              "cat_ref_stripey_lowtd/animations/sitting_v2/south/frame_011.png",
+              "cat_ref_stripey_lowtd/animations/sitting_v2/south/frame_012.png",
+              "cat_ref_stripey_lowtd/animations/sitting_v2/south/frame_013.png",
+              "cat_ref_stripey_lowtd/animations/sitting_v2/south/frame_014.png",
+              "cat_ref_stripey_lowtd/animations/sitting_v2/south/frame_015.png",
+              "cat_ref_stripey_lowtd/animations/sitting_v2/south/frame_016.png"
+            ]
+          },
+          "licking_v2": {
+            "south": [
+              "cat_ref_stripey_lowtd/animations/licking_v2/south/frame_000.png",
+              "cat_ref_stripey_lowtd/animations/licking_v2/south/frame_001.png",
+              "cat_ref_stripey_lowtd/animations/licking_v2/south/frame_002.png",
+              "cat_ref_stripey_lowtd/animations/licking_v2/south/frame_003.png",
+              "cat_ref_stripey_lowtd/animations/licking_v2/south/frame_004.png",
+              "cat_ref_stripey_lowtd/animations/licking_v2/south/frame_005.png",
+              "cat_ref_stripey_lowtd/animations/licking_v2/south/frame_006.png",
+              "cat_ref_stripey_lowtd/animations/licking_v2/south/frame_007.png",
+              "cat_ref_stripey_lowtd/animations/licking_v2/south/frame_008.png",
+              "cat_ref_stripey_lowtd/animations/licking_v2/south/frame_009.png",
+              "cat_ref_stripey_lowtd/animations/licking_v2/south/frame_010.png",
+              "cat_ref_stripey_lowtd/animations/licking_v2/south/frame_011.png",
+              "cat_ref_stripey_lowtd/animations/licking_v2/south/frame_012.png",
+              "cat_ref_stripey_lowtd/animations/licking_v2/south/frame_013.png",
+              "cat_ref_stripey_lowtd/animations/licking_v2/south/frame_014.png",
+              "cat_ref_stripey_lowtd/animations/licking_v2/south/frame_015.png",
+              "cat_ref_stripey_lowtd/animations/licking_v2/south/frame_016.png"
+            ]
+          },
+          "butt_flash_dotted": {
+            "north": [
+              "cat_ref_stripey_lowtd/animations/butt_flash_dotted/north/frame_000.png",
+              "cat_ref_stripey_lowtd/animations/butt_flash_dotted/north/frame_001.png",
+              "cat_ref_stripey_lowtd/animations/butt_flash_dotted/north/frame_002.png",
+              "cat_ref_stripey_lowtd/animations/butt_flash_dotted/north/frame_003.png",
+              "cat_ref_stripey_lowtd/animations/butt_flash_dotted/north/frame_004.png",
+              "cat_ref_stripey_lowtd/animations/butt_flash_dotted/north/frame_005.png",
+              "cat_ref_stripey_lowtd/animations/butt_flash_dotted/north/frame_006.png",
+              "cat_ref_stripey_lowtd/animations/butt_flash_dotted/north/frame_007.png",
+              "cat_ref_stripey_lowtd/animations/butt_flash_dotted/north/frame_008.png"
+            ]
+          },
+          "walk_8dir_lowtd": {
+            "west": [
+              "cat_ref_stripey_lowtd/animations/walk_8dir_lowtd/west/frame_000.png",
+              "cat_ref_stripey_lowtd/animations/walk_8dir_lowtd/west/frame_001.png",
+              "cat_ref_stripey_lowtd/animations/walk_8dir_lowtd/west/frame_002.png",
+              "cat_ref_stripey_lowtd/animations/walk_8dir_lowtd/west/frame_003.png",
+              "cat_ref_stripey_lowtd/animations/walk_8dir_lowtd/west/frame_004.png",
+              "cat_ref_stripey_lowtd/animations/walk_8dir_lowtd/west/frame_005.png",
+              "cat_ref_stripey_lowtd/animations/walk_8dir_lowtd/west/frame_006.png",
+              "cat_ref_stripey_lowtd/animations/walk_8dir_lowtd/west/frame_007.png"
+            ],
+            "south": [
+              "cat_ref_stripey_lowtd/animations/walk_8dir_lowtd/south/frame_000.png",
+              "cat_ref_stripey_lowtd/animations/walk_8dir_lowtd/south/frame_001.png",
+              "cat_ref_stripey_lowtd/animations/walk_8dir_lowtd/south/frame_002.png",
+              "cat_ref_stripey_lowtd/animations/walk_8dir_lowtd/south/frame_003.png",
+              "cat_ref_stripey_lowtd/animations/walk_8dir_lowtd/south/frame_004.png",
+              "cat_ref_stripey_lowtd/animations/walk_8dir_lowtd/south/frame_005.png",
+              "cat_ref_stripey_lowtd/animations/walk_8dir_lowtd/south/frame_006.png",
+              "cat_ref_stripey_lowtd/animations/walk_8dir_lowtd/south/frame_007.png"
+            ],
+            "north-east": [
+              "cat_ref_stripey_lowtd/animations/walk_8dir_lowtd/north-east/frame_000.png",
+              "cat_ref_stripey_lowtd/animations/walk_8dir_lowtd/north-east/frame_001.png",
+              "cat_ref_stripey_lowtd/animations/walk_8dir_lowtd/north-east/frame_002.png",
+              "cat_ref_stripey_lowtd/animations/walk_8dir_lowtd/north-east/frame_003.png",
+              "cat_ref_stripey_lowtd/animations/walk_8dir_lowtd/north-east/frame_004.png",
+              "cat_ref_stripey_lowtd/animations/walk_8dir_lowtd/north-east/frame_005.png",
+              "cat_ref_stripey_lowtd/animations/walk_8dir_lowtd/north-east/frame_006.png",
+              "cat_ref_stripey_lowtd/animations/walk_8dir_lowtd/north-east/frame_007.png"
+            ],
+            "north": [
+              "cat_ref_stripey_lowtd/animations/walk_8dir_lowtd/north/frame_000.png",
+              "cat_ref_stripey_lowtd/animations/walk_8dir_lowtd/north/frame_001.png",
+              "cat_ref_stripey_lowtd/animations/walk_8dir_lowtd/north/frame_002.png",
+              "cat_ref_stripey_lowtd/animations/walk_8dir_lowtd/north/frame_003.png",
+              "cat_ref_stripey_lowtd/animations/walk_8dir_lowtd/north/frame_004.png",
+              "cat_ref_stripey_lowtd/animations/walk_8dir_lowtd/north/frame_005.png",
+              "cat_ref_stripey_lowtd/animations/walk_8dir_lowtd/north/frame_006.png",
+              "cat_ref_stripey_lowtd/animations/walk_8dir_lowtd/north/frame_007.png"
+            ],
+            "south-west": [
+              "cat_ref_stripey_lowtd/animations/walk_8dir_lowtd/south-west/frame_000.png",
+              "cat_ref_stripey_lowtd/animations/walk_8dir_lowtd/south-west/frame_001.png",
+              "cat_ref_stripey_lowtd/animations/walk_8dir_lowtd/south-west/frame_002.png",
+              "cat_ref_stripey_lowtd/animations/walk_8dir_lowtd/south-west/frame_003.png",
+              "cat_ref_stripey_lowtd/animations/walk_8dir_lowtd/south-west/frame_004.png",
+              "cat_ref_stripey_lowtd/animations/walk_8dir_lowtd/south-west/frame_005.png",
+              "cat_ref_stripey_lowtd/animations/walk_8dir_lowtd/south-west/frame_006.png",
+              "cat_ref_stripey_lowtd/animations/walk_8dir_lowtd/south-west/frame_007.png"
+            ],
+            "east": [
+              "cat_ref_stripey_lowtd/animations/walk_8dir_lowtd/east/frame_000.png",
+              "cat_ref_stripey_lowtd/animations/walk_8dir_lowtd/east/frame_001.png",
+              "cat_ref_stripey_lowtd/animations/walk_8dir_lowtd/east/frame_002.png",
+              "cat_ref_stripey_lowtd/animations/walk_8dir_lowtd/east/frame_003.png",
+              "cat_ref_stripey_lowtd/animations/walk_8dir_lowtd/east/frame_004.png",
+              "cat_ref_stripey_lowtd/animations/walk_8dir_lowtd/east/frame_005.png",
+              "cat_ref_stripey_lowtd/animations/walk_8dir_lowtd/east/frame_006.png",
+              "cat_ref_stripey_lowtd/animations/walk_8dir_lowtd/east/frame_007.png"
+            ],
+            "north-west": [
+              "cat_ref_stripey_lowtd/animations/walk_8dir_lowtd/north-west/frame_000.png",
+              "cat_ref_stripey_lowtd/animations/walk_8dir_lowtd/north-west/frame_001.png",
+              "cat_ref_stripey_lowtd/animations/walk_8dir_lowtd/north-west/frame_002.png",
+              "cat_ref_stripey_lowtd/animations/walk_8dir_lowtd/north-west/frame_003.png",
+              "cat_ref_stripey_lowtd/animations/walk_8dir_lowtd/north-west/frame_004.png",
+              "cat_ref_stripey_lowtd/animations/walk_8dir_lowtd/north-west/frame_005.png",
+              "cat_ref_stripey_lowtd/animations/walk_8dir_lowtd/north-west/frame_006.png",
+              "cat_ref_stripey_lowtd/animations/walk_8dir_lowtd/north-west/frame_007.png"
+            ],
+            "south-east": [
+              "cat_ref_stripey_lowtd/animations/walk_8dir_lowtd/south-east/frame_000.png",
+              "cat_ref_stripey_lowtd/animations/walk_8dir_lowtd/south-east/frame_001.png",
+              "cat_ref_stripey_lowtd/animations/walk_8dir_lowtd/south-east/frame_002.png",
+              "cat_ref_stripey_lowtd/animations/walk_8dir_lowtd/south-east/frame_003.png",
+              "cat_ref_stripey_lowtd/animations/walk_8dir_lowtd/south-east/frame_004.png",
+              "cat_ref_stripey_lowtd/animations/walk_8dir_lowtd/south-east/frame_005.png",
+              "cat_ref_stripey_lowtd/animations/walk_8dir_lowtd/south-east/frame_006.png",
+              "cat_ref_stripey_lowtd/animations/walk_8dir_lowtd/south-east/frame_007.png"
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "export_version": "3.1",
+  "export_date": "2026-07-26T05:29:58.513288"
+}

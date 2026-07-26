@@ -1,0 +1,261 @@
+{
+  "group_id": null,
+  "states": [
+    {
+      "character": {
+        "id": "28157d2a-7126-4db4-b726-2b6770ac0d4a",
+        "name": "cat_black",
+        "prompt": "sleek black office cat with amber eyes, warm-grime pixel art style, heavy dark outline, deep shadow, muted warm palette",
+        "size": {
+          "width": 68,
+          "height": 68
+        },
+        "template_id": "cat",
+        "directions": 8,
+        "view": "low top-down",
+        "created_at": "2026-07-19T10:19:15.834862+00:00"
+      },
+      "folder": "cat_black",
+      "frames": {
+        "rotations": {
+          "south": "cat_black/rotations/south.png",
+          "south-east": "cat_black/rotations/south-east.png",
+          "east": "cat_black/rotations/east.png",
+          "north-east": "cat_black/rotations/north-east.png",
+          "north": "cat_black/rotations/north.png",
+          "north-west": "cat_black/rotations/north-west.png",
+          "west": "cat_black/rotations/west.png",
+          "south-west": "cat_black/rotations/south-west.png"
+        },
+        "animations": {
+          "walking": {
+            "south-west": [
+              "cat_black/animations/walking/south-west/frame_000.png",
+              "cat_black/animations/walking/south-west/frame_001.png",
+              "cat_black/animations/walking/south-west/frame_002.png",
+              "cat_black/animations/walking/south-west/frame_003.png",
+              "cat_black/animations/walking/south-west/frame_004.png",
+              "cat_black/animations/walking/south-west/frame_005.png",
+              "cat_black/animations/walking/south-west/frame_006.png",
+              "cat_black/animations/walking/south-west/frame_007.png"
+            ],
+            "north": [
+              "cat_black/animations/walking/north/frame_000.png",
+              "cat_black/animations/walking/north/frame_001.png",
+              "cat_black/animations/walking/north/frame_002.png",
+              "cat_black/animations/walking/north/frame_003.png",
+              "cat_black/animations/walking/north/frame_004.png",
+              "cat_black/animations/walking/north/frame_005.png",
+              "cat_black/animations/walking/north/frame_006.png",
+              "cat_black/animations/walking/north/frame_007.png"
+            ],
+            "north-west": [
+              "cat_black/animations/walking/north-west/frame_000.png",
+              "cat_black/animations/walking/north-west/frame_001.png",
+              "cat_black/animations/walking/north-west/frame_002.png",
+              "cat_black/animations/walking/north-west/frame_003.png",
+              "cat_black/animations/walking/north-west/frame_004.png",
+              "cat_black/animations/walking/north-west/frame_005.png",
+              "cat_black/animations/walking/north-west/frame_006.png",
+              "cat_black/animations/walking/north-west/frame_007.png"
+            ],
+            "south": [
+              "cat_black/animations/walking/south/frame_000.png",
+              "cat_black/animations/walking/south/frame_001.png",
+              "cat_black/animations/walking/south/frame_002.png",
+              "cat_black/animations/walking/south/frame_003.png",
+              "cat_black/animations/walking/south/frame_004.png",
+              "cat_black/animations/walking/south/frame_005.png",
+              "cat_black/animations/walking/south/frame_006.png",
+              "cat_black/animations/walking/south/frame_007.png"
+            ],
+            "east": [
+              "cat_black/animations/walking/east/frame_000.png",
+              "cat_black/animations/walking/east/frame_001.png",
+              "cat_black/animations/walking/east/frame_002.png",
+              "cat_black/animations/walking/east/frame_003.png",
+              "cat_black/animations/walking/east/frame_004.png",
+              "cat_black/animations/walking/east/frame_005.png",
+              "cat_black/animations/walking/east/frame_006.png",
+              "cat_black/animations/walking/east/frame_007.png"
+            ],
+            "south-east": [
+              "cat_black/animations/walking/south-east/frame_000.png",
+              "cat_black/animations/walking/south-east/frame_001.png",
+              "cat_black/animations/walking/south-east/frame_002.png",
+              "cat_black/animations/walking/south-east/frame_003.png",
+              "cat_black/animations/walking/south-east/frame_004.png",
+              "cat_black/animations/walking/south-east/frame_005.png",
+              "cat_black/animations/walking/south-east/frame_006.png",
+              "cat_black/animations/walking/south-east/frame_007.png"
+            ],
+            "north-east": [
+              "cat_black/animations/walking/north-east/frame_000.png",
+              "cat_black/animations/walking/north-east/frame_001.png",
+              "cat_black/animations/walking/north-east/frame_002.png",
+              "cat_black/animations/walking/north-east/frame_003.png",
+              "cat_black/animations/walking/north-east/frame_004.png",
+              "cat_black/animations/walking/north-east/frame_005.png",
+              "cat_black/animations/walking/north-east/frame_006.png",
+              "cat_black/animations/walking/north-east/frame_007.png"
+            ],
+            "west": [
+              "cat_black/animations/walking/west/frame_000.png",
+              "cat_black/animations/walking/west/frame_001.png",
+              "cat_black/animations/walking/west/frame_002.png",
+              "cat_black/animations/walking/west/frame_003.png",
+              "cat_black/animations/walking/west/frame_004.png",
+              "cat_black/animations/walking/west/frame_005.png",
+              "cat_black/animations/walking/west/frame_006.png",
+              "cat_black/animations/walking/west/frame_007.png"
+            ]
+          },
+          "walk_diag_cleanfix": {
+            "south-west": [
+              "cat_black/animations/walk_diag_cleanfix/south-west/frame_000.png",
+              "cat_black/animations/walk_diag_cleanfix/south-west/frame_001.png",
+              "cat_black/animations/walk_diag_cleanfix/south-west/frame_002.png",
+              "cat_black/animations/walk_diag_cleanfix/south-west/frame_003.png",
+              "cat_black/animations/walk_diag_cleanfix/south-west/frame_004.png",
+              "cat_black/animations/walk_diag_cleanfix/south-west/frame_005.png",
+              "cat_black/animations/walk_diag_cleanfix/south-west/frame_006.png",
+              "cat_black/animations/walk_diag_cleanfix/south-west/frame_007.png",
+              "cat_black/animations/walk_diag_cleanfix/south-west/frame_008.png"
+            ],
+            "north-west": [
+              "cat_black/animations/walk_diag_cleanfix/north-west/frame_000.png",
+              "cat_black/animations/walk_diag_cleanfix/north-west/frame_001.png",
+              "cat_black/animations/walk_diag_cleanfix/north-west/frame_002.png",
+              "cat_black/animations/walk_diag_cleanfix/north-west/frame_003.png",
+              "cat_black/animations/walk_diag_cleanfix/north-west/frame_004.png",
+              "cat_black/animations/walk_diag_cleanfix/north-west/frame_005.png",
+              "cat_black/animations/walk_diag_cleanfix/north-west/frame_006.png",
+              "cat_black/animations/walk_diag_cleanfix/north-west/frame_007.png",
+              "cat_black/animations/walk_diag_cleanfix/north-west/frame_008.png"
+            ],
+            "north-east": [
+              "cat_black/animations/walk_diag_cleanfix/north-east/frame_000.png",
+              "cat_black/animations/walk_diag_cleanfix/north-east/frame_001.png",
+              "cat_black/animations/walk_diag_cleanfix/north-east/frame_002.png",
+              "cat_black/animations/walk_diag_cleanfix/north-east/frame_003.png",
+              "cat_black/animations/walk_diag_cleanfix/north-east/frame_004.png",
+              "cat_black/animations/walk_diag_cleanfix/north-east/frame_005.png",
+              "cat_black/animations/walk_diag_cleanfix/north-east/frame_006.png",
+              "cat_black/animations/walk_diag_cleanfix/north-east/frame_007.png",
+              "cat_black/animations/walk_diag_cleanfix/north-east/frame_008.png"
+            ],
+            "south-east": [
+              "cat_black/animations/walk_diag_cleanfix/south-east/frame_000.png",
+              "cat_black/animations/walk_diag_cleanfix/south-east/frame_001.png",
+              "cat_black/animations/walk_diag_cleanfix/south-east/frame_002.png",
+              "cat_black/animations/walk_diag_cleanfix/south-east/frame_003.png",
+              "cat_black/animations/walk_diag_cleanfix/south-east/frame_004.png",
+              "cat_black/animations/walk_diag_cleanfix/south-east/frame_005.png",
+              "cat_black/animations/walk_diag_cleanfix/south-east/frame_006.png",
+              "cat_black/animations/walk_diag_cleanfix/south-east/frame_007.png",
+              "cat_black/animations/walk_diag_cleanfix/south-east/frame_008.png"
+            ]
+          },
+          "sitting_v2": {
+            "south": [
+              "cat_black/animations/sitting_v2/south/frame_000.png",
+              "cat_black/animations/sitting_v2/south/frame_001.png",
+              "cat_black/animations/sitting_v2/south/frame_002.png",
+              "cat_black/animations/sitting_v2/south/frame_003.png",
+              "cat_black/animations/sitting_v2/south/frame_004.png",
+              "cat_black/animations/sitting_v2/south/frame_005.png",
+              "cat_black/animations/sitting_v2/south/frame_006.png",
+              "cat_black/animations/sitting_v2/south/frame_007.png",
+              "cat_black/animations/sitting_v2/south/frame_008.png",
+              "cat_black/animations/sitting_v2/south/frame_009.png",
+              "cat_black/animations/sitting_v2/south/frame_010.png",
+              "cat_black/animations/sitting_v2/south/frame_011.png",
+              "cat_black/animations/sitting_v2/south/frame_012.png",
+              "cat_black/animations/sitting_v2/south/frame_013.png",
+              "cat_black/animations/sitting_v2/south/frame_014.png",
+              "cat_black/animations/sitting_v2/south/frame_015.png",
+              "cat_black/animations/sitting_v2/south/frame_016.png"
+            ]
+          },
+          "licking_v2": {
+            "south": [
+              "cat_black/animations/licking_v2/south/frame_000.png",
+              "cat_black/animations/licking_v2/south/frame_001.png",
+              "cat_black/animations/licking_v2/south/frame_002.png",
+              "cat_black/animations/licking_v2/south/frame_003.png",
+              "cat_black/animations/licking_v2/south/frame_004.png",
+              "cat_black/animations/licking_v2/south/frame_005.png",
+              "cat_black/animations/licking_v2/south/frame_006.png",
+              "cat_black/animations/licking_v2/south/frame_007.png",
+              "cat_black/animations/licking_v2/south/frame_008.png",
+              "cat_black/animations/licking_v2/south/frame_009.png",
+              "cat_black/animations/licking_v2/south/frame_010.png",
+              "cat_black/animations/licking_v2/south/frame_011.png",
+              "cat_black/animations/licking_v2/south/frame_012.png",
+              "cat_black/animations/licking_v2/south/frame_013.png",
+              "cat_black/animations/licking_v2/south/frame_014.png",
+              "cat_black/animations/licking_v2/south/frame_015.png",
+              "cat_black/animations/licking_v2/south/frame_016.png"
+            ]
+          },
+          "butt_flash_north": {
+            "north": [
+              "cat_black/animations/butt_flash_north/north/frame_000.png",
+              "cat_black/animations/butt_flash_north/north/frame_001.png",
+              "cat_black/animations/butt_flash_north/north/frame_002.png",
+              "cat_black/animations/butt_flash_north/north/frame_003.png",
+              "cat_black/animations/butt_flash_north/north/frame_004.png",
+              "cat_black/animations/butt_flash_north/north/frame_005.png",
+              "cat_black/animations/butt_flash_north/north/frame_006.png",
+              "cat_black/animations/butt_flash_north/north/frame_007.png",
+              "cat_black/animations/butt_flash_north/north/frame_008.png"
+            ]
+          },
+          "licking": {
+            "south": [
+              "cat_black/animations/licking/south/frame_000.png",
+              "cat_black/animations/licking/south/frame_001.png",
+              "cat_black/animations/licking/south/frame_002.png",
+              "cat_black/animations/licking/south/frame_003.png",
+              "cat_black/animations/licking/south/frame_004.png",
+              "cat_black/animations/licking/south/frame_005.png",
+              "cat_black/animations/licking/south/frame_006.png",
+              "cat_black/animations/licking/south/frame_007.png",
+              "cat_black/animations/licking/south/frame_008.png",
+              "cat_black/animations/licking/south/frame_009.png",
+              "cat_black/animations/licking/south/frame_010.png",
+              "cat_black/animations/licking/south/frame_011.png"
+            ]
+          },
+          "walk_north_fix": {
+            "north": [
+              "cat_black/animations/walk_north_fix/north/frame_000.png",
+              "cat_black/animations/walk_north_fix/north/frame_001.png",
+              "cat_black/animations/walk_north_fix/north/frame_002.png",
+              "cat_black/animations/walk_north_fix/north/frame_003.png",
+              "cat_black/animations/walk_north_fix/north/frame_004.png",
+              "cat_black/animations/walk_north_fix/north/frame_005.png",
+              "cat_black/animations/walk_north_fix/north/frame_006.png",
+              "cat_black/animations/walk_north_fix/north/frame_007.png",
+              "cat_black/animations/walk_north_fix/north/frame_008.png"
+            ]
+          },
+          "sitting": {
+            "south": [
+              "cat_black/animations/sitting/south/frame_000.png",
+              "cat_black/animations/sitting/south/frame_001.png",
+              "cat_black/animations/sitting/south/frame_002.png",
+              "cat_black/animations/sitting/south/frame_003.png",
+              "cat_black/animations/sitting/south/frame_004.png",
+              "cat_black/animations/sitting/south/frame_005.png",
+              "cat_black/animations/sitting/south/frame_006.png",
+              "cat_black/animations/sitting/south/frame_007.png"
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "export_version": "3.1",
+  "export_date": "2026-07-26T05:29:45.692043"
+}
