@@ -68,12 +68,15 @@ jobs:
 
     - name: Ladder Bump Heuristic (advisory)
       if: github.event_name == 'pull_request'
+      env:
+        # SECURITY: branch name is user-influenced -- pass via env, not inline
+        BASE_REF: ${{ github.base_ref }}
       run: |
         echo "Build-vs-ladder split: warn when gameplay-surface files changed without a"
         echo "ladder_version.txt bump (or vice versa). Advisory smell detector, never blocks;"
         echo "reviewer acks against the spec Section 3.3 checklist."
-        git fetch origin ${{ github.base_ref }} --depth=1
-        python tools/check_ladder_bump.py --base origin/${{ github.base_ref }} || true
+        git fetch origin "$BASE_REF" --depth=1
+        python tools/check_ladder_bump.py --base "origin/$BASE_REF" || true
 
     - name: Web Export System Check
       run: |

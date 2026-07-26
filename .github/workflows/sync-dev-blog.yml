@@ -68,6 +68,10 @@ jobs:
 
       - name: Sync blog entries to website
         if: steps.changes.outputs.changed_files != ''
+        env:
+          # SECURITY: filenames from git diff are author-controlled text --
+          # pass via env (data), never inline ${{ }} in the script
+          CHANGED_FILES: ${{ steps.changes.outputs.changed_files }}
         run: |
           echo "LAUNCH Syncing blog entries to website..."
 
@@ -75,8 +79,8 @@ jobs:
           mkdir -p website/public/blog
           mkdir -p website/public/dev-notes
 
-          # Copy changed entries
-          for file in ${{ steps.changes.outputs.changed_files }}; do
+          # Copy changed entries (word-splitting on spaces is intended)
+          for file in $CHANGED_FILES; do
             if [ -f "$file" ]; then
               filename=$(basename "$file")
               echo "DOCUMENT Copying $filename to website"
@@ -123,9 +127,11 @@ jobs:
 
       - name: Notification
         if: steps.changes.outputs.changed_files != ''
+        env:
+          CHANGED_FILES: ${{ steps.changes.outputs.changed_files }}
         run: |
           echo "CELEBRATION Dev blog sync completed!"
-          echo "METRICS Synced entries: ${{ steps.changes.outputs.changed_files }}"
+          echo "METRICS Synced entries: $CHANGED_FILES"
           echo "GLOBAL Changes will be live on the website shortly"
 
       - name: No changes notification
