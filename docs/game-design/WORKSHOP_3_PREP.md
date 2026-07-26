@@ -1,12 +1,35 @@
-# Workshop 3 -- Running Order (2026-07-29) + Prep Pack
+# Workshop 3 -- Three-Day Structure (Mon 2026-07-27 .. Wed 2026-07-29) + Prep Pack
 
-> Status: RUNNING ORDER for WS-3 (Wed 2026-07-29, 0800-1800 AEST, issue #811),
-> written 2026-07-25. Date pinned 2026-07-26 (earlier copies said "Wed 07-30",
-> but 07-30 is a Thursday; may move EARLIER at Pip's call, not later).
-> Sections R0-R6 are the day-of agenda. Sections 0-6 further down are the original
-> prep pack (2026-07-23) that fed this agenda -- BACKGROUND, partially superseded;
-> read the reconciliation note at the head of the appendix before trusting a detail
-> there.
+> Status: RUNNING ORDER for the W-3 block (issue #811), RESTRUCTURED 2026-07-26
+> evening at Pip's call: the single Wed 07-29 workshop becomes a THREE-DAY
+> structure (table below). The blow-by-blow schedule lives in
+> `RUNSHEET_2026-07-27_to_29.md`. Blocks R0-R5 are the agenda, now
+> RE-PARTITIONED across Monday and Wednesday by one gating rule (an item is
+> Monday iff its ruling gates Tuesday's build fan-out). Sections 0-6 further
+> down are the original prep pack (2026-07-23) that fed this agenda --
+> BACKGROUND, partially superseded; read the reconciliation note at the head of
+> the appendix before trusting a detail there.
+
+## The three days (pinned 2026-07-26 evening, anniversary-driven)
+
+Pip's first GitHub issue on this project was 2025-07-30. Thu 2026-07-30 is the
+one-year anniversary, and W-4 lands on its eve -- the restructure exists so the
+anniversary week SHOWS what a year produced: decide Monday, build Tuesday,
+review + plan the next epoch Wednesday.
+
+| Day | Name | What happens |
+|---|---|---|
+| **Mon 2026-07-27** | **W-3a** | The RATIFY block (`WS3_FINISH_OR_DROP.md`'s 5 questions) + build-gating decisions ONLY: early-game decisions design, effort-economy scheduling (#613 keystone), tile-grid addressing ruling, office-view real-estate/camera ruling. ~5 focused hours AROUND Pip's day-job CEO chunks. |
+| **Tue 2026-07-28** | **BUILD DAY** | Fable orchestrates the implementation fan-out of Monday's rulings + the in-flight art re-base. Pip mostly ignores it: CEO chunks + drive-by approvals only (the proven 27-PR co-orchestration mode). |
+| **Wed 2026-07-29** | **W-3b / W-4** | Colour architecture circle-back, interior-decorating math + office-fullness, league/content cadence + Friday league prep, REVIEW of Tuesday's builds, next-epoch planning. |
+
+Standing constraints (baked into the runsheet): 3x 2-hour day-job CEO chunks
+across Mon+Tue, exact times TBD by Pip -- schedules show them as MOVABLE
+placeholders, with workshop time as morning + late-afternoon blocks, hard
+stops, and a movable middle. 30-min feed-triage slots Mon+Tue+Wed (Manifund
+launched + 20 contacts messaged Sunday night -- inbound expected). Energy
+discipline: Sunday was enormous; hard stops, no heroics. Fri 2026-07-31 17:30
+Rektango remains the weekly anchor.
 
 ## The frame -- this is a CONVERGENCE workshop, not an exploration
 
@@ -39,16 +62,36 @@ INTERFACE complexity (reject / simplify) or DECISION complexity (the only kind t
 earns its keep)? Claude runs this as a standing MaRo-Rosewater / Rams check across
 every block.
 
-## Running order (timed; start early)
+## Running order -- Monday 2026-07-27 (W-3a): ratify + build-gating decisions
+
+Gating rule: an item sits on Monday IFF its ruling gates Tuesday's build
+fan-out. ~4.5h of blocks, fitted around the CEO chunks (see the runsheet).
 
 | Block | ~Time | What happens | Exit artifact |
 |---|---|---|---|
-| **R0 -- Frame** | 20m | State the win condition: by end of day every candidate mechanic is a scoped, Epoch-tagged build lane OR explicitly killed/deferred with a reason -- nothing leaves in "exploratory" status. | the decision queue |
-| **R1 -- Finish-or-drop the inheritance** | 45m | Walk `WS3_FINISH_OR_DROP.md` against the WS-2 ADR status table (Appendix Section 2). Each unbuilt/half-built WS-2 decision (0010 adoption, 0011 workstreams, 0014 conference-shape, 0016 league pipeline) + the ADR-0015 data-strip trap: ship / kill / defer. Clear the deck before adding new meat. | kill-list + keep-list |
-| **R2 -- The substrate** | 60m | `RESEARCH_STREAMS_PROPOSAL.md` (= the ADR-0011 L2 workstream substrate). Lock or reject the compute / non-compute stream model + the polyvirate axis set. FOUNDATIONAL: the rival RPS and the endgame both hang off the axes, so protect this timebox above all others. | ADR: research substrate + axes |
-| **R3 -- Economy + endgame** | 60m | `OFFICE_ECONOMY_PROPOSAL.md` (near-term money loop / upkeep; the office-era cost), then `ENDGAME_VIOLENCE_PROPOSAL.md` (the far tent-pole). The sharp ruling in endgame: is military a genuine winning branch or another desperation-trap? And what fires "violence arrives"? | rulings + endgame/violence ADR |
-| **R4 -- Scope + prioritise into lanes** | 45m | Every keep/build ruling -> a lane: size (S/M/L), dependencies, Epoch target (v0.14 vs v0.15), which carve-seam it lands on (the monolith is now carved to ~1940 lines; the R1-R6 controllers exist). This is where the roadmap epoch-assignments deferred as "pending WS-3" get filled in for real. | lane manifest + roadmap epochs |
-| **R5 -- Emit + commit** | 30m | Fable fans out: one build-brief agent per locked lane -> `BUILD_BRIEF_*` docs; the ADRs get written; roadmap updated; DQ index regenerated (`scripts/generate_dq_index.py`); WORKSHOP_2_BACKLOG parked-items updated; all committed. | stack of build-ready briefs |
+| **R0 -- Frame** | 20m | State the win condition for the three days: by Wednesday close every candidate mechanic is a scoped, Epoch-tagged build lane OR explicitly killed/deferred with a reason -- nothing leaves in "exploratory" status. Monday's narrower bar: every build-gating item exits with a RULING so Tuesday can fan out. | the decision queue |
+| **R1 -- Finish-or-drop the inheritance (THE RATIFY BLOCK)** | 45m | Walk `WS3_FINISH_OR_DROP.md`'s five ratify-in-minutes questions against the WS-2 ADR status table (Appendix Section 2). Each unbuilt/half-built WS-2 decision (0010 adoption, 0011 workstreams, 0014 conference-shape, 0016 league pipeline) + the ADR-0015 data-strip trap: ship / kill / defer. Clear the deck before adding new meat. | kill-list + keep-list |
+| **R2 -- The substrate + effort-economy scheduling** | 60m | `RESEARCH_STREAMS_PROPOSAL.md` (= the ADR-0011 L2 workstream substrate). Lock or reject the compute / non-compute stream model + the polyvirate axis set. Then the #613 keystone scheduling call: MINIMAL-now vs MODERATE-when, and when the legacy AP pool dies. FOUNDATIONAL: the rival RPS and the endgame both hang off the axes, so protect this timebox above all others. | ADR: research substrate + axes; #613 schedule |
+| **R3a -- Office economy + spatial rulings** | 45m | `OFFICE_ECONOMY_PROPOSAL.md` (near-term money loop / upkeep; the office-era cost) PLUS the two spatial calls that gate the office-view build lanes: the **tile-grid addressing ruling** and the **office-view real-estate/camera ruling** (sandbox v3 prototypes are the demo input). Also the early-game decisions design from #811 item 1 (offices 1-of-3, np/fp depth, first-funding modes, scouting actions, onboarding->scouting handoff) -- Pip's content calls. | rulings Tuesday builds against |
+| **R4 -- Scope + prioritise into lanes** | 45m | Every Monday keep/build ruling -> a lane: size (S/M/L), dependencies, Epoch target (v0.14 vs v0.15), which carve-seam it lands on (the monolith is now carved to ~1940 lines; the controllers exist). This emits Tuesday's build queue; the roadmap epoch-assignments deferred as "pending WS-3" get their first real fill here, finished Wednesday. | Tuesday's lane manifest |
+| **R5 -- Emit + commit** | 30m | Fable fans out overnight: one build-brief agent per locked lane -> `BUILD_BRIEF_*` docs; Monday's ADRs drafted; DQ index regenerated (`scripts/generate_dq_index.py`); all committed so Tuesday starts from briefs, not memory. | stack of build-ready briefs |
+
+## Tuesday 2026-07-28 -- BUILD DAY (not a workshop)
+
+No agenda blocks. Fable runs the fan-out of Monday's rulings + the standing
+art re-base lanes; Pip does CEO chunks + drive-by approvals only. The runsheet
+carries the anticipated build queues.
+
+## Running order -- Wednesday 2026-07-29 (W-3b / W-4): react, colour, cadence, next epoch
+
+| Block | ~Time | What happens | Exit artifact |
+|---|---|---|---|
+| **W0 -- Review Tuesday's builds** | 60m | Merge/park call per lane PR; anything half-done gets an explicit in-flight status, not silence. | merged lanes + park-list |
+| **R3b -- Endgame + violence (+ cat doom-oracle)** | 60m | `ENDGAME_VIOLENCE_PROPOSAL.md` (the far tent-pole). The sharp ruling: is military a genuine winning branch or another desperation-trap? And what fires "violence arrives"? Plus #811 item 3: the cat as a higher-resolution doom instrument (earn resolution, no printed deltas; rival-steal modifier stays HELD per Pip's T6 ruling). | rulings + endgame/violence ADR |
+| **W1 -- Colour architecture circle-back** | 45m | The deferred colour ruling, with the sandbox v3 doom-glow + overlay-compositing prototypes as the demo input. | colour architecture ruling |
+| **W2 -- Interior-decorating math + office-fullness** | 45m | How furniture/decoration accrues, what "full" means for an office tier, how fullness reads on screen -- downstream of Monday's tile-grid + real-estate rulings and Tuesday's office-view lanes. | decorating/fullness model |
+| **W3 -- League/content cadence + Friday league prep** | 45m | Ratify `RELEASE_AND_LEAGUE_CYCLE.html` (two-cadence model + two-league idea, #811 item 4); the ADR-0016 first-cycle date question lands here; prep the Fri 07-31 league target (seed rotation + notes). | cadence ratification + Friday plan |
+| **W4 -- Next-epoch planning + emit** | 60m | Finish the lane manifest + roadmap epoch assignments (v0.14 "Per-tick & People", Fri 08-07); WORKSHOP_2_BACKLOG parked-items updated; remaining ADRs written; DQ index regenerated; all committed. The anniversary beat: one year from issue #1 (2025-07-30) -- name what the year produced. | lane manifest + roadmap epochs |
 
 Two cross-cutting threads, not their own blocks:
 - **`CAPABILITY_UPLIFT_SCAN.md`** is the FEASIBILITY lens -- keep it open through R2-R4
