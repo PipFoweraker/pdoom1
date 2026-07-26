@@ -1,9 +1,14 @@
 #!/usr/bin/env python3
 """Generate a self-contained pixellab contact-sheet / triage HTML. Local review tool."""
+
 import collections
 import json
 import os
 import sys
+
+# shared verdict vocabulary -- review_style.py is the SSOT (same dir as this script,
+# which sys.path[0] covers when run as a script)
+from review_style import VERDICT_COLORS, VERDICTS
 
 # Repo-relative: this script lives at <repo>/tools/art_review/ , so the repo
 # root is three levels up. Override art_source with argv[1] if given.
@@ -123,14 +128,7 @@ CAT_COLORS = {
     "cosmetics": "#b57fb0",
     "other": "#8a8375",
 }
-VERDICTS = ["like", "dislike", "favour", "disfavour", "promote"]
-VERDICT_COLORS = {
-    "like": "#6fae5a",
-    "dislike": "#cc5a4a",
-    "favour": "#e0a34a",
-    "disfavour": "#7a7268",
-    "promote": "#5a8fc0",
-}
+# VERDICTS / VERDICT_COLORS imported from review_style (shared vocabulary)
 
 data = [
     {"r": rec["rel"], "u": rec["run"], "c": rec["cat"], "s": rec["sub"], "f": rec["fn"]}

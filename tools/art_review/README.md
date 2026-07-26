@@ -19,6 +19,59 @@ the browser (tag + bulk-select), you "export JSON" to a tracked verdicts file,
 then the analyzer reads the verdicts against the on-disk inventory.
 
 
+## Shared house style -- review_style.py (CONVENTION)
+
+ALL new internal review/dev HTML tools build on `review_style.py` instead of
+hand-rolling CSS. It is the one place for the "warm cozy-grim CRT" look (dark
+warm ground, subtle scanlines + vignette, amber/green accents, ASCII chrome)
+extracted from the contact sheet / hero gallery, and it provides:
+
+  * the shared vocabulary: PALETTE, VERDICTS, VERDICT_COLORS, CAT_PALETTE;
+  * `page(...)` -- standard document wrapper: header block (tool name, date,
+    count badges), intro note, footer;
+  * `section(...)` / `image_cell(...)` -- collapsible sections and the standard
+    image cell (checkerboard-under-alpha thumb, size-variant row, blurb,
+    expandable prompt, verdict-chip slot);
+  * verdict machinery with HIDE-ON-VERDICT ("hide decided") as a first-class
+    behaviour -- decided cells leave the live queue so you can clear hundreds
+    without getting tired -- plus filter-by-verdict and export/import JSON in
+    the flat `{rel: [tags]}` schema `analyze_verdicts.py` reads.
+
+Compare-mode hook (issue #745): every `image_cell` carries `data-rel`, the
+stable handle a compare-and-contrast mode needs. The planned shape: a "compare"
+pin per cell collecting pinned cells into a fixed side-by-side tray (same
+lightbox stage the hero gallery uses). Build it INSIDE review_style so every
+sheet gets it at once.
+
+Sheets on the shared style:
+
+    python tools/art_review/gen_quirk_icon_sheet.py
+        -> art_generated/quirk_icons_sheet.html
+        Quirk icon set (#903/#909): shipped 64px icons grouped by valence with
+        the theme_manager colour language, 64/32/16 readability rows, resolved
+        prompts, verdict chips (exports quirk_verdicts.json, repo-relative
+        godot/assets/... paths).
+
+    python tools/art_review/build_cat_angle_ab_sheet.py [--source-root DIR]
+        -> art_generated/cat_angle_ab.html
+        Cat angle A/B vanguard (#900): old low-top-down vs new side-view on a
+        floor-tiled strip, animated walk players. --source-root points at the
+        checkout holding the A/B frames when they live in another worktree.
+
+### Migration status
+
+| tool | on review_style? | notes |
+|---|---|---|
+| gen_quirk_icon_sheet.py | YES | born on it (replaces the #909 inline one-off) |
+| build_cat_angle_ab_sheet.py | YES | ported 2026-07-26 (layout CSS stays sheet-local) |
+| gen_contact_sheet.py | PARTIAL | imports VERDICTS/VERDICT_COLORS from review_style (verified byte-identical output); CSS still inline -- it IS the style source |
+| gen_hero_gallery.py + hero_gallery_template.html | NO (follow-up) | style/verdict colours live inside the template HTML; migrating means templating machinery, not a mechanical swap -- deferred so the live triage loop stays untouched before a sweep |
+| serve_review.py | NO (follow-up) | different verdict model (keep/iterate/discard, server-persisted); adopt BASE_CSS only |
+
+Follow-up rule: migrate a legacy tool only when its output can be verified
+against a pre-migration render (the gen_contact_sheet.py byte-diff pattern).
+
+
 ## Pipeline -- sprites
 
     python tools/art_review/gen_contact_sheet.py
@@ -121,9 +174,12 @@ and merges `disfavour` + `dislike` into the prune list. `like` is informational.
 
 TRACKED (the durable human decisions + the tools):
 
+    tools/art_review/review_style.py           (shared house style -- see above)
     tools/art_review/gen_contact_sheet.py
     tools/art_review/gen_hero_gallery.py
     tools/art_review/hero_gallery_template.html
+    tools/art_review/gen_quirk_icon_sheet.py
+    tools/art_review/build_cat_angle_ab_sheet.py
     tools/art_review/analyze_verdicts.py
     tools/art_review/README.md
     art_source/pixellab_verdicts.json      (sprite triage decisions)
@@ -133,6 +189,8 @@ REGENERABLE, so gitignored (rebuilt any time from source + inventory):
 
     art_source/pixellab_contact_sheet.html
     art_generated/hero_gallery.html
+    art_generated/quirk_icons_sheet.html
+    art_generated/cat_angle_ab.html
     art_source/promote_list.txt
     art_source/favour_list.txt
     art_source/disfavour_dislike_list.txt
