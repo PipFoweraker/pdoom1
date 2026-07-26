@@ -298,3 +298,32 @@ func test_enabled_toggle_and_footfall_pulse_deterministic():
 		host.frame = quiet
 		ov2._on_host_frame()
 		assert_eq(ov2.modulate.a, a2, "non-footfall frame does not pulse")
+
+
+func test_flavour_swap_replaces_frames_and_retints_live():
+	# Regression for Pip's 2026-07-26 demo review: [D] flavour cycling updated
+	# the status line but the visible glow never changed. The live-swap path is
+	# set_overlay_frames + set_tint on an ALREADY-ATTACHED overlay -- both must
+	# take effect immediately.
+	var host := _synthetic_host()
+	add_child_autofree(host)
+	var ov := AnchoredOverlay.new()
+	ov.attach(host, "cat_tabby_v1", "eyes", null, {"pulse": false, "opacity": 0.5})
+	# Swap in a new flavour's SpriteFrames: adopted and playing at once.
+	var img := Image.create(8, 8, false, Image.FORMAT_RGBA8)
+	img.fill(Color(1, 1, 1, 1))
+	var flavour := SpriteFrames.new()
+	flavour.rename_animation("default", "glow")
+	flavour.add_frame("glow", ImageTexture.create_from_image(img))
+	ov.set_overlay_frames(flavour)
+	assert_eq(ov.sprite_frames, flavour, "new flavour frames adopted live")
+	assert_eq(String(ov.animation), "glow", "new flavour clip playing")
+	# Re-tint: the modulate hue must change NOW (this is what makes the three
+	# flavours distinct at a glance even at eye-glow scale).
+	ov.set_tint(Color(0.62, 0.32, 1.0))
+	assert_almost_eq(ov.modulate.r, 0.62, 0.001, "tint red channel applied")
+	assert_almost_eq(ov.modulate.g, 0.32, 0.001, "tint green channel applied")
+	assert_almost_eq(ov.modulate.b, 1.0, 0.001, "tint blue channel applied")
+	assert_almost_eq(ov.modulate.a, 0.5, 0.001, "tint leaves base opacity alone")
+	ov.set_tint(Color(1.0, 0.30, 0.18))
+	assert_almost_eq(ov.modulate.b, 0.18, 0.001, "second swap re-tints again")

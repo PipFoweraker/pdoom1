@@ -117,9 +117,12 @@ const DOOM_STEP := 0.1
 # blue = technical weirdness, purple = eldritch, red = conventional
 # catastrophe. INTENSITY carries the doom level; subtle at nominal.
 const _GLOW_FLAVOURS := [
-	{"name": "purple (eldritch)", "rel": "pixellab_2026-07-26_doom_overlays/aura/glowdisc"},
-	{"name": "red (catastrophe)", "rel": "pixellab_2026-07-26_doom_overlays/states/aura_red"},
-	{"name": "blue (weirdness)", "rel": "pixellab_2026-07-26_doom_overlays/arc/radialweb"},
+	{"name": "purple (eldritch)", "rel": "pixellab_2026-07-26_doom_overlays/aura/glowdisc",
+		"hue": Color(0.62, 0.32, 1.0)},
+	{"name": "red (catastrophe)", "rel": "pixellab_2026-07-26_doom_overlays/states/aura_red",
+		"hue": Color(1.0, 0.30, 0.18)},
+	{"name": "blue (weirdness)", "rel": "pixellab_2026-07-26_doom_overlays/arc/radialweb",
+		"hue": Color(0.30, 0.62, 1.0)},
 ]
 
 # Skins the sandbox rotates through. "art" = real pixellab frames; "color" = a generated
@@ -958,12 +961,17 @@ func _add_cat(target: OfficeFloor = null) -> void:
 		# doom glow (eyes everywhere; butt on rear walks + butt-flash splices).
 		var aset := String(set_info.get("anchored_set", ""))
 		if aset != "":
-			rc.configure_anchor_glow(aset, _current_glow_frames(), _anchor_glow_on)
+			rc.configure_anchor_glow(aset, _current_glow_frames(), _anchor_glow_on,
+				_current_glow_hue())
 		cat = rc
 	else:
 		var sc := SandboxCat.new()
 		sc.color = _cat_palette[_cat_color_idx % _cat_palette.size()]
 		cat = sc
+	# Every cat's centre radial glow follows the selected doom flavour hue (the
+	# radial used to be hardcoded orange-red, which visually drowned the [D]
+	# flavour swap -- Pip's 2026-07-26 demo review).
+	cat.set_glow_color(_current_glow_hue())
 	_cat_color_idx += 1
 	var b := _bounds_of(af)
 	cat.position = Vector2(
@@ -1914,6 +1922,9 @@ func _current_glow_frames() -> SpriteFrames:
 		return null
 	return _glow_flavour_frames[_glow_flavour_idx % _glow_flavour_frames.size()]
 
+func _current_glow_hue() -> Color:
+	return _GLOW_FLAVOURS[_glow_flavour_idx % _GLOW_FLAVOURS.size()].get("hue", Color.WHITE)
+
 func _toggle_anchor_glow() -> void:
 	_anchor_glow_on = not _anchor_glow_on
 	for cat in _cats:
@@ -1926,12 +1937,19 @@ func _cycle_glow_flavour() -> void:
 		return
 	_glow_flavour_idx = (_glow_flavour_idx + 1) % _GLOW_FLAVOURS.size()
 	var frames := _current_glow_frames()
+	var hue := _current_glow_hue()
+	# The swap must be VISIBLE on every live cat immediately (Pip demo review
+	# 2026-07-26): re-hue the centre radial on ALL cats (real + procedural) and
+	# swap art + tint on every anchored overlay.
 	for cat in _cats:
-		if is_instance_valid(cat) and cat is RealCat:
-			(cat as RealCat).set_glow_frames(frames)
+		if not is_instance_valid(cat):
+			continue
+		(cat as SandboxCatBase).set_glow_color(hue)
+		if cat is RealCat:
+			(cat as RealCat).set_glow_flavour(frames, hue)
 	_last_msg = "doom glow flavour: %s%s" % [
 		String(_GLOW_FLAVOURS[_glow_flavour_idx]["name"]),
-		"" if frames != null else " (art missing -- glow hidden)"]
+		"" if frames != null else " (overlay art missing -- radial hue only)"]
 
 # ===========================================================================
 # FEEDBACK PERSISTENCE (<art_source>/sandbox_feedback.json; merges on load).
@@ -1978,6 +1996,9 @@ class SandboxCatBase extends Node2D:
 	var _t: float = 0.0
 	var _rng := RandomNumberGenerator.new()
 	var _glow: Sprite2D = null
+	# Centre-radial hue; follows the sandbox doom-flavour selection ([D]). The
+	# old hardcoded orange-red made flavour cycling look dead (Pip 2026-07-26).
+	var _glow_color := Color(1.0, 0.25, 0.15)
 	static var _glow_tex: Texture2D = null
 
 	func _ready() -> void:
@@ -1995,7 +2016,7 @@ class SandboxCatBase extends Node2D:
 		mat.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
 		_glow.material = mat
 		_glow.z_index = -1                # behind the cat body
-		_glow.modulate = Color(1.0, 0.25, 0.15, 0.0)
+		_glow.modulate = Color(_glow_color, 0.0)
 		add_child(_glow)
 		_build_visual()
 		_update_glow()
@@ -2043,9 +2064,15 @@ class SandboxCatBase extends Node2D:
 		if _glow == null:
 			return
 		var pulse := 0.75 + 0.25 * sin(_t * 4.0)
-		_glow.modulate = Color(1.0, 0.25, 0.15, _doom * pulse)
+		_glow.modulate = Color(_glow_color, _doom * pulse)
 		var sc := 0.6 + _doom * 0.9
 		_glow.scale = Vector2(sc, sc)
+
+	## Re-hue the centre radial (doom-flavour cycling). Takes effect on the
+	## next _update_glow tick; immediate call keeps a paused scene honest.
+	func set_glow_color(c: Color) -> void:
+		_glow_color = c
+		_update_glow()
 
 	func set_doom(level: float) -> void:
 		_doom = clampf(level, 0.0, 1.0)
@@ -2110,6 +2137,7 @@ class RealCat extends SandboxCatBase:
 	const BUTT_GLOW_SCALE := 0.40
 	var anchored_set: String = ""
 	var _glow_frames: SpriteFrames = null
+	var _glow_hue := Color.WHITE          # flavour hue; also tints the overlays
 	var _glow_enabled := true
 	var _eye_ov: AnchoredOverlay = null
 	var _butt_ov: AnchoredOverlay = null
@@ -2126,10 +2154,12 @@ class RealCat extends SandboxCatBase:
 
 	## Anchor Sockets V2: opt this cat into part-anchored glow (call before the
 	## cat enters the tree; overlays are built in _build_visual).
-	func configure_anchor_glow(set_id: String, glow_frames: SpriteFrames, enabled: bool) -> void:
+	func configure_anchor_glow(set_id: String, glow_frames: SpriteFrames, enabled: bool,
+			hue: Color = Color.WHITE) -> void:
 		anchored_set = set_id
 		_glow_frames = glow_frames
 		_glow_enabled = enabled
+		_glow_hue = hue
 
 	func set_anchor_glow_enabled(on: bool) -> void:
 		_glow_enabled = on
@@ -2137,12 +2167,16 @@ class RealCat extends SandboxCatBase:
 			if ov != null:
 				ov.set_enabled(on)
 
-	## Swap the glow hue flavour (Pip interim colour mapping) live.
-	func set_glow_frames(glow_frames: SpriteFrames) -> void:
+	## Swap the glow flavour LIVE (Pip interim colour mapping): new overlay art
+	## AND its hue tint, on both anchored overlays. The tint guarantees the
+	## flavours read distinct at a glance even at eye-glow scale.
+	func set_glow_flavour(glow_frames: SpriteFrames, hue: Color) -> void:
 		_glow_frames = glow_frames
+		_glow_hue = hue
 		for ov in [_eye_ov, _butt_ov]:
 			if ov != null:
 				ov.set_overlay_frames(glow_frames)
+				ov.set_tint(hue)
 
 	func _build_visual() -> void:
 		_anim = AnimatedSprite2D.new()
@@ -2163,11 +2197,11 @@ class RealCat extends SandboxCatBase:
 			_eye_ov = AnchoredOverlay.new()
 			_eye_ov.attach(_anim, anchored_set, "eyes", _glow_frames,
 				{"scale": EYE_GLOW_SCALE, "opacity": EYE_GLOW_MIN, "blend": "add",
-				"pulse": true, "z_offset": 1})
+				"pulse": true, "z_offset": 1, "tint": _glow_hue})
 			_butt_ov = AnchoredOverlay.new()
 			_butt_ov.attach(_anim, anchored_set, "butt", _glow_frames,
 				{"scale": BUTT_GLOW_SCALE, "opacity": BUTT_GLOW_MIN, "blend": "add",
-				"pulse": true, "z_offset": 1})
+				"pulse": true, "z_offset": 1, "tint": _glow_hue})
 			set_anchor_glow_enabled(_glow_enabled)
 			_apply_glow_doom()
 
