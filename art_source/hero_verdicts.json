@@ -1358,5 +1358,33 @@
     "promote",
     "favour",
     "like"
+  ],
+  "core_resource_icons/v1/money_512.png": [
+    "like",
+    "promote"
+  ],
+  "core_resource_icons/v1/compute_512.png": [
+    "like",
+    "promote"
+  ],
+  "core_resource_icons/v1/research_512.png": [
+    "like",
+    "promote"
+  ],
+  "core_resource_icons/v1/doom_512.png": [
+    "like",
+    "promote"
+  ],
+  "core_resource_icons/v1/paper_512.png": [
+    "like",
+    "promote"
+  ],
+  "core_resource_icons/v1/reputation_512.png": [
+    "like",
+    "promote"
+  ],
+  "core_resource_icons/v1/logo_512.png": [
+    "like",
+    "promote"
   ]
 }
