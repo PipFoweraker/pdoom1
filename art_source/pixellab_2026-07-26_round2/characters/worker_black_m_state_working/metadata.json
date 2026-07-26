@@ -1,0 +1,100 @@
+{
+  "group_id": "9e03f3a7-aea7-4751-a1eb-68900300ad90",
+  "states": [
+    {
+      "character": {
+        "id": "38f3a047-3cb4-4d12-bf56-1407d779c4c5",
+        "name": "worker_black_m",
+        "prompt": "Black man office worker with short natural hair, slate-blue button-up shirt with rolled sleeves, dark olive trousers, ID lanyard, muted teal-olive-slate palette with warm amber accent, lived-in AI lab worker",
+        "size": {
+          "width": 68,
+          "height": 68
+        },
+        "template_id": "mannequin",
+        "directions": 8,
+        "view": "low top-down",
+        "created_at": "2026-07-26T00:03:13.107950+00:00"
+      },
+      "folder": "worker_black_m",
+      "frames": {
+        "rotations": {
+          "south": "worker_black_m/rotations/south.png",
+          "south-east": "worker_black_m/rotations/south-east.png",
+          "east": "worker_black_m/rotations/east.png",
+          "north-east": "worker_black_m/rotations/north-east.png",
+          "north": "worker_black_m/rotations/north.png",
+          "north-west": "worker_black_m/rotations/north-west.png",
+          "west": "worker_black_m/rotations/west.png",
+          "south-west": "worker_black_m/rotations/south-west.png"
+        },
+        "animations": {
+          "walk": {
+            "east": [
+              "worker_black_m/animations/walk/east/frame_000.png",
+              "worker_black_m/animations/walk/east/frame_001.png",
+              "worker_black_m/animations/walk/east/frame_002.png",
+              "worker_black_m/animations/walk/east/frame_003.png",
+              "worker_black_m/animations/walk/east/frame_004.png",
+              "worker_black_m/animations/walk/east/frame_005.png"
+            ],
+            "south": [
+              "worker_black_m/animations/walk/south/frame_000.png",
+              "worker_black_m/animations/walk/south/frame_001.png",
+              "worker_black_m/animations/walk/south/frame_002.png",
+              "worker_black_m/animations/walk/south/frame_003.png",
+              "worker_black_m/animations/walk/south/frame_004.png",
+              "worker_black_m/animations/walk/south/frame_005.png"
+            ],
+            "west": [
+              "worker_black_m/animations/walk/west/frame_000.png",
+              "worker_black_m/animations/walk/west/frame_001.png",
+              "worker_black_m/animations/walk/west/frame_002.png",
+              "worker_black_m/animations/walk/west/frame_003.png",
+              "worker_black_m/animations/walk/west/frame_004.png",
+              "worker_black_m/animations/walk/west/frame_005.png"
+            ],
+            "north": [
+              "worker_black_m/animations/walk/north/frame_000.png",
+              "worker_black_m/animations/walk/north/frame_001.png",
+              "worker_black_m/animations/walk/north/frame_002.png",
+              "worker_black_m/animations/walk/north/frame_003.png",
+              "worker_black_m/animations/walk/north/frame_004.png",
+              "worker_black_m/animations/walk/north/frame_005.png"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "character": {
+        "id": "cbadc929-ddbb-44fa-9f3c-29235d07ba74",
+        "name": "seated typing pose,",
+        "prompt": "Black man office worker with short natural hair, slate-blue button-up shirt with rolled sleeves, dark olive trousers, ID lanyard, muted teal-olive-slate palette with warm amber accent, lived-in AI lab worker",
+        "size": {
+          "width": 68,
+          "height": 68
+        },
+        "template_id": "mannequin",
+        "directions": 8,
+        "view": "low top-down",
+        "created_at": "2026-07-26T00:56:19.611295+00:00"
+      },
+      "folder": "seated_typing_pose",
+      "frames": {
+        "rotations": {
+          "south": "seated_typing_pose/rotations/south.png",
+          "south-east": "seated_typing_pose/rotations/south-east.png",
+          "east": "seated_typing_pose/rotations/east.png",
+          "north-east": "seated_typing_pose/rotations/north-east.png",
+          "north": "seated_typing_pose/rotations/north.png",
+          "north-west": "seated_typing_pose/rotations/north-west.png",
+          "west": "seated_typing_pose/rotations/west.png",
+          "south-west": "seated_typing_pose/rotations/south-west.png"
+        },
+        "animations": {}
+      }
+    }
+  ],
+  "export_version": "3.1",
+  "export_date": "2026-07-26T00:59:16.903132"
+}

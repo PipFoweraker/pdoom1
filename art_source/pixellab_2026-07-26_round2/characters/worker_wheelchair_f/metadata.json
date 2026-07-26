@@ -1,0 +1,36 @@
+{
+  "group_id": null,
+  "states": [
+    {
+      "character": {
+        "id": "f98d8524-ea05-4b70-bc28-9b6e76218b20",
+        "name": "worker_wheelchair_f",
+        "prompt": "middle-aged white woman office worker seated in a manual wheelchair with visible wheels, olive-teal blouse, ID lanyard, hands on wheel rims, muted teal-olive-slate palette with warm amber accent, lived-in AI lab worker",
+        "size": {
+          "width": 68,
+          "height": 68
+        },
+        "template_id": "mannequin",
+        "directions": 8,
+        "view": "low top-down",
+        "created_at": "2026-07-26T00:03:15.558133+00:00"
+      },
+      "folder": "worker_wheelchair_f",
+      "frames": {
+        "rotations": {
+          "south": "worker_wheelchair_f/rotations/south.png",
+          "south-east": "worker_wheelchair_f/rotations/south-east.png",
+          "east": "worker_wheelchair_f/rotations/east.png",
+          "north-east": "worker_wheelchair_f/rotations/north-east.png",
+          "north": "worker_wheelchair_f/rotations/north.png",
+          "north-west": "worker_wheelchair_f/rotations/north-west.png",
+          "west": "worker_wheelchair_f/rotations/west.png",
+          "south-west": "worker_wheelchair_f/rotations/south-west.png"
+        },
+        "animations": {}
+      }
+    }
+  ],
+  "export_version": "3.1",
+  "export_date": "2026-07-26T00:17:28.988835"
+}

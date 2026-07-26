@@ -1,0 +1,195 @@
+schema_version: '1.0'
+_meta: 'Core resource icon set (issue #900, round 2). Replaces the 7 theme_manager.gd
+  placeholders (logo, icon_money, icon_compute, icon_research, icon_doom, icon_paper,
+  icon_reputation -- theme_manager.gd:112-118). Reuses the quirk-icon prompt formula
+  (art_prompts/quirk_icons.yaml: global_icon_base + surface_tarkov) that Pip called
+  fresher and bolder. Colour language from godot/autoload/theme_manager.gd: money
+  -> funding cyan-teal (#4DCCB3), compute -> resources blue (#8080CC), research ->
+  purple (#B380E6), doom -> crimson red (#E64D33 toward doom_critical #B31A1A), paper
+  -> neutral parchment (no saturated accent), reputation -> gold (#E6B34D), logo ->
+  doom crimson with amber ember. Promoted 64px files would land in godot/assets/icons/;
+  NO wiring in this round -- triage first.'
+asset_type: core_resource_icons
+default_size: 1024x1024
+output_sizes:
+- 1024
+- 512
+- 256
+- 128
+- 64
+background: opaque
+styles:
+  global_icon_base: 'high-res 1024x1024 square game icon, single central symbol, soft
+    but detailed digital painting with slightly cartoony shapes, StarCraft 2 / early-2000s
+    XCOM ability icon feel, plain or softly graded background with a subtle vignette,
+    no full scene or environment, no text, strong chunky silhouette that reads clearly
+    at 64x64, limited color palette, high contrast lighting, centered composition
+
+    '
+  surface_tarkov: Tarkov-style worn metal and dirty surfaces but simplified
+themes:
+  resource_money:
+    style_overrides:
+    - global_icon_base
+    - surface_tarkov
+    color_bias: resource colour MONEY -- the single saturated accent is a cool cyan-teal
+      glow (#4DCCB3 family, the funding colour), dark desaturated grey-slate ground,
+      no other saturated hue
+  resource_compute:
+    style_overrides:
+    - global_icon_base
+    - surface_tarkov
+    color_bias: resource colour COMPUTE -- the single saturated accent is an electric
+      blue-violet glow (#8080CC family, the infrastructure colour), dark desaturated
+      gunmetal ground, no other saturated hue
+  resource_research:
+    style_overrides:
+    - global_icon_base
+    - surface_tarkov
+    color_bias: resource colour RESEARCH -- the single saturated accent is a bright
+      violet purple glow (#B380E6 family, the science colour), dark desaturated aubergine-grey
+      ground, no other saturated hue
+  resource_doom:
+    style_overrides:
+    - global_icon_base
+    - surface_tarkov
+    color_bias: 'resource colour DOOM -- the single saturated accent is an ominous
+      crimson red glow (#E64D33 toward deep #B31A1A), dark desaturated grey-brown
+      ground, no other saturated hue'
+  resource_paper:
+    style_overrides:
+    - global_icon_base
+    - surface_tarkov
+    color_bias: resource colour PAPERS -- desaturated warm parchment off-white and
+      grey-teal tones, dim soft highlight, NO strongly saturated accent colour
+  resource_reputation:
+    style_overrides:
+    - global_icon_base
+    - surface_tarkov
+    color_bias: resource colour REPUTATION -- the single saturated accent is a warm
+      gold-amber glow (#E6B34D family, the leadership colour), dark desaturated grey-brown
+      ground, no other saturated hue
+  brand_logo:
+    style_overrides:
+    - global_icon_base
+    - surface_tarkov
+    color_bias: brand emblem -- ominous crimson red core glow (#B31A1A family) with
+      a single warm amber ember accent, near-black charcoal ground, no other saturated
+      hue
+assets:
+- id: logo
+  category: core_resources
+  display_name: P(Doom) Logo Emblem
+  status: generated
+  theme: brand_logo
+  prompt_tail: 'circular emblem of a jagged probability curve rising steeply and cresting
+    into an alarm glow, framed between two tall curved bracket shapes like parentheses,
+    badge-like, plain dark background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-26T00:11:27.075375+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: b08c9497ba17
+    file_path: art_generated\core_resource_icons\v1\logo_1024.png
+    cost_usd: 0.06
+- id: money
+  category: core_resources
+  display_name: Money
+  status: generated
+  theme: resource_money
+  prompt_tail: 'circular indicator with a short stack of chunky coins beside a folded
+    banknote clip, crisp simple shapes, plain dark background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-26T00:11:45.273709+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 2bcad55c86ec
+    file_path: art_generated\core_resource_icons\v1\money_1024.png
+    cost_usd: 0.06
+- id: compute
+  category: core_resources
+  display_name: Compute
+  status: generated
+  theme: resource_compute
+  prompt_tail: 'circular indicator with a single square processor chip with a glowing
+    die center and short pin legs, faint circuit traces radiating, plain dark background
+    with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-26T00:12:16.528292+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: d269a46bfdb5
+    file_path: art_generated\core_resource_icons\v1\compute_1024.png
+    cost_usd: 0.06
+- id: research
+  category: core_resources
+  display_name: Research
+  status: generated
+  theme: resource_research
+  prompt_tail: 'circular indicator with a simple erlenmeyer flask holding softly glowing
+    liquid with one orbiting spark above it, plain dark background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-26T00:12:32.736281+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: db577e685ecc
+    file_path: art_generated\core_resource_icons\v1\research_1024.png
+    cost_usd: 0.06
+- id: doom
+  category: core_resources
+  display_name: Doom
+  status: generated
+  theme: resource_doom
+  prompt_tail: 'circular indicator with a jagged graph line sweeping sharply upward
+    ending in a burning warning flare, small tick marks along the base, plain dark
+    background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-26T00:13:05.053666+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 409d013d9936
+    file_path: art_generated\core_resource_icons\v1\doom_1024.png
+    cost_usd: 0.06
+- id: paper
+  category: core_resources
+  display_name: Papers
+  status: generated
+  theme: resource_paper
+  prompt_tail: 'circular indicator with a small neat stack of research papers, top
+    sheet showing faint abstract chart scribbles, one corner lifting, plain dark background
+    with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-26T00:13:20.673735+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: ed164f37a7de
+    file_path: art_generated\core_resource_icons\v1\paper_1024.png
+    cost_usd: 0.06
+- id: reputation
+  category: core_resources
+  display_name: Reputation
+  status: generated
+  theme: resource_reputation
+  prompt_tail: 'circular indicator with a simple laurel-flanked star medal badge,
+    quiet proud glow, plain dark background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-26T00:13:52.354726+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 7e33b41a273d
+    file_path: art_generated\core_resource_icons\v1\reputation_1024.png
+    cost_usd: 0.06
