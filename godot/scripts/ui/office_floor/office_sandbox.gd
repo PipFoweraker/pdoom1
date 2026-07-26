@@ -1,8 +1,19 @@
 extends Control
-## OFFICE SANDBOX v3 -- a standalone DEV TOY for the office-floor view (Pip: open
-## this in the evening and play). v3 adds SCALING, a POPULATE-UP sequence with simple
+## OFFICE SANDBOX v4 -- a standalone DEV TOY for the office-floor view (Pip: open
+## this in the evening and play). v3 added SCALING, a POPULATE-UP sequence with simple
 ## space/placement logic, REAL cat walk-cycles loaded from art_source, and two dev-only
 ## prototypes: doom-glow on cats + a transparent-overlay (poster-on-wall) compositing POC.
+##
+## v4 (Pip's 2026-07-26 review feedback):
+##   - COMPARE (side-by-side small vs large office) is now the DEFAULT view on open;
+##     [V] toggles back to the single-floor view.
+##   - BOTH floors are editable: spawn/populate/prop/poster/cat actions target the floor
+##     UNDER THE MOUSE CURSOR; the status line names the active floor.
+##   - Quality-tier mapping (canonical ladder: scummy / decent / premium): in compare
+##     view the SMALL office renders the SCUMMY tier, the LARGE office DECENT. Where
+##     tier-variant art is missing an asset falls back to the decent art unchanged.
+##   - Props with a manifest entry (PropCatalogue, #907) place at their authored
+##     scale + feet anchor and occupy their footprint_tiles cells.
 ##
 ## Everything v2 shipped still works: promoted-asset loader, prop placement, skin/mood
 ## cycling, scummy/decent office STATE, and in-context feedback.
@@ -40,8 +51,11 @@ const MAX_PLACED := 64
 
 # Tile grid props snap to (matches the 32px source tile scale; feels like desks-on-a-grid).
 const GRID := 32.0
-# Target on-floor height a placed prop is scaled to (aspect kept), matching OfficeFloor props.
+# LEGACY fallback prop height for assets WITHOUT a manifest entry (#907 integration:
+# manifested props scale via PropCatalogue.height_px instead of this force-scale).
 const PROP_TARGET_H := 46.0
+# One floor tile on screen (32px art displayed 2x; = OfficeEmployeeSprite.TILE_PX).
+const DISPLAY_TILE_PX := 64.0
 # Region of a 4x4 Wang tileset atlas holding the all-lower base tile (same crop OfficeFloor
 # uses). Applied to promoted floor/wall tilesets before handing them to the dev hooks.
 const WANG_BASE_REGION := Rect2i(64, 32, 32, 32)
@@ -115,17 +129,27 @@ var _moods: Array = [
 	{"name": "Sepia", "tint": Color(1.08, 0.94, 0.72)},
 ]
 
-# Coarse office STATE -- the prototype "reflects game state" query. Each state biases
-# which promoted props are offered (by keyword match on the asset id) and picks a
+# Office quality TIERS -- the prototype "reflects game state" query. Canonical ladder
+# (ruled 2026-07-26, see docs/game-design/SEED_ASSET_REGISTRY_AND_VERDICTS.md):
+# scummy / decent / premium. Only scummy + decent have art today; premium joins this
+# array when its tilesets/props exist. Each tier biases which promoted props are offered
+# (manifest style_tags when available, else keyword match on the asset id) and picks a
 # promoted floor/wall tileset (matched by filename substring) to swap in. The real
-# runtime hook later reads this from GameState instead of a keypress. "neutral" props
-# (matching NO state keyword) are offered in every state.
+# runtime hook later reads the tier from GameState instead of a keypress. Props tagged
+# for NO tier count as decent art and are offered in every tier (decent fallback --
+# where tier-variant art is missing the decent art shows unchanged, no tinting).
 var _states: Array = [
 	{"name": "scummy", "floor_key": "floor_lino",     "wall_key": "wall_scummy", "bias": ["scummy"]},
 	{"name": "decent", "floor_key": "floor_concrete", "wall_key": "wall_decent", "bias": ["decent", "clean", "mega"]},
 ]
-# Union of every state's bias keywords -- a prop matching none of these is "neutral".
+# Union of every tier's bias keywords -- a prop matching none of these is decent-fallback art.
 const _STATE_KEYWORDS := ["scummy", "decent", "clean", "mega"]
+# The tier whose art stands in when a tier-variant is missing (ruled 2026-07-26).
+const FALLBACK_TIER := "decent"
+# COMPARE view pins tiers per floor: the small starter office renders SCUMMY, the
+# large complex office DECENT (Pip's 2026-07-26 ruling).
+const COMPARE_TIER_SMALL := "scummy"
+const COMPARE_TIER_LARGE := "decent"
 
 # Cat coat colours cycled as procedural cats are added (fallback only; real cats use art).
 var _cat_palette: Array = [
@@ -183,6 +207,7 @@ var _feedback: Dictionary = {}             # asset_id -> {"tags":[...], "notes":
 # --- v3 state ---------------------------------------------------------------
 var _occupant_scale: float = OCCUPANT_SCALE_DEFAULT
 var _pop_level: int = 0
+var _pop_level_b: int = 0                  # v4: the small floor has its own populate level
 var _furniture: Array = []                 # Sprite2D furniture placed by POPULATE (wall-affinity)
 var _occupied_cells: Dictionary = {}       # str(cell centre) -> true (furniture no-overlap)
 var _cat_frame_sets: Array = []            # [{name, frames}] real walk-cycle SpriteFrames
@@ -196,13 +221,17 @@ var _marker: SandboxMarker = null          # highlights the per-sprite / overlay
 var _last_msg: String = ""                 # #899: transient feedback line shown in the status
 
 # --- compare view (side-by-side scale check) ---------------------------------
-# [V] renders TWO OfficeFloor instances at once: LEFT a small starter room (2-3
-# staff, sparse props), RIGHT the main floor as a larger complex office (6+
-# staff, cats, dense props). Same rendering path + the same shared scale
-# constants on both -- the point is compare-and-contrast of one scale ruling in
-# two room sizes. Dev-only, pure composition, zero game-state writes.
+# v4: compare is the DEFAULT view on open ("a more useful view" -- Pip 2026-07-26);
+# [V] toggles back to single-floor. It renders TWO OfficeFloor instances at once:
+# LEFT a small starter room (2-3 staff, sparse props, SCUMMY tier), RIGHT the main
+# floor as a larger complex office (6+ staff, cats, dense props, DECENT tier). Same
+# rendering path + the same shared scale constants on both -- the point is
+# compare-and-contrast of one scale ruling in two room sizes. BOTH floors are
+# editable: actions target the floor under the mouse cursor (_active_floor).
+# Dev-only, pure composition, zero game-state writes.
 var _compare_mode := false
 var _floor_b: OfficeFloor = null           # LEFT starter office
+var _hover_is_b := false                   # cached "cursor over the small floor" (v4)
 var _roster_b: Array = []
 var _furniture_b: Array = []               # starter-floor placeholder props
 var _caption_a: Label = null
@@ -232,10 +261,12 @@ func _ready() -> void:
 	# Start with the real-art skin and a few people so it's alive on open.
 	_apply_skin(0)
 	_apply_mood(0)
-	_apply_state(0)
+	_apply_state(1)   # single-view tier defaults to decent (index 1)
 	for _i in range(5):
-		_spawn_person()
-	_add_cat()
+		_spawn_person_on(_floor)
+	_add_cat(_floor)
+	# v4: COMPARE (small scummy office vs large decent office) is the DEFAULT view.
+	_toggle_compare()
 	_apply_occupant_scale()
 	_update_status()
 
@@ -252,11 +283,11 @@ func _build_overlay() -> void:
 	_legend = Label.new()
 	_legend.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_legend.add_theme_font_size_override("font_size", 13)
-	_legend.text = "OFFICE SANDBOX v3  --  dev toy (no game state)\n" \
+	_legend.text = "OFFICE SANDBOX v4  --  dev toy (no game state)   |   actions hit the floor UNDER THE CURSOR\n" \
 		+ "[1]/[2] spawn/despawn person   [S] skin   [B] mood   [C]/[X] add/remove cat   [R] randomize   [0] clear   [ESC] quit\n" \
-		+ "SCALE:  [-]/[=] all occupants   [,]/[.] the sprite under the cursor (within 64px)   |   POPULATE:  [U] up a stage   [I] down a stage\n" \
-		+ "[V] COMPARE: side-by-side starter (small) vs complex (large) office\n" \
-		+ "[T] office STATE (scummy/decent)   [P] cycle prop/poster   [LMB] place   [RMB] remove nearest   [K] clear props\n" \
+		+ "SCALE:  [-]/[=] all occupants   [,]/[.] the sprite under the cursor (within 64px)   |   POPULATE (cursor floor):  [U] up a stage   [I] down a stage\n" \
+		+ "[V] toggle COMPARE (DEFAULT ON): small=SCUMMY vs large=DECENT office\n" \
+		+ "[T] office TIER (scummy/decent; pinned per floor while compare is on)   [P] cycle prop/poster   [LMB] place   [RMB] remove nearest   [K] clear props\n" \
 		+ "DOOM-GLOW on cats:  [ [ ] decrease   [ ] ] increase   |   OVERLAY POC:  [O] toggle poster-on-wall mode   [;]/['] selected overlay opacity\n" \
 		+ "feedback on current prop:  [L]ike  [J] dislike  [F]avour  [G] disfavour  [M] promote  [N] note"
 	vb.add_child(_legend)
@@ -286,15 +317,51 @@ func _build_marker() -> void:
 	_marker.visible = false
 	_floor.add_child(_marker)
 
+# v4: the floor the mouse cursor is over -- ALL spawn/populate/placement actions target
+# this floor, so the small starter office is just as editable as the large one.
+func _active_floor() -> OfficeFloor:
+	if _compare_mode and _floor_b != null and is_instance_valid(_floor_b) \
+			and _floor_b.get_global_rect().has_point(get_global_mouse_position()):
+		return _floor_b
+	return _floor
+
+# Human-readable name + pinned tier of a floor, for the status line.
+func _floor_label(f: OfficeFloor) -> String:
+	if not _compare_mode:
+		return "single (%s)" % String(_states[_state_idx]["name"])
+	return ("SMALL/%s" % COMPARE_TIER_SMALL) if f == _floor_b else ("LARGE/%s" % COMPARE_TIER_LARGE)
+
+# The tier whose props should be OFFERED right now (compare: the hovered floor's tier).
+func _pool_tier() -> String:
+	if _compare_mode:
+		return COMPARE_TIER_SMALL if _hover_is_b else COMPARE_TIER_LARGE
+	return String(_states[_state_idx]["name"])
+
+# Ghost + marker live under whichever floor is active so their local coords track it.
+func _reparent_cursor_nodes(af: OfficeFloor) -> void:
+	for n in [_ghost, _marker]:
+		if n != null and is_instance_valid(n) and n.get_parent() != af:
+			n.get_parent().remove_child(n)
+			af.add_child(n)
+
 func _process(_delta: float) -> void:
+	# Active-floor tracking: when the cursor crosses floors, retarget the ghost/marker and
+	# re-bias the offered prop pool to that floor's tier.
+	var af := _active_floor()
+	var over_b := af == _floor_b and _floor_b != null
+	if over_b != _hover_is_b:
+		_hover_is_b = over_b
+		_reparent_cursor_nodes(af)
+		_rebuild_prop_pool()
+		_update_status()
 	# Ghost preview: in prop mode it snaps to the tile grid; in overlay mode it snaps to the
 	# nearest wall so the poster drop target reads. Marker highlights the selection target for
 	# the per-sprite scale ([,]/[.]) or the overlay opacity ([;]/[']) keys.
-	var mouse := _floor.get_local_mouse_position()
+	var mouse := af.get_local_mouse_position()
 	if _ghost != null:
 		if _overlay_mode:
 			_ghost.visible = _ghost.texture != null
-			_ghost.position = _snap_to_wall(mouse)
+			_ghost.position = _snap_to_wall(mouse, _bounds_of(af))
 		elif _prop_pool.is_empty():
 			_ghost.visible = false
 		else:
@@ -302,13 +369,13 @@ func _process(_delta: float) -> void:
 			_ghost.position = _snap_to_grid(mouse)
 	if _marker != null:
 		if _overlay_mode:
-			var ov := _nearest_overlay(mouse)
+			var ov := _nearest_overlay(mouse, af)
 			_marker.visible = ov != null
 			if ov != null:
 				_marker.position = ov.position
 				_marker.radius = 26.0
 		else:
-			var sp := _nearest_person(mouse)
+			var sp := _nearest_person(mouse, PICK_RADIUS, af)
 			_marker.visible = sp != null
 			if sp != null:
 				_marker.position = sp.position
@@ -327,9 +394,9 @@ func _input(event: InputEvent) -> void:
 					_place_prop()
 			MOUSE_BUTTON_RIGHT:
 				if _overlay_mode:
-					_remove_nearest_overlay(_floor.get_local_mouse_position())
+					_remove_nearest_overlay(_active_floor().get_local_mouse_position())
 				else:
-					_remove_nearest_prop(_floor.get_local_mouse_position())
+					_remove_nearest_prop(_active_floor().get_local_mouse_position())
 			_:
 				return
 		_update_status()
@@ -397,12 +464,20 @@ func _input(event: InputEvent) -> void:
 	_update_status()
 
 # --- People -----------------------------------------------------------------
+# v4: rosters are per-floor; keyboard actions route to the floor under the cursor.
+func _roster_of(f: OfficeFloor) -> Array:
+	return _roster_b if f == _floor_b and _floor_b != null else _roster
+
 func _spawn_person() -> void:
-	if _roster.size() >= MAX_PEOPLE:
+	_spawn_person_on(_active_floor())
+
+func _spawn_person_on(f: OfficeFloor) -> void:
+	var r := _roster_of(f)
+	if r.size() >= MAX_PEOPLE:
 		return
-	_roster.append(_make_person(_next_id))
+	r.append(_make_person(_next_id))
 	_next_id += 1
-	_push_roster()
+	f.set_roster(r)
 	_apply_occupant_scale()
 
 # Build one employee snapshot dict with a randomised mood so the roster shows a
@@ -429,10 +504,12 @@ func _make_person(id: int) -> Dictionary:
 	return d
 
 func _despawn_person() -> void:
-	if _roster.is_empty():
+	var f := _active_floor()
+	var r := _roster_of(f)
+	if r.is_empty():
 		return
-	_roster.pop_back()
-	_push_roster()
+	r.pop_back()
+	f.set_roster(r)
 
 func _push_roster() -> void:
 	_floor.set_roster(_roster)
@@ -473,24 +550,45 @@ func _apply_mood(idx: int) -> void:
 	if _floor_b != null and is_instance_valid(_floor_b):
 		_floor_b.modulate = _moods[idx]["tint"]
 
-# --- Office STATE (prototype "reflects game state") -------------------------
+# --- Office TIER (prototype "reflects game state"; ladder scummy/decent/premium) ----
 func _cycle_state() -> void:
+	if _compare_mode:
+		# Tiers are PINNED per floor while comparing (small=scummy, large=decent).
+		_last_msg = "compare view pins tiers: small=%s, large=%s ([V] for single view to cycle)" % [
+			COMPARE_TIER_SMALL, COMPARE_TIER_LARGE]
+		return
 	_apply_state((_state_idx + 1) % _states.size())
 
 func _apply_state(idx: int) -> void:
 	_state_idx = idx
-	var st: Dictionary = _states[idx]
-	# 1) bias the prop pool toward this state (neutral props always kept).
+	# 1) bias the prop pool toward the active tier (decent-fallback art always kept).
 	_rebuild_prop_pool()
-	# 2) swap floor + wall tilesets to the matching promoted tileset, if we have one.
-	var floor_tex := _tileset_tile_for(String(st.get("floor_key", "")))
-	var wall_tex := _tileset_tile_for(String(st.get("wall_key", "")))
-	# Additive dev hooks (default null restores built-in look for the live integration).
-	_floor.set_floor_tile_texture(floor_tex)
-	_floor.set_wall_strip_texture(wall_tex)
-	if _floor_b != null and is_instance_valid(_floor_b):
-		_floor_b.set_floor_tile_texture(floor_tex)
-		_floor_b.set_wall_strip_texture(wall_tex)
+	# 2) dress each floor for its tier (compare pins small=scummy / large=decent).
+	_apply_floor_styles()
+
+func _state_named(tier: String) -> Dictionary:
+	for st in _states:
+		if String(st.get("name", "")) == tier:
+			return st
+	return _states[_state_idx]
+
+func _apply_floor_styles() -> void:
+	if _compare_mode and _floor_b != null and is_instance_valid(_floor_b):
+		_style_floor(_floor, COMPARE_TIER_LARGE)
+		_style_floor(_floor_b, COMPARE_TIER_SMALL)
+	else:
+		_style_floor(_floor, String(_states[_state_idx]["name"]))
+
+# Dress one floor for a tier: swap in the tier's promoted floor/wall tilesets (additive
+# dev hooks; null restores the built-in look) and tell the floor its quality tier so its
+# landmark props can pick tier-variant art (missing variants fall back to decent art).
+func _style_floor(f: OfficeFloor, tier: String) -> void:
+	if f == null or not is_instance_valid(f):
+		return
+	var st := _state_named(tier)
+	f.set_floor_tile_texture(_tileset_tile_for(String(st.get("floor_key", ""))))
+	f.set_wall_strip_texture(_tileset_tile_for(String(st.get("wall_key", ""))))
+	f.set_office_style(tier)
 
 # Find a promoted tileset whose id contains `key`, crop its Wang base tile, upscale,
 # and return a tileable texture. Returns null if no promoted tileset matched.
@@ -516,26 +614,41 @@ func _wang_base_tile(tex: Texture2D) -> Texture2D:
 	return ImageTexture.create_from_image(img)
 
 # --- Props (placeable, grid-snapped) ----------------------------------------
-# Rebuild the offered prop pool for the current state: props whose id matches the
-# state's bias keywords PLUS state-neutral props (matching no state keyword at all).
+# Rebuild the offered prop pool for the ACTIVE tier (compare: the hovered floor's tier):
+# props serving the tier PLUS decent-fallback art. Manifested assets (PropCatalogue) are
+# judged by their style_tags (#907); unmanifested promoted art falls back to keyword
+# inference on the asset id. A decent-tagged asset with NO tier-variant art is still
+# offered in other tiers (the fall-back-to-decent-unchanged rule, 2026-07-26).
 func _rebuild_prop_pool() -> void:
-	var st: Dictionary = _states[_state_idx]
-	var bias: Array = st.get("bias", [])
+	var tier := _pool_tier()
+	var bias: Array = _state_named(tier).get("bias", [])
 	_prop_pool.clear()
 	for a in _promoted.get("props", []):
-		var id_l := String(a.get("id", "")).to_lower()
-		var neutral := true
-		var matches_state := false
-		for kw in _STATE_KEYWORDS:
-			if id_l.find(kw) != -1:
-				neutral = false
-				if kw in bias:
-					matches_state = true
-		if neutral or matches_state:
+		if _prop_serves_tier(a, tier, bias):
 			_prop_pool.append(a)
 	if _prop_idx >= _prop_pool.size():
 		_prop_idx = 0
 	_refresh_ghost_texture()
+
+func _prop_serves_tier(a: Dictionary, tier: String, bias: Array) -> bool:
+	var id := String(a.get("id", ""))
+	var base := id.get_file().get_basename()
+	if PropCatalogue.has(base):
+		var tags := PropCatalogue.style_tags(base)
+		if tier in tags:
+			return true
+		# Decent art stands in wherever its tier-variant is missing (no tinting hacks).
+		return FALLBACK_TIER in tags and not PropCatalogue.has("%s_%s" % [base, tier])
+	# Unmanifested: keyword inference on the id (legacy path).
+	var id_l := id.to_lower()
+	var untiered := true
+	var matches_tier := false
+	for kw in _STATE_KEYWORDS:
+		if id_l.find(kw) != -1:
+			untiered = false
+			if kw in bias:
+				matches_tier = true
+	return untiered or matches_tier
 
 func _cycle_prop() -> void:
 	if _overlay_mode:
@@ -557,16 +670,56 @@ func _refresh_ghost_texture() -> void:
 	if _overlay_mode:
 		_ghost.texture = _current_poster()
 		_ghost.scale = Vector2.ONE
+		_ghost.centered = true
+		_ghost.offset = Vector2.ZERO
 		return
 	var p := _current_prop()
 	_ghost.texture = p.get("tex", null) if not p.is_empty() else null
 	if _ghost.texture != null:
-		_ghost.scale = _prop_scale(_ghost.texture) * _occupant_scale
+		var id := String(p.get("id", ""))
+		_ghost.scale = _prop_scale(_ghost.texture, id) * _occupant_scale
+		_apply_prop_anchor(_ghost, _ghost.texture, id)
 
-func _prop_scale(tex: Texture2D) -> Vector2:
+# Manifest id for a promoted asset: the file basename (matches props_manifest.json keys).
+# Only trusted when the loaded texture's size equals the manifest canvas_px -- an
+# art_source master at another resolution is exactly the "missing metadata" case Pip
+# picks up in his review sweep, so it degrades to the legacy path.
+func _manifest_id_for(tex: Texture2D, asset_id: String) -> String:
+	if tex == null or asset_id == "":
+		return ""
+	var base := asset_id.get_file().get_basename()
+	if not PropCatalogue.has(base):
+		return ""
+	var canvas: Array = PropCatalogue.get_entry(base).get("canvas_px", [])
+	if canvas.size() != 2 or Vector2(float(canvas[0]), float(canvas[1])) != tex.get_size():
+		return ""
+	return base
+
+# #907 integration: manifested props scale so the opaque subject spans
+# height_px(id, DISPLAY_TILE_PX); everything else keeps the legacy PROP_TARGET_H
+# force-scale (PropCatalogue's fallback reproduces the same 46px for unknown ids).
+func _prop_scale(tex: Texture2D, asset_id: String = "") -> Vector2:
+	var mid := _manifest_id_for(tex, asset_id)
+	if mid != "":
+		var subj: Array = PropCatalogue.get_entry(mid).get("subject_px", [])
+		if subj.size() == 2 and float(subj[1]) > 0.0:
+			var sm := PropCatalogue.height_px(mid, DISPLAY_TILE_PX) / float(subj[1])
+			return Vector2(sm, sm)
 	var h := tex.get_size().y
 	var s := (PROP_TARGET_H / h) if h > 0.0 else 1.0
 	return Vector2(s, s)
+
+# Feet-anchor a sprite at the manifest anchor_px (subject feet) instead of the texture
+# centre, so padding-heavy art sits on the floor where it is dropped.
+func _apply_prop_anchor(spr: Sprite2D, tex: Texture2D, asset_id: String) -> void:
+	var mid := _manifest_id_for(tex, asset_id)
+	var anchor := PropCatalogue.anchor(mid) if mid != "" else PropCatalogue.ANCHOR_UNSET
+	if anchor != PropCatalogue.ANCHOR_UNSET:
+		spr.centered = false
+		spr.offset = -anchor
+	else:
+		spr.centered = true
+		spr.offset = Vector2.ZERO
 
 func _place_prop() -> void:
 	var p := _current_prop()
@@ -575,27 +728,61 @@ func _place_prop() -> void:
 	var tex: Texture2D = p.get("tex", null)
 	if tex == null:
 		return
+	var af := _active_floor()
+	var id := String(p.get("id", ""))
 	var spr := Sprite2D.new()
 	spr.texture = tex
 	spr.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	var base := _prop_scale(tex)
+	var base := _prop_scale(tex, id)
 	spr.set_meta("base_scale", base)
 	spr.scale = base * _occupant_scale
+	_apply_prop_anchor(spr, tex, id)
 	# Wall-affinity assist: if the drop point is near a wall, snap flush to it; else free grid.
-	spr.position = _grid_or_wall(_floor.get_local_mouse_position())
+	spr.position = _grid_or_wall(af.get_local_mouse_position(), _bounds_of(af))
 	spr.z_index = 2
-	spr.set_meta("asset_id", String(p.get("id", "")))
-	_floor.add_child(spr)
+	spr.set_meta("asset_id", id)
+	af.add_child(spr)
 	_placed_props.append(spr)
+	_occupy_prop_footprint(spr, af, id)
+
+# #907: a manifested prop OCCUPIES its footprint_tiles cells (display tiles are 64px =
+# 2x2 sandbox grid cells each) so POPULATE furniture will not overlap it. Unmanifested
+# props keep the old behaviour (no occupancy -- the renderer used to just guess).
+func _occupy_prop_footprint(spr: Sprite2D, f: OfficeFloor, asset_id: String) -> void:
+	var mid := _manifest_id_for(spr.texture, asset_id)
+	if mid == "":
+		return
+	var fp := PropCatalogue.footprint(mid)
+	var w_px := fp.x * DISPLAY_TILE_PX
+	var d_px := fp.y * DISPLAY_TILE_PX
+	var keys: Array = []
+	# Feet-anchored: footprint extends up from the feet row, centred horizontally.
+	var y0 := spr.position.y - d_px + GRID * 0.5
+	var x0 := spr.position.x - w_px * 0.5 + GRID * 0.5
+	var cols := int(ceil(w_px / GRID))
+	var rows := int(ceil(d_px / GRID))
+	for r in range(rows):
+		for c in range(cols):
+			var cell := _cell_of(f, Vector2(x0 + c * GRID, y0 + r * GRID))
+			var key := _cell_key(f, cell)
+			if not _occupied_cells.has(key):
+				_occupied_cells[key] = true
+				keys.append(key)
+	spr.set_meta("occupied_keys", keys)
+
+func _release_prop_footprint(spr: Sprite2D) -> void:
+	for key in spr.get_meta("occupied_keys", []):
+		_occupied_cells.erase(String(key))
 
 func _remove_nearest_prop(at: Vector2) -> void:
 	if _placed_props.is_empty():
 		return
+	var af := _active_floor()
 	var best := -1
 	var best_d := INF
 	for i in range(_placed_props.size()):
 		var spr = _placed_props[i]
-		if not is_instance_valid(spr):
+		if not is_instance_valid(spr) or spr.get_parent() != af:
 			continue
 		var d: float = spr.position.distance_to(at)
 		if d < best_d:
@@ -604,12 +791,14 @@ func _remove_nearest_prop(at: Vector2) -> void:
 	if best >= 0:
 		var spr = _placed_props[best]
 		if is_instance_valid(spr):
+			_release_prop_footprint(spr)
 			spr.queue_free()
 		_placed_props.remove_at(best)
 
 func _clear_props() -> void:
 	for spr in _placed_props:
 		if is_instance_valid(spr):
+			_release_prop_footprint(spr)
 			spr.queue_free()
 	_placed_props.clear()
 
@@ -618,10 +807,25 @@ func _snap_to_grid(pos: Vector2) -> Vector2:
 		floor(pos.x / GRID) * GRID + GRID * 0.5,
 		floor(pos.y / GRID) * GRID + GRID * 0.5)
 
+# Occupancy key for a grid cell of a specific floor (cells are floor-local, so the two
+# compare floors would otherwise collide on identical coordinates).
+func _cell_key(f: OfficeFloor, cell: Vector2) -> String:
+	return ("b|" if f == _floor_b and _floor_b != null else "a|") + str(cell)
+
+# Resolve a floor-local point to its occupancy cell CENTRE on the floor's bounds lattice
+# (the same lattice _pick_wall_cell enumerates, so occupancy from placed props and
+# populate furniture actually collide instead of living on offset grids).
+func _cell_of(f: OfficeFloor, pos: Vector2) -> Vector2:
+	var b := _bounds_of(f)
+	var c := floorf((pos.x - b.position.x) / GRID)
+	var r := floorf((pos.y - b.position.y) / GRID)
+	return Vector2(
+		b.position.x + c * GRID + GRID * 0.5,
+		b.position.y + r * GRID + GRID * 0.5)
+
 # Grid-snap, but if the point is within one grid cell of a wall, snap flush to that wall
 # (furniture wall-affinity for manual placement; the POPULATE placer uses walls exclusively).
-func _grid_or_wall(pos: Vector2) -> Vector2:
-	var b := _floor_bounds()
+func _grid_or_wall(pos: Vector2, b: Rect2) -> Vector2:
 	var snapped := _snap_to_grid(pos)
 	if pos.x - b.position.x < GRID:
 		snapped.x = b.position.x + GRID * 0.5
@@ -671,11 +875,13 @@ func _tags_for(id: String) -> String:
 	return "-" if parts.is_empty() else ", ".join(parts)
 
 # --- Cats -------------------------------------------------------------------
-# Spawn a cat. Uses a REAL loaded walk-cycle (cycling the available sets) when any exist;
-# otherwise falls back to the procedural drawn cat. Both honour doom-glow + occupant scale.
-func _add_cat() -> void:
+# Spawn a cat on `target` (default: the floor under the cursor). Uses a REAL loaded
+# walk-cycle (cycling the available sets) when any exist; otherwise falls back to the
+# procedural drawn cat. Both honour doom-glow + occupant scale.
+func _add_cat(target: OfficeFloor = null) -> void:
 	if _cats.size() >= MAX_CATS:
 		return
+	var af := target if target != null else _active_floor()
 	var cat: SandboxCatBase
 	if not _cat_frame_sets.is_empty():
 		var rc := RealCat.new()
@@ -686,19 +892,35 @@ func _add_cat() -> void:
 		sc.color = _cat_palette[_cat_color_idx % _cat_palette.size()]
 		cat = sc
 	_cat_color_idx += 1
-	var b := _floor_bounds()
+	var b := _bounds_of(af)
 	cat.position = Vector2(
 		_rng.randf_range(b.position.x, b.end.x),
 		_rng.randf_range(b.position.y, b.end.y))
-	_floor.add_child(cat)
+	af.add_child(cat)
 	cat.scale = Vector2(_occupant_scale, _occupant_scale)
 	cat.set_doom(_doom_level)
 	_cats.append(cat)
 
-func _remove_cat() -> void:
+func _cats_on(f: OfficeFloor) -> int:
+	var n := 0
+	for cat in _cats:
+		if is_instance_valid(cat) and cat.get_parent() == f:
+			n += 1
+	return n
+
+# Remove the newest cat on `target` (default: the floor under the cursor); falls back to
+# the newest cat anywhere so [X] never silently no-ops while cats remain.
+func _remove_cat(target: OfficeFloor = null) -> void:
 	if _cats.is_empty():
 		return
-	var cat = _cats.pop_back()
+	var af := target if target != null else _active_floor()
+	var idx := _cats.size() - 1
+	for i in range(_cats.size() - 1, -1, -1):
+		if is_instance_valid(_cats[i]) and _cats[i].get_parent() == af:
+			idx = i
+			break
+	var cat = _cats[idx]
+	_cats.remove_at(idx)
 	if is_instance_valid(cat):
 		cat.queue_free()
 
@@ -747,7 +969,8 @@ func _nudge_occupant_scale(mult: float) -> void:
 	_apply_occupant_scale()
 
 func _scale_nearest_person(mult: float) -> void:
-	var sp := _nearest_person(_floor.get_local_mouse_position())
+	var af := _active_floor()
+	var sp := _nearest_person(af.get_local_mouse_position(), PICK_RADIUS, af)
 	if sp == null:
 		# #899: previously this silently no-opped (or silently retargeted a far-away
 		# sprite) -- now the status line says why nothing visibly changed.
@@ -764,10 +987,12 @@ func _scale_nearest_person(mult: float) -> void:
 
 # #899: picks the nearest employee sprite WITHIN max_dist of `at` (was unbounded,
 # which made [,]/[.] retarget invisibly-distant sprites between presses).
-func _nearest_person(at: Vector2, max_dist: float = PICK_RADIUS) -> Node2D:
+# v4: searches floor `f` (default main) -- `at` is in that floor's local coords.
+func _nearest_person(at: Vector2, max_dist: float = PICK_RADIUS, f: OfficeFloor = null) -> Node2D:
+	var af := f if f != null else _floor
 	var best: Node2D = null
 	var best_d := INF
-	for c in _floor.get_children():
+	for c in af.get_children():
 		if c is OfficeEmployeeSprite:
 			var d: float = (c as Node2D).position.distance_to(at)
 			if d < best_d:
@@ -776,52 +1001,74 @@ func _nearest_person(at: Vector2, max_dist: float = PICK_RADIUS) -> Node2D:
 	return best if best_d <= max_dist else null
 
 # --- v3: POPULATE-UP sequence + placement logic -----------------------------
+# v4: each floor keeps its own populate level; [U]/[I] drive the floor under the cursor.
+func _furn_of(f: OfficeFloor) -> Array:
+	return _furniture_b if f == _floor_b and _floor_b != null else _furniture
+
 func _populate_up() -> void:
-	if _pop_level >= _POP_STAGES.size():
-		return
-	_pop_level += 1
-	_apply_pop_stage()
+	var af := _active_floor()
+	if af == _floor_b and _floor_b != null:
+		if _pop_level_b >= _POP_STAGES.size():
+			return
+		_pop_level_b += 1
+	else:
+		if _pop_level >= _POP_STAGES.size():
+			return
+		_pop_level += 1
+	_apply_pop_stage(af)
 
 func _populate_down() -> void:
-	if _pop_level <= 0:
-		return
-	_pop_level -= 1
-	_apply_pop_stage()
+	var af := _active_floor()
+	if af == _floor_b and _floor_b != null:
+		if _pop_level_b <= 0:
+			return
+		_pop_level_b -= 1
+	else:
+		if _pop_level <= 0:
+			return
+		_pop_level -= 1
+	_apply_pop_stage(af)
 
-func _apply_pop_stage() -> void:
+func _apply_pop_stage(f: OfficeFloor = null) -> void:
+	var af := f if f != null else _floor
+	var on_b := af == _floor_b and _floor_b != null
+	var level := _pop_level_b if on_b else _pop_level
 	var want_people := 0
 	var want_cats := 0
 	var want_furn := 0
-	if _pop_level > 0:
-		var st: Dictionary = _POP_STAGES[_pop_level - 1]
+	if level > 0:
+		var st: Dictionary = _POP_STAGES[level - 1]
 		want_people = int(st["people"])
 		want_cats = int(st["cats"])
 		want_furn = int(st["furn"])
 	# People (spread around the desks by OfficeFloor's own layout -- sane, non-overlapping).
-	while _roster.size() < want_people and _roster.size() < MAX_PEOPLE:
-		_roster.append(_make_person(_next_id))
+	var roster := _roster_of(af)
+	while roster.size() < want_people and roster.size() < MAX_PEOPLE:
+		roster.append(_make_person(_next_id))
 		_next_id += 1
-	while _roster.size() > want_people:
-		_roster.pop_back()
-	_push_roster()
-	# Cats (wander freely).
-	while _cats.size() < want_cats and _cats.size() < MAX_CATS:
-		_add_cat()
-	while _cats.size() > want_cats:
-		_remove_cat()
+	while roster.size() > want_people:
+		roster.pop_back()
+	af.set_roster(roster)
+	# Cats (wander freely, parented to this floor).
+	while _cats_on(af) < want_cats and _cats.size() < MAX_CATS:
+		_add_cat(af)
+	while _cats_on(af) > want_cats:
+		_remove_cat(af)
 	# Furniture (wall-affinity, no-overlap).
-	while _furniture.size() < want_furn:
-		if not _spawn_furniture():
+	var furn := _furn_of(af)
+	while furn.size() < want_furn:
+		if not _spawn_furniture(af):
 			break
-	while _furniture.size() > want_furn:
-		_remove_furniture()
+	while furn.size() > want_furn:
+		_remove_furniture(af)
 	_apply_occupant_scale()
 
-# Place one furniture piece on a free perimeter (wall) grid cell. Returns false if the
-# floor is full. Demonstrates the first "space logic" slice: furniture hugs walls, does
-# not overlap other furniture.
-func _spawn_furniture() -> bool:
-	var cell := _pick_wall_cell()
+# Place one furniture piece on a free perimeter (wall) grid cell of floor `f`. Returns
+# false if the floor is full. Demonstrates the first "space logic" slice: furniture hugs
+# walls, does not overlap other furniture.
+func _spawn_furniture(f: OfficeFloor = null) -> bool:
+	var af := f if f != null else _floor
+	var cell := _pick_wall_cell(af)
 	if cell == Vector2.INF:
 		return false
 	var kinds := _FURN_KINDS.keys()
@@ -835,24 +1082,27 @@ func _spawn_furniture() -> bool:
 	spr.scale = base * _occupant_scale
 	spr.position = cell
 	spr.z_index = 2
-	spr.set_meta("cell_key", str(cell))
-	_floor.add_child(spr)
-	_furniture.append(spr)
-	_occupied_cells[str(cell)] = true
+	var key := _cell_key(af, cell)
+	spr.set_meta("cell_key", key)
+	af.add_child(spr)
+	_furn_of(af).append(spr)
+	_occupied_cells[key] = true
 	return true
 
-func _remove_furniture() -> void:
-	if _furniture.is_empty():
+func _remove_furniture(f: OfficeFloor = null) -> void:
+	var furn := _furn_of(f if f != null else _floor)
+	if furn.is_empty():
 		return
-	var spr = _furniture.pop_back()
+	var spr = furn.pop_back()
 	if is_instance_valid(spr):
 		_occupied_cells.erase(String(spr.get_meta("cell_key", "")))
 		spr.queue_free()
 
 # Return a random unoccupied grid cell centre on the floor PERIMETER (wall-affinity). Falls
 # back to any interior cell if the perimeter is full. Returns Vector2.INF if nothing free.
-func _pick_wall_cell() -> Vector2:
-	var b := _floor_bounds()
+func _pick_wall_cell(f: OfficeFloor = null) -> Vector2:
+	var af := f if f != null else _floor
+	var b := _bounds_of(af)
 	var cols := int(b.size.x / GRID)
 	var rows := int(b.size.y / GRID)
 	if cols < 2 or rows < 2:
@@ -864,7 +1114,7 @@ func _pick_wall_cell() -> Vector2:
 			var centre := Vector2(
 				b.position.x + c * GRID + GRID * 0.5,
 				b.position.y + r * GRID + GRID * 0.5)
-			if _occupied_cells.has(str(centre)):
+			if _occupied_cells.has(_cell_key(af, centre)):
 				continue
 			if c == 0 or c == cols - 1 or r == 0 or r == rows - 1:
 				edge.append(centre)
@@ -911,15 +1161,13 @@ func _toggle_compare() -> void:
 		_exit_compare()
 
 func _enter_compare() -> void:
-	# LEFT starter floor: same scene, same skin/mood/state, its own small roster.
+	# LEFT starter floor: same scene, same skin/mood, its own small roster; renders the
+	# SCUMMY tier (the large floor renders DECENT -- Pip's 2026-07-26 quality-tier ruling).
 	_floor_b = OfficeFloorScene.instantiate()
 	add_child(_floor_b)
 	move_child(_floor_b, _floor.get_index() + 1)   # keep the legend/status panel on top
 	_apply_skin_to_floor(_floor_b)
 	_floor_b.modulate = _moods[_mood_idx]["tint"]
-	var st: Dictionary = _states[_state_idx]
-	_floor_b.set_floor_tile_texture(_tileset_tile_for(String(st.get("floor_key", ""))))
-	_floor_b.set_wall_strip_texture(_tileset_tile_for(String(st.get("wall_key", ""))))
 	_roster_b = []
 	for _i in range(3):
 		_roster_b.append(_make_person(_next_id))
@@ -931,32 +1179,58 @@ func _enter_compare() -> void:
 		_roster.append(_make_person(_next_id))
 		_next_id += 1
 	_push_roster()
-	while _cats.size() < 2 and _cats.size() < MAX_CATS:
-		_add_cat()
-	while _furniture.size() < 8:
-		if not _spawn_furniture():
-			break
+	while _cats_on(_floor) < 2 and _cats.size() < MAX_CATS:
+		_add_cat(_floor)
+	_apply_floor_styles()   # small=scummy / large=decent tilesets + prop variants
+	_rebuild_prop_pool()
 	_layout_floors()
-	_caption_a = _make_caption(_floor, "COMPLEX (large office)")
-	_caption_b = _make_caption(_floor_b, "STARTER (small office)")
-	# Starter props spawn deferred: the left floor's size is 0 until the first
-	# layout pass, and the wall spots derive from its real bounds.
+	_caption_a = _make_caption(_floor, "LARGE office -- DECENT tier")
+	_caption_b = _make_caption(_floor_b, "SMALL office -- SCUMMY tier")
+	# Furniture spawns DEFERRED (both floors): wall-affinity derives from the floors'
+	# real bounds, which do not exist until the layout pass after the anchor change
+	# (spawning now would hug the walls of a stale rect).
 	call_deferred("_spawn_starter_props")
+	call_deferred("_spawn_compare_furniture")
 	_apply_occupant_scale()
-	_last_msg = "compare ON: same render path + scale constants on both floors"
+	_last_msg = "compare ON (default): both floors editable -- actions hit the floor under the cursor"
 
 func _exit_compare() -> void:
 	if _caption_a != null and is_instance_valid(_caption_a):
 		_caption_a.queue_free()
 	_caption_a = null
 	_caption_b = null                      # child of _floor_b; freed with it
+	# Ghost/marker may be parented to the departing floor; cats/props on it die with it.
+	_reparent_cursor_nodes(_floor)
+	_hover_is_b = false
 	if _floor_b != null and is_instance_valid(_floor_b):
+		for i in range(_cats.size() - 1, -1, -1):
+			if not is_instance_valid(_cats[i]) or _cats[i].get_parent() == _floor_b:
+				_cats.remove_at(i)
+		for i in range(_placed_props.size() - 1, -1, -1):
+			var spr = _placed_props[i]
+			if not is_instance_valid(spr) or spr.get_parent() == _floor_b:
+				if is_instance_valid(spr):
+					_release_prop_footprint(spr)
+				_placed_props.remove_at(i)
+		for i in range(_overlays.size() - 1, -1, -1):
+			if not is_instance_valid(_overlays[i]) or _overlays[i].get_parent() == _floor_b:
+				_overlays.remove_at(i)
 		_floor_b.queue_free()
 	_floor_b = null
 	_roster_b.clear()
+	for spr in _furniture_b:
+		if is_instance_valid(spr):
+			_occupied_cells.erase(String(spr.get_meta("cell_key", "")))
 	_furniture_b.clear()
+	# Drop any remaining small-floor occupancy records.
+	for key in _occupied_cells.keys():
+		if String(key).begins_with("b|"):
+			_occupied_cells.erase(key)
+	_pop_level_b = 0
+	_apply_floor_styles()   # restore the single-view tier
+	_rebuild_prop_pool()
 	_layout_floors()
-	_last_msg = "compare OFF"
+	_last_msg = "compare OFF (single floor; [V] to bring it back)"
 
 func _layout_floors() -> void:
 	if _compare_mode:
@@ -988,8 +1262,19 @@ func _make_caption(parent_floor: Control, text: String) -> Label:
 	parent_floor.add_child(cap)
 	return cap
 
+# Deferred main-floor furniture top-up for compare entry (see _enter_compare: the
+# wall cells need the post-layout bounds). Never shrinks anything Pip already placed.
+func _spawn_compare_furniture() -> void:
+	if not _compare_mode:
+		return
+	while _furniture.size() < 8:
+		if not _spawn_furniture(_floor):
+			break
+	_apply_occupant_scale()
+
 # Sparse starter furnishing: a desk / plant / cabinet against the left floor's
-# walls, via the same placeholder _furniture_tex path POPULATE uses.
+# walls, via the same placeholder _furniture_tex path POPULATE uses. Registers each
+# spot's occupancy so populate-up on the small floor will not stack furniture on it.
 func _spawn_starter_props() -> void:
 	if _floor_b == null or not is_instance_valid(_floor_b):
 		return
@@ -1010,6 +1295,9 @@ func _spawn_starter_props() -> void:
 		spr.scale = base * _occupant_scale
 		spr.position = spots[i]
 		spr.z_index = 2
+		var key := _cell_key(_floor_b, _cell_of(_floor_b, spots[i]))
+		spr.set_meta("cell_key", key)
+		_occupied_cells[key] = true
 		_floor_b.add_child(spr)
 		_furniture_b.append(spr)
 
@@ -1081,31 +1369,35 @@ func _place_overlay() -> void:
 	var tex := _current_poster()
 	if tex == null:
 		return
+	var af := _active_floor()
 	var spr := Sprite2D.new()
 	spr.texture = tex
 	spr.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	spr.position = _snap_to_wall(_floor.get_local_mouse_position())
+	spr.position = _snap_to_wall(af.get_local_mouse_position(), _bounds_of(af))
 	# z_index 1 = on the wall, behind the people (z 0) that stand lower on the floor. Later
 	# overlays get a higher z so a stack composites front-to-back visibly.
 	spr.z_index = 1 + (_overlays.size() % 4)
 	var op := 0.7
 	spr.modulate = Color(1, 1, 1, op)
 	spr.set_meta("opacity", op)
-	_floor.add_child(spr)
+	af.add_child(spr)
 	_overlays.append(spr)
 
 func _remove_nearest_overlay(at: Vector2) -> void:
-	var ov := _nearest_overlay(at)
+	var ov := _nearest_overlay(at, _active_floor())
 	if ov == null:
 		return
 	_overlays.erase(ov)
 	ov.queue_free()
 
-func _nearest_overlay(at: Vector2) -> Sprite2D:
+# Nearest overlay ON floor `f` (default: any floor -- `at` must then be main-floor-local).
+func _nearest_overlay(at: Vector2, f: OfficeFloor = null) -> Sprite2D:
 	var best: Sprite2D = null
 	var best_d := INF
 	for spr in _overlays:
 		if not is_instance_valid(spr):
+			continue
+		if f != null and spr.get_parent() != f:
 			continue
 		var d: float = spr.position.distance_to(at)
 		if d < best_d:
@@ -1114,17 +1406,17 @@ func _nearest_overlay(at: Vector2) -> Sprite2D:
 	return best
 
 func _nudge_overlay_opacity(d: float) -> void:
-	var ov := _nearest_overlay(_floor.get_local_mouse_position())
+	var af := _active_floor()
+	var ov := _nearest_overlay(af.get_local_mouse_position(), af)
 	if ov == null:
 		return
 	var op := clampf(float(ov.get_meta("opacity", 0.7)) + d, 0.05, 1.0)
 	ov.set_meta("opacity", op)
 	ov.modulate = Color(1, 1, 1, op)
 
-# Snap a point to the nearest wall of the floor bounds (poster wall-affinity). Posters sit
-# just inside the wall so they read as mounted on it.
-func _snap_to_wall(p: Vector2) -> Vector2:
-	var b := _floor_bounds()
+# Snap a point to the nearest wall of the given floor bounds (poster wall-affinity).
+# Posters sit just inside the wall so they read as mounted on it.
+func _snap_to_wall(p: Vector2, b: Rect2) -> Vector2:
 	var inset := 20.0
 	var dl := p.x - b.position.x
 	var dr := b.end.x - p.x
@@ -1150,6 +1442,10 @@ func _clear_furniture() -> void:
 		if is_instance_valid(spr):
 			spr.queue_free()
 	_furniture.clear()
+	for spr in _furniture_b:
+		if is_instance_valid(spr):
+			spr.queue_free()
+	_furniture_b.clear()
 	_occupied_cells.clear()
 
 # --- Bulk toys --------------------------------------------------------------
@@ -1157,21 +1453,24 @@ func _randomize() -> void:
 	_clear_all()
 	_apply_skin(_rng.randi() % _skins.size())
 	_apply_mood(_rng.randi() % _moods.size())
-	_apply_state(_rng.randi() % _states.size())
+	if not _compare_mode:
+		_apply_state(_rng.randi() % _states.size())
 	var n := _rng.randi_range(4, 9)
 	for _i in range(n):
-		_spawn_person()
+		_spawn_person_on(_floor)
 	var c := _rng.randi_range(1, 3)
 	for _j in range(c):
-		_add_cat()
+		_add_cat(_floor)
 	_apply_occupant_scale()
 
+# v4: [0] clears CONTENTS but keeps the current view layout (compare stays compare --
+# it is the default view now, so clearing must not silently collapse to single-floor).
 func _clear_all() -> void:
-	if _compare_mode:
-		_compare_mode = false
-		_exit_compare()
 	_roster.clear()
 	_push_roster()
+	_roster_b.clear()
+	if _floor_b != null and is_instance_valid(_floor_b):
+		_floor_b.set_roster(_roster_b)
 	for cat in _cats:
 		if is_instance_valid(cat):
 			cat.queue_free()
@@ -1180,6 +1479,7 @@ func _clear_all() -> void:
 	_clear_furniture()
 	_clear_overlays()
 	_pop_level = 0
+	_pop_level_b = 0
 
 func _update_status() -> void:
 	if _status == null:
@@ -1187,17 +1487,24 @@ func _update_status() -> void:
 	# #899: surface the SELECTED sprite's per-sprite multiplier so [,]/[.] have
 	# visible feedback (the old status only printed the GLOBAL scale, so a
 	# working per-sprite nudge looked like dead keys).
-	var sel := _nearest_person(_floor.get_local_mouse_position())
+	var af := _active_floor()
+	var sel := _nearest_person(af.get_local_mouse_position(), PICK_RADIUS, af)
 	var sel_txt := "none in range"
 	if sel != null:
 		sel_txt = "x%.2f" % float(sel.get_meta("sb_scale_mult", 1.0))
-	_status.text = "skin: %s   |   people: %d   |   cats: %d   |   mood: %s   |   scale: %d%%   |   sel sprite: %s   |   populate: %d/%d%s" % [
-		_skins[_skin_idx]["name"], _roster.size(), _cats.size(), _moods[_mood_idx]["name"],
-		int(round(_occupant_scale * 100.0)), sel_txt, _pop_level, _POP_STAGES.size(),
+	var pop_txt := "%d/%d" % [_pop_level, _POP_STAGES.size()]
+	if _compare_mode:
+		pop_txt = "large %d/%d, small %d/%d" % [
+			_pop_level, _POP_STAGES.size(), _pop_level_b, _POP_STAGES.size()]
+	_status.text = "skin: %s   |   people: %d+%d   |   cats: %d   |   mood: %s   |   scale: %d%%   |   sel sprite: %s   |   populate: %s%s" % [
+		_skins[_skin_idx]["name"], _roster.size(), _roster_b.size(), _cats.size(),
+		_moods[_mood_idx]["name"],
+		int(round(_occupant_scale * 100.0)), sel_txt, pop_txt,
 		("" if _last_msg == "" else "\n>> " + _last_msg)]
 	if _asset_status == null:
 		return
-	var mode_line := "MODE: %s   |   compare: %s   |   doom-glow: %d%%   |   overlays: %d" % [
+	var mode_line := "ACTIVE FLOOR (under cursor): %s   |   MODE: %s   |   compare: %s   |   doom-glow: %d%%   |   overlays: %d" % [
+		_floor_label(af),
 		("OVERLAY (poster on wall)" if _overlay_mode else "prop placement"),
 		("ON" if _compare_mode else "off"),
 		int(round(_doom_level * 100.0)), _overlays.size()]
@@ -1212,8 +1519,9 @@ func _update_status() -> void:
 	else:
 		var id := String(cur.get("id", ""))
 		cur_line = "current prop: %s  [%s]" % [id.get_file(), _tags_for(id)]
-	_asset_status.text = "state: %s   |   props offered: %d   |   placed: %d   |   furniture: %d\n%s\n%s\ncats: %s\nloaded: %s" % [
-		_states[_state_idx]["name"], _prop_pool.size(), _placed_props.size(), _furniture.size(),
+	_asset_status.text = "tier: %s   |   props offered: %d   |   placed: %d   |   furniture: %d+%d\n%s\n%s\ncats: %s\nloaded: %s" % [
+		_pool_tier(), _prop_pool.size(), _placed_props.size(),
+		_furniture.size(), _furniture_b.size(),
 		mode_line, cur_line, _cat_walk_report, _load_report]
 
 func _has_promoted_posters() -> bool:

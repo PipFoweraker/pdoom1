@@ -43,7 +43,13 @@ const FLOOR_BASE_REGION := Rect2i(64, 32, 32, 32)
 # #770: integer nearest-neighbor upscale of the base floor tile so the concrete reads
 # at a sensible scale in the WATCH strip (the atlas tiles are 32px, which tiled tiny).
 const FLOOR_TILE_SCALE := 2
+# LEGACY fallback only (#907 integration): props with a manifest entry render at their
+# authored proportions via PropCatalogue; PROP_TARGET_H remains the force-scale for any
+# texture drawn WITHOUT a manifest id (PropCatalogue's own fallback reproduces it too).
 const PROP_TARGET_H := 46.0                    # #770: props drawn larger (was 30) to match the bigger floor
+# One floor tile on screen: 32 px art displayed at FLOOR_TILE_SCALE (matches
+# OfficeEmployeeSprite.TILE_PX = 64). PropCatalogue heights are in tiles of this size.
+const DISPLAY_TILE_PX := 32.0 * FLOOR_TILE_SCALE
 const FLOOR_DIM := Color(0.62, 0.63, 0.66)     # tint floor/props muted so sprites + UI read over them
 
 @export var tier: int = 0: set = set_tier
@@ -72,6 +78,12 @@ var _rng := RandomNumberGenerator.new()   # cosmetic-only (collaboration timing)
 var _collab_timer := 0.0
 var _floor_tile: Texture2D = null   # base concrete tile cropped from the Wang atlas (cosmetic)
 var _wall_strip_tex: Texture2D = null   # ADDITIVE dev-hook override for the top wall strip (cosmetic)
+# Office quality tier (canonical ladder: scummy / decent / premium -- see
+# docs/game-design/SEED_ASSET_REGISTRY_AND_VERDICTS.md). "" or "decent" = the shipped
+# default art. ADDITIVE dev hook like the tile overrides: the live WATCH integration
+# never sets it, so its behaviour is unchanged. Cosmetic only (ADR-0006).
+var _office_style: String = ""
+var _style_tex_cache: Dictionary = {}   # variant manifest id -> Texture2D (loaded once)
 
 func _ready() -> void:
 	custom_minimum_size = Vector2(360, 260)
@@ -200,6 +212,14 @@ func set_wall_strip_texture(tex: Texture2D) -> void:
 	_wall_strip_tex = tex
 	queue_redraw()
 
+## ADDITIVE dev hook: set the office quality tier (canonical ladder scummy/decent/premium).
+## Landmark props then prefer a manifest variant "<id>_<style>" whose style_tags carry the
+## tier; where that variant art is missing the prop falls back to the decent art UNCHANGED
+## (no tinting hacks -- ruled 2026-07-26). "" or "decent" = shipped default art.
+func set_office_style(style: String) -> void:
+	_office_style = style
+	queue_redraw()
+
 func _relayout_desks() -> void:
 	var b := _bounds()
 	var z := _zones(b)
@@ -261,18 +281,53 @@ func _build_floor_tile() -> Texture2D:
 	tile_img.resize(r.size.x * FLOOR_TILE_SCALE, r.size.y * FLOOR_TILE_SCALE, Image.INTERPOLATE_NEAREST)
 	return ImageTexture.create_from_image(tile_img)
 
-# Draw a promoted prop texture centred horizontally on `at`, feet-anchored (bottom edge at
-# `at`) so it sits on the floor, scaled to PROP_TARGET_H (aspect kept) and dimmed to match.
-func _draw_prop(tex: Texture2D, at: Vector2) -> void:
+# Draw a prop texture with its feet anchor at `at`, dimmed to match the floor.
+# #907 integration: when `id` has a manifest entry (PropCatalogue) the prop keeps its
+# AUTHORED proportions -- scaled so the opaque subject spans height_px(id, DISPLAY_TILE_PX)
+# and anchored at the manifest anchor_px (subject feet) instead of the texture's
+# bottom-centre (which drifted with transparent padding). Without an id / entry it falls
+# back to the legacy PROP_TARGET_H force-scale, so unknown textures render like before.
+func _draw_prop(tex: Texture2D, at: Vector2, id: String = "") -> void:
 	if tex == null:
 		return
 	var src := tex.get_size()
 	if src.y <= 0.0:
 		return
+	if id != "" and PropCatalogue.has(id):
+		var e := PropCatalogue.get_entry(id)
+		var subj: Array = e.get("subject_px", [])
+		var subject_h := float(subj[1]) if subj.size() == 2 else src.y
+		if subject_h <= 0.0:
+			subject_h = src.y
+		var scl_m := PropCatalogue.height_px(id, DISPLAY_TILE_PX) / subject_h
+		var anchor := PropCatalogue.anchor(id)
+		if anchor == PropCatalogue.ANCHOR_UNSET:
+			anchor = Vector2(src.x * 0.5, src.y)   # no anchor data -> texture bottom-centre
+		draw_texture_rect(tex, Rect2(at - anchor * scl_m, src * scl_m), false, FLOOR_DIM)
+		return
 	var scl := PROP_TARGET_H / src.y
 	var w := src.x * scl
 	var rect := Rect2(at - Vector2(w * 0.5, PROP_TARGET_H), Vector2(w, PROP_TARGET_H))
 	draw_texture_rect(tex, rect, false, FLOOR_DIM)
+
+# Resolve the texture + manifest id a landmark prop should draw with under the current
+# office style. Honours the manifest's style_tags: a "<id>_<style>" variant is used only
+# if manifested AND tagged for the style; otherwise the decent art draws unchanged.
+func _styled_prop(id: String, default_tex: Texture2D) -> Array:
+	if _office_style == "" or _office_style == "decent":
+		return [default_tex, id]
+	var variant := "%s_%s" % [id, _office_style]
+	if not PropCatalogue.has(variant) or not (_office_style in PropCatalogue.style_tags(variant)):
+		return [default_tex, id]   # variant art missing -> decent art unchanged
+	if not _style_tex_cache.has(variant):
+		var path := PropCatalogue.art_path(variant)
+		var tex := load(path) if path != "" and ResourceLoader.exists(path) else null
+		_style_tex_cache[variant] = tex if tex != null else default_tex
+	return [_style_tex_cache[variant], variant]
+
+func _draw_landmark_prop(id: String, default_tex: Texture2D, at: Vector2) -> void:
+	var resolved := _styled_prop(id, default_tex)
+	_draw_prop(resolved[0], at, resolved[1])
 
 # --- Floor background (tier-agnostic; sprites draw on top) ------------------
 func _draw() -> void:
@@ -307,9 +362,11 @@ func _draw() -> void:
 	else:
 		draw_rect(Rect2(Vector2(b.position.x + 6, b.position.y + 2), Vector2(b.size.x - 12, 5)), Color(0.45, 0.6, 0.75, 0.45))
 	draw_circle(z["cat_pos"], 9.0, Color(0.9, 0.5, 0.7, 0.4))            # cat corner (pink)
-	_draw_prop(PROP_WATER_COOLER, z["water_pos"])                       # water cooler (top-right)
-	_draw_prop(PROP_FILING_CABINET, z["fridge_pos"])                    # filing cabinet appliance (bottom-right)
-	_draw_prop(PROP_SERVER, b.position + Vector2(b.size.x * 0.12, b.size.y * 0.18))  # server cluster decor (top-left)
+	# #907: landmark props render manifest-scaled/anchored, style-variant-aware.
+	_draw_landmark_prop("water_cooler", PROP_WATER_COOLER, z["water_pos"])          # top-right
+	_draw_landmark_prop("filing_cabinet", PROP_FILING_CABINET, z["fridge_pos"])     # bottom-right
+	_draw_landmark_prop("server_cluster", PROP_SERVER,
+		b.position + Vector2(b.size.x * 0.12, b.size.y * 0.18))                     # top-left decor
 
 # ---------------------------------------------------------------------------
 # READ-ONLY GameState adapter. Static so callers can build a snapshot without

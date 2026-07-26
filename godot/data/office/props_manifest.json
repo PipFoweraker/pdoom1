@@ -1,7 +1,7 @@
 {
   "_meta": {
-    "version": "1.0",
-    "description": "Per-asset metadata for office floor props. Replaces the renderer's one-size-fits-all PROP_TARGET_H force-scale (office_floor.gd / office_sandbox.gd) once the in-flight scale lane merges. Loaded by scripts/core/prop_catalogue.gd. Measurements taken from the real PNGs (alpha bounding box) -- see docs/art/PROP_MANIFEST.md for how to add a prop.",
+    "version": "1.1",
+    "description": "Per-asset metadata for office floor props. Consumed by office_floor.gd / office_sandbox.gd (integrated 2026-07-26): manifested props render at authored proportions, feet-anchored at anchor_px, and occupy footprint_tiles. Loaded by scripts/core/prop_catalogue.gd. Measurements taken from the real PNGs (alpha bounding box) -- see docs/art/PROP_MANIFEST.md for how to add a prop.",
     "measured_with": "python PIL alpha-channel getbbox(), 2026-07-26"
   },
   "_schema": {
@@ -11,7 +11,7 @@
     "anchor_px": "[x, y] feet anchor in CANVAS coordinates: bottom-centre of the opaque bbox. x may be a .5 half-pixel for even-width subjects; y is the exclusive bottom of the opaque bbox (the baseline row the feet sit on).",
     "footprint_tiles": "[w, h] floor tiles occupied for placement/collision, at the 32px art-tile scale (floor tile art is 32px, displayed at 64px). h (depth) is a judgement call -- front-view art carries no depth information.",
     "height_tiles": "subject height / 32, rounded to the nearest 0.25 (ties round up).",
-    "style_tags": "office-state families this prop belongs to: any of [\"scummy\", \"decent\"]. Both tags = state-neutral art shown in either state.",
+    "style_tags": "office quality tiers this art serves, from the canonical ladder [\"scummy\", \"decent\", \"premium\"] (ruled 2026-07-26; see docs/game-design/SEED_ASSET_REGISTRY_AND_VERDICTS.md). Tag only the tiers the art was AUTHORED for. Renderers fall back to the decent art unchanged where a tier-variant is missing (no tinting hacks). Tier-variant entries use the id convention <base_id>_<tier>, e.g. water_cooler_scummy.",
     "sockets": "SCHEMA PLACEHOLDER, always [] for now. Future attachment points for cosmetics/paper-doll layers. Each socket will be {\"name\": String, \"px\": [x, y] canvas coords, \"layer\": \"front\"|\"behind\" draw order relative to the prop}. No consumer exists yet -- do not populate until one does.",
     "review": "optional bool: true = a field needs Pip's judgement (see notes).",
     "notes": "optional free-text provenance / uncertainty notes."
@@ -24,10 +24,10 @@
       "anchor_px": [37, 106],
       "footprint_tiles": [2, 1],
       "height_tiles": 3.25,
-      "style_tags": ["scummy", "decent"],
+      "style_tags": ["decent"],
       "sockets": [],
       "review": true,
-      "notes": "Footprint: subject is 52px wide = 1.6 tiles, rounded up to 2x1, but a filing cabinet may be intended as 1x1 -- Pip to rule. Height 3.125 rounded up to 3.25 (exact tie). Style tags inferred: no scummy/decent pair file exists, art is state-neutral."
+      "notes": "Footprint: subject is 52px wide = 1.6 tiles, rounded up to 2x1, but a filing cabinet may be intended as 1x1 -- Pip to rule. Height 3.125 rounded up to 3.25 (exact tie). Tier inferred as decent (no tier-variant art exists); Pip to confirm in the next review sweep."
     },
     "server_cluster": {
       "art": "res://assets/office_floor/props/server_cluster.png",
@@ -36,10 +36,10 @@
       "anchor_px": [64, 116],
       "footprint_tiles": [4, 1],
       "height_tiles": 3.5,
-      "style_tags": ["scummy", "decent"],
+      "style_tags": ["decent"],
       "sockets": [],
       "review": true,
-      "notes": "Footprint: 118px wide = 3.7 tiles -> 4 wide; depth set to 1 but a server rack cluster plausibly occupies 2 tiles deep -- Pip to rule. Style tags inferred: no pair file, state-neutral art."
+      "notes": "Footprint: 118px wide = 3.7 tiles -> 4 wide; depth set to 1 but a server rack cluster plausibly occupies 2 tiles deep -- Pip to rule. Tier inferred as decent (no tier-variant art exists); Pip to confirm in the next review sweep."
     },
     "water_cooler": {
       "art": "res://assets/office_floor/props/water_cooler.png",
@@ -48,9 +48,10 @@
       "anchor_px": [31.5, 114],
       "footprint_tiles": [1, 1],
       "height_tiles": 3.5,
-      "style_tags": ["scummy", "decent"],
+      "style_tags": ["decent"],
       "sockets": [],
-      "notes": "Style tags inferred: no pair file, state-neutral art. Footprint confident (37px subject fits one 32px tile)."
+      "review": true,
+      "notes": "Tier inferred as decent (no tier-variant art exists); Pip to confirm in the next review sweep. Footprint confident (37px subject fits one 32px tile)."
     }
   }
 }

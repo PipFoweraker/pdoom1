@@ -5,9 +5,9 @@ class_name PropCatalogue
 ## per-prop footprint, feet anchor, height, and style-family tags.
 ##
 ## PURPOSE: replace the renderer's one-size-fits-all PROP_TARGET_H force-scale (every prop
-## squashed to 46 display px, feet-anchored) with per-asset metadata. This lane ships DATA +
-## LOADER + TESTS only; office_floor.gd / office_sandbox.gd integration is a documented
-## follow-up AFTER the in-flight scale lane merges (see docs/art/PROP_MANIFEST.md).
+## squashed to 46 display px, feet-anchored) with per-asset metadata. INTEGRATED 2026-07-26:
+## office_floor.gd (_draw_prop) and office_sandbox.gd (_prop_scale/_apply_prop_anchor/
+## footprint occupancy) consume this catalogue (see docs/art/PROP_MANIFEST.md).
 ##
 ## DETERMINISM: ids() and style_ids() return SORTED id lists, so any seeded-rng draw over
 ## them is independent of JSON key / Dictionary iteration order (same rule as ADR-0006).
@@ -121,8 +121,8 @@ static func art_path(id: String) -> String:
 
 
 static func style_tags(id: String) -> Array[String]:
-	"""Office-state families ("scummy"/"decent") this prop belongs to. Empty for
-	unmanifested ids."""
+	"""Office quality tiers this art serves, from the canonical ladder
+	scummy/decent/premium (ruled 2026-07-26). Empty for unmanifested ids."""
 	_ensure_loaded()
 	var out: Array[String] = []
 	if not _defs.has(id):
