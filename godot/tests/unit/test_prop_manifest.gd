@@ -93,12 +93,13 @@ func test_geometry_sane():
 			int(foot[0]) > 0 and int(foot[1]) > 0, "'%s' footprint tiles positive" % id
 		)
 		assert_gt(float(e.get("height_tiles", 0.0)), 0.0, "'%s' height_tiles positive" % id)
-		# style_tags restricted to the known office-state families.
+		# style_tags restricted to the canonical quality-tier ladder (ruled 2026-07-26).
 		var tags: Array = e.get("style_tags", [])
 		assert_true(tags.size() > 0, "'%s' carries at least one style tag" % id)
 		for t in tags:
 			assert_true(
-				t in ["scummy", "decent"], "'%s' style tag '%s' not a known family" % [id, t]
+				t in ["scummy", "decent", "premium"],
+				"'%s' style tag '%s' not on the scummy/decent/premium ladder" % [id, t]
 			)
 
 
