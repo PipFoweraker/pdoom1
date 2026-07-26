@@ -13,7 +13,9 @@ class_name OfficeFloor
 ##   set_roster(snapshot: Array)   # array of employee dicts; adds/updates/removes sprites
 ##   set_tier(t: int)              # 0 = placeholder blobs+hats, 1 = AnimatedSprite2D FSM
 ##   tier                          # property (get/set)
-##   set_sprite_frames(frames)     # optional: real pixellab.ai art for Tier 1
+##   set_sprite_frames(frames)     # optional: FALLBACK shared art for Tier 1
+##   set_use_variant_pool(on)      # per-worker appearance variants (WorkerVariantPool); default ON
+##   set_extra_blocked_rects(a)    # additive dev hook: extra no-stand prop footprints (sandbox)
 ##   OfficeFloor.snapshot_from_state(state) -> Array   # static, read-only GameState adapter
 ##
 ## Employee snapshot dict fields (ALL optional; unknown fields ignored; see
@@ -72,8 +74,27 @@ const HAT_COLOR := Color(0.14, 0.14, 0.18)
 const COLLAB_CHECK_RANGE := Vector2(2.5, 5.0)   # seconds between collaboration attempts
 const COLLAB_START_CHANCE := 0.5                # chance to actually pair when eligible
 
+# #913 water-cooler bubbles: tiny procedural 3-frame loop drawn over the jug
+# (no new art). ~2 fps and low alpha so it reads as ambient life, not a beacon.
+const BUBBLE_FRAMES := 3
+const BUBBLE_FRAME_TIME := 0.5                  # seconds per frame
+const BUBBLE_COLOR := Color(0.85, 0.95, 1.0, 0.38)
+
 var _sprites: Dictionary = {}   # id -> OfficeEmployeeSprite
-var _shared_frames: SpriteFrames = null   # optional real art shared across sprites
+var _shared_frames: SpriteFrames = null   # FALLBACK art shared across sprites
+# Worker appearance variants (#793 mechanism half): when ON (default), each
+# sprite's SpriteFrames comes from WorkerVariantPool keyed by the snapshot's
+# appearance_id; any unresolved variant falls back to _shared_frames. Variant 0
+# is wired to the current shared asset, so behaviour is unchanged until new
+# worker art is triaged in. The sandbox turns this OFF for colour-skin previews.
+var _use_variant_pool := true
+var _appearance: Dictionary = {}          # sprite id -> appearance_id (for reapplies)
+# Tier-1 collision: floor-local no-stand rects built from landmark-prop
+# footprints (PropCatalogue) + any extra rects a host supplies (sandbox props).
+var _blocked_rects: Array = []
+var _extra_blocked_rects: Array = []
+var _bubble_frame := 0
+var _bubble_t := 0.0
 var _rng := RandomNumberGenerator.new()   # cosmetic-only (collaboration timing); NOT the game RNG
 var _collab_timer := 0.0
 var _floor_tile: Texture2D = null   # base concrete tile cropped from the Wang atlas (cosmetic)
@@ -94,6 +115,7 @@ func _ready() -> void:
 	_rng.randomize()
 	_collab_timer = _rng.randf_range(COLLAB_CHECK_RANGE.x, COLLAB_CHECK_RANGE.y)
 	resized.connect(_on_resized)
+	_rebuild_blocked_rects()
 	queue_redraw()
 
 # Collaboration is orchestrated HERE because the floor knows who else is working.
@@ -103,6 +125,33 @@ func _process(delta: float) -> void:
 	if _collab_timer <= 0.0:
 		_collab_timer = _rng.randf_range(COLLAB_CHECK_RANGE.x, COLLAB_CHECK_RANGE.y)
 		_maybe_start_collaboration()
+	_apply_separation(delta)
+	_tick_bubbles(delta)
+
+# Tier-1 collision: one separation pass per frame. Positions are SNAPSHOTTED
+# before any sprite moves, so the result is independent of iteration order --
+# fully deterministic from positions alone (no RNG; see EmployeeSprite).
+# O(n^2) is fine at the 1..24-walker scale this floor is scoped to.
+func _apply_separation(delta: float) -> void:
+	if _sprites.size() < 2:
+		return
+	var ids := _sprites.keys()
+	var pts: Array = []
+	for id in ids:
+		pts.append((_sprites[id] as Node2D).position)
+	for i in range(ids.size()):
+		var others: Array = []
+		for j in range(ids.size()):
+			if j != i:
+				others.append(pts[j])
+		(_sprites[ids[i]] as OfficeEmployeeSprite).apply_separation(others, delta)
+
+func _tick_bubbles(delta: float) -> void:
+	_bubble_t += delta
+	if _bubble_t >= BUBBLE_FRAME_TIME:
+		_bubble_t = fmod(_bubble_t, BUBBLE_FRAME_TIME)
+		_bubble_frame = (_bubble_frame + 1) % BUBBLE_FRAMES
+		queue_redraw()
 
 func _maybe_start_collaboration() -> void:
 	var available: Array = []
@@ -118,11 +167,13 @@ func _maybe_start_collaboration() -> void:
 		a.try_start_collaboration(b.desk_pos)
 
 func _on_resized() -> void:
-	# Keep everyone inside the new bounds.
+	# Keep everyone inside the new bounds; landmark footprints move with them.
 	var b := _bounds()
+	_rebuild_blocked_rects()
 	for id in _sprites:
 		var spr: OfficeEmployeeSprite = _sprites[id]
 		spr.bounds = b
+		spr.blocked_rects = _blocked_rects
 	_relayout_desks()
 	queue_redraw()
 
@@ -144,12 +195,16 @@ func set_roster(snapshot: Array) -> void:
 			continue
 		var id = emp.get("id", emp.get("name", str(i)))
 		seen[id] = true
+		# Appearance seam (#758/#793): appearance_id keys the worker's variant art;
+		# absent -> the roster id (stable), so assignment never shuffles on re-set.
+		_appearance[id] = emp.get("appearance_id", id)
 		var state := EmployeeFSM.map_state(emp)
 		var spec := String(emp.get("specialization", ""))
 		var body: Color = SPEC_COLORS.get(spec, DEFAULT_BODY_COLOR)
 		var desk := _desk_for_index(i, total, b)
 		var cfg := {
 			"state": state, "name": String(emp.get("name", str(id))),
+			"entity_id": str(id),
 			"body_color": body, "hat_color": HAT_COLOR, "desk_pos": desk,
 			"fridge_pos": z["fridge_pos"], "water_pos": z["water_pos"],
 			"cat_pos": z["cat_pos"], "window_pos": z["window_pos"],
@@ -157,22 +212,26 @@ func set_roster(snapshot: Array) -> void:
 		if _sprites.has(id):
 			var spr: OfficeEmployeeSprite = _sprites[id]
 			spr.bounds = b
+			spr.blocked_rects = _blocked_rects
 			spr.configure(cfg)
 		else:
 			var spr2: OfficeEmployeeSprite = EmployeeSpriteScript.new()
 			spr2.tier = tier
 			spr2.bounds = b
+			spr2.blocked_rects = _blocked_rects
 			spr2.position = desk
 			add_child(spr2)
 			spr2.configure(cfg)
-			if _shared_frames != null:
-				spr2.set_sprite_frames(_shared_frames)
+			var fr := _resolved_frames(_appearance[id])
+			if fr != null:
+				spr2.set_sprite_frames(fr)
 			_sprites[id] = spr2
 	# Remove sprites for employees no longer present.
 	for id in _sprites.keys():
 		if not seen.has(id):
 			_sprites[id].queue_free()
 			_sprites.erase(id)
+			_appearance.erase(id)
 	queue_redraw()
 
 ## Number of employee sprites currently on the floor (the walker count). Read-only;
@@ -186,11 +245,37 @@ func set_tier(t: int) -> void:
 		_sprites[id].set_tier(t)
 	queue_redraw()
 
-## Supply a real Tier-1 SpriteFrames (animations: idle/walking/working/stressed).
+## Supply the FALLBACK Tier-1 SpriteFrames (animations: idle/walking/working/
+## stressed). With the variant pool ON (default) each sprite still prefers its
+## appearance-mapped variant; today variant 0 IS this same shared asset, so the
+## two paths render identically until new worker art is triaged in.
 func set_sprite_frames(frames: SpriteFrames) -> void:
 	_shared_frames = frames
+	_reapply_frames()
+
+## Toggle per-worker appearance variants (WorkerVariantPool). The sandbox turns
+## this OFF so its colour-skin preview frames apply uniformly; the live WATCH
+## integration leaves it ON.
+func set_use_variant_pool(enabled: bool) -> void:
+	if _use_variant_pool == enabled:
+		return
+	_use_variant_pool = enabled
+	_reapply_frames()
+
+## Frames for one worker: appearance-mapped variant when the pool is on and the
+## variant's art resolves; otherwise the shared fallback (graceful degrade).
+func _resolved_frames(appearance_id) -> SpriteFrames:
+	if _use_variant_pool:
+		var f := WorkerVariantPool.frames_for(appearance_id)
+		if f != null:
+			return f
+	return _shared_frames
+
+func _reapply_frames() -> void:
 	for id in _sprites:
-		_sprites[id].set_sprite_frames(frames)
+		var f := _resolved_frames(_appearance.get(id, id))
+		if f != null:
+			_sprites[id].set_sprite_frames(f)
 
 # ---------------------------------------------------------------------------
 # ADDITIVE DEV HOOKS (office sandbox v2). PURELY COSMETIC + backward-compatible:
@@ -220,6 +305,39 @@ func set_office_style(style: String) -> void:
 	_office_style = style
 	queue_redraw()
 
+## ADDITIVE dev hook (tier-1 collision): extra no-stand rects in floor-local
+## coords -- the sandbox feeds its placed-prop/furniture footprints through here.
+## The live WATCH integration never calls this (backward-compatible no-op).
+func set_extra_blocked_rects(rects: Array) -> void:
+	_extra_blocked_rects = rects.duplicate()
+	_rebuild_blocked_rects()
+	for id in _sprites:
+		_sprites[id].blocked_rects = _blocked_rects
+
+## Read-only: the current no-stand rects (own landmarks + extras). For tests.
+func blocked_rects() -> Array:
+	return _blocked_rects.duplicate()
+
+# Landmark props whose PropCatalogue footprints become no-stand rects. The cat
+# corner and window strip stay procedural (no prop, nothing to block).
+func _rebuild_blocked_rects() -> void:
+	_blocked_rects = []
+	var b := _bounds()
+	var z := _zones(b)
+	_blocked_rects.append(_footprint_rect("water_cooler", z["water_pos"]))
+	_blocked_rects.append(_footprint_rect("filing_cabinet", z["fridge_pos"]))
+	_blocked_rects.append(_footprint_rect("server_cluster",
+		b.position + Vector2(b.size.x * 0.12, b.size.y * 0.18)))
+	_blocked_rects.append_array(_extra_blocked_rects)
+
+# Floor area a feet-anchored prop occupies: footprint_tiles wide, extending UP
+# from the feet point (same convention as the sandbox occupancy pass, #907).
+func _footprint_rect(id: String, feet: Vector2) -> Rect2:
+	var fp := PropCatalogue.footprint(id)
+	var w := fp.x * DISPLAY_TILE_PX
+	var d := fp.y * DISPLAY_TILE_PX
+	return Rect2(feet - Vector2(w * 0.5, d), Vector2(w, d))
+
 func _relayout_desks() -> void:
 	var b := _bounds()
 	var z := _zones(b)
@@ -232,6 +350,7 @@ func _relayout_desks() -> void:
 		spr.water_pos = z["water_pos"]
 		spr.cat_pos = z["cat_pos"]
 		spr.window_pos = z["window_pos"]
+		spr.blocked_rects = _blocked_rects
 
 # Cosmetic destination LANDMARKS derived from the floor bounds -- placed at distinct
 # spots so a walking employee's destination reads at a glance (Tier-1 named points,
@@ -364,9 +483,24 @@ func _draw() -> void:
 	draw_circle(z["cat_pos"], 9.0, Color(0.9, 0.5, 0.7, 0.4))            # cat corner (pink)
 	# #907: landmark props render manifest-scaled/anchored, style-variant-aware.
 	_draw_landmark_prop("water_cooler", PROP_WATER_COOLER, z["water_pos"])          # top-right
+	_draw_water_bubbles(z["water_pos"])                                             # #913 juice
 	_draw_landmark_prop("filing_cabinet", PROP_FILING_CABINET, z["fridge_pos"])     # bottom-right
 	_draw_landmark_prop("server_cluster", PROP_SERVER,
 		b.position + Vector2(b.size.x * 0.12, b.size.y * 0.18))                     # top-left decor
+
+# #913: subtle 3-frame procedural bubble loop over the water-cooler jug (drawn,
+# no art). Two bubbles rise a step per frame inside the jug (the top ~third of
+# the manifest-scaled prop); the second lags a frame so the loop reads organic.
+func _draw_water_bubbles(feet: Vector2) -> void:
+	var h := PropCatalogue.height_px("water_cooler", DISPLAY_TILE_PX)
+	if h <= 0.0:
+		return
+	var rise := h * 0.05                                   # px climbed per frame
+	var base_y := feet.y - h * 0.72                        # bottom of the jug water line
+	var y_a := base_y - float(_bubble_frame) * rise
+	var y_b := base_y - float((_bubble_frame + BUBBLE_FRAMES - 1) % BUBBLE_FRAMES) * rise
+	draw_circle(Vector2(feet.x - h * 0.02, y_a), 1.6, BUBBLE_COLOR)
+	draw_circle(Vector2(feet.x + h * 0.025, y_b + h * 0.03), 1.1, BUBBLE_COLOR)
 
 # ---------------------------------------------------------------------------
 # READ-ONLY GameState adapter. Static so callers can build a snapshot without

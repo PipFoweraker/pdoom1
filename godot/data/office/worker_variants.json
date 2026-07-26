@@ -1,0 +1,19 @@
+{
+  "_meta": {
+    "purpose": "Worker appearance variant registry (#793 mechanism half). Maps appearance_id -> SpriteFrames via WorkerVariantPool (stable posmod over list order). Add triaged round-2 worker sheets HERE as new entries -- no code changes needed.",
+    "updated": "2026-07-26",
+    "rules": [
+      "List order is the assignment order: appearance_id maps to posmod(id_or_hash, count).",
+      "Adding/removing a variant REMAPS assignments (cosmetic-only, ADR-0006 pure view).",
+      "frames must be a res:// SpriteFrames with the employee_sprite clip contract (idle/walking/working/stressed + optional walking_<facing> and *_alt clips).",
+      "A missing/unloadable frames path degrades to the floor's shared fallback frames."
+    ]
+  },
+  "variants": [
+    {
+      "id": "worker_v0",
+      "frames": "res://assets/office_floor/artloop_char/office_worker.tres",
+      "notes": "The current shared pixellab worker. Variant 0 == the shared asset keeps behaviour unchanged until round-2 workers are triaged in (do NOT wire raw art_source files)."
+    }
+  ]
+}

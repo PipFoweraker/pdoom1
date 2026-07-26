@@ -34,6 +34,11 @@ const ARRIVE_EPS := 4.0
 # at 2.0 the 140px subject drew ~280px tall in a ~260px room.)
 const TILE_PX := 64.0                        # one floor tile on screen
 const CHAR_TARGET_H := TILE_PX * 2.0         # 128px: target on-screen worker height
+# Cat height as a fraction of one tile. Shared scale-ruling home: cat renderers
+# (sandbox RealCat today, any future live cat) derive their target height from
+# TILE_PX * CAT_TILE_RATIO so one constant moves every cat. #913 "sneaky 1.1x":
+# 0.5 -> 0.55 tile (Pip-approved 2026-07-26).
+const CAT_TILE_RATIO := 0.55
 const ART_CANVAS_H := 180.0                  # artloop_char frame canvas
 const ART_SUBJECT_H := 140.0                 # opaque subject height in that canvas
 const ART_FEET_Y := 158.0                    # bottom of the opaque bbox (the feet)
@@ -59,6 +64,23 @@ const PLACEHOLDER_FEET_OFFSET := Vector2(0.0, PLACEHOLDER_CANVAS_H * 0.5 - PLACE
 # 24x32-blob era that let the bigger art clip through the room bounds).
 const FOOTPRINT_RATIO := 0.15
 const FEET_BOTTOM_PAD := 2.0                 # feet stay just off the bottom wall line
+
+# --- Tier-1 collision: separation steering (boids-lite) ---------------------
+# Walkers softly repel walkers so they stop rendering inside each other (the
+# obvious failure mode). DETERMINISTIC by construction: the repulsion is a pure
+# function of positions only -- no RNG anywhere in the separation path.
+# STRENGTH (40) is deliberately BELOW walk speed (42): separation can deflect
+# and slow a walker but can never stop it reaching a destination, so head-on
+# meetings pass through transiently instead of deadlocking. Near the walker's
+# CURRENT nav target the push fades to zero (SEPARATION_DAMP_RADIUS ramp), so
+# ring-slotted desk seating -- an intentional convergence point -- still works.
+const SEPARATION_RADIUS := 30.0        # px: neighbours inside this repel
+const SEPARATION_STRENGTH := 40.0      # px/sec push at full overlap (< speed 42)
+const SEPARATION_DAMP_RADIUS := 28.0   # px: push ramps 0..full over this distance from the nav target
+
+# Margin kept between feet and a blocked prop-footprint rect after a push-out.
+const BLOCKED_RECT_MARGIN := 2.0
+const WANDER_TARGET_RETRIES := 8       # attempts to roll a wander target outside blocked rects
 
 # Micro-behavior tuning (seconds / per-second chances; all cosmetic).
 const BREAK_CHANCE_PER_SEC := 0.14      # once off cooldown, chance/sec to start a break
@@ -120,6 +142,13 @@ var water_pos: Vector2 = Vector2.ZERO     # water cooler
 var cat_pos: Vector2 = Vector2.ZERO       # pat the cat
 var window_pos: Vector2 = Vector2.ZERO    # window-gaze
 var speed: float = 42.0
+# Tier-1 collision: floor-local rects (prop footprints) the FEET may not stand in.
+# Assigned by OfficeFloor alongside bounds. Straight-line movement may still cross
+# one transiently (tier-1 boundary); standing/idling inside one is prevented.
+var blocked_rects: Array = []
+# Stable identity used for the deterministic alt-clip splice (hash seed). Set from
+# the roster snapshot id; falls back to the display name.
+var entity_id: String = ""
 
 var _target: Vector2 = Vector2.ZERO
 var _rng := RandomNumberGenerator.new()   # cosmetic-only; deliberately un-seeded from the game
@@ -144,6 +173,19 @@ var _facing: String = FACING_SOUTH
 var _facing_active: bool = false          # true while translating or spinning-in-place
 var _facing_textures: Dictionary = DEFAULT_FACING_TEXTURES
 
+# --- #913 alt-clip splice ("butt-flash" hook) --------------------------------
+# When the SpriteFrames carries "<clip>_alt" (e.g. "walking_north_alt"), the
+# walker occasionally plays that alt loop ONCE mid-cycle, then returns to the
+# base clip. DETERMINISTIC: which loops splice is a pure hash of entity_id +
+# loop count (should_play_alt), roughly 1-in-ALT_CLIP_PERIOD loops. The art
+# itself handles the visual blend (cat_b2 MANIFEST: alt loops are authored as
+# splice-window frames ~2-8); we just play the alt clip from its start.
+const ALT_CLIP_SUFFIX := "_alt"
+const ALT_CLIP_PERIOD := 6                # ~1-in-6 loops plays the alt clip
+var _anim_loop_count := 0
+var _alt_active := false
+var _alt_base_clip := ""
+
 func _ready() -> void:
 	_rng.randomize()
 	_target = position
@@ -151,6 +193,9 @@ func _ready() -> void:
 	_anim.visible = false
 	# Crisp pixel art, no blur, regardless of per-file .import filter settings.
 	_anim.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	# #913 alt-clip splice: count base-clip loops; end a spliced alt loop after one pass.
+	_anim.animation_looped.connect(_on_animation_looped)
+	_anim.animation_finished.connect(_on_animation_finished)
 	add_child(_anim)
 	_facing_sprite = Sprite2D.new()
 	_facing_sprite.visible = false
@@ -169,6 +214,7 @@ func configure(data: Dictionary) -> void:
 	var prev_state := sprite_state
 	sprite_state = data.get("state", EmployeeFSM.STATE_IDLE)
 	emp_name = data.get("name", "")
+	entity_id = String(data.get("entity_id", emp_name if entity_id == "" else entity_id))
 	body_color = data.get("body_color", body_color)
 	hat_color = data.get("hat_color", hat_color)
 	desk_pos = data.get("desk_pos", desk_pos)
@@ -295,8 +341,58 @@ func _show_animated_clip(clip_name: String) -> void:
 	if _facing_sprite:
 		_facing_sprite.visible = false
 	_anim.visible = true
+	if _alt_active:
+		if clip_name == _alt_base_clip:
+			return   # let the spliced alt loop finish one pass; _end_alt_clip restores base
+		_alt_active = false   # wanted clip changed mid-splice -> cancel the alt
+		_alt_base_clip = ""
 	if _anim.sprite_frames and _anim.sprite_frames.has_animation(clip_name):
 		_anim.play(clip_name)
+
+# --- #913 alt-clip splice ----------------------------------------------------
+
+## Pure decision: does loop `loop_index` of entity `id` splice in the alt clip?
+## Deterministic (stable string hash + posmod) -- exactly one splice per `period`
+## consecutive loops, phase-offset per entity so a floor full of walkers doesn't
+## flash in sync. No RNG (ADR-0006-adjacent: cosmetic but reproducible).
+static func should_play_alt(id: String, loop_index: int, period: int = ALT_CLIP_PERIOD) -> bool:
+	if period <= 0:
+		return false
+	return posmod(id.hash() + loop_index, period) == 0
+
+func _on_animation_looped() -> void:
+	if _alt_active:
+		_end_alt_clip()
+		return
+	_anim_loop_count += 1
+	_maybe_start_alt_clip()
+
+func _on_animation_finished() -> void:
+	# A non-looping alt clip ends here instead of animation_looped.
+	if _alt_active:
+		_end_alt_clip()
+
+func _maybe_start_alt_clip() -> void:
+	if _anim == null or _anim.sprite_frames == null:
+		return
+	var base := String(_anim.animation)
+	if base.ends_with(ALT_CLIP_SUFFIX):
+		return
+	var alt := base + ALT_CLIP_SUFFIX
+	if not _anim.sprite_frames.has_animation(alt):
+		return
+	if not should_play_alt(entity_id, _anim_loop_count):
+		return
+	_alt_active = true
+	_alt_base_clip = base
+	_anim.play(alt)
+
+func _end_alt_clip() -> void:
+	_alt_active = false
+	var back := _alt_base_clip
+	_alt_base_clip = ""
+	if _anim and _anim.sprite_frames and _anim.sprite_frames.has_animation(back):
+		_anim.play(back)
 
 func _show_static_facing(facing: String) -> void:
 	if _facing_sprite == null:
@@ -322,14 +418,124 @@ static func facing_from_vector(v: Vector2) -> String:
 func _set_facing(f: String) -> void:
 	_facing = f
 
-## Clamp a movement target into the walkable feet rect (#899 feet-anchor pass).
-## Landmarks/desks laid out near the top wall stay valid destinations -- feet
-## stop at the closest legal point (head overlapping the wall art reads as
-## standing AT it) -- and arrival checks agree with the clamped point instead
-## of never triggering.
+## Clamp a movement target into the walkable feet rect (#899 feet-anchor pass)
+## AND out of any blocked prop-footprint rect (tier-1 collision). Landmarks/desks
+## laid out near the top wall stay valid destinations -- feet stop at the closest
+## legal point (head overlapping the wall art reads as standing AT it) -- and a
+## destination INSIDE a prop (e.g. the water-cooler landmark is the prop's feet)
+## resolves to the nearest point just outside it, so arrival checks agree with
+## the standing spot instead of never triggering.
 func _clamp_target(p: Vector2) -> Vector2:
 	var walk := _feet_rect()
-	return p.clamp(walk.position, walk.end)
+	var c := p.clamp(walk.position, walk.end)
+	return push_out_of_rects(c, blocked_rects, walk)
+
+# --- Tier-1 collision helpers (pure/static, unit-testable) -------------------
+
+## Nearest point just OUTSIDE rect `r` for an inside point `p`. Exits through the
+## nearest edge, preferring exits that stay inside the walkable rect `walk` (so a
+## prop against a wall pushes feet back onto the floor, not into the wall).
+static func exit_point_from_rect(p: Vector2, r: Rect2, walk: Rect2, margin: float = BLOCKED_RECT_MARGIN) -> Vector2:
+	var candidates := [
+		Vector2(r.position.x - margin, p.y),   # out the left edge
+		Vector2(r.end.x + margin, p.y),        # right
+		Vector2(p.x, r.position.y - margin),   # top
+		Vector2(p.x, r.end.y + margin),        # bottom
+	]
+	var best := Vector2.INF
+	var best_d := INF
+	var best_in_walk := Vector2.INF
+	var best_in_walk_d := INF
+	for c in candidates:
+		var d: float = p.distance_to(c)
+		if d < best_d:
+			best_d = d
+			best = c
+		if walk.has_point(c) and d < best_in_walk_d:
+			best_in_walk_d = d
+			best_in_walk = c
+	return best_in_walk if best_in_walk != Vector2.INF else best
+
+## Push `p` out of every rect in `rects` (two settling passes cover overlapping
+## rects). Points already outside all rects pass through unchanged.
+static func push_out_of_rects(p: Vector2, rects: Array, walk: Rect2, margin: float = BLOCKED_RECT_MARGIN) -> Vector2:
+	for _pass in range(2):
+		var moved := false
+		for r in rects:
+			if (r as Rect2).has_point(p):
+				p = exit_point_from_rect(p, r, walk, margin)
+				moved = true
+		if not moved:
+			break
+	return p
+
+## True when `p` is inside any blocked rect (used by wander retries + tests).
+static func inside_any_rect(p: Vector2, rects: Array) -> bool:
+	for r in rects:
+		if (r as Rect2).has_point(p):
+			return true
+	return false
+
+## Pure separation steering (boids-lite): summed, distance-weighted repulsion
+## from every neighbour position closer than `radius`. Deterministic -- positions
+## only, no RNG. Exactly-coincident neighbours contribute nothing (no direction
+## is derivable from positions alone); the intentional case -- shared desk slots --
+## is handled by the arrival damping instead. Result magnitude is capped at 1.
+static func separation_vector(pos: Vector2, neighbors: Array, radius: float = SEPARATION_RADIUS) -> Vector2:
+	var out := Vector2.ZERO
+	for n in neighbors:
+		var d: Vector2 = pos - (n as Vector2)
+		var dist := d.length()
+		if dist >= radius or dist <= 0.0001:
+			continue
+		out += (d / dist) * (1.0 - dist / radius)
+	if out.length() > 1.0:
+		out = out.normalized()
+	return out
+
+## The point this walker is CURRENTLY navigating toward, or null while it is
+## deliberately holding position (idle/stressed, dwelling on a break/collab,
+## spinning). Used to damp separation near arrival so convergence points
+## (desk ring slots, the water cooler) still work.
+func current_destination() -> Variant:
+	match sprite_state:
+		EmployeeFSM.STATE_WORKING:
+			match _work_sub:
+				"desk", "returning":
+					return desk_pos
+				"to_break":
+					return _break_target
+				"to_collab":
+					return _collab_target + Vector2(BODY_RADIUS * 1.6, 0.0)
+				_:
+					return null   # on_break / collaborating: dwelling in place
+		EmployeeFSM.STATE_WALKING:
+			match _aimless:
+				"drift":
+					return _target
+				"window":
+					return window_pos
+				_:
+					return null   # spin: turning on the spot
+		_:
+			return null           # idle / stressed hold position
+
+## Apply one frame of separation steering away from `neighbor_positions`
+## (positions of the OTHER walkers, snapshotted by OfficeFloor so update order
+## cannot matter). Push fades to zero within SEPARATION_DAMP_RADIUS of the
+## current nav target -- separation must not fight arrival.
+func apply_separation(neighbor_positions: Array, delta: float) -> void:
+	var sep := separation_vector(position, neighbor_positions, SEPARATION_RADIUS)
+	if sep == Vector2.ZERO:
+		return
+	var damp := 1.0
+	var dest = current_destination()
+	if dest != null:
+		damp = clampf(position.distance_to(_clamp_target(dest)) / SEPARATION_DAMP_RADIUS, 0.0, 1.0)
+	if damp <= 0.0:
+		return
+	position += sep * SEPARATION_STRENGTH * damp * delta
+	_clamp_to_bounds()
 
 ## True when the feet are at (the walkable projection of) `target`.
 func _arrived(target: Vector2) -> bool:
@@ -490,15 +696,29 @@ func _pick_aimless() -> void:
 
 func _pick_wander_target() -> void:
 	var walk := _feet_rect()
-	_target = Vector2(
-		_rng.randf_range(walk.position.x, walk.end.x),
-		_rng.randf_range(walk.position.y, walk.end.y)
-	)
+	# Tier-1 collision: reroll targets that land inside a prop footprint (cosmetic
+	# RNG, so retries are fine); final fallback projects the target out instead.
+	for _i in range(WANDER_TARGET_RETRIES):
+		_target = Vector2(
+			_rng.randf_range(walk.position.x, walk.end.x),
+			_rng.randf_range(walk.position.y, walk.end.y)
+		)
+		if not inside_any_rect(_target, blocked_rects):
+			return
+	_target = push_out_of_rects(_target, blocked_rects, walk)
 
 func _clamp_to_bounds() -> void:
 	var walk := _feet_rect()
 	position.x = clampf(position.x, walk.position.x, walk.end.x)
 	position.y = clampf(position.y, walk.position.y, walk.end.y)
+	# Tier-1 collision: never STAND inside a prop footprint. Gated on "not actively
+	# translating": a walker mid-walk may cross a prop transiently (accepted tier-1
+	# boundary -- real pathing is tier 2, awaiting the tile-grid ruling / WS-3; an
+	# ungated per-frame push-out would instead pin walkers against a prop sitting on
+	# their straight-line path). Every stationary pose (idle/stressed, break/collab
+	# dwell, spin, post-arrival) gets pushed out, so nobody idles inside furniture.
+	if not _facing_active:
+		position = push_out_of_rects(position, blocked_rects, walk)
 
 # --- Tier 0 rendering: blob + hat ------------------------------------------
 func _draw() -> void:
