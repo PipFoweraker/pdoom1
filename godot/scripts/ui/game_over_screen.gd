@@ -272,10 +272,38 @@ func _persist_and_submit_score(final_state: Dictionary, game_seed: String) -> vo
 	_maybe_submit_remote(entry, game_seed)
 
 func _maybe_submit_remote(entry, game_seed: String) -> void:
-	"""Upload the just-saved score to the global board, if sync is on. Never blocks;
-	shows a tiny status blip that resolves async via submit_completed."""
-	if not LeaderboardSync.should_submit():
+	"""Route the just-saved score through the IDENTITY-CONSENT flow (privacy ruling
+	2026-07-26). The local save above is already durable and is never gated by any
+	of this; consent covers only uploading player name + lab name + score."""
+	# No sync configured -> nothing to consent to; stay silent (dev builds, forks).
+	if not (LeaderboardSync.enabled and LeaderboardSync.is_configured()):
 		return
+	var flow: String = LeaderboardSync.consent_flow_state(
+		GameConfig.leaderboard_consent_asked,
+		GameConfig.submit_scores_global,
+		_has_submittable_identity(),
+		GameConfig.leaderboard_reminder_shown
+	)
+	match flow:
+		"submit":
+			_do_remote_submit(entry, game_seed)
+		"ask":
+			_show_consent_prompt(entry, game_seed)
+		"remind":
+			_show_identity_reminder()
+		_:
+			pass  # "silent": remembered decline, or anonymous + already nudged
+
+func _has_submittable_identity() -> bool:
+	"""A submission would be meaningful only with a non-empty player + lab name
+	(the board displays them; consent is about sharing exactly these)."""
+	return GameConfig.player_name.strip_edges() != "" and GameConfig.lab_name.strip_edges() != ""
+
+func _do_remote_submit(entry, game_seed: String) -> void:
+	"""Upload the just-saved score to the global board. Never blocks; shows a tiny
+	status blip that resolves async via submit_completed."""
+	if not LeaderboardSync.should_submit():
+		return  # authoritative gate: enabled + configured + explicit identity consent
 	_ensure_sync_status_label()
 	sync_status_label.visible = true
 	sync_status_label.text = "Global leaderboard: submitting..."
@@ -286,6 +314,57 @@ func _maybe_submit_remote(entry, game_seed: String) -> void:
 	# not attempted here): api.pdoom1.com's score API must key by ladder_version and
 	# alias the live v0.12.0 board to L1 -- see GameConfig.get_board_version() docs.
 	LeaderboardSync.submit_score(entry, game_seed, GameConfig.get_board_version())
+
+func _show_consent_prompt(entry, game_seed: String) -> void:
+	"""FIRST-TIME identity opt-in (privacy ruling 2026-07-26): the player must click
+	once to confirm that submitting PLAYER NAME + LAB NAME + score to the global
+	board is OK. Either answer is remembered (never re-asked) and reversible any
+	time in Settings; ESC / cancel = remembered 'keep local only'."""
+	var dialog := ConfirmationDialog.new()
+	dialog.title = "GLOBAL LEADERBOARD -- ONE-TIME CHOICE"
+	dialog.dialog_text = (
+		"Submit your scores to the global leaderboard?\n\n"
+		+ "This shares publicly, for this and future runs:\n"
+		+ "  player name: %s\n" % GameConfig.player_name
+		+ "  lab name:    %s\n" % GameConfig.lab_name
+		+ "  your score\n\n"
+		+ "Nothing else is sent. Change any time in Settings."
+	)
+	dialog.ok_button_text = "[OK] Submit my runs"
+	dialog.cancel_button_text = "Keep local only"
+	dialog.confirmed.connect(func():
+		_record_consent_choice(true)
+		_do_remote_submit(entry, game_seed)
+	)
+	dialog.canceled.connect(func():
+		_record_consent_choice(false)
+		_ensure_sync_status_label()
+		sync_status_label.visible = true
+		sync_status_label.text = "Global leaderboard: local only (change in Settings)"
+		sync_status_label.add_theme_color_override("font_color", Color(0.75, 0.75, 0.75))
+	)
+	add_child(dialog)
+	dialog.popup_centered()
+
+func _record_consent_choice(opted_in: bool) -> void:
+	"""Persist the explicit identity choice IMMEDIATELY (a crash later must not
+	lose it or cause a re-ask)."""
+	GameConfig.leaderboard_consent_asked = true
+	GameConfig.submit_scores_global = opted_in
+	GameConfig.save_config()
+	print("[GameOverScreen] Leaderboard identity consent recorded: %s"
+		% ("opted in" if opted_in else "local only"))
+
+func _show_identity_reminder() -> void:
+	"""ONE gracious nudge, ever (persisted flag): an anonymous player (empty
+	name/lab) reached submission without having opted in. Friendly label, no
+	dialog, never blocks replays, never repeated on later playthroughs."""
+	GameConfig.leaderboard_reminder_shown = true
+	GameConfig.save_config()
+	_ensure_sync_status_label()
+	sync_status_label.visible = true
+	sync_status_label.text = "[i] Playing anonymously -- set a name + opt in via Settings to join the global leaderboard"
+	sync_status_label.add_theme_color_override("font_color", Color(0.7, 0.75, 0.8))
 
 func _on_sync_submit_completed(success: bool, _added: bool, _rank: int, message: String) -> void:
 	"""Resolve the status blip. Failure is silent-ish: score is already saved locally."""

@@ -230,21 +230,18 @@ static func _looks_like_iso_date(s: String) -> bool:
 # --------------------------------------------------------------------------
 
 ## Privacy gate for the ping (the update-check GET is NOT gated: it carries no
-## identifiers, per #799). Both opt-outs are honoured:
-##   - submit_scores_global: the existing privacy opt-out #799 mandates
-##     ("If the player has opted out, do not send at all").
-##   - send_launch_ping: the dedicated, honestly-labelled settings toggle.
-## Opting out of EITHER suppresses the ping entirely -- privacy-conservative AND.
+## identifiers, per #799). TIER 2 of the two-tier model
+## (docs/PRIVACY_POSTURE.md, ruled + approved by Pip 2026-07-26): the ping is
+## identity-free (random install UUID only), so the leaderboard gate -- which
+## now means IDENTITY consent specifically -- does NOT cover it. The ping
+## honours exactly one thing: its own default-ON, honestly-labelled settings
+## toggle (GameConfig.send_launch_ping).
 func should_send_ping() -> bool:
 	if typeof(GameConfig) != TYPE_OBJECT:
 		return false
-	var scores_ok := true
-	if "submit_scores_global" in GameConfig:
-		scores_ok = bool(GameConfig.submit_scores_global)
-	var ping_ok := true
 	if "send_launch_ping" in GameConfig:
-		ping_ok = bool(GameConfig.send_launch_ping)
-	return scores_ok and ping_ok
+		return bool(GameConfig.send_launch_ping)
+	return true
 
 ## Feed-response handler (public so tests can call it with stubbed transport
 ## results -- no real HTTP in tests). Sets available_version + emits on a
