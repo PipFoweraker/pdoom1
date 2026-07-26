@@ -20,12 +20,24 @@ this module instead of hand-rolling CSS. It provides:
                            row, name/sublabel, blurb, expandable prompt, verdict
                            chip slot.
   * verdict machinery   -- per-cell like/dislike/favour/disfavour/promote chips,
-                           localStorage persistence, filter-by-verdict, and
-                           HIDE-ON-VERDICT ("hide decided") as a first-class
-                           behaviour: decided cells leave the live queue so you
-                           can clear hundreds without getting tired. Export /
-                           import JSON round-trips the flat {rel: [tags]} schema
-                           used by analyze_verdicts.py.
+                           localStorage persistence, filter-by-verdict, and a
+                           three-state completeness control (ALL / HIDE DECIDED /
+                           ONLY UNREVIEWED): any verdict tag moves a cell off
+                           unreviewed-neutral, so decided cells leave the live
+                           queue and you can clear hundreds without getting
+                           tired. Export / import JSON round-trips the flat
+                           {rel: [tags]} schema used by analyze_verdicts.py.
+  * completeness UX     -- COMPLETENESS_JS / COMPLETENESS_CSS /
+                           completeness_controls(): sections render COLLAPSED by
+                           default (expand state persists per-section in
+                           localStorage; expand-all / collapse-all in the
+                           header), every section header carries a live
+                           "unreviewed N / M" rollup (parents aggregate their
+                           sub-sections via DOM containment), and ONLY-UNREVIEWED
+                           mode force-expands sections and hides any section with
+                           0 unreviewed -- the completeness pass. The count
+                           rollup has a pure-Python mirror, rollup_counts()
+                           (run `python review_style.py --selftest`).
 
 Compare-mode hook (issue #745): every cell carries data-rel; a future compare
 mode can collect cells marked via a "compare" pin into a side-by-side tray.
@@ -34,6 +46,8 @@ See README "compare-and-contrast mode" note. Stdlib only; ASCII only.
 
 import datetime
 import html as _html
+import re as _re
+import sys as _sys
 
 # ---------------------------------------------------------------- vocabulary
 
@@ -170,6 +184,96 @@ pointer-events:none;}
 """
 )
 
+# completeness-pass chrome, shared verbatim by the contact sheet and the hero
+# gallery template (both consume this constant -- keep it selector-generic):
+# live "unreviewed N / M" pill per section head; ONLY-UNREVIEWED mode hides
+# sections with 0 unreviewed (data-unrev kept current by COMPLETENESS_JS).
+COMPLETENESS_CSS = """
+.rs-cc{color:var(--dim);font-size:10px;font-family:monospace;border:1px solid var(--line);
+border-radius:9px;padding:1px 7px;white-space:nowrap;}
+.rs-cc.has-unrev{color:var(--amber2);border-color:#5a4a2a;}
+body.rs-only [data-unrev="0"]{display:none;}
+body.rs-only .caret{opacity:.35;}
+"""
+
+BASE_CSS += COMPLETENESS_CSS
+
+# ---------------------------------------------------------------- completeness JS
+
+# Shared engine: collapsed-by-default sections with per-section localStorage
+# expand state + expand/collapse-all, the ALL / HIDE DECIDED / ONLY UNREVIEWED
+# three-state, and the live unreviewed/total rollup (parents aggregate children
+# because querySelectorAll on a parent section sees descendant cells).
+# Consumers: VERDICT_JS below, gen_contact_sheet.py, hero_gallery_template.html
+# (injected by gen_hero_gallery.py). Pure-Python mirror: rollup_counts().
+COMPLETENESS_JS = r"""
+window.rsCompleteness=(function(){
+  const cfg={key:null,sectionSel:'.rs-section',cellSel:'.rs-cell[data-rel]',
+    tagsOf:function(){return [];},onFilter:null};
+  let exp={};      // secid -> 1 == user expanded (sections default COLLAPSED)
+  let mode='all';  // 'all' | 'hide' (hide decided) | 'only' (only unreviewed)
+  let inited=false;
+  function skey(){return (cfg.key||('rsui:'+document.title))+':expanded';}
+  function load(){try{exp=JSON.parse(localStorage.getItem(skey()))||{};}catch(e){exp={};}}
+  function save(){try{localStorage.setItem(skey(),JSON.stringify(exp));}catch(e){}}
+  function sections(){return Array.from(document.querySelectorAll(cfg.sectionSel));}
+  function secId(s,i){return s.dataset.secid||('sec'+i);}
+  function applyCollapse(){const force=(mode==='only'); // completeness pass opens everything
+    sections().forEach((s,i)=>{s.classList.toggle('collapsed',!force&&!exp[secId(s,i)]);});}
+  function toggle(sec){const i=sections().indexOf(sec);const id=secId(sec,i);
+    const col=sec.classList.toggle('collapsed');
+    if(col)delete exp[id];else exp[id]=1;save();}
+  function setAll(open){exp={};if(open)sections().forEach((s,i)=>{exp[secId(s,i)]=1;});
+    save();applyCollapse();}
+  function markMode(){document.body.classList.toggle('rs-only',mode==='only');
+    for(const b of document.querySelectorAll('[data-rsmode]'))
+      b.classList.toggle('on',b.dataset.rsmode===mode);}
+  function setMode(m){mode=m;markMode();applyCollapse();updateCounts();
+    if(cfg.onFilter)cfg.onFilter();}
+  function cellPass(tags){return mode==='all'||!(tags&&tags.length);}
+  function updateCounts(){for(const s of sections()){
+    let un=0,tot=0;
+    for(const c of s.querySelectorAll(cfg.cellSel)){tot++;
+      const t=cfg.tagsOf(c.dataset.rel);if(!(t&&t.length))un++;}
+    s.dataset.unrev=un;
+    const el=s.querySelector('.rs-cc');
+    if(el){el.textContent=tot?('unreviewed '+un+' / '+tot):'';
+      el.classList.toggle('has-unrev',un>0);}}}
+  function init(c){Object.assign(cfg,c||{});load();applyCollapse();markMode();updateCounts();
+    if(!inited){inited=true;
+      const ea=document.getElementById('rs-expandall');if(ea)ea.onclick=()=>setAll(true);
+      const ca=document.getElementById('rs-collapseall');if(ca)ca.onclick=()=>setAll(false);
+      for(const b of document.querySelectorAll('[data-rsmode]'))
+        b.onclick=()=>setMode(b.dataset.rsmode);}
+  }
+  window.addEventListener('DOMContentLoaded',()=>{if(!inited)init({});});
+  return {init:init,toggle:toggle,setAll:setAll,setMode:setMode,
+    cellPass:cellPass,updateCounts:updateCounts,mode:()=>mode};
+})();
+window.rsSecToggle=function(sec){window.rsCompleteness.toggle(sec);};
+"""
+
+
+def completeness_controls(default_mode="all"):
+    """Header controls for the completeness pass: the ALL / HIDE DECIDED /
+    ONLY UNREVIEWED three-state plus expand-all / collapse-all. Buttons are
+    wired by COMPLETENESS_JS (data-rsmode / rs-expandall / rs-collapseall)."""
+
+    def b(m, label):
+        on = " on" if m == default_mode else ""
+        return f'<button class="toggle{on}" data-rsmode="{m}">{label}</button>'
+
+    return (
+        '<span class="row-label">show</span>'
+        + b("all", "all")
+        + b("hide", "hide decided")
+        + b("only", "only unreviewed")
+        + '<span class="row-label">sections</span>'
+        '<button class="btn" id="rs-expandall">expand all</button>'
+        '<button class="btn" id="rs-collapseall">collapse all</button>'
+    )
+
+
 # ---------------------------------------------------------------- verdict JS
 
 VERDICT_JS = r"""
@@ -187,13 +291,13 @@ function hasTag(r,t){return tagsOf(r).indexOf(t)>=0;}
 function setTag(r,t,on){let a=V[r]?V[r].slice():[];const i=a.indexOf(t);
   if(on&&i<0)a.push(t);else if(!on&&i>=0)a.splice(i,1);
   if(a.length)V[r]=a;else delete V[r];}
-let activeVerdicts=new Set(),hideDecided=false;
+let activeVerdicts=new Set();
 const cells=Array.from(document.querySelectorAll('.rs-cell[data-rel]'));
 function applyFilter(){
   let shown=0,hidden=0;
   for(const c of cells){
     const r=c.dataset.rel,tags=tagsOf(r);let ok=true;
-    if(hideDecided&&tags.length)ok=false;
+    if(!rsCompleteness.cellPass(tags))ok=false;
     if(ok&&activeVerdicts.size){let m=false;
       for(const v of activeVerdicts)if(tags.indexOf(v)>=0){m=true;break;}
       if(!m)ok=false;}
@@ -231,8 +335,8 @@ window.addEventListener('DOMContentLoaded',()=>{
       b.style.setProperty('--vc',VCOLORS[v]);
       if(hasTag(r,v))b.classList.add('on');
       b.onclick=e=>{e.stopPropagation();const on=!hasTag(r,v);setTag(r,v,on);
-        b.classList.toggle('on',on);saveV();refreshCounts();
-        if(hideDecided||activeVerdicts.size)applyFilter();};
+        b.classList.toggle('on',on);saveV();refreshCounts();rsCompleteness.updateCounts();
+        if(rsCompleteness.mode()!=='all'||activeVerdicts.size)applyFilter();};
       vt.appendChild(b);
     }
   }
@@ -240,8 +344,8 @@ window.addEventListener('DOMContentLoaded',()=>{
     vc.onclick=()=>{const v=vc.dataset.v;
       if(activeVerdicts.has(v)){activeVerdicts.delete(v);vc.classList.remove('on');}
       else{activeVerdicts.add(v);vc.classList.add('on');}applyFilter();};}
-  const hb=document.getElementById('rs-hidedecided');
-  if(hb)hb.onclick=()=>{hideDecided=!hideDecided;hb.classList.toggle('on',hideDecided);applyFilter();};
+  rsCompleteness.init({key:KEY,sectionSel:'.rs-section',cellSel:'.rs-cell[data-rel]',
+    tagsOf:tagsOf,onFilter:applyFilter});
   const ex=document.getElementById('rs-export');
   if(ex)ex.onclick=()=>{download(EXPORT_NAME,JSON.stringify(V,null,2),'application/json');
     toast('Exported '+EXPORT_NAME);};
@@ -252,7 +356,7 @@ window.addEventListener('DOMContentLoaded',()=>{
       rd.onload=()=>{try{const obj=JSON.parse(rd.result);
         if(typeof obj!=='object'||Array.isArray(obj))throw 0;
         V=obj;saveV();for(const c of cells)syncCell(c);
-        refreshCounts();applyFilter();toast('Imported verdicts');
+        refreshCounts();rsCompleteness.updateCounts();applyFilter();toast('Imported verdicts');
       }catch(err){toast('Import failed -- not a valid verdicts JSON');}};
       rd.readAsText(f);e.target.value='';});}
   const sw=document.getElementById('rs-storewarn');
@@ -271,9 +375,11 @@ def _verdict_toolbar():
     )
     return (
         '<div class="controls">'
-        '<span class="row-label">verdict</span>' + vchips + " "
-        '<button class="toggle" id="rs-hidedecided">hide decided '
-        '(<span id="rs-hiddenn">0</span> hidden)</button> '
+        '<span class="row-label">verdict</span>'
+        + vchips
+        + " "
+        + completeness_controls()
+        + '<span class="count-tag"><span id="rs-hiddenn">0</span> hidden</span> '
         '<button class="btn" id="rs-export">export JSON</button>'
         '<button class="btn primary" id="rs-import">import JSON</button>'
         '<input type="file" id="rs-importfile" accept="application/json,.json" style="display:none">'
@@ -290,14 +396,21 @@ def esc(s):
 
 
 def section(title, body_html, count=None, accent=None, head_extra=""):
-    """Collapsible titled section. accent = CSS colour for the heading rule."""
+    """Collapsible titled section. accent = CSS colour for the heading rule.
+
+    Renders COLLAPSED by default (completeness UX): COMPLETENESS_JS restores
+    per-section expand state from localStorage, keyed by a slug of the title,
+    and keeps the head's "unreviewed N / M" pill (.rs-cc) live.
+    """
     style = f' style="--accent:{accent}"' if accent else ""
     cls = "rs-sec-head accent" if accent else "rs-sec-head"
     count_tag = f' <span class="count-tag">{count}</span>' if count is not None else ""
+    secid = _re.sub(r"[^a-z0-9]+", "-", str(title).lower()).strip("-") or "section"
     return (
-        f'<section class="rs-section"{style}>'
-        f'<div class="{cls}" onclick="this.parentNode.classList.toggle(\'collapsed\')">'
-        f'<span class="caret">v</span>{esc(title)}{count_tag}{head_extra}</div>'
+        f'<section class="rs-section collapsed" data-secid="{esc(secid)}"{style}>'
+        f'<div class="{cls}" onclick="rsSecToggle(this.parentNode)">'
+        f'<span class="caret">v</span>{esc(title)}{count_tag}'
+        f'<span class="rs-cc"></span>{head_extra}</div>'
         f'<div class="body">{body_html}</div></section>'
     )
 
@@ -413,12 +526,14 @@ def page(
     if verdict_key:
         footer_bits.append(
             "Verdicts persist to this browser's localStorage under key "
-            f'"{verdict_key}"; hide decided shrinks the live queue as you triage; '
-            "export JSON to make decisions durable."
+            f'"{verdict_key}"; sections open collapsed (expand state remembered); '
+            "show: all / hide decided / only unreviewed -- only-unreviewed is the "
+            "completeness pass (any verdict tag = decided; sections with 0 "
+            "unreviewed disappear); export JSON to make decisions durable."
         )
     if footer_note:
         footer_bits.append(footer_note)
-    scripts = ""
+    scripts = f"<script>{COMPLETENESS_JS}</script>"
     if verdict_js:
         scripts += f"<script>{verdict_js}</script>"
     if extra_js:
@@ -461,3 +576,77 @@ def write_ascii(path, html_text):
         raise ValueError(f"non-ascii chars in generated HTML: {bad!r}")
     with open(path, "w", encoding="ascii", newline="\n") as fh:
         fh.write(html_text)
+
+
+# ---------------------------------------------------------------- rollup (pure)
+
+
+def rollup_counts(section_tree, verdicts):
+    """Pure mirror of COMPLETENESS_JS's updateCounts() rollup.
+
+    section_tree -- {"id": str, "cells": [rel, ...], "children": [tree, ...]}
+    verdicts     -- {rel: [tags]} (the flat verdict schema); a missing rel or an
+                    empty tag list means UNREVIEWED (any tag = decided).
+
+    Returns {section_id: (unreviewed, total)} where a parent's counts include
+    every descendant's cells -- in the JS this aggregation falls out of
+    querySelectorAll on the parent element seeing descendant cells.
+    """
+    out = {}
+
+    def walk(sec):
+        un = tot = 0
+        for rel in sec.get("cells", ()):
+            tot += 1
+            if not verdicts.get(rel):
+                un += 1
+        for child in sec.get("children", ()):
+            cu, ct = walk(child)
+            un += cu
+            tot += ct
+        out[sec["id"]] = (un, tot)
+        return un, tot
+
+    walk(section_tree)
+    return out
+
+
+def _selftest():
+    """Check the count-rollup logic (python mirror of the JS)."""
+    tree = {
+        "id": "batch",
+        "cells": ["root_a"],
+        "children": [
+            {"id": "batch/chars", "cells": ["b", "c"], "children": []},
+            {"id": "batch/props", "cells": ["d", "e", "f"], "children": []},
+        ],
+    }
+    verdicts = {
+        "b": ["like"],  # decided
+        "e": ["dislike", "favour"],  # decided (multi-tag still one item)
+        "f": [],  # empty list == unreviewed (schema drops empty keys)
+        "ghost": ["promote"],  # verdict for a cell not on the sheet: ignored
+    }
+    got = rollup_counts(tree, verdicts)
+    assert got["batch/chars"] == (1, 2), got
+    assert got["batch/props"] == (2, 3), got
+    # parent = own cells + sum of children: (1,1) + (1,2) + (2,3)
+    assert got["batch"] == (4, 6), got
+    # all-decided section -> 0 unreviewed (ONLY-UNREVIEWED mode hides it)
+    solo = rollup_counts({"id": "s", "cells": ["x"], "children": []}, {"x": ["promote"]})
+    assert solo["s"] == (0, 1), solo
+    # no verdicts at all -> everything unreviewed
+    fresh = rollup_counts(tree, {})
+    assert fresh["batch"] == (6, 6), fresh
+    # sanity: the JS engine string carries the same vocabulary + hooks
+    for needle in ("cellPass", "updateCounts", "data-rsmode", "rs-expandall", "rs-cc"):
+        assert needle in COMPLETENESS_JS, needle
+    assert 'body.rs-only [data-unrev="0"]' in COMPLETENESS_CSS
+    print("review_style selftest OK (rollup + completeness hooks)")
+
+
+if __name__ == "__main__":
+    if "--selftest" in _sys.argv:
+        _selftest()
+    else:
+        print("usage: python review_style.py --selftest")

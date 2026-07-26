@@ -7,6 +7,10 @@ import re
 
 import yaml
 
+# shared completeness-pass engine -- review_style.py is the SSOT (same dir as
+# this script, which sys.path[0] covers when run as a script)
+from review_style import COMPLETENESS_CSS, COMPLETENESS_JS
+
 # Repo-relative: this script lives at <repo>/tools/art_review/ , so the repo
 # root is three levels up. The HTML template sits next to this script.
 _HERE = os.path.dirname(os.path.abspath(__file__))
@@ -316,6 +320,8 @@ HTML = (
     .replace("__NIMGS__", str(total_imgs))
     .replace("__MATCHED__", str(matched))
     .replace("__NRUNS__", str(len(set(e["u"] for e in entries))))
+    .replace("__RS_COMPLETENESS_JS__", COMPLETENESS_JS)
+    .replace("__RS_COMPLETENESS_CSS__", COMPLETENESS_CSS)
 )
 
 # guard: ensure ASCII only

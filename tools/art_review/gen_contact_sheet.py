@@ -6,9 +6,15 @@ import json
 import os
 import sys
 
-# shared verdict vocabulary -- review_style.py is the SSOT (same dir as this script,
-# which sys.path[0] covers when run as a script)
-from review_style import VERDICT_COLORS, VERDICTS
+# shared verdict vocabulary + completeness-pass engine -- review_style.py is the
+# SSOT (same dir as this script, which sys.path[0] covers when run as a script)
+from review_style import (
+    COMPLETENESS_CSS,
+    COMPLETENESS_JS,
+    VERDICT_COLORS,
+    VERDICTS,
+    completeness_controls,
+)
 
 # Repo-relative: this script lives at <repo>/tools/art_review/ , so the repo
 # root is three levels up. Override art_source with argv[1] if given.
@@ -262,24 +268,26 @@ function build(){
   for(const d of DATA){(runs[d.u]=runs[d.u]||{});(runs[d.u][d.c]=runs[d.u][d.c]||[]).push(d);}
   const main=document.getElementById('main');
   for(const run of Object.keys(runs).sort()){
-    const sec=document.createElement('section');sec.className='run-sec';
+    const sec=document.createElement('section');sec.className='run-sec collapsed';
+    sec.dataset.secid=run;
     const rc=Object.values(runs[run]).reduce((a,b)=>a+b.length,0);
     const rh=document.createElement('div');rh.className='run-head';
-    rh.innerHTML=`<span class="caret">v</span><span class="mono">${run}</span> <span class="count-tag">${rc}</span>`;
+    rh.innerHTML=`<span class="caret">v</span><span class="mono">${run}</span> <span class="count-tag">${rc}</span> <span class="rs-cc"></span>`;
     const selBtn=document.createElement('span');selBtn.className='selall';selBtn.textContent='select group';
     rh.appendChild(selBtn);
     const rbody=document.createElement('div');rbody.className='body';
-    rh.addEventListener('click',e=>{if(e.target===selBtn)return;sec.classList.toggle('collapsed');});
+    rh.addEventListener('click',e=>{if(e.target===selBtn)return;rsCompleteness.toggle(sec);});
     const groupRels=[];
     sec.appendChild(rh);sec.appendChild(rbody);
     for(const cat of Object.keys(runs[run]).sort()){
-      const cwrap=document.createElement('div');cwrap.className='cat-sec';cwrap.dataset.cat=cat;
+      const cwrap=document.createElement('div');cwrap.className='cat-sec collapsed';cwrap.dataset.cat=cat;
+      cwrap.dataset.secid=run+'/'+cat;
       const ch=document.createElement('div');ch.className='cat-head';
-      ch.innerHTML=`<span class="caret">v</span>${cat} <span class="count-tag">${runs[run][cat].length}</span>`;
+      ch.innerHTML=`<span class="caret">v</span>${cat} <span class="count-tag">${runs[run][cat].length}</span> <span class="rs-cc"></span>`;
       const cSel=document.createElement('span');cSel.className='selall';cSel.textContent='select';
       ch.appendChild(cSel);
       const cbody=document.createElement('div');cbody.className='body grid';
-      ch.addEventListener('click',e=>{if(e.target===cSel)return;cwrap.classList.toggle('collapsed');});
+      ch.addEventListener('click',e=>{if(e.target===cSel)return;rsCompleteness.toggle(cwrap);});
       const catRels=[];
       for(const d of runs[run][cat]){const t=tile(d);cbody.appendChild(t);catRels.push(d.r);groupRels.push(d.r);}
       cSel.onclick=e=>{e.stopPropagation();selectRels(catRels);};
@@ -306,7 +314,8 @@ function tile(d){
     b.style.setProperty('--vc',VCOLORS[v]);
     if(hasTag(d.r,v))b.classList.add('on');
     b.onclick=e=>{e.stopPropagation();const on=!hasTag(d.r,v);setTag(d.r,v,on);
-      b.classList.toggle('on',on);saveV();refreshCounts();if(activeVerdicts.size)applyFilter();};
+      b.classList.toggle('on',on);saveV();refreshCounts();rsCompleteness.updateCounts();
+      if(activeVerdicts.size||rsCompleteness.mode()!=='all')applyFilter();};
     vt.appendChild(b);
   }
   const cb=t.querySelector('.selbox');
@@ -346,7 +355,8 @@ function updateSelUI(){const n=selected.size;
 // ---- bulk verdict ----
 function bulkApply(v,on){for(const r of selected){setTag(r,v,on);
   const t=tileByRel[r];const b=t.querySelector(`.vtag[data-v="${v}"]`);if(b)b.classList.toggle('on',on);}
-  saveV();refreshCounts();if(activeVerdicts.size)applyFilter();
+  saveV();refreshCounts();rsCompleteness.updateCounts();
+  if(activeVerdicts.size||rsCompleteness.mode()!=='all')applyFilter();
   toast(`${on?'Set':'Removed'} ${v} on ${selected.size} sprite(s)`);}
 
 // ---- filtering ----
@@ -355,6 +365,7 @@ function applyFilter(){
   for(const r of orderedRels){
     const t=tileByRel[r];let ok=true;
     if(activeCats.size&&!activeCats.has(t.dataset.cat))ok=false;
+    if(ok&&!rsCompleteness.cellPass(tagsOf(r)))ok=false;
     if(ok&&query){const hay=t.dataset.fn+' '+t.dataset.cat+' '+t.dataset.sub;if(!hay.includes(query))ok=false;}
     if(ok&&activeVerdicts.size){const tags=tagsOf(r);
       let m=false;for(const v of activeVerdicts)if(tags.indexOf(v)>=0){m=true;break;}if(!m)ok=false;}
@@ -398,7 +409,7 @@ function importJSON(file){const rd=new FileReader();
     V=obj;saveV();
     for(const r of orderedRels){const t=tileByRel[r];
       for(const b of t.querySelectorAll('.vtag'))b.classList.toggle('on',hasTag(r,b.dataset.v));}
-    refreshCounts();applyFilter();toast('Imported verdicts');
+    refreshCounts();rsCompleteness.updateCounts();applyFilter();toast('Imported verdicts');
   }catch(e){toast('Import failed -- not a valid verdicts JSON');}};
   rd.readAsText(file);}
 
@@ -411,6 +422,8 @@ function toast(msg){const el=document.getElementById('toast');el.textContent=msg
 
 window.addEventListener('DOMContentLoaded',()=>{
   loadV();orderedRels=DATA.map(d=>d.r);build();
+  rsCompleteness.init({key:KV,sectionSel:'.run-sec,.cat-sec',cellSel:'.tile[data-rel]',
+    tagsOf:tagsOf,onFilter:applyFilter});
   document.getElementById('total').textContent=DATA.length;
   refreshCounts();applyFilter();
   document.getElementById('q').addEventListener('input',e=>{query=e.target.value.trim().toLowerCase();applyFilter();});
@@ -449,13 +462,15 @@ js = (
     .replace("__VCOLORS__", json.dumps(VERDICT_COLORS))
 )
 
+controls_row = completeness_controls()
+
 doc = f"""<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>P(Doom)1 -- pixellab triage</title>
-<style>{css}</style>
+<style>{css}{COMPLETENESS_CSS}</style>
 </head>
 <body>
 <header>
@@ -480,12 +495,19 @@ doc = f"""<!doctype html>
     <button class="btn primary" id="impbtn">import JSON</button>
     <input type="file" id="impfile" accept="application/json,.json" style="display:none">
   </div>
+  <div class="controls">
+    {controls_row}
+  </div>
 </header>
 <main id="main"></main>
 <footer>
   Local triage tool -- untracked, not committed. Thumbnail = enlarge (Esc/click closes).
   Per-sprite verdict tags (like/dislike/favour/disfavour/promote) + batch select (checkbox,
   shift-click ranges, select-group / select-all-visible) + bulk apply/remove bar.
+  Sections open COLLAPSED (expand state remembered per section); every header shows a live
+  "unreviewed N / M" rollup (run headers aggregate their category sub-sections).
+  show: all / hide decided / only unreviewed -- only-unreviewed is the completeness pass
+  (any verdict tag = decided; sections with 0 unreviewed disappear and the rest force-open).
   Verdicts persist to this browser's localStorage; Export JSON/CSV to make them portable/actionable.
   {total} sprites across {len([r for r in runs if run_counts[r]])} runs.
 </footer>
@@ -500,6 +522,7 @@ doc = f"""<!doctype html>
 </div>
 <div class="lightbox" id="lb"><img src="" alt=""><div class="lbcap"></div></div>
 <div id="toast"></div>
+<script>{COMPLETENESS_JS}</script>
 <script>{js}</script>
 </body>
 </html>

@@ -32,10 +32,18 @@ extracted from the contact sheet / hero gallery, and it provides:
   * `section(...)` / `image_cell(...)` -- collapsible sections and the standard
     image cell (checkerboard-under-alpha thumb, size-variant row, blurb,
     expandable prompt, verdict-chip slot);
-  * verdict machinery with HIDE-ON-VERDICT ("hide decided") as a first-class
-    behaviour -- decided cells leave the live queue so you can clear hundreds
-    without getting tired -- plus filter-by-verdict and export/import JSON in
-    the flat `{rel: [tags]}` schema `analyze_verdicts.py` reads.
+  * verdict machinery -- per-cell chips, filter-by-verdict, export/import JSON
+    in the flat `{rel: [tags]}` schema `analyze_verdicts.py` reads;
+  * the completeness pass (`COMPLETENESS_JS` / `COMPLETENESS_CSS` /
+    `completeness_controls()`), shared by ALL three sheets: sections render
+    COLLAPSED by default (expand state persists per-section in localStorage;
+    expand-all / collapse-all in the header); every section header carries a
+    live "unreviewed N / M" rollup where parent headers aggregate their
+    sub-sections; and a three-state show control -- ALL / HIDE DECIDED / ONLY
+    UNREVIEWED (any verdict tag = decided). ONLY UNREVIEWED is the completeness
+    pass: sections with 0 unreviewed disappear and the rest force-open, so the
+    queue is exactly the items judgment has not reached. The rollup logic has a
+    pure-Python mirror: `python tools/art_review/review_style.py --selftest`.
 
 Compare-mode hook (issue #745): every `image_cell` carries `data-rel`, the
 stable handle a compare-and-contrast mode needs. The planned shape: a "compare"
@@ -64,8 +72,8 @@ Sheets on the shared style:
 |---|---|---|
 | gen_quirk_icon_sheet.py | YES | born on it (replaces the #909 inline one-off) |
 | build_cat_angle_ab_sheet.py | YES | ported 2026-07-26 (layout CSS stays sheet-local) |
-| gen_contact_sheet.py | PARTIAL | imports VERDICTS/VERDICT_COLORS from review_style (verified byte-identical output); CSS still inline -- it IS the style source |
-| gen_hero_gallery.py + hero_gallery_template.html | NO (follow-up) | style/verdict colours live inside the template HTML; migrating means templating machinery, not a mechanical swap -- deferred so the live triage loop stays untouched before a sweep |
+| gen_contact_sheet.py | PARTIAL | imports VERDICTS/VERDICT_COLORS + COMPLETENESS_JS/CSS + completeness_controls() from review_style; page CSS still inline -- it IS the style source |
+| gen_hero_gallery.py + hero_gallery_template.html | PARTIAL | template keeps its own style/verdict colours, but the completeness engine is injected from review_style (`__RS_COMPLETENESS_JS__` / `__RS_COMPLETENESS_CSS__` placeholders) -- full style migration still a follow-up |
 | serve_review.py | NO (follow-up) | different verdict model (keep/iterate/discard, server-persisted); adopt BASE_CSS only |
 
 Follow-up rule: migrate a legacy tool only when its output can be verified
