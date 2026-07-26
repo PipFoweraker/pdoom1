@@ -1,0 +1,259 @@
+<!-- P(DOOM) CRAFT PRIMERS #2 -- Anchors and Effects. ASCII-only, self-contained. -->
+<meta charset="utf-8">
+<title>Anchors and Effects -- P(Doom) Craft Primer #2</title>
+<style>
+  :root {
+    --ground: #141210; --panel: #1c1916; --ink: #d8cfc2; --dim: #8a8075;
+    --amber: #e0a34a; --amber-hi: #ffcf7a; --green: #7fb069; --red: #c05746;
+    --blue: #6a9fce; --purple: #a07fce; --line: #3a342c;
+  }
+  html { background: var(--ground); }
+  body {
+    color: var(--ink); font-family: Consolas, "Cascadia Mono", monospace;
+    max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem 6rem; line-height: 1.55;
+  }
+  .series { color: var(--dim); letter-spacing: 0.25em; font-size: 0.75rem; }
+  h1 { color: var(--amber-hi); font-size: 1.6rem; margin: 0.25rem 0 0.25rem; }
+  .sub { color: var(--dim); margin-bottom: 2rem; }
+  h2 { color: var(--amber); border-bottom: 1px solid var(--line); padding-bottom: 0.3rem; margin-top: 2.5rem; }
+  h3 { color: var(--amber-hi); margin-top: 1.6rem; }
+  table { border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.9rem; }
+  th, td { border: 1px solid var(--line); padding: 0.45rem 0.6rem; text-align: left; vertical-align: top; }
+  th { background: var(--panel); color: var(--amber); }
+  code, pre { background: var(--panel); color: var(--amber-hi); padding: 0.1rem 0.35rem; border-radius: 3px; }
+  pre { padding: 0.8rem 1rem; overflow-x: auto; line-height: 1.45; }
+  .box { background: var(--panel); border: 1px solid var(--line); border-left: 4px solid var(--amber); padding: 0.8rem 1.1rem; margin: 1.2rem 0; }
+  .box.ruled { border-left-color: var(--green); }
+  .box.verify { border-left-color: var(--blue); }
+  .box.warn { border-left-color: var(--red); }
+  .tag { font-size: 0.72rem; letter-spacing: 0.12em; padding: 0.1rem 0.5rem; border-radius: 3px; margin-right: 0.5rem; }
+  .tag.ruled { background: #24391f; color: var(--green); }
+  .tag.interim { background: #3a2f1a; color: var(--amber-hi); }
+  .tag.suggest { background: #1d2c3a; color: var(--blue); }
+  .tag.never { background: #3a1f1a; color: var(--red); }
+  figure { margin: 1.5rem 0; text-align: center; }
+  figcaption { color: var(--dim); font-size: 0.8rem; margin-top: 0.4rem; }
+  svg { max-width: 100%; height: auto; }
+  .footer { color: var(--dim); font-size: 0.8rem; margin-top: 3rem; border-top: 1px solid var(--line); padding-top: 1rem; }
+</style>
+
+<div class="series">P(DOOM) CRAFT PRIMERS -- #2</div>
+<h1>Anchors and Effects</h1>
+<div class="sub">Where effects attach, who owns which layer, and what the skeleton
+actually is. Companion to Primer #1 (PIXEL_SCALE_PRIMER.html). Written 2026-07-26,
+from the cat-sweep review session. Status: rulings marked; the rest is craft theory.</div>
+
+<h2>1. The two skeletons (only one of them is ours)</h2>
+
+<p>When PixelLab animates a cat, it poses an internal <b>skeleton template</b>
+(their quadruped rig), renders each pose, and hands us <b>baked PNG frames</b>.
+The skeleton does its job at generation time and vanishes -- nothing skeletal
+arrives in the repo. Our runtime receives flat pictures.</p>
+
+<p>So when an effect "centers on the cat", that is not a skeleton failing --
+it is the runtime knowing exactly one point: the sprite's middle. The fix is
+not runtime skeletons. It is <b>sockets</b>: named anchor points recorded as
+data beside each sprite, at whatever granularity the motion demands.</p>
+
+<figure>
+<svg viewBox="0 0 840 210" xmlns="http://www.w3.org/2000/svg" role="img">
+  <rect x="10" y="20" width="250" height="170" fill="#1c1916" stroke="#3a342c"/>
+  <text x="135" y="42" fill="#e0a34a" font-size="13" text-anchor="middle" font-family="monospace">GENERATION (PixelLab)</text>
+  <circle cx="80" cy="90" r="6" fill="none" stroke="#6a9fce"/>
+  <line x1="80" y1="96" x2="80" y2="130" stroke="#6a9fce"/>
+  <line x1="80" y1="105" x2="60" y2="120" stroke="#6a9fce"/>
+  <line x1="80" y1="105" x2="100" y2="120" stroke="#6a9fce"/>
+  <line x1="80" y1="130" x2="66" y2="155" stroke="#6a9fce"/>
+  <line x1="80" y1="130" x2="94" y2="155" stroke="#6a9fce"/>
+  <text x="80" y="180" fill="#8a8075" font-size="11" text-anchor="middle" font-family="monospace">skeleton poses</text>
+  <text x="150" y="115" fill="#8a8075" font-size="16" font-family="monospace">-&gt;</text>
+  <rect x="175" y="75" width="60" height="60" fill="#26221d" stroke="#3a342c"/>
+  <text x="205" y="110" fill="#d8cfc2" font-size="10" text-anchor="middle" font-family="monospace">frames</text>
+  <text x="205" y="160" fill="#8a8075" font-size="11" text-anchor="middle" font-family="monospace">baked PNGs</text>
+  <text x="300" y="110" fill="#8a8075" font-size="18" font-family="monospace">--&gt;</text>
+  <rect x="340" y="20" width="240" height="170" fill="#1c1916" stroke="#3a342c"/>
+  <text x="460" y="42" fill="#e0a34a" font-size="13" text-anchor="middle" font-family="monospace">REPO (data)</text>
+  <rect x="365" y="70" width="60" height="60" fill="#26221d" stroke="#3a342c"/>
+  <text x="395" y="103" fill="#d8cfc2" font-size="10" text-anchor="middle" font-family="monospace">frames</text>
+  <text x="500" y="85" fill="#ffcf7a" font-size="11" font-family="monospace">sockets.json</text>
+  <text x="500" y="103" fill="#8a8075" font-size="10" font-family="monospace">eyes: [34,18]</text>
+  <text x="500" y="118" fill="#8a8075" font-size="10" font-family="monospace">tail: [12,30]</text>
+  <text x="500" y="133" fill="#8a8075" font-size="10" font-family="monospace">butt: [15,34]</text>
+  <text x="620" y="110" fill="#8a8075" font-size="18" font-family="monospace">--&gt;</text>
+  <rect x="660" y="20" width="170" height="170" fill="#1c1916" stroke="#3a342c"/>
+  <text x="745" y="42" fill="#e0a34a" font-size="13" text-anchor="middle" font-family="monospace">RUNTIME (Godot)</text>
+  <rect x="700" y="80" width="50" height="50" fill="#26221d" stroke="#3a342c"/>
+  <circle cx="716" cy="94" r="5" fill="#7fb069" opacity="0.8"/>
+  <circle cx="734" cy="94" r="5" fill="#7fb069" opacity="0.8"/>
+  <text x="745" y="160" fill="#8a8075" font-size="10" text-anchor="middle" font-family="monospace">glow parented</text>
+  <text x="745" y="174" fill="#8a8075" font-size="10" text-anchor="middle" font-family="monospace">at eye socket</text>
+</svg>
+<figcaption>The skeleton lives and dies at generation. Sockets are the part we keep.</figcaption>
+</figure>
+
+<h2>2. Division of labour</h2>
+
+<table>
+<tr><th>Layer</th><th>Owns</th><th>Concretely</th></tr>
+<tr><td><b>Godot (runtime)</b></td><td>Composition -- where things attach,
+how they blend, when they fire</td><td>Socket JSON beside SpriteFrames;
+overlay sprites / particles / shader glows parented at socket offsets;
+blend modes, z-order, doom-tier opacity curves; y-sort. Everything the
+layering lab's dials prototype.</td></tr>
+<tr><td><b>PixelLab (generation)</b></td><td>Content -- the frames, and
+effects intrinsic to a thing</td><td>Base animations; overlay loops (the
+ember/arc/wisp/aura/flame/void families); baked-in effects only when
+inseparable from the subject. Ruled 2026-07-26: regular cats look regular,
+doom arrives by overlay.</td></tr>
+<tr><td><b>Fable + animator-when-hired</b></td><td>Taste and mapping --
+the opinions</td><td>Which effect anchors where; phase-sync between overlay
+loop and walk cycle; per-species anchor conventions; intensity curves per
+doom tier; when to hand-polish a socket table.</td></tr>
+</table>
+
+<h2>3. The maturity ladder: V1 to V4</h2>
+
+<table>
+<tr><th>Ver</th><th>Anchor granularity</th><th>Cost</th><th>What it buys</th></tr>
+<tr><td><b>V1</b></td><td>Whole-sprite center (today)</td><td>zero</td>
+<td>The crude version: aura centered on the ribcage.</td></tr>
+<tr><td><b>V2</b></td><td>One socket set per clip-direction</td><td>days;
+mostly data</td><td>~80% of the win. A cat's eyes barely move within an
+east-walk, so a static per-direction offset puts glow at the eyes, not the
+body. Unblocks eye-glow + butt-glow identity immediately.</td></tr>
+<tr><td><b>V3</b></td><td>Per-frame anchor tracks</td><td>small tool +
+harvest pass</td><td>Moving parts: the tail tip through a walk, the head
+through a lick. Sources ranked in section 5.</td></tr>
+<tr><td><b>V4</b></td><td><span class="tag never">NEVER</span> Runtime
+Skeleton2D mesh deformation</td><td>--</td><td>Godot supports it; pixel art
+rejects it. Deforming a texture resamples it -- the crisp integer-scaled
+pixels from Primer #1 smear into mush. Frame-based + sockets is the
+pixel-art-native answer. Prediction: the future animator agrees.</td></tr>
+</table>
+
+<h2>4. One socket schema for the whole art world</h2>
+
+<p>Props already carry <code>{name, px: [x,y], layer}</code> sockets in the
+manifest (approach slots landed the same day as this primer). Cosmetics
+(hat mounts, feather stacks), entity effect anchors, and eventually portrait
+attachments (lanyards, laptops) are the <b>same schema at different
+granularities</b>:</p>
+
+<pre>static prop socket:        "sign":  { "px": [30, 40], "layer": 1 }
+clip-direction socket(V2): "eyes":  { "east": [41, 22], "west": [27, 22], ... }
+per-frame track (V3):      "tail_tip": { "east": [[12,30],[13,28],[13,26], ...] }</pre>
+
+<div class="box ruled"><span class="tag ruled">RULED 2026-07-26</span>
+<b>Default glow anchors: EYES always; BUTT when rear-facing (butt-flash
+frames).</b> Pip: quickly establishes identity, is a win, and works with
+green and grey eyes at nominal. Doom overlays attach at these sockets by
+default; other anchors are per-effect taste calls.</div>
+
+<h2>5. Sourcing V3 tracks: the keypoint verdict</h2>
+
+<div class="box verify"><b>VERDICT: YES -- PixelLab's API exposes named
+skeleton keypoints with coordinates, verified in their SDK source
+(pixellab-python, models/keypoint.py + estimate_skeleton.py).</b>
+<code>POST /estimate-skeleton</code> takes one transparent-background
+character image and returns <code>keypoints: [{x, y, label, z_index}]</code>
+over an 18-label set: NOSE, NECK, L/R SHOULDER, ELBOW, ARM, HIP, KNEE, LEG,
+<b>RIGHT EYE, LEFT EYE</b>, L/R EAR. The ruled eye anchor is literally a
+first-class API output.</div>
+
+<p><b>The harvest path:</b> for each frame of an existing clip, call
+estimate-skeleton -&gt; collect per-frame keypoints -&gt; smooth jitter -&gt;
+write socket tracks. V2 falls out for free (average the track). Runs as a
+batch script over <code>art_source</code>; no regeneration involved.</p>
+
+<p><b>Three honest caveats:</b> (1) the label set is humanoid-shaped --
+<b>no TAIL keypoint</b>; quadruped estimates presumably map hips/legs to
+hindquarters, so tail-tip tracks still come from the annotation tool (below)
+or hip-extrapolation. What labels a cat frame actually returns needs one
+live probe call. (2) estimate-skeleton bills in <b>USD API credits, not
+subscription generations</b> (the SDK's usage type is "usd") -- trivially
+small, inside the spend policy, but a different meter. (3) estimation is
+imperfect by PixelLab's own docs; the harvest script should flag
+low-confidence frames for the human eye.</p>
+
+<p><b>Authoring ladder, cheapest adequate wins:</b></p>
+<table>
+<tr><th>Path</th><th>Good for</th><th>Cost</th></tr>
+<tr><td>PIL auto-detect (color heuristics: eye pixels, silhouette extremes)</td>
+<td>V2 static sockets, eye positions</td><td>free, scripted</td></tr>
+<tr><td>Pip click-annotation (layering lab gains click-to-place)</td>
+<td>taste-critical anchors, tail tips, corrections</td><td>~30s/clip of
+Pip-time -- and doubles as art-direction opinion capture</td></tr>
+<tr><td>Keypoint harvest (estimate-skeleton per frame)</td>
+<td>bulk V3 tracks across the whole library</td><td>pennies USD; one probe
+call to confirm quadruped labels first</td></tr>
+</table>
+
+<h2>6. Art-direction layers: today's rulings + the pickup pattern</h2>
+
+<p>Standing request (Pip, 2026-07-26): agents proactively surface subtle
+art-direction opportunities as <b>suggestions</b>; Pip rules, and the rulings
+accrete into cohered layers of art-direction language. Today's session ruled
+three on the spot:</p>
+
+<div class="box ruled"><span class="tag ruled">RULED 2026-07-26</span>
+<b>Footfall-anchored overlay pulses: accepted.</b> Effect loops may sync
+pulse phase to walk-cycle footfalls (paw-contact frames) rather than
+free-running -- grounded, alive, and it uses the anchor system itself.</div>
+
+<div class="box ruled"><span class="tag ruled">RULED 2026-07-26</span>
+<span class="tag interim">INTERIM -- W3 circle-back may override</span>
+<b>Doom colour language: shared hue ramps yes, but NOT one-glow-fits-all.</b>
+Interim tri-hue mapping carries doom <i>FLAVOUR</i>:
+<span style="color:var(--blue)">BLUE = technical weirdness</span> /
+<span style="color:var(--purple)">PURPLE = eldritch</span> /
+<span style="color:var(--red)">RED = conventional catastrophe</span>;
+<i>intensity</i> (or added dark shadows) carries level. The flavour-vs-level
+distinction emerged today and links the overlay families to the typed doom
+streams -- flagged for review at the full colour-architecture pass (~W3).
+SimCity's RCI mini-bars cited as precedent for compact orthogonal
+indicators. One collision argues for keeping the tri-hue lean: green-for-
+economic would fight the ruled green/grey nominal <i>eyes</i>.</div>
+
+<div class="box ruled"><span class="tag ruled">RULED 2026-07-26</span>
+<b>Clean-alpha-under-paws-and-feet is codified house prompt language</b>
+(applies to workers too). Every walk-cycle prompt carries it; PIL scans
+verify; violations re-roll. Also recorded in PIXELLAB_OPERATIONS.md.</div>
+
+<p>And three fresh candidates, offered in the requested pattern --
+<b>suggestions, not rulings:</b></p>
+
+<div class="box"><span class="tag suggest">SUGGEST</span>
+<b>Ground-contact shadows.</b> No entity casts a shadow; a 2px soft ellipse
+at the feet socket (engine-drawn, zero art cost) would ground every cat,
+worker, and prop on the floor and quietly kill the "floating sprite" read.
+Pairs with the clean-alpha rule: the shadow is drawn by us, never baked.</div>
+
+<div class="box"><span class="tag suggest">SUGGEST</span>
+<b>Eye-blink micro-idle.</b> A 2-frame blink spliced rarely into idle via
+the existing alt-clip mechanism (the butt-flash splice hook, reused) --
+life at near-zero cost, and it showcases the eye socket as the anchor.</div>
+
+<div class="box"><span class="tag suggest">SUGGEST</span>
+<b>High-doom whisker catch-light.</b> At red-tier doom, a 1px warm highlight
+on whisker tips (whisker socket, marmalade chonker's magnificent whiskers
+being the flagship case) -- doom reaching into small details reads as
+atmosphere, not UI.</div>
+
+<h2>7. The dials, by cost-to-change</h2>
+
+<table>
+<tr><th>Dial</th><th>Cost to change</th></tr>
+<tr><td>Effect opacity / blend / z-order per tier</td><td>constants; the layering lab tunes live</td></tr>
+<tr><td>Which socket an effect attaches to</td><td>one JSON field</td></tr>
+<tr><td>Socket positions (V2)</td><td>data edit or re-harvest; no art touched</td></tr>
+<tr><td>Overlay loop art (new family, new hue)</td><td>a few generations</td></tr>
+<tr><td>Per-frame tracks (V3)</td><td>harvest script + probe; annotation for tails</td></tr>
+<tr><td>Baked-in effects on subjects</td><td>full regeneration of the subject -- and ruled against for regular cats</td></tr>
+</table>
+
+<div class="footer">P(DOOM) CRAFT PRIMERS: #1 Pixel Scale -- #2 Anchors and
+Effects. Evidence: pixellab-python SDK source (models/keypoint.py,
+estimate_skeleton.py) read 2026-07-26; rulings from Pip's cat-sweep review
+session same day. The socket schema convention lives in
+docs/art/PROP_MANIFEST.md; operational generation guidance in
+docs/art/PIXELLAB_OPERATIONS.md.</div>
