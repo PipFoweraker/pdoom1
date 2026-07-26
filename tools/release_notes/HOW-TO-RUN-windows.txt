@@ -1,0 +1,22 @@
+P(Doom) -- Windows
+
+HOW TO RUN
+1. EXTRACT this whole zip to a folder first (right-click -> Extract All).
+   Do NOT run PDoom.exe from inside the zip viewer -- the game needs the
+   other files sitting next to it, and the zip viewer hides them. This is
+   the #1 thing that trips people up.
+2. Open the extracted folder and double-click PDoom.exe.
+3. If Windows SmartScreen says "Windows protected your PC":
+   click "More info" -> "Run anyway". The build is unsigned (alpha).
+
+WHATS IN HERE
+   PDoom.exe    the game
+   PDoom.pck    the game data (must stay next to the exe)
+   *.dll        Steam integration libraries (keep them here)
+
+FEEDBACK
+   In-game F8 saves a bug report to your disk and shows you the file path --
+   please email that file to pip@beacongcr.org (the in-game reporter does not
+   send anything itself yet).
+
+Thanks for playing -- Pip
