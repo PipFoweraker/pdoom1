@@ -150,6 +150,43 @@ func test_loader_fallback_matches_legacy_force_scale():
 	)
 
 
+func test_approach_px_schema_and_water_cooler_slots():
+	# v1.2: optional approach_px = list of [x, y] slot offsets from anchor_px
+	# (source px). water_cooler populates left/right side slots (Pip 2026-07-26:
+	# walkers were standing "slightly in front of the water cooler").
+	var data := _load_manifest()
+	assert_true(data.get("_schema", {}).has("approach_px"), "_schema documents approach_px")
+	var props: Dictionary = data.get("props", {})
+	for id in props:
+		if not props[id].has("approach_px"):
+			continue  # optional field -- absence is the documented fallback
+		var ap = props[id]["approach_px"]
+		assert_true(ap is Array, "'%s' approach_px is a list" % id)
+		for slot in ap:
+			assert_true(slot is Array and (slot as Array).size() == 2,
+				"'%s' approach slot is an [x, y] pair" % id)
+	var wc: Array = props.get("water_cooler", {}).get("approach_px", [])
+	assert_eq(wc.size(), 2, "water_cooler declares two approach slots")
+	if wc.size() == 2:
+		assert_lt(float(wc[0][0]), 0.0, "first slot on the LEFT side")
+		assert_gt(float(wc[1][0]), 0.0, "second slot on the RIGHT side")
+
+
+func test_loader_approach_points():
+	var pts := PropCatalogue.approach_points("water_cooler")
+	assert_eq(pts.size(), 2, "loader surfaces both water_cooler slots")
+	if pts.size() == 2:
+		assert_true(pts[0] is Vector2 and pts[1] is Vector2, "slots come back as Vector2")
+		assert_lt((pts[0] as Vector2).x, 0.0)
+		assert_gt((pts[1] as Vector2).x, 0.0)
+	# Manifested prop WITHOUT the optional field -> empty (fallback unchanged).
+	assert_eq(PropCatalogue.approach_points("filing_cabinet").size(), 0,
+		"props without approach_px report no slots")
+	# Unmanifested id -> empty list + the standard warn-once.
+	assert_eq(PropCatalogue.approach_points("__no_such_prop_ap__").size(), 0)
+	assert_engine_error("has no manifest entry", "unmanifested id warns once")
+
+
 func test_style_lookup_sorted_and_deterministic():
 	var decent := PropCatalogue.style_ids("decent")
 	assert_true(decent.size() > 0, "at least one decent-tagged prop")

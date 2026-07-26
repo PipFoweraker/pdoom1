@@ -27,6 +27,7 @@ footprint, height) so a renderer can size and place each prop on its own terms.
 | `subject_px` | opaque-subject (alpha bbox) size `[w, h]` |
 | `anchor_px` | feet anchor in canvas coords: bottom-centre of the opaque bbox (x may be `.5`; y = exclusive bbox bottom, the baseline row) |
 | `footprint_tiles` | floor tiles occupied `[w, h]` at the 32 px art-tile scale (floor art is 32 px, displayed at 64 px); depth is judgement -- front-view art has none |
+| `approach_px` | v1.2, OPTIONAL: list of `[x, y]` approach-slot offsets from `anchor_px`, in source px (`+x` right, `+y` down = in front). Landmark destination resolution (`office_floor.gd` `approach_point_for`) prefers the first FREE slot, so walkers queue at a prop's sides instead of stacking in front of it (`water_cooler` populates left/right). Omit it and resolution falls back to the nearest-outside-footprint point unchanged |
 | `height_tiles` | subject height / 32, rounded to nearest 0.25 (ties up) |
 | `style_tags` | office quality tiers this art serves, from the canonical ladder `"scummy"` / `"decent"` / `"premium"` (ruled 2026-07-26; `docs/game-design/SEED_ASSET_REGISTRY_AND_VERDICTS.md`). Tier-variant art uses id convention `<base_id>_<tier>`; where a variant is missing, renderers show the decent art unchanged (no tinting) |
 | `sockets` | ALWAYS `[]` for now -- schema placeholder, see below |
@@ -56,6 +57,10 @@ footprint, height) so a renderer can size and place each prop on its own terms.
   `_draw_prop`; sandbox sprites get `centered = false, offset = -anchor_px`.)
 - The sandbox uses `footprint_tiles` for placement occupancy: a manifested prop
   marks its footprint cells so populate furniture will not overlap it.
+- `approach_px` (v1.2, office pass 3) drives landmark-visit destinations:
+  `OfficeFloor.approach_point_for()` hands a walker the first free slot
+  (occupied = someone standing within 10 px of it, or navigating to it);
+  props without the field keep the plain nearest-outside-footprint fallback.
 - `style_tags` drive tier selection: `office_floor.set_office_style(tier)` picks
   a `<id>_<tier>` variant when manifested + tagged for the tier; otherwise the
   decent art draws unchanged. The sandbox prop pool filters manifested assets by

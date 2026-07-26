@@ -120,6 +120,22 @@ static func art_path(id: String) -> String:
 	return String(_defs[id].get("art", ""))
 
 
+static func approach_points(id: String) -> Array:
+	"""Approach-slot offsets from anchor_px, in SOURCE px (manifest v1.2
+	`approach_px`), as an Array of Vector2 in authored order. Empty for props
+	without slots or unmanifested ids -- callers then keep the plain
+	nearest-outside-footprint destination (pass-2 behaviour unchanged)."""
+	_ensure_loaded()
+	var out: Array = []
+	if not _defs.has(id):
+		_warn_once(id)
+		return out
+	for p in _defs[id].get("approach_px", []):
+		if p is Array and p.size() == 2:
+			out.append(Vector2(float(p[0]), float(p[1])))
+	return out
+
+
 static func style_tags(id: String) -> Array[String]:
 	"""Office quality tiers this art serves, from the canonical ladder
 	scummy/decent/premium (ruled 2026-07-26). Empty for unmanifested ids."""
