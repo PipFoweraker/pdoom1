@@ -70,6 +70,14 @@ unverified pck.
   `api.pdoom1.com`; if a newer build exists, show a non-blocking
   `"vX available -> Download"` banner that opens the release URL. This is the
   core of issue #799.
+  **SHIPPED (2026-07, #799):** `godot/autoload/update_check.gd` GETs the
+  website's static feed `https://pdoom1.com/data/version.json` (3s timeout,
+  silent offline no-op), compares numerically to `GameConfig.CURRENT_VERSION`,
+  and the welcome screen shows a dismissible `vX available >> [U]pdate page`
+  notice opening the GitHub releases page. The same launch moment fires the
+  anonymous install ping (Plausible, random install UUID, opt-out in settings)
+  that #940's install-base metrics consume server-side. No auto-download; L3
+  remains unbuilt (and per the Steam note below, may never be).
 - **L3: in-game auto pck-swap patcher.** Download + hash-verify + mount/swap +
   relaunch, all in-game. Rare exe/engine updates fall back to re-running the
   installer, surfaced via the same L2 banner.
