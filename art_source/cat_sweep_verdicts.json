@@ -1,0 +1,337 @@
+{
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_b2_tabby_side_heft/animations/walk/east": [
+    "like",
+    "promote"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_b2_tabby_side_heft/animations/walk/west": [
+    "like",
+    "promote"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_b2_tabby_lowtd_heft/animations/walk/north": [
+    "like",
+    "promote",
+    "disfavour"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_b2_tabby_lowtd_heft/animations/walk/south": [
+    "like",
+    "promote"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_sweep_black_side_heft/animations/walk/west": [
+    "disfavour",
+    "promote",
+    "like",
+    "dislike"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_sweep_black_side_heft/animations/walk/east": [
+    "like",
+    "promote"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_black/animations/walk/north": [
+    "disfavour"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_black/animations/walk/south": [
+    "favour",
+    "disfavour"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_sweep_eldritch_side_heft/animations/walk/east": [
+    "disfavour"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_sweep_eldritch_side_heft/animations/walk/west": [
+    "disfavour"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_eldritch_r2/animations/walk/north": [
+    "disfavour"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_eldritch_r2/animations/walk/south": [
+    "disfavour"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_purple_r2b/animations/walk/south": [
+    "disfavour"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_purple_r2b/animations/walk/north": [
+    "disfavour"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_sweep_purple_side_heft/animations/walk/east": [
+    "like",
+    "promote"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_sweep_purple_side_heft/animations/walk/west": [
+    "like",
+    "promote"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_b2_tabby_lowtd_heft/animations/butt_flash_north/north": [
+    "promote",
+    "like"
+  ],
+  "art_source/pixellab_2026-07-26_doom_overlays/embers/flecks": [
+    "like",
+    "favour",
+    "promote"
+  ],
+  "art_source/pixellab_2026-07-26_doom_overlays/arc/radialweb": [
+    "like",
+    "promote"
+  ],
+  "art_source/pixellab_2026-07-26_doom_overlays/arc/branching": [
+    "like",
+    "promote"
+  ],
+  "art_source/pixellab_2026-07-26_doom_overlays/embers/faint": [
+    "like",
+    "promote"
+  ],
+  "art_source/pixellab_2026-07-26_doom_overlays/wisp/tendrils": [
+    "like",
+    "promote"
+  ],
+  "art_source/pixellab_2026-07-26_doom_overlays/wisp/slim": [
+    "like",
+    "promote"
+  ],
+  "art_source/pixellab_2026-07-26_doom_overlays/wisp/curl": [
+    "disfavour"
+  ],
+  "art_source/pixellab_2026-07-26_doom_overlays/aura/spikysigil": [
+    "like",
+    "favour",
+    "promote"
+  ],
+  "art_source/pixellab_2026-07-26_doom_overlays/aura/glowdisc": [
+    "like",
+    "promote"
+  ],
+  "art_source/pixellab_2026-07-26_doom_overlays/aura/smokering": [
+    "like",
+    "favour",
+    "promote"
+  ],
+  "art_source/pixellab_2026-07-26_doom_overlays/flame/tongue": [
+    "like",
+    "favour",
+    "promote"
+  ],
+  "art_source/pixellab_2026-07-26_doom_overlays/flame/lowwide": [
+    "like",
+    "promote"
+  ],
+  "art_source/pixellab_2026-07-26_doom_overlays/flame/sparking": [
+    "like",
+    "promote"
+  ],
+  "art_source/pixellab_2026-07-26_doom_overlays/void/jaggedrift": [
+    "promote",
+    "favour",
+    "like"
+  ],
+  "art_source/pixellab_2026-07-26_doom_overlays/void/tentacles": [
+    "favour",
+    "promote",
+    "like"
+  ],
+  "art_source/pixellab_2026-07-26_doom_overlays/void/vortex": [
+    "like",
+    "favour",
+    "promote"
+  ],
+  "art_source/pixellab_2026-07-26_doom_overlays/states/aura_amber": [
+    "promote",
+    "disfavour"
+  ],
+  "art_source/pixellab_2026-07-26_doom_overlays/states/aura_red": [
+    "promote",
+    "dislike"
+  ],
+  "art_source/pixellab_2026-07-26_doom_overlays/states/wisp_blue": [
+    "like",
+    "promote"
+  ],
+  "art_source/pixellab_2026-07-26_doom_overlays/states/embers_red": [
+    "like",
+    "promote"
+  ],
+  "lab/tabby_lowtd_south+aura_glowdisc": [
+    "like",
+    "promote"
+  ],
+  "lab/black_lowtd_north+wisp_slim": [
+    "promote"
+  ],
+  "lab/eldritch_side_east+arc_radialweb": [
+    "like",
+    "promote"
+  ],
+  "lab/purple_lowtd_south+void_vortex": [
+    "promote"
+  ],
+  "lab/tabby_side_east+embers_motes": [
+    "like",
+    "promote"
+  ],
+  "lab/black_lowtd_south+flame_lowwide": [
+    "like",
+    "favour",
+    "promote"
+  ],
+  "lab/tabby_lowtd_east+states_aura_amber": [
+    "promote"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_b2_tabby_side_heft/animations/walk/north-east": [
+    "like"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_b2_tabby_side_heft/animations/walk/south-east": [
+    "like"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_b2_tabby_lowtd_heft/animations/walk/north-east": [
+    "like"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_b2_tabby_lowtd_heft/animations/walk/south-east": [
+    "like"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_b2_tabby_side_heft/animations/walk/south-west": [
+    "like"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_b2_tabby_lowtd_heft/animations/walk/south-west": [
+    "like"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_b2_tabby_side_heft/animations/walk/north-west": [
+    "like"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_b2_tabby_lowtd_heft/animations/walk/north-west": [
+    "like"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_sweep_black_side_heft/animations/walk/north-east": [
+    "like"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_sweep_black_side_heft/animations/walk/south-east": [
+    "like"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_sweep_black_side_heft/animations/walk/south-west": [
+    "like"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_sweep_black_side_heft/animations/walk/north-west": [
+    "like"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_black/animations/walk/north-east": [
+    "dislike"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_black/animations/walk/south-east": [
+    "dislike"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_black/animations/walk/south-west": [
+    "dislike"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_black/animations/walk/north-west": [
+    "dislike"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_sweep_eldritch_side_heft/animations/walk/north-east": [
+    "disfavour"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_sweep_eldritch_side_heft/animations/walk/south-east": [
+    "disfavour"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_sweep_eldritch_side_heft/animations/walk/south-west": [
+    "disfavour"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_sweep_eldritch_side_heft/animations/walk/north-west": [
+    "disfavour"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_sweep_purple_side_heft/animations/walk/south-east": [
+    "like"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_sweep_purple_side_heft/animations/walk/north-east": [
+    "like"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_sweep_purple_side_heft/animations/walk/south-west": [
+    "like"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_sweep_purple_side_heft/animations/walk/north-west": [
+    "like"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_purple_r2b/animations/walk/south-west": [
+    "disfavour"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_purple_r2b/animations/walk/south-east": [
+    "disfavour"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_purple_r2b/animations/walk/north-east": [
+    "disfavour"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_purple_r2b/animations/walk/north-west": [
+    "disfavour"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_black/animations/butt_flash_north/north": [
+    "like"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_eldritch_r2/animations/butt_flash_north/north": [
+    "like"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_purple_r2b/animations/butt_flash_north/north": [
+    "like"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_b2_tabby_lowtd_heft/animations/sitting/south": [
+    "dislike"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_b2_tabby_lowtd_heft/animations/licking/south": [
+    "dislike"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_black/animations/sitting/south": [
+    "dislike"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_black/animations/licking/south": [
+    "dislike"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_eldritch_r2/animations/sitting/south": [
+    "dislike"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_eldritch_r2/animations/licking/south": [
+    "dislike"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_purple_r2b/animations/sitting/south": [
+    "dislike"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_purple_r2b/animations/licking/south": [
+    "dislike"
+  ],
+  "art_source/pixellab_2026-07-26_doom_overlays/embers/motes": [
+    "disfavour"
+  ],
+  "art_source/pixellab_2026-07-26_doom_overlays/arc/zigzag": [
+    "favour"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_eldritch_r2/animations/walk/north-east": [
+    "like"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_eldritch_r2/animations/walk/south-east": [
+    "like"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_eldritch_r2/animations/walk/south-west": [
+    "like"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_eldritch_r2/animations/walk/north-west": [
+    "like"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_purple_r2b/animations/walk/east": [
+    "like"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_purple_r2b/animations/walk/west": [
+    "like"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_eldritch_r2/animations/walk/east": [
+    "dislike"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_eldritch_r2/animations/walk/west": [
+    "dislike"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_black/animations/walk/east": [
+    "like"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_black/animations/walk/west": [
+    "like"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_b2_tabby_lowtd_heft/animations/walk/east": [
+    "dislike"
+  ],
+  "art_source/pixellab_2026-07-26_cat_sweep/cat_b2_tabby_lowtd_heft/animations/walk/west": [
+    "dislike"
+  ]
+}
