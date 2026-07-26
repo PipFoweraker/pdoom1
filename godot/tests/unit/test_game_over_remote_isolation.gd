@@ -14,12 +14,17 @@ var _prev_enabled: bool
 var _prev_base: String
 var _prev_token: String
 var _prev_optin: bool
+var _prev_asked: bool
 
 func before_each():
 	_prev_enabled = LeaderboardSync.enabled
 	_prev_base = LeaderboardSync.base_url
 	_prev_token = LeaderboardSync.token
 	_prev_optin = GameConfig.submit_scores_global
+	_prev_asked = GameConfig.leaderboard_consent_asked
+	# Default these tests to an explicitly opted-in player (identity-consent
+	# ruling 2026-07-26); individual tests override where they test decline.
+	GameConfig.leaderboard_consent_asked = true
 	if FileAccess.file_exists(LeaderboardSync.OUTBOX_PATH):
 		DirAccess.remove_absolute(LeaderboardSync.OUTBOX_PATH)
 
@@ -28,6 +33,7 @@ func after_each():
 	LeaderboardSync.base_url = _prev_base
 	LeaderboardSync.token = _prev_token
 	GameConfig.submit_scores_global = _prev_optin
+	GameConfig.leaderboard_consent_asked = _prev_asked
 	if FileAccess.file_exists(LeaderboardSync.OUTBOX_PATH):
 		DirAccess.remove_absolute(LeaderboardSync.OUTBOX_PATH)
 
@@ -93,6 +99,23 @@ func test_show_game_over_is_idempotent():
 
 	assert_eq(LeaderboardSync._read_outbox().size(), 1,
 		"remote submit fires once, not once-per-refresh (re-entrancy guard)")
+
+func test_declined_consent_keeps_score_local():
+	# Identity-consent ruling 2026-07-26: a remembered decline must not stop
+	# local play or local scoring -- it only silences the remote upload.
+	LeaderboardSync.enabled = true
+	LeaderboardSync.base_url = "http://127.0.0.1:9"
+	LeaderboardSync.token = "test-token"
+	GameConfig.leaderboard_consent_asked = true
+	GameConfig.submit_scores_global = false
+
+	var screen := _instance_screen()
+	screen.show_game_over(false, _defeat_state())
+
+	assert_true(screen.visible, "defeat screen renders for opted-out players")
+	assert_ne(screen.leaderboard_entry_uuid, "", "score still saved LOCALLY (local board is never gated)")
+	assert_eq(LeaderboardSync._read_outbox().size(), 0,
+		"nothing queued for remote -- declined identity consent is a silent no-op")
 
 func test_show_game_over_noop_when_sync_disabled():
 	LeaderboardSync.enabled = false

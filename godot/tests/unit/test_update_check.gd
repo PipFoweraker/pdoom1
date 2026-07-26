@@ -231,29 +231,37 @@ func test_handler_respects_dismissal():
 	GameConfig.dismissed_update_version = prior_dismissed
 
 
-# ---- ping privacy gate: opting out of EITHER toggle suppresses the ping ------
+# ---- ping privacy gate: TIER 2, decoupled from leaderboard identity consent --
+# (docs/PRIVACY_POSTURE.md, ruled + approved by Pip 2026-07-26: the ping is
+# identity-free, so ONLY its own toggle gates it.)
 
 func test_ping_gate_default_on():
-	var prior_scores = GameConfig.submit_scores_global
 	var prior_ping = GameConfig.send_launch_ping
-	GameConfig.submit_scores_global = true
 	GameConfig.send_launch_ping = true
 	var checker = _make_checker()
 	assert_true(checker.should_send_ping())
-	GameConfig.submit_scores_global = prior_scores
 	GameConfig.send_launch_ping = prior_ping
 
-func test_ping_gate_either_optout_suppresses():
-	var prior_scores = GameConfig.submit_scores_global
+func test_ping_gate_own_toggle_suppresses():
 	var prior_ping = GameConfig.send_launch_ping
 	var checker = _make_checker()
-	# Dedicated ping opt-out alone.
-	GameConfig.submit_scores_global = true
 	GameConfig.send_launch_ping = false
 	assert_false(checker.should_send_ping(), "ping toggle off -> no ping")
-	# The pre-existing privacy opt-out alone (#799: 'do not send at all').
-	GameConfig.submit_scores_global = false
+	GameConfig.send_launch_ping = prior_ping
+
+func test_ping_fires_regardless_of_leaderboard_choice():
+	# The decoupling ruling: leaderboard identity opt-out (or never-consented)
+	# must NOT silence the anonymous ping, and vice versa.
+	var prior_scores = GameConfig.submit_scores_global
+	var prior_asked = GameConfig.leaderboard_consent_asked
+	var prior_ping = GameConfig.send_launch_ping
+	var checker = _make_checker()
 	GameConfig.send_launch_ping = true
-	assert_false(checker.should_send_ping(), "leaderboard opt-out also silences the ping")
+	GameConfig.submit_scores_global = false
+	GameConfig.leaderboard_consent_asked = false
+	assert_true(checker.should_send_ping(), "never-consented leaderboard state does not gate the ping")
+	GameConfig.leaderboard_consent_asked = true
+	assert_true(checker.should_send_ping(), "explicit leaderboard DECLINE does not gate the ping")
 	GameConfig.submit_scores_global = prior_scores
+	GameConfig.leaderboard_consent_asked = prior_asked
 	GameConfig.send_launch_ping = prior_ping

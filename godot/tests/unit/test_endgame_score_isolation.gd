@@ -17,12 +17,23 @@ extends GutTest
 
 const UNREACHABLE := "https://10.255.255.1"  # unroutable: connect never completes -> timeout
 
+var _prev_optin: bool
+var _prev_asked: bool
+
 func before_each():
 	# Isolate the outbox file per test.
 	if FileAccess.file_exists(LeaderboardSync.OUTBOX_PATH):
 		DirAccess.remove_absolute(LeaderboardSync.OUTBOX_PATH)
+	# These tests pin the POST-consent submission contract, so run as an
+	# explicitly opted-in player (identity-consent ruling 2026-07-26).
+	_prev_optin = GameConfig.submit_scores_global
+	_prev_asked = GameConfig.leaderboard_consent_asked
+	GameConfig.submit_scores_global = true
+	GameConfig.leaderboard_consent_asked = true
 
 func after_each():
+	GameConfig.submit_scores_global = _prev_optin
+	GameConfig.leaderboard_consent_asked = _prev_asked
 	if FileAccess.file_exists(LeaderboardSync.OUTBOX_PATH):
 		DirAccess.remove_absolute(LeaderboardSync.OUTBOX_PATH)
 
