@@ -1,0 +1,27 @@
+P(Doom) -- Linux
+
+HOW TO RUN
+1. EXTRACT this whole zip to a folder first. Do NOT run the game from
+   inside an archive viewer -- it needs PDoom.pck and the .so libraries
+   sitting next to it.
+2. Make the game executable if needed, then run it:
+      chmod +x PDoom.x86_64
+      ./PDoom.x86_64
+3. If nothing happens when launching from a file manager, run it from a
+   terminal instead so you can see any error output.
+
+WHATS IN HERE
+   PDoom.x86_64   the game
+   PDoom.pck      the game data (must stay next to the executable)
+   *.so           Steam integration libraries (keep them here)
+
+HEADS UP
+   The Linux build is not extensively tested yet -- expect rough edges.
+   Reports are very welcome.
+
+FEEDBACK
+   In-game F8 saves a bug report to your disk and shows you the file path --
+   please email that file to pip@beacongcr.org (the in-game reporter does not
+   send anything itself yet).
+
+Thanks for playing -- Pip

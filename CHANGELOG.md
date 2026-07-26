@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Feeds the hidden Risk Pool system (research integrity, capability overhang, financial exposure)
   - New `research_quality_selector.gd` UI; defaults to Standard and remembers last selection
   - Unit tests: `test_research_quality.gd`, `test_risk_system.gd`
-- **Game-design documentation** (#500): `godot/docs/design/` — `TWO_ACT_STRUCTURE.md`, `INTRO_CINEMATIC.md`, `TONE_AND_ART.md`
+- **Game-design documentation** (#500): `godot/docs/design/` -- `TWO_ACT_STRUCTURE.md`, `INTRO_CINEMATIC.md`, `TONE_AND_ART.md`
 - **Scenario/Mod Hook System** (#483): Custom scenarios without code changes
   - Drop JSON files into `godot/data/scenarios/` to add new scenarios
   - Scenario selection dropdown in Custom Game setup screen
@@ -32,7 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **CI/CD pipeline restored** (#527, #530, #535): the daily Enhanced CI/CD pipeline had been failing for 10+ days and two workflows (`data-validation`, `dev-blog-automation`) failed at startup for months
   - Repaired PEP 701 nested-quote f-strings that broke on the Python 3.11 runner (valid only on 3.12+)
   - Added missing `pyyaml` dependency to the sync/cleanup stages
-  - Fixed invalid workflow YAML (column-0 lines terminating `run:` block scalars → 0s startup failures)
+  - Fixed invalid workflow YAML (column-0 lines terminating `run:` block scalars -> 0s startup failures)
   - Fixed schema-validation check failing under AJV strict mode on `format: "uri"` (added `ajv-formats`)
 
 ### Technical
@@ -40,6 +40,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Repo cleanup**: archived ~35 pygame-era debris files to `archive/legacy-pygame/`; removed duplicates; pruned 9 stale remote branches and 6 orphaned worktrees
 - New files: `scenario_loader.gd`, `docs/SCENARIOS.md`, `godot/data/scenarios/*.json`
 - Modified: `game_config.gd`, `game_manager.gd`, `pregame_setup.gd`, `pregame_setup.tscn`, `events.gd`
+
+---
+
+## [v0.13.1] - 2026-07-25 - 'Soft-Lock Hotfixes'
+
+### Fixed
+- **Ledger event-orphan dialog soft-lock** (#883): an event opening over the ledger
+  orphaned the ledger dialog, leaving it un-closeable and the session stuck
+- **Staff-card ESC dead-mouse soft-lock** (#887): closing a staff card with ESC could
+  leave the input blocker alive, deadening the mouse for the rest of the session
+
+Both bugs could strand a session; no other gameplay changes in this release.
 
 ---
 

@@ -23,6 +23,20 @@ from typing import Optional
 class MultiPlatformBuilder:
     """Builds game for Windows, Linux, and macOS using Godot."""
 
+    # GDExtension libraries the Godot export lays down beside the executable
+    # (from godot/addons/godotsteam/godotsteam.gdextension: the [libraries]
+    # release entry plus the [dependencies] steam_api library). Shipping a zip
+    # without them causes GDExtension load errors and dead Steam integration
+    # (v0.13.1 forensics, issue #917), so packaging fails loudly if absent.
+    EXPECTED_WINDOWS_LIBS = [
+        "libgodotsteam.windows.template_release.x86_64.dll",
+        "steam_api64.dll",
+    ]
+    EXPECTED_LINUX_LIBS = [
+        "libgodotsteam.linux.template_release.x86_64.so",
+        "libsteam_api.so",
+    ]
+
     def __init__(
         self, version: str, godot_path: Optional[str] = None, project_path: Optional[Path] = None
     ):
@@ -183,13 +197,67 @@ class MultiPlatformBuilder:
             # Create distribution ZIPs
             zip_success = self.zip_builds()
             if not zip_success:
-                print("\n[WARNING] Some ZIP packaging failed")
+                print("\n[ERROR] ZIP packaging failed -- refusing to ship incomplete zips")
+                all_success = False
 
             print(f"\nBuilds location: {self.repo_root / 'builds'}")
         else:
             print("\n[WARNING] Some builds failed. Check errors above.")
 
         return all_success
+
+    def _release_note(self, platform_key: str) -> Optional[Path]:
+        """Per-platform HOW-TO-RUN template shipped inside each zip."""
+        note = self.repo_root / "tools" / "release_notes" / f"HOW-TO-RUN-{platform_key}.txt"
+        if not note.exists():
+            print(f"[ERROR] Missing release note template: {note}")
+            return None
+        return note
+
+    def _zip_native_build(
+        self,
+        build_dir: Path,
+        zip_path: Path,
+        exe_name: str,
+        lib_glob: str,
+        expected_libs: list,
+        platform_key: str,
+    ) -> bool:
+        """Zip a Windows/Linux build dir: exe + pck + GDExtension libs + HOW-TO-RUN.
+
+        Includes every lib matching lib_glob that the export laid down beside the
+        executable, and fails if any expected GodotSteam library is absent.
+        """
+        ok = True
+        files = [build_dir / exe_name, build_dir / "PDoom.pck"]
+        files.extend(sorted(build_dir.glob(lib_glob)))
+
+        missing = [n for n in expected_libs if not (build_dir / n).exists()]
+        if missing:
+            print(f"[ERROR] {build_dir} is missing expected GDExtension libraries: {missing}")
+            print("        The shipped game would fail to load GodotSteam. Aborting package.")
+            ok = False
+
+        note = self._release_note(platform_key)
+        if note is None:
+            ok = False
+
+        with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zf:
+            for f in files:
+                if f.exists():
+                    zf.write(f, f.name)
+                    print(f"    + {f.name}")
+                else:
+                    print(f"[ERROR] Expected build output missing: {f}")
+                    ok = False
+            if note is not None:
+                zf.write(note, "HOW-TO-RUN.txt")
+                print("    + HOW-TO-RUN.txt")
+
+        size_mb = zip_path.stat().st_size / (1024 * 1024)
+        status = "[SUCCESS]" if ok else "[ERROR]"
+        print(f"{status} Created {zip_path.name} ({size_mb:.1f} MB)")
+        return ok
 
     def zip_builds(self) -> bool:
         """Create distribution ZIPs for each platform."""
@@ -199,24 +267,21 @@ class MultiPlatformBuilder:
 
         success = True
 
-        # Windows: ZIP the .exe and .pck together
+        # Windows: ZIP exe + pck + GodotSteam DLLs + HOW-TO-RUN
         windows_dir = self.repo_root / "builds" / "windows" / self.version
         if windows_dir.exists():
             zip_path_versioned = windows_dir / f"PDoom-Windows-{self.version}.zip"
             zip_path_simple = windows_dir / "PDoom-Windows.zip"
             try:
-                # Create versioned zip
-                with zipfile.ZipFile(zip_path_versioned, "w", zipfile.ZIP_DEFLATED) as zf:
-                    exe_file = windows_dir / "PDoom.exe"
-                    pck_file = windows_dir / "PDoom.pck"
-
-                    if exe_file.exists():
-                        zf.write(exe_file, "PDoom.exe")
-                    if pck_file.exists():
-                        zf.write(pck_file, "PDoom.pck")
-
-                size_mb = zip_path_versioned.stat().st_size / (1024 * 1024)
-                print(f"[SUCCESS] Created {zip_path_versioned.name} ({size_mb:.1f} MB)")
+                if not self._zip_native_build(
+                    windows_dir,
+                    zip_path_versioned,
+                    "PDoom.exe",
+                    "*.dll",
+                    self.EXPECTED_WINDOWS_LIBS,
+                    "windows",
+                ):
+                    success = False
 
                 # Also create simple-named zip for website compatibility
                 shutil.copy2(zip_path_versioned, zip_path_simple)
@@ -225,41 +290,59 @@ class MultiPlatformBuilder:
                 print(f"[ERROR] Failed to create Windows ZIP: {e}")
                 success = False
 
-        # Linux: ZIP the executable and .pck
+        # Linux: ZIP executable + pck + GodotSteam .so libs + HOW-TO-RUN
         linux_dir = self.repo_root / "builds" / "linux" / self.version
         if linux_dir.exists():
             zip_path = linux_dir / f"PDoom-Linux-{self.version}.zip"
             try:
-                with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zf:
-                    exe_file = linux_dir / "PDoom.x86_64"
-                    pck_file = linux_dir / "PDoom.pck"
-
-                    if exe_file.exists():
-                        zf.write(exe_file, "PDoom.x86_64")
-                    if pck_file.exists():
-                        zf.write(pck_file, "PDoom.pck")
-
-                size_mb = zip_path.stat().st_size / (1024 * 1024)
-                print(f"[SUCCESS] Created {zip_path.name} ({size_mb:.1f} MB)")
+                if not self._zip_native_build(
+                    linux_dir,
+                    zip_path,
+                    "PDoom.x86_64",
+                    "*.so",
+                    self.EXPECTED_LINUX_LIBS,
+                    "linux",
+                ):
+                    success = False
             except Exception as e:
                 print(f"[ERROR] Failed to create Linux ZIP: {e}")
                 success = False
 
-        # macOS: Rename existing .zip for consistency
+        # macOS: the export emits PDoom.app.zip directly, with the GodotSteam
+        # framework + libsteam_api.dylib already embedded in Contents/Frameworks/
+        # (verified against the CI-built v0.13.1 asset). Verify that, add
+        # HOW-TO-RUN.txt beside the .app inside the zip, then copy to the
+        # versioned name.
         mac_dir = self.repo_root / "builds" / "mac" / self.version
         old_mac_zip = mac_dir / "PDoom.app.zip"
         new_mac_zip = mac_dir / f"PDoom-macOS-{self.version}.zip"
-        if old_mac_zip.exists() and not new_mac_zip.exists():
+        if old_mac_zip.exists():
             try:
+                with zipfile.ZipFile(old_mac_zip, "a", zipfile.ZIP_DEFLATED) as zf:
+                    names = zf.namelist()
+                    frameworks = [n for n in names if "/Contents/Frameworks/" in n]
+                    if not frameworks:
+                        print(
+                            "[ERROR] macOS .app bundle has no Contents/Frameworks/ -- "
+                            "GodotSteam GDExtension was not embedded by the export"
+                        )
+                        success = False
+                    else:
+                        print(f"[INFO] macOS bundle embeds {len(frameworks)} Frameworks/ entries")
+                    note = self._release_note("macos")
+                    if note is None:
+                        success = False
+                    elif "HOW-TO-RUN.txt" not in names:
+                        zf.write(note, "HOW-TO-RUN.txt")
+                        print("    + HOW-TO-RUN.txt (added beside the .app inside the zip)")
+
+                # Copy (overwrite) so the versioned zip matches the updated one
                 shutil.copy2(old_mac_zip, new_mac_zip)
                 size_mb = new_mac_zip.stat().st_size / (1024 * 1024)
                 print(f"[SUCCESS] Created {new_mac_zip.name} ({size_mb:.1f} MB)")
             except Exception as e:
-                print(f"[ERROR] Failed to rename macOS ZIP: {e}")
+                print(f"[ERROR] Failed to package macOS ZIP: {e}")
                 success = False
-        elif new_mac_zip.exists():
-            size_mb = new_mac_zip.stat().st_size / (1024 * 1024)
-            print(f"[INFO] macOS package ready: {new_mac_zip.name} ({size_mb:.1f} MB)")
 
         return success
 
