@@ -37,8 +37,7 @@
     },
     "legendary": {
       "research": 20,
-      "reputation": 10,
-      "doom": 5
+      "reputation": 10
     }
   }
 }

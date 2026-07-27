@@ -27,6 +27,106 @@ func test_all_events_have_required_fields():
 		assert_has(event, "trigger_type", "Event should have trigger_type")
 		assert_has(event, "options", "Event should have options")
 
+## --------------------------------------------------------------------------------------
+## ADR-0015 S-ticket CONTENT-SCAN GUARD (#967 Parent 1)
+##
+## Authored event CONTENT must never carry a literal `doom` effect again. Such a write went
+## to Resources.add's `state.doom += v` sink, which turn resolution clobbers -- so every
+## "(+/-N doom)" message in the data files was a promise the engine never kept. Content now
+## writes a world-state INTERMEDIARY (global_alarm / global_panic / safety_absorption /
+## frontier_capability / general_capability) and DoomSystem converts it into doom rate.
+##
+## This guard exists mainly to protect the ADR-0016 pack schema: the year packs are authored
+## by copying these files, so one surviving literal would breed.
+##
+## CARVE-OUTS (deliberate, both documented in ADR-0015):
+##  1. START CONFIG -- `starting_resources.doom` sets the initial LEVEL. That is a legitimate
+##     scenario dial, not an event effect, and is not scanned.
+##  2. risk_events.json -- its 20 pool `effects.doom` fields are LIVE (turn_manager routes
+##     them through doom_system.add_event_doom), so re-authoring them is a BALANCE change
+##     deferred to the ADR-0015 M-ticket. Budgeted below so the count can only shrink.
+## --------------------------------------------------------------------------------------
+
+const RISK_EVENTS_DOOM_BUDGET := 20  # M-ticket backlog; MUST only ever go down
+
+func _all_data_json_paths(dir_path: String, out: Array) -> void:
+	var dir := DirAccess.open(dir_path)
+	if dir == null:
+		return
+	dir.list_dir_begin()
+	var entry := dir.get_next()
+	while entry != "":
+		var full := dir_path.path_join(entry)
+		if dir.current_is_dir():
+			_all_data_json_paths(full, out)
+		elif entry.ends_with(".json"):
+			out.append(full)
+		entry = dir.get_next()
+	dir.list_dir_end()
+
+func _parse_json(path: String):
+	var text := FileAccess.get_file_as_string(path)
+	assert_ne(text, "", "readable: " + path)
+	var parsed = JSON.parse_string(text)
+	assert_not_null(parsed, "parses as JSON: " + path)
+	return parsed
+
+func _scan_for_doom_effects(node, path: String, trail: String, hits: Array) -> void:
+	"""Walk a parsed data tree and record every place authored content still writes doom."""
+	if node is Array:
+		for i in range(node.size()):
+			_scan_for_doom_effects(node[i], path, "%s[%d]" % [trail, i], hits)
+		return
+	if not (node is Dictionary):
+		return
+	for key in node.keys():
+		var child = node[key]
+		var child_trail := "%s.%s" % [trail, key]
+		# (a) the event-choice / event effect schema
+		if key == "effects" and child is Dictionary and child.has("doom"):
+			hits.append("%s%s.doom" % [path, child_trail])
+		# (b) the pdoom-data override schema (impacts[].variable == "doom")
+		if key == "impacts" and child is Array:
+			for i in range(child.size()):
+				var imp = child[i]
+				if imp is Dictionary and str(imp.get("variable", "")) == "doom":
+					hits.append("%s%s[%d].variable=doom" % [path, child_trail, i])
+		# (c) the dead historical-timeline schema (game_effect.doom_increase/_decrease)
+		if key == "game_effect" and child is Dictionary:
+			for gk in child.keys():
+				if str(gk).begins_with("doom"):
+					hits.append("%s%s.%s" % [path, child_trail, gk])
+		# (d) rarity default effects (variable_mapping.json default_effects.*)
+		if key == "default_effects" and child is Dictionary:
+			for rk in child.keys():
+				var bucket = child[rk]
+				if bucket is Dictionary and bucket.has("doom"):
+					hits.append("%s%s.%s.doom" % [path, child_trail, rk])
+		_scan_for_doom_effects(child, path, child_trail, hits)
+
+func test_no_authored_event_content_writes_literal_doom():
+	var paths: Array = []
+	_all_data_json_paths("res://data", paths)
+	assert_gt(paths.size(), 10, "the data tree was found and walked")
+
+	var hits: Array = []
+	var risk_hits: Array = []
+	for path in paths:
+		var parsed = _parse_json(path)
+		var found: Array = []
+		_scan_for_doom_effects(parsed, path, "", found)
+		if path.ends_with("risk_events.json"):
+			risk_hits.append_array(found)
+		else:
+			hits.append_array(found)
+
+	assert_eq(hits.size(), 0,
+		"authored content must write an intermediary, never a literal doom effect. Offenders: "
+		+ ", ".join(PackedStringArray(hits)))
+	assert_lte(risk_hits.size(), RISK_EVENTS_DOOM_BUDGET,
+		"the risk_events.json carve-out may only shrink (ADR-0015 M-ticket); found %d"
+		% risk_hits.size())
+
 func test_event_count():
 	# Test that we have a substantial number of events
 	var events = GameEvents.get_all_events()
@@ -305,15 +405,18 @@ func test_multi_resource_effects():
 	var events = GameEvents.get_all_events()
 	var ai_breakthrough = _find_event_by_id(events, "ai_breakthrough")
 
-	var initial_doom = state.doom
+	var initial_general_capability = state.general_capability
 	var initial_reputation = state.reputation
 	var initial_research = state.research
 
-	# Choose publish openly (affects doom, reputation, research)
+	# Choose publish openly. ADR-0015 S-ticket: the hazard arm is no longer a literal
+	# "doom" write (that was clobbered at resolve) -- publishing openly commoditizes the
+	# capability, which is the general_capability intermediary behind the diffusion stream.
 	var result = GameEvents.execute_event_choice(ai_breakthrough, "publish_open", state)
 
 	assert_true(result["success"], "Choice should succeed")
-	assert_ne(state.doom, initial_doom, "Doom should change")
+	assert_ne(state.general_capability, initial_general_capability,
+		"Publishing openly raises general_capability (diffusion stream), not a printed doom number")
 	assert_ne(state.reputation, initial_reputation, "Reputation should change")
 	assert_ne(state.research, initial_research, "Research should change")
 
@@ -451,7 +554,13 @@ func test_remove_researchers_safe_noop_when_empty():
 # Every effect key execute_event_choice actually applies (scalars via
 # ResourceAccessor.add + the non-scalar match arms in events.gd).
 const HANDLED_EFFECT_KEYS := [
-	"money", "compute", "research", "papers", "reputation", "doom",
+	"money", "compute", "research", "papers", "reputation",
+	"doom",  # routed to doom_system.add_event_doom (ADR-0015 S-ticket); authored content no
+	         # longer uses it (see test_no_authored_event_content_writes_literal_doom) but the
+	         # runtime pdoom-data path in event_service.gd still emits it.
+	# ADR-0015 world-state intermediaries -- the honest replacements for literal doom.
+	"global_alarm", "global_panic", "safety_absorption",
+	"general_capability", "frontier_capability",
 	"compute_engineers",  # scalar legacy count (ResourceAccessor.add)
 	"safety_researchers", "capability_researchers",  # staffing arms
 	"has_cat", "lose_researcher",
@@ -503,7 +612,10 @@ func test_push_through_burnout_docks_loyalty_least_loyal_first_no_removal():
 
 	assert_true(result["success"], "Push Through should succeed")
 	assert_eq(state.researchers.size(), before_count, "Push Through removes nobody (interim: loyalty-hit only)")
-	assert_eq(state.doom, before_doom + 3.0, "Doom still applies as flavor states")
+	# ADR-0015 S-ticket: the old "+3 doom" was a clobbered no-op AND a category error --
+	# team morale is not a printed doom write (same ruling as actions.gd team_building).
+	# The loyalty hit below is now the whole teeth of Push Through.
+	assert_eq(state.doom, before_doom, "Burnout is a morale outcome, not a doom write")
 
 	# The two least-loyal researchers (Weary Wade 10, Frayed Fiona 20) take the hit;
 	# the most-loyal (Steady Sam 80) is untouched.

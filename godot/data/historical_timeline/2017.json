@@ -11,7 +11,6 @@
       "description": "OpenAI announces bot that can beat amateur Dota 2 players in 1v1 matches",
       "detailed_description": "OpenAI's bot learned to play Dota 2 through self-play using a scaled-up version of Proximal Policy Optimization. This demonstrated the potential of reinforcement learning at scale and sparked discussions about AI capabilities advancement.",
       "game_effect": {
-        "doom_increase": 2.0,
         "capability_research_boost": 5,
         "media_attention": true,
         "reputation_change": -1
@@ -33,7 +32,6 @@
       "description": "DeepMind's AlphaGo Zero learns Go from scratch without human data, defeating previous versions 100-0",
       "detailed_description": "AlphaGo Zero achieved superhuman performance in Go using only self-play reinforcement learning, without any human game data. This milestone demonstrated that AI systems could surpass human knowledge entirely through self-learning.",
       "game_effect": {
-        "doom_increase": 3.0,
         "capability_research_boost": 10,
         "media_attention": true
       },
@@ -54,7 +52,6 @@
       "description": "Google researchers introduce the Transformer architecture, revolutionizing NLP",
       "detailed_description": "Vaswani et al. introduce the Transformer model architecture, which would become the foundation for GPT, BERT, and virtually all modern large language models. The self-attention mechanism proved more effective than recurrent architectures.",
       "game_effect": {
-        "doom_increase": 1.0,
         "capability_research_boost": 15,
         "unlocks_research_option": "transformer_architectures"
       },
@@ -89,7 +86,6 @@
       "description": "Safety researchers reference 'Concrete Problems in AI Safety' paper (published June 2016)",
       "detailed_description": "Amodei et al.'s 'Concrete Problems in AI Safety' paper from 2016 gains traction in the safety community during 2017, establishing a research agenda around reward misspecification, safe exploration, distributional shift, robustness, and interpretability.",
       "game_effect": {
-        "doom_decrease": -0.5,
         "reputation_boost": 3,
         "unlocks_research_option": "reward_modeling_basics"
       },
@@ -105,13 +101,13 @@
           "id": "study_paper",
           "text": "Assign researchers to study concrete safety problems",
           "costs": {"action_points": 1},
-          "effects": {"research": 10, "doom": -1.0, "reputation": 2}
+          "effects": {"research": 10, "safety_absorption": 10, "reputation": 2}
         },
         {
           "id": "organize_reading_group",
           "text": "Organize safety reading group (costs 2 AP)",
           "costs": {"action_points": 2, "money": 3000},
-          "effects": {"research": 20, "doom": -2.0, "reputation": 5}
+          "effects": {"research": 20, "safety_absorption": 20, "reputation": 5}
         },
         {
           "id": "ignore",
@@ -131,7 +127,6 @@
       "description": "Future of Life Institute publishes 23 principles for beneficial AI development",
       "detailed_description": "At the Asilomar conference, AI researchers and thought leaders agree on 23 principles for safe and beneficial AI development, covering research issues, ethics and values, and longer-term considerations. These become influential in AI governance discussions.",
       "game_effect": {
-        "doom_decrease": -1.0,
         "reputation_boost": 5,
         "governance_boost": 10
       },
@@ -146,13 +141,13 @@
           "id": "endorse_principles",
           "text": "Publicly endorse Asilomar Principles",
           "costs": {"action_points": 1},
-          "effects": {"reputation": 8, "doom": -0.5}
+          "effects": {"reputation": 8, "global_alarm": 1}
         },
         {
           "id": "integrate_principles",
           "text": "Integrate principles into lab policy (costs 2 AP, $10k)",
           "costs": {"action_points": 2, "money": 10000},
-          "effects": {"reputation": 15, "doom": -2.0}
+          "effects": {"reputation": 15, "safety_absorption": 20}
         },
         {
           "id": "ignore",
