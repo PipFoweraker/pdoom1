@@ -1,5 +1,12 @@
 extends Control
 ## Pre-Game Setup Screen - Configure player name, lab name, seed, and difficulty using GameConfig
+##
+## ASSUMPTION (scene-reentry run-killer family, sibling of #979): this screen assumes a
+## pre-game context -- it only ever forwards to config_confirmation.tscn, whose Launch button
+## drives a fresh-boot (force=true) main.tscn that REPLACES any live run. It must never be
+## reachable mid-run without GameManager.pending_resume (or an equivalent resume flag) set
+## first. Before adding a new nav edge into this screen, check that path can't be taken while
+## a game is live.
 
 # UI References
 @onready var player_name_input = $Panel/VBox/FieldsContainer/PlayerNameRow/LineEdit

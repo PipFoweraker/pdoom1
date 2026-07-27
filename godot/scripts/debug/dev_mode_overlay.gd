@@ -305,10 +305,16 @@ func _jump_employee() -> void:
 
 
 func _jump_leaderboard() -> void:
+	# Scene-reentry run-killer family (sibling of #979): this used to leave a live main.tscn
+	# behind with no handoff -- leaderboard_screen's Back only ever went to welcome, whence
+	# Launch Lab / Load Game silently clobbered the run. leaderboard_screen._live_run_active()
+	# now detects the still-live GameManager autoload directly (is_initialized && not
+	# game_over) and offers "[BACK TO GAME]" instead, so no flag needs setting here.
 	SceneTransition.go_to("res://scenes/leaderboard_screen.tscn")
 
 
 func _jump_settings() -> void:
+	# See _jump_leaderboard() above -- settings_menu._live_run_active() does the same check.
 	SceneTransition.go_to("res://scenes/settings_menu.tscn")
 
 

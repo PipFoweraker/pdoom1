@@ -429,4 +429,6 @@ func _on_reset_game_button_pressed():
 	var gm = _live_gm()
 	if gm:
 		ErrorHandler.info(ErrorHandler.Category.VALIDATION, "Debug: Reset game requested", {})
-		gm.start_new_game()
+		# Deliberate reset over a live run -- force=true declares that intent explicitly
+		# (start_new_game's self-guard otherwise refuses, scene-reentry run-killer family).
+		gm.start_new_game("", true)

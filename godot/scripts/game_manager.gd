@@ -43,8 +43,21 @@ var last_conference_trip: Dictionary = {}
 func _ready():
 	print("[GameManager] Pure GDScript version ready")
 
-func start_new_game(game_seed: String = ""):
-	"""Initialize new game - pure GDScript - FIX #418: Handle initial events"""
+func start_new_game(game_seed: String = "", force: bool = false):
+	"""Initialize new game - pure GDScript - FIX #418: Handle initial events.
+
+	Self-guard (scene-reentry run-killer family, sibling of #979): this used to
+	unconditionally replace `state`, so every caller had to remember its own guard --
+	the dev-overlay leaderboard/settings jump forgot, and silently destroyed a live run.
+	Refuses to run when a game is already live unless the caller passes force=true.
+	Legitimate fresh-start callers (welcome/config_confirmation Launch-Lab chain via
+	main_ui._boot_game's fresh-boot branch, the debug "Reset Game" button) pass
+	force=true explicitly -- that is the caller declaring "yes, I mean to end the
+	current run"."""
+	if is_initialized and not force:
+		push_warning("[GameManager] start_new_game() REFUSED: a game is already live (is_initialized=true) and force=false would silently destroy it. Pass force=true if this is a deliberate reset/new-game.")
+		PerfLog.mark("start_new_game_refused", {"turn": state.turn if state != null else -1})
+		return
 	# Get config from GameConfig singleton if seed not provided
 	if game_seed.is_empty():
 		game_seed = GameConfig.get_display_seed()
@@ -789,9 +802,18 @@ func save_game(path: String = SaveLoad.QUICKSAVE_PATH) -> bool:
 	action_executed.emit({"success": true, "message": "Game saved (turn %d)" % state.turn})
 	return true
 
-func load_saved_game(path: String = SaveLoad.QUICKSAVE_PATH) -> bool:
+func load_saved_game(path: String = SaveLoad.QUICKSAVE_PATH, force: bool = false) -> bool:
 	"""Restore a saved game and resume exactly where it left off (phase, queued
-	actions, pending events, rng stream). Returns false if no/corrupt save."""
+	actions, pending events, rng stream). Returns false if no/corrupt save.
+
+	Self-guard (scene-reentry run-killer family, sibling of #979): same rule as
+	start_new_game -- refuses to clobber a live run unless force=true. The one
+	legitimate caller (main_ui._boot_game's queued-load branch) passes force=true;
+	it only fires straight off a fresh main.tscn boot, before any run exists."""
+	if is_initialized and not force:
+		push_warning("[GameManager] load_saved_game() REFUSED: a game is already live (is_initialized=true) and force=false would silently destroy it. Pass force=true if this is a deliberate load-over.")
+		PerfLog.mark("load_saved_game_refused", {"turn": state.turn if state != null else -1})
+		return false
 	var envelope := SaveLoad.load_envelope(path)
 	if envelope.is_empty():
 		error_occurred.emit("No save found to load")

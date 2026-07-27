@@ -1,6 +1,13 @@
 extends Control
 ## Configuration Confirmation Screen - Shows locked-in game settings before launch
 ## Used for default pathway to show what options are configured
+##
+## ASSUMPTION (scene-reentry run-killer family, sibling of #979): this screen assumes a
+## pre-game context -- its Launch button drives main.tscn's fresh-boot path
+## (main_ui._boot_game -> GameManager.start_new_game(force=true)), which REPLACES any live
+## run. It must never be reachable mid-run without GameManager.pending_resume (or an
+## equivalent resume flag) set first. Before adding a new nav edge into this screen, check
+## that path can't be taken while a game is live.
 
 # UI References
 @onready var player_name_label = $Panel/VBox/FieldsContainer/PlayerNameRow/ValueLabel

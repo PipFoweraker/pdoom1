@@ -706,14 +706,20 @@ func _boot_game():
 		var load_path: String = GameConfig.pending_load_path
 		GameConfig.pending_load_path = ""
 		log_message("[color=cyan]Loading saved game...[/color]")
-		if game_manager.load_saved_game(load_path):
+		# force=true: reaching here with no pending_resume flag means this really is a
+		# deliberate fresh boot of main.tscn (welcome's Load Game queued the path). The
+		# start_new_game/load_saved_game self-guard (scene-reentry run-killer family,
+		# sibling of #979) exists to catch callers that DON'T declare that intent.
+		if game_manager.load_saved_game(load_path, true):
 			return
 		log_message("[color=red]Load failed -- starting a new game instead.[/color]")
 	log_message("[color=cyan]Initializing game...[/color]")
 	# #617 debt: was hardcoded "test-seed" -- every boot ran the SAME timeline and
 	# GameConfig.game_seed was ignored. Empty arg -> GameManager falls back to
 	# GameConfig.get_display_seed() (player's configured seed, else the weekly seed).
-	game_manager.start_new_game()
+	# force=true: same reasoning as the load branch above -- no resume flag means this
+	# boot of main.tscn is a genuine fresh start (welcome/config_confirmation chain).
+	game_manager.start_new_game("", true)
 
 func _show_conference_backlog(trip: Dictionary) -> void:
 	"""The return burst -- ONE surface (ADR-0014 shell; design-seed section 1).
