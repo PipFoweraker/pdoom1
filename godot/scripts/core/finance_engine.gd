@@ -199,6 +199,104 @@ static func generate_offers(ctx: Dictionary, purpose: String, rng: RandomNumberG
 		})
 	return offers
 
+# --- Lease offers: a new INSTRUMENT FAMILY on this engine (#791, #811 item 1) -------
+#
+# OFFICE_ECONOMY_PROPOSAL sec 1: "a lease menu is a new instrument family on an existing
+# engine, not a new engine." This mints offer dictionaries in the SAME shape
+# generate_offers() produces -- offer_id / counterparty / factory / expiry_turn -- so
+# offer_live() and accept_offer() work on them unchanged (accept_offer gains one `lease`
+# branch, below).
+#
+# It is a sibling of generate_offers rather than a call into it for ONE honest reason: the
+# instrument SOURCE differs. Financing instruments come from Balance "financing.instruments"
+# and the menu WIDTH is reputation-tiered (_tier_count); lease options come from
+# data/office/offices.json and the menu is a fixed THREE (Pip's ruling: "I want 3 offices to
+# choose from"). Everything else -- counterparty factors, expiry, the accept path -- is the
+# existing engine.
+
+## Mint the 3-option first-lease menu. Deterministic in `rng` (WS-0): rng is drawn once per
+## option for the deposit jitter, so a given seed always sees the same terms.
+## Terms are DATA (offices.json); the engine's contribution is the counterparty/reputation
+## adjustment on the DEPOSIT -- a landlord who trusts you asks for less up front. Rent
+## itself is never adjusted: rent is the predictable rail (#791).
+static func generate_lease_offers(ctx: Dictionary, rng: RandomNumberGenerator) -> Array:
+	var offers: Array = []
+	var expiry := int(ctx.get("turn", 0)) + offer_ttl_turns()
+	var idx := 0
+	for opt in Office.lease_options():
+		if not (opt is Dictionary):
+			continue
+		var cp := String(opt.get("counterparty", "commercial_agent"))
+		var cp_factor := Balance.num("financing.counterparty_factors." + cp, 1.0)
+		var rep := float(ctx.get("finance_rep", 50.0))
+		# Deposit relief scales with finance reputation (same rep-relieves-cost thesis as
+		# price(), applied to an up-front cash ask instead of an interest rate). Bounded so
+		# the deposit can never invert or vanish.
+		var relief := clampf(rep / 100.0 * _cfg_num("lease_deposit_rep_relief", 0.25), 0.0, 0.5)
+		var deposit := roundf(float(opt.get("deposit", 0.0)) * cp_factor * (1.0 - relief))
+		var jitter := _cfg_num("lease_deposit_jitter", 0.0)
+		if jitter > 0.0 and rng != null:
+			deposit = roundf(deposit * (1.0 + (rng.randf() - 0.5) * jitter))
+		idx += 1
+		offers.append({
+			"offer_id": "lease:%s#%d" % [String(opt.get("id", "")), idx],
+			"instrument_id": "lease",
+			"option_id": String(opt.get("id", "")),
+			"name": String(opt.get("name", "Office")),
+			"counterparty": cp,
+			"factory": "lease",
+			"purpose": "office",
+			"deposit": deposit,
+			"fitout": float(opt.get("fitout", 0.0)),
+			"principal": 0.0,                                  # a lease gives no cash
+			"repayment": 0.0,
+			"rent_per_month": float(opt.get("rent_per_month", 0.0)),
+			"hire_cap": int(opt.get("hire_cap", 0)),
+			"break_fee": float(opt.get("break_fee", 0.0)),
+			"term_months": float(opt.get("min_term_months", 0.0)),
+			"fuse_ticks": 0,
+			"interest_rate": 0.0,
+			"non_cash": {},
+			"flavor": String(opt.get("flavor", "")),
+			"expiry_turn": expiry,
+		})
+	return offers
+
+
+## Sign a lease: charge deposit + fitout NOW, write the office onto GameState, LOCK it in.
+## Refuses if a lease is already signed -- v1 has no moving mechanic (Pip: "for now lets
+## leave players locked in with their choices, mechanically, just architect
+## extensibility"). The seam for the future move instrument is state.office_locked plus the
+## already-authored break_fee on every offer: a move action clears the lock and mints the
+## break fee as a one-shot ledger payable. Nothing today does that.
+static func _accept_lease(offer: Dictionary, state) -> Dictionary:
+	var result := {"success": false, "message": "", "money_delta": 0.0, "doom_delta": 0.0, "entries": []}
+	if ("office_locked" in state) and bool(state.office_locked):
+		result["message"] = "You are already on a lease -- moving is not possible yet."
+		return result
+	var option := Office.option_by_id(String(offer.get("option_id", "")))
+	if option.is_empty():
+		result["message"] = "That office is no longer available."
+		return result
+	var upfront := float(offer.get("deposit", 0.0)) + float(offer.get("fitout", 0.0))
+	if float(state.money) < upfront:
+		result["message"] = "Can't cover the deposit and fitout (%s)." % GameConfig.format_money(upfront)
+		return result
+	state.add_resources({"money": -upfront})
+	result["money_delta"] = -upfront
+	# The offer's OWN quoted terms win over the raw data file (same honesty rule as the
+	# financing menu: what you saw is what you signed) for everything the engine priced.
+	var signed := option.duplicate(true)
+	signed["rent_per_month"] = float(offer.get("rent_per_month", option.get("rent_per_month", 0.0)))
+	signed["hire_cap"] = int(offer.get("hire_cap", option.get("hire_cap", 0)))
+	Office.apply_lease(state, signed)
+	result["success"] = true
+	result["message"] = "Signed: %s. Paid %s up front; rent %s/month. Desks: %d." % [
+		String(offer.get("name", "office")), GameConfig.format_money(upfront),
+		GameConfig.format_money(float(state.office_rent_per_month)), int(state.office_hire_cap)]
+	return result
+
+
 ## Is a standing offer still open at `turn`? (ADR-0012 standing-offer expiry.)
 static func offer_live(offer: Dictionary, turn: int) -> bool:
 	return turn <= int(offer.get("expiry_turn", 0))
@@ -230,6 +328,11 @@ static func accept_offer(offer: Dictionary, state) -> Dictionary:
 	var entries: Array = []
 
 	match factory:
+		"lease":
+			# The office instrument family (#791): no cash in, an up-front spend out, and a
+			# recurring rent obligation on the payroll rail (Office.charge_rent) rather than
+			# a ledger payable -- see the rail decision in office.gd's header.
+			return _accept_lease(offer, state)
 		"loan":
 			state.add_resources({"money": principal})
 			result["money_delta"] = principal

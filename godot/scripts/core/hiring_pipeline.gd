@@ -277,6 +277,11 @@ func make_offer(state, candidate_id: String, cash_offer: float, promises: Array 
 	var cand := find_pool_candidate(state, candidate_id)
 	if cand == null:
 		return {"success": false, "message": "No such candidate in the pool."}
+	# Office hire cap (#791): refuse at the OFFER stage, not at acceptance -- extending an
+	# offer you have no desk for would be a promise the office cannot keep. Crisp refusal,
+	# no Attention spent, no state touched.
+	if not Office.has_desk_space(state):
+		return {"success": false, "message": Office.no_desk_message(state)}
 	if _has_job_for(candidate_id, KIND_OFFER):
 		return {"success": false, "message": "%s already has an offer out." % cand.researcher_name}
 	var cost_att := Balance.inum("hiring.offer.cost_attention", 1)

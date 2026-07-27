@@ -93,6 +93,29 @@ var ledger: Ledger
 # the L7 save round-trip stays byte-stable.
 var financing_offers: Array = []
 
+# Standing LEASE offers (#791 / #811 item 1): the 3-option first-lease menu minted by
+# FinanceEngine.generate_lease_offers. TRANSIENT, exactly like financing_offers -- they
+# carry their own expiry_turn and are cheap to re-tour, so save/load drops a pending menu.
+var lease_offers: Array = []
+
+# --- Office economy (#791; see scripts/core/office.gd) -------------------------
+# The office is the early game's shape-giver: tier 0 (bedroom/basement) hard-caps hires,
+# so growing FORCES the first lease spend. Signing LOCKS the choice in v1 (no moving
+# mechanic yet -- office_locked is the seam the future move instrument clears).
+var office_id: String = "bedroom"
+var office_name: String = "Bedroom / basement"
+var office_tier: int = 0
+var office_hire_cap: int = 2            # SIM number. The render layer's desk_slots is NOT read here (ADR-0018).
+var office_rent_per_month: float = 0.0  # Charged on the payroll rail at the month boundary.
+var office_locked: bool = false         # true once a lease is signed; nothing shipped flips it back.
+var office_upgrades: Array = []         # ADDITIVE String ids (Office.apply_upgrade). Empty in v1 by design.
+
+# Hype: the "loud on the internet" standing that FinanceEngine already prices against
+# (finance_engine.gd:69 read it duck-typed with a 0.0 fallback; vc_equity gates on
+# min_hype 25). Promoting it to a real field is behaviour-NEUTRAL at 0 and gives the
+# scouting shitpost action somewhere honest to write (#811 item 1).
+var hype: float = 0.0
+
 # The month plan layer (L1 / ADR-0009): the founder currency Attention, the crisp reserve,
 # and duration-bearing queued strategic actions. The plan cadence is monthly; the turn above
 # is the day-grained resolution tick. Rebuilt per game in reset().
@@ -266,6 +289,11 @@ func reset():
 	action_points = Balance.inum("starting_resources.action_points", 3)
 	stationery = Balance.num("starting_resources.stationery", 100.0)
 	governance = Balance.num("starting_resources.governance", 50.0)
+	hype = Balance.num("starting_resources.hype", 0.0)
+	# Office economy (#791): back to the bedroom, cap and all. Clears any signed lease.
+	financing_offers.clear()
+	lease_offers.clear()
+	Office.apply_start(self)
 	ledger = Ledger.new()  # ADR-0003: fresh ledger per game
 	# L1/ADR-0009: fresh month plan, opened with the first month's Attention grant. The plan
 	# month ordinal is derived from the calendar (turn 0 -> ordinal 0).
@@ -1128,6 +1156,17 @@ func to_dict() -> Dictionary:
 		"compute_engineers": compute_engineers,
 		"managers": managers,
 		"total_staff": get_total_staff(),
+		# Office economy (#791). hire_cap is the SIM number the hiring paths enforce;
+		# floorplan stays render-side and is deliberately NOT surfaced here (ADR-0018).
+		"office_id": office_id,
+		"office_name": office_name,
+		"office_tier": office_tier,
+		"office_hire_cap": office_hire_cap,
+		"office_rent_per_month": office_rent_per_month,
+		"office_locked": office_locked,
+		"office_upgrades": office_upgrades.duplicate(),
+		"desks_free": maxi(0, office_hire_cap - get_total_staff()),
+		"hype": hype,
 		"management_capacity": get_management_capacity(),
 		"unmanaged_count": get_unmanaged_count(),
 		"turn": turn,
@@ -1180,6 +1219,16 @@ func from_dict(data: Dictionary) -> void:
 	rep_org = _load_rep_dims(data.get("rep_org", {}))
 	rep_operator = _load_rep_dims(data.get("rep_operator", {}))
 	governance = float(data.get("governance", 50.0))  # was forgotten pre-L7
+	hype = float(data.get("hype", 0.0))
+	# Office economy (#791). Defaults are the tier-0 start, so a pre-office save loads
+	# into the bedroom rather than into an undefined office.
+	office_id = String(data.get("office_id", "bedroom"))
+	office_name = String(data.get("office_name", "Bedroom / basement"))
+	office_tier = int(data.get("office_tier", 0))
+	office_hire_cap = int(data.get("office_hire_cap", int(Office.start_office().get("hire_cap", 2))))
+	office_rent_per_month = float(data.get("office_rent_per_month", 0.0))
+	office_locked = bool(data.get("office_locked", false))
+	office_upgrades = (data.get("office_upgrades", []) as Array).duplicate()
 	# Doom-adjacent floats re-snap on load (idempotent under the 1-ulp JSON parse
 	# corruption -- see the to_dict comment + DoomSystem.SAVE_QUANTUM).
 	doom = DoomSystem._snap(float(data.get("doom", 50.0)))

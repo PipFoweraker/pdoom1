@@ -72,6 +72,28 @@ const GRID_CONFIG := {
 		"summary": {"text": "High-stakes moves - use wisely!", "color": Color(1.0, 0.6, 0.3)},
 		"log_label": "Strategic",
 	},
+	"office": {
+		"panel_size": Vector2(440, 300), "panel_pos": Vector2(90, 80),
+		"main_vbox_sep": 10,
+		"header": {"text": "OFFICE", "color": Color(0.7, 0.75, 0.9), "size": 14},
+		"columns": 2, "h_sep": 12, "v_sep": 12, "btn_size": Vector2(180, 80),
+		"key_labels": ["Q", "W", "E", "R"],
+		"name_transform": [["Sign: ", ""]],
+		"show_gains": false,
+		"summary": {"text": "Desks are the hard limit on headcount", "color": Color(0.6, 0.6, 0.6)},
+		"log_label": "Office",
+	},
+	"scouting": {
+		"panel_size": Vector2(380, 260), "panel_pos": Vector2(90, 80),
+		"main_vbox_sep": 10,
+		"header": {"text": "SCOUTING", "color": Color(0.6, 0.8, 0.6), "size": 14},
+		"columns": 3, "h_sep": 8, "v_sep": 8, "btn_size": Vector2(110, 80),
+		"key_labels": ["Q", "W", "E"],
+		"name_transform": [],
+		"show_gains": false,
+		"summary": {"text": "Different rooms, different people", "color": Color(0.6, 0.6, 0.6)},
+		"log_label": "Scouting",
+	},
 	"operations": {
 		"panel_size": Vector2(350, 250), "panel_pos": Vector2(90, 80),
 		"main_vbox_sep": 10,
@@ -292,6 +314,10 @@ func _options_for(id: String) -> Array:
 			return GameActions.get_strategic_options()
 		"operations":
 			return GameActions.get_operations_options()
+		"office":
+			return GameActions.get_office_options()
+		"scouting":
+			return GameActions.get_scouting_options()
 	return []
 
 

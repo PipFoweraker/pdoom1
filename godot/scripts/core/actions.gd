@@ -170,6 +170,12 @@ static func get_action_by_id(action_id: String) -> Dictionary:
 	for action in get_financing_options():
 		if action["id"] == action_id:
 			return action
+	for action in get_office_options():
+		if action["id"] == action_id:
+			return action
+	for action in get_scouting_options():
+		if action["id"] == action_id:
+			return action
 	# Special pass action (not in any submenu)
 	if action_id == PASS_ACTION_ID:
 		return get_pass_action()
@@ -202,6 +208,14 @@ static func get_travel_options() -> Array[Dictionary]:
 static func get_operations_options() -> Array[Dictionary]:
 	"""Get all operations/maintenance submenu options (data/actions/operations.json)"""
 	return _domain_defs("operations")
+
+static func get_office_options() -> Array[Dictionary]:
+	"""Office economy submenu: tour + the three sign-a-lease forks (#791; data/actions/office.json)."""
+	return _domain_defs("office")
+
+static func get_scouting_options() -> Array[Dictionary]:
+	"""Scouting submenu: read / meetups / shitpost (#811 item 1; data/actions/scouting.json)."""
+	return _domain_defs("scouting")
 
 static func get_pass_action() -> Dictionary:
 	"""Get the special pass/do nothing action (shown in command zone, not action list;
@@ -374,6 +388,74 @@ static func execute_action(action_id: String, state: GameState) -> Dictionary:
 			# Submenu action - opens the Liability Ledger financing menu (ADR-0003)
 			result["message"] = "Opening financing menu..."
 			result["open_submenu"] = "financing"
+
+		"office":
+			# Submenu action - opens the office economy menu (#791)
+			result["message"] = "Opening office menu..."
+			result["open_submenu"] = "office"
+
+		"scouting":
+			# Submenu action - opens the scouting menu (#811 item 1)
+			result["message"] = "Opening scouting menu..."
+			result["open_submenu"] = "scouting"
+
+		# --- Office economy (#791): tour -> three standing lease offers -> sign ONE. ---
+		"tour_offices":
+			if state.office_locked:
+				result["success"] = false
+				result["message"] = "You already signed a lease. Moving is not possible yet."
+			else:
+				var lease_rng: RandomNumberGenerator = state.rng if ("rng" in state and state.rng != null) else RandomNumberGenerator.new()
+				var lease_ctx: Dictionary = FinanceEngine.context_from_state(state)
+				state.lease_offers = FinanceEngine.generate_lease_offers(lease_ctx, lease_rng)
+				if state.lease_offers.is_empty():
+					result["success"] = false
+					result["message"] = "Nothing on the market right now."
+				else:
+					var lease_lines: Array = []
+					for lo in state.lease_offers:
+						lease_lines.append("%s (%s up front, %s/mo, %d desks)" % [
+							lo["name"], GameConfig.format_money(float(lo["deposit"]) + float(lo["fitout"])),
+							GameConfig.format_money(float(lo["rent_per_month"])), int(lo["hire_cap"])])
+					result["message"] = "Quotes on the table: " + "; ".join(lease_lines)
+
+		"sign_lease_coworking_corner", "sign_lease_walkup_office", "sign_lease_university_annex":
+			var sign_result: Dictionary = _sign_lease(state, action_id.trim_prefix("sign_lease_"))
+			result["success"] = bool(sign_result.get("success", false))
+			result["message"] = String(sign_result.get("message", ""))
+
+		# --- Scouting (#811 item 1). Cheap, deterministic, honestly narrated stubs. ---
+		"scout_read":
+			# The only scouting that touches the actual work. No rep, no hype -- reading is
+			# invisible to everyone but you.
+			var read_gain := Balance.num("scouting.read.research_gain", 3.0)
+			state.add_resources({"research": read_gain})
+			result["message"] = "Read for a day (+%0.1f research). Nobody noticed." % read_gain
+
+		"scout_meetups":
+			# In-person scouting: standing goes up a little, and IF the pool has room you
+			# meet exactly one person worth a follow-up (unvetted -- you talked, you did not
+			# interview them). Contrast with Advertise, which trickles over months.
+			var meet_rep := Balance.num("scouting.meetups.reputation_gain", 1.5)
+			state.reputation += meet_rep
+			var met_someone := false
+			if state.hiring != null:
+				if state.candidate_pool.size() < state.MAX_CANDIDATES:
+					var lead: Researcher = state.hiring._spawn_candidate(state, false)
+					met_someone = state.hiring._add_sourced_candidate(state, lead)
+			if met_someone:
+				result["message"] = "Worked the room (+%0.1f reputation). Someone unvetted is now in your candidate pool." % meet_rep
+			else:
+				result["message"] = "Worked the room (+%0.1f reputation). No leads you have room for." % meet_rep
+
+		"scout_shitpost":
+			# Hype is a real pricing input the finance engine already reads (vc_equity gates
+			# on min_hype). Loud costs you standing with the people who read carefully.
+			var hype_gain := Balance.num("scouting.shitpost.hype_gain", 4.0)
+			var hype_rep_cost := Balance.num("scouting.shitpost.reputation_cost", 1.0)
+			state.hype += hype_gain
+			state.reputation -= hype_rep_cost
+			result["message"] = "Posted (+%0.1f hype, -%0.1f reputation). Investors read hype; researchers read the replies." % [hype_gain, hype_rep_cost]
 
 		# --- Liability Ledger trades (ADR-0003): apply the immediate benefit here,
 		# add the future bill via the Ledger factories. Balance parked (DQ-8). ---
@@ -671,8 +753,31 @@ static func _apply_risk_contributions(action_id: String, state: GameState) -> vo
 	state.risk_system.add_risk_multi(entry.get("pools", {}), str(entry.get("source", action_id)), state.turn)
 
 
+## Sign one of the standing lease offers by its offices.json option id. Refuses (rather
+## than silently touring for you) if there is no live quote -- the tour is a real step, and
+## a lease you never priced is not a decision you made.
+static func _sign_lease(state, option_id: String) -> Dictionary:
+	if state.office_locked:
+		return {"success": false, "message": "You already signed a lease. Moving is not possible yet."}
+	for offer in state.lease_offers:
+		if String(offer.get("option_id", "")) != option_id:
+			continue
+		if not FinanceEngine.offer_live(offer, int(state.turn)):
+			return {"success": false, "message": "That quote has expired -- tour again."}
+		var accepted: Dictionary = FinanceEngine.accept_offer(offer, state)
+		if bool(accepted.get("success", false)):
+			state.lease_offers.clear()  # signing one retires the whole menu
+		return accepted
+	return {"success": false, "message": "No current quote for that office -- tour offices first."}
+
+
 static func _hire_from_pool(state: GameState, specialization: String) -> Dictionary:
 	"""Try to hire a candidate from the pool with matching specialization"""
+	# Office hire cap (#791): a hard, crisp refusal BEFORE any spend. Tier 0 (bedroom)
+	# binds at 2 -- the third person has nowhere to sit, which is what forces the lease.
+	if not Office.has_desk_space(state):
+		return {"success": false, "message": Office.no_desk_message(state)}
+
 	var candidate: Researcher = null
 
 	# Check if a specific candidate was queued for this specialization

@@ -5,14 +5,17 @@ extends GutTest
 ## This is a NON-FORKING refactor: the WHAT -- which options each config-driven submenu lists,
 ## and their costs -- must stay byte-for-byte identical to the pre-carve builders, which each
 ## read the same GameActions static getter. These tests pin that the controller reads exactly
-## that same source (so a fifth copy-paste can't silently diverge) and that the four grid
-## submenus are covered by config, while hiring/travel stay bespoke.
+## that same source (so a fifth copy-paste can't silently diverge) and that every grid
+## submenu is covered by config, while hiring/travel stay bespoke.
 
 const SubmenuControllerScript: GDScript = preload("res://scripts/ui/submenu_controller.gd")
 
-# The four submenus the pre-carve view built with near-identical icon-grid code, now collapsed
-# into GRID_CONFIG. Each maps to the GameActions getter its old builder called verbatim.
-const GRID_IDS := ["fundraise", "publicity", "strategic", "operations"]
+# The submenus built by the ONE generic icon-grid builder, collapsed into GRID_CONFIG. The
+# first four are the pre-carve builders (each maps to the GameActions getter its old builder
+# called verbatim); office + scouting are the #791 / #811-item-1 early-game additions, which
+# are pure GRID_CONFIG entries -- exactly the "adding a fifth pure-grid panel is now a
+# GRID_CONFIG entry" claim in the controller's header, now exercised.
+const GRID_IDS := ["fundraise", "publicity", "strategic", "operations", "office", "scouting"]
 
 
 func _controller() -> SubmenuController:
@@ -32,17 +35,21 @@ func _getter_options(id: String) -> Array:
 			return GameActions.get_strategic_options()
 		"operations":
 			return GameActions.get_operations_options()
+		"office":
+			return GameActions.get_office_options()
+		"scouting":
+			return GameActions.get_scouting_options()
 	return []
 
 
 # --- The config-driven submenus read the SAME option source as the pre-carve builders --------
 
-func test_grid_config_covers_exactly_the_four_grid_submenus():
+func test_grid_config_covers_exactly_the_grid_submenus():
 	var keys := SubmenuControllerScript.GRID_CONFIG.keys()
 	keys.sort()
 	var expected := GRID_IDS.duplicate()
 	expected.sort()
-	assert_eq(keys, expected, "GRID_CONFIG covers exactly the four collapsed grid submenus")
+	assert_eq(keys, expected, "GRID_CONFIG covers exactly the collapsed grid submenus")
 
 
 func test_options_for_matches_gameactions_getter_verbatim():
