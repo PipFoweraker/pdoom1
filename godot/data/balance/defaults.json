@@ -130,6 +130,18 @@
 		"_description": "AP economy: per-turn AP = difficulty base + per_staff * total staff.",
 		"per_staff": 0.5
 	},
+	"workstreams": {
+		"_description": "ADR-0011 s3/s4 workstream substrate (workstream.gd + the turn_manager accrual hook). turns_per_month re-denominates the per-MONTH quotes below onto the workday tick. effort_per_turn_scale converts one researcher's effective productivity into effort units. compute_starved_effort_multiplier is what an assigned researcher gets done when the fleet cannot cover their workstream's compute_intensity that tick (they are not idle, just slower). FIRST PASS -- priced by hand, not by sweep; re-price after the first assignment playtest (review-by 2026-08-31).",
+		"turns_per_month": 22,
+		"effort_per_turn_scale": 1.0,
+		"compute_starved_effort_multiplier": 0.5,
+		"self_direction": {
+			"_description": "Unassigned staff self-direct on their agenda (ADR-0011 s3: idle staff don't exist). effort_multiplier is the tax for nobody steering: unsteered work is real work, just less of it lands where it was needed. optimism_min/optimism_span set the OVER-CLAIM band for self-reported progress -- deterministic per person (Researcher.self_report_optimism, seeded off their stable key, never rng). FIRST-PASS GENTLE by ruling (2026-07-27): an audit should surface a nagging discrepancy, not a fraud. Audits ground-truth reported vs actual in a later lane; nothing consumes the reported figure yet.",
+			"effort_multiplier": 0.8,
+			"optimism_min": 1.05,
+			"optimism_span": 0.3
+		}
+	},
 	"rivals": {
 		"_description": "Rival lab coefficients (rivals.gd). ADR-0015: rivals no longer emit doom literals -- capability_overhang_doom_per_progress and per_tick_doom_scale (the pre-L1 shim) are RETIRED (Legacy #7/#12). Rival capability_progress IS the actor's frontier_capability slice, converted by the DoomSystem overhang stream; panic_per_capability_action feeds global_panic when a rival makes a reckless capability move.",
 		"panic_per_capability_action": 0.05,

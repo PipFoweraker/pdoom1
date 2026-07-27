@@ -1,0 +1,78 @@
+{
+  "_description": "ADR-0011 s3 workstream BACKLOG -- the standing list of directed work the founder can commit people to. 'There's always a backlog': this file is the thing that makes idle staff impossible. Each entry mints a Workstream (scripts/core/workstream.gd) when started. effort_target is in effort units (one average researcher contributes ~1.0/workday tick); duration_months is design INTENT (the target is the actual gate). compute_intensity is compute units per assigned researcher per MONTH -- the A7 dial: heavy empirical work drains the fleet, theory does not.",
+  "_review": "First-pass content, priced by hand not by sweep. Re-price after the first assignment playtest (review-by 2026-08-31).",
+  "workstreams": [
+    {
+      "id": "eval_harness",
+      "title": "Build an internal eval harness",
+      "topic": "safety",
+      "effort_target": 60.0,
+      "duration_months": 2,
+      "compute_intensity": 2.0,
+      "description": "Measure the thing before claiming it. Cheap in people, hungry for compute."
+    },
+    {
+      "id": "reward_hacking_study",
+      "title": "Reward-hacking case study",
+      "topic": "alignment",
+      "effort_target": 90.0,
+      "duration_months": 3,
+      "compute_intensity": 1.5,
+      "description": "Chase a concrete misgeneralization until it is legible to outsiders."
+    },
+    {
+      "id": "circuit_atlas",
+      "title": "Circuit atlas for a small model",
+      "topic": "interpretability",
+      "effort_target": 140.0,
+      "duration_months": 5,
+      "compute_intensity": 1.0,
+      "description": "Slow, unglamorous, and the only thing that makes later claims checkable."
+    },
+    {
+      "id": "scaling_probe",
+      "title": "Scaling probe on the house model",
+      "topic": "capabilities",
+      "effort_target": 80.0,
+      "duration_months": 2,
+      "compute_intensity": 4.0,
+      "description": "Fast prestige, heavy fleet burn, and it moves the frontier you claim to fear."
+    },
+    {
+      "id": "incident_taxonomy",
+      "title": "Incident taxonomy for the field",
+      "topic": "governance",
+      "effort_target": 70.0,
+      "duration_months": 3,
+      "compute_intensity": 0.0,
+      "description": "Pen and paper. Costs no compute and buys standing with people who write rules."
+    },
+    {
+      "id": "red_team_program",
+      "title": "Standing red-team program",
+      "topic": "safety",
+      "effort_target": 110.0,
+      "duration_months": 4,
+      "compute_intensity": 2.5,
+      "description": "A program, not a paper: it keeps finding things for as long as you staff it."
+    },
+    {
+      "id": "corrigibility_theory",
+      "title": "Corrigibility theory push",
+      "topic": "alignment",
+      "effort_target": 160.0,
+      "duration_months": 6,
+      "compute_intensity": 0.5,
+      "description": "A long theory bet. Nothing to show for months, then possibly everything."
+    },
+    {
+      "id": "compute_governance_brief",
+      "title": "Compute-governance briefing pack",
+      "topic": "governance",
+      "effort_target": 50.0,
+      "duration_months": 2,
+      "compute_intensity": 0.0,
+      "description": "Short, political, and it expires: the brief nobody reads twice."
+    }
+  ]
+}

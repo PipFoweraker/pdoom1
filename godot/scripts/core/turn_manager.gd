@@ -35,9 +35,11 @@ func start_turn() -> Dictionary:
 	var lifecycle_notes: Array = _step_process_researcher_lifecycles()
 	var staff_salaries: float = _step_pay_salaries(total_staff)
 	var prod: Dictionary = _step_researcher_productivity()
+	var workstream_notes: Array = _step_workstream_accrual()
 	var stationery: Dictionary = _step_consume_stationery()
 	var messages: Array = _build_start_turn_messages(max_ap, total_staff, staff_salaries, prod, stationery, ledger_result)
 	messages.append_array(lifecycle_notes)
+	messages.append_array(workstream_notes)
 	var triggered_events: Array[Dictionary] = _step_check_events(messages)
 
 	return {
@@ -297,6 +299,66 @@ func _step_researcher_productivity() -> Dictionary:
 		"unmanaged_employees": unmanaged_employees,
 		"total_unproductive": total_unproductive,
 	}
+
+func _step_workstream_accrual() -> Array:
+	"""=== WORKSTREAM ACCRUAL (ADR-0011 s3/s4, lane T1 / issue #613) ===
+	Every employed researcher's effort lands SOMEWHERE this tick:
+	  - assigned to an active workstream -> effort accrues into that multi-month bet, and
+	    the workstream's compute_intensity is billed per head against the fleet (atom A7);
+	  - assigned to nothing -> they SELF-DIRECT on their agenda topic (ADR-0011 s3, 'idle
+	    staff don't exist; unmanaged staff do'). That work is real but unsteered, and they
+	    report it OPTIMISTICALLY -- state.record_self_directed keeps the true and the
+	    claimed figure side by side.
+
+	SEAM (ruled 2026-07-27, review-by 2026-08-31): AUDITS ground-truth reported vs actual.
+	The audit founder-hour is a later lane; nothing consumes the reported figure yet.
+
+	DETERMINISM (ADR-0006): this step makes ZERO rng draws, so inserting it does not shift
+	the seeded stream -- recorded replays from before the substrate stay valid. It is also
+	INERT on an untouched run: with no workstreams started, nothing is billed to compute
+	and only bookkeeping tallies move.
+
+	Returns feed lines for COMPLETIONS only (feed discipline: per-tick effort trickle is a
+	readout, not news)."""
+	var notes: Array = []
+	if state.researchers.is_empty():
+		return notes
+	var scale: float = Balance.num("workstreams.effort_per_turn_scale", 1.0)
+	var self_mult: float = Balance.num("workstreams.self_direction.effort_multiplier", 0.8)
+	var starved_mult: float = Balance.num("workstreams.compute_starved_effort_multiplier", 0.5)
+
+	for researcher in state.researchers:
+		# get_effective_productivity() already folds burnout, jet lag, quirk and onboarding
+		# in -- effort is the SAME quantity the research roll is scaled by, just not gambled.
+		var effort: float = researcher.get_effective_productivity() * scale
+		if effort <= 0.0:
+			continue
+		var ws = state.workstream_for_researcher(researcher)
+		if ws == null:
+			# Unassigned: self-direct on the agenda topic (explicit focus_topic, else lane).
+			var topic: int = Workstream.agenda_topic(researcher.specialization, researcher.focus_topic)
+			var rec: Dictionary = researcher.accrue_self_directed(effort * self_mult)
+			state.record_self_directed(Workstream.topic_key(topic),
+				float(rec["actual"]), float(rec["reported"]))
+			continue
+		# Assigned: bill this workstream's compute intensity for this head, then accrue.
+		# A fleet that cannot cover the charge does not idle the person -- it slows them
+		# (they queue for runs). The charge is skipped entirely when it cannot be paid, so
+		# compute never goes negative on this path.
+		var charge: float = DoomSystem._snap(ws.compute_demand_per_turn_per_head())
+		if charge > 0.0:
+			if state.compute >= charge:
+				# Snapped: compute is a saved scalar, and an unsnapped decrement would leave
+				# the live value 1 ulp off what the save writes (DoomSystem.SAVE_QUANTUM).
+				state.compute = DoomSystem._snap(state.compute - charge)
+			else:
+				effort *= starved_mult
+		var was_complete: bool = ws.is_complete()
+		ws.accrue(state.researcher_id(researcher), effort, state.turn)
+		if ws.is_complete() and not was_complete:
+			notes.append("[workstream] '%s' reached its target (%s, lead: %s)" % [
+				ws.title, Workstream.topic_key(ws.topic), ws.lead_contributor()])
+	return notes
 
 func _step_consume_stationery() -> Dictionary:
 	"""=== STATIONERY SYSTEM === Staff consume stationery each turn; running out
