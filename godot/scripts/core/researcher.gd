@@ -23,6 +23,13 @@ var turns_employed: int = 0
 var jet_lag_turns: int = 0  # Turns remaining with jet lag
 var jet_lag_severity: float = 0.0  # 0.0-1.0, productivity penalty during jet lag
 
+# Per-person typed reputation (ADR-0010 B7/B8, first pass -- fields + accessor
+# only, no reader wired yet). This is the EMPLOYEE bearer of GameState's typed
+# rep triple (org / operator / employee); GameState.rep_for(kind, who) resolves
+# `who` to a researcher by candidate_id or name and delegates here. Additive
+# modifier layer: the authoritative lab-wide scalar remains GameState.reputation.
+var rep: Dictionary = {"safety": 0.0, "capability": 0.0}
+
 # NOTE: the legacy positive/negative "trait" system (workaholic/leak_prone/...) has been
 # RETIRED. Its shallow, hardcoded placeholders are replaced by the data-driven QUIRK
 # catalogue (see `quirk` below + res://data/researchers/quirks.json). The good ones were
@@ -679,6 +686,28 @@ func get_card_text() -> String:
 	return "\n".join(lines)
 
 # ============================================================================
+# TYPED REPUTATION (ADR-0010 B7/B8) -- employee bearer
+# ============================================================================
+
+func rep_for(kind: String) -> float:
+	"""This person's typed standing for "safety"/"capability". Unknown kinds read
+	0.0 (ResourceAccessor's unknown-name convention), never error."""
+	return float(rep.get(kind, 0.0))
+
+
+func add_rep(kind: String, amount: float) -> void:
+	"""Additive typed-rep write; no-op for a kind this person does not carry."""
+	if not rep.has(kind):
+		return
+	rep[kind] = float(rep[kind]) + amount
+
+
+func rep_dims() -> Dictionary:
+	"""Detached copy of the typed dims -- never hand out the live dictionary."""
+	return rep.duplicate(true)
+
+
+# ============================================================================
 # SERIALIZATION
 # ============================================================================
 
@@ -696,6 +725,8 @@ func to_dict() -> Dictionary:
 		"turns_employed": turns_employed,
 		"jet_lag_turns": jet_lag_turns,
 		"jet_lag_severity": jet_lag_severity,
+		# ADR-0010 B7/B8 per-person typed rep -- NEW KEY ONLY, snapped like appetites.
+		"rep": DoomSystem._snap_dict(rep),
 		# --- Hiring pipeline hidden-ability layer (Phase A) ---
 		# Appetites / loyalty-risk are SNAPPED to the repo-wide serialization grid
 		# (DoomSystem.SAVE_QUANTUM) so the save/load round-trip is JSON-parse-stable --
@@ -733,6 +764,13 @@ func from_dict(data: Dictionary):
 	turns_employed = int(data.get("turns_employed", 0))
 	jet_lag_turns = int(data.get("jet_lag_turns", 0))
 	jet_lag_severity = float(data.get("jet_lag_severity", 0.0))
+	# ADR-0010 B7/B8: absent on pre-typing saves -> everyone loads at zero standing.
+	rep = {"safety": 0.0, "capability": 0.0}
+	var rep_data = data.get("rep", {})
+	if rep_data is Dictionary:
+		for k in rep.keys():
+			if rep_data.has(k):
+				rep[k] = DoomSystem._snap(float(rep_data[k]))
 	# NOTE: legacy "traits" key (retired system) is intentionally ignored on load -- old saves
 	# carrying it drop it silently; the quirk layer below is the replacement.
 
