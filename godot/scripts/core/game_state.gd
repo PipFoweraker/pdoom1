@@ -12,6 +12,41 @@ var research: float = 0.0  # Generated from compute
 var papers: float = 0.0
 var reputation: float = 50.0
 var doom: float = 50.0  # 0-100, lose at 100
+
+# ============================================================================
+# TYPED REPUTATION (ADR-0010 R2 atoms B7/B8/B9) -- ADDITIVE, first pass.
+#
+# AUTHORITY RULE (do not "improve" this into a derived sum): the legacy scalar
+# `reputation` above stays AUTHORITATIVE and writable. ~20 sites write it
+# (spend_resources below, media_system.gd:244/416, ledger entries carrying
+# currency "reputation"); a derived-sum shim breaks every one of them on write.
+# The typed dimensions here are ADDITIVE modifiers read through rep_for(); no
+# reader is wired yet (readers switch on one at a time, B9).
+#
+# Three bearers: ORG (the lab), OPERATOR (the founder, personally) and
+# EMPLOYEE (per-person, stored on Researcher.rep -- see researcher.gd).
+# Two kinds per bearer: safety / capability standing.
+# ============================================================================
+const REP_KIND_SAFETY := "safety"
+const REP_KIND_CAPABILITY := "capability"
+const REP_KINDS: Array = [REP_KIND_SAFETY, REP_KIND_CAPABILITY]
+
+const REP_WHO_ORG := "org"
+const REP_WHO_OPERATOR := "operator"
+const REP_WHO_EMPLOYEE := "employee"  # `who` for an employee is their name/candidate_id
+
+## COST ROUTING RULE -- ruled by Pip, 2026-07-27 (answers ADR-0010 R2 section 6
+## question 1, "which pocket pays when something costs reputation?").
+##   Reputation COSTS bill the ORG by default. They bill the FOUNDER (operator)
+##   ONLY when the event/action EXPLICITLY names the founder.
+## One constant + one helper (rep_cost_bearer) so the rule has a single home;
+## every future rep-cost site routes through it rather than re-deciding.
+const REP_COST_DEFAULT_BEARER := REP_WHO_ORG
+const REP_BEARER_KEY := "rep_bearer"        # explicit override on an action/event def
+const REP_FOUNDER_FLAG := "targets_founder"  # boolean flag form of the same intent
+
+var rep_org: Dictionary = {REP_KIND_SAFETY: 0.0, REP_KIND_CAPABILITY: 0.0}
+var rep_operator: Dictionary = {REP_KIND_SAFETY: 0.0, REP_KIND_CAPABILITY: 0.0}
 var doom_history: Array[float] = []  # Per-turn doom snapshots for the trend graph (#512)
 # ADR-0002: area under the survival curve -- sum of (100 - doom) over turns actually
 # survived. The lexicographic score tiebreaker ("doom-years averted"); accrues in-engine.
@@ -223,6 +258,10 @@ func reset():
 	research = Balance.num("starting_resources.research", 0.0)
 	papers = Balance.num("starting_resources.papers", 0.0)
 	reputation = Balance.num("starting_resources.reputation", 50.0)
+	# Typed dims start at zero: they are ADDITIVE modifiers on top of the
+	# authoritative scalar, not a decomposition of it (ADR-0010 B9).
+	rep_org = {REP_KIND_SAFETY: 0.0, REP_KIND_CAPABILITY: 0.0}
+	rep_operator = {REP_KIND_SAFETY: 0.0, REP_KIND_CAPABILITY: 0.0}
 	doom = Balance.num("starting_resources.doom", 50.0)
 	action_points = Balance.inum("starting_resources.action_points", 3)
 	stationery = Balance.num("starting_resources.stationery", 100.0)
@@ -297,6 +336,121 @@ func reset():
 	paper_submissions.clear()
 	attended_conferences.clear()
 	conference_year = start_year
+
+
+# ============================================================================
+# TYPED REPUTATION ACCESSORS (ADR-0010 B7/B9)
+# Read side is total: an unknown kind or an unknown bearer reads 0.0 rather
+# than erroring, matching ResourceAccessor.read's "unknown name reads 0.0"
+# convention. Callers that need the distinction gate on has_rep_bearer().
+# ============================================================================
+
+func rep_for(kind: String, who: String = REP_WHO_ORG) -> float:
+	"""Typed reputation for one kind ("safety"/"capability") held by one bearer
+	("org", "operator", or an employee's name/candidate_id). 0.0 for unknowns.
+	ADDITIVE only -- the legacy `reputation` scalar is unaffected by this read."""
+	if not (kind in REP_KINDS):
+		return 0.0
+	match who:
+		REP_WHO_ORG:
+			return float(rep_org.get(kind, 0.0))
+		REP_WHO_OPERATOR:
+			return float(rep_operator.get(kind, 0.0))
+	var person = _find_researcher_by_handle(who)
+	if person == null:
+		return 0.0
+	return person.rep_for(kind)
+
+
+func rep_dims(who: String = REP_WHO_ORG) -> Dictionary:
+	"""All typed dims for one bearer, as a DETACHED COPY (callers must never get a
+	live reference into state -- a mutated copy would silently rewrite the model)."""
+	var out: Dictionary = {}
+	for kind in REP_KINDS:
+		out[kind] = rep_for(String(kind), who)
+	return out
+
+
+func has_rep_bearer(who: String) -> bool:
+	"""True if `who` names a bearer this state knows (org, operator, or an
+	employed researcher). Unknown bearers still READ as 0.0 via rep_for()."""
+	if who == REP_WHO_ORG or who == REP_WHO_OPERATOR:
+		return true
+	return _find_researcher_by_handle(who) != null
+
+
+func add_rep(kind: String, amount: float, who: String = REP_WHO_ORG) -> void:
+	"""Additive typed-rep write. No-op for an unknown kind or unknown bearer --
+	typed rep is a modifier layer, so a missed write can never corrupt the run."""
+	if not (kind in REP_KINDS):
+		return
+	match who:
+		REP_WHO_ORG:
+			rep_org[kind] = float(rep_org.get(kind, 0.0)) + amount
+			return
+		REP_WHO_OPERATOR:
+			rep_operator[kind] = float(rep_operator.get(kind, 0.0)) + amount
+			return
+	var person = _find_researcher_by_handle(who)
+	if person != null:
+		person.add_rep(kind, amount)
+
+
+static func rep_cost_bearer(spec: Dictionary) -> String:
+	"""WHICH POCKET PAYS a reputation cost. Pip's ruling, 2026-07-27 (ADR-0010 R2
+	section 6 q1): the ORG pays by default; the FOUNDER pays only when the
+	event/action explicitly names the founder. `spec` is the action/event
+	definition dict; it opts in with either "rep_bearer": "operator"/"founder"
+	or "targets_founder": true. Anything else -- including an empty dict -- is
+	the org. Single home for the rule; do not re-decide it at call sites."""
+	if spec == null or spec.is_empty():
+		return REP_COST_DEFAULT_BEARER
+	var explicit := String(spec.get(REP_BEARER_KEY, ""))
+	if explicit == REP_WHO_OPERATOR or explicit == "founder":
+		return REP_WHO_OPERATOR
+	if explicit == REP_WHO_ORG:
+		return REP_WHO_ORG
+	if bool(spec.get(REP_FOUNDER_FLAG, false)):
+		return REP_WHO_OPERATOR
+	return REP_COST_DEFAULT_BEARER
+
+
+func bill_reputation(kind: String, amount: float, spec: Dictionary = {}) -> String:
+	"""Charge `amount` of typed reputation of `kind` to whichever pocket
+	rep_cost_bearer(spec) names, and return that bearer. Deliberately does NOT
+	touch the legacy `reputation` scalar -- that stays authoritative and is
+	still deducted by spend_resources()/the ledger path."""
+	var bearer := rep_cost_bearer(spec)
+	add_rep(kind, -amount, bearer)
+	return bearer
+
+
+static func _load_rep_dims(raw) -> Dictionary:
+	"""Deserialize one typed-rep bearer dict: every REP_KINDS key present, every
+	value a re-snapped float, unknown keys dropped (JSON hands numbers back as
+	floats; re-snapping is idempotent -- see the SERIALIZATION block)."""
+	var out: Dictionary = {}
+	for kind in REP_KINDS:
+		var value := 0.0
+		if raw is Dictionary and raw.has(kind):
+			value = float(raw[kind])
+		out[kind] = DoomSystem._snap(value)
+	return out
+
+
+func _find_researcher_by_handle(handle: String):
+	"""Employed researcher matching a `who` handle (candidate_id first, then
+	display name). null when nothing matches."""
+	if handle == "":
+		return null
+	for r in researchers:
+		if r.candidate_id != "" and r.candidate_id == handle:
+			return r
+	for r in researchers:
+		if r.researcher_name == handle:
+			return r
+	return null
+
 
 func can_afford(costs: Dictionary) -> bool:
 	"""Check if player can afford given costs (FIX #407: added reputation validation)"""
@@ -925,6 +1079,12 @@ func to_dict() -> Dictionary:
 		"research_quality_mode": research_quality_mode,  # Issue #500
 		"papers": papers,
 		"reputation": reputation,
+		# ADR-0010 B7/B9 typed reputation. NEW KEYS ONLY -- the authoritative
+		# "reputation" scalar above is untouched, so this merges clean with the
+		# other save-schema lanes landing this week. Snapped to the repo-wide
+		# serialization grid (same reason as appetites in researcher.gd).
+		"rep_org": DoomSystem._snap_dict(rep_org),
+		"rep_operator": DoomSystem._snap_dict(rep_operator),
 		"governance": governance,
 		"ledger": ledger.to_dict() if ledger else {},
 		"month_plan": month_plan.to_dict() if month_plan else {},  # L1/ADR-0009 Attention + reserve + WIP
@@ -1015,6 +1175,10 @@ func from_dict(data: Dictionary) -> void:
 	research_quality_mode = String(data.get("research_quality_mode", DEFAULT_RESEARCH_QUALITY))  # Issue #500
 	papers = float(data.get("papers", 0.0))
 	reputation = float(data.get("reputation", 10.0))
+	# ADR-0010 B7: typed dims default to zero, so pre-typing saves load as
+	# "scalar only" -- exactly the state the game is in before any reader wires up.
+	rep_org = _load_rep_dims(data.get("rep_org", {}))
+	rep_operator = _load_rep_dims(data.get("rep_operator", {}))
 	governance = float(data.get("governance", 50.0))  # was forgotten pre-L7
 	# Doom-adjacent floats re-snap on load (idempotent under the 1-ulp JSON parse
 	# corruption -- see the to_dict comment + DoomSystem.SAVE_QUANTUM).

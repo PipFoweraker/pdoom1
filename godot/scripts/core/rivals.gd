@@ -179,6 +179,45 @@ static func get_rival_labs() -> Array[RivalLab]:
 
 	return rivals
 
+# ---------------------------------------------------------------------------
+# GOVERNANCE BODIES (ADR-0010 B4) -- the adoption/reputation counterpart roster
+# to the labs above. Data-driven (res://data/bodies.json), LOADING ONLY this
+# pass: nothing consumes the roster until the adoption readers land. Returned as
+# plain Dictionaries (no new class -- B4 is explicit about that) with the same
+# `focus` vocabulary as RivalLab so one receptivity reader can walk labs and
+# bodies together.
+# ---------------------------------------------------------------------------
+const GOVERNANCE_BODIES_PATH := "res://data/bodies.json"
+
+static func load_governance_bodies() -> Array:
+	## The governance-body roster, or [] if the file is missing/malformed (data
+	## absence must never crash a run -- same posture as the other data loaders).
+	if not FileAccess.file_exists(GOVERNANCE_BODIES_PATH):
+		return []
+	var f := FileAccess.open(GOVERNANCE_BODIES_PATH, FileAccess.READ)
+	if f == null:
+		return []
+	var parsed = JSON.parse_string(f.get_as_text())
+	f.close()
+	if not (parsed is Dictionary):
+		return []
+	var raw = parsed.get("bodies", [])
+	if not (raw is Array):
+		return []
+	var bodies: Array = []
+	for entry in raw:
+		if not (entry is Dictionary):
+			continue
+		bodies.append({
+			"id": String(entry.get("id", "")),
+			"name": String(entry.get("name", "")),
+			"focus": String(entry.get("focus", "balanced")),
+			"weight": float(entry.get("weight", 0.0)),
+			"description": String(entry.get("description", "")),
+		})
+	return bodies
+
+
 static func check_discovery(rival: RivalLab, player_state: GameState, rng: RandomNumberGenerator) -> Dictionary:
 	var result = {"discovered": false, "new_visibility": rival.visibility, "message": ""}
 	if rival.visibility >= VisibilityState.KNOWN:

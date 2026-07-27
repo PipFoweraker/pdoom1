@@ -46,6 +46,13 @@ class PaperSubmission:
 	var lead_researcher_name: String = ""  # Track by name since Researcher refs may change
 	var co_author_names: Array[String] = []
 
+	# ADR-0010 B8 -- PER-THING reputation: the standing this specific paper carries.
+	# Rises when the paper is adopted by a named lab/body (the Wednesday adoption
+	# lane writes it); in v1 it never decays. First pass = field + accessor only,
+	# nothing reads it yet. Additive layer, like the org/operator/employee dims:
+	# GameState.reputation stays the authoritative scalar.
+	var standing: float = 0.0
+
 	func _init():
 		id = "paper_%d" % Time.get_ticks_msec()
 
@@ -67,6 +74,11 @@ class PaperSubmission:
 			Topic.GOVERNANCE: return "Governance"
 		return "General"
 
+	func add_standing(amount: float) -> void:
+		"""Additive write to this paper's standing (ADR-0010 B8). Never negative in
+		v1 -- adoption only adds, and nothing decays it yet."""
+		standing = max(0.0, standing + amount)
+
 	func is_safety_paper() -> bool:
 		return topic in [Topic.SAFETY, Topic.ALIGNMENT, Topic.INTERPRETABILITY, Topic.GOVERNANCE]
 
@@ -85,7 +97,9 @@ class PaperSubmission:
 			"topic_text": get_topic_text(),
 			"research_invested": research_invested,
 			"lead_researcher_name": lead_researcher_name,
-			"co_author_names": co_author_names
+			"co_author_names": co_author_names,
+			# ADR-0010 B8 -- NEW KEY ONLY (snapped, same grid as the rest of the save).
+			"standing": DoomSystem._snap(standing)
 		}
 
 	static func from_dict(data: Dictionary) -> PaperSubmission:
@@ -103,6 +117,8 @@ class PaperSubmission:
 		paper.topic = int(data.get("topic", Topic.SAFETY))
 		paper.research_invested = float(data.get("research_invested", 0.0))
 		paper.lead_researcher_name = String(data.get("lead_researcher_name", ""))
+		# ADR-0010 B8: absent on pre-typing saves -> the paper loads with no standing.
+		paper.standing = DoomSystem._snap(float(data.get("standing", 0.0)))
 		paper.co_author_names.clear()
 		for n in data.get("co_author_names", []):
 			paper.co_author_names.append(String(n))

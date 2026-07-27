@@ -1,0 +1,26 @@
+{
+  "_comment": "ADR-0010 B4 -- governance bodies: the adoption/reputation counterpart to the rival labs in scripts/core/rivals.gd. Same shape of idea as a RivalLab (named actor with a focus and a standing), but a body adopts papers rather than racing. DATA ONLY this pass: RivalLabs.load_governance_bodies() reads the file and nothing consumes it yet -- the adoption readers land Wednesday. Vocabulary rule (ADR-0010 R2 section 0): player-facing verbs are 'adopted by' / 'picked up by' / 'ignored by'; the word 'counterparty' is banned from identifiers and copy. `focus` shares the RivalLab vocabulary so a receptivity reader can treat labs and bodies alike. `weight` is 0..1 adoption clout -- how much a pickup by this body counts.",
+  "bodies": [
+    {
+      "id": "model_standards_board",
+      "name": "Model Standards Board",
+      "focus": "safety",
+      "weight": 0.35,
+      "description": "The interim standards body. Publishes evaluation criteria faster than anyone can meet them."
+    },
+    {
+      "id": "global_compute_registry",
+      "name": "Global Compute Registry",
+      "focus": "governance",
+      "weight": 0.3,
+      "description": "Counts the chips. Declines to say what it does with the numbers."
+    },
+    {
+      "id": "frontier_risk_committee",
+      "name": "Select Committee on Frontier Risk",
+      "focus": "balanced",
+      "weight": 0.25,
+      "description": "A legislative committee two hearings deep. Cites the papers it has actually read."
+    }
+  ]
+}
