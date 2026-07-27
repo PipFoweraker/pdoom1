@@ -1,0 +1,162 @@
+{
+  "08cad768-259c-45e8-8758-ee275f7a63ba": {
+    "stem": "water_cooler_scummy_r1",
+    "ok": true,
+    "native_size": [
+      40,
+      48
+    ]
+  },
+  "cc21ffd2-d4eb-4911-88bc-5f0ec87fc823": {
+    "stem": "water_cooler_scummy_r2",
+    "ok": true,
+    "native_size": [
+      40,
+      48
+    ]
+  },
+  "0c3d63b6-e6e6-4700-8e5d-9ac81b844216": {
+    "stem": "water_cooler_decent_r1",
+    "ok": true,
+    "native_size": [
+      40,
+      48
+    ]
+  },
+  "e0ca346b-2c29-4cab-917a-2e7614615e86": {
+    "stem": "water_cooler_decent_r2",
+    "ok": true,
+    "native_size": [
+      40,
+      48
+    ]
+  },
+  "94b49a69-d129-447c-be2d-db9d70cbef2b": {
+    "stem": "filing_cabinet_scummy_r1",
+    "ok": true,
+    "native_size": [
+      40,
+      52
+    ]
+  },
+  "80d45a4f-2c59-406b-878a-6fbf8f56e3a5": {
+    "stem": "filing_cabinet_scummy_r2",
+    "ok": true,
+    "native_size": [
+      40,
+      52
+    ]
+  },
+  "e73a637e-2052-4940-a37f-a9effae32376": {
+    "stem": "filing_cabinet_decent_r1",
+    "ok": true,
+    "native_size": [
+      40,
+      52
+    ]
+  },
+  "241e230d-e1e9-426b-9e07-100e4a3eee21": {
+    "stem": "filing_cabinet_decent_r2",
+    "ok": true,
+    "native_size": [
+      40,
+      52
+    ]
+  },
+  "ed5ddad5-0b0e-4e06-a448-fde0d860d749": {
+    "stem": "server_cluster_r1",
+    "ok": true,
+    "native_size": [
+      112,
+      80
+    ]
+  },
+  "5bdb6b30-f897-490a-bab7-ab12ad6810b9": {
+    "stem": "server_cluster_r2",
+    "ok": true,
+    "native_size": [
+      112,
+      80
+    ]
+  },
+  "c066dd55-752c-45f9-82aa-db6502d859c0": {
+    "stem": "desk_scummy_r1",
+    "ok": true,
+    "native_size": [
+      72,
+      48
+    ]
+  },
+  "aa71cb43-9e93-4ac8-b8f7-07dae4d334eb": {
+    "stem": "desk_scummy_r2",
+    "ok": false,
+    "native_size": [
+      72,
+      48
+    ]
+  },
+  "09c6a07c-8fc4-416d-a7d5-95da080ea7f5": {
+    "stem": "desk_decent_r1",
+    "ok": false,
+    "native_size": [
+      72,
+      48
+    ]
+  },
+  "578ac773-2a2a-4407-b4f2-8d1c7c750c92": {
+    "stem": "desk_decent_r2",
+    "ok": false,
+    "native_size": [
+      72,
+      48
+    ]
+  },
+  "399e9f28-1323-48ab-8260-0b88810fc362": {
+    "stem": "door_scummy_r1",
+    "ok": true,
+    "native_size": [
+      48,
+      80
+    ]
+  },
+  "671ea1ab-91d1-4439-b42f-201bc7ebaf6b": {
+    "stem": "door_decent_r1",
+    "ok": false,
+    "native_size": [
+      48,
+      80
+    ]
+  },
+  "115e2a04-3b23-430f-82d1-81096223ab92": {
+    "stem": "desk_front_scummy_r1",
+    "ok": false,
+    "native_size": [
+      72,
+      48
+    ]
+  },
+  "886ae4ac-3a25-4287-9b5a-7be8c1956284": {
+    "stem": "desk_side_scummy_r1",
+    "ok": true,
+    "native_size": [
+      48,
+      48
+    ]
+  },
+  "bbecf204-9826-48a3-969a-6301cceb2bc6": {
+    "stem": "desk_front_decent_r1",
+    "ok": false,
+    "native_size": [
+      72,
+      48
+    ]
+  },
+  "187c9fa8-10c9-4043-a70b-ddfac955d98b": {
+    "stem": "desk_side_decent_r1",
+    "ok": false,
+    "native_size": [
+      48,
+      48
+    ]
+  }
+}

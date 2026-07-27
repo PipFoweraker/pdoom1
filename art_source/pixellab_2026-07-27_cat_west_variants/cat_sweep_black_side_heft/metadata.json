@@ -1,0 +1,148 @@
+{
+  "group_id": null,
+  "states": [
+    {
+      "character": {
+        "id": "55bf4986-ac8e-4419-bce6-aeb6892e0c56",
+        "name": "cat_sweep_black_side_heft",
+        "prompt": "stocky chunky fluffy black cat with amber orange eyes, dark charcoal fur, solid heavy body mass, thick barrel-shaped torso, broad chest, short sturdy legs, weighty stance, slightly grumpy expression, cozy pet cat, warm bright colors, cartoony retro RPG style, pixel art",
+        "size": {
+          "width": 68,
+          "height": 68
+        },
+        "template_id": "cat",
+        "directions": 8,
+        "view": "side",
+        "created_at": "2026-07-26T01:19:20.771419+00:00"
+      },
+      "folder": "cat_sweep_black_side_heft",
+      "frames": {
+        "rotations": {
+          "south": "cat_sweep_black_side_heft/rotations/south.png",
+          "south-east": "cat_sweep_black_side_heft/rotations/south-east.png",
+          "east": "cat_sweep_black_side_heft/rotations/east.png",
+          "north-east": "cat_sweep_black_side_heft/rotations/north-east.png",
+          "north": "cat_sweep_black_side_heft/rotations/north.png",
+          "north-west": "cat_sweep_black_side_heft/rotations/north-west.png",
+          "west": "cat_sweep_black_side_heft/rotations/west.png",
+          "south-west": "cat_sweep_black_side_heft/rotations/south-west.png"
+        },
+        "animations": {
+          "west_walk_v5_v3custom": {
+            "west": [
+              "cat_sweep_black_side_heft/animations/west_walk_v5_v3custom/west/frame_000.png",
+              "cat_sweep_black_side_heft/animations/west_walk_v5_v3custom/west/frame_001.png",
+              "cat_sweep_black_side_heft/animations/west_walk_v5_v3custom/west/frame_002.png",
+              "cat_sweep_black_side_heft/animations/west_walk_v5_v3custom/west/frame_003.png",
+              "cat_sweep_black_side_heft/animations/west_walk_v5_v3custom/west/frame_004.png",
+              "cat_sweep_black_side_heft/animations/west_walk_v5_v3custom/west/frame_005.png",
+              "cat_sweep_black_side_heft/animations/west_walk_v5_v3custom/west/frame_006.png",
+              "cat_sweep_black_side_heft/animations/west_walk_v5_v3custom/west/frame_007.png",
+              "cat_sweep_black_side_heft/animations/west_walk_v5_v3custom/west/frame_008.png"
+            ]
+          },
+          "walk_west_cleanfix": {
+            "west": [
+              "cat_sweep_black_side_heft/animations/walk_west_cleanfix/west/frame_000.png",
+              "cat_sweep_black_side_heft/animations/walk_west_cleanfix/west/frame_001.png",
+              "cat_sweep_black_side_heft/animations/walk_west_cleanfix/west/frame_002.png",
+              "cat_sweep_black_side_heft/animations/walk_west_cleanfix/west/frame_003.png",
+              "cat_sweep_black_side_heft/animations/walk_west_cleanfix/west/frame_004.png",
+              "cat_sweep_black_side_heft/animations/walk_west_cleanfix/west/frame_005.png",
+              "cat_sweep_black_side_heft/animations/walk_west_cleanfix/west/frame_006.png",
+              "cat_sweep_black_side_heft/animations/walk_west_cleanfix/west/frame_007.png",
+              "cat_sweep_black_side_heft/animations/walk_west_cleanfix/west/frame_008.png"
+            ]
+          },
+          "walk_ew": {
+            "east": [
+              "cat_sweep_black_side_heft/animations/walk_ew/east/frame_000.png",
+              "cat_sweep_black_side_heft/animations/walk_ew/east/frame_001.png",
+              "cat_sweep_black_side_heft/animations/walk_ew/east/frame_002.png",
+              "cat_sweep_black_side_heft/animations/walk_ew/east/frame_003.png",
+              "cat_sweep_black_side_heft/animations/walk_ew/east/frame_004.png",
+              "cat_sweep_black_side_heft/animations/walk_ew/east/frame_005.png",
+              "cat_sweep_black_side_heft/animations/walk_ew/east/frame_006.png",
+              "cat_sweep_black_side_heft/animations/walk_ew/east/frame_007.png"
+            ],
+            "south-east": [
+              "cat_sweep_black_side_heft/animations/walk_ew/south-east/frame_000.png",
+              "cat_sweep_black_side_heft/animations/walk_ew/south-east/frame_001.png",
+              "cat_sweep_black_side_heft/animations/walk_ew/south-east/frame_002.png",
+              "cat_sweep_black_side_heft/animations/walk_ew/south-east/frame_003.png",
+              "cat_sweep_black_side_heft/animations/walk_ew/south-east/frame_004.png",
+              "cat_sweep_black_side_heft/animations/walk_ew/south-east/frame_005.png",
+              "cat_sweep_black_side_heft/animations/walk_ew/south-east/frame_006.png",
+              "cat_sweep_black_side_heft/animations/walk_ew/south-east/frame_007.png"
+            ],
+            "north-west": [
+              "cat_sweep_black_side_heft/animations/walk_ew/north-west/frame_000.png",
+              "cat_sweep_black_side_heft/animations/walk_ew/north-west/frame_001.png",
+              "cat_sweep_black_side_heft/animations/walk_ew/north-west/frame_002.png",
+              "cat_sweep_black_side_heft/animations/walk_ew/north-west/frame_003.png",
+              "cat_sweep_black_side_heft/animations/walk_ew/north-west/frame_004.png",
+              "cat_sweep_black_side_heft/animations/walk_ew/north-west/frame_005.png",
+              "cat_sweep_black_side_heft/animations/walk_ew/north-west/frame_006.png",
+              "cat_sweep_black_side_heft/animations/walk_ew/north-west/frame_007.png"
+            ],
+            "west": [
+              "cat_sweep_black_side_heft/animations/walk_ew/west/frame_000.png",
+              "cat_sweep_black_side_heft/animations/walk_ew/west/frame_001.png",
+              "cat_sweep_black_side_heft/animations/walk_ew/west/frame_002.png",
+              "cat_sweep_black_side_heft/animations/walk_ew/west/frame_003.png",
+              "cat_sweep_black_side_heft/animations/walk_ew/west/frame_004.png",
+              "cat_sweep_black_side_heft/animations/walk_ew/west/frame_005.png",
+              "cat_sweep_black_side_heft/animations/walk_ew/west/frame_006.png",
+              "cat_sweep_black_side_heft/animations/walk_ew/west/frame_007.png"
+            ],
+            "south-west": [
+              "cat_sweep_black_side_heft/animations/walk_ew/south-west/frame_000.png",
+              "cat_sweep_black_side_heft/animations/walk_ew/south-west/frame_001.png",
+              "cat_sweep_black_side_heft/animations/walk_ew/south-west/frame_002.png",
+              "cat_sweep_black_side_heft/animations/walk_ew/south-west/frame_003.png",
+              "cat_sweep_black_side_heft/animations/walk_ew/south-west/frame_004.png",
+              "cat_sweep_black_side_heft/animations/walk_ew/south-west/frame_005.png",
+              "cat_sweep_black_side_heft/animations/walk_ew/south-west/frame_006.png",
+              "cat_sweep_black_side_heft/animations/walk_ew/south-west/frame_007.png"
+            ],
+            "north-east": [
+              "cat_sweep_black_side_heft/animations/walk_ew/north-east/frame_000.png",
+              "cat_sweep_black_side_heft/animations/walk_ew/north-east/frame_001.png",
+              "cat_sweep_black_side_heft/animations/walk_ew/north-east/frame_002.png",
+              "cat_sweep_black_side_heft/animations/walk_ew/north-east/frame_003.png",
+              "cat_sweep_black_side_heft/animations/walk_ew/north-east/frame_004.png",
+              "cat_sweep_black_side_heft/animations/walk_ew/north-east/frame_005.png",
+              "cat_sweep_black_side_heft/animations/walk_ew/north-east/frame_006.png",
+              "cat_sweep_black_side_heft/animations/walk_ew/north-east/frame_007.png"
+            ]
+          },
+          "west_walk_v4_v3custom": {
+            "west": [
+              "cat_sweep_black_side_heft/animations/west_walk_v4_v3custom/west/frame_000.png",
+              "cat_sweep_black_side_heft/animations/west_walk_v4_v3custom/west/frame_001.png",
+              "cat_sweep_black_side_heft/animations/west_walk_v4_v3custom/west/frame_002.png",
+              "cat_sweep_black_side_heft/animations/west_walk_v4_v3custom/west/frame_003.png",
+              "cat_sweep_black_side_heft/animations/west_walk_v4_v3custom/west/frame_004.png",
+              "cat_sweep_black_side_heft/animations/west_walk_v4_v3custom/west/frame_005.png",
+              "cat_sweep_black_side_heft/animations/west_walk_v4_v3custom/west/frame_006.png",
+              "cat_sweep_black_side_heft/animations/west_walk_v4_v3custom/west/frame_007.png",
+              "cat_sweep_black_side_heft/animations/west_walk_v4_v3custom/west/frame_008.png"
+            ]
+          },
+          "west_walk_v3_template6": {
+            "west": [
+              "cat_sweep_black_side_heft/animations/west_walk_v3_template6/west/frame_000.png",
+              "cat_sweep_black_side_heft/animations/west_walk_v3_template6/west/frame_001.png",
+              "cat_sweep_black_side_heft/animations/west_walk_v3_template6/west/frame_002.png",
+              "cat_sweep_black_side_heft/animations/west_walk_v3_template6/west/frame_003.png",
+              "cat_sweep_black_side_heft/animations/west_walk_v3_template6/west/frame_004.png",
+              "cat_sweep_black_side_heft/animations/west_walk_v3_template6/west/frame_005.png"
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "export_version": "3.1",
+  "export_date": "2026-07-26T22:51:45.433430"
+}

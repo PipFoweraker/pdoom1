@@ -1,0 +1,112 @@
+{
+  "group_id": null,
+  "states": [
+    {
+      "character": {
+        "id": "f9af0f30-8542-4658-bc31-f3804e362193",
+        "name": "cat_eldritch_side_original",
+        "prompt": "a black cat with glowing violet eyes and a glowing collar emblem, faint eldritch violet aura, unsettling doom cat, warm grimy pixel art, heavy black outline, deep contrast shadows",
+        "size": {
+          "width": 68,
+          "height": 68
+        },
+        "template_id": "cat",
+        "directions": 8,
+        "view": "side",
+        "created_at": "2026-07-27T06:04:08.225983+00:00"
+      },
+      "folder": "cat_eldritch_side_original",
+      "frames": {
+        "rotations": {
+          "south": "cat_eldritch_side_original/rotations/south.png",
+          "south-east": "cat_eldritch_side_original/rotations/south-east.png",
+          "east": "cat_eldritch_side_original/rotations/east.png",
+          "north-east": "cat_eldritch_side_original/rotations/north-east.png",
+          "north": "cat_eldritch_side_original/rotations/north.png",
+          "north-west": "cat_eldritch_side_original/rotations/north-west.png",
+          "west": "cat_eldritch_side_original/rotations/west.png",
+          "south-west": "cat_eldritch_side_original/rotations/south-west.png"
+        },
+        "animations": {
+          "butt_flash_north": {
+            "north": [
+              "cat_eldritch_side_original/animations/butt_flash_north/north/frame_000.png",
+              "cat_eldritch_side_original/animations/butt_flash_north/north/frame_001.png",
+              "cat_eldritch_side_original/animations/butt_flash_north/north/frame_002.png",
+              "cat_eldritch_side_original/animations/butt_flash_north/north/frame_003.png",
+              "cat_eldritch_side_original/animations/butt_flash_north/north/frame_004.png",
+              "cat_eldritch_side_original/animations/butt_flash_north/north/frame_005.png",
+              "cat_eldritch_side_original/animations/butt_flash_north/north/frame_006.png",
+              "cat_eldritch_side_original/animations/butt_flash_north/north/frame_007.png",
+              "cat_eldritch_side_original/animations/butt_flash_north/north/frame_008.png"
+            ]
+          },
+          "walk_ew_diag": {
+            "west": [
+              "cat_eldritch_side_original/animations/walk_ew_diag/west/frame_000.png",
+              "cat_eldritch_side_original/animations/walk_ew_diag/west/frame_001.png",
+              "cat_eldritch_side_original/animations/walk_ew_diag/west/frame_002.png",
+              "cat_eldritch_side_original/animations/walk_ew_diag/west/frame_003.png",
+              "cat_eldritch_side_original/animations/walk_ew_diag/west/frame_004.png",
+              "cat_eldritch_side_original/animations/walk_ew_diag/west/frame_005.png",
+              "cat_eldritch_side_original/animations/walk_ew_diag/west/frame_006.png",
+              "cat_eldritch_side_original/animations/walk_ew_diag/west/frame_007.png"
+            ],
+            "south-east": [
+              "cat_eldritch_side_original/animations/walk_ew_diag/south-east/frame_000.png",
+              "cat_eldritch_side_original/animations/walk_ew_diag/south-east/frame_001.png",
+              "cat_eldritch_side_original/animations/walk_ew_diag/south-east/frame_002.png",
+              "cat_eldritch_side_original/animations/walk_ew_diag/south-east/frame_003.png",
+              "cat_eldritch_side_original/animations/walk_ew_diag/south-east/frame_004.png",
+              "cat_eldritch_side_original/animations/walk_ew_diag/south-east/frame_005.png",
+              "cat_eldritch_side_original/animations/walk_ew_diag/south-east/frame_006.png",
+              "cat_eldritch_side_original/animations/walk_ew_diag/south-east/frame_007.png"
+            ],
+            "east": [
+              "cat_eldritch_side_original/animations/walk_ew_diag/east/frame_000.png",
+              "cat_eldritch_side_original/animations/walk_ew_diag/east/frame_001.png",
+              "cat_eldritch_side_original/animations/walk_ew_diag/east/frame_002.png",
+              "cat_eldritch_side_original/animations/walk_ew_diag/east/frame_003.png",
+              "cat_eldritch_side_original/animations/walk_ew_diag/east/frame_004.png",
+              "cat_eldritch_side_original/animations/walk_ew_diag/east/frame_005.png",
+              "cat_eldritch_side_original/animations/walk_ew_diag/east/frame_006.png",
+              "cat_eldritch_side_original/animations/walk_ew_diag/east/frame_007.png"
+            ],
+            "north-west": [
+              "cat_eldritch_side_original/animations/walk_ew_diag/north-west/frame_000.png",
+              "cat_eldritch_side_original/animations/walk_ew_diag/north-west/frame_001.png",
+              "cat_eldritch_side_original/animations/walk_ew_diag/north-west/frame_002.png",
+              "cat_eldritch_side_original/animations/walk_ew_diag/north-west/frame_003.png",
+              "cat_eldritch_side_original/animations/walk_ew_diag/north-west/frame_004.png",
+              "cat_eldritch_side_original/animations/walk_ew_diag/north-west/frame_005.png",
+              "cat_eldritch_side_original/animations/walk_ew_diag/north-west/frame_006.png",
+              "cat_eldritch_side_original/animations/walk_ew_diag/north-west/frame_007.png"
+            ],
+            "south-west": [
+              "cat_eldritch_side_original/animations/walk_ew_diag/south-west/frame_000.png",
+              "cat_eldritch_side_original/animations/walk_ew_diag/south-west/frame_001.png",
+              "cat_eldritch_side_original/animations/walk_ew_diag/south-west/frame_002.png",
+              "cat_eldritch_side_original/animations/walk_ew_diag/south-west/frame_003.png",
+              "cat_eldritch_side_original/animations/walk_ew_diag/south-west/frame_004.png",
+              "cat_eldritch_side_original/animations/walk_ew_diag/south-west/frame_005.png",
+              "cat_eldritch_side_original/animations/walk_ew_diag/south-west/frame_006.png",
+              "cat_eldritch_side_original/animations/walk_ew_diag/south-west/frame_007.png"
+            ],
+            "north-east": [
+              "cat_eldritch_side_original/animations/walk_ew_diag/north-east/frame_000.png",
+              "cat_eldritch_side_original/animations/walk_ew_diag/north-east/frame_001.png",
+              "cat_eldritch_side_original/animations/walk_ew_diag/north-east/frame_002.png",
+              "cat_eldritch_side_original/animations/walk_ew_diag/north-east/frame_003.png",
+              "cat_eldritch_side_original/animations/walk_ew_diag/north-east/frame_004.png",
+              "cat_eldritch_side_original/animations/walk_ew_diag/north-east/frame_005.png",
+              "cat_eldritch_side_original/animations/walk_ew_diag/north-east/frame_006.png",
+              "cat_eldritch_side_original/animations/walk_ew_diag/north-east/frame_007.png"
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "export_version": "3.1",
+  "export_date": "2026-07-27T06:47:01.610135"
+}
