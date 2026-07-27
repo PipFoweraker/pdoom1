@@ -528,9 +528,29 @@ func _step_execute_queued_actions(results: Array) -> bool:
 		# Record action in verification hash
 		VerificationTracker.record_action(action_id, state)
 
+	_restore_stranded_hires(results)
+
 	# Clear queued actions
 	state.queued_actions.clear()
 	return all_success
+
+func _restore_stranded_hires(results: Array) -> void:
+	"""#952: queue_candidate_hire removes the candidate from the pool the moment the
+	hire is queued, but if the hire action fails at execution (eg cash ran dry from an
+	earlier action this turn), execute_action bails on the affordability check before
+	_hire_from_pool ever dequeues them -- the candidate was stuck in pending_hire_queue
+	forever: not in the pool, never employed, invisible. Hires only span a single
+	turn's action step, so anyone still queued after it is stranded by definition:
+	return them to the pool, or narrate the walk-away if the pool refilled to cap."""
+	while not state.pending_hire_queue.is_empty():
+		var cand: Researcher = state.pending_hire_queue.pop_front()
+		if state.candidate_pool.size() < state.MAX_CANDIDATES:
+			state.candidate_pool.append(cand)
+			results.append({"success": true,
+				"message": "%s was never hired (deal fell through) -- back in the candidate pool." % cand.researcher_name})
+		else:
+			results.append({"success": true,
+				"message": "%s was never hired and the pool is full -- they took another offer." % cand.researcher_name})
 
 func _step_publish_papers(results: Array) -> void:
 	"""Check for paper publication (research threshold).
