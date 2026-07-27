@@ -46,6 +46,7 @@ var global_toggle_button: Button = null
 @onready var avg_score_label = $MarginContainer/VBoxContainer/Stats/AvgScore
 @onready var best_score_label = $MarginContainer/VBoxContainer/Stats/BestScore
 @onready var subtitle = $MarginContainer/VBoxContainer/Header/Subtitle
+@onready var back_button: Button = $MarginContainer/VBoxContainer/Buttons/BackButton
 
 func _ready():
 	ErrorHandler.info(ErrorHandler.Category.VALIDATION, "Leaderboard screen opened", {})
@@ -56,6 +57,19 @@ func _ready():
 	_populate_seed_dropdown()
 	_setup_global_toggle()
 	_select_default_view()
+	# Scene-reentry run-killer family (sibling of #979): reached mid-run (dev-overlay jump,
+	# or any future nav) with the run still live and unfinished in the GameManager autoload.
+	# Relabel Back so it reads honestly -- it resumes the run instead of going to welcome,
+	# where Launch Lab / Load Game would silently clobber it.
+	if back_button != null and _live_run_active():
+		back_button.text = "[BACK TO GAME]"
+
+
+func _live_run_active() -> bool:
+	"""True when a real, unfinished run is sitting live in the GameManager autoload (not a
+	just-concluded game -- game_over_screen's own Back-to-leaderboard path must NOT offer
+	this; that run is over)."""
+	return GameManager.is_initialized and GameManager.state != null and not GameManager.state.game_over
 
 func _exit_tree():
 	# Cleanup guard: drop the working-set references the instant the screen leaves
@@ -683,8 +697,18 @@ func _on_back_button_pressed():
 	ErrorHandler.info(ErrorHandler.Category.VALIDATION, "Exiting leaderboard screen", {})
 	# Try to go back to previous scene
 	if get_tree().current_scene.name == "LeaderboardScreen":
-		# If launched as main scene, go to welcome
-		SceneTransition.go_to("res://scenes/welcome.tscn")
+		if _live_run_active():
+			# Scene-reentry run-killer family (sibling of #979): a live, unfinished run is
+			# sitting in the GameManager autoload -- welcome's Launch Lab / Load Game would
+			# silently clobber it (main.tscn._boot_game has no idea it exists). Route back
+			# to main.tscn with the resume flag set instead, mirroring the conference
+			# rhythm-break's own exit (conference_vignette.gd).
+			GameManager.pending_resume = true
+			SceneTransition.go_to("res://scenes/main.tscn")
+		else:
+			# No live run (fresh session, or reached from the post-game-over leaderboard) --
+			# welcome is the correct destination.
+			SceneTransition.go_to("res://scenes/welcome.tscn")
 	else:
 		# Otherwise hide this overlay
 		queue_free()

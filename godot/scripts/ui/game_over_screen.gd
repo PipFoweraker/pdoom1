@@ -535,7 +535,17 @@ func _on_copy_result_pressed() -> void:
 		copy_result_button.text = "Copied to clipboard"
 
 func _on_play_again_pressed():
-	"""Restart the game"""
+	"""Restart the game.
+
+	VERIFIED (scene-reentry run-killer family audit, sibling of #979): this looks like it
+	reloads the GAME-OVER SCREEN, not the game, but it doesn't -- GameOverScreen is never its
+	own current_scene. It only ever lives as a child of TabManager inside main.tscn
+	(godot/scenes/main.tscn, node "GameOverScreen"; see also test_endgame_score_isolation.gd /
+	test_game_over_remote_isolation.gd, which instantiate it standalone for isolated testing,
+	never as the live tree root). So get_tree().current_scene at this point IS main.tscn, and
+	SceneTransition.reload() reloads main.tscn -- re-running main_ui._boot_game(), whose
+	fresh-start branch calls GameManager.start_new_game("", true) (force=true: a real reset,
+	not a reentry bug). Play Again works correctly."""
 	print("[GameOverScreen] Play Again pressed")
 	# Reload the main scene to restart
 	SceneTransition.reload()

@@ -25,7 +25,7 @@ func test_start_new_game_frees_prior_game_node_subsystems() -> void:
 	await get_tree().process_frame
 	var orphans_after_first: int = Performance.get_monitor(Performance.OBJECT_ORPHAN_NODE_COUNT)
 
-	gm.start_new_game("hygiene-seed-2")
+	gm.start_new_game("hygiene-seed-2", true)  # force: deliberate reset over the first game
 	await get_tree().process_frame
 	await get_tree().process_frame
 	var orphans_after_second: int = Performance.get_monitor(Performance.OBJECT_ORPHAN_NODE_COUNT)

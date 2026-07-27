@@ -33,12 +33,20 @@ var play_intros_checkbox: CheckButton = null
 @onready var ui_label = $VBox/Scroll/SettingsContainer/UISettings/UILabel
 @onready var accessibility_label = $VBox/Scroll/SettingsContainer/AccessibilitySettings/AccessibilityLabel
 @onready var keyboard_label = $VBox/Scroll/SettingsContainer/KeyboardShortcuts/KeyboardLabel
+@onready var back_button: Button = $VBox/ButtonRow/BackButton
 
 func _ready():
 	print("[SettingsMenu] Initializing...")
 
 	# Load settings from GameConfig singleton
 	update_ui_from_game_config()
+
+	# Scene-reentry run-killer family (sibling of #979): reached mid-run (dev-overlay jump,
+	# or any future nav) with the run still live and unfinished in the GameManager autoload.
+	# Relabel Back so it reads honestly -- it resumes the run instead of going to welcome,
+	# where Launch Lab / Load Game would silently clobber it.
+	if back_button != null and _live_run_active():
+		back_button.text = "[BACK TO GAME]"
 
 	# Add icons to section headers
 	_setup_section_icons()
@@ -322,13 +330,26 @@ func _on_apply_pressed():
 
 func _on_back_pressed():
 	"""Handle Back button press"""
-	print("[SettingsMenu] Returning to welcome screen...")
-
 	# Ask if user wants to save unsaved changes
 	# For now, just return (changes are applied in real-time anyway)
 
-	# Return to welcome screen
-	SceneTransition.go_to("res://scenes/welcome.tscn")
+	if _live_run_active():
+		# Scene-reentry run-killer family (sibling of #979): a live, unfinished run is
+		# sitting in the GameManager autoload -- welcome's Launch Lab / Load Game would
+		# silently clobber it (main.tscn._boot_game has no idea it exists). Route back
+		# to main.tscn with the resume flag set instead, mirroring the conference
+		# rhythm-break's own exit (conference_vignette.gd).
+		print("[SettingsMenu] Returning to the live game...")
+		GameManager.pending_resume = true
+		SceneTransition.go_to("res://scenes/main.tscn")
+	else:
+		print("[SettingsMenu] Returning to welcome screen...")
+		SceneTransition.go_to("res://scenes/welcome.tscn")
+
+
+func _live_run_active() -> bool:
+	"""True when a real, unfinished run is sitting live in the GameManager autoload."""
+	return GameManager.is_initialized and GameManager.state != null and not GameManager.state.game_over
 
 func _input(event: InputEvent):
 	"""Handle keyboard shortcuts"""
