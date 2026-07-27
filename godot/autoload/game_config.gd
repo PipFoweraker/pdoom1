@@ -158,7 +158,7 @@ const INTRO_VERSION: String = "1"
 # patches bump version.txt alone, so everyone stays on the same leaderboard.
 # Epoch L1 == the current ruleset. NOTE: #789 hiring-stitch changes gameplay and
 # bumps this to 2 at the v0.13 epoch cut (spec DECISION C2) -- do not bump earlier.
-const LADDER_VERSION: String = "2"
+const LADDER_VERSION: String = "3"
 
 # Leaderboard State (transient, not saved)
 var latest_leaderboard_entry: String = ""  # UUID of most recent score entry
