@@ -119,11 +119,12 @@ drawn.
 
 ## Rejected alternatives
 
-- **Promote the sandbox's 32px grid to a first-class gameplay type.** Rejected:
-  this is precisely the tile-grid implementation lane the ruling cancels --
-  it would turn a dev-preview convenience into a second state store the sim
-  would need to trust, reproducing the 2026-07-25 dual-source-of-truth failure
-  shape at the scale of the whole office system.
+- **Promote the sandbox's existing ad hoc string-keyed 32px snap-hack to
+  first-class, as-is.** Rejected: that hack was a dev-preview convenience,
+  not a designed type, and formalizing it unchanged would carry its
+  string-keyed debt into production. This is distinct from what the a(3)-lite
+  amendment approves -- a fresh `Vector2i` grid type that replaces and retires
+  the hack, not the hack itself promoted wholesale.
 - **Camera/real-estate application built on that grid.** Rejected for the same
   reason and on the same day -- it is downstream of the grid becoming
   first-class, so it falls with it.
