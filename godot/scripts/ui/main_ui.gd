@@ -324,6 +324,13 @@ func _ready():
 	flight_recorder.main_ui = self
 	add_child(flight_recorder)
 
+	# UI evolution capture rail (F7) -- screenshot + one-line context, no popup.
+	# Same wiring pattern as the flight recorder above (WORKSHOP capture tooling,
+	# Pip's "it went from this... to this..." ask, 2026-07-27).
+	var ui_evolution_recorder := UIEvolutionRecorder.new()
+	ui_evolution_recorder.main_ui = self
+	add_child(ui_evolution_recorder)
+
 	# Enable input processing for keyboard shortcuts
 	set_process_input(true)
 	set_process_unhandled_input(true)
