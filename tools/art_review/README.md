@@ -82,6 +82,25 @@ Sheets on the shared style:
         native-grain candidates on a floor strip with a worker for scale;
         verdict chips (exports prop_grain_verdicts.json).
 
+    python tools/art_review/build_doom_strip_sheet.py
+        -> art_generated/doom_strip_sheet.html
+        ADR-0015 doom-strip rapid triage (issue #949): a DATA-field sheet, not
+        an image one -- 55 cells over the inert literal `doom` fields the
+        strip will re-author (core_events.json + 2017.json + crisis.json
+        inert writes, variable_mapping.json's legendary default, the
+        overrides/example.json copy-me template, and 2017.json's dead
+        game_effect keys), grouped by disposition-pattern family, each cell
+        carrying the real option text/effects/message + the scout's
+        suggested disposition as a label (not pre-applied). Custom verdict
+        vocabulary (monkeypatches rs.VERDICTS/rs.VERDICT_COLORS before
+        calling page(), since page() has no per-call override): the chips
+        are UPLIFT STREAM TARGETS (uplift-overhang / uplift-alarm /
+        uplift-political / uplift-panic / uplift-absorption /
+        uplift-rival-delay) plus drop / keep / discuss -- exports
+        doom_strip_verdicts.json. The 20 LIVE risk_events.json pool fields
+        are deliberately excluded (separate M-ticket calibration work); see
+        the sheet's intro note for the full scope reasoning.
+
     python tools/art_review/build_worker_rebase_sheet.py
         -> art_generated/worker_rebase_sheet.html
         Worker 64px re-base review (#900/#793): 8 variants + walks + state
