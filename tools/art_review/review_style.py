@@ -27,6 +27,15 @@ this module instead of hand-rolling CSS. It provides:
                            queue and you can clear hundreds without getting
                            tired. Export / import JSON round-trips the flat
                            {rel: [tags]} schema used by analyze_verdicts.py.
+  * bulk-select         -- ported from gen_contact_sheet.py (issue #900/#912
+                           follow-up): a checkbox per cell, shift-click range
+                           select (keyed off data-rel, respects the current
+                           show-filter -- hidden cells never enter a shift
+                           range or select-all-visible), a "select all visible"
+                           button in the verdict toolbar, and a fixed bulk
+                           apply/remove bar (one +tag/-tag button pair per
+                           verdict). Automatic whenever a sheet passes
+                           verdict_key to page() -- no per-sheet wiring needed.
   * completeness UX     -- COMPLETENESS_JS / COMPLETENESS_CSS /
                            completeness_controls(): sections render COLLAPSED by
                            default (expand state persists per-section in
@@ -196,7 +205,29 @@ body.rs-only [data-unrev="0"]{display:none;}
 body.rs-only .caret{opacity:.35;}
 """
 
+# bulk-select chrome (ported from gen_contact_sheet.py, issue #900/#912
+# follow-up): per-cell checkbox, .sel highlight, and the fixed bulk apply/
+# remove bar. Shared by every sheet that passes verdict_key to page().
+BULK_CSS = """
+main{padding-bottom:76px;}
+.rs-selbox{position:absolute;top:6px;left:6px;width:16px;height:16px;cursor:pointer;
+z-index:3;accent-color:var(--amber);margin:0;}
+.rs-cell.sel{border-color:var(--amber2);box-shadow:0 0 0 1px var(--amber2) inset;}
+.rs-bulkbar{position:fixed;left:0;right:0;bottom:0;z-index:40;
+background:linear-gradient(0deg,#221d16,#1a1611);border-top:1px solid #5a4a2a;
+padding:10px 18px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;
+box-shadow:0 -3px 14px #000a;transform:translateY(110%);transition:transform .18s;}
+.rs-bulkbar.on{transform:translateY(0);}
+.rs-bulkbar .rs-selcount{color:var(--amber2);font-family:monospace;font-size:13px;font-weight:600;}
+.rs-bulkbar .sep{color:var(--line);}
+.rs-bulk-add,.rs-bulk-del{border-radius:6px;font-size:11px;padding:5px 9px;border:1px solid var(--line);
+background:var(--bg3);color:var(--dim);cursor:pointer;font-family:monospace;}
+.rs-bulk-add:hover{background:var(--vc);color:#12100c;border-color:var(--vc);}
+.rs-bulk-del:hover{background:#3a2020;border-color:#cc5a4a;color:#e8b0a8;}
+"""
+
 BASE_CSS += COMPLETENESS_CSS
+BASE_CSS += BULK_CSS
 
 # ---------------------------------------------------------------- completeness JS
 
@@ -318,6 +349,38 @@ function refreshCounts(){
 }
 function syncCell(c){const r=c.dataset.rel;
   for(const b of c.querySelectorAll('.vtag'))b.classList.toggle('on',hasTag(r,b.dataset.v));}
+// ---- bulk-select (ported from gen_contact_sheet.py, issue #900/#912 follow-up) ----
+// data-rel is the stable handle (README compare-mode note); shift-click range
+// select walks DOM order and skips cells hidden by the current show-filter.
+const cellByRel={};for(const c of cells)cellByRel[c.dataset.rel]=c;
+const selected=new Set();
+let lastClickedIdx=null;
+function setSel(rel,on){const c=cellByRel[rel];if(!c)return;
+  if(on){selected.add(rel);c.classList.add('sel');}else{selected.delete(rel);c.classList.remove('sel');}
+  const cb=c.querySelector('.rs-selbox');if(cb)cb.checked=on;}
+function onSelClick(rel,shift,checked){
+  const idx=cells.indexOf(cellByRel[rel]);
+  if(shift&&lastClickedIdx!==null){
+    const [a,b]=[Math.min(lastClickedIdx,idx),Math.max(lastClickedIdx,idx)];
+    for(let i=a;i<=b;i++){const c=cells[i];
+      if(c.style.display==='none')continue; // never silently pull in filtered-out cells
+      setSel(c.dataset.rel,checked);}
+  }else{setSel(rel,checked);}
+  lastClickedIdx=idx;updateSelUI();
+}
+function selectAllVisible(){const vis=cells.filter(c=>c.style.display!=='none').map(c=>c.dataset.rel);
+  const allSel=vis.length&&vis.every(r=>selected.has(r));
+  for(const r of vis)setSel(r,!allSel);updateSelUI();}
+function clearSel(){for(const r of[...selected])setSel(r,false);updateSelUI();}
+function updateSelUI(){const n=selected.size;
+  const sc=document.getElementById('rs-selcountn');if(sc)sc.textContent=n;
+  const bar=document.getElementById('rs-bulkbar');if(bar)bar.classList.toggle('on',n>0);}
+function bulkApply(v,on){for(const r of selected){setTag(r,v,on);
+  const c=cellByRel[r];if(!c)continue;const b=c.querySelector(`.vtag[data-v="${v}"]`);
+  if(b)b.classList.toggle('on',on);}
+  saveV();refreshCounts();rsCompleteness.updateCounts();
+  if(rsCompleteness.mode()!=='all'||activeVerdicts.size)applyFilter();
+  toast(`${on?'Set':'Removed'} ${v} on ${selected.size} item(s)`);}
 let toastT=null;
 function toast(msg){const el=document.getElementById('toast');if(!el)return;
   el.textContent=msg;el.classList.add('on');
@@ -339,11 +402,26 @@ window.addEventListener('DOMContentLoaded',()=>{
         if(rsCompleteness.mode()!=='all'||activeVerdicts.size)applyFilter();};
       vt.appendChild(b);
     }
+    const cb=document.createElement('input');cb.type='checkbox';cb.className='rs-selbox';
+    cb.title='select';
+    cb.addEventListener('click',e=>{e.stopPropagation();onSelClick(r,e.shiftKey,cb.checked);});
+    c.insertBefore(cb,c.firstChild);
   }
   for(const vc of document.querySelectorAll('.vchip[data-v]')){
     vc.onclick=()=>{const v=vc.dataset.v;
       if(activeVerdicts.has(v)){activeVerdicts.delete(v);vc.classList.remove('on');}
       else{activeVerdicts.add(v);vc.classList.add('on');}applyFilter();};}
+  const sav=document.getElementById('rs-selallvis');if(sav)sav.onclick=selectAllVisible;
+  const addWrap=document.getElementById('rs-bulkadd'),delWrap=document.getElementById('rs-bulkdel');
+  if(addWrap&&delWrap){
+    for(const v of VERDICTS){
+      const a=document.createElement('button');a.className='rs-bulk-add';a.textContent='+'+v;
+      a.style.setProperty('--vc',VCOLORS[v]);a.onclick=()=>bulkApply(v,true);addWrap.appendChild(a);
+      const d=document.createElement('button');d.className='rs-bulk-del';d.textContent='-'+v;
+      d.onclick=()=>bulkApply(v,false);delWrap.appendChild(d);
+    }
+  }
+  const cs=document.getElementById('rs-clearsel');if(cs)cs.onclick=clearSel;
   rsCompleteness.init({key:KEY,sectionSel:'.rs-section',cellSel:'.rs-cell[data-rel]',
     tagsOf:tagsOf,onFilter:applyFilter});
   const ex=document.getElementById('rs-export');
@@ -380,9 +458,29 @@ def _verdict_toolbar():
         + " "
         + completeness_controls()
         + '<span class="count-tag"><span id="rs-hiddenn">0</span> hidden</span> '
+        '<button class="btn" id="rs-selallvis">select all visible</button>'
         '<button class="btn" id="rs-export">export JSON</button>'
         '<button class="btn primary" id="rs-import">import JSON</button>'
         '<input type="file" id="rs-importfile" accept="application/json,.json" style="display:none">'
+        "</div>"
+    )
+
+
+def _bulk_bar():
+    """Fixed bulk apply/remove bar (ported from gen_contact_sheet.py). Buttons
+    for +tag/-tag per verdict are populated by VERDICT_JS; only rendered when
+    the sheet has a verdict toolbar (verdict_key set)."""
+    return (
+        '<div class="rs-bulkbar" id="rs-bulkbar">'
+        '<span class="rs-selcount"><span id="rs-selcountn">0</span> selected</span>'
+        '<span class="sep">|</span>'
+        '<span class="row-label">apply</span>'
+        '<span id="rs-bulkadd" style="display:flex;gap:5px;flex-wrap:wrap"></span>'
+        '<span class="sep">|</span>'
+        '<span class="row-label">remove</span>'
+        '<span id="rs-bulkdel" style="display:flex;gap:5px;flex-wrap:wrap"></span>'
+        '<span class="sep">|</span>'
+        '<button class="btn" id="rs-clearsel">clear selection</button>'
         "</div>"
     )
 
@@ -501,8 +599,10 @@ def page(
     verdict_bar = ""
     verdict_js = ""
     store_warn = ""
+    bulk_bar = ""
     if verdict_key:
         verdict_bar = _verdict_toolbar()
+        bulk_bar = _bulk_bar()
         store_warn = (
             '<span class="badge" id="rs-storewarn" style="display:none;color:#d88">'
             "localStorage off -- verdicts wont persist (use Export)</span>"
@@ -529,7 +629,9 @@ def page(
             f'"{verdict_key}"; sections open collapsed (expand state remembered); '
             "show: all / hide decided / only unreviewed -- only-unreviewed is the "
             "completeness pass (any verdict tag = decided; sections with 0 "
-            "unreviewed disappear); export JSON to make decisions durable."
+            "unreviewed disappear); export JSON to make decisions durable. "
+            "Batch-select: checkbox + shift-click range per cell, select all "
+            "visible (respects the current show-filter), bulk apply/remove bar."
         )
     if footer_note:
         footer_bits.append(footer_note)
@@ -562,6 +664,7 @@ def page(
 <footer>
   {' '.join(footer_bits)}
 </footer>
+{bulk_bar}
 <div id="toast"></div>
 {scripts}
 </body>
