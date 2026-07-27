@@ -1,12 +1,17 @@
 {
   "_meta": {
     "purpose": "Worker appearance variant registry (#793 mechanism half). Maps appearance_id -> SpriteFrames via WorkerVariantPool (stable posmod over list order). Add triaged round-2 worker sheets HERE as new entries -- no code changes needed.",
-    "updated": "2026-07-26",
+    "updated": "2026-07-27",
     "rules": [
       "List order is the assignment order: appearance_id maps to posmod(id_or_hash, count).",
       "Adding/removing a variant REMAPS assignments (cosmetic-only, ADR-0006 pure view).",
       "frames must be a res:// SpriteFrames with the employee_sprite clip contract (idle/walking/working/stressed + optional walking_<facing> and *_alt clips).",
       "A missing/unloadable frames path degrades to the floor's shared fallback frames."
+    ],
+    "pending_2026-07-27": [
+      "worker_grey_f: EXCLUDED, rejected 9/9 on the worker_rebase_verdicts.json triage -- do not wire.",
+      "worker_headphones_m: EXCLUDED, reroll in flight (mixed promote/dislike per-direction verdicts) -- revisit once a clean re-roll lands.",
+      "worker_wheelchair_f: EXCLUDED for this lane -- verdicts split (south/roll dislike, only east/north/west-ish 4 roll dirs vs the 8-dir walk template other characters got) and the roll cycle only has 4 directions, not 8. TODO: wire after the diagonal-gen follow-up fills in the missing roll directions (see art_source/pixellab_2026-07-26_worker_rebase/MANIFEST.md wheelchair notes); hook is this list -- add a {id, frames, notes} entry here, no code changes needed."
     ]
   },
   "variants": [
@@ -14,6 +19,26 @@
       "id": "worker_v0",
       "frames": "res://assets/office_floor/artloop_char/office_worker.tres",
       "notes": "The current shared pixellab worker. Variant 0 == the shared asset keeps behaviour unchanged until round-2 workers are triaged in (do NOT wire raw art_source files)."
+    },
+    {
+      "id": "worker_black_m",
+      "frames": "res://assets/office_floor/worker_black_m/worker_black_m.tres",
+      "notes": "64px re-base (art_source/pixellab_2026-07-26_worker_rebase, PR #947), Pip verdict promote-heavy (branch data/verdicts-2026-07-27). State-composite: idle/working/stressed pull from the worker_black_m_state_{idle,working,stressed} rotation stills (south only); walking/walking_east/walking_north/walking_west are the character's own 8-dir walk cycle (south-only compass facings used -- employee_sprite.gd has no diagonal facing)."
+    },
+    {
+      "id": "worker_crutch_m",
+      "frames": "res://assets/office_floor/worker_crutch_m/worker_crutch_m.tres",
+      "notes": "64px re-base, Pip verdict promote (walk south/east/north/west all promote+like). No state variant exists for this character -- idle/working/stressed all fall back to the character's own south rotation still (cheap-path composite rule)."
+    },
+    {
+      "id": "worker_glasses_badge_m",
+      "frames": "res://assets/office_floor/worker_glasses_badge_m/worker_glasses_badge_m.tres",
+      "notes": "64px re-base, Pip verdict promote (rotations + all 8 walk directions promote; only the 4 cardinal directions are wired -- employee_sprite.gd facing is compass-only). No state variant -- idle/working/stressed fall back to the character's own south rotation still."
+    },
+    {
+      "id": "worker_hijab_f",
+      "frames": "res://assets/office_floor/worker_hijab_f/worker_hijab_f.tres",
+      "notes": "64px re-base, Pip verdict promote (rotations + south/east/north/west/north-east/north-west/south-west promote; south-east dislike but unused -- only cardinals are wired). No state variant -- idle/working/stressed fall back to the character's own south rotation still."
     }
   ]
 }

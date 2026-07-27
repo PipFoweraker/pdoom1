@@ -3,8 +3,10 @@ extends GutTest
 ## data/office/worker_variants.json lists variant id -> SpriteFrames path;
 ## appearance_id maps to a variant via a pure, stable function (posmod of int
 ## id / stable String hash); a missing variant degrades to the floor's shared
-## fallback frames. Variant 0 is wired to the CURRENT shared asset, so today's
-## render is unchanged -- these tests lock the mechanism, not the art.
+## fallback frames. Variant 0 is wired to the CURRENT shared asset, so
+## appearance_id 0 always renders unchanged -- these tests lock the mechanism,
+## not the art (the manifest also carries real triaged workers as of the
+## 64px re-base wiring lane, #900/#793).
 
 const OfficeFloorScene := preload("res://scenes/ui/office_floor/office_floor.tscn")
 const SharedWorkerFrames := preload("res://assets/office_floor/artloop_char/office_worker.tres")
@@ -81,14 +83,33 @@ func test_floor_falls_back_to_shared_frames_when_variant_missing():
 # --- OfficeFloor wiring ------------------------------------------------------
 
 func test_floor_applies_variant_frames_by_appearance_id():
+	# appearance_id 0 always maps to variant INDEX 0 (posmod(0, n) == 0 for any
+	# n > 0) -- pinned regardless of how many variants the manifest lists, so
+	# this stays "unchanged render" even as round-2/round-3 workers are added.
 	var f: OfficeFloor = OfficeFloorScene.instantiate()
 	add_child_autofree(f)
 	await get_tree().process_frame
 	f.set_tier(1)
-	f.set_roster([{"id": 0, "name": "A", "assigned": true, "appearance_id": 3}])
+	f.set_roster([{"id": 0, "name": "A", "assigned": true, "appearance_id": 0}])
 	var spr: OfficeEmployeeSprite = f._sprites[0]
 	assert_eq(spr._anim.sprite_frames, SharedWorkerFrames,
-		"pool ON by default: appearance maps to variant 0 == the shared asset (unchanged render)")
+		"pool ON by default: appearance 0 maps to variant 0 == the shared asset (unchanged render)")
+
+
+func test_floor_applies_a_non_shared_variant_when_the_manifest_has_more_than_one():
+	# 64px worker re-base wiring (#900/#793): once real (non-shared) variants
+	# exist in the manifest, a different appearance_id must resolve to a
+	# DIFFERENT SpriteFrames resource than the shared fallback.
+	assert_gt(WorkerVariantPool.count(), 1,
+		"this test needs a real second variant in worker_variants.json to be meaningful")
+	var f: OfficeFloor = OfficeFloorScene.instantiate()
+	add_child_autofree(f)
+	await get_tree().process_frame
+	f.set_tier(1)
+	f.set_roster([{"id": 0, "name": "A", "assigned": true, "appearance_id": 1}])
+	var spr: OfficeEmployeeSprite = f._sprites[0]
+	assert_ne(spr._anim.sprite_frames, SharedWorkerFrames,
+		"appearance 1 maps to variant index 1 -- a real triaged worker, not the shared asset")
 
 
 func test_pool_off_applies_shared_frames_uniformly():
