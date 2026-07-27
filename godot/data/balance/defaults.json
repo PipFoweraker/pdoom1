@@ -91,7 +91,21 @@
 			"alarm_decay": 0.985,
 			"panic_decay": 0.97,
 			"leak_panic_scale": 0.02,
-			"W_quirk_doom": 0.5
+			"W_quirk_doom": 0.5,
+			"action_safety_absorb": 4.0,
+			"action_safety_alarm": 0.03,
+			"action_paper_alarm": 3.0,
+			"action_audit_absorb": 1.0,
+			"action_desperation_absorb": 0.0,
+			"action_lobby_pressure": 0.5,
+			"action_lobby_alarm": 0.5,
+			"action_warning_alarm": 0.6,
+			"action_acquire_frontier": 60.0,
+			"action_sabotage_frontier": 200.0,
+			"action_sabotage_panic": 5.0,
+			"action_opensource_alarm": 0.6,
+			"action_opensource_diffusion": 0.0,
+			"action_conference_alarm": 0.6
 		}
 	},
 	"salaries": {
