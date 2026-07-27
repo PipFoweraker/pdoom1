@@ -29,8 +29,8 @@
           "id": "issue_statement",
           "text": "Issue a supporting statement",
           "costs": {},
-          "effects": {"reputation": 10, "doom": -2},
-          "message": "Your public support helps legitimize safety concerns."
+          "effects": {"reputation": 10, "global_alarm": 4},
+          "message": "Your public support helps legitimize safety concerns (+global alarm)."
         },
         {
           "id": "stay_quiet",
@@ -55,8 +55,8 @@
           "id": "compromise",
           "text": "Accept faster timelines",
           "costs": {},
-          "effects": {"money": 50000, "doom": 3},
-          "message": "Additional funding secured, but at what cost?"
+          "effects": {"money": 50000, "frontier_capability": 30},
+          "message": "Additional funding secured; the compressed timeline pushes your frontier ahead of your safety work (+frontier capability)."
         },
         {
           "id": "stand_firm",

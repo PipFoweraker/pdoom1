@@ -62,10 +62,9 @@
 						"action_points": 1
 					},
 					"effects": {
-						"safety_researchers": 1,
-						"doom": -3
+						"safety_researchers": 1
 					},
-					"message": "Fast-tracked hiring process! (+1 safety researcher, -3 doom)"
+					"message": "Fast-tracked hiring process! (+1 safety researcher)"
 				},
 				{
 					"id": "hire_discounted",
@@ -74,10 +73,9 @@
 						"money": 25000
 					},
 					"effects": {
-						"safety_researchers": 1,
-						"doom": -2
+						"safety_researchers": 1
 					},
-					"message": "Hired talented researcher at discount! (+1 safety researcher, -2 doom)"
+					"message": "Hired talented researcher at discount! (+1 safety researcher)"
 				},
 				{
 					"id": "decline",
@@ -104,20 +102,20 @@
 					"id": "publish_open",
 					"text": "Publish Openly",
 					"effects": {
-						"doom": 5,
+						"general_capability": 5,
 						"reputation": 10,
 						"research": 20
 					},
-					"message": "Published breakthrough! (+5 doom, +10 reputation, +20 research)"
+					"message": "Published breakthrough! (+capability diffusion, +10 reputation, +20 research)"
 				},
 				{
 					"id": "keep_proprietary",
 					"text": "Keep Proprietary",
 					"effects": {
-						"doom": 2,
+						"frontier_capability": 20,
 						"research": 30
 					},
-					"message": "Kept research proprietary (+2 doom, +30 research)"
+					"message": "Kept research proprietary (+frontier capability, +30 research)"
 				},
 				{
 					"id": "safety_review",
@@ -127,11 +125,10 @@
 						"money": 20000
 					},
 					"effects": {
-						"doom": 1,
 						"research": 15,
 						"reputation": 5
 					},
-					"message": "Safety review complete (+1 doom, +15 research, +5 reputation)"
+					"message": "Safety review complete (+15 research, +5 reputation)"
 				}
 			]
 		},
@@ -222,10 +219,9 @@
 						"action_points": 2
 					},
 					"effects": {
-						"reputation": 8,
-						"doom": -5
+						"reputation": 8
 					},
-					"message": "Personal intervention prevented resignations! (+8 reputation, -5 doom)"
+					"message": "Personal intervention prevented resignations! (+8 reputation)"
 				},
 				{
 					"id": "team_retreat",
@@ -234,10 +230,9 @@
 						"money": 30000
 					},
 					"effects": {
-						"reputation": 5,
-						"doom": -2
+						"reputation": 5
 					},
-					"message": "Team retreat restored morale (+5 reputation, -2 doom)"
+					"message": "Team retreat restored morale (+5 reputation)"
 				},
 				{
 					"id": "salary_raise",
@@ -255,10 +250,9 @@
 					"text": "Push Through (costs trust -- affected researchers lose loyalty)",
 					"costs": {},
 					"effects": {
-						"doom": 3,
 						"loyalty_hit": 15
 					},
-					"message": "Nobody quit, but pushing through cost trust -- the most burned-out researchers lose loyalty. (+3 doom)"
+					"message": "Nobody quit, but pushing through cost trust -- the most burned-out researchers lose loyalty."
 				}
 			]
 		},
@@ -343,27 +337,27 @@
 						"action_points": 1
 					},
 					"effects": {
-						"doom": -10,
+						"global_alarm": 20,
 						"reputation": 15
 					},
-					"message": "Regulation passed! Global safety improved (-10 doom, +15 reputation)"
+					"message": "Regulation passed! The world is paying attention (+global alarm, +15 reputation)"
 				},
 				{
 					"id": "oppose_regulation",
 					"text": "Oppose (Stay Competitive)",
 					"effects": {
-						"doom": 5,
+						"global_alarm": -10,
 						"reputation": -5
 					},
-					"message": "Regulation weakened (+5 doom, -5 reputation)"
+					"message": "Regulation weakened; public concern deflated (-global alarm, -5 reputation)"
 				},
 				{
 					"id": "stay_neutral",
 					"text": "Remain Neutral",
 					"effects": {
-						"doom": 2
+						"global_alarm": -4
 					},
-					"message": "Stayed neutral as doom increased (+2 doom)"
+					"message": "Stayed neutral while the debate moved on (-global alarm)"
 				}
 			]
 		},
@@ -429,10 +423,9 @@
 						"money": 500
 					},
 					"effects": {
-						"has_cat": 1,
-						"doom": -1
+						"has_cat": 1
 					},
-					"message": "Cat adopted! Your researchers' morale improves slightly. The cat has claimed its spot in the lab. (-1 doom)"
+					"message": "Cat adopted! Your researchers' morale improves slightly. The cat has claimed its spot in the lab."
 				},
 				{
 					"id": "feed_and_release",
@@ -446,10 +439,8 @@
 				{
 					"id": "shoo_away",
 					"text": "Shoo It Away",
-					"effects": {
-						"doom": 1
-					},
-					"message": "The cat leaves, disappointed. Your researchers seem a bit sad. (+1 doom for being heartless)"
+					"effects": {},
+					"message": "The cat leaves, disappointed. Your researchers seem a bit sad."
 				}
 			]
 		},
@@ -472,10 +463,9 @@
 						"action_points": 1
 					},
 					"effects": {
-						"reputation": 3,
-						"doom": -1
+						"reputation": 3
 					},
-					"message": "Successful mediation! Team cohesion improved (+3 reputation, -1 doom)"
+					"message": "Successful mediation! Team cohesion improved (+3 reputation)"
 				},
 				{
 					"id": "hire_mediator",
@@ -492,10 +482,9 @@
 					"id": "ignore_conflict",
 					"text": "Let Them Work It Out",
 					"effects": {
-						"reputation": -3,
-						"doom": 2
+						"reputation": -3
 					},
-					"message": "Conflict festered and spread (-3 reputation, +2 doom)"
+					"message": "Conflict festered and spread (-3 reputation)"
 				}
 			]
 		},
@@ -538,10 +527,9 @@
 					"id": "minimize_issue",
 					"text": "Minimize the Issue",
 					"effects": {
-						"reputation": -10,
-						"doom": 3
+						"reputation": -10
 					},
-					"message": "Poor handling damaged lab culture (-10 reputation, +3 doom)"
+					"message": "Poor handling damaged lab culture (-10 reputation)"
 				}
 			]
 		},
@@ -565,10 +553,9 @@
 						"money": 60000
 					},
 					"effects": {
-						"reputation": 10,
-						"doom": -2
+						"reputation": 10
 					},
-					"message": "Salary audit complete, adjustments made (+10 reputation, -2 doom)"
+					"message": "Salary audit complete, adjustments made (+10 reputation)"
 				},
 				{
 					"id": "explain_structure",
@@ -585,10 +572,9 @@
 					"id": "ignore_concerns",
 					"text": "Dismiss Concerns",
 					"effects": {
-						"reputation": -5,
-						"doom": 1
+						"reputation": -5
 					},
-					"message": "Ignored concerns bred resentment (-5 reputation, +1 doom)"
+					"message": "Ignored concerns bred resentment (-5 reputation)"
 				}
 			]
 		},
@@ -611,10 +597,9 @@
 						"money": 30000
 					},
 					"effects": {
-						"reputation": 8,
-						"doom": -3
+						"reputation": 8
 					},
-					"message": "Provided full support. Team sees you care (+8 reputation, -3 doom)"
+					"message": "Provided full support. Team sees you care (+8 reputation)"
 				},
 				{
 					"id": "partial_leave",
@@ -629,10 +614,9 @@
 					"id": "deny_leave",
 					"text": "Deny Request (Too Busy)",
 					"effects": {
-						"reputation": -8,
-						"doom": 5
+						"reputation": -8
 					},
-					"message": "Denial caused serious damage to culture (-8 reputation, +5 doom)"
+					"message": "Denial caused serious damage to culture (-8 reputation)"
 				}
 			]
 		},
@@ -716,10 +700,9 @@
 					"id": "sweep_under_rug",
 					"text": "Ignore It (They're Valuable)",
 					"effects": {
-						"reputation": -6,
-						"doom": 2
+						"reputation": -6
 					},
-					"message": "Favoritism damaged morale (-6 reputation, +2 doom)"
+					"message": "Favoritism damaged morale (-6 reputation)"
 				}
 			]
 		},
@@ -743,10 +726,10 @@
 						"money": 30000
 					},
 					"effects": {
-						"doom": 3,
+						"general_capability": 3,
 						"reputation": 5
 					},
-					"message": "Found and addressed the leak, but damage done (+3 doom, +5 reputation)"
+					"message": "Found and addressed the leak, but the work is already spreading (+capability diffusion, +5 reputation)"
 				},
 				{
 					"id": "publish_immediately",
@@ -757,18 +740,18 @@
 					"effects": {
 						"papers": 1,
 						"reputation": 8,
-						"doom": 5
+						"general_capability": 5
 					},
-					"message": "Published to get credit, but all labs benefit (+1 paper, +8 rep, +5 doom)"
+					"message": "Published to get credit, but all labs benefit (+1 paper, +8 reputation, +capability diffusion)"
 				},
 				{
 					"id": "accept_leak",
 					"text": "Accept the Loss",
 					"effects": {
-						"doom": 8,
+						"general_capability": 8,
 						"reputation": -3
 					},
-					"message": "Competitor gained significant advantage (+8 doom, -3 reputation)"
+					"message": "Competitor gained significant advantage (+capability diffusion, -3 reputation)"
 				}
 			]
 		},
@@ -790,10 +773,10 @@
 						"money": 20000
 					},
 					"effects": {
-						"doom": -5,
+						"safety_absorption": 50,
 						"reputation": -8
 					},
-					"message": "Used intel to counter their work (-5 doom, -8 reputation for ethics)"
+					"message": "Used the intel to harden your own safety work (+safety absorption, -8 reputation for ethics)"
 				},
 				{
 					"id": "report_intel",
@@ -803,9 +786,9 @@
 					},
 					"effects": {
 						"reputation": 10,
-						"doom": -3
+						"global_alarm": 6
 					},
-					"message": "Reported concerns, triggering investigation (+10 reputation, -3 doom)"
+					"message": "Reported concerns, triggering investigation (+10 reputation, +global alarm)"
 				},
 				{
 					"id": "refuse_intel",
@@ -837,10 +820,10 @@
 						"money": 50000
 					},
 					"effects": {
-						"doom": -15,
+						"global_alarm": 30,
 						"reputation": 20
 					},
-					"message": "Major expose! Industry-wide safety improvements (-15 doom, +20 reputation)"
+					"message": "Major expose! Industry-wide alarm rises (+global alarm, +20 reputation)"
 				},
 				{
 					"id": "anonymous_support",
@@ -849,10 +832,10 @@
 						"money": 25000
 					},
 					"effects": {
-						"doom": -8,
+						"global_alarm": 16,
 						"reputation": 5
 					},
-					"message": "Quietly helped expose dangers (-8 doom, +5 reputation)"
+					"message": "Quietly helped expose dangers (+global alarm, +5 reputation)"
 				},
 				{
 					"id": "hire_whistleblower",
@@ -862,10 +845,9 @@
 						"action_points": 1
 					},
 					"effects": {
-						"safety_researchers": 1,
-						"doom": -3
+						"safety_researchers": 1
 					},
-					"message": "Hired the concerned researcher (+1 safety researcher, -3 doom)"
+					"message": "Hired the concerned researcher (+1 safety researcher)"
 				},
 				{
 					"id": "decline_involvement",
@@ -897,9 +879,9 @@
 					},
 					"effects": {
 						"reputation": 8,
-						"doom": -2
+						"global_alarm": 4
 					},
-					"message": "Transparent discussion improved practices (+8 reputation, -2 doom)"
+					"message": "Transparent discussion improved practices (+global alarm, +8 reputation)"
 				},
 				{
 					"id": "private_resolution",
@@ -917,9 +899,9 @@
 					"text": "Suppress the Issue",
 					"effects": {
 						"reputation": -15,
-						"doom": 5
+						"global_alarm": -10
 					},
-					"message": "Suppression backfired badly (-15 reputation, +5 doom)"
+					"message": "Suppression backfired badly (-global alarm, -15 reputation)"
 				}
 			]
 		},
@@ -941,10 +923,10 @@
 						"action_points": 1
 					},
 					"effects": {
-						"doom": -10,
+						"safety_absorption": 100,
 						"reputation": -15
 					},
-					"message": "Source planted, early warnings enabled -- but word of your methods spreads (-10 doom, -15 reputation)"
+					"message": "Source planted, early warnings enabled -- but word of your methods spreads (+safety absorption, -15 reputation)"
 				},
 				{
 					"id": "legitimate_partnership",
@@ -954,10 +936,10 @@
 						"money": 40000
 					},
 					"effects": {
-						"doom": -5,
+						"safety_absorption": 50,
 						"reputation": 8
 					},
-					"message": "Established safety information sharing (-5 doom, +8 reputation)"
+					"message": "Established safety information sharing (+safety absorption, +8 reputation)"
 				},
 				{
 					"id": "decline_espionage",
@@ -988,9 +970,9 @@
 					},
 					"effects": {
 						"reputation": 15,
-						"doom": -3
+						"safety_absorption": 30
 					},
-					"message": "Proactive security audit boosted confidence (+15 reputation, -3 doom)"
+					"message": "Proactive security audit boosted confidence (+safety absorption, +15 reputation)"
 				},
 				{
 					"id": "offer_help",
@@ -1008,9 +990,9 @@
 					"text": "Stay Silent",
 					"effects": {
 						"reputation": -5,
-						"doom": 2
+						"global_panic": 4
 					},
-					"message": "Silence perceived as indifference (-5 reputation, +2 doom)"
+					"message": "Silence perceived as indifference (+global panic, -5 reputation)"
 				},
 				{
 					"id": "exploit_weakness",
@@ -1021,9 +1003,9 @@
 					"effects": {
 						"money": 50000,
 						"reputation": -10,
-						"doom": 3
+						"global_panic": 6
 					},
-					"message": "Gained clients but damaged reputation (+$50k, -10 rep, +3 doom)"
+					"message": "Gained clients but damaged reputation (+$50k, -10 reputation, +global panic)"
 				}
 			]
 		},
@@ -1047,9 +1029,9 @@
 					},
 					"effects": {
 						"reputation": 8,
-						"doom": -5
+						"safety_absorption": 50
 					},
-					"message": "Comprehensive security upgrade complete (+8 reputation, -5 doom)"
+					"message": "Comprehensive security upgrade complete (+safety absorption, +8 reputation)"
 				},
 				{
 					"id": "patch_critical",
@@ -1059,17 +1041,17 @@
 					},
 					"effects": {
 						"reputation": 3,
-						"doom": -2
+						"safety_absorption": 20
 					},
-					"message": "Critical vulnerabilities patched (+3 reputation, -2 doom)"
+					"message": "Critical vulnerabilities patched (+safety absorption, +3 reputation)"
 				},
 				{
 					"id": "defer_security",
 					"text": "Defer (We're Too Busy)",
 					"effects": {
-						"doom": 5
+						"safety_absorption": -50
 					},
-					"message": "Security risks remain (+5 doom)"
+					"message": "Security risks remain; your safety posture erodes (-safety absorption)"
 				}
 			]
 		},
@@ -1112,10 +1094,9 @@
 					"id": "let_them_go",
 					"text": "Let Them Leave",
 					"effects": {
-						"lose_researcher": 1,
-						"doom": 3
+						"lose_researcher": 1
 					},
-					"message": "Researcher departed for competitor (+3 doom, lost valuable team member)"
+					"message": "Researcher departed for competitor (lost a valuable team member)"
 				}
 			]
 		}

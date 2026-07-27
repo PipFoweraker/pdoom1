@@ -287,10 +287,51 @@ static func execute_event_choice(event: Dictionary, choice_id: String, state: Ga
 	for key in effects.keys():
 		var value = effects[key]
 
+		# ADR-0015 S-ticket (#967 Parent 1): a literal "doom" effect must NEVER reach
+		# Resources.add's `state.doom += v` sink -- that write is CLOBBERED at resolve by
+		# `state.doom = doom_system.current_doom` (turn_manager.gd:657), so every
+		# "(+/-N doom)" message in event content was a silent lie. Route it through the
+		# doom engine as a named stream input instead, exactly as the risk pools do
+		# (turn_manager.gd:691,717). Migrated CONTENT no longer carries this key at all
+		# (guarded by test_events.gd::test_no_authored_event_content_writes_literal_doom);
+		# this branch exists for RUNTIME-generated effects (event_service.gd pdoom-data
+		# events) and as a permanent trap so a re-introduced literal cannot go inert.
+		# Attributed to the `panic` stream -- an unmodelled event shock the world reacts
+		# to, the same stream add_event_doom() gives risk-pool shocks -- rather than
+		# add_event_doom's default `ledger` bucket, which would misattribute it in the
+		# L6 delta chips / death attribution.
+		if key == "doom":
+			if state.doom_system:
+				state.doom_system.add_stream_input("panic", float(value))
+			else:
+				# Direct-state unit contexts with no doom engine: keep the legacy write so
+				# those tests still observe a delta.
+				state.add_resources({"doom": value})
+			continue
+
 		if Resources.add(state, key, value):
 			continue
 
 		match key:
+			# --- ADR-0015 world-state intermediaries (the honest replacements for the
+			# retired literal "doom" content effect). These are real accumulating stocks
+			# read by DoomSystem._compute_streams; the doom LEVEL stays single-authority.
+			# NOTE political_pressure is deliberately absent: doom_system.gd:246
+			# REASSIGNS it every tick (global_alarm - global_panic), so an event write
+			# there would be the same inert-sink bug in a new costume.
+			"global_alarm":
+				state.global_alarm += float(value)
+			"global_panic":
+				state.global_panic += float(value)
+			"safety_absorption":
+				state.safety_absorption += float(value)
+			"general_capability":
+				state.general_capability += float(value)
+			"frontier_capability":
+				# Events address the PLAYER slice; rival slices are owned by the rival
+				# sim (doom_system.gd:215) and the event schema carries no actor id.
+				state.frontier_capability["player"] = \
+					float(state.frontier_capability.get("player", 0.0)) + float(value)
 			"safety_researchers":
 				_apply_staffing_effect(state, "safety", int(value), staffing_notes)
 			"capability_researchers":

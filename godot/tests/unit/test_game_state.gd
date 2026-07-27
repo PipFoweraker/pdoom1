@@ -86,6 +86,32 @@ func test_add_resources_clamps_doom():
 	state.add_resources({"doom": -20})
 	assert_eq(state.doom, 0.0, "Doom should be clamped to 0")
 
+func test_add_resources_doom_write_is_clobbered_by_the_doom_engine():
+	## ADR-0015 S-ticket CLOBBER GUARD (#967 Parent 1).
+	## `add_resources({"doom": N})` still moves `state.doom` in a direct-state context (the
+	## test above depends on that), which is exactly why the bug was invisible for so long:
+	## turn resolution REASSIGNS `state.doom = doom_system.current_doom`
+	## (turn_manager.gd _step_resolve_doom), so the parallel write never survives a real turn.
+	## This test PINS the clobber. It must stay red-if-removed, because the wrong fix is to
+	## make the parallel write stick -- the doom LEVEL is single-authority (DoomSystem), and
+	## content that wants to move it writes a world-state INTERMEDIARY instead
+	## (events.gd effect loop -> add_event_doom / global_alarm / safety_absorption / ...).
+	var state = GameState.new("clobber_guard_seed")
+	assert_not_null(state.doom_system, "GameState owns a DoomSystem")
+	state.doom_system.current_doom = 42.0
+	state.doom = 42.0
+
+	state.add_resources({"doom": 25.0})
+	assert_eq(state.doom, 67.0, "the raw sink does move state.doom before resolution")
+
+	var tm: TurnManager = autofree(TurnManager.new(state))
+	tm.execute_turn()
+
+	assert_eq(state.doom, state.doom_system.current_doom,
+		"after resolution the doom level is whatever DoomSystem says -- single authority")
+	assert_lt(state.doom, 67.0,
+		"the +25 parallel write was discarded, not coincidentally preserved")
+
 func test_get_total_staff_counts_all_types():
 	# Test get_total_staff sums all staff types
 	var state = GameState.new("test_seed")

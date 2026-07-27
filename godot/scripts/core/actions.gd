@@ -949,11 +949,12 @@ static func attend_conference_action(state: GameState, conf_id: String, travel_c
 
 		return {
 			"success": true,
-			"message": "Presented '%s' at %s! (+%.0f rep, -%.1f doom, cost: %s %s)%s" % [
+			# ADR-0015 S-ticket: the mechanic above was migrated to global_alarm but this
+			# string still printed "-N doom" -- a number the doom level never moved by.
+			"message": "Presented '%s' at %s! (+%.0f rep, +global alarm, cost: %s %s)%s" % [
 				presenting_paper.title,
 				conf.name,
 				rep_gain,
-				doom_reduction,
 				GameConfig.format_money(travel_cost.total),
 				travel_cost.class_name,
 				jet_lag_msg
