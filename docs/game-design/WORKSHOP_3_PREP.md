@@ -256,11 +256,11 @@ test-only reference does not count.
 | ADR | Decided | Status in code | Drag on WS-3? |
 |---|---|---|---|
 | 0009 plan-months / two speeds | Turn=month; evaporating reserve; response windows; durations | **LANDED** -- `month_plan.gd`, `month_controller.gd` | No |
-| 0010 adoption routing | World/rival doom bends only via research->paper->socialization->adoption | **MOSTLY NOT BUILT** -- own-lab `safety_absorption` exists in `doom_system.gd`; no adoption pipeline ("adopt" only in comments). Lane L3 (#615) open | YES -- a thesis pillar unbuilt |
+| 0010 adoption routing | World/rival doom bends only via research->paper->socialization->adoption | **MOSTLY NOT BUILT** -- own-lab `safety_absorption` exists in `doom_system.gd`; no adoption pipeline ("adopt" only in comments). Lane L3 (#614) open | YES -- a thesis pillar unbuilt |
 | 0011 effort economy | Delete global AP; typed founder hours; workstreams; managers; researcher lanes x appetites x quirks | **PARTIAL** -- lanes/appetites/quirks + appetite-promises-as-ledger landed; founder-hour typing, **workstreams**, manager-shields NOT built. Lane L2 (#613) open | YES -- biggest single drag |
 | 0012 event-response taxonomy | 4 classes; DEFER mints ledger | **MECHANISM LANDED** (`event_tiers.gd`, `window_resolver.gd`); event **content** unclassified (only defaults in `balance/defaults.json`). Lane L4 (#614) owes content | Partial (content only) |
 | 0013 cost-of-debt engine | One pricing engine for all liabilities | **LANDED** -- `finance_engine.gd` (`price()`, `generate_offers()`, `accept_offer()`); caveat: typed rep / org_type not first-class state yet (prices off scalar reputation) | No (inputs stubbed) |
-| 0014 conferences / presence / location | Founder-vs-delegate; contacts-as-receivables; presence=SA channel; seed-timeline scheduling | **NOT BUILT (ADR shape)** -- only the pre-ADR #468 travel system (`conferences.gd`, `paper_submissions.gd`) exists. Lane L3 (#615) open | YES |
+| 0014 conferences / presence / location | Founder-vs-delegate; contacts-as-receivables; presence=SA channel; seed-timeline scheduling | **NOT BUILT (ADR shape)** -- only the pre-ADR #468 travel system (`conferences.gd`, `paper_submissions.gd`) exists. Lane L3 (#614) open | YES |
 | 0015 no printed doom deltas | No definition carries literal doom; computed each tick; single authority | **ENGINE LANDED** (`doom_system.gd` streams + single authority #638); data migration INCOMPLETE -- `data/events/core_events.json` still ships ~40 literal `"doom": N` fields, inert only because clobbered at resolve | Partial (latent trap) |
 | 0016 league metabolism | Monthly world-update packs; game trails reality by 1 month; 2017 start | **NOT BUILT** -- only the 2017 anchor (`DEFAULT_START_YEAR = 2017`); no world-update-pack pipeline. Largely ops/content, not engine | YES (ops/content) |
 | 0017 anti-hollow test strategy | Load-time smoke + property invariants | **LANDED** -- `test_smoke_load_all.gd`, `test_property_boot_invariants.gd`, `test_property_determinism.gd` | No |
@@ -269,6 +269,11 @@ test-only reference does not count.
 adoption, 0011 workstreams, 0014 conference-ADR-shape, 0016 league pipeline).
 These are DRAG: WS-3 should not stack new design on top of them. For each,
 WS-3's first job is *finish, or formally drop/downscope*, not add.
+
+**Correction (2026-07-27, R5 emit):** the table above originally read "Lane
+L3 (#615)" in both the 0010 and 0014 rows. Verified mapping per
+`WS3_FINISH_OR_DROP.md`: **L3 = #614** (adoption/papers/conferences --
+ADR-0010 + ADR-0014), **L4 = #615** (event taxonomy). Both rows fixed above.
 
 **Decision-for-Pip 2B (latent trap):** ADR-0015's data strip is unfinished --
 the fiction still says "-3 doom" and 40 literal fields survive as inert
