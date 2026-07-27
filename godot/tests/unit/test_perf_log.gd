@@ -140,3 +140,84 @@ func test_entries_ring_buffer_is_bounded():
 		PerfLog.end("ring_%d" % i)
 	assert_eq(PerfLog.get_entries().size(), PerfLog.MAX_ENTRIES,
 		"the rolling log must cap at MAX_ENTRIES (oldest dropped)")
+
+
+# --- mark() / gauge() -------------------------------------------------------
+
+func test_mark_records_an_entry_with_label_and_ctx():
+	PerfLog.mark("scene_ready", {"scene": "watch"})
+	var entries := PerfLog.get_entries()
+	assert_eq(entries.size(), 1, "mark() should record exactly one entry")
+	assert_eq(entries[0]["kind"], "mark", "entry should be tagged kind=mark")
+	assert_eq(entries[0]["label"], "scene_ready", "entry should carry the mark label")
+	assert_eq(entries[0]["ctx"]["scene"], "watch", "entry should carry the caller context")
+
+
+func test_mark_is_noop_when_inactive():
+	PerfLog.set_enabled_override(false)
+	PerfLog.mark("gated_mark")
+	assert_eq(PerfLog.get_entries().size(), 0, "mark() must no-op while the gate is off")
+
+
+func test_gauge_records_an_entry_with_name_and_value():
+	PerfLog.gauge("office_sprites", 12, {"turn": 3})
+	var entries := PerfLog.get_entries()
+	assert_eq(entries.size(), 1, "gauge() should record exactly one entry")
+	assert_eq(entries[0]["kind"], "gauge", "entry should be tagged kind=gauge")
+	assert_eq(entries[0]["name"], "office_sprites", "entry should carry the gauge name")
+	assert_eq(entries[0]["value"], 12, "entry should carry the gauge value")
+	assert_eq(entries[0]["ctx"]["turn"], 3, "entry should carry the caller context")
+
+
+func test_gauge_is_noop_when_inactive():
+	PerfLog.set_enabled_override(false)
+	PerfLog.gauge("gated_gauge", 1)
+	assert_eq(PerfLog.get_entries().size(), 0, "gauge() must no-op while the gate is off")
+
+
+# --- Rotation ----------------------------------------------------------------
+
+func test_should_rotate_true_past_threshold():
+	assert_true(PerfLog.should_rotate(PerfLog.MAX_LOG_BYTES, PerfLog.MAX_LOG_BYTES),
+		"a log exactly at the threshold should rotate")
+	assert_true(PerfLog.should_rotate(PerfLog.MAX_LOG_BYTES + 1, PerfLog.MAX_LOG_BYTES),
+		"a log past the threshold should rotate")
+
+
+func test_should_rotate_false_under_threshold():
+	assert_false(PerfLog.should_rotate(100, PerfLog.MAX_LOG_BYTES),
+		"a small log should not rotate")
+
+
+# --- File line shape ---------------------------------------------------------
+# Enables real file logging briefly to check the written line shape, then removes the file
+# and restores hermetic settings -- the only test in this suite that touches user://.
+
+func test_written_line_has_timestamp_and_type_fields():
+	var re := RegEx.new()
+	re.compile("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z (BEGIN|END|MARK|GAUGE|WARN|ITER) ")
+
+	PerfLog.set_file_logging(true)
+	if FileAccess.file_exists(PerfLog.LOG_PATH):
+		DirAccess.remove_absolute(PerfLog.LOG_PATH)
+	PerfLog.begin("line_shape_section", {"turn": 1})
+	PerfLog.end("line_shape_section")
+	PerfLog.mark("line_shape_mark")
+	PerfLog.gauge("line_shape_gauge", 5)
+	PerfLog.set_file_logging(false)
+
+	var f := FileAccess.open(PerfLog.LOG_PATH, FileAccess.READ)
+	assert_not_null(f, "perf.log should exist after a real write")
+	if f == null:
+		return
+	var lines: Array = []
+	while not f.eof_reached():
+		var line := f.get_line()
+		if not line.is_empty():
+			lines.append(line)
+	f.close()
+	DirAccess.remove_absolute(PerfLog.LOG_PATH)
+
+	assert_gte(lines.size(), 4, "begin+end+mark+gauge should write at least 4 lines")
+	for line in lines:
+		assert_not_null(re.search(line), "line should start with an ISO-8601 timestamp + TYPE field: %s" % line)

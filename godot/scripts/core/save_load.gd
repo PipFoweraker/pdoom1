@@ -28,13 +28,19 @@ static func build_envelope(state: GameState) -> Dictionary:
 
 
 static func save_game(state: GameState, path: String = QUICKSAVE_PATH) -> Error:
+	# Observability only (see godot/autoload/perf_log.gd): wall-clock timing + display-only
+	# ctx (path, turn). Never touches state/RNG/scoring, never branched on.
+	var sw := PerfLog.time_section("save", {"path": path, "turn": (state.turn if state != null else -1)})
 	if state == null:
+		sw.stop()
 		return ERR_INVALID_PARAMETER
 	var err := DirAccess.make_dir_recursive_absolute(SAVE_DIR)
 	if err != OK and err != ERR_ALREADY_EXISTS:
+		sw.stop()
 		return err
 	var f := FileAccess.open(path, FileAccess.WRITE)
 	if f == null:
+		sw.stop()
 		return FileAccess.get_open_error()
 	# full_precision=true is LOAD-BEARING: the default truncates float decimals,
 	# which shifts every restored float by ulps -- the drift then compounds turn
@@ -42,6 +48,7 @@ static func save_game(state: GameState, path: String = QUICKSAVE_PATH) -> Error:
 	f.store_string(JSON.stringify(build_envelope(state), "\t", true, true))
 	f.close()
 	print("[SaveLoad] Saved turn %d to %s" % [state.turn, path])
+	sw.stop()
 	return OK
 
 
@@ -50,17 +57,24 @@ static func has_save(path: String = QUICKSAVE_PATH) -> bool:
 
 
 static func load_envelope(path: String = QUICKSAVE_PATH) -> Dictionary:
+	# Observability only (see godot/autoload/perf_log.gd): wall-clock timing + display-only
+	# ctx (path). Never touches state/RNG/scoring, never branched on.
+	var sw := PerfLog.time_section("load", {"path": path})
 	if not FileAccess.file_exists(path):
+		sw.stop()
 		return {}
 	var f := FileAccess.open(path, FileAccess.READ)
 	if f == null:
+		sw.stop()
 		return {}
 	var text := f.get_as_text()
 	f.close()
 	var parsed = JSON.parse_string(text)
 	if not (parsed is Dictionary):
 		print("[SaveLoad] Corrupt save (not a JSON object): %s" % path)
+		sw.stop()
 		return {}
+	sw.stop()
 	return parsed
 
 

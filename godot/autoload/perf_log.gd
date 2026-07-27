@@ -2,8 +2,9 @@ extends Node
 ## PerfLog -- dev-mode performance logger for the load-bearing turn/month loop.
 ##
 ## OBSERVABILITY ONLY. It reads a monotonic clock (Time.get_ticks_usec) and, at most,
-## the turn number a caller hands it. It NEVER touches game state, RNG, or scoring, so it
-## has ZERO gameplay/determinism effect (ladder stays L2). Every public method early-returns
+## display-only values a caller hands it (turn number, counts, labels). It NEVER touches
+## game state, RNG, or scoring, so it has ZERO gameplay/determinism effect (ladder stays L2).
+## Every public method early-returns
 ## a no-op unless BuildInfo.is_dev_build() is true, so a clean release cut (DEV_BUILD=false)
 ## makes normal players see nothing -- no file writes, no console spam.
 ##
@@ -17,9 +18,17 @@ extends Node
 ##   PerfLog.begin("turn_resolution", {"turn": t}); ...; PerfLog.end("turn_resolution")
 ##   var sw := PerfLog.time_section("turn_resolution"); ...; sw.stop()   # stopwatch helper
 ##   PerfLog.check_iterations("month_playback", i, 400)                  # loop tripwire
+##   PerfLog.mark("scene_ready", {"scene": "watch"})                     # one-line stamped event
+##   PerfLog.gauge("office_sprites", 12)                                 # point-in-time count
 ##
 ## Callers must treat the tripwire returns as OBSERVATION ONLY -- never break/branch game
 ## logic on them, or the logger would fork behavior. It watches; it does not steer.
+##
+## FILE FORMAT (2026-07-27 tightening, for later story-mining/parsing): every line written
+## to perf.log leads with an ISO-8601 UTC wall-clock timestamp and a fixed TYPE field
+## (BEGIN/END/MARK/GAUGE/WARN/ITER), then the existing free-text body, so a later parser can
+## split reliably on the first two whitespace-delimited fields. ASCII only; ctx renders as
+## trailing key=value pairs, stable field order.
 
 ## Default wall-time threshold (ms) above which a timed section is flagged. A whole turn
 ## resolving in >1s is well past anything the current sim should need -- picked as a loud
@@ -33,6 +42,13 @@ const MAX_WARNINGS := 128
 
 ## Dev log trail. Append-only; created lazily under user://logs (same dir as LogExporter).
 const LOG_PATH := "user://logs/perf.log"
+const LOG_DIR := "user://logs"
+const ROTATED_LOG_NAME := "perf.log.1"
+
+## Size-based rotation: once perf.log reaches this many bytes, the NEXT write rotates it to
+## perf.log.1 (overwriting any prior rotation) and starts a fresh perf.log. Keeps a session's
+## worth of story-mineable trail without unbounded growth across a long dev session.
+const MAX_LOG_BYTES := 5 * 1024 * 1024
 
 signal anomaly_flagged(message: String)
 
@@ -94,6 +110,7 @@ func begin(section: String, ctx: Dictionary = {}) -> void:
 	if not is_active():
 		return
 	_open[section] = {"start_usec": Time.get_ticks_usec(), "ctx": ctx}
+	_write_line("BEGIN", "section=%s%s" % [section, _kv_suffix(ctx)])
 
 
 ## End a named section started with begin(). Returns elapsed ms (0.0 if unmatched/inactive).
@@ -113,6 +130,27 @@ func time_section(section: String, ctx: Dictionary = {}) -> Stopwatch:
 	return Stopwatch.new(self, section, Time.get_ticks_usec(), ctx)
 
 
+## --- One-line events ---------------------------------------------------------
+
+## Stamp a single unpaired event -- no begin/end matching, just "this happened, here's when
+## and with what context". No-op when inactive; feeds the same ring buffer + file trail as
+## timed sections. ctx is display-only (e.g. {"scene": "watch"}) -- never branch on it.
+func mark(label: String, ctx: Dictionary = {}) -> void:
+	if not is_active():
+		return
+	_push(_entries, {"kind": "mark", "label": label, "ctx": ctx}, MAX_ENTRIES)
+	_write_line("MARK", "label=%s%s" % [label, _kv_suffix(ctx)])
+
+
+## Record a point-in-time count/value (e.g. gauge("office_sprites", 12)). No-op when
+## inactive; feeds the same ring buffer + file trail as timed sections.
+func gauge(name: String, value, ctx: Dictionary = {}) -> void:
+	if not is_active():
+		return
+	_push(_entries, {"kind": "gauge", "name": name, "value": value, "ctx": ctx}, MAX_ENTRIES)
+	_write_line("GAUGE", "name=%s value=%s%s" % [name, str(value), _kv_suffix(ctx)])
+
+
 ## --- Iteration tripwire ----------------------------------------------------
 
 ## Flag a WARNING if a loop's iteration count blows past a sane bound -- the cheap
@@ -123,7 +161,7 @@ func check_iterations(loop_name: String, count: int, sane_bound: int, ctx: Dicti
 		return false
 	if count <= sane_bound:
 		return false
-	_flag("RUNAWAY loop '%s' hit %d iterations (sane bound %d)" % [loop_name, count, sane_bound], ctx)
+	_flag("RUNAWAY loop '%s' hit %d iterations (sane bound %d)" % [loop_name, count, sane_bound], ctx, "ITER")
 	return true
 
 
@@ -174,25 +212,44 @@ func _record(section: String, start_usec: int, ctx: Dictionary) -> float:
 	var over := elapsed_ms > threshold
 	var entry := {"section": section, "ms": elapsed_ms, "over": over, "ctx": ctx}
 	_push(_entries, entry, MAX_ENTRIES)
-	_write_line("[PerfLog] %-22s %8.2f ms%s%s" % [
-		section, elapsed_ms, ("  <<< OVER" if over else ""), _ctx_suffix(ctx)])
+	var body := "section=%s ms=%.2f" % [section, elapsed_ms]
+	if over:
+		body += " over=true"
+	body += _kv_suffix(ctx)
+	_write_line("END", body)
 	if over:
 		_flag("SLOW section '%s' took %.1f ms (threshold %.0f ms)" % [section, elapsed_ms, threshold], ctx)
 	return elapsed_ms
 
 
-func _flag(message: String, ctx: Dictionary) -> void:
+## type is the file TYPE field for this warning ("WARN" for a slow section, "ITER" for a
+## runaway-loop trip). The in-memory _warnings line keeps the legacy "[WARN]" tag regardless
+## of type -- callers/tests match on the message text (SLOW/RUNAWAY), not that tag.
+func _flag(message: String, ctx: Dictionary, type: String = "WARN") -> void:
 	var line := "[PerfLog][WARN] " + message + _ctx_suffix(ctx)
 	_push(_warnings, line, MAX_WARNINGS)
 	# print (not push_warning): in a dev checkout these are expected dev signals, and
 	# push_warning can be mis-counted as an engine fault by strict test tooling.
 	print(line)
-	_write_line(line)
+	_write_line(type, message + _kv_suffix(ctx))
 	anomaly_flagged.emit(message)
 
 
+## Legacy in-memory suffix (Dictionary.to_string() shape) -- kept for the _warnings buffer's
+## text, which existing callers/tests match by substring only. File lines use _kv_suffix().
 func _ctx_suffix(ctx: Dictionary) -> String:
 	return ("  " + str(ctx)) if not ctx.is_empty() else ""
+
+
+## Stable key=value ctx rendering for the file trail (a later parser splits on TYPE, then
+## reads trailing key=value pairs). Insertion order; "" when ctx is empty.
+func _kv_suffix(ctx: Dictionary) -> String:
+	if ctx.is_empty():
+		return ""
+	var parts: Array = []
+	for k in ctx.keys():
+		parts.append("%s=%s" % [k, str(ctx[k])])
+	return " " + " ".join(parts)
 
 
 func _push(buf: Array, item, cap: int) -> void:
@@ -201,12 +258,16 @@ func _push(buf: Array, item, cap: int) -> void:
 		buf.pop_front()
 
 
-func _write_line(line: String) -> void:
+## Compose and append one line: "<ISO-8601 UTC timestamp>Z <TYPE> <body>". TYPE is one of
+## BEGIN/END/MARK/GAUGE/WARN/ITER (see the file-format doc at the top of this file).
+func _write_line(type: String, body: String) -> void:
 	if not _file_logging or not is_active():
 		return
 	var dir := DirAccess.open("user://")
 	if dir != null and not dir.dir_exists("logs"):
 		dir.make_dir("logs")
+	_rotate_if_needed()
+	var line := "%s %s %s" % [_timestamp(), type, body]
 	var f: FileAccess
 	if FileAccess.file_exists(LOG_PATH):
 		f = FileAccess.open(LOG_PATH, FileAccess.READ_WRITE)
@@ -217,3 +278,35 @@ func _write_line(line: String) -> void:
 	if f != null:
 		f.store_line(line)
 		f.close()
+
+
+## Current wall-clock as an ISO-8601 UTC string, e.g. "2026-07-27T13:45:01Z".
+func _timestamp() -> String:
+	return "%sZ" % Time.get_datetime_string_from_system(true)
+
+
+## Pure size-vs-threshold decision, split out so tests can exercise it without touching
+## user://. True means the CURRENT perf.log has grown past the rotation threshold.
+static func should_rotate(current_size_bytes: int, threshold_bytes: int = MAX_LOG_BYTES) -> bool:
+	return current_size_bytes >= threshold_bytes
+
+
+## Size-based rotation: when perf.log has reached MAX_LOG_BYTES, move it to perf.log.1
+## (clobbering any prior rotation) so the next write starts a fresh perf.log. Runs at the
+## top of every file write; a no-op on a small/missing log (the common case).
+func _rotate_if_needed() -> void:
+	if not FileAccess.file_exists(LOG_PATH):
+		return
+	var f := FileAccess.open(LOG_PATH, FileAccess.READ)
+	if f == null:
+		return
+	var size := f.get_length()
+	f.close()
+	if not should_rotate(size):
+		return
+	var dir := DirAccess.open(LOG_DIR)
+	if dir == null:
+		return
+	if dir.file_exists(ROTATED_LOG_NAME):
+		dir.remove(ROTATED_LOG_NAME)
+	dir.rename("perf.log", ROTATED_LOG_NAME)

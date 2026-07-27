@@ -287,8 +287,19 @@ func _bounds() -> Rect2:
 		s = custom_minimum_size
 	return Rect2(Vector2(8, 8), s - Vector2(16, 16))
 
+## Observability only (see godot/autoload/perf_log.gd): the Titan-phase scaling cliff this
+## class's own doc comment flags above (hundreds of staff, one-sprite-each not viable) makes
+## the roster rebuild the thing worth watching first. A tighter threshold than the 1000 ms
+## default (still cosmetic, never touches game state/RNG/scoring, never branched on).
+const ROSTER_REBUILD_WARN_MS := 50.0
+var _roster_threshold_set := false
+
 ## Replace/refresh the rendered roster from a snapshot (read-only; copies values).
 func set_roster(snapshot: Array) -> void:
+	if not _roster_threshold_set:
+		PerfLog.set_threshold("office_roster_rebuild", ROSTER_REBUILD_WARN_MS)
+		_roster_threshold_set = true
+	var sw := PerfLog.time_section("office_roster_rebuild", {"count": snapshot.size()})
 	var b := _bounds()
 	var z := _zones(b)
 	var seen: Dictionary = {}
@@ -337,6 +348,8 @@ func set_roster(snapshot: Array) -> void:
 			_sprites.erase(id)
 			_appearance.erase(id)
 	queue_redraw()
+	PerfLog.gauge("office_sprites", _sprites.size())
+	sw.stop()
 
 ## Number of employee sprites currently on the floor (the walker count). Read-only;
 ## the WATCH integration + its guard test assert this tracks the live staff count.
