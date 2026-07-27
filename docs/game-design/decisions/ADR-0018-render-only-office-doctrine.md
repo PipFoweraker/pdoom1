@@ -34,13 +34,24 @@ render-side state store that the sim would have to trust.
 ## Decision
 
 The office view is a render surface driven one-way from the deterministic sim.
-**The sim owns counts and quantities; the render owns coordinates.** No
-first-class grid type enters production. The sandbox's 32px snap
-(`office_sandbox.gd` GRID/`_snap_to_grid`/`_cell_of`) remains exactly what it is
-today: a dev-tool convenience for placing preview props, never promoted to a
-gameplay data type. Tile addressing for the shipped game is **tier integers
-only** (ADR-0014's presence/location tiers, office-era tiers) -- never (x, y)
-coordinates, never grid cells, never pixel positions.
+**The sim owns counts and quantities; the render owns coordinates.**
+
+**Amendment 2026-07-27 (Pip ruling 1143 + facilitator reweight, "a(3)-lite"):**
+a first-class integer grid type -- `Vector2i` col/row addressing, footprint
+occupancy, snap -- **is approved as render-layer infrastructure.** Its
+consumers are prop placement, decorating render, walk theatre, and
+click-targets. This is chosen over both rejected options it replaces:
+formalizing the sandbox's ad hoc string-keyed 32px snap (that debt is retired
+by this grid superseding it), and the original tier-integers-only clause
+(overturned 2026-07-27 by Pip: *"having the sim be a useful part of the game is
+growing on me and this gives me room downstream to explore with less technical
+debt"*). Scope guard, non-negotiable: this grid is explicitly **not** a
+pathfinding or simulation grid; nothing sim-side may read cell state -- the
+doctrine's arrow rule (sim owns counts and quantities; the render owns
+coordinates) governs it fully, unchanged. Tile addressing for anything
+sim-facing remains **tier integers only** (ADR-0014's presence/location tiers,
+office-era tiers) -- never (x, y) coordinates, never grid cells, never pixel
+positions, as sim-side input.
 
 ### Three riders (part of the ruling)
 
@@ -140,6 +151,15 @@ drawn.
   only -- props owned, spend, tier -- never positions, never coordinates, never
   grid cells. Any decorating-math design that wants "where a prop sits" as an
   input needs to first clear this ADR's review, not route around it.
+  Wednesday's decorating-math block must hold the doctrine line explicitly:
+  decor value keys off ownership/tier/spend (sim-side counts), never off
+  placement; placement is expression only. A placement-priced decor bonus
+  would be a spatial fact becoming a gameplay input, which this ADR forbids.
+- **The camera question is a triggered decision**, not a standing one: a
+  Camera2D enters consideration only when a ruled office tier exceeds one
+  fixed-rect screen; until then fixed-rect Control + duplicate-instance
+  compare (lease-upsell) stand. Nothing built under those is discarded by a
+  later camera -- the Control becomes viewport content.
 - **The determinism/replay/leaderboard system (ADR-0006) is the load-bearing
   beneficiary.** Spatial state, if it existed as a gameplay input, would need
   its own serialization and deterministic replay path (coordinates, grid state,
