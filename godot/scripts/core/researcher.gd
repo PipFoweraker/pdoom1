@@ -118,6 +118,27 @@ var quirk_known: bool = false              # true once an exposure event surface
 var loyalty_risk: float = 0.0              # 0..1 hidden flight predisposition (NOT live loyalty)
 
 # ============================================================================
+# DIRECTION -- FOCUS TOPIC + SELF-DIRECTED WORK (ADR-0011 s3, lane T1 / issue #613)
+# The topic this person is pointed at. -1 = UNSET, in which case their lane picks for
+# them (Workstream.agenda_topic). Values are PaperSubmissions.Topic enum members, shared
+# with papers on purpose so a workstream's output needs no topic translation.
+#
+# The two self-directed tallies below are the ADR-0011 delegation lesson made cheap: a
+# researcher nobody assigned still works -- on their own agenda, at their own topic --
+# and they report that work OPTIMISTICALLY. `self_directed_effort` is the deterministic
+# TRUTH; `self_directed_reported` is what the person claims on the plan screen.
+#
+# SEAM (ruled 2026-07-27, review-by 2026-08-31): AUDITS ground-truth reported vs actual.
+# The audit founder-hour type is a LATER lane -- nothing consumes self_directed_reported
+# yet. It exists now so the distortion source and its record are in the save format
+# before the mechanic that reads them lands. ASSIGNED (planned) workstream progress stays
+# single-valued and truthful: only self-direction misreports, first pass.
+# ============================================================================
+var focus_topic: int = -1                  # PaperSubmissions.Topic value, or -1 = unset
+var self_directed_effort: float = 0.0      # ACTUAL self-directed effort (the truth)
+var self_directed_reported: float = 0.0    # what this person CLAIMS (optimism-inflated)
+
+# ============================================================================
 # SPECIALIZATIONS
 # ============================================================================
 
@@ -598,6 +619,53 @@ func has_quirk() -> bool:
 	"""True if this person actually carries a quirk (regardless of whether it is known)."""
 	return quirk != ""
 
+# ============================================================================
+# DIRECTION -- SELF-DIRECTED ACCRUAL + OPTIMISTIC SELF-REPORT
+# ============================================================================
+
+func stable_key() -> String:
+	"""A handle that survives save/load and is stable for one person across a run. The
+	pipeline id when there is one (direct/legacy hires have none), else the name."""
+	return candidate_id if candidate_id != "" else researcher_name
+
+
+func self_report_optimism() -> float:
+	"""This person's habitual over-claim factor, >= 1.0. DETERMINISTIC and seeded off their
+	own stable key -- NOT an rng draw (ADR-0006: adding an rng source here would fork every
+	recorded replay). Same person, same run, same factor, every tick.
+
+	First-pass GENTLE per the 2026-07-27 ruling: the band is small enough that an audit
+	finds a nagging discrepancy, not a fraud. Constants live in
+	balance/defaults.json workstreams.self_direction.*."""
+	var lo: float = Balance.num("workstreams.self_direction.optimism_min", 1.05)
+	var span: float = maxf(0.0, Balance.num("workstreams.self_direction.optimism_span", 0.30))
+	var key := stable_key()
+	if key == "":
+		return DoomSystem._snap(lo)
+	# abs(hash) % 1000 -> a stable 0..1 position inside the band. String hashing is a pure
+	# function of the characters, so this replays identically.
+	var pos: float = float(abs(hash(key)) % 1000) / 999.0
+	return DoomSystem._snap(lo + span * pos)
+
+
+func accrue_self_directed(amount: float) -> Dictionary:
+	"""Record `amount` of self-directed effort. Returns {actual, reported} for this tick.
+	The reported figure is the inflated claim; the actual is the truth. Audits (later lane)
+	are what reconcile them -- nothing reads `reported` today."""
+	if amount <= 0.0:
+		return {"actual": 0.0, "reported": 0.0}
+	# Snapped at the accumulator (not just at to_dict) so the live value and the saved value
+	# sit on the same grid -- see DoomSystem.SAVE_QUANTUM and the note in Workstream.accrue.
+	var claimed: float = amount * self_report_optimism()
+	self_directed_effort = DoomSystem._snap(self_directed_effort + amount)
+	self_directed_reported = DoomSystem._snap(self_directed_reported + claimed)
+	return {"actual": amount, "reported": claimed}
+
+
+func self_report_gap() -> float:
+	"""Claimed minus actual self-directed effort -- what an audit would surface."""
+	return self_directed_reported - self_directed_effort
+
 # --- Hire-state lifecycle (guarded transitions) ---
 
 func can_transition_to(new_state: int) -> bool:
@@ -749,6 +817,11 @@ func to_dict() -> Dictionary:
 		"meet_people_done": meet_people_done,
 		"mentoring_done": mentoring_done,
 		"mentoring_skipped": mentoring_skipped,
+		# --- Direction (ADR-0011 workstream substrate). ADDITIVE keys: a pre-substrate
+		# save simply loads with focus unset and zero self-directed effort. ---
+		"focus_topic": focus_topic,
+		"self_directed_effort": DoomSystem._snap(self_directed_effort),
+		"self_directed_reported": DoomSystem._snap(self_directed_reported),
 	}
 
 func from_dict(data: Dictionary):
@@ -804,3 +877,9 @@ func from_dict(data: Dictionary):
 	meet_people_done = bool(data.get("meet_people_done", false))
 	mentoring_done = bool(data.get("mentoring_done", false))
 	mentoring_skipped = bool(data.get("mentoring_skipped", false))
+
+	# --- Direction (ADR-0011 workstream substrate). Missing keys = pre-substrate save:
+	# focus unset (-1, lane decides) and no self-directed history. ---
+	focus_topic = int(data.get("focus_topic", -1))
+	self_directed_effort = DoomSystem._snap(float(data.get("self_directed_effort", 0.0)))
+	self_directed_reported = DoomSystem._snap(float(data.get("self_directed_reported", 0.0)))

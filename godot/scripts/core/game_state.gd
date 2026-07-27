@@ -162,6 +162,28 @@ var candidate_pool: Array[Researcher] = []
 const MAX_CANDIDATES: int = 6  # Maximum candidates in pool
 var pending_hire_queue: Array[Researcher] = []  # Queue of candidates selected for hiring (FIFO)
 
+# ============================================================================
+# WORKSTREAM SUBSTRATE (ADR-0011 s3/s4, lane T1 / issue #613)
+# The directed-work layer the month plan was pointing at (month_plan.gd:21). Workstreams
+# are started off the data-driven backlog (WorkstreamBacklog), researchers are committed
+# to them at plan speed, and effort accrues per person per tick (turn_manager
+# _step_workstream_accrual). Everything here is INERT until the player starts a
+# workstream: with an empty list the accrual hook only records self-directed effort and
+# bills no compute, so an untouched run is byte-identical to the pre-substrate build.
+#
+# NOT in this lane: AP-pool deletion / Attention migration, founder-hour typing, manager
+# shields. Nothing below reads action_points.
+# ============================================================================
+var workstreams: Array = []                          # Array[Workstream], live + finished
+var workstream_backlog_taken: Array[String] = []     # backlog entry ids already started
+var workstream_serial: int = 0                       # pure counter for workstream ids (no rng)
+var researcher_id_serial: int = 0                    # pure counter for minted staff ids
+# Self-directed effort tally by topic key -> {"actual": float, "reported": float}. The
+# REPORTED half is the optimistic claim (Researcher.self_report_optimism); audits
+# ground-truth reported vs actual in a later lane (ruled 2026-07-27, review-by
+# 2026-08-31). Nothing consumes "reported" today -- it only serializes and displays.
+var self_directed_progress: Dictionary = {}
+
 # Purchased upgrades (one-time purchases)
 var purchased_upgrades: Array[String] = []
 
@@ -331,6 +353,13 @@ func reset():
 	candidate_pool.clear()
 	pending_hire_queue.clear()
 	researchers.clear()
+
+	# Workstream substrate: a new run starts with an empty board and the full backlog.
+	workstreams.clear()
+	workstream_backlog_taken.clear()
+	workstream_serial = 0
+	researcher_id_serial = 0
+	self_directed_progress.clear()
 
 	# Initialize with 2-3 starting candidates (low quality)
 	_populate_initial_candidates()
@@ -769,6 +798,142 @@ func remove_researcher(researcher: Researcher):
 			"interpretability", "alignment":
 				safety_researchers = max(0, safety_researchers - 1)
 
+		# A departing person stops accruing, but what they already contributed STAYS on the
+		# workstream (contributions feed later authorship). Losing your lead is supposed to
+		# hurt as a slowdown, not as a retroactive erasure.
+		release_from_workstreams(researcher)
+
+# ============================================================================
+# WORKSTREAM SUBSTRATE -- BACKLOG, ASSIGNMENT, READOUT (ADR-0011 s3/s4, #613)
+# Assignment is PLAYER INPUT, so it replays for free (ADR-0006); every function below is
+# deterministic and rng-free. Single source of truth for "who is on what" is
+# Workstream.assigned_ids -- the Researcher does NOT carry a back-pointer, so the two
+# cannot drift.
+# ============================================================================
+
+func researcher_id(researcher: Researcher) -> String:
+	"""The stable id used in workstream assignment lists, MINTING one if this person has
+	none (direct/legacy hires are created without a pipeline id). Pure counter, no rng;
+	the 'staff_' prefix cannot collide with the pipeline's 'cand_'/'job_' serials."""
+	if researcher == null:
+		return ""
+	if researcher.candidate_id == "":
+		researcher_id_serial += 1
+		researcher.candidate_id = "staff_%d" % researcher_id_serial
+	return researcher.candidate_id
+
+
+func available_backlog() -> Array[Dictionary]:
+	"""Backlog entries not yet started this run (id-sorted, like WorkstreamBacklog)."""
+	var out: Array[Dictionary] = []
+	for e in WorkstreamBacklog.entries():
+		if not workstream_backlog_taken.has(String(e.get("id", ""))):
+			out.append(e)
+	return out
+
+
+func start_workstream(backlog_id: String):
+	"""Commit the lab to a backlog item. Returns the new Workstream, or null if the id is
+	unknown or already running. Costs nothing here: pricing the START against founder
+	Attention is the plan-screen lane's call, not the substrate's."""
+	if not WorkstreamBacklog.has(backlog_id):
+		return null
+	if workstream_backlog_taken.has(backlog_id):
+		return null
+	var entry := WorkstreamBacklog.get_entry(backlog_id)
+	workstream_serial += 1
+	var ws := Workstream.make("ws_%d" % workstream_serial, entry, turn)
+	workstreams.append(ws)
+	workstream_backlog_taken.append(backlog_id)
+	return ws
+
+
+func get_workstream(workstream_id: String):
+	for ws in workstreams:
+		if ws.id == workstream_id:
+			return ws
+	return null
+
+
+func active_workstreams() -> Array:
+	var out: Array = []
+	for ws in workstreams:
+		if ws.status == Workstream.Status.ACTIVE:
+			out.append(ws)
+	return out
+
+
+func workstream_for_researcher(researcher: Researcher):
+	"""The ACTIVE workstream this person is committed to, or null if they self-direct.
+	A researcher is on at most one workstream at a time (assign_to_workstream enforces it):
+	splitting one person across bets is exactly the fungible-scalar move ADR-0011 kills."""
+	if researcher == null or researcher.candidate_id == "":
+		return null
+	for ws in workstreams:
+		if ws.status == Workstream.Status.ACTIVE and ws.is_assigned(researcher.candidate_id):
+			return ws
+	return null
+
+
+func assign_to_workstream(researcher: Researcher, workstream_id: String) -> bool:
+	"""Commit a researcher to a workstream at plan speed. Pulls them off any other one
+	first. Returns false if the workstream is unknown/finished or they were already there."""
+	var ws = get_workstream(workstream_id)
+	if ws == null or ws.status != Workstream.Status.ACTIVE:
+		return false
+	var rid := researcher_id(researcher)
+	if rid == "":
+		return false
+	if ws.is_assigned(rid):
+		return false
+	release_from_workstreams(researcher)
+	return ws.assign(rid)
+
+
+func release_from_workstreams(researcher: Researcher) -> bool:
+	"""Take a person off whatever they are on (back to self-directing). Their accrued
+	contribution stays recorded on the workstream."""
+	if researcher == null or researcher.candidate_id == "":
+		return false
+	var released := false
+	for ws in workstreams:
+		if ws.unassign(researcher.candidate_id):
+			released = true
+	return released
+
+
+func record_self_directed(topic_key: String, actual: float, reported: float) -> void:
+	"""Tally self-directed work by topic. TWO figures by ruling (2026-07-27): `actual` is
+	the deterministic truth, `reported` is what the unsupervised researcher claims.
+	SEAM: audits ground-truth reported vs actual (a later lane) -- nothing reads
+	`reported` yet. Review-by 2026-08-31."""
+	var bucket: Dictionary = self_directed_progress.get(topic_key, {"actual": 0.0, "reported": 0.0})
+	# Snapped at the accumulator so live == saved (DoomSystem.SAVE_QUANTUM; see the note in
+	# Workstream.accrue -- an unsnapped live tally forks a loaded run from an unsaved one).
+	bucket["actual"] = DoomSystem._snap(float(bucket.get("actual", 0.0)) + actual)
+	bucket["reported"] = DoomSystem._snap(float(bucket.get("reported", 0.0)) + reported)
+	self_directed_progress[topic_key] = bucket
+
+
+func workstream_readout() -> Array[String]:
+	"""Minimal ASCII debug readout for this lane (the plan-screen assignment verb is a
+	separate UI carve). Lists running workstreams, then the self-directed drift with the
+	claimed-vs-true gap the audit hour will eventually reconcile."""
+	var lines: Array[String] = []
+	if workstreams.is_empty():
+		lines.append("[workstreams] none started -- all staff self-directing")
+	for ws in workstreams:
+		lines.append("[workstreams] " + ws.readout_line())
+	var topics: Array = self_directed_progress.keys()
+	topics.sort()  # order-stable readout regardless of Dictionary iteration order
+	for t in topics:
+		var b: Dictionary = self_directed_progress[t]
+		lines.append("[self-directed] %s: %.1f actual / %.1f reported (gap %.1f)" % [
+			String(t), float(b.get("actual", 0.0)), float(b.get("reported", 0.0)),
+			float(b.get("reported", 0.0)) - float(b.get("actual", 0.0)),
+		])
+	return lines
+
 func add_candidate(candidate: Researcher):
 	"""Add a candidate to the hiring pool"""
 	# Phase B: stamp a stable id (+ deterministic visa flag) so the pipeline can reference
@@ -1100,6 +1265,19 @@ func to_dict() -> Dictionary:
 	for paper in paper_submissions:
 		paper_dicts.append(paper.to_dict())
 
+	# Serialize workstreams (ADR-0011 substrate). Self-directed tallies are float pairs, so
+	# they get the same serialization-boundary snap as every other sim float.
+	var workstream_dicts = []
+	for ws in workstreams:
+		workstream_dicts.append(ws.to_dict())
+	var self_directed_out := {}
+	for t in self_directed_progress.keys():
+		var b: Dictionary = self_directed_progress[t]
+		self_directed_out[String(t)] = {
+			"actual": DoomSystem._snap(float(b.get("actual", 0.0))),
+			"reported": DoomSystem._snap(float(b.get("reported", 0.0))),
+		}
+
 	return {
 		"money": money,
 		"compute": compute,
@@ -1199,7 +1377,14 @@ func to_dict() -> Dictionary:
 		"start_month": start_month,
 		"start_day": start_day,
 		"pending_hire_queue": pending_hire_dicts,
-		"rival_labs_full": rival_full_dicts  # "rival_labs" stays display summaries for the UI
+		"rival_labs_full": rival_full_dicts,  # "rival_labs" stays display summaries for the UI
+		# --- Workstream substrate (ADR-0011 s3/s4, #613). ADDITIVE top-level keys, one per
+		# concern (convention rule 2); a pre-substrate save loads with an empty board. ---
+		"workstreams": workstream_dicts,
+		"workstream_backlog_taken": workstream_backlog_taken.duplicate(),
+		"workstream_serial": workstream_serial,
+		"researcher_id_serial": researcher_id_serial,
+		"self_directed_progress": self_directed_out
 	}
 
 
@@ -1393,3 +1578,25 @@ func from_dict(data: Dictionary) -> void:
 		for paper_data in data["paper_submissions"]:
 			var paper = PaperSubmissions.PaperSubmission.from_dict(paper_data)
 			paper_submissions.append(paper)
+
+	# Restore the workstream substrate (ADR-0011 s3/s4, #613). Every key is optional: a
+	# pre-substrate save restores to an empty board with the full backlog available.
+	workstreams.clear()
+	for ws_data in data.get("workstreams", []):
+		if ws_data is Dictionary:
+			workstreams.append(Workstream.from_dict(ws_data))
+	workstream_backlog_taken.clear()
+	for bid in data.get("workstream_backlog_taken", []):
+		workstream_backlog_taken.append(String(bid))
+	workstream_serial = int(data.get("workstream_serial", 0))
+	researcher_id_serial = int(data.get("researcher_id_serial", 0))
+	self_directed_progress.clear()
+	var sd_data = data.get("self_directed_progress", {})
+	if sd_data is Dictionary:
+		for t in sd_data.keys():
+			var b = sd_data[t]
+			if b is Dictionary:
+				self_directed_progress[String(t)] = {
+					"actual": DoomSystem._snap(float(b.get("actual", 0.0))),
+					"reported": DoomSystem._snap(float(b.get("reported", 0.0))),
+				}

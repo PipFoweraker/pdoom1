@@ -45,6 +45,13 @@ class PaperSubmission:
 	var research_invested: float = 0.0
 	var lead_researcher_name: String = ""  # Track by name since Researcher refs may change
 	var co_author_names: Array[String] = []
+	# The workstream this paper came out of ("" = no workstream, the legacy path).
+	# ADR-0011 s4: workstreams "produce artifacts (papers, systems, campaigns)". This is the
+	# idea-carrying seam -- a paper stops being a decontextualized counter++ and points back
+	# at the multi-month bet that generated it. Emission itself (progress threshold -> paper,
+	# contributors -> authors) is a LATER lane; this lane only opens the ref where the struct
+	# already serializes, so no save migration is owed when emission lands.
+	var source_workstream: String = ""
 
 	# ADR-0010 B8 -- PER-THING reputation: the standing this specific paper carries.
 	# Rises when the paper is adopted by a named lab/body (the Wednesday adoption
@@ -99,7 +106,8 @@ class PaperSubmission:
 			"lead_researcher_name": lead_researcher_name,
 			"co_author_names": co_author_names,
 			# ADR-0010 B8 -- NEW KEY ONLY (snapped, same grid as the rest of the save).
-			"standing": DoomSystem._snap(standing)
+			"standing": DoomSystem._snap(standing),
+			"source_workstream": source_workstream  # ADR-0011 s4 idea-carrying seam ("" = legacy path)
 		}
 
 	static func from_dict(data: Dictionary) -> PaperSubmission:
@@ -119,6 +127,7 @@ class PaperSubmission:
 		paper.lead_researcher_name = String(data.get("lead_researcher_name", ""))
 		# ADR-0010 B8: absent on pre-typing saves -> the paper loads with no standing.
 		paper.standing = DoomSystem._snap(float(data.get("standing", 0.0)))
+		paper.source_workstream = String(data.get("source_workstream", ""))  # "" for pre-substrate saves
 		paper.co_author_names.clear()
 		for n in data.get("co_author_names", []):
 			paper.co_author_names.append(String(n))
