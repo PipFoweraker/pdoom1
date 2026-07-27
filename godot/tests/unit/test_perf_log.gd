@@ -9,21 +9,26 @@ extends GutTest
 ##
 ## Hermetic: file logging is disabled and the override forces the gate, so the suite does
 ## not depend on the DEV_BUILD const nor write to user://.
+##
+## #976: PerfLog is a shared autoload singleton with NO test gating of its own callers --
+## turn_manager.gd/office_floor.gd/event_service.gd call it unconditionally, so across a
+## full-suite run they write real lines to the real LOG_PATH the entire time (DEV_BUILD is a
+## hardcoded true const). reset_for_tests() below resets every piece of shared state
+## (including the _thresholds map, which before_each/after_each never used to touch) so
+## nothing this file sets can leak into another test file, in either direction.
 
 var _anomaly_count := 0
 
 
 func before_each() -> void:
-	PerfLog.clear()
+	PerfLog.reset_for_tests()
 	PerfLog.set_file_logging(false)
 	PerfLog.set_enabled_override(true)  # force-active regardless of DEV_BUILD
 	_anomaly_count = 0
 
 
 func after_each() -> void:
-	PerfLog.clear()
-	PerfLog.set_enabled_override(null)  # restore the dev-build default
-	PerfLog.set_file_logging(true)
+	PerfLog.reset_for_tests()
 
 
 func _on_anomaly(_msg: String) -> void:
@@ -192,23 +197,33 @@ func test_should_rotate_false_under_threshold():
 # --- File line shape ---------------------------------------------------------
 # Enables real file logging briefly to check the written line shape, then removes the file
 # and restores hermetic settings -- the only test in this suite that touches user://.
+#
+# #976: writes to a private log_path_override rather than the real PerfLog.LOG_PATH.
+# turn_manager.gd/office_floor.gd/event_service.gd write real, unguarded lines to the real
+# LOG_PATH throughout a full-suite run (nothing gates their PerfLog calls), so sharing that
+# path here raced this test's delete-then-4-writes-then-read against that outside traffic --
+# an order-dependent flake that passed 18/18 in isolation and failed intermittently in the
+# full fast gate. A path nothing else ever touches makes that race structurally impossible.
+const _TEST_LOG_PATH := "user://logs/perf_log_line_shape_test.log"
 
 func test_written_line_has_timestamp_and_type_fields():
 	var re := RegEx.new()
 	re.compile("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z (BEGIN|END|MARK|GAUGE|WARN|ITER) ")
 
+	PerfLog.set_log_path_override(_TEST_LOG_PATH)
 	PerfLog.set_file_logging(true)
-	if FileAccess.file_exists(PerfLog.LOG_PATH):
-		DirAccess.remove_absolute(PerfLog.LOG_PATH)
+	if FileAccess.file_exists(_TEST_LOG_PATH):
+		DirAccess.remove_absolute(_TEST_LOG_PATH)
 	PerfLog.begin("line_shape_section", {"turn": 1})
 	PerfLog.end("line_shape_section")
 	PerfLog.mark("line_shape_mark")
 	PerfLog.gauge("line_shape_gauge", 5)
 	PerfLog.set_file_logging(false)
 
-	var f := FileAccess.open(PerfLog.LOG_PATH, FileAccess.READ)
-	assert_not_null(f, "perf.log should exist after a real write")
+	var f := FileAccess.open(_TEST_LOG_PATH, FileAccess.READ)
+	assert_not_null(f, "perf log should exist after a real write")
 	if f == null:
+		PerfLog.set_log_path_override(null)
 		return
 	var lines: Array = []
 	while not f.eof_reached():
@@ -216,7 +231,8 @@ func test_written_line_has_timestamp_and_type_fields():
 		if not line.is_empty():
 			lines.append(line)
 	f.close()
-	DirAccess.remove_absolute(PerfLog.LOG_PATH)
+	DirAccess.remove_absolute(_TEST_LOG_PATH)
+	PerfLog.set_log_path_override(null)
 
 	assert_gte(lines.size(), 4, "begin+end+mark+gauge should write at least 4 lines")
 	for line in lines:

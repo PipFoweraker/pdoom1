@@ -63,6 +63,8 @@ var _thresholds: Dictionary = {}
 var _enabled_override = null
 ## File logging can be disabled (e.g. by tests) to stay hermetic; on by default in dev.
 var _file_logging := true
+## Test hook: null => write to LOG_PATH; non-null => redirect writes to this path instead.
+var _log_path_override = null
 
 
 ## Manual stopwatch for scoped timing without matching begin/end names. Cheap RefCounted;
@@ -182,6 +184,35 @@ func set_file_logging(enabled: bool) -> void:
 	_file_logging = enabled
 
 
+## Test hook: redirect file writes to a private path (null => the real LOG_PATH).
+## Exists because turn_manager.gd/office_floor.gd/event_service.gd call PerfLog with NO
+## test gating of their own (by design -- they're production call sites), so whenever a test
+## suite run exercises them the real LOG_PATH gets real writes for the whole suite. A test
+## that wants to inspect the actual written-line shape needs a path nothing else touches,
+## rather than fighting that shared, suite-wide traffic (issue #976).
+func set_log_path_override(path) -> void:
+	_log_path_override = path
+
+
+## Effective file-trail path: the override when a test set one, else the real LOG_PATH.
+func get_log_path() -> String:
+	return _log_path_override if _log_path_override != null else LOG_PATH
+
+
+## Test-only: reset ALL shared singleton state in one call (dev/test hook, unused in a
+## release cut). Covers what before_each/after_each need so a test can't leak ring-buffer
+## entries, warnings, open sections, threshold overrides, the enabled/file-logging gates, or
+## a log-path override into the next test -- see issue #976.
+func reset_for_tests() -> void:
+	_entries.clear()
+	_warnings.clear()
+	_open.clear()
+	_thresholds.clear()
+	_enabled_override = null
+	_file_logging = true
+	_log_path_override = null
+
+
 ## --- Introspection (for the dev overlay / tests) ---------------------------
 
 func get_entries() -> Array:
@@ -266,15 +297,16 @@ func _write_line(type: String, body: String) -> void:
 	var dir := DirAccess.open("user://")
 	if dir != null and not dir.dir_exists("logs"):
 		dir.make_dir("logs")
-	_rotate_if_needed()
+	var log_path := get_log_path()
+	_rotate_if_needed(log_path)
 	var line := "%s %s %s" % [_timestamp(), type, body]
 	var f: FileAccess
-	if FileAccess.file_exists(LOG_PATH):
-		f = FileAccess.open(LOG_PATH, FileAccess.READ_WRITE)
+	if FileAccess.file_exists(log_path):
+		f = FileAccess.open(log_path, FileAccess.READ_WRITE)
 		if f != null:
 			f.seek_end()
 	else:
-		f = FileAccess.open(LOG_PATH, FileAccess.WRITE)
+		f = FileAccess.open(log_path, FileAccess.WRITE)
 	if f != null:
 		f.store_line(line)
 		f.close()
@@ -293,8 +325,12 @@ static func should_rotate(current_size_bytes: int, threshold_bytes: int = MAX_LO
 
 ## Size-based rotation: when perf.log has reached MAX_LOG_BYTES, move it to perf.log.1
 ## (clobbering any prior rotation) so the next write starts a fresh perf.log. Runs at the
-## top of every file write; a no-op on a small/missing log (the common case).
-func _rotate_if_needed() -> void:
+## top of every file write; a no-op on a small/missing log (the common case). Rotation is
+## defined only for the real LOG_PATH -- a test-only log_path_override (issue #976) never
+## rotates, since it is a throwaway path a single test owns.
+func _rotate_if_needed(log_path: String = LOG_PATH) -> void:
+	if log_path != LOG_PATH:
+		return
 	if not FileAccess.file_exists(LOG_PATH):
 		return
 	var f := FileAccess.open(LOG_PATH, FileAccess.READ)
