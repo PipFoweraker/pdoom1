@@ -28,6 +28,11 @@ var keybinds: Dictionary = {
 	# FlightRecorder itself, same pattern as dev_mode. Rebound from F9 to F6 (Pip playtest:
 	# F9 collides with his Nvidia overlay hotkey). F6 is otherwise unused.
 	"flight_recorder": {"key": KEY_F6, "category": Category.DEBUG, "description": "Flight Recorder Capture (screenshot + state + note)"},
+	# UI evolution capture rail (Pip's "it went from this... to this..." ask, 2026-07-27):
+	# one silent press drops a screenshot + one-line context (scene/version/turn) for later
+	# devblog/anniversary montages. Gated on BuildInfo.is_dev_build() by UIEvolutionRecorder
+	# itself, same pattern as flight_recorder. F7 is otherwise unused.
+	"ui_evolution_shot": {"key": KEY_F7, "category": Category.DEBUG, "description": "UI Evolution Capture (screenshot + context line)"},
 	"admin_mode": {"key": KEY_BRACKETRIGHT, "category": Category.ADMIN, "description": "Toggle Admin Mode"},
 
 	# Gameplay
@@ -85,6 +90,7 @@ signal admin_mode_toggled
 signal debug_overlay_toggled
 signal dev_mode_toggled
 signal flight_recorder_requested
+signal ui_evolution_shot_requested
 
 func _ready():
 	load_keybinds()
@@ -305,6 +311,12 @@ func _input(event: InputEvent):
 	# (dev builds only; FlightRecorder itself gates on BuildInfo.is_dev_build()).
 	elif is_action_pressed(event, "flight_recorder"):
 		flight_recorder_requested.emit()
+		get_viewport().set_input_as_handled()
+
+	# UI evolution capture (F7) -- screenshot + one-line context, no popup
+	# (dev builds only; UIEvolutionRecorder itself gates on BuildInfo.is_dev_build()).
+	elif is_action_pressed(event, "ui_evolution_shot"):
+		ui_evolution_shot_requested.emit()
 		get_viewport().set_input_as_handled()
 
 	# Admin mode
