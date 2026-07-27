@@ -1,0 +1,197 @@
+{
+  "art_source/pixellab_2026-07-26_worker_rebase/worker_hijab_f/rotations": [
+    "like",
+    "promote"
+  ],
+  "art_source/pixellab_2026-07-26_worker_rebase/worker_hijab_f/animations/walk/south": [
+    "like",
+    "promote"
+  ],
+  "art_source/pixellab_2026-07-26_worker_rebase/worker_hijab_f/animations/walk/south-east": [
+    "dislike"
+  ],
+  "art_source/pixellab_2026-07-26_worker_rebase/worker_hijab_f/animations/walk/east": [
+    "like",
+    "promote"
+  ],
+  "art_source/pixellab_2026-07-26_worker_rebase/worker_hijab_f/animations/walk/north-east": [
+    "like",
+    "promote"
+  ],
+  "art_source/pixellab_2026-07-26_worker_rebase/worker_hijab_f/animations/walk/north": [
+    "like",
+    "promote"
+  ],
+  "art_source/pixellab_2026-07-26_worker_rebase/worker_hijab_f/animations/walk/north-west": [
+    "like",
+    "promote"
+  ],
+  "art_source/pixellab_2026-07-26_worker_rebase/worker_hijab_f/animations/walk/west": [
+    "like",
+    "promote"
+  ],
+  "art_source/pixellab_2026-07-26_worker_rebase/worker_hijab_f/animations/walk/south-west": [
+    "like",
+    "promote"
+  ],
+  "art_source/pixellab_2026-07-26_worker_rebase/worker_black_m/rotations": [
+    "promote"
+  ],
+  "art_source/pixellab_2026-07-26_worker_rebase/worker_black_m/animations/walk/south": [
+    "promote"
+  ],
+  "art_source/pixellab_2026-07-26_worker_rebase/worker_black_m/animations/walk/south-east": [
+    "promote"
+  ],
+  "art_source/pixellab_2026-07-26_worker_rebase/worker_black_m/animations/walk/east": [
+    "promote"
+  ],
+  "art_source/pixellab_2026-07-26_worker_rebase/worker_black_m/animations/walk/north-east": [
+    "promote"
+  ],
+  "art_source/pixellab_2026-07-26_worker_rebase/worker_black_m/animations/walk/north": [
+    "promote"
+  ],
+  "art_source/pixellab_2026-07-26_worker_rebase/worker_black_m/animations/walk/north-west": [
+    "promote"
+  ],
+  "art_source/pixellab_2026-07-26_worker_rebase/worker_black_m/animations/walk/west": [
+    "promote"
+  ],
+  "art_source/pixellab_2026-07-26_worker_rebase/worker_black_m/animations/walk/south-west": [
+    "promote"
+  ],
+  "art_source/pixellab_2026-07-26_worker_rebase/worker_wheelchair_f/rotations": [
+    "promote"
+  ],
+  "art_source/pixellab_2026-07-26_worker_rebase/worker_wheelchair_f/animations/roll/south": [
+    "dislike"
+  ],
+  "art_source/pixellab_2026-07-26_worker_rebase/worker_wheelchair_f/animations/roll/east": [
+    "like",
+    "promote"
+  ],
+  "art_source/pixellab_2026-07-26_worker_rebase/worker_wheelchair_f/animations/roll/west": [
+    "like"
+  ],
+  "art_source/pixellab_2026-07-26_worker_rebase/worker_wheelchair_f/animations/roll/north": [
+    "promote"
+  ],
+  "art_source/pixellab_2026-07-26_worker_rebase/worker_crutch_m/rotations": [
+    "promote"
+  ],
+  "art_source/pixellab_2026-07-26_worker_rebase/worker_crutch_m/animations/walk/south": [
+    "promote",
+    "like"
+  ],
+  "art_source/pixellab_2026-07-26_worker_rebase/worker_crutch_m/animations/walk/east": [
+    "like",
+    "promote"
+  ],
+  "art_source/pixellab_2026-07-26_worker_rebase/worker_crutch_m/animations/walk/north": [
+    "like",
+    "promote"
+  ],
+  "art_source/pixellab_2026-07-26_worker_rebase/worker_crutch_m/animations/walk/west": [
+    "like",
+    "promote"
+  ],
+  "art_source/pixellab_2026-07-26_worker_rebase/worker_crutch_m_v2/rotations": [
+    "promote"
+  ],
+  "art_source/pixellab_2026-07-26_worker_rebase/worker_glasses_badge_m/rotations": [
+    "promote"
+  ],
+  "art_source/pixellab_2026-07-26_worker_rebase/worker_glasses_badge_m/animations/walk/south": [
+    "promote"
+  ],
+  "art_source/pixellab_2026-07-26_worker_rebase/worker_glasses_badge_m/animations/walk/south-east": [
+    "promote"
+  ],
+  "art_source/pixellab_2026-07-26_worker_rebase/worker_glasses_badge_m/animations/walk/east": [
+    "promote"
+  ],
+  "art_source/pixellab_2026-07-26_worker_rebase/worker_glasses_badge_m/animations/walk/north-east": [
+    "promote"
+  ],
+  "art_source/pixellab_2026-07-26_worker_rebase/worker_glasses_badge_m/animations/walk/north": [
+    "promote"
+  ],
+  "art_source/pixellab_2026-07-26_worker_rebase/worker_glasses_badge_m/animations/walk/north-west": [
+    "promote"
+  ],
+  "art_source/pixellab_2026-07-26_worker_rebase/worker_glasses_badge_m/animations/walk/west": [
+    "promote"
+  ],
+  "art_source/pixellab_2026-07-26_worker_rebase/worker_glasses_badge_m/animations/walk/south-west": [
+    "promote"
+  ],
+  "art_source/pixellab_2026-07-26_worker_rebase/worker_grey_f/rotations": [
+    "dislike"
+  ],
+  "art_source/pixellab_2026-07-26_worker_rebase/worker_grey_f/animations/walk/south": [
+    "dislike"
+  ],
+  "art_source/pixellab_2026-07-26_worker_rebase/worker_grey_f/animations/walk/south-east": [
+    "dislike"
+  ],
+  "art_source/pixellab_2026-07-26_worker_rebase/worker_grey_f/animations/walk/east": [
+    "dislike"
+  ],
+  "art_source/pixellab_2026-07-26_worker_rebase/worker_grey_f/animations/walk/north-east": [
+    "dislike"
+  ],
+  "art_source/pixellab_2026-07-26_worker_rebase/worker_grey_f/animations/walk/north": [
+    "dislike"
+  ],
+  "art_source/pixellab_2026-07-26_worker_rebase/worker_grey_f/animations/walk/north-west": [
+    "dislike"
+  ],
+  "art_source/pixellab_2026-07-26_worker_rebase/worker_grey_f/animations/walk/west": [
+    "dislike"
+  ],
+  "art_source/pixellab_2026-07-26_worker_rebase/worker_grey_f/animations/walk/south-west": [
+    "dislike"
+  ],
+  "art_source/pixellab_2026-07-26_worker_rebase/worker_headphones_m/rotations": [
+    "promote"
+  ],
+  "art_source/pixellab_2026-07-26_worker_rebase/worker_headphones_m/animations/walk/south": [
+    "promote"
+  ],
+  "art_source/pixellab_2026-07-26_worker_rebase/worker_headphones_m/animations/walk/south-east": [
+    "promote",
+    "dislike",
+    "disfavour"
+  ],
+  "art_source/pixellab_2026-07-26_worker_rebase/worker_headphones_m/animations/walk/east": [
+    "promote"
+  ],
+  "art_source/pixellab_2026-07-26_worker_rebase/worker_headphones_m/animations/walk/north-east": [
+    "promote"
+  ],
+  "art_source/pixellab_2026-07-26_worker_rebase/worker_headphones_m/animations/walk/north-west": [
+    "promote",
+    "like"
+  ],
+  "art_source/pixellab_2026-07-26_worker_rebase/worker_headphones_m/animations/walk/west": [
+    "promote",
+    "like"
+  ],
+  "art_source/pixellab_2026-07-26_worker_rebase/worker_headphones_m/animations/walk/south-west": [
+    "dislike"
+  ],
+  "art_source/pixellab_2026-07-26_worker_rebase/worker_headphones_m/animations/walk/north": [
+    "dislike",
+    "promote"
+  ],
+  "art_source/pixellab_2026-07-26_worker_rebase/worker_black_m_state_working/rotations": [
+    "promote"
+  ],
+  "art_source/pixellab_2026-07-26_worker_rebase/worker_black_m_state_idle/rotations": [
+    "promote"
+  ],
+  "art_source/pixellab_2026-07-26_worker_rebase/worker_black_m_state_stressed/rotations": [
+    "promote"
+  ]
+}
