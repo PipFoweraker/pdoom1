@@ -693,6 +693,13 @@ func _apply_balance_tooltips() -> void:
 func _boot_game():
 	# Was _on_init_button_pressed (wired to a vestigial "Init" button that has been
 	# removed, #715); the game auto-boots from _ready. Loads a queued save or starts fresh.
+	# ADR-0014 rhythm break: main.tscn was LEFT for the conference mini-scene and is now being
+	# re-entered with the run still live in the GameManager autoload. Resume it -- booting a
+	# new game here would silently destroy the run. One-shot flag, cleared by resume_in_place.
+	if game_manager.pending_resume and game_manager.is_initialized:
+		game_manager.resume_in_place()
+		_show_conference_backlog(game_manager.last_conference_trip)
+		return
 	# L7 (#618): if the welcome screen queued a saved game, boot into it instead
 	# of starting a new run. The flag is one-shot.
 	if GameConfig.pending_load_path != "":
@@ -707,6 +714,120 @@ func _boot_game():
 	# GameConfig.game_seed was ignored. Empty arg -> GameManager falls back to
 	# GameConfig.get_display_seed() (player's configured seed, else the weekly seed).
 	game_manager.start_new_game()
+
+func _show_conference_backlog(trip: Dictionary) -> void:
+	"""The return burst -- ONE surface (ADR-0014 shell; design-seed section 1).
+
+	FEED-CHANNEL DISCIPLINE, the load-bearing constraint here: the fade-in must NOT land the
+	player in a stack of N modals for N missed ticks. That is the #877 modal-stacking failure
+	and the FRESH_EYES item-9 complaint about auto-jumping month-review modals. So:
+	  * exactly one dismissible, SCROLLABLE panel, never auto-advancing;
+	  * the conference's own outcome headlines it, routine accrual reads as compressed feed
+	    lines underneath -- not separate interrupts;
+	  * a window that came home unanswered (a cut-short trip) is listed FIRST here, and is
+	    only surfaced as a real dialog AFTER this panel is closed
+	    (game_manager.surface_pending_events on the close path). One surface at a time."""
+	if trip.is_empty() or not bool(trip.get("success", false)):
+		return
+	var conf: Dictionary = trip.get("conference", {})
+	var conf_name := String(conf.get("name", "the conference"))
+	var backlog: Array = trip.get("backlog", [])
+	var memento: Dictionary = trip.get("memento", {})
+
+	var dialog := Panel.new()
+	dialog.custom_minimum_size = Vector2(620, 520)
+	dialog.size = Vector2(620, 520)
+	dialog.position = Vector2(80, 50)
+
+	var margin := MarginContainer.new()
+	margin.add_theme_constant_override("margin_left", 18)
+	margin.add_theme_constant_override("margin_right", 18)
+	margin.add_theme_constant_override("margin_top", 16)
+	margin.add_theme_constant_override("margin_bottom", 16)
+	dialog.add_child(margin)
+
+	var vbox := VBoxContainer.new()
+	vbox.add_theme_constant_override("separation", 8)
+	margin.add_child(vbox)
+
+	var header := Label.new()
+	header.text = "WHILE YOU WERE AWAY"
+	header.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	header.add_theme_font_size_override("font_size", 15)
+	header.add_theme_color_override("font_color", Color(0.85, 0.72, 0.35))
+	vbox.add_child(header)
+
+	var body := RichTextLabel.new()
+	body.bbcode_enabled = true
+	body.fit_content = false
+	body.scroll_active = true
+	body.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	body.custom_minimum_size = Vector2(0, 380)
+	vbox.add_child(body)
+
+	var lines: Array[String] = []
+
+	# --- Headline: the trip's own outcome + its FIRST-PASS flavor yields. ---
+	lines.append("[b]%s[/b]  --  days %d to %d" % [
+		conf_name, int(trip.get("start_turn", 0)), int(trip.get("end_turn", 0))])
+	lines.append("[color=gray]%s  |  %d Attention consumed  |  %s travel[/color]" % [
+		("Cut short" if bool(trip.get("cut_short", false)) else "Full trip"),
+		int(trip.get("attention_consumed", 0)),
+		GameConfig.format_money(int(trip.get("travel_cost", 0)))])
+	if not memento.is_empty():
+		lines.append("")
+		lines.append("[color=#c8b98a]%s[/color]" % String(memento.get("line", "")))
+		var contact: Dictionary = memento.get("contact", {})
+		if not contact.is_empty():
+			lines.append("[color=#c8b98a]New contact: %s (met at %s).[/color]" % [
+				String(contact.get("name", "someone")), String(contact.get("met_at", conf_name))])
+		lines.append("[color=gray][i]First-pass yields -- reputation and the contact are placeholders "
+			+ "until the adoption pipeline lands.[/i][/color]")
+
+	# --- Compressed accrual, in surfaced order. Deferred windows sort FIRST by construction. ---
+	lines.append("")
+	if backlog.is_empty():
+		lines.append("[color=gray]Nothing stacked up. The lab held.[/color]")
+	else:
+		lines.append("[b]%d things stacked up:[/b]" % backlog.size())
+		for entry in backlog:
+			if not (entry is Dictionary):
+				continue
+			var kind := String(entry.get("kind", ""))
+			var turn := int(entry.get("turn", 0))
+			var name := String(entry.get("name", entry.get("id", "update")))
+			match kind:
+				"window_deferred":
+					lines.append("[color=#ff8080][!] day %d -- %s -- STILL OPEN: %s[/color]" % [
+						turn, name, String(entry.get("message", ""))])
+				"window_auto_ignored":
+					lines.append("[color=#e0b060][ ] day %d -- %s -- went unanswered[/color]" % [turn, name])
+				"month_opened":
+					lines.append("[color=#8090c0][M] day %d -- %s[/color]" % [turn, name])
+				"strategic_released":
+					lines.append("[color=#80c090][>] day %d -- %s[/color]" % [turn, name])
+				_:
+					lines.append("[color=gray]day %d -- %s -- %s[/color]" % [
+						turn, String(entry.get("source_id", "feed")), name])
+
+	body.text = "\n".join(lines)
+
+	var close_btn := Button.new()
+	close_btn.text = "Back to work  >>"
+	close_btn.custom_minimum_size = Vector2(220, 38)
+	close_btn.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	close_btn.pressed.connect(func():
+		dialog.queue_free()
+		active_dialog = null
+		# Only NOW may a real dialog open -- never stacked on top of this panel.
+		game_manager.surface_pending_events())
+	vbox.add_child(close_btn)
+
+	_present_modal_dialog(dialog)
+	active_dialog = dialog
+	# One compressed feed line is the persistent record; the panel is the readable surface.
+	log_message("[color=#c8b98a]Back from %s -- %d items waiting.[/color]" % [conf_name, backlog.size()])
+
 
 func _on_reserve_ap_button_pressed():
 	"""Reserve 1 AP for event responses"""

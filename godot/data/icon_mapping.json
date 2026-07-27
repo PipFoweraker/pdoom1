@@ -143,6 +143,11 @@
       "status": "mapped",
       "note": "#768 interim: reused international-cooperation icon (travel/conference theme)"
     },
+    "attend_conference_trip": {
+      "icon": "res://assets/icons/actions_policies/action_policy_international_cooperation_64.png",
+      "status": "mapped",
+      "note": "ADR-0014 rhythm-break shell: shares the attend_conference icon until the two attendance paths merge (post adoption-v1)"
+    },
     "send_delegation": {
       "icon": "res://assets/icons/actions/action_publicity_network_64.png",
       "status": "mapped",
