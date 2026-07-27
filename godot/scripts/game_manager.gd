@@ -29,6 +29,17 @@ var _rival_cap_snapshot: Dictionary = {}
 # Synthetic month-review dialog id -- intercepted by resolve_event before any engine path.
 const MONTH_REVIEW_EVENT_ID := "__month_review__"
 
+# --- Conference rhythm break (ADR-0014 shell; scripts/core/conference_trip.gd) ---
+# One-shot handoff flag: main.tscn is LEFT for the conference mini-scene and re-entered
+# afterwards. main_ui._boot_game() would otherwise start_new_game() and destroy the live run,
+# so re-entry checks this and resumes in place instead. Set by the vignette on its way out,
+# cleared by resume_in_place(). Deliberately NOT serialized -- it is a scene-handoff flag,
+# never simulation state.
+var pending_resume: bool = false
+# The most recent resolved trip record (ConferenceTrip.run_trip). Read by the vignette scene
+# and by the return backlog panel. Display data only; the sim already consumed its effects.
+var last_conference_trip: Dictionary = {}
+
 func _ready():
 	print("[GameManager] Pure GDScript version ready")
 
@@ -543,6 +554,63 @@ func start_next_turn():
 #   month boundary -> review dialog -> next plan phase (boundary tick held open).
 # Guard rule (sacred): no routine decision hangs on a day tick -- only windows pause.
 # ============================================================================
+
+func attend_conference_trip(conf_id: String) -> Dictionary:
+	"""Commit to a conference and resolve the whole away window (ADR-0014 rhythm-break shell).
+
+	The SIM half runs here and finishes before the player sees anything: ConferenceTrip
+	drives real day-ticks through the existing MonthController, so the outcome is fully
+	determined at commit time and replays identically. The PRESENTATION half (fade ->
+	vignette scene -> fade -> return backlog panel) is theatre over an already-decided
+	result -- the caller navigates after this returns success.
+
+	Returns the trip record (see ConferenceTrip.run_trip), or {success:false, message} if
+	the commit was refused."""
+	if not is_initialized:
+		error_occurred.emit("Cannot attend: Game not initialized")
+		return {"success": false, "message": "Game not initialized"}
+	# Stop any in-flight timer-driven month playback first: the away window advances the same
+	# ticks synchronously, and two drivers on one MonthController would interleave.
+	month_playback_active = false
+	var trip: Dictionary = ConferenceTrip.run_trip(state, month_controller, conf_id)
+	if not bool(trip.get("success", false)):
+		error_occurred.emit(String(trip.get("message", "Cannot attend that conference")))
+		return trip
+	last_conference_trip = trip
+	print("[GameManager] Conference trip resolved: %s, turns %d..%d, %d backlog items%s" % [
+		conf_id, int(trip.get("start_turn", 0)), int(trip.get("end_turn", 0)),
+		(trip.get("backlog", []) as Array).size(),
+		" (CUT SHORT)" if bool(trip.get("cut_short", false)) else ""])
+	game_state_updated.emit(state.to_dict())
+	return trip
+
+
+func resume_in_place() -> void:
+	"""Re-attach a freshly-loaded main.tscn to the ALREADY-RUNNING game (conference return).
+
+	Mirrors the tail of load_saved_game() minus the loading: push state and the action list
+	to the new view. It deliberately does NOT surface pending events -- the return backlog
+	panel is the single surface on arrival (feed-channel discipline / the #877 modal-stacking
+	lesson). The caller surfaces events afterwards via surface_pending_events()."""
+	pending_resume = false
+	if not is_initialized or state == null:
+		return
+	MusicManager.play_context(MusicManager.MusicContext.GAMEPLAY)
+	game_state_updated.emit(state.to_dict())
+	turn_phase_changed.emit("action_selection")
+	actions_available.emit(turn_manager.get_available_actions())
+
+
+func surface_pending_events() -> void:
+	"""Open any window that came home still unanswered (a trip cut short by an unignorable
+	event). Called AFTER the return backlog panel is dismissed, so the player never faces a
+	panel and a dialog at the same time."""
+	if not is_initialized or state == null or state.pending_events.is_empty():
+		return
+	turn_phase_changed.emit("turn_start")
+	for event in state.pending_events:
+		event_triggered.emit(WindowResolver.strip_ap(event))
+
 
 func end_month():
 	"""Commit the queued actions as this month's plan and play the month out day by day."""

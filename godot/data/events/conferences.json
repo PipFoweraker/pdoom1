@@ -1,0 +1,65 @@
+{
+	"_description": "Conference RHYTHM-BREAK shell catalogue (ADR-0014, Pip ruling 2026-07-27). Tempo data ONLY: how long the founder is away and what the trip reads like. Deliberately tiny (3 entries) -- this is the placeholder that turns the travel menu's '[Coming Soon]' into something shippable.",
+	"_grain": "duration_turns and travel_days are DAY TICKS (GameState.turn is the workday tick beneath the plan month, ADR-0009). away window = travel_days + duration_turns + travel_days.",
+	"_seam_catalogue": "The richer #468 catalogue lives in scripts/core/conferences.gd (prestige, submission deadlines, acceptance rolls). Ids here MATCH its ids so the two merge cleanly once adoption-v1 lands and this shell stops being flavor-only. Do NOT duplicate yield numbers into this file.",
+	"_seam_yields": "flavor_reputation and contacts are FIRST-PASS PLACEHOLDERS. Real adoption-accelerant multipliers and contacts-as-receivables (ADR-0014 point 3, Ledger counterparty slot) attach at ConferenceTrip._apply_flavor_yields -- swap the function body, not this schema.",
+	"conferences": [
+		{
+			"id": "safety_retreat",
+			"name": "Safety Research Retreat",
+			"duration_turns": 3,
+			"travel_days": 1,
+			"travel_cost": 900,
+			"flavor_reputation": 1.0,
+			"blurb": "A converted farmhouse, no wifi in the barn, forty people who all read the same preprint last week.",
+			"vignette": [
+				"The shuttle drops you at a farmhouse that has been a conference venue for exactly four years and a working farm for two hundred.",
+				"There is no wifi in the barn. This is presented as a feature. By the second afternoon you agree.",
+				"Someone sketches an argument on the back of a feed-store receipt. You keep the receipt."
+			],
+			"contacts": [
+				"a postdoc who runs the whiteboard",
+				"the organiser who never sits down",
+				"a funder's analyst, off the record"
+			]
+		},
+		{
+			"id": "facct",
+			"name": "FAccT",
+			"duration_turns": 3,
+			"travel_days": 1,
+			"travel_cost": 2200,
+			"flavor_reputation": 1.5,
+			"blurb": "Hotel ballroom, four parallel tracks, and the hallway is louder than any of them.",
+			"vignette": [
+				"Badge, lanyard, tote bag, a program you will not open. The ballroom carpet has a pattern designed to hide spills.",
+				"You attend one session in full and three in the hallway outside it. The hallway ones go better.",
+				"A policy person hands you a card and says 'send me the thing' without specifying which thing."
+			],
+			"contacts": [
+				"a policy staffer with a card and no title",
+				"an auditor who wants your incident log",
+				"a journalist pretending not to take notes"
+			]
+		},
+		{
+			"id": "neurips",
+			"name": "NeurIPS",
+			"duration_turns": 5,
+			"travel_days": 2,
+			"travel_cost": 5400,
+			"flavor_reputation": 2.5,
+			"blurb": "Convention-centre scale. Eighteen thousand people and a poster hall you could land a plane in.",
+			"vignette": [
+				"The poster hall is a hangar. You walk it once end to end to establish that walking it is not a plan.",
+				"Your inbox is a country you have emigrated from. The time zone helps. Nothing else does.",
+				"At a party in a rented warehouse someone from a rival lab is very friendly and asks nothing at all about your work."
+			],
+			"contacts": [
+				"a rival's engineer, unguarded at hour eleven",
+				"a lab director's chief of staff",
+				"a hardware vendor who owes someone a favour"
+			]
+		}
+	]
+}

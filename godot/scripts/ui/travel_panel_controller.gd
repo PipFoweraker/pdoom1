@@ -304,6 +304,127 @@ func _on_travel_option_selected(action_id: String, action_name: String, dialog: 
 	elif action_id == "attend_conference":
 		_show_conference_attendance_dialog()
 		return
+	elif action_id == "attend_conference_trip":
+		_show_conference_trip_dialog()
+		return
+
+
+func _show_conference_trip_dialog() -> void:
+	"""The rhythm-break commit surface (ADR-0014 shell; Pip ruling 2026-07-27).
+
+	Deliberately blunt about the cost BEFORE the player commits -- the whole point of the
+	tempo break is that it is a legible-cost / fuzzy-payoff call ("is this worth the blackout
+	window"). If this dialog ever stops showing the days away, the cash, and the
+	all-your-Attention line, the decision degenerates into a free button.
+
+	PURE VIEW: it reads the ConferenceTrip catalogue and the live state payload, then hands
+	the whole commit to GameManager.attend_conference_trip(). No sim work happens here."""
+	var dialog := Panel.new()
+	dialog.custom_minimum_size = Vector2(560, 460)
+	dialog.size = Vector2(560, 460)
+	dialog.position = Vector2(90, 60)
+
+	var margin := MarginContainer.new()
+	margin.add_theme_constant_override("margin_left", 18)
+	margin.add_theme_constant_override("margin_right", 18)
+	margin.add_theme_constant_override("margin_top", 16)
+	margin.add_theme_constant_override("margin_bottom", 16)
+	dialog.add_child(margin)
+
+	var vbox := VBoxContainer.new()
+	vbox.add_theme_constant_override("separation", 10)
+	margin.add_child(vbox)
+
+	var header := Label.new()
+	header.text = "LEAVE FOR A CONFERENCE"
+	header.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	header.add_theme_font_size_override("font_size", 15)
+	header.add_theme_color_override("font_color", Color(0.85, 0.72, 0.35))
+	vbox.add_child(header)
+
+	var warning := Label.new()
+	warning.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	warning.text = "You are gone for the whole window, travel days included. The lab runs on " \
+		+ "whatever you have already queued -- your remaining Attention goes with you, and " \
+		+ "anything that happens while you are away waits for you on your desk."
+	warning.add_theme_font_size_override("font_size", 12)
+	warning.add_theme_color_override("font_color", Color(0.62, 0.64, 0.66))
+	vbox.add_child(warning)
+
+	vbox.add_child(HSeparator.new())
+
+	var scroll := ScrollContainer.new()
+	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	vbox.add_child(scroll)
+
+	var list := VBoxContainer.new()
+	list.add_theme_constant_override("separation", 12)
+	list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	scroll.add_child(list)
+
+	var current_state: Dictionary = host.game_manager.get_game_state()
+	var money: float = float(current_state.get("money", 0))
+
+	for conf in ConferenceTrip.catalogue():
+		var conf_id := String(conf.get("id", ""))
+		var away: int = ConferenceTrip.away_ticks(conf)
+		var cost: int = int(conf.get("travel_cost", 0))
+
+		var row := VBoxContainer.new()
+		row.add_theme_constant_override("separation", 3)
+		list.add_child(row)
+
+		var title := Label.new()
+		title.text = "%s -- %d days away (%d travel)" % [
+			String(conf.get("name", conf_id)), away, int(conf.get("travel_days", 0)) * 2]
+		title.add_theme_font_size_override("font_size", 13)
+		row.add_child(title)
+
+		var blurb := Label.new()
+		blurb.text = String(conf.get("blurb", ""))
+		blurb.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		blurb.add_theme_font_size_override("font_size", 11)
+		blurb.add_theme_color_override("font_color", Color(0.55, 0.57, 0.6))
+		row.add_child(blurb)
+
+		var gate: Dictionary = ConferenceTrip.can_commit(host.game_manager.state, conf_id)
+		var go_btn := Button.new()
+		go_btn.text = "Commit -- %s + all remaining Attention" % GameConfig.format_money(cost)
+		go_btn.disabled = not bool(gate.get("ok", false)) or money < float(cost)
+		if go_btn.disabled:
+			go_btn.tooltip_text = String(gate.get("reason", "Unavailable"))
+			go_btn.modulate = Color(0.5, 0.5, 0.5)
+		go_btn.pressed.connect(_on_conference_trip_committed.bind(conf_id, dialog))
+		row.add_child(go_btn)
+
+	var cancel := Button.new()
+	cancel.text = "Stay home"
+	cancel.pressed.connect(func():
+		dialog.queue_free()
+		host.active_dialog = null)
+	vbox.add_child(cancel)
+
+	host._present_modal_dialog(dialog)
+	host.active_dialog = dialog
+
+
+func _on_conference_trip_committed(conf_id: String, dialog: Control) -> void:
+	"""Commit -> resolve the away window -> fade out to the mini-scene.
+
+	Navigation goes through SceneTransition (the v0.11.0 rule); use_fade=true IS the
+	fade-out half of the tempo pocket. The fade back in happens on the vignette's exit."""
+	dialog.queue_free()
+	host.active_dialog = null
+	host.active_dialog_buttons = []
+
+	var trip: Dictionary = host.game_manager.attend_conference_trip(conf_id)
+	if not bool(trip.get("success", false)):
+		host.log_message("[color=yellow]%s[/color]" % String(trip.get("message", "Cannot attend.")))
+		return
+
+	host.log_message("[color=cyan]Leaving for %s...[/color]" % String(
+		trip.get("conference", {}).get("name", "a conference")))
+	SceneTransition.go_to("res://scenes/ui/conference_vignette.tscn", true)
 
 func _show_paper_submission_dialog():
 	"""Show dialog for submitting a paper to a conference"""
