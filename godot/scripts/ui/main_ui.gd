@@ -107,8 +107,21 @@ var current_turn_phase: String = "NOT_STARTED"
 # (by the cold-open on completion), pulse the hire button + point the getting-started hint at
 # the lever, so a new player learns action->effect. Cleared after the first hire or turn 3.
 # Pure presentation -- reads a transient flag, mutates no game state / RNG / score.
+# Defaults only -- the ACTIVE handoff target comes from GameConfig.first_lever_action_id /
+# .first_lever_hint_text, which the cold-open sets on its way out (#811 item 1: the final
+# beat hands an active SCOUTING choice rather than ending on narrative). These consts stay
+# as the fallback for a session that never played the cold-open.
 const FIRST_LEVER_ACTION_ID := "hire_staff"
 const FIRST_LEVER_HINT_TEXT := "Advisor: doom is rising -- hire a researcher to lower it (the glowing button)."
+
+## The action the first-lever nudge points at this session.
+func _first_lever_action_id() -> String:
+	var id: String = GameConfig.first_lever_action_id
+	return id if id != "" else FIRST_LEVER_ACTION_ID
+
+func _first_lever_hint_text() -> String:
+	var t: String = GameConfig.first_lever_hint_text
+	return t if t != "" else FIRST_LEVER_HINT_TEXT
 var _first_lever_pulse_tween: Tween
 
 # CARVE 5 (R1): COMING_SOON_ACTION_IDS / COMING_SOON_TOOLTIP_SUFFIX / HIDDEN_FROM_ACTION_BAR_IDS
@@ -1366,12 +1379,12 @@ func _apply_first_lever_nudge() -> void:
 	_first_lever_pulse_tween = null
 	if not GameConfig.show_first_lever_hint:
 		return
-	var btn := _find_action_button(FIRST_LEVER_ACTION_ID)
+	var btn := _find_action_button(_first_lever_action_id())
 	if btn == null:
 		return
 	# Advisor pointer line (names the lever AND its effect).
 	if getting_started_hint:
-		getting_started_hint.text = FIRST_LEVER_HINT_TEXT
+		getting_started_hint.text = _first_lever_hint_text()
 	# Looping alpha pulse to draw the eye to the named lever.
 	_first_lever_pulse_tween = create_tween().set_loops()
 	_first_lever_pulse_tween.tween_property(btn, "modulate:a", 0.4, 0.6)
@@ -1481,7 +1494,7 @@ func _on_dynamic_action_pressed(action_id: String, action_name: String):
 	log_message("[color=cyan]Selecting action: %s[/color]" % action_name)
 
 	# #801: the player engaged the taught lever -- retire the first-lever nudge.
-	if GameConfig.show_first_lever_hint and action_id == FIRST_LEVER_ACTION_ID:
+	if GameConfig.show_first_lever_hint and action_id == _first_lever_action_id():
 		_clear_first_lever_nudge()
 
 	# Check if this is a submenu action

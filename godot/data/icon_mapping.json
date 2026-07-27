@@ -103,6 +103,16 @@
       "status": "mapped",
       "note": "#762 interim: reused international-cooperation icon for travel/conferences"
     },
+    "office": {
+      "icon": "res://assets/icons/actions_facilities/action_facility_expand_office_64.png",
+      "status": "mapped",
+      "note": "#791 interim: shares the facilities office icon with Operations until a dedicated lease icon lands"
+    },
+    "scouting": {
+      "icon": "res://assets/icons/actions_publicity/network_64.png",
+      "status": "mapped",
+      "note": "#811 item 1 interim: reused the publicity network icon (read/meetups/shitpost is a networking verb) until a dedicated one lands"
+    },
     "financing": {
       "icon": "res://assets/icons/main_navigation/ui_budget_finance_64.png",
       "status": "mapped",

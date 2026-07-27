@@ -128,6 +128,22 @@
 			"is_submenu": true
 		},
 		{
+			"id": "office",
+			"name": "Office",
+			"description": "Where the work happens. Tour the market and sign your first lease -- desks are the hard limit on how many people you can have.",
+			"costs": {},
+			"category": "management",
+			"is_submenu": true
+		},
+		{
+			"id": "scouting",
+			"name": "Scouting",
+			"description": "Find out what is going on out there: read, show up, or be loud.",
+			"costs": {},
+			"category": "influence",
+			"is_submenu": true
+		},
+		{
 			"id": "advertise",
 			"name": "Advertise a Role",
 			"description": "SOURCE: spend money + Attention to run a hiring campaign. Candidates trickle into the pool over the coming months (also raises your visibility).",

@@ -1,0 +1,33 @@
+{
+	"_description": "Scouting actions (#811 item 1: read / go-to-meetups / shitpost). FIRST-PASS STUBS: each has a real, cheap, deterministic effect and a message that names ONLY what actually fired. No fake numbers, no promised-but-unwired consequences (the silent-promise audit). Magnitudes live on the Balance surface under 'scouting.*'.",
+	"actions": [
+		{
+			"id": "scout_read",
+			"name": "Read the Literature",
+			"description": "Sit down with the arxiv firehose. Slow, free, and the only scouting that makes you better at the actual work.",
+			"costs": {
+				"action_points": 1
+			},
+			"category": "scouting"
+		},
+		{
+			"id": "scout_meetups",
+			"name": "Go to Meetups",
+			"description": "Drinks, badges, a talk you half-listen to. People remember you, and sometimes one of them is looking for a job.",
+			"costs": {
+				"action_points": 1,
+				"money": 300
+			},
+			"category": "scouting"
+		},
+		{
+			"id": "scout_shitpost",
+			"name": "Post Online",
+			"description": "Be loud. Hype is not respect -- it buys you attention from people who fund things and costs you standing with people who read things.",
+			"costs": {
+				"action_points": 1
+			},
+			"category": "scouting"
+		}
+	]
+}

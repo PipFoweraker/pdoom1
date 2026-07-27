@@ -123,7 +123,8 @@
 		"doom": 20.0,
 		"action_points": 3,
 		"stationery": 100.0,
-		"governance": 50.0
+		"governance": 50.0,
+		"hype": 0.0
 	},
 	"action_points": {
 		"_description": "AP economy: per-turn AP = difficulty base + per_staff * total staff.",
@@ -146,6 +147,12 @@
 		"standard": { "money_multiplier": 1.0, "max_action_points": 3 },
 		"hard": { "money_multiplier": 0.75, "max_action_points": 2 }
 	},
+	"scouting": {
+		"_description": "Scouting action stubs (#811 item 1): read / meetups / shitpost. FIRST-PASS magnitudes -- deliberately small, and every one of them is actually applied and named in the action's message (no silent promises). hype feeds FinanceEngine pricing (vc_equity gates on min_hype 25), so ~7 shitposts opens that door.",
+		"read": { "research_gain": 3.0 },
+		"meetups": { "reputation_gain": 1.5 },
+		"shitpost": { "hype_gain": 4.0, "reputation_cost": 1.0 }
+	},
 	"financing": {
 		"_description": "Cost-of-debt pricing engine + financing instruments (ADR-0013, lane L5/#616). FinanceEngine.price() computes terms from org_type + counterparty + typed reputation + current leverage; generate_offers() mints 2-3 concurrent STANDING offers with an expiry (ADR-0012 -- expiry mints no ledger entry). Engine: godot/scripts/core/finance_engine.gd. GOTCHA: computed interest rates are snapped to 0.001 (JSON save-safe, probe-verified against the real full-precision save path) and principals to whole units before entering a Ledger.Entry, so minted offers survive save/load (calibration open-Q #2). Baseline continuity: bank_loan at default context reproduces the calibrated ledger.loan terms (rate 0.008, ~77-tick fuse, 1.2x balloon); the sweep's take_loan path is UNCHANGED (routes Ledger.loan directly), so this block is additive and does not move the L1 medians.",
 		"ticks_per_month": 22.0,
@@ -154,6 +161,8 @@
 		"rate_floor": 0.002,
 		"rate_ceiling": 0.05,
 		"rep_rate_relief": 0.004,
+		"lease_deposit_rep_relief": 0.25,
+		"lease_deposit_jitter": 0.0,
 		"leverage_rate_penalty": 0.004,
 		"org_factors": {
 			"_description": "Multiply the base interest (ADR-0013: org type is the pricing engine's biggest input). >1 = worse cost of capital; <1 = cheaper. for_profit borrows cheapest (equity as collateral); independent/solo pays a premium.",

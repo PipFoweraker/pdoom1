@@ -51,7 +51,13 @@ const BANK_SUBTITLE: String = "Operating account -- balance"
 # --- Phone home: Messages app + the Mysterious Helpful Stranger (first-lever nudge) ---
 const MESSAGES_TITLE: String = "MESSAGES"
 const STRANGER_NAME: String = "Mysterious Helpful Stranger"
-const STRANGER_MESSAGE: String = "Hello past me! I am expository filler (for now). Get to work: hire a researcher -- it lowers doom. -- MHS"
+# HANDOFF (#811 item 1): the last thing the cold-open says hands the player an ACTIVE
+# SCOUTING CHOICE, not a closing narrative line. Copy still Pip's to finalize.
+const STRANGER_MESSAGE: String = "Hello past me! I am expository filler (for now). You know nothing yet -- go and find out. Read, show up somewhere, or be loud online. Scouting. -- MHS"
+# What the nudge points at when the cold-open ends. Content, not machinery: re-pointing
+# the handoff is this one string plus its hint line.
+const HANDOFF_ACTION_ID: String = "scouting"
+const HANDOFF_HINT_TEXT: String = "Advisor: you do not know anything yet. Go and find out -- scouting (the glowing button)."
 
 # --- Chrome ---
 const CONTINUE_LABEL: String = "Begin  >>"
@@ -586,6 +592,10 @@ func _finish(skipped: bool, via_hold_skip: bool = false) -> void:
 	# Seed the first-lever nudge for main_ui (pulse the hire button). Set on BOTH
 	# complete and skip -- a first-time player benefits from the pointer either way.
 	GameConfig.show_first_lever_hint = true
+	# ...and point it at the SCOUTING choice the stranger just handed over (#811 item 1),
+	# so the sequence ends on something to DO rather than on a narrative beat.
+	GameConfig.first_lever_action_id = HANDOFF_ACTION_ID
+	GameConfig.first_lever_hint_text = HANDOFF_HINT_TEXT
 	# Auto-flip the story-intro preference off ONLY on an explicit hold-to-skip (the "I skip
 	# intros" signal). Watching to completion does NOT flip it. Reversible in settings.
 	if via_hold_skip:

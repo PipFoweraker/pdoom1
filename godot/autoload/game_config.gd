@@ -123,6 +123,13 @@ var play_intros: bool = true
 # to pulse the first lever (hire) button once as an advisor nudge, then clears it.
 # Pure presentation -- never touches game state, RNG, or score.
 var show_first_lever_hint: bool = false
+# THE ONBOARDING -> SCOUTING HANDOFF (#811 item 1: "the cold-open's final beat should hand
+# an active scouting choice, not end on narrative"). The cold-open sets these on its way
+# out; main_ui pulses whichever action id is named here instead of a hardcoded one. Two
+# transient strings is the whole wire -- the seam is deliberately tiny so re-pointing the
+# handoff at a different first choice later is a one-line content change, not a refactor.
+var first_lever_action_id: String = "scouting"
+var first_lever_hint_text: String = "Advisor: you do not know anything yet. Go and find out -- scouting (the glowing button)."
 # First-launch welcome overlay show-once gate (issue #720). Reuses the
 # last_seen_version show-once shape: once the welcome/help overlay has been shown
 # it is marked seen and PERSISTED, so it never re-appears on later launches -- even

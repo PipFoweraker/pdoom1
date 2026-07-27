@@ -393,11 +393,30 @@ func _open_plan_month(mi: int) -> void:
 	windows_surfaced_this_month = 0
 	var ordinal := Clock.month_ordinal_since_start(state.turn, state.start_year, state.start_month, state.start_day)
 	state.month_plan.begin_month(Balance.inum("attention.per_month", 20), ordinal)
+	# Office rent (#791): the predictable monthly cash sink, on the payroll rail (a direct
+	# deduction, not a compounding ledger payable -- see office.gd's rail decision). No-op
+	# for an unsigned run, so a bedroom-only game is economically unchanged.
+	var rent_charged: float = Office.charge_rent(state)
+	if rent_charged > 0.0:
+		_surface_rent_notification(rent_charged)
 	# Hiring pipeline (Phase B): advertise campaigns trickle candidates, un-mentored hires face
 	# their attrition roll. Stream-neutral when no campaign/at-risk hire is live (guarded).
 	if state.hiring != null:
 		var hiring_events: Array = state.hiring.on_month_boundary(state)
 		_surface_hiring_notifications(hiring_events)
+
+
+func _surface_rent_notification(charged: float) -> void:
+	"""Rent falling due is READABLE, not a decision -- TIER_FEED, same channel as the hiring
+	trickle. #791 wants rent felt and predictable; a feed line each month is the 'felt'."""
+	var feed_event := {
+		"id": "office_rent_due",
+		"name": "Rent due",
+		"delivery_tier": EventTiers.TIER_FEED,
+		"source_id": "office",
+		"message": Office.rent_message(state, charged),
+	}
+	feed_log.append({"event": feed_event, "source_id": EventTiers.source_id_of(feed_event)})
 
 
 func _surface_hiring_notifications(events: Array) -> void:
