@@ -98,15 +98,21 @@ func test_furniture_hugs_walls_and_never_shares_a_cell():
 	for _i in range(6):
 		s._populate_up()
 	assert_true(s._furniture.size() > 0, "furniture was placed")
-	# no-overlap: every piece owns a distinct registered cell (the occupancy dict also
-	# holds small-floor starter cells + manifested-prop footprints, so compare per-piece).
+	# no-overlap: every piece owns a distinct registered cell (the grid also holds
+	# small-floor starter cells + manifested-prop footprints, so compare per-piece).
+	# a(3)-lite port: occupancy moved from a string-keyed dict + a "cell_key" sprite meta
+	# to per-floor RenderGrid instances keyed by the sprite's instance id.
+	var grid: RenderGrid = s._grid_for(s._floor)
 	var seen := {}
 	for spr in s._furniture:
-		var key := String(spr.get_meta("cell_key", ""))
-		assert_ne(key, "", "furniture piece carries its occupancy cell key")
-		assert_false(seen.has(key), "no two furniture share a grid cell (%s)" % key)
-		assert_true(s._occupied_cells.has(key), "furniture cell registered occupied")
-		seen[key] = true
+		var held: Array = grid.cells_of(spr.get_instance_id())
+		assert_eq(held.size(), 1, "furniture piece owns exactly one grid cell")
+		if held.is_empty():
+			continue
+		var held_cell: Vector2i = held[0]
+		assert_false(seen.has(held_cell), "no two furniture share a grid cell (%s)" % held_cell)
+		assert_true(grid.is_occupied(held_cell), "furniture cell registered occupied")
+		seen[held_cell] = true
 	# wall-affinity: every piece sits within one grid cell of a wall
 	var b: Rect2 = s._floor_bounds()
 	for spr in s._furniture:

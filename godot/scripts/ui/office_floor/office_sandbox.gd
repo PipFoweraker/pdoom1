@@ -15,6 +15,15 @@ extends Control
 ##   - Props with a manifest entry (PropCatalogue, #907) place at their authored
 ##     scale + feet anchor and occupy their footprint_tiles cells.
 ##
+## v4.1 (a(3)-lite, ADR-0018 amendment 2026-07-27): all grid arithmetic moved to the
+## first-class RenderGrid type (scripts/ui/office_floor/render_grid.gd). The ad hoc
+## string-keyed 32px snap-hack -- `_snap_to_grid` / `_cell_of` / `_cell_key` plus a shared
+## `String -> true` `_occupied_cells` dictionary keyed by stringified cell CENTRES with an
+## "a|"/"b|" floor prefix -- is RETIRED. One RenderGrid per floor, Vector2i cells, occupancy
+## keyed by sprite instance id. No behaviour change is intended: same lattices, same
+## row-major enumeration order (so the seeded furniture draw is unchanged), same
+## skip-do-not-steal occupancy semantics.
+##
 ## Everything v2 shipped still works: promoted-asset loader, prop placement, skin/mood
 ## cycling, scummy/decent office STATE, and in-context feedback.
 ##
@@ -50,6 +59,8 @@ const MAX_CATS := 8
 const MAX_PLACED := 64
 
 # Tile grid props snap to (matches the 32px source tile scale; feels like desks-on-a-grid).
+# a(3)-lite (ADR-0018 amendment, 2026-07-27): this is now only the CELL SIZE fed to the
+# first-class RenderGrid; the snap/cell/occupancy arithmetic itself lives there.
 const GRID := 32.0
 # LEGACY fallback prop height for assets WITHOUT a manifest entry (#907 integration:
 # manifested props scale via PropCatalogue.height_px instead of this force-scale).
@@ -226,7 +237,21 @@ var _occupant_scale: float = OCCUPANT_SCALE_DEFAULT
 var _pop_level: int = 0
 var _pop_level_b: int = 0                  # v4: the small floor has its own populate level
 var _furniture: Array = []                 # Sprite2D furniture placed by POPULATE (wall-affinity)
-var _occupied_cells: Dictionary = {}       # str(cell centre) -> true (furniture no-overlap)
+# a(3)-lite (ADR-0018 amendment): occupancy now lives in first-class RenderGrid instances,
+# ONE PER FLOOR. This retires `_occupied_cells: Dictionary` -- a str(cell centre) -> true map
+# whose keys carried an "a|"/"b|" prefix purely to stop the two compare floors colliding on
+# identical local coordinates. Separate grid objects make that prefix unnecessary, and cells
+# are real Vector2i instead of stringified float centres.
+# Both grids are anchored to their floor's inner bounds by _grid_for() on every access, so a
+# compare-view relayout cannot leave the lattice behind.
+var _grid := RenderGrid.new(GRID)          # LARGE / single floor occupancy lattice
+var _grid_b := RenderGrid.new(GRID)        # compare-view SMALL floor occupancy lattice
+# Free-placement snap lattice, origin (0,0). PRESERVED BEHAVIOUR, not an oversight: the
+# ghost preview and manual prop drops have always snapped on a screen-origin lattice while
+# occupancy/populate use the bounds-anchored one (the two are 16px out of phase because
+# _bounds_of() insets by 16). Unifying them would visibly shift every manual placement, which
+# is out of scope for a port that must look identical; the mismatch is now at least explicit.
+var _snap_grid := RenderGrid.new(GRID, Vector2.ZERO)
 var _cat_frame_sets: Array = []            # [{name, frames, anchored_set?}] real walk-cycle SpriteFrames
 var _cat_walk_report: String = ""
 # Anchor Sockets V2 demo state: glow toggle + doom-flavour hue selection.
@@ -389,7 +414,7 @@ func _process(_delta: float) -> void:
 			_ghost.visible = false
 		else:
 			_ghost.visible = true
-			_ghost.position = _snap_to_grid(mouse)
+			_ghost.position = _snap_grid.snap(mouse)
 	if _marker != null:
 		if _overlay_mode:
 			var ov := _nearest_overlay(mouse, af)
@@ -781,6 +806,14 @@ func _place_prop() -> void:
 # #907: a manifested prop OCCUPIES its footprint_tiles cells (display tiles are 64px =
 # 2x2 sandbox grid cells each) so POPULATE furniture will not overlap it. Unmanifested
 # props keep the old behaviour (no occupancy -- the renderer used to just guess).
+#
+# a(3)-lite SEAM (ADR-0018 amendment): this is the first consumer of RenderGrid, and
+# WEDNESDAY'S DECORATING RENDER (W2) is the next one -- it will ask this same grid for
+# footprint cells, free cells, and snaps. The doctrine line W2 must not cross, restated:
+# DECOR VALUE KEYS OFF OWNERSHIP + TIER + SPEND (sim-side counts); PLACEMENT IS EXPRESSION.
+# Occupancy here exists so props do not overlap and walkers do not stand inside furniture --
+# a picture-correctness concern. The moment a decor bonus is priced by WHICH CELL a prop
+# sits in, a spatial fact has become a gameplay input and ADR-0018 is breached.
 func _occupy_prop_footprint(spr: Sprite2D, f: OfficeFloor, asset_id: String) -> void:
 	var mid := _manifest_id_for(spr.texture, asset_id)
 	if mid == "":
@@ -788,24 +821,14 @@ func _occupy_prop_footprint(spr: Sprite2D, f: OfficeFloor, asset_id: String) -> 
 	var fp := PropCatalogue.footprint(mid)
 	var w_px := fp.x * DISPLAY_TILE_PX
 	var d_px := fp.y * DISPLAY_TILE_PX
-	var keys: Array = []
+	var g := _grid_for(f)
 	# Feet-anchored: footprint extends up from the feet row, centred horizontally.
-	var y0 := spr.position.y - d_px + GRID * 0.5
-	var x0 := spr.position.x - w_px * 0.5 + GRID * 0.5
-	var cols := int(ceil(w_px / GRID))
-	var rows := int(ceil(d_px / GRID))
-	for r in range(rows):
-		for c in range(cols):
-			var cell := _cell_of(f, Vector2(x0 + c * GRID, y0 + r * GRID))
-			var key := _cell_key(f, cell)
-			if not _occupied_cells.has(key):
-				_occupied_cells[key] = true
-				keys.append(key)
-	spr.set_meta("occupied_keys", keys)
-
-func _release_prop_footprint(spr: Sprite2D) -> void:
-	for key in spr.get_meta("occupied_keys", []):
-		_occupied_cells.erase(String(key))
+	var first := g.cell_at(Vector2(
+		spr.position.x - w_px * 0.5 + GRID * 0.5,
+		spr.position.y - d_px + GRID * 0.5))
+	var span := Vector2i(int(ceil(w_px / GRID)), int(ceil(d_px / GRID)))
+	# Cells already held by other props are SKIPPED, not stolen (unchanged behaviour).
+	g.occupy(g.footprint_cells(first, span), spr.get_instance_id())
 
 # --- Tier-1 collision: feed prop/furniture footprints to the floors ----------
 # Walkers must never STAND inside furniture. Each floor gets the no-stand rects
@@ -858,7 +881,7 @@ func _remove_nearest_prop(at: Vector2) -> void:
 	if best >= 0:
 		var spr = _placed_props[best]
 		if is_instance_valid(spr):
-			_release_prop_footprint(spr)
+			_release_occupancy(spr)
 			spr.queue_free()
 		_placed_props.remove_at(best)
 		_sync_blocked_rects()
@@ -866,36 +889,31 @@ func _remove_nearest_prop(at: Vector2) -> void:
 func _clear_props() -> void:
 	for spr in _placed_props:
 		if is_instance_valid(spr):
-			_release_prop_footprint(spr)
+			_release_occupancy(spr)
 			spr.queue_free()
 	_placed_props.clear()
 	_sync_blocked_rects()
 
-func _snap_to_grid(pos: Vector2) -> Vector2:
-	return Vector2(
-		floor(pos.x / GRID) * GRID + GRID * 0.5,
-		floor(pos.y / GRID) * GRID + GRID * 0.5)
+# a(3)-lite: the occupancy lattice for one floor, re-anchored to that floor's current
+# inner bounds on every access (compare-view relayout moves them). Replaces the old
+# _cell_of / _cell_key pair -- addressing is Vector2i on a per-floor grid, so no string
+# key and no "a|"/"b|" disambiguation prefix exist any more.
+func _grid_for(f: OfficeFloor) -> RenderGrid:
+	var g := _grid_b if (f == _floor_b and _floor_b != null) else _grid
+	g.set_bounds(_bounds_of(f))
+	return g
 
-# Occupancy key for a grid cell of a specific floor (cells are floor-local, so the two
-# compare floors would otherwise collide on identical coordinates).
-func _cell_key(f: OfficeFloor, cell: Vector2) -> String:
-	return ("b|" if f == _floor_b and _floor_b != null else "a|") + str(cell)
-
-# Resolve a floor-local point to its occupancy cell CENTRE on the floor's bounds lattice
-# (the same lattice _pick_wall_cell enumerates, so occupancy from placed props and
-# populate furniture actually collide instead of living on offset grids).
-func _cell_of(f: OfficeFloor, pos: Vector2) -> Vector2:
-	var b := _bounds_of(f)
-	var c := floorf((pos.x - b.position.x) / GRID)
-	var r := floorf((pos.y - b.position.y) / GRID)
-	return Vector2(
-		b.position.x + c * GRID + GRID * 0.5,
-		b.position.y + r * GRID + GRID * 0.5)
+# Release every cell a sprite holds. Both grids are asked because a sprite's parent floor
+# may already be mid-teardown when this runs, and instance ids are unique across floors.
+func _release_occupancy(spr: Node) -> void:
+	var owner_id := spr.get_instance_id()
+	_grid.release(owner_id)
+	_grid_b.release(owner_id)
 
 # Grid-snap, but if the point is within one grid cell of a wall, snap flush to that wall
 # (furniture wall-affinity for manual placement; the POPULATE placer uses walls exclusively).
 func _grid_or_wall(pos: Vector2, b: Rect2) -> Vector2:
-	var snapped := _snap_to_grid(pos)
+	var snapped := _snap_grid.snap(pos)
 	if pos.x - b.position.x < GRID:
 		snapped.x = b.position.x + GRID * 0.5
 	elif b.end.x - pos.x < GRID:
@@ -1151,24 +1169,24 @@ func _apply_pop_stage(f: OfficeFloor = null) -> void:
 func _spawn_furniture(f: OfficeFloor = null) -> bool:
 	var af := f if f != null else _floor
 	var cell := _pick_wall_cell(af)
-	if cell == Vector2.INF:
+	if cell == RenderGrid.NO_CELL:
 		return false
 	var kinds := _FURN_KINDS.keys()
 	var kind := String(kinds[_rng.randi() % kinds.size()])
 	var tex := _furniture_tex(kind)
+	var g := _grid_for(af)
 	var spr := Sprite2D.new()
 	spr.texture = tex
 	spr.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	var base := _prop_scale(tex)
 	spr.set_meta("base_scale", base)
 	spr.scale = base * _occupant_scale
-	spr.position = cell
+	spr.position = g.cell_centre(cell)
 	spr.z_index = 2
-	var key := _cell_key(af, cell)
-	spr.set_meta("cell_key", key)
 	af.add_child(spr)
 	_furn_of(af).append(spr)
-	_occupied_cells[key] = true
+	# Occupancy is keyed by the sprite's instance id -- no "cell_key" meta string any more.
+	g.occupy_cell(cell, spr.get_instance_id())
 	return true
 
 func _remove_furniture(f: OfficeFloor = null) -> void:
@@ -1177,36 +1195,24 @@ func _remove_furniture(f: OfficeFloor = null) -> void:
 		return
 	var spr = furn.pop_back()
 	if is_instance_valid(spr):
-		_occupied_cells.erase(String(spr.get_meta("cell_key", "")))
+		_release_occupancy(spr)
 		spr.queue_free()
 
-# Return a random unoccupied grid cell centre on the floor PERIMETER (wall-affinity). Falls
-# back to any interior cell if the perimeter is full. Returns Vector2.INF if nothing free.
-func _pick_wall_cell(f: OfficeFloor = null) -> Vector2:
+# Return a random unoccupied CELL on the floor PERIMETER (wall-affinity). Falls back to any
+# interior cell if the perimeter is full. Returns RenderGrid.NO_CELL if nothing is free.
+# The grid's enumerators are row-major, so the seeded _rng draw over `pool` is stable --
+# same order the hand-rolled double loop this replaced produced.
+func _pick_wall_cell(f: OfficeFloor = null) -> Vector2i:
 	var af := f if f != null else _floor
-	var b := _bounds_of(af)
-	var cols := int(b.size.x / GRID)
-	var rows := int(b.size.y / GRID)
-	if cols < 2 or rows < 2:
-		return Vector2.INF
-	var edge: Array = []
-	var inner: Array = []
-	for r in range(rows):
-		for c in range(cols):
-			var centre := Vector2(
-				b.position.x + c * GRID + GRID * 0.5,
-				b.position.y + r * GRID + GRID * 0.5)
-			if _occupied_cells.has(_cell_key(af, centre)):
-				continue
-			if c == 0 or c == cols - 1 or r == 0 or r == rows - 1:
-				edge.append(centre)
-			else:
-				inner.append(centre)
-	var pool: Array = edge if not edge.is_empty() else inner
+	var g := _grid_for(af)
+	if g.cols() < 2 or g.rows() < 2:
+		return RenderGrid.NO_CELL
+	var pool := g.edge_cells(true)
 	if pool.is_empty():
-		return Vector2.INF
-	var chosen: Vector2 = pool[_rng.randi() % pool.size()]
-	return chosen
+		pool = g.interior_cells(true)
+	if pool.is_empty():
+		return RenderGrid.NO_CELL
+	return pool[_rng.randi() % pool.size()]
 
 func _furniture_tex(kind: String) -> Texture2D:
 	var spec: Array = _FURN_KINDS[kind]
@@ -1292,7 +1298,7 @@ func _exit_compare() -> void:
 			var spr = _placed_props[i]
 			if not is_instance_valid(spr) or spr.get_parent() == _floor_b:
 				if is_instance_valid(spr):
-					_release_prop_footprint(spr)
+					_release_occupancy(spr)
 				_placed_props.remove_at(i)
 		for i in range(_overlays.size() - 1, -1, -1):
 			if not is_instance_valid(_overlays[i]) or _overlays[i].get_parent() == _floor_b:
@@ -1302,12 +1308,11 @@ func _exit_compare() -> void:
 	_roster_b.clear()
 	for spr in _furniture_b:
 		if is_instance_valid(spr):
-			_occupied_cells.erase(String(spr.get_meta("cell_key", "")))
+			_release_occupancy(spr)
 	_furniture_b.clear()
-	# Drop any remaining small-floor occupancy records.
-	for key in _occupied_cells.keys():
-		if String(key).begins_with("b|"):
-			_occupied_cells.erase(key)
+	# Drop any remaining small-floor occupancy records. This used to be a prefix scan over a
+	# shared string-keyed dict ("b|..."); with a grid PER FLOOR it is one clear().
+	_grid_b.clear()
 	_pop_level_b = 0
 	_apply_floor_styles()   # restore the single-view tier
 	_rebuild_prop_pool()
@@ -1369,6 +1374,7 @@ func _spawn_starter_props() -> void:
 		Vector2(b.position.x + GRID * 0.5, b.end.y - GRID * 0.5),
 	]
 	var kinds: Array = ["desk", "plant", "cabinet"]
+	var g := _grid_for(_floor_b)
 	for i in range(spots.size()):
 		var tex := _furniture_tex(String(kinds[i]))
 		var spr := Sprite2D.new()
@@ -1379,9 +1385,7 @@ func _spawn_starter_props() -> void:
 		spr.scale = base * _occupant_scale
 		spr.position = spots[i]
 		spr.z_index = 2
-		var key := _cell_key(_floor_b, _cell_of(_floor_b, spots[i]))
-		spr.set_meta("cell_key", key)
-		_occupied_cells[key] = true
+		g.occupy_cell(g.cell_at(spots[i]), spr.get_instance_id())
 		_floor_b.add_child(spr)
 		_furniture_b.append(spr)
 	_sync_blocked_rects()
@@ -1531,7 +1535,10 @@ func _clear_furniture() -> void:
 		if is_instance_valid(spr):
 			spr.queue_free()
 	_furniture_b.clear()
-	_occupied_cells.clear()
+	# Unchanged behaviour: clearing furniture drops ALL occupancy on both floors, manually
+	# placed props included (it was one shared dict before; it is two grids now).
+	_grid.clear()
+	_grid_b.clear()
 	_sync_blocked_rects()
 
 # --- Bulk toys --------------------------------------------------------------
