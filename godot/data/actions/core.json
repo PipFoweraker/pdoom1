@@ -41,7 +41,7 @@
 		{
 			"id": "publish_paper",
 			"name": "Publish Safety Paper",
-			"description": "Publish research to reduce p(doom)",
+			"description": "Publish research to raise global alarm (adopted safety concern)",
 			"costs": {
 				"research": 20,
 				"action_points": 1
@@ -67,7 +67,7 @@
 		{
 			"id": "team_building",
 			"name": "Team Building",
-			"description": "Improve morale, reduce doom slightly",
+			"description": "Improve morale",
 			"costs": {
 				"money": 10000,
 				"action_points": 1
