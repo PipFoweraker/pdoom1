@@ -338,6 +338,9 @@ func _transform_all_events() -> void:
 
 	events_transformed.emit(transformed_events.size())
 	print("[EventService] Transformed %d events" % transformed_events.size())
+	# Observability only (see godot/autoload/perf_log.gd): point-in-time size of the
+	# rebuilt event pool. Never touches state/RNG/scoring, never branched on.
+	PerfLog.gauge("event_pool_size", transformed_events.size())
 
 
 func _transform_event(raw: Dictionary) -> Dictionary:

@@ -84,6 +84,14 @@ func change_scene(target_scene: String) -> void:
 
 
 func _run_transition() -> void:
+	# Observability only (see godot/autoload/perf_log.gd): wall-clock timing around the
+	# deferred scene swap, the one sanctioned chokepoint (see class doc), so this single
+	# instrumentation point covers every scene load. Never touches state/RNG/scoring, never
+	# branched on, and does NOT alter the always-deferred transition logic below.
+	var sw := PerfLog.time_section("scene_load", {
+		"target": (_pending_target if not _pending_reload else "<reload>"),
+	})
+
 	# Runs on a clean idle frame (out of any input/signal callstack).
 	if _pending_fade:
 		fade_rect.mouse_filter = Control.MOUSE_FILTER_STOP
@@ -98,6 +106,7 @@ func _run_transition() -> void:
 		await fade_in()
 		fade_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
+	sw.stop()
 	_pending_target = ""
 	_pending_reload = false
 	_pending_fade = false
