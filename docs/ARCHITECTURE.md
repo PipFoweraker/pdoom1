@@ -111,7 +111,7 @@ re-authored** to intermediaries (the printed-delta ban isn't 100% true in data y
 ### Liability Ledger (every mitigation is a loan)
 A two-sided ledger (payables / receivables) of trades that pay now and bill later.
 **No new player-facing currency**  --  entries read/write only existing resources (money,
-reputation, governance, doom, AP). Compounding interest on unpaid payables is the
+reputation, governance, doom, Attention). Compounding interest on unpaid payables is the
 **mortality guarantee** (ADR-0002): debt grows unbounded until a bill you can't cover ends
 the run  --  and the death is attributable to specific entries. A defaulted money bill
 converts its shortfall to **capped** doom + reputation damage (doom residual rolls forward
@@ -142,15 +142,20 @@ rep / nonprofit); equity dilution + board seats mint **inert standing riders** (
 The founder currency is **Attention** (~N decisions/month; admin as painful overhead), held
 on `MonthPlan`. It splits into `available` (fund strategic work), `reserved` (crisp reserve
 for response windows  --  **evaporates** monthly), and `spent`. Strategic actions carry
-**durations** (nothing strategic resolves instantly). There is **no global AP pool** in the
-target design  --  staff get a separate per-person budget.
+**durations** (nothing strategic resolves instantly). There is **no global AP pool**  --
+staff get a separate per-person budget. Every Attention spend is typed into one of two
+**founder hour types** (2-way floor, T2): **planning** (planner mind  --  queuing strategic
+work, direction) or **operating** (presence  --  response windows, hiring, travel).
+Overflow is **asymmetric**: operating may eat planning hours, planning may never eat
+operating. The crisp reserve is deliberately untyped (it is the emergency channel).
 **Files:** [`month_plan.gd`](../godot/scripts/core/month_plan.gd) (`MonthPlan`);
 plan API on `GameManager` (`queue_strategic_action`, `set_attention_reserve`).
-**ADR:** ADR-0011, ADR-0009. **Status:** **Attention layer built**; the **legacy
-per-turn AP pool still co-exists** (`GameState.action_points`, `select_action`)  --  L1
-introduced Attention *alongside* AP; **L2 (#613) deletes AP and migrates costs**. This dual
-economy is the single most confusing live edge for a new dev (see section 7). The **staff effort
-economy (L2) is not built**  --  only spec inputs exist.
+**ADR:** ADR-0011 (amendments (a)-(g)), ADR-0009. **Status:** **Attention is the only
+founder currency.** T2 (2026-07-28) deleted the AP pool outright  --  no `action_points`
+field, no per-turn grant, no AP in any cost dict; the cost key everywhere is `attention`,
+read through `GameActions.attention_cost()` / `hour_type()`. The **4-way** hour split
+(doors / approvals / audits / reserve, ADR-0011 amendment (c)) subdivides the 2-way floor in
+a later lane. Workstream substrate is built (T1); manager shields are not.
 
 ### SA channels (situational awareness)
 "Spending buys sight": simulate everything, gate only the *view*; SA is **channels with
@@ -232,7 +237,7 @@ Gameplay numbers live in JSON, not code, via the **`Balance` autoload** (L9 #621
   `user://balance_overrides.json` **deep-merges on top**, so sweeps/tuning swap a file
   instead of editing code.
 - **Top-level keys in `defaults.json`:** `starting_resources`, `attention`, `doom`
-  (incl. `doom.streams.*`), `ledger`, `financing`, `salaries`, `action_points`, `rivals`,
+  (incl. `doom.streams.*`), `ledger`, `financing`, `salaries`, `rivals`,
   `risk`, `difficulty`, `events`, `papers`.
 - **Contract:** every consumer passes its inline literal as the fallback, so a missing/broken
   file *should* degrade to shipped behavior. [!] **This contract is currently violated for
@@ -242,8 +247,9 @@ Gameplay numbers live in JSON, not code, via the **`Balance` autoload** (L9 #621
   `data/scenarios/*.json` (bootstrap / crisis / sandbox).
 
 **What's tunable without code:** starting resources, doom stream coefficients, ledger
-escalation rates/fuses, financing rate curves & instruments, salaries, AP grants, rival
-pressure, difficulty modifiers, event budgets  --  all of it.
+escalation rates/fuses, financing rate curves & instruments, salaries, the monthly
+Attention grant and its planning/operating split (`attention.per_month`,
+`attention.planning_share`), rival pressure, difficulty modifiers, event budgets  --  all of it.
 
 ---
 
@@ -307,11 +313,18 @@ Where a new dev will hit live edges. Pulled from the ADRs, code TODOs, and
 [`WORKSHOP_2_BACKLOG.md`](game-design/WORKSHOP_2_BACKLOG.md) open DQs.
 
 **Half-built / transitional:**
-- **Dual currency (AP vs Attention).** L1 added Attention beside the legacy AP pool; both
-  are live. `select_action` still spends AP; windows spend Attention. **L2 (#613) deletes
-  AP.** Expect confusion until then.
-- **Staff effort economy (L2, #613): not built.** Only spec inputs exist (burnout debuffs,
-  typed delegation DQ-24).
+- **Dual currency (AP vs Attention): RESOLVED (T2, 2026-07-28).** The AP pool is deleted;
+  Attention is the only founder currency and it is typed 2-way (planning / operating).
+  Residual: `action_points` is still accepted as a READ-ONLY cost-key alias for content
+  that lags the code  --  in-repo data carries none, and a unit test pins that.
+- **Founder-hour typing is at the 2-way FLOOR.** ADR-0011 amendment (c) ruled a 4-way split
+  (doors / approvals / audits / reserve); only planning-vs-operating is built. The
+  subdivision points are `GameActions.hour_type()` and `GameState._cost_hour_type()`.
+- **Attention balance is un-swept.** `attention.planning_share` (0.6) is hand-set; the
+  planning pool is now a real cap on strategic cards per month. Re-price with the
+  exploit-finder (review-by 2026-08-31).
+- **Staff effort economy (L2, #613): substrate built (T1), consumption thin.** Workstreams,
+  backlog, assignment and reported-vs-actual accrual exist; manager shields do not.
 - **Ledger not player-facing** (BL-1). Engine + soak only; no action/UI to view or pay bills
   from the plan screen yet. Exposure not fired by rival/scheduled causes (BL-2);
   hire/departure don't create/flip riders (BL-3).
