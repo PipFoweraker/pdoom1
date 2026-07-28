@@ -288,7 +288,7 @@ func _compute_streams(state: GameState) -> Dictionary:
 	var quirk_sum := 0.0
 	for r in _productive_researchers(state):
 		quirk_sum += float(r.quirk_effect("doom_mod_add", 0.0))
-	s["quirk"] = _w("W_quirk_doom", 0.5) * quirk_sum
+	s["quirk"] = _w("W_quirk_doom", 0.35) * quirk_sum
 
 	# (h) scheduled pulses -- ADR-0005 schedule entries inject time-shaped rate bumps. v1 ships
 	#     no pulse content; the hook is wired so the schema addition (R2-Q6) has a landing site.

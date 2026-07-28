@@ -441,7 +441,7 @@ func maybe_reveal_quirk_by_tenure() -> bool:
 # Tuning intent: GENTLE. Baseline loyalty drift is +-1..2/turn (salary); appetites add a
 # net clamped +-APPETITE_NET_CAP so a well-fed hungry hire gains ~1-2/turn and a starved
 # one bleeds ~1-2/turn -- felt over months, never a one-turn cliff.
-const APPETITE_HUNGRY_THRESHOLD := 0.6  # only strong hungers (top ~40% of draws) move loyalty
+const APPETITE_HUNGRY_THRESHOLD := 0.65  # only strong hungers (top ~35% of draws) move loyalty
 const APPETITE_FED_LOYALTY := 1         # per fed hungry appetite, per turn
 const APPETITE_STARVED_LOYALTY := 1     # per starved hungry appetite, per turn
 const APPETITE_NET_CAP := 2             # net appetite drift clamp per turn (keeps it gentle)

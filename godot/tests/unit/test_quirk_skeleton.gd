@@ -49,7 +49,7 @@ func test_safety_lane_quirk_carrier_feeds_the_stream():
 	# +0.04 was completely dead.
 	var s := _new_state("quirk_stream_safety")
 	_employ(s, "safety", "Quiet Successionist", 5, "secret_successionist")
-	var expected: float = Balance.num("doom.streams.W_quirk_doom", 0.5) \
+	var expected: float = Balance.num("doom.streams.W_quirk_doom", 0.35) \
 		* float(QuirkCatalogue.effect("secret_successionist", "doom_mod_add", 0.0))
 	var result: Dictionary = s.doom_system.calculate_doom_change(s)
 	assert_almost_eq(float(result["sources"]["quirk"]), expected, 0.000001,
@@ -72,7 +72,7 @@ func test_quirk_stream_sums_over_whole_roster():
 	_employ(s, "safety", "A", 5, "secret_successionist")   # +0.04
 	_employ(s, "interpretability", "B", 5, "true_believer") # -0.04
 	_employ(s, "capabilities", "C", 5, "e_acc_sympathizer") # +0.05
-	var w: float = Balance.num("doom.streams.W_quirk_doom", 0.5)
+	var w: float = Balance.num("doom.streams.W_quirk_doom", 0.35)
 	var expected: float = w * (0.04 - 0.04 + 0.05)
 	var result: Dictionary = s.doom_system.calculate_doom_change(s)
 	assert_almost_eq(float(result["sources"]["quirk"]), expected, 0.000001,
@@ -86,6 +86,22 @@ func test_quirk_stream_effect_live_while_hidden():
 	assert_false(r.quirk_known, "the quirk starts hidden")
 	var result: Dictionary = s.doom_system.calculate_doom_change(s)
 	assert_gt(float(result["sources"]["quirk"]), 0.0, "the effect is live before the reveal")
+
+
+func test_single_carrier_quirk_stream_stays_below_baseline():
+	# balance/quirk-sweep guard: the sweep's design intent is "felt but not dominant" -- a
+	# single doom-quirk carrier should never outweigh the always-there baseline floor on its
+	# own. Checks the STRONGEST-magnitude doom quirk in the catalogue (e_acc_sympathizer,
+	# doom_mod_add 0.05) against W_quirk_doom; a regression that re-widens W_quirk_doom
+	# (or a new quirk with a bigger doom_mod_add) trips this before it ships.
+	var s := _new_state("quirk_stream_vs_baseline")
+	_employ(s, "capabilities", "Solo Carrier", 5, "e_acc_sympathizer")
+	var w: float = Balance.num("doom.streams.W_quirk_doom", 0.35)
+	var baseline: float = Balance.num("doom.base_per_turn", 0.06)
+	var result: Dictionary = s.doom_system.calculate_doom_change(s)
+	var quirk_contribution: float = float(result["sources"]["quirk"])
+	assert_lt(quirk_contribution, baseline,
+		"a single strong doom-quirk carrier (w=%s) must stay felt, not dominant, vs the baseline floor (%s)" % [w, baseline])
 
 
 # ============================================================================
