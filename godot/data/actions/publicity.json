@@ -6,7 +6,8 @@
 			"name": "Networking",
 			"description": "Build relationships and connections in the AI safety community",
 			"costs": {
-				"attention": 1
+				"attention": 1,
+				"hour_type": "doors"
 			},
 			"category": "influence"
 		},
@@ -16,7 +17,8 @@
 			"description": "Public outreach through press and social media",
 			"costs": {
 				"money": 30000,
-				"attention": 2
+				"attention": 2,
+				"hour_type": "doors"
 			},
 			"category": "influence"
 		},
@@ -26,7 +28,8 @@
 			"description": "Advocate for AI safety regulation (costly but impactful)",
 			"costs": {
 				"money": 80000,
-				"attention": 2
+				"attention": 2,
+				"hour_type": "doors"
 			},
 			"category": "influence"
 		},
@@ -36,7 +39,8 @@
 			"description": "Warn public about AI risks - risky but high impact",
 			"costs": {
 				"attention": 2,
-				"reputation": 15
+				"reputation": 15,
+				"hour_type": "approvals"
 			},
 			"category": "influence"
 		},
@@ -46,7 +50,8 @@
 			"description": "Release safety research publicly for community benefit",
 			"costs": {
 				"papers": 3,
-				"attention": 1
+				"attention": 1,
+				"hour_type": "approvals"
 			},
 			"category": "influence"
 		}

@@ -7,7 +7,8 @@
 			"description": "Restock stationery (+50 supplies). Staff consume supplies each turn.",
 			"costs": {
 				"money": 2000,
-				"attention": 1
+				"attention": 1,
+				"hour_type": "doors"
 			},
 			"category": "operations"
 		},
@@ -17,7 +18,8 @@
 			"description": "Routine repairs and cleaning. Improves morale slightly.",
 			"costs": {
 				"money": 5000,
-				"attention": 1
+				"attention": 1,
+				"hour_type": "doors"
 			},
 			"category": "operations"
 		}

@@ -7,7 +7,8 @@
 			"description": "Buy struggling AI startup for talent and compute",
 			"costs": {
 				"money": 150000,
-				"attention": 2
+				"attention": 2,
+				"hour_type": "doors"
 			},
 			"category": "strategic"
 		},
@@ -18,7 +19,8 @@
 			"costs": {
 				"money": 100000,
 				"attention": 3,
-				"reputation": 20
+				"reputation": 20,
+				"hour_type": "doors"
 			},
 			"category": "strategic"
 		},
@@ -28,7 +30,8 @@
 			"description": "Convert capability researchers to safety focus",
 			"costs": {
 				"money": 50000,
-				"attention": 2
+				"attention": 2,
+				"hour_type": "approvals"
 			},
 			"category": "strategic"
 		},
@@ -38,7 +41,8 @@
 			"description": "Apply for government/foundation funding",
 			"costs": {
 				"attention": 1,
-				"papers": 1
+				"papers": 1,
+				"hour_type": "approvals"
 			},
 			"category": "strategic"
 		}

@@ -7,7 +7,8 @@
 			"description": "Conservative fundraising - lower amounts, lower risk, always available",
 			"costs": {
 				"attention": 1,
-				"reputation": 2
+				"reputation": 2,
+				"hour_type": "doors"
 			},
 			"gains": {
 				"money_min": 30000,
@@ -21,7 +22,8 @@
 			"description": "Aggressive funding - higher amounts but requires strong reputation",
 			"costs": {
 				"attention": 2,
-				"reputation": 8
+				"reputation": 8,
+				"hour_type": "doors"
 			},
 			"gains": {
 				"money_min": 80000,
@@ -34,7 +36,8 @@
 			"name": "Business Loan",
 			"description": "Immediate funds via debt - creates future repayment obligation",
 			"costs": {
-				"attention": 1
+				"attention": 1,
+				"hour_type": "doors"
 			},
 			"gains": {
 				"money": 75000,
@@ -48,7 +51,8 @@
 			"description": "Government/foundation funding - requires published papers",
 			"costs": {
 				"attention": 1,
-				"papers": 1
+				"papers": 1,
+				"hour_type": "approvals"
 			},
 			"gains": {
 				"money_min": 50000,

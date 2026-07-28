@@ -7,7 +7,8 @@
 			"description": "Focused on AI safety and alignment research",
 			"costs": {
 				"money": 60000,
-				"attention": 1
+				"attention": 1,
+				"hour_type": "approvals"
 			},
 			"category": "hiring"
 		},
@@ -17,7 +18,8 @@
 			"description": "Advances AI capabilities (increases doom!)",
 			"costs": {
 				"money": 60000,
-				"attention": 1
+				"attention": 1,
+				"hour_type": "approvals"
 			},
 			"category": "hiring"
 		},
@@ -27,7 +29,8 @@
 			"description": "Improves compute efficiency",
 			"costs": {
 				"money": 50000,
-				"attention": 1
+				"attention": 1,
+				"hour_type": "approvals"
 			},
 			"category": "hiring"
 		},
@@ -37,7 +40,8 @@
 			"description": "Oversees a team of up to 8 researchers",
 			"costs": {
 				"money": 80000,
-				"attention": 1
+				"attention": 1,
+				"hour_type": "approvals"
 			},
 			"category": "hiring"
 		},
@@ -47,7 +51,8 @@
 			"description": "Add philosophical perspective to research (+5 reputation)",
 			"costs": {
 				"money": 70000,
-				"attention": 1
+				"attention": 1,
+				"hour_type": "approvals"
 			},
 			"category": "hiring"
 		},
@@ -57,7 +62,8 @@
 			"description": "Probes how models work internally (safety-aligned research)",
 			"costs": {
 				"money": 60000,
-				"attention": 1
+				"attention": 1,
+				"hour_type": "approvals"
 			},
 			"category": "hiring"
 		},
@@ -67,7 +73,8 @@
 			"description": "Aligns AI goals with human values (safety-aligned research)",
 			"costs": {
 				"money": 60000,
-				"attention": 1
+				"attention": 1,
+				"hour_type": "approvals"
 			},
 			"category": "hiring"
 		}

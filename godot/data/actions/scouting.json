@@ -6,7 +6,8 @@
 			"name": "Read the Literature",
 			"description": "Sit down with the arxiv firehose. Slow, free, and the only scouting that makes you better at the actual work.",
 			"costs": {
-				"attention": 1
+				"attention": 1,
+				"hour_type": "approvals"
 			},
 			"category": "scouting"
 		},
@@ -16,7 +17,8 @@
 			"description": "Drinks, badges, a talk you half-listen to. People remember you, and sometimes one of them is looking for a job.",
 			"costs": {
 				"attention": 1,
-				"money": 300
+				"money": 300,
+				"hour_type": "doors"
 			},
 			"category": "scouting"
 		},
@@ -25,7 +27,8 @@
 			"name": "Post Online",
 			"description": "Be loud. Hype is not respect -- it buys you attention from people who fund things and costs you standing with people who read things.",
 			"costs": {
-				"attention": 1
+				"attention": 1,
+				"hour_type": "approvals"
 			},
 			"category": "scouting"
 		}

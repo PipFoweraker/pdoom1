@@ -24,7 +24,8 @@
 			"description": "Conduct AI safety research",
 			"costs": {
 				"research": 10,
-				"attention": 1
+				"attention": 1,
+				"hour_type": "approvals"
 			},
 			"category": "research"
 		},
@@ -34,7 +35,8 @@
 			"description": "Advance AI capabilities",
 			"costs": {
 				"research": 10,
-				"attention": 1
+				"attention": 1,
+				"hour_type": "approvals"
 			},
 			"category": "research"
 		},
@@ -44,7 +46,8 @@
 			"description": "Publish research to raise global alarm (adopted safety concern)",
 			"costs": {
 				"research": 20,
-				"attention": 1
+				"attention": 1,
+				"hour_type": "approvals"
 			},
 			"category": "research"
 		},
@@ -70,7 +73,8 @@
 			"description": "Improve morale",
 			"costs": {
 				"money": 10000,
-				"attention": 1
+				"attention": 1,
+				"hour_type": "doors"
 			},
 			"category": "management",
 			"unlock_conditions": {
@@ -83,7 +87,8 @@
 			"description": "Comprehensive safety review",
 			"costs": {
 				"money": 40000,
-				"attention": 2
+				"attention": 2,
+				"hour_type": "audits"
 			},
 			"category": "research",
 			"unlock_conditions": {

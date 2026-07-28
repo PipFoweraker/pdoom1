@@ -536,10 +536,25 @@ func can_afford(costs: Dictionary) -> bool:
 
 
 func _cost_hour_type(costs: Dictionary) -> String:
-	"""Which founder hour type a cost dict bills. Data may name it explicitly with an
-	`hour_type` key ("planning" | "operating"); anything else is OPERATING (presence work).
-	Kept in ONE place so the later 4-way lane subdivides here, not at 40 call sites."""
+	"""Which founder hour token a cost dict bills. Data may name it explicitly with an
+	`hour_type` key -- either a 2-way FAMILY ("planning" | "operating") or a 4-way KIND
+	("doors" | "approvals" | "audits" | "reserve"); MonthPlan.family_of/kind_of resolve
+	either. Anything unrecognised is OPERATING (presence work).
+	This is ONE of the two subdivision points the 4-way lane widened (the other is
+	GameActions.hour_type); the 40 call sites stayed untouched.
+
+	DEFAULT ASYMMETRY -- KEPT DELIBERATELY (T2 judgment call 4, re-examined by this lane and
+	upheld). A bare cost dict handed to spend_resources defaults to OPERATING; a queued
+	ACTION defaults to PLANNING. Rationale unchanged: queuing is deciding, whereas an
+	un-typed subsystem charge (hiring, ledger, media) is somebody physically doing a thing.
+	The alternative -- one default everywhere -- would silently re-type either every
+	subsystem charge or every strategic card, i.e. a balance change disguised as a cleanup,
+	on the eve of the 2026-08-31 review. Both defaults are now pinned by tests so the split
+	cannot drift unnoticed; the real fix (every cost dict declares its type explicitly) is a
+	data pass, not a code change, and is tracked for post-review."""
 	var declared: String = String(costs.get("hour_type", MonthPlan.HOUR_OPERATING))
+	if MonthPlan.KIND_FAMILY.has(declared):
+		return declared
 	if declared == MonthPlan.HOUR_PLANNING:
 		return MonthPlan.HOUR_PLANNING
 	return MonthPlan.HOUR_OPERATING

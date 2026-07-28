@@ -38,11 +38,19 @@ static func attention_cost(action: Dictionary) -> int:
 
 
 static func hour_type(action: Dictionary) -> String:
-	"""Which founder hour type an action bills. Data may declare `costs.hour_type`; the
-	DEFAULT for a queued strategic action is PLANNING -- picking what the org does next is
-	planner mind, not presence (the #980 seam: that is exactly the part you keep while
-	away). Actions that are inherently presence work declare "operating" in their data."""
+	"""Which founder hour token an action bills. Data may declare `costs.hour_type` as either
+	a 2-way FAMILY ("planning" | "operating") or a 4-way KIND ("doors" | "approvals" |
+	"audits" | "reserve"); both are returned verbatim because MonthPlan.family_of/kind_of
+	resolve either. Unrecognised values fall back to the family default.
+
+	DEFAULT for a queued strategic action is PLANNING (booked as `approvals`) -- picking what
+	the org does next is planner mind, not presence (the #980 seam: that is exactly the part
+	you keep while away). Presence work declares "operating"/"doors"/"audits" in its data.
+	KEPT (not fixed) from T2 judgment call 4: this default is PLANNING while the bare-cost-
+	dict default in GameState._cost_hour_type is OPERATING. See that function's note."""
 	var declared: String = String(action.get("costs", {}).get("hour_type", MonthPlan.HOUR_PLANNING))
+	if MonthPlan.KIND_FAMILY.has(declared):
+		return declared
 	if declared == MonthPlan.HOUR_OPERATING:
 		return MonthPlan.HOUR_OPERATING
 	return MonthPlan.HOUR_PLANNING
