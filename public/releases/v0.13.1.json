@@ -1,0 +1,24 @@
+{
+  "version": "v0.13.1",
+  "version_number": "0.13.1",
+  "release_date": "2026-07-25T22:23:46+10:00",
+  "commit_hash": "409535dc0215d5e7bf4ff1b83025e8da98d7b4ef",
+  "is_prerelease": false,
+  "changelog": "Release v0.13.1\n\nSee CHANGELOG.md for details.",
+  "downloads": {
+    "windows": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.13.1/PDoom-Windows-v0.13.1.zip",
+    "linux": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.13.1/PDoom-Linux-v0.13.1.zip",
+    "mac": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.13.1/PDoom-macOS-v0.13.1.zip",
+    "source_zip": "https://github.com/PipFoweraker/pdoom1/archive/refs/tags/v0.13.1.zip",
+    "source_tar": "https://github.com/PipFoweraker/pdoom1/archive/refs/tags/v0.13.1.tar.gz"
+  },
+  "metadata": {
+    "engine": "Godot 4.5.1",
+    "platforms": [
+      "Windows",
+      "Linux",
+      "macOS"
+    ],
+    "tag_message": "fix(ui): tie staff-card blocker to panel lifetime -- fixes ESC dead-mouse soft-lock (non-forking, L2) (#887)\n\nThe staff ID card (EmployeePanel) raises a full-rect z=998 MOUSE_FILTER_STOP\nblocker behind the perks panel. The blocker was torn down ONLY by the panel's\nown click/close lambdas, and those lambdas free perks_panel FIRST -- so when\nESC frees the panel via MainUI._close_active_submenu (which frees active_dialog\n== perks_panel but never the blocker), the blocker is orphaned and swallows\nevery mouse click forever = dead UI. Double-opening stacks two unclosable\nblockers.\n\nFix (mirrors main_ui.gd _present_modal_dialog's tree_exited idiom): connect the\nblocker teardown to perks_panel.tree_exited so the blocker is freed whenever the\npanel leaves the tree by ANY path (ESC, replacing dialog, click, close). Also\nharden the close/click lambdas: guard each queue_free with is_instance_valid and\nfree the blocker BEFORE the panel so a freed panel can't strand the blocker even\nwithout the signal.\n\nNon-forking: pure UI-lifecycle fix, no game-state/board-key impact.\n\nRefs #886 (adversarial fuzz found it), #877 (scene-nav/chokepoint follow-up).\n\nCo-authored-by: Claude Opus 4.8 <noreply@anthropic.com>"
+  }
+}

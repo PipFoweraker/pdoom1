@@ -125,12 +125,21 @@ class ReleaseMetadataGenerator:
             "commit_hash": tag_info["commit"],
             "is_prerelease": is_prerelease,
             "changelog": changelog,
+            # Asset names must match what scripts/build_all_platforms.py actually
+            # produces and enhanced-release.yml actually uploads (build-windows/
+            # **/*.zip, build-linux/**/*.zip, build-mac/**/*.zip) -- NOT a guessed
+            # shape. Verified against the real v0.13.1 release asset list
+            # (issue #963: PDoom.exe / PDoom.x86_64 / pdoom-*-source.* were all
+            # 404s because no such assets are ever produced).
             "downloads": {
-                "windows": f"{base_url}/PDoom.exe",
-                "linux": f"{base_url}/PDoom.x86_64",
-                "mac": f"{base_url}/PDoom.app.zip",
-                "source_zip": f"{base_url}/pdoom-{version_num}-source.zip",
-                "source_tar": f"{base_url}/pdoom-{version_num}-source.tar.gz",
+                "windows": f"{base_url}/PDoom-Windows-{version}.zip",
+                "linux": f"{base_url}/PDoom-Linux-{version}.zip",
+                "mac": f"{base_url}/PDoom-macOS-{version}.zip",
+                # GitHub auto-generates these codeload archives for every tag;
+                # they are not uploaded release assets, so this URL shape works
+                # even though no matching file appears in `gh release view`.
+                "source_zip": f"https://github.com/{github_repo}/archive/refs/tags/{version}.zip",
+                "source_tar": f"https://github.com/{github_repo}/archive/refs/tags/{version}.tar.gz",
             },
             "metadata": {
                 "engine": "Godot 4.5.1",
