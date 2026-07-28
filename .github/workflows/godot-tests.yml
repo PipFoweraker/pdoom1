@@ -118,14 +118,23 @@ jobs:
 
   simulation-tests:
     # SLOW suite: full-game / replay / determinism simulations (~3 min).
-    # Kept VISIBLE but non-blocking initially (not wired into Test Summary and
-    # not a required status check) -- promote to required once it is stable in
-    # CI. continue-on-error lets a failure show as an annotation without failing
-    # the overall run. (#629 runtime-split requirement.)
-    name: Simulation Tests (slow, non-blocking)
+    # Kept VISIBLE but non-blocking: this job is NOT in the required-checks
+    # list (see branch protection -- only "GDScript Syntax Check", "Unit
+    # Tests" and "quality-checks" are required), so it never blocks a merge
+    # regardless of its own conclusion.
+    #
+    # #964: deliberately does NOT use continue-on-error. continue-on-error
+    # makes a failed job report a green check in the PR checks list (GitHub
+    # hides the failure behind success) -- that is exactly how the sim tier
+    # went red on 5 straight main-branch runs unnoticed (#964). Letting the
+    # job fail for real gives a plain red X in the checks list -- visible in
+    # one click -- while staying non-blocking because it is not a required
+    # context. Failure here does not fail the workflow's required jobs.
+    name: Simulation Tests (slow, non-blocking, SIM-TIER)
     runs-on: ubuntu-latest
     needs: syntax-check
-    continue-on-error: true
+    outputs:
+      sim_conclusion: ${{ steps.run_sim.outcome }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v7
@@ -142,15 +151,99 @@ jobs:
           python-version: '3.11'
 
       - name: Run simulation suite
+        id: run_sim
         run: |
-          python scripts/run_godot_tests.py --simulation --ci-mode --min-tests 80
+          python scripts/run_godot_tests.py --simulation --ci-mode --min-tests 80 \
+            --summary-file godot/test-results-simulation-summary.md
 
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v7
         with:
           name: simulation-test-results
-          path: godot/test-results-simulation.xml
+          path: |
+            godot/test-results-simulation.xml
+            godot/test-results-simulation-summary.md
+          if-no-files-found: warn
+
+  sim-tier-pr-status:
+    # #964 half 2: surface non-blocking sim-tier red on PRs without making it
+    # a required check. Job summary (GITHUB_STEP_SUMMARY, written by
+    # run_godot_tests.py in the job above) already gives a one-click view on
+    # the Actions run page; this job additionally posts/updates a single
+    # PR comment so the red is visible on the PR itself, not just in Actions.
+    # Update-in-place via a hidden marker -- never spams a new comment per push.
+    name: Sim Tier PR Status
+    runs-on: ubuntu-latest
+    needs: simulation-tests
+    if: always() && github.event_name == 'pull_request'
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Download sim-tier summary
+        if: always()
+        uses: actions/download-artifact@v8
+        continue-on-error: true  # artifact upload itself can fail; comment step must still run
+        with:
+          name: simulation-test-results
+          path: sim-tier-artifact
+
+      - name: Post or update PR comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const marker = '<!-- sim-tier-pr-status -->';
+            const outcome = '${{ needs.simulation-tests.outputs.sim_conclusion }}';
+
+            let body;
+            if (outcome === 'failure') {
+              let details = '';
+              try {
+                details = fs.readFileSync('sim-tier-artifact/test-results-simulation-summary.md', 'utf8');
+              } catch (e) {
+                details = '(summary file not found -- see the Simulation Tests job log/summary directly.)';
+              }
+              body = marker + '\n' +
+                '## [!] SIM TIER RED\n\n' +
+                'The non-blocking Simulation Tests job failed on this PR. ' +
+                'This does NOT block merge (not a required check), but is a ' +
+                'real signal -- see [ADR context / issue #964](https://github.com/' +
+                context.repo.owner + '/' + context.repo.repo + '/issues/964).\n\n' +
+                details;
+            } else if (outcome === 'success') {
+              body = marker + '\n' + 'SIM TIER: simulation tests passed on this PR.';
+            } else {
+              // cancelled / skipped / unknown -- don't create noise, but update
+              // an existing comment so it doesn't say stale RED forever.
+              body = marker + '\n' + 'SIM TIER: run did not complete cleanly (outcome: ' + outcome + '). Check the Simulation Tests job.';
+            }
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              per_page: 100,
+            });
+            const existing = comments.find(c => c.body && c.body.includes(marker));
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else if (outcome === 'failure') {
+              // Only create a NEW comment for the red case -- a passing sim
+              // tier on a PR that never went red should not add clutter.
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }
 
   test-summary:
     name: Test Summary

@@ -125,6 +125,9 @@ temp_package/
 # GUT JUnit test result artifacts (written by scripts/run_godot_tests.py)
 godot/test-results-*.xml
 test-results-*.xml
+# --summary-file markdown output (same script, #964 sim-tier surfacing)
+godot/test-results-*-summary.md
+test-results-*-summary.md
 
 # Asset generation pipeline (raw generated images - keep only promoted assets)
 art_generated/
