@@ -94,7 +94,7 @@ func test_format_costs_inline_free_when_empty():
 func test_format_costs_inline_lists_all_known_resources():
 	var ui = _main_ui_script.new()
 	var text: String = ui._format_costs_inline({"attention": 2, "money": 8000, "reputation": 1})
-	assert_string_contains(text, "2 AP")
+	assert_string_contains(text, "2 Attention")
 	assert_string_contains(text, "$8,000")
 	assert_string_contains(text, "1 Rep")
 	ui.free()

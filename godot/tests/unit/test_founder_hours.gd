@@ -110,21 +110,26 @@ func test_cannibalizing_a_window_converts_planning_into_operating():
 	var mp := _plan(20, 0.5)
 	mp.queue_strategic("big_bet", 8, 3, 0)
 	assert_eq(mp.hours_spent[MonthPlan.HOUR_PLANNING], 8, "planning committed to the bet")
-	var pay: Dictionary = mp.pay_by_cannibalizing(12)
+	# 14 exceeds the 12 un-committed Attention, so the queued bet MUST be sacrificed first.
+	var pay: Dictionary = mp.pay_by_cannibalizing(14)
 	assert_true(pay.get("paid", false), "the window is paid")
 	assert_eq(pay.get("cancelled", []).size(), 1, "the queued bet was sacrificed")
-	assert_eq(mp.attention_spent, 12, "scalar reflects the window only")
-	assert_eq(_sum(mp.hours_spent), 12, "invariant survives the cancel-then-spend path")
+	assert_eq(mp.attention_spent, 14, "scalar reflects the window only (the bet was refunded)")
+	assert_eq(_sum(mp.hours_spent), 14, "invariant survives the cancel-then-spend path")
 	assert_eq(mp.hours_spent[MonthPlan.HOUR_OPERATING], 10, "operating drained first")
-	assert_eq(mp.hours_spent[MonthPlan.HOUR_PLANNING], 2, "the rest came out of planning")
+	assert_eq(mp.hours_spent[MonthPlan.HOUR_PLANNING], 4, "the rest came out of planning")
 
 
-func test_reserve_is_gated_on_operating_hours():
-	# The crisp reserve is presence capacity by definition -- you cannot hold back more
-	# firefighting than you have operating hours for.
+func test_reserve_is_deliberately_untyped():
+	# DESIGN CALL (see MonthPlan.set_reserve): the crisp reserve is NOT capped at the
+	# operating pool. The reserve is the emergency channel, and an emergency is exactly
+	# where the type wall is allowed to break (operating already overflows into planning).
+	# Capping the pre-declared reserve would forbid at plan time what the overflow rule
+	# permits at crisis time. This test exists so that call cannot be reverted silently.
 	var mp := _plan(20, 0.5)
-	assert_true(mp.set_reserve(10), "reserving the whole operating pool is legal")
-	assert_false(mp.set_reserve(11), "reserving past it is not, even with planning free")
+	assert_true(mp.set_reserve(14), "reserving past the operating pool is legal")
+	assert_eq(mp.available(), 6, "the reserve still competes with plan-speed work")
+	assert_eq(_sum(mp.hours_spent), mp.attention_spent, "reserving books no typed hours")
 
 
 func test_grant_hours_buys_presence_not_planner_mind():

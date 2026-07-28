@@ -146,13 +146,15 @@ func set_reserve(amount: int) -> bool:
 	# The new reserve must fit within total minus what's spent on strategic work.
 	if amount > attention_total - attention_spent:
 		return false
-	# T2 (2-way hour typing): the crisp reserve is OPERATING capacity BY DEFINITION -- it
-	# exists to be present for response windows. You cannot hold back more firefighting
-	# capacity than you have operating hours left. (reserve_used deliberately does NOT book
-	# into hours_spent: the invariant kept here is sum(hours_spent) == attention_spent, and
-	# reserve draw is accounted by reserve_used against this operating-gated hold.)
-	if amount > hours_available(HOUR_OPERATING):
-		return false
+	# T2 DESIGN CALL: the crisp reserve is deliberately UNTYPED, and is NOT capped at the
+	# operating pool. Reason: the reserve is the emergency channel, and an emergency is
+	# precisely where the type wall is allowed to break -- pay_by_cannibalizing already lets
+	# OPERATING overflow into PLANNING hours. Capping the pre-declared reserve at operating
+	# hours would forbid at plan time exactly what the overflow rule permits at crisis time,
+	# which is incoherent (and would silently truncate the implicit end-of-month reserve).
+	# Consequence for the invariant: reserve_used does NOT book into hours_spent, so
+	# sum(hours_spent) == attention_spent continues to hold; the reserve is accounted
+	# separately by attention_reserved / reserve_used.
 	attention_reserved = amount
 	return true
 
