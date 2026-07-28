@@ -332,6 +332,47 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+  # Anti-rot guard (issue #963): the generator has drifted from the real
+  # build/upload pipeline before (PDoom.exe / PDoom.x86_64 were 404s against
+  # every release since the versioned-zip pipeline landed) and nothing
+  # caught it until a human noticed. Runs AFTER create-github-release so the
+  # asset URLs actually exist to check. Blocking: a future generator/build
+  # mismatch fails this job (and therefore the workflow run) instead of
+  # silently shipping broken URLs.
+  verify-release-urls:
+    name: Verify Release Download URLs
+    runs-on: ubuntu-latest
+    needs: [create-github-release]
+    if: needs.create-github-release.result == 'success'
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.11'
+
+      - name: Download feed artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: release-feeds
+          path: public/releases/
+
+      - name: Verify this release's download URLs resolve
+        env:
+          RELEASE_VERSION: ${{ github.event.inputs.version || github.ref_name }}
+        run: |
+          python scripts/verify_release_urls.py --file "public/releases/${RELEASE_VERSION}.json"
+
+      - name: Sweep committed feed index for rotted entries (report-only)
+        # Report-only on purpose: an OLD entry going 404 (e.g. a release that
+        # was later deleted, like v0.9.0) is a separate, non-urgent cleanup
+        # concern, not something that should block THIS release from
+        # shipping. The step above is what's blocking for the new tag.
+        continue-on-error: true
+        run: |
+          python scripts/verify_release_urls.py --sweep public/releases/releases.json
+
   # Explicitly drive the website version sync. Required because this workflow
   # publishes the release with GITHUB_TOKEN, and a release published by a
   # GITHUB_TOKEN-authored action does NOT fire the `release: published` event

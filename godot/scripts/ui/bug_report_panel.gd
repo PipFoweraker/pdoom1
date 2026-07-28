@@ -183,7 +183,7 @@ func _on_report_saved(filepath: String):
 	# truth (was implying an auto-filed GitHub issue) and surface the path + an email
 	# so tester feedback actually reaches us.
 	var global_path := ProjectSettings.globalize_path(filepath)
-	show_confirmation("Thanks! Saved locally to:\n%s\n\nThis build does not send reports automatically yet -- please email that file to pip@beacongcr.org so it reaches us." % global_path)
+	show_confirmation("Thanks! Saved locally to:\n%s\n\nThis build does not send reports automatically yet -- please email that file to team@pdoom1.com so it reaches us." % global_path)
 
 	# Reset form after a longer delay so the path is readable.
 	await get_tree().create_timer(6.0).timeout
