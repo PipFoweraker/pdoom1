@@ -14,26 +14,35 @@ static func get_all_upgrades() -> Array[Dictionary]:
 			"category": "infrastructure"
 		},
 		{
+			# 970: "less likely to lose staff on low funds" was unbacked -- no low-funds
+			# staff-attrition system exists to hook into. Inventing one is a design call
+			# (Pip's), not a silent reinterpretation onto an unrelated system. Re-priced
+			# to 0 and relabelled as flavor-only pending that call.
 			"id": "comfy_chairs",
 			"name": "Buy Comfy Office Chairs",
-			"description": "Staff morale up (less likely to lose staff on low funds)",
-			"cost": 120000,
+			"description": "Nicer office chairs. Flavor only for now -- no mechanical effect (#970).",
+			"cost": 0,
 			"effect_key": "comfy_chairs",
 			"category": "office"
 		},
 		{
 			"id": "secure_cloud",
 			"name": "Secure Cloud Provider",
-			"description": "Reduces doom spikes from lab breakthroughs",
+			"description": "Dampens player-frontier growth from capability breakthroughs",
 			"cost": 160000,
 			"effect_key": "secure_cloud",
 			"category": "infrastructure"
 		},
 		{
+			# 970: "cash flow tracking" and "prevents board oversight" were both unbacked --
+			# board_seat ledger riders are explicitly inert-by-design (ledger.gd: "consequences
+			# are owned by other lanes... L5's boundary forbids doom conversion here"), so
+			# there is nothing real to prevent yet. Re-priced to 0 and relabelled pending a
+			# real governance/board-oversight mechanic (Pip's design call).
 			"id": "accounting_software",
 			"name": "Accounting Software",
-			"description": "Enables cash flow tracking, prevents board oversight",
-			"cost": 500000,
+			"description": "Basic bookkeeping tooling. Flavor only for now -- no mechanical effect (#970).",
+			"cost": 0,
 			"effect_key": "accounting_software",
 			"category": "management"
 		},
@@ -96,27 +105,36 @@ static func purchase_upgrade(upgrade_id: String, state: GameState) -> Dictionary
 
 	match upgrade_id:
 		"upgrade_computer":
-			# Note: Effect is applied passively in research actions
+			# #970: wired -- GameActions.execute_action("capability_research", ...) reads
+			# has_upgrade("upgrade_computer") and adds the flat research bonus.
 			result["message"] += " Research actions now more effective!"
 
 		"comfy_chairs":
-			# Passive morale effect
-			result["message"] += " Staff morale improved!"
+			# #970: STOP SELLING -- no low-funds staff-attrition system exists to back
+			# "less likely to lose staff on low funds". Re-priced to 0 (see get_all_upgrades);
+			# flavor-only, no gameplay claim.
+			result["message"] += " Chairs installed. Purely cosmetic for now."
 
 		"secure_cloud":
-			# Passive doom mitigation
+			# #970: wired -- DoomSystem._advance_intermediaries reads has_upgrade("secure_cloud")
+			# and dampens player-frontier growth from capabilities researchers.
 			result["message"] += " Research breakthroughs less risky!"
 
 		"accounting_software":
-			# Unlocks cash flow tracking
-			result["message"] += " Cash flow tracking enabled!"
+			# #970: STOP SELLING -- "cash flow tracking" / "prevents board oversight" had no
+			# backing system (board_seat riders are explicitly inert-by-design). Re-priced to
+			# 0 (see get_all_upgrades); flavor-only, no gameplay claim.
+			result["message"] += " Software installed. Purely cosmetic for now."
 
 		"hpc_cluster":
 			state.add_resources({"compute": 20})
+			# #970: wired -- GameActions.execute_action("capability_research", ...) reads
+			# has_upgrade("hpc_cluster") and applies the +25% research multiplier.
 			result["message"] += " +20 compute, research 25% more effective!"
 
 		"research_automation":
-			# Passive research boost with compute
+			# #970: wired -- GameActions.execute_action("capability_research", ...) reads
+			# has_upgrade("research_automation") and adds a compute-scaled research bonus.
 			result["message"] += " Research scales with compute!"
 
 		"cat_adoption":

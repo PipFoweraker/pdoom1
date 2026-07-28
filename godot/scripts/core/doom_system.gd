@@ -206,8 +206,15 @@ func _advance_intermediaries(state: GameState) -> void:
 				"safety", "interpretability", "alignment":
 					safety_workers += 1
 
+	# #970: secure_cloud claimed "reduces doom spikes from lab breakthroughs" with zero
+	# backing code. Wired here -- it dampens the player-frontier growth rate driven by
+	# productive capability researchers (the actual "breakthrough" -> doom-relevant channel).
+	var effective_cap_gain := cap_gain
+	if state.has_upgrade("secure_cloud"):
+		effective_cap_gain *= 1.0 - Balance.num("upgrades.secure_cloud.frontier_dampen", 0.15)
+
 	var pf: float = float(state.frontier_capability.get("player", 0.0))
-	pf += cap_workers * cap_gain
+	pf += cap_workers * effective_cap_gain
 	state.frontier_capability["player"] = pf
 	state.safety_absorption += safety_workers * absorb_gain
 	state.global_alarm += safety_workers * alarm_gain

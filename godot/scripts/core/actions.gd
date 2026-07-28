@@ -405,6 +405,15 @@ static func execute_action(action_id: String, state: GameState) -> Dictionary:
 		"capability_research":
 			# Capability research generates research points
 			var research_gained = state.capability_researchers * 5.0
+			# #970: upgrade_computer/hpc_cluster/research_automation used to print effect
+			# claims with zero backing code. Wired here -- the only action that GENERATES
+			# research points, matching each upgrade's own description text.
+			if state.has_upgrade("upgrade_computer"):
+				research_gained += Balance.num("upgrades.upgrade_computer.research_bonus", 1.0)
+			if state.has_upgrade("hpc_cluster"):
+				research_gained *= 1.0 + Balance.num("upgrades.hpc_cluster.research_multiplier", 0.25)
+			if state.has_upgrade("research_automation"):
+				research_gained += state.compute * Balance.num("upgrades.research_automation.compute_scale", 0.02)
 			state.add_resources({"research": research_gained})
 			result["message"] = "Capability research (+%0.1f research)" % research_gained
 
@@ -783,10 +792,14 @@ static func execute_action(action_id: String, state: GameState) -> Dictionary:
 			result["message"] = "Grant approved! Received %s" % GameConfig.format_money(total)
 
 		"hire_ethicist":
-			# Ethicist improves safety research effectiveness
+			# #970: "improves safety research" was an unbacked claim (no ethicist-count
+			# state field, nothing read it -- comment admitted it: "Would track ethicist
+			# count in expanded state"). Tracking a persistent ethicist headcount and wiring
+			# it into the safety-research effectiveness stream is a real design question
+			# (does it stack? decay? cap?) -- Pip's call, not stripped in silently. Only the
+			# +5 reputation, which does fire, is claimed here.
 			state.add_resources({"reputation": 5})
-			# Note: Would track ethicist count in expanded state
-			result["message"] = "Hired AI ethicist (+5 reputation, improves safety research)"
+			result["message"] = "Hired AI ethicist (+5 reputation)"
 
 	# === RISK SYSTEM INTEGRATION ===
 	# Apply risk contributions for successful actions
