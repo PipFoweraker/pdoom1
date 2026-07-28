@@ -41,10 +41,8 @@ func _show_hiring_submenu():
 	every action routes through the existing GameManager.hiring_* delegates and the panel
 	reads the live Researcher objects in state.candidate_pool / state.researchers, so
 	reveal-gated card data (get_card_data) shows exactly what interviewing has earned."""
-	if host.active_dialog != null and is_instance_valid(host.active_dialog):
-		host.active_dialog.queue_free()
-		host.active_dialog = null
-		host.active_dialog_buttons = []
+	# #877: free-first moved into ModalStack (via host._present_modal_dialog) -- it pops the
+	# incumbent top-first, or refuses this open when an unanswered event holds the top.
 
 	var st = host.game_manager.state
 	if st == null:
@@ -409,10 +407,8 @@ func _show_offer_dialog(candidate_id: String) -> void:
 	var cand = st.hiring.find_pool_candidate(st, candidate_id)
 	if cand == null:
 		return
-	if host.active_dialog != null and is_instance_valid(host.active_dialog):
-		host.active_dialog.queue_free()
-		host.active_dialog = null
-		host.active_dialog_buttons = []
+	# #877: free-first moved into ModalStack (via host._present_modal_dialog) -- it pops the
+	# incumbent top-first, or refuses this open when an unanswered event holds the top.
 
 	var dialog := Panel.new()
 	var dsize := Vector2(460, 470)

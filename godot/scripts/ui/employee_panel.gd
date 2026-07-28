@@ -217,6 +217,11 @@ func show_staff_id_card(data: Dictionary) -> void:
 
 	# Add panel
 	overlay_parent.add_child(perks_panel)
+	# #877: pin the blocker to the CARD's lifetime. Both close lambdas above/below capture
+	# perks_panel, so once anything else freed the card (ESC via MainUI, a replacing modal)
+	# neither lambda could ever run again and the z=998 MOUSE_FILTER_STOP blocker was
+	# stranded over the whole board -- a dead-mouse soft-lock with nothing visible to blame.
+	perks_panel.tree_exited.connect(blocker.queue_free)
 	perks_panel.z_index = 999
 	perks_panel.visible = true
 

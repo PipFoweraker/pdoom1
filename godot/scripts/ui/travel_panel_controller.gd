@@ -42,12 +42,9 @@ func _show_travel_submenu():
 	"""Show popup dialog with travel/conference options - Issue #468"""
 	print("[MainUI] === TRAVEL SUBMENU STARTING ===")
 
-	# Close any existing dialog first
-	if host.active_dialog != null and is_instance_valid(host.active_dialog):
-		print("[MainUI] Closing existing dialog...")
-		host.active_dialog.queue_free()
-		host.active_dialog = null
-		host.active_dialog_buttons = []
+	# #877: the local free-first block moved into ModalStack (via host._present_modal_dialog),
+	# so the incumbent is popped top-first -- or this open is refused outright when an
+	# unanswered event holds the top, instead of stranding that event's blocker.
 
 	# Use Panel
 	var dialog = Panel.new()
@@ -404,8 +401,10 @@ func _show_conference_trip_dialog() -> void:
 		host.active_dialog = null)
 	vbox.add_child(cancel)
 
-	host._present_modal_dialog(dialog)
+	# #877: assign BEFORE presenting -- the chokepoint reads the slot and re-asserts it if
+	# the open is refused (an unanswered event outranks every other modal).
 	host.active_dialog = dialog
+	host._present_modal_dialog(dialog)
 
 
 func _on_conference_trip_committed(conf_id: String, dialog: Control) -> void:
