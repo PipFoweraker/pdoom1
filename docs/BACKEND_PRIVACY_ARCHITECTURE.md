@@ -374,7 +374,7 @@ third-party analytics or tracking services.
 
 ## Contact
 
-Questions about your data: privacy@pdoom.com
+Questions about your data: team@pdoom1.com
 ```
 
 ## Implementation Checklist
