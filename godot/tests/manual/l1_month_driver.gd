@@ -37,13 +37,14 @@ const DEFAULT_MAX_MONTHS := 420  # ADR-0002 mortality guard: > the 400-month har
 # ============================================================================
 
 static func ap_cost(id: String) -> int:
-	# L2 (ADR-0011): the action's legacy action_points cost IS its Attention cost.
-	return int(GameActions.get_action_by_id(id).get("costs", {}).get("action_points", 1))
+	# T2 (ADR-0011): the founder cost of an action is its Attention cost.
+	return maxi(1, GameActions.attention_cost(GameActions.get_action_by_id(id)))
 
 
 static func non_ap_costs(id: String) -> Dictionary:
 	var c: Dictionary = GameActions.get_action_by_id(id).get("costs", {}).duplicate()
-	c.erase("action_points")
+	c.erase("attention")
+	c.erase("hour_type")
 	return c
 
 

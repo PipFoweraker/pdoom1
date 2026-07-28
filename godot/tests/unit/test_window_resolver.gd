@@ -18,7 +18,7 @@ func _deferrable_window() -> Dictionary:
 		"event_class": "deferrable",
 		"source_id": "legal_counsel",
 		"options": [
-			{"id": "settle", "costs": {"money": 20000, "action_points": 1}, "effects": {"reputation": 5}, "message": "Settled"},
+			{"id": "settle", "costs": {"money": 20000, "attention": 1}, "effects": {"reputation": 5}, "message": "Settled"},
 			{"id": "let_it_ride", "costs": {}, "effects": {"reputation": -3}, "message": "Ignored the notice"},
 		],
 		"window": {"attention_cost": 2, "handle_option": "settle", "ignore_option": "let_it_ride", "defer": {"factory": "loan", "amount": 20000}},
@@ -47,7 +47,8 @@ func test_handle_from_reserve_fails_without_enough_reserve():
 
 func test_handle_by_cannibalizing_ignores_legacy_ap():
 	var s := _state()
-	s.action_points = 0  # prove Attention, not AP, is the window currency (AP stripped)
+	# T2: there is no AP pool at all -- the window currency is Attention, and the option's
+	# own attention cost is stripped so the founder is charged exactly once.
 	s.month_plan.set_reserve(0)  # 20 available
 	var r := WindowResolver.resolve(s, s.month_plan, _deferrable_window(), "handle_cannibalize")
 	assert_true(r.success, "cannibalizing free capacity handles the window even with zero AP")

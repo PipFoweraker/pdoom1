@@ -163,13 +163,22 @@ func test_real_away_window_produces_a_readable_backlog():
 # ---------------------------------------------------------------------------
 # The costs that keep this from being a free button
 # ---------------------------------------------------------------------------
-func test_trip_consumes_all_remaining_founder_attention():
-	var before: int = state.month_plan.available()
-	assert_gt(before, 0, "the founder starts the month with Attention to lose")
+func test_trip_consumes_all_remaining_operating_hours():
+	# Pip ruling 2026-07-27 1555 ("attending consumes the founder's remaining capacity"),
+	# REFINED by his #980 noticing and cashed out by T2's 2-way founder hours: being away is
+	# a loss of OPERATOR PRESENCE, not of PLANNER MIND. So the trip must drain the operating
+	# pool to nothing, and must NOT touch planning hours -- next month's direction is still
+	# decidable from a hotel room. The anti-free-button property is preserved: every form of
+	# presence work (windows, hiring, interviews, travel) is dead for the rest of the month.
+	var before_operating: int = state.month_plan.hours_available(MonthPlan.HOUR_OPERATING)
+	var before_planning: int = state.month_plan.hours_available(MonthPlan.HOUR_PLANNING)
+	assert_gt(before_operating, 0, "the founder starts the month with presence to lose")
 	var trip: Dictionary = ConferenceTrip.run_trip(state, controller, "safety_retreat")
 	assert_true(bool(trip.get("success", false)), "committed")
-	assert_eq(state.month_plan.available(), 0,
-		"no Attention is left to plan with from the road (Pip ruling 2026-07-27 1555)")
+	assert_eq(state.month_plan.hours_available(MonthPlan.HOUR_OPERATING), 0,
+		"no operating hours are left -- the founder is not in the building")
+	assert_eq(state.month_plan.hours_available(MonthPlan.HOUR_PLANNING), before_planning,
+		"planner mind survives the trip (#980)")
 	assert_gt(int(trip.get("attention_consumed", 0)), 0, "the cost is reported back to the player")
 
 

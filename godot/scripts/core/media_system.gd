@@ -231,18 +231,19 @@ func execute_press_release(game_state) -> Dictionary:
 
 func execute_exclusive_interview(game_state) -> Dictionary:
 	"""
-	Execute Exclusive Interview action (5 reputation, 1 AP)
+	Execute Exclusive Interview action (5 reputation, 1 operating hour)
 	High-impact story with small risk of backfire
 	"""
 	if game_state.reputation < 10.0:
 		return {"success": false, "message": "Requires 10+ reputation"}
 
-	if game_state.action_points < 1:
-		return {"success": false, "message": "Insufficient AP"}
+	# T2: an interview is OPERATING work -- you are in the room, on the record.
+	if game_state.month_plan == null or not game_state.month_plan.can_spend_hours(1, MonthPlan.HOUR_OPERATING):
+		return {"success": false, "message": "Insufficient Attention (1 operating hour)"}
 
-	# Costs reputation and AP
+	# Costs reputation and Attention
 	game_state.reputation -= 5.0
-	game_state.action_points -= 1
+	game_state.month_plan.spend_attention(1, MonthPlan.HOUR_OPERATING)
 
 	# Risk of backfire (10% chance)
 	var backfire = rng.randf() < 0.1

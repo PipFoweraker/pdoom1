@@ -35,7 +35,7 @@ func update_resources(state: Dictionary):
 	resources["papers"]["value"] = state.get("papers_published", 0)
 	resources["reputation"]["value"] = state.get("reputation", 0)
 	resources["doom"]["value"] = state.get("doom", 0)
-	resources["ap"]["value"] = state.get("action_points", 0)
+	resources["ap"]["value"] = state.get("attention", 0)
 
 	_update_display()
 

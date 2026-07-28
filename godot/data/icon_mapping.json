@@ -222,7 +222,7 @@
     "research": "res://assets/icons/resources/resource_research_points_64.png",
     "papers": "res://assets/icons/actions_research/action_research_formal_verification_64.png",
     "reputation": "res://assets/icons/resources/resource_reputation_64.png",
-    "action_points": "res://assets/icons/resources/resource_action_points_64.png"
+    "attention": "res://assets/icons/resources/resource_action_points_64.png"
   },
   "decorative": {
     "corner_top_left": "res://assets/icons/decorative_corners/ui_corner_top_left_64.png",

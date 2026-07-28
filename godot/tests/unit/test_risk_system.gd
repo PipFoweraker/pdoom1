@@ -253,7 +253,6 @@ func test_capability_research_adds_risk():
 	state.money = 100000
 	state.compute = 100
 	state.research = 20  # Need research to spend on capability research
-	state.action_points = 3  # Need AP to execute action
 	state.capability_researchers = 2  # Need researchers to do research
 
 	var initial_cap = state.risk_system.pools["capability_overhang"]

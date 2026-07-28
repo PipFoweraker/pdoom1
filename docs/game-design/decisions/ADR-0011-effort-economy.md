@@ -132,3 +132,58 @@ breaks priced in, logged as lessons).
 Founder-hour-typing lane itself (the mechanism that spends the 4-way split)
 is scheduled **Tuesday** -- it consumes T1's merged substrate and was
 deliberately not parallelized with T1 the same night.
+
+## Amendment 2026-07-28 -- T2 landed: AP deleted in code, 2-way hours live
+
+Build record for the T2 lane. The Decision section above is unchanged; this
+records what shipped and the calls the lane had to make.
+
+**(d) The AP pool is DELETED in code**, closing amendment (a). Gone:
+`GameState.action_points` / `max_action_points` / `committed_ap` /
+`reserved_ap` / `used_event_ap` and their reserve methods;
+`turn_manager._step_grant_action_points` (there is now NO per-turn founder
+grant of any kind -- point 1's "the pool illusion dies" is now structural,
+not a convention); the Balance keys `starting_resources.action_points` and
+`action_points.per_staff`. The cost key in all action / event / scenario
+data is `attention` (72 keys, 13 files). `action_points` survives ONLY as a
+read-only alias in `GameActions.attention_cost()` for content that lags the
+code; nothing writes it. Difficulty now scales the monthly Attention grant
+(24 / 20 / 16) rather than a per-turn cap. Removing the grant step is
+RNG-safe -- it drew nothing from `state.rng`, so recorded replay streams are
+unchanged.
+
+**(e) 2-way founder hours shipped as the floor**, ahead of the 4-way split
+ruled in (c). Every Attention spend is **PLANNING** (planner mind: queuing
+strategic work, direction, approvals) or **OPERATING** (presence: response
+windows, hiring loop, travel, interviews). Typed pools are **additive
+accounting over the authoritative scalar** -- the shape N2 used for typed
+reputation -- so `attention_total`/`attention_spent` stay authoritative and
+every caller that only knows the aggregate still works. **Overflow is
+asymmetric**: operating may eat planning hours (a crisis costs you the month
+you meant to spend thinking), planning may never eat operating (you cannot
+retroactively have been in the room). The 4-way split subdivides these two
+in a later lane; `GameActions.hour_type()` and `GameState._cost_hour_type()`
+are the single points that lane changes.
+
+This also closes the seam **#980** named: conference travel drains OPERATING
+hours only, with overflow forbidden. Away costs operator presence, not
+planner mind.
+
+**(f) The crisp reserve is deliberately UNTYPED.** Gating `set_reserve` on
+the operating pool was built, then reverted: the reserve is the emergency
+channel, and an emergency is exactly where the type wall is allowed to break
+(cannibalizing already lets operating overflow into planning). Capping the
+pre-declared reserve at operating hours forbids at PLAN time what the
+overflow rule permits at CRISIS time, and it silently truncated the implicit
+end-of-month reserve #789's hiring flow depends on. Pinned by a test so the
+call cannot be reverted silently.
+
+**(g) `staff_rider` re-expressed.** The contractor action used to mint +2
+into the founder pool, which point 1 forbids outright. It now grants +2
+OPERATING hours for the month (point 6: ops/admin staff reduce the founder-
+price of routine work -- bought presence). It cannot buy planner mind.
+
+**Balance is knowingly disturbed** under the day's audacity ruling: the
+planning pool is a real cap on strategic cards per month, and
+`attention.planning_share` (0.6) is hand-set, not swept. Re-price with the
+exploit-finder before the ADR's own review date.

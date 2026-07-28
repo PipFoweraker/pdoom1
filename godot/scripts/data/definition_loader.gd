@@ -6,7 +6,7 @@ class_name DefinitionLoader
 ##
 ## JSON parses every number as float; whole-number floats are normalized back to
 ## int so definitions behave identically to the old in-code literals (typed
-## GameState fields such as action_points reject float assignment). Non-whole
+## int-typed cost fields such as attention reject float assignment). Non-whole
 ## floats (probabilities, weights) are preserved.
 
 

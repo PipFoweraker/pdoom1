@@ -27,7 +27,7 @@ func _research_event() -> Dictionary:
 	return {
 		"id": "hist_some_paper", "name": "Some Paper", "type": "popup", "category": "research",
 		"options": [
-			{"id": "build_upon", "text": "Build", "costs": {"action_points": 1, "money": 10000},
+			{"id": "build_upon", "text": "Build", "costs": {"attention": 1, "money": 10000},
 			 "effects": {"research": 15, "doom": 1}, "message": "Advancing."},
 			{"id": "acknowledge", "text": "Ack", "costs": {}, "effects": {"research": 2}, "message": "Noted."},
 		],
@@ -38,7 +38,7 @@ func _policy_event() -> Dictionary:
 	return {
 		"id": "hist_some_policy", "name": "Some Policy", "type": "popup", "category": "policy",
 		"options": [
-			{"id": "support", "text": "Support", "costs": {"action_points": 1},
+			{"id": "support", "text": "Support", "costs": {"attention": 1},
 			 "effects": {"reputation": 5, "doom": -3}, "message": "Supported."},
 			{"id": "stay_neutral", "text": "Neutral", "costs": {}, "effects": {}, "message": "Neutral."},
 		],

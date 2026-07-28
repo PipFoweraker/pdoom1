@@ -6,7 +6,7 @@
 			"name": "Tour Offices",
 			"description": "Go and look at what is on the market. Three landlords will quote you terms; the offers stand for a while.",
 			"costs": {
-				"action_points": 1
+				"attention": 1
 			},
 			"category": "office"
 		},
@@ -15,7 +15,7 @@
 			"name": "Sign: Co-working corner",
 			"description": "Cheap in, cheap out, low ceiling. Requires a current quote (tour first).",
 			"costs": {
-				"action_points": 1
+				"attention": 1
 			},
 			"category": "office"
 		},
@@ -24,7 +24,7 @@
 			"name": "Sign: Walk-up office",
 			"description": "Middle of everything -- more desks, more rent, a year on the term. Requires a current quote.",
 			"costs": {
-				"action_points": 1
+				"attention": 1
 			},
 			"category": "office"
 		},
@@ -33,7 +33,7 @@
 			"name": "Sign: University annex",
 			"description": "The cheapest desk in town if you last two years. Big deposit. Requires a current quote.",
 			"costs": {
-				"action_points": 1
+				"attention": 1
 			},
 			"category": "office"
 		}

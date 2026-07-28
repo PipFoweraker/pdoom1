@@ -6,7 +6,7 @@
 			"name": "Networking",
 			"description": "Build relationships and connections in the AI safety community",
 			"costs": {
-				"action_points": 1
+				"attention": 1
 			},
 			"category": "influence"
 		},
@@ -16,7 +16,7 @@
 			"description": "Public outreach through press and social media",
 			"costs": {
 				"money": 30000,
-				"action_points": 2
+				"attention": 2
 			},
 			"category": "influence"
 		},
@@ -26,7 +26,7 @@
 			"description": "Advocate for AI safety regulation (costly but impactful)",
 			"costs": {
 				"money": 80000,
-				"action_points": 2
+				"attention": 2
 			},
 			"category": "influence"
 		},
@@ -35,7 +35,7 @@
 			"name": "Public Warning",
 			"description": "Warn public about AI risks - risky but high impact",
 			"costs": {
-				"action_points": 2,
+				"attention": 2,
 				"reputation": 15
 			},
 			"category": "influence"
@@ -46,7 +46,7 @@
 			"description": "Release safety research publicly for community benefit",
 			"costs": {
 				"papers": 3,
-				"action_points": 1
+				"attention": 1
 			},
 			"category": "influence"
 		}

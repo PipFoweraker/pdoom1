@@ -65,7 +65,7 @@ static func format_cost_summary(costs: Dictionary) -> String:
 			continue  # a zero/negative-cost entry is not a real cost -- don't clutter the face
 		if resource == "money":
 			parts.append(GameConfig.format_money(amount))
-		elif resource == "action_points":
+		elif resource == "attention":
 			parts.append("%d AP" % int(amount))
 		else:
 			parts.append("%d %s" % [int(amount), str(resource).capitalize()])
@@ -235,16 +235,16 @@ func _show_next_event() -> void:
 			var cost = costs[resource]
 			var available = 0
 
-			# Special handling for action_points - use total AP (FIX #453)
+			# Special handling for attention - read the month plan, not a per-turn pool
 			# Must match can_afford() logic in GameState:130
-			if resource == "action_points":
-				available = current_state.get("action_points", 0)
+			if resource == "attention":
+				available = current_state.get("attention", 0)
 			else:
 				available = current_state.get(resource, 0)
 
 			if available < cost:
 				can_afford = false
-				if resource == "action_points":
+				if resource == "attention":
 					missing_resources.append("AP (need %s, have %s available)" % [cost, available])
 				else:
 					missing_resources.append("%s (need %s, have %s)" % [resource, cost, available])

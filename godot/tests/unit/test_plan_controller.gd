@@ -6,7 +6,7 @@ extends GutTest
 ## refactor target: these tests pin the CURRENT behaviour so the extraction cannot drift it.
 ## Behaviour under test, verbatim from the pre-carve code:
 ##   - sum every cost resource across the queued actions,
-##   - EXCEPT "action_points" (tracked separately as Attention), which is skipped,
+##   - EXCEPT "attention" / "hour_type" (Attention is tracked on the month plan), which is skipped,
 ##   - an unknown action id resolves to {} costs and contributes nothing,
 ##   - an empty queue yields {}.
 
@@ -24,13 +24,13 @@ func _controller(queue: Array) -> PlanController:
 # --- Cost aggregation contract (PlanController.calculate_queued_costs) --------------------
 
 func test_money_costs_sum_and_ap_is_skipped():
-	# buy_compute {money:50000}; team_building {money:10000, action_points:1}
+	# buy_compute {money:50000}; team_building {money:10000, attention:1}
 	var costs: Dictionary = _controller([
 		{"id": "buy_compute", "name": "Buy Compute"},
 		{"id": "team_building", "name": "Team Building"},
 	]).calculate_queued_costs()
 	assert_eq(costs.get("money", 0), 60000, "money costs sum across queued actions")
-	assert_false(costs.has("action_points"), "action_points is tracked as Attention, never summed here")
+	assert_false(costs.has("attention"), "attention is tracked on the month plan, never summed here")
 
 
 func test_non_money_resource_costs_sum():
@@ -40,11 +40,11 @@ func test_non_money_resource_costs_sum():
 		{"id": "publish_paper", "name": "Publish Paper"},
 	]).calculate_queued_costs()
 	assert_eq(costs.get("research", 0), 30, "research costs aggregate")
-	assert_false(costs.has("action_points"), "AP still skipped for research-costing actions")
+	assert_false(costs.has("attention"), "Attention still skipped for research-costing actions")
 
 
 func test_reputation_cost_surfaces():
-	# fundraise_small {action_points:1, reputation:2}
+	# fundraise_small {attention:1, reputation:2}
 	var costs: Dictionary = _controller([
 		{"id": "fundraise_small", "name": "Small Fundraise"},
 	]).calculate_queued_costs()
@@ -64,7 +64,7 @@ func test_empty_queue_is_empty_costs():
 
 
 func test_ap_only_action_yields_empty_costs():
-	# take_loan {action_points:1} -- the only cost is AP, which is skipped.
+	# take_loan {attention:1} -- the only cost is Attention, which is skipped.
 	var costs: Dictionary = _controller([
 		{"id": "take_loan", "name": "Take Loan"},
 	]).calculate_queued_costs()

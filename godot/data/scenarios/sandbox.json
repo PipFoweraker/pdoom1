@@ -10,7 +10,7 @@
     "papers": 10,
     "reputation": 80,
     "doom": 30,
-    "action_points": 5,
+    "attention_per_month": 40,
     "stationery": 1000
   },
   "config": {

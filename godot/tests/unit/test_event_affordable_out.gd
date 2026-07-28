@@ -1,6 +1,6 @@
 extends GutTest
 ## Outs sweep (launch guard, L2). Every player-CHOICE event must offer at least one
-## AFFORDABLE OUT: an option that costs neither money nor action_points, so a money-
+## AFFORDABLE OUT: an option that costs neither money nor attention, so a money-
 ## constrained OR Attention-constrained player always has a legible legal response and
 ## can never be walled by an event. This guards two option sources:
 ##   1. the data-driven core events (GameEvents.get_all_events -> core_events.json), and
@@ -8,7 +8,7 @@ extends GutTest
 ## A month-controller auto-lapse safety net exists too, but this asserts the OUT is a real
 ## CHOICE the player can pick -- not something the engine silently does for them.
 
-const CONSTRAINED := ["money", "action_points"]
+const CONSTRAINED := ["money", "attention"]
 
 
 func _has_affordable_out(options: Array) -> bool:
@@ -37,7 +37,7 @@ func test_every_core_event_has_an_affordable_out():
 		if options.is_empty():
 			continue  # non-choice / auto-applied event -- no dead-end is possible
 		assert_true(_has_affordable_out(options),
-			"core event '%s' must offer an option costing neither money nor action_points" % String(ev.get("id", "?")))
+			"core event '%s' must offer an option costing neither money nor attention" % String(ev.get("id", "?")))
 
 
 func test_every_event_service_category_has_an_affordable_out():

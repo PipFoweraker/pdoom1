@@ -7,7 +7,7 @@
 			"description": "Buy struggling AI startup for talent and compute",
 			"costs": {
 				"money": 150000,
-				"action_points": 2
+				"attention": 2
 			},
 			"category": "strategic"
 		},
@@ -17,7 +17,7 @@
 			"description": "Slow down competitors (unethical, risky)",
 			"costs": {
 				"money": 100000,
-				"action_points": 3,
+				"attention": 3,
 				"reputation": 20
 			},
 			"category": "strategic"
@@ -28,7 +28,7 @@
 			"description": "Convert capability researchers to safety focus",
 			"costs": {
 				"money": 50000,
-				"action_points": 2
+				"attention": 2
 			},
 			"category": "strategic"
 		},
@@ -37,7 +37,7 @@
 			"name": "Grant Proposal",
 			"description": "Apply for government/foundation funding",
 			"costs": {
-				"action_points": 1,
+				"attention": 1,
 				"papers": 1
 			},
 			"category": "strategic"

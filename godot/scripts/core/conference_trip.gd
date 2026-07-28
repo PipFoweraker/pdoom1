@@ -252,22 +252,25 @@ static func _commit_open_turn(state: GameState, controller) -> void:
 
 
 static func _consume_founder_capacity(state: GameState) -> int:
-	"""Pip's 2026-07-27 1555 ruling: attending consumes ALL the founder's remaining
-	attention/action capacity for the away window.
+	"""Pip's 2026-07-27 1555 ruling: attending consumes the founder's remaining capacity for
+	the away window.
 
-	==== SEAM: ATTENTION MIGRATION ====
-	This is the ONLY place this lane touches the founder currency, and it spends through the
-	EXISTING mechanism (MonthPlan.spend_attention) rather than migrating anything. When L2
-	deletes the legacy AP pool and re-homes cost dicts onto Attention/staff (month_plan.gd
-	class docstring), this one function is the entire surface that has to move. Do not spread
-	capacity arithmetic through the trip loop.
+	==== SEAM CLOSED BY T2 (attention migration + 2-way founder hours) ====
+	Refined per Pip's #980 noticing: being away is a loss of OPERATOR PRESENCE, not of
+	PLANNER MIND. So the trip drains only the OPERATING pool, and drains it with overflow
+	FORBIDDEN -- travel must never eat the planning hours that let you decide next month's
+	direction from a hotel room. Everything else about the trip's cost model is unchanged.
 	Returns the Attention actually consumed (for the return panel's honesty about the cost)."""
 	if state.month_plan == null:
 		return 0
-	var free: int = state.month_plan.available()
+	# Cap the drain at whichever binds first: operating hours left, or un-reserved Attention.
+	var free: int = mini(
+		state.month_plan.hours_available(MonthPlan.HOUR_OPERATING),
+		state.month_plan.available()
+	)
 	if free <= 0:
 		return 0
-	state.month_plan.spend_attention(free)
+	state.month_plan.spend_attention(free, MonthPlan.HOUR_OPERATING)
 	return free
 
 

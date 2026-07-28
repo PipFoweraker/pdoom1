@@ -45,12 +45,12 @@ static func _resources_section(state) -> Dictionary:
 	lines.append("Stationery: %s" % _fnum(state.stationery))
 	lines.append("Tech debt:  %s" % _fnum(state.technical_debt))
 	var avail := 0
-	var reserved := int(state.reserved_ap)
-	var committed := int(state.committed_ap)
-	if state.has_method("get_available_ap"):
-		avail = int(state.get_available_ap())
+	var reserved := int(state.month_plan.attention_reserved) if state.month_plan != null else 0
+	var committed := int(state.month_plan.attention_spent) if state.month_plan != null else 0
+	if state.has_method("get_available_attention"):
+		avail = int(state.get_available_attention())
 	lines.append("AP: %d total | %d avail | %d committed | %d reserved" % [
-		int(state.action_points), avail, committed, reserved
+		int(state.month_plan.attention_total) if state.month_plan != null else 0, avail, committed, reserved
 	])
 	return {"title": "Resources", "lines": lines}
 

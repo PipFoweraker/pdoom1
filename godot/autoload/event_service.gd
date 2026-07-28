@@ -601,7 +601,7 @@ func _generate_options(raw: Dictionary, category: String, significance: int) -> 
 			{
 				"id": "collaborate",
 				"text": "Seek collaboration",
-				"costs": {"action_points": 1},
+				"costs": {"attention": 1},
 				"effects": {"reputation": rep_effect, "doom": -doom_effect},
 				"message": "Established collaborative relationship." + (_format_reaction(safety_reaction))
 			},
@@ -626,14 +626,14 @@ func _generate_options(raw: Dictionary, category: String, significance: int) -> 
 			{
 				"id": "build_upon",
 				"text": "Build upon this research",
-				"costs": {"action_points": 1, "money": money_effect},
+				"costs": {"attention": 1, "money": money_effect},
 				"effects": {"research": rep_effect * 3, "doom": doom_effect / 2},
 				"message": "Advancing the research frontier." + (_format_reaction(safety_reaction))
 			},
 			{
 				"id": "safety_analysis",
 				"text": "Conduct safety analysis",
-				"costs": {"action_points": 1},
+				"costs": {"attention": 1},
 				"effects": {"research": rep_effect, "doom": -doom_effect, "reputation": rep_effect / 2},
 				"message": "Published safety analysis of the work."
 			},
@@ -651,14 +651,14 @@ func _generate_options(raw: Dictionary, category: String, significance: int) -> 
 			{
 				"id": "support",
 				"text": "Publicly support",
-				"costs": {"action_points": 1},
+				"costs": {"attention": 1},
 				"effects": {"reputation": rep_effect, "doom": -doom_effect},
 				"message": "Your support strengthens the policy effort." + (_format_reaction(media_reaction))
 			},
 			{
 				"id": "critique",
 				"text": "Offer constructive critique",
-				"costs": {"action_points": 1},
+				"costs": {"attention": 1},
 				"effects": {"reputation": rep_effect / 2, "research": rep_effect},
 				"message": "Your expertise shapes the discussion."
 			},
@@ -676,14 +676,14 @@ func _generate_options(raw: Dictionary, category: String, significance: int) -> 
 			{
 				"id": "respond_publicly",
 				"text": "Issue public response",
-				"costs": {"action_points": 1},
+				"costs": {"attention": 1},
 				"effects": {"reputation": rep_effect, "doom": -doom_effect / 2},
 				"message": "Your response shapes public understanding." + (_format_reaction(media_reaction))
 			},
 			{
 				"id": "internal_review",
 				"text": "Conduct internal review",
-				"costs": {"action_points": 1},
+				"costs": {"attention": 1},
 				"effects": {"research": rep_effect, "doom": -doom_effect},
 				"message": "Lessons learned improve your safety practices."
 			},
@@ -703,14 +703,14 @@ func _generate_options(raw: Dictionary, category: String, significance: int) -> 
 			{
 				"id": "emergency_fundraise",
 				"text": "Emergency Fundraising",
-				"costs": {"action_points": 2},
+				"costs": {"attention": 2},
 				"effects": {"money": abs(money_impact) / 2, "reputation": -rep_effect / 2},
 				"message": "Launched emergency fundraising campaign." + (_format_reaction(safety_reaction))
 			},
 			{
 				"id": "diversify_funding",
 				"text": "Diversify Funding Sources",
-				"costs": {"action_points": 1},
+				"costs": {"attention": 1},
 				"effects": {"doom": -doom_effect / 2, "reputation": rep_effect / 2},
 				"message": "Reduced dependency on any single funder."
 			},
@@ -729,7 +729,7 @@ func _generate_options(raw: Dictionary, category: String, significance: int) -> 
 			{
 				"id": "engage",
 				"text": "Engage with this development",
-				"costs": {"action_points": 1},
+				"costs": {"attention": 1},
 				"effects": {"reputation": rep_effect, "research": rep_effect / 2},
 				"message": "Engaging with the broader AI safety community."
 			},

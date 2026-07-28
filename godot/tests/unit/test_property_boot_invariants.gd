@@ -64,7 +64,7 @@ func _assert_actionable(game_seed: String, label: String) -> void:
 	assert_gt(state.money, 0.0, "[%s] starts with positive money" % label)
 	assert_true(is_finite(state.doom), "[%s] doom finite" % label)
 	assert_between(state.doom, 0.0, 100.0, "[%s] doom within [0,100] and not yet lost" % label)
-	assert_gt(state.action_points, 0, "[%s] has action points to spend" % label)
+	assert_gt(state.get_available_attention(), 0, "[%s] has Attention to spend" % label)
 
 	# The core "actionable" claim: at least one action is affordable at boot. A run
 	# that boots with nothing affordable is soft-locked from move one.

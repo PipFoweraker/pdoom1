@@ -4,7 +4,7 @@ class_name Ledger
 ##
 ## A two-sided ledger of trades that pay now and bill later. There is NO new
 ## player-facing currency (ADR-0003 "no parallel economy"): every entry reads and
-## writes only existing resources -- money, reputation, governance, action_points,
+## writes only existing resources -- money, reputation, governance, attention,
 ## doom. Compounding interest on payables is the mortality guarantee (ADR-0002):
 ## an un-serviced debt grows without bound until a bill it cannot pay ends the run,
 ## and the death is attributable to specific entries.
@@ -21,7 +21,7 @@ enum Side { PAYABLE, RECEIVABLE }
 class Entry:
 	var id: String = ""
 	var source: String = ""            # the trade that created it ("loan", "payroll_coinflip", ...)
-	var currency: String = "money"     # money | reputation | governance | doom | action_points
+	var currency: String = "money"     # money | reputation | governance | doom | attention
 	var principal: float = 0.0         # current magnitude; grows by `interest` each turn while unsettled
 	var fuse: int = 0                  # turns until it bills (0 = due now)
 	var interest: float = 0.0          # per-turn compounding rate (0.0 = does not grow)
@@ -281,8 +281,11 @@ func _bill(e: Entry, state) -> void:
 			state.compute = max(0.0, state.compute - e.principal)
 			_note(state, "ledger_compute_bill", e.source, {"compute": -compute_paid})
 			_settle_promise(e, compute_covered, state)
-		"action_points":
-			state.action_points = max(0, state.action_points - int(e.principal))
+		"attention":
+			# T2: a liability denominated in founder time bills OPERATING hours -- somebody
+			# has to physically show up and deal with it. It cannot bill planner mind.
+			if state.month_plan != null:
+				state.month_plan.spend_attention(int(e.principal), MonthPlan.HOUR_OPERATING)
 		"equity", "board_seat", "agenda":
 			# Non-cash standing TERMS from the financing engine (ADR-0013 riders: equity
 			# dilution, board seat, agenda narrowing). Inert by design -- recorded, no resource

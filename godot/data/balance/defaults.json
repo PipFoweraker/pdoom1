@@ -12,8 +12,9 @@
 		"default_event_class": "deferrable"
 	},
 	"attention": {
-		"_description": "Founder currency (workshop#3 addendum #5 / ADR-0011): ~N decisions per PLAN MONTH; admin is painful overhead spent here. Staff spend a SEPARATE per-person 'actions' currency -- there is no global pool (L2 deletes the legacy AP pool; L1 introduces Attention alongside it). Unspent reserve evaporates at month end (ADR-0009 S4 -- no banking).",
-		"per_month": 20
+		"_description": "Founder currency (workshop#3 addendum #5 / ADR-0011): ~N decisions per PLAN MONTH; admin is painful overhead spent here. Staff spend a SEPARATE per-person 'actions' currency -- there is no global pool, and as of T2 (2026-07-28) no legacy AP pool either: Attention is the ONLY founder currency. Unspent reserve evaporates at month end (ADR-0009 S4 -- no banking). planning_share splits the monthly grant into PLANNING vs OPERATING founder hours (the 2-way T3-rung floor); the remainder goes to operating. TUNING DIAL, HAND-SET, NOT SWEPT: planning hours bound how many strategic cards a month can hold, operating hours bound presence work (response windows, hiring loop, travel, interviews). Overflow is asymmetric -- operating may eat planning hours, planning may never eat operating. Re-price after the first playtest (review-by 2026-08-31).",
+		"per_month": 20,
+		"planning_share": 0.6
 	},
 	"papers": {
 		"_description": "Paper-decision pacing (#630 stopgap): at most max_decisions_per_turn paper accept/reject decisions surface per turn; clustered decision_turns otherwise flood a click-through wall. Surplus stays UNDER_REVIEW and resolves on later turns (never dropped). 0 = unlimited (pre-#630). Superseded by ADR-0009/0012/0014 response windows. research_per_paper/reputation_per_paper drive the auto-publish step (turn_manager._step_publish_papers) AND the Research/Papers HUD tooltips (main_ui) -- single source so the tooltip cannot drift from the mechanic.",
@@ -121,14 +122,9 @@
 		"papers": 0.0,
 		"reputation": 50.0,
 		"doom": 20.0,
-		"action_points": 3,
 		"stationery": 100.0,
 		"governance": 50.0,
 		"hype": 0.0
-	},
-	"action_points": {
-		"_description": "AP economy: per-turn AP = difficulty base + per_staff * total staff.",
-		"per_staff": 0.5
 	},
 	"workstreams": {
 		"_description": "ADR-0011 s3/s4 workstream substrate (workstream.gd + the turn_manager accrual hook). turns_per_month re-denominates the per-MONTH quotes below onto the workday tick. effort_per_turn_scale converts one researcher's effective productivity into effort units. compute_starved_effort_multiplier is what an assigned researcher gets done when the fleet cannot cover their workstream's compute_intensity that tick (they are not idle, just slower). FIRST PASS -- priced by hand, not by sweep; re-price after the first assignment playtest (review-by 2026-08-31).",
@@ -155,9 +151,9 @@
 	},
 	"difficulty": {
 		"_description": "Difficulty modifiers applied by game_manager._apply_difficulty_settings (indices: 0=easy, 1=standard, 2=hard). Replaces the dormant data/events/balancing/difficulty.json (deleted this lane).",
-		"easy": { "money_multiplier": 1.5, "max_action_points": 4 },
-		"standard": { "money_multiplier": 1.0, "max_action_points": 3 },
-		"hard": { "money_multiplier": 0.75, "max_action_points": 2 }
+		"easy": { "money_multiplier": 1.5, "attention_per_month": 24 },
+		"standard": { "money_multiplier": 1.0, "attention_per_month": 20 },
+		"hard": { "money_multiplier": 0.75, "attention_per_month": 16 }
 	},
 	"scouting": {
 		"_description": "Scouting action stubs (#811 item 1): read / meetups / shitpost. FIRST-PASS magnitudes -- deliberately small, and every one of them is actually applied and named in the action's message (no silent promises). hype feeds FinanceEngine pricing (vc_equity gates on min_hype 25), so ~7 shitposts opens that door.",

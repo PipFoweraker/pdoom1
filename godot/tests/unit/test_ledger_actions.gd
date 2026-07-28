@@ -5,7 +5,6 @@ extends GutTest
 func _fresh_state(seed_str: String = "bl1-test") -> GameState:
 	var s = GameState.new(seed_str)
 	s.money = 200000
-	s.action_points = 5
 	return s
 
 func test_take_loan_pays_out_and_adds_bill():
@@ -39,9 +38,10 @@ func test_desperation_lever_plants_secret_without_printed_doom():
 
 func test_staff_rider_grants_ap_and_rider():
 	var s = _fresh_state()
-	var before_ap = s.action_points
+	var before_hours = s.get_available_hours(MonthPlan.HOUR_OPERATING)
 	GameActions.execute_action("staff_rider", s)
-	assert_eq(s.action_points, before_ap + 2, "contractor grants +2 AP now")
+	assert_eq(s.get_available_hours(MonthPlan.HOUR_OPERATING), before_hours + 2,
+		"T2: contractor grants +2 OPERATING hours (bought presence), never founder planner mind")
 	assert_eq(s.ledger.entries.size(), 1, "staff rider adds a ledger entry")
 
 func test_exposure_fires_and_chains():

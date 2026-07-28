@@ -9,7 +9,6 @@ func _fresh_state(seed_str: String = "office-test") -> GameState:
 	var s := GameState.new(seed_str)
 	s.reset()
 	s.money = 245000.0
-	s.action_points = 6
 	_created.append(s)
 	return s
 

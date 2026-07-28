@@ -13,7 +13,7 @@ var _main_ui_script: GDScript = load("res://scripts/ui/main_ui.gd")
 # --- EventDialog.format_cost_summary (event-dialog options) -------------------------------
 
 func test_format_cost_summary_shows_money_and_ap():
-	var text := EventDialog.format_cost_summary({"money": 35000, "action_points": 1})
+	var text := EventDialog.format_cost_summary({"money": 35000, "attention": 1})
 	assert_string_contains(text, "1 AP", "AP cost must be on the button face, not hover-only")
 	assert_string_contains(text, "$35,000", "money cost must be on the button face")
 
@@ -22,13 +22,13 @@ func test_format_cost_summary_zero_cost_is_free():
 		"a costless option must say Free, not show nothing (ambiguous != free)")
 
 func test_format_cost_summary_zero_valued_entries_do_not_render_as_a_cost():
-	# A {"action_points": 0} entry is not a real cost -- must not clutter the face as "0 AP".
-	var text := EventDialog.format_cost_summary({"action_points": 0})
+	# An {"attention": 0} entry is not a real cost -- must not clutter the face.
+	var text := EventDialog.format_cost_summary({"attention": 0})
 	assert_eq(text, " (Free)", "a zero-valued cost entry must read as Free, not '0 AP'")
 
 func test_format_cost_summary_reputation_cost_shown():
 	# Regression: reputation-only costs (e.g. compute_deal's "Negotiate Better Terms") must
-	# not be silently dropped -- only money/action_points had bespoke handling historically.
+	# not be silently dropped -- only money/attention had bespoke handling historically.
 	var text := EventDialog.format_cost_summary({"reputation": 5})
 	assert_string_contains(text, "5 Reputation")
 
@@ -62,7 +62,7 @@ func test_core_events_option_text_has_no_baked_in_cost_strings():
 
 # --- Free-out options cost 0 Attention (task requirement 4) --------------------------------
 
-func test_declineignore_style_outs_cost_zero_action_points():
+func test_declineignore_style_outs_cost_zero_attention():
 	# "defer / reject offer / ignore / acknowledge"-style free outs must cost 0 AP. This does
 	# not change gameplay -- it is a regression lock on the existing data.
 	GameEvents.reload_definitions()
@@ -78,7 +78,7 @@ func test_declineignore_style_outs_cost_zero_action_points():
 					is_free_out = true
 					break
 			if is_free_out:
-				var ap_cost = option.get("costs", {}).get("action_points", 0)
+				var ap_cost = option.get("costs", {}).get("attention", 0)
 				if ap_cost > 0:
 					violations.append("%s/%s costs %s AP" % [event.get("id", "?"), option.get("id", "?"), ap_cost])
 	assert_eq(violations.size(), 0, "free-out style options must cost 0 Attention: %s" % [violations])
@@ -93,20 +93,20 @@ func test_format_costs_inline_free_when_empty():
 
 func test_format_costs_inline_lists_all_known_resources():
 	var ui = _main_ui_script.new()
-	var text: String = ui._format_costs_inline({"action_points": 2, "money": 8000, "reputation": 1})
-	assert_string_contains(text, "2 AP")
+	var text: String = ui._format_costs_inline({"attention": 2, "money": 8000, "reputation": 1})
+	assert_string_contains(text, "2 Attention")
 	assert_string_contains(text, "$8,000")
 	assert_string_contains(text, "1 Rep")
 	ui.free()
 
-func test_costs_affordable_uses_available_ap_not_raw_action_points():
-	# Regression for the AP-skip / raw-action_points bug found during the sweep: a state
-	# with plenty of raw action_points but a fully committed monthly Attention budget
+func test_costs_affordable_uses_month_plan_attention():
+	# Regression for the AP-skip bug found during the sweep: a state whose monthly
+	# Attention budget is fully committed
 	# (available_ap == 0) must NOT read as affordable for an AP-costing option.
 	var ui = _main_ui_script.new()
-	var state := {"action_points": 5, "available_ap": 0, "money": 100000}
-	assert_false(ui._costs_affordable({"action_points": 1}, state),
-		"available_ap (not the raw action_points primitive) must gate AP affordability")
+	var state := {"attention": 0, "money": 100000}
+	assert_false(ui._costs_affordable({"attention": 1}, state),
+		"the month plan's spendable Attention must gate affordability")
 	assert_true(ui._costs_affordable({"money": 50000}, state),
 		"a money-only cost within budget should be affordable")
 	assert_false(ui._costs_affordable({"money": 200000}, state),

@@ -14,7 +14,7 @@ static func has_readable(resource_name: String) -> bool:
 	names evaluate false, matching the old match's default arm)."""
 	return resource_name in [
 		"money", "compute", "research", "papers", "reputation", "doom",
-		"action_points", "safety_researchers", "capability_researchers",
+		"attention", "safety_researchers", "capability_researchers",
 		"compute_engineers", "managers", "researchers", "total_staff",
 	]
 
@@ -35,8 +35,10 @@ static func read(state, resource_name: String) -> float:
 			return state.reputation
 		"doom":
 			return state.doom
-		"action_points":
-			return float(state.action_points)
+		"attention":
+			# T2: the founder currency is the month plan's un-reserved Attention. Exposed to
+			# the exploit-finder / bot policy space under the name the design uses.
+			return float(state.get_available_attention())
 		"safety_researchers":
 			return float(state.safety_researchers)
 		"capability_researchers":

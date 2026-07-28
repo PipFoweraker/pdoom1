@@ -33,23 +33,29 @@ func test_start_turn_increments_turn_counter():
 	turn_manager.start_turn()
 	assert_eq(state.turn, 2, "Turn should increment to 2")
 
-func test_start_turn_resets_action_points():
-	# Test that start_turn resets AP to base amount
-	state.action_points = 0  # Deplete AP
+func test_start_turn_does_not_regrant_founder_capacity():
+	# T2 (ADR-0011 amendment (a)): the per-turn AP grant is DELETED. A day tick must NOT
+	# hand the founder more capacity -- Attention is granted per PLAN MONTH, by
+	# MonthController. Spending inside a month has to stay spent across the day ticks.
+	state.month_plan.spend_attention(4, MonthPlan.HOUR_OPERATING)
+	var after_spend := state.get_available_attention()
 
 	turn_manager.start_turn()
 
-	assert_eq(state.action_points, 3, "AP should reset to base 3")
+	assert_eq(state.get_available_attention(), after_spend,
+		"a day tick must not re-grant founder Attention")
 
-func test_start_turn_ap_scales_with_staff():
-	# Test that AP increases with staff count (base 3 + 0.5 per employee)
+func test_staff_do_not_add_founder_attention():
+	# ADR-0011 point 1: "the pool illusion dies; staff never add founder AP." Under the old
+	# AP pool, 6 staff bought the founder 3 extra points per turn. That is now gone.
 	state.safety_researchers = 2
-	state.compute_engineers = 4
-	# Total staff = 6, so AP = 3 + int(6 * 0.5) = 3 + 3 = 6
+	state.compute_engineers = 4  # total staff = 6
+	var before := state.get_available_attention()
 
 	turn_manager.start_turn()
 
-	assert_eq(state.action_points, 6, "AP should scale: 3 + int(6 * 0.5) = 6")
+	assert_eq(state.get_available_attention(), before,
+		"hiring staff must not top up the founder budget")
 
 func test_start_turn_deducts_staff_salaries():
 	# #573: salaries are now per-workday (annual / 260), not a flat $5k/turn.
@@ -121,7 +127,6 @@ func test_start_turn_compute_not_burned_without_researchers():
 func test_execute_turn_processes_queued_actions():
 	# Test that execute_turn runs queued actions
 	state.queued_actions = ["buy_compute"]
-	state.action_points = 3
 
 	var result = turn_manager.execute_turn()
 
@@ -216,7 +221,7 @@ func test_turn_sequence_integration():
 	# Start turn
 	var start_result = turn_manager.start_turn()
 	assert_eq(state.turn, initial_turn + 1, "Turn should increment")
-	assert_eq(state.action_points, 3, "AP should be 3")
+	assert_eq(state.get_available_attention(), state.attention_per_month, "Full Attention month still available")
 
 	# Queue actions
 	state.queued_actions = ["buy_compute"]

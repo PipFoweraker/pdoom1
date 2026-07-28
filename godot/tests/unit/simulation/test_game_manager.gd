@@ -98,17 +98,17 @@ func test_select_action_queues_action():
 	assert_eq(game_manager.state.queued_actions[0], "buy_compute",
 		"Correct action should be queued")
 
-func test_select_action_deducts_action_points():
-	# Selecting an action commits AP (committed_ap); available AP drops immediately.
-	# state.action_points itself only decrements at execution (end_turn).
+func test_select_action_deducts_attention():
+	# Selecting an action debits the month plan's Attention immediately (T2: there is no
+	# separate per-turn pool that lags behind it).
 	game_manager.start_new_game("test_seed")
 	game_manager.state.research = 100  # safety_research costs 10 research + 1 AP
-	var initial_available = game_manager.state.get_available_ap()
+	var initial_available = game_manager.state.get_available_attention()
 
 	game_manager.select_action("buy_compute")  # Costs 0 AP in current impl
 	game_manager.select_action("safety_research")  # Costs 1 AP
 
-	assert_lt(game_manager.state.get_available_ap(), initial_available,
+	assert_lt(game_manager.state.get_available_attention(), initial_available,
 		"Available action points should decrease after committing actions")
 
 func test_select_action_validates_affordability():
@@ -257,14 +257,14 @@ func test_new_plan_month_resets_attention():
 	# day-step. Queuing spends Attention; a fresh plan-month restores the full grant.
 	game_manager.start_new_game("test_seed")
 	game_manager.state.research = 100  # safety_research costs 10 research + 1 Attention
-	var full_budget = game_manager.state.get_available_ap()
+	var full_budget = game_manager.state.get_available_attention()
 	game_manager.select_action("safety_research")  # spends 1 Attention
-	assert_lt(game_manager.state.get_available_ap(), full_budget,
+	assert_lt(game_manager.state.get_available_attention(), full_budget,
 		"queuing an action spends from the monthly Attention budget")
 
 	# Simulate crossing a month boundary (what MonthController._open_plan_month does).
 	game_manager.state.month_plan.begin_month(Balance.inum("attention.per_month", 20), 1)
-	assert_eq(game_manager.state.get_available_ap(), full_budget,
+	assert_eq(game_manager.state.get_available_attention(), full_budget,
 		"a fresh plan-month restores the full Attention grant (crisp reserve evaporated)")
 
 func test_start_next_turn_emits_actions_available_when_no_events():
@@ -472,19 +472,23 @@ func test_standard_difficulty_uses_base_money():
 	assert_almost_eq(game_manager.state.money, _BASE_MONEY, 0.01,
 		"Standard should use unmodified base money")
 
-func test_difficulty_changes_turn1_action_points():
-	# Issue #541: max_action_points (set by difficulty) must feed start_turn's AP.
-	# Staff scaling is identical across difficulties, so Easy base (4) must exceed
-	# Hard base (2) by exactly 2 on turn 1.
+func test_difficulty_changes_attention_grant():
+	# Issue #541, T2 denomination: difficulty sets the MONTHLY ATTENTION GRANT (24/20/16),
+	# not a per-turn AP cap. force=true on the second start is required -- start_new_game
+	# self-guards against silently destroying a live run (the #979 sibling fix), and without
+	# it the second call is REFUSED and both reads return the Easy grant.
 	GameConfig.difficulty = 0  # Easy
 	game_manager.start_new_game("difficulty_seed")
-	var easy_ap = game_manager.state.action_points
+	var easy_grant: int = game_manager.state.attention_per_month
+	assert_eq(easy_grant, game_manager.state.month_plan.attention_total,
+		"the opening month was re-granted at the difficulty size, not the Balance default")
 
 	GameConfig.difficulty = 2  # Hard
-	game_manager.start_new_game("difficulty_seed")
-	var hard_ap = game_manager.state.action_points
+	game_manager.start_new_game("difficulty_seed", true)
+	var hard_grant: int = game_manager.state.attention_per_month
 
-	assert_gt(easy_ap, hard_ap,
-		"Easy should grant more turn-1 AP than Hard (#541)")
-	assert_eq(easy_ap - hard_ap, 2,
-		"Easy base AP (4) minus Hard base AP (2) should be 2 on turn 1")
+	assert_gt(easy_grant, hard_grant,
+		"Easy should grant more monthly Attention than Hard (#541)")
+	assert_eq(easy_grant - hard_grant,
+		Balance.inum("difficulty.easy.attention_per_month", 24) - Balance.inum("difficulty.hard.attention_per_month", 16),
+		"the gap is exactly what the Balance surface declares")
