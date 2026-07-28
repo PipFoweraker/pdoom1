@@ -218,7 +218,11 @@ static func collect_tick(backlog: Array, turn: int, tick_result: Dictionary) -> 
 			"kind": "month_opened",
 			"turn": turn,
 			"name": "A new month opened while you were away",
-			"message": "The month's Attention grant went unplanned -- you were not there to spend it.",
+			# COPY UPDATED WITH #980 (4-way lane). The old line ("the grant went unplanned")
+			# is literally false now: travel drains the OPERATING family only, so the
+			# planning half of the grant survives the boundary and next month's direction is
+			# still decidable from the road. What is gone is presence: doors and audits.
+			"message": "The month opened with nobody in the building -- its doors and audit hours are gone. Next month's direction is still yours to set.",
 		})
 
 	for released in tick_result.get("released", []):
@@ -260,6 +264,14 @@ static func _consume_founder_capacity(state: GameState) -> int:
 	PLANNER MIND. So the trip drains only the OPERATING pool, and drains it with overflow
 	FORBIDDEN -- travel must never eat the planning hours that let you decide next month's
 	direction from a hotel room. Everything else about the trip's cost model is unchanged.
+
+	==== 4-WAY LANE (Ballot 4) ====
+	No code change was needed here, and that is the point: `doors` and `audits` both live in
+	the OPERATING family (MonthPlan.KIND_FAMILY), so draining that family kills exactly the
+	two presence kinds -- you cannot hold a stakeholder room you are not in, and you cannot
+	skip-level ground-truth a researcher from a conference floor. `approvals` (the PLANNING
+	family) survives untouched, which IS #980's "planner mind, not operator presence". The
+	`month_opened` backlog copy above was rewritten to stop asserting the pre-#980 rule.
 	Returns the Attention actually consumed (for the return panel's honesty about the cost)."""
 	if state.month_plan == null:
 		return 0

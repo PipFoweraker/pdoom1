@@ -8,7 +8,8 @@
 			"costs": {
 				"attention": 1
 			},
-			"category": "financing"
+			"category": "financing",
+			"hour_type": "doors"
 		},
 		{
 			"id": "funding_strings",
@@ -17,7 +18,8 @@
 			"costs": {
 				"attention": 1
 			},
-			"category": "financing"
+			"category": "financing",
+			"hour_type": "doors"
 		},
 		{
 			"id": "desperation_lever",
@@ -26,7 +28,8 @@
 			"costs": {
 				"attention": 1
 			},
-			"category": "financing"
+			"category": "financing",
+			"hour_type": "approvals"
 		},
 		{
 			"id": "staff_rider",
@@ -36,7 +39,8 @@
 				"money": 15000,
 				"attention": 1
 			},
-			"category": "financing"
+			"category": "financing",
+			"hour_type": "doors"
 		},
 		{
 			"id": "seek_financing",
@@ -45,7 +49,8 @@
 			"costs": {
 				"attention": 1
 			},
-			"category": "financing"
+			"category": "financing",
+			"hour_type": "doors"
 		},
 		{
 			"id": "accept_financing_offer",
@@ -54,7 +59,8 @@
 			"costs": {
 				"attention": 1
 			},
-			"category": "financing"
+			"category": "financing",
+			"hour_type": "approvals"
 		},
 		{
 			"id": "pay_bills",
@@ -63,7 +69,8 @@
 			"costs": {
 				"attention": 1
 			},
-			"category": "financing"
+			"category": "financing",
+			"hour_type": "approvals"
 		}
 	]
 }

@@ -8,7 +8,8 @@
 			"costs": {
 				"attention": 1
 			},
-			"category": "scouting"
+			"category": "scouting",
+			"hour_type": "approvals"
 		},
 		{
 			"id": "scout_meetups",
@@ -18,7 +19,8 @@
 				"attention": 1,
 				"money": 300
 			},
-			"category": "scouting"
+			"category": "scouting",
+			"hour_type": "doors"
 		},
 		{
 			"id": "scout_shitpost",
@@ -27,7 +29,8 @@
 			"costs": {
 				"attention": 1
 			},
-			"category": "scouting"
+			"category": "scouting",
+			"hour_type": "approvals"
 		}
 	]
 }

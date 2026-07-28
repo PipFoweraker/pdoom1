@@ -26,7 +26,8 @@
 				"research": 10,
 				"attention": 1
 			},
-			"category": "research"
+			"category": "research",
+			"hour_type": "approvals"
 		},
 		{
 			"id": "capability_research",
@@ -36,7 +37,8 @@
 				"research": 10,
 				"attention": 1
 			},
-			"category": "research"
+			"category": "research",
+			"hour_type": "approvals"
 		},
 		{
 			"id": "publish_paper",
@@ -46,7 +48,8 @@
 				"research": 20,
 				"attention": 1
 			},
-			"category": "research"
+			"category": "research",
+			"hour_type": "approvals"
 		},
 		{
 			"id": "fundraise",
@@ -75,7 +78,8 @@
 			"category": "management",
 			"unlock_conditions": {
 				"staff_min": 2
-			}
+			},
+			"hour_type": "doors"
 		},
 		{
 			"id": "audit_safety",
@@ -88,7 +92,8 @@
 			"category": "research",
 			"unlock_conditions": {
 				"turn_min": 5
-			}
+			},
+			"hour_type": "audits"
 		},
 		{
 			"id": "operations",

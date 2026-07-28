@@ -9,7 +9,8 @@
 				"money": 60000,
 				"attention": 1
 			},
-			"category": "hiring"
+			"category": "hiring",
+			"hour_type": "approvals"
 		},
 		{
 			"id": "hire_capability_researcher",
@@ -19,7 +20,8 @@
 				"money": 60000,
 				"attention": 1
 			},
-			"category": "hiring"
+			"category": "hiring",
+			"hour_type": "approvals"
 		},
 		{
 			"id": "hire_compute_engineer",
@@ -29,7 +31,8 @@
 				"money": 50000,
 				"attention": 1
 			},
-			"category": "hiring"
+			"category": "hiring",
+			"hour_type": "approvals"
 		},
 		{
 			"id": "hire_manager",
@@ -39,7 +42,8 @@
 				"money": 80000,
 				"attention": 1
 			},
-			"category": "hiring"
+			"category": "hiring",
+			"hour_type": "approvals"
 		},
 		{
 			"id": "hire_ethicist",
@@ -49,7 +53,8 @@
 				"money": 70000,
 				"attention": 1
 			},
-			"category": "hiring"
+			"category": "hiring",
+			"hour_type": "approvals"
 		},
 		{
 			"id": "hire_interpretability_researcher",
@@ -59,7 +64,8 @@
 				"money": 60000,
 				"attention": 1
 			},
-			"category": "hiring"
+			"category": "hiring",
+			"hour_type": "approvals"
 		},
 		{
 			"id": "hire_alignment_researcher",
@@ -69,7 +75,8 @@
 				"money": 60000,
 				"attention": 1
 			},
-			"category": "hiring"
+			"category": "hiring",
+			"hour_type": "approvals"
 		}
 	]
 }

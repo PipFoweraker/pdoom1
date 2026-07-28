@@ -9,7 +9,8 @@
 				"money": 150000,
 				"attention": 2
 			},
-			"category": "strategic"
+			"category": "strategic",
+			"hour_type": "doors"
 		},
 		{
 			"id": "sabotage_competitor",
@@ -20,7 +21,8 @@
 				"attention": 3,
 				"reputation": 20
 			},
-			"category": "strategic"
+			"category": "strategic",
+			"hour_type": "doors"
 		},
 		{
 			"id": "emergency_pivot",
@@ -30,7 +32,8 @@
 				"money": 50000,
 				"attention": 2
 			},
-			"category": "strategic"
+			"category": "strategic",
+			"hour_type": "approvals"
 		},
 		{
 			"id": "grant_proposal",
@@ -40,7 +43,8 @@
 				"attention": 1,
 				"papers": 1
 			},
-			"category": "strategic"
+			"category": "strategic",
+			"hour_type": "approvals"
 		}
 	]
 }

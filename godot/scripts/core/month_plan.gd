@@ -35,8 +35,29 @@ extends RefCounted
 ##     spend thinking. (ADR-0011: "reserve -- instant-speed firefighting".)
 ##   PLANNING may NOT overflow into OPERATING -- you cannot retroactively have been in the
 ##     room. Running out of planner hours BLOCKS more strategic queuing this month.
-## The 4-way refinement (doors / approvals / audits / reserve, ADR-0011 amendment (c)) is a
-## LATER lane; it subdivides these two, it does not replace them.
+##
+## FOUNDER-HOUR KINDS (4-way, ADR-0011 point 2 / Ballot 4 ruled 2026-07-27, REVIEW-BY
+## 2026-08-31). The four kinds SUBDIVIDE the two families; they do not replace them:
+##   doors     -- stakeholder face-time, being in rooms         (family: OPERATING)
+##   approvals -- hires, direction rulings, queuing strategy    (family: PLANNING)
+##   audits    -- skip-level ground-truthing of reported work   (family: OPERATING)
+##   reserve   -- instant-speed firefighting (the crisp reserve)(family: OPERATING)
+## Third storey of the SAME additive-accounting tower: an authoritative scalar
+## (attention_total/spent), typed by a 2-way family layer (hours_total/hours_spent), labelled
+## by a 4-way kind layer (kind_spent). Each storey is additive over the one below, so the
+## 2026-08-31 review can DELETE the kind layer without touching the gate logic if 4-way did
+## not earn its complexity.
+##
+## DELIBERATE S-CUT SCOPE: kinds ACCOUNT, families GATE. There are no per-kind monthly
+## budgets -- admissibility is decided entirely by the family pools and the asymmetric
+## overflow rule above. Per-kind caps would be four more balance dials to sweep before a
+## review that may collapse the split back to 2-way; that is a post-review call.
+##
+## Why audits and doors are OPERATING: both are presence by definition (you cannot
+## skip-level ground-truth a researcher's real progress from a hotel room, and a door you
+## are not standing in is not open). This is what makes #980 fall out for free -- travel
+## drains the OPERATING family, so it kills doors and audits and leaves approvals (next
+## month's direction) decidable from the road.
 ##
 ## Strategic actions carry DURATIONS (ADR-0009 S5 -- nothing strategic resolves instantly);
 ## queued items land on a future resolution tick. This is the seam L2 workstreams extend.
@@ -45,6 +66,29 @@ extends RefCounted
 const HOUR_PLANNING := "planning"
 const HOUR_OPERATING := "operating"
 const HOUR_TYPES := [HOUR_PLANNING, HOUR_OPERATING]
+
+# --- Founder hour kinds (4-way, Ballot 4) -- labels over the families above ---
+const KIND_DOORS := "doors"
+const KIND_APPROVALS := "approvals"
+const KIND_AUDITS := "audits"
+const KIND_RESERVE := "reserve"
+const HOUR_KINDS := [KIND_DOORS, KIND_APPROVALS, KIND_AUDITS, KIND_RESERVE]
+
+## Which family each kind bills. THE one place the 4-way maps onto the 2-way.
+const KIND_FAMILY := {
+	KIND_DOORS: HOUR_OPERATING,
+	KIND_APPROVALS: HOUR_PLANNING,
+	KIND_AUDITS: HOUR_OPERATING,
+	KIND_RESERVE: HOUR_OPERATING,
+}
+
+## What an un-subdivided family spend is LABELLED as. Presence-by-default is face-time;
+## planner-mind-by-default is a direction ruling. Callers/data that mean something finer
+## name the kind explicitly.
+const FAMILY_DEFAULT_KIND := {
+	HOUR_PLANNING: KIND_APPROVALS,
+	HOUR_OPERATING: KIND_DOORS,
+}
 
 # --- Attention accounting (all integer Attention units) ---
 var attention_total: int = 0        # granted this plan-month (Balance attention.per_month)
@@ -57,6 +101,12 @@ var reserve_used: int = 0           # reserve consumed by HANDLE-from-reserve th
 # every spend that goes through spend_attention/queue_strategic/the window payers.
 var hours_total: Dictionary = {HOUR_PLANNING: 0, HOUR_OPERATING: 0}
 var hours_spent: Dictionary = {HOUR_PLANNING: 0, HOUR_OPERATING: 0}
+
+# 4-way kind labels over hours_spent. Invariants pinned by test_founder_hours.gd:
+#   kind_spent[doors] + [approvals] + [audits] == attention_spent
+#   kind_spent[reserve] == reserve_used   (the reserve is accounted separately -- see
+#   set_reserve's T2 design note, which this lane deliberately did NOT overrule)
+var kind_spent: Dictionary = {KIND_DOORS: 0, KIND_APPROVALS: 0, KIND_AUDITS: 0, KIND_RESERVE: 0}
 
 # Which plan-month this is (0-based from run start) -- stamps the replay artifact (ADR-0016).
 var month_ordinal: int = 0
@@ -87,16 +137,46 @@ func begin_month(attention_per_month: int, ordinal: int, planning_share: float =
 	planning = clampi(planning, 0, attention_per_month)
 	hours_total = {HOUR_PLANNING: planning, HOUR_OPERATING: attention_per_month - planning}
 	hours_spent = {HOUR_PLANNING: 0, HOUR_OPERATING: 0}
+	kind_spent = {KIND_DOORS: 0, KIND_APPROVALS: 0, KIND_AUDITS: 0, KIND_RESERVE: 0}
 	# In-flight strategic actions persist across the boundary (they have durations);
 	# resolved ones are pruned by the controller, not here.
 
 
-# --- Typed founder hours (2-way floor) ---
+# --- Typed founder hours (2-way families gate; 4-way kinds label) ---
+
+static func family_of(hour_type: String) -> String:
+	"""Resolve ANY hour token -- a 4-way kind OR a 2-way family -- to the family that gates
+	it. Unknown tokens resolve to OPERATING (presence is the safe assumption: it is the
+	family that can overflow, so a mis-typed spend is never silently granted planner mind).
+	Every public entry point funnels through here, which is why callers written against the
+	2-way API keep working verbatim after the 4-way landed."""
+	if KIND_FAMILY.has(hour_type):
+		return String(KIND_FAMILY[hour_type])
+	if hour_type == HOUR_PLANNING:
+		return HOUR_PLANNING
+	return HOUR_OPERATING
+
+
+static func kind_of(hour_type: String) -> String:
+	"""Resolve ANY hour token to the 4-way kind it is BOOKED as. A family name maps to its
+	default kind (see FAMILY_DEFAULT_KIND); an unknown token follows family_of to OPERATING
+	and so books as doors."""
+	if KIND_FAMILY.has(hour_type):
+		return hour_type
+	return String(FAMILY_DEFAULT_KIND.get(family_of(hour_type), KIND_DOORS))
+
 
 func hours_available(hour_type: String) -> int:
-	"""Hours of `hour_type` not yet spent. This is the TYPE gate only -- a spend must also
-	fit inside the authoritative aggregate available() (which nets out the reserve)."""
-	return int(hours_total.get(hour_type, 0)) - int(hours_spent.get(hour_type, 0))
+	"""Hours of `hour_type`'s FAMILY not yet spent. Accepts a kind or a family. This is the
+	TYPE gate only -- a spend must also fit inside the authoritative aggregate available()
+	(which nets out the reserve). There is deliberately no per-KIND budget (see header)."""
+	var fam: String = family_of(hour_type)
+	return int(hours_total.get(fam, 0)) - int(hours_spent.get(fam, 0))
+
+
+func kind_spend(kind: String) -> int:
+	"""Hours booked against one 4-way kind this month. Read-only accounting/readout surface."""
+	return int(kind_spent.get(kind, 0))
 
 
 func can_spend_hours(cost: int, hour_type: String) -> bool:
@@ -110,20 +190,26 @@ func can_spend_hours(cost: int, hour_type: String) -> bool:
 		return true
 	# OPERATING may eat PLANNING hours (a crisis costs you thinking time). PLANNING may not
 	# eat OPERATING hours -- you cannot retroactively have been in the room.
-	return hour_type == HOUR_OPERATING
+	return family_of(hour_type) == HOUR_OPERATING
 
 
 func _debit_hours(cost: int, hour_type: String) -> void:
-	"""Record `cost` hours against the typed pools, spilling into the other type per the
-	asymmetric-overflow rule. Callers gate with can_spend_hours() first; this only books."""
+	"""Record `cost` hours against the typed pools, spilling into the other FAMILY per the
+	asymmetric-overflow rule, and label the whole spend with its 4-way KIND. Callers gate
+	with can_spend_hours() first; this only books.
+	Note the kind is booked whole even when the family spills: an audit hour that overflowed
+	into planning capacity is still an audit -- the spill records WHERE the time came from,
+	the kind records WHAT it was spent on."""
 	if cost <= 0:
 		return
-	var from_type: int = mini(cost, maxi(0, hours_available(hour_type)))
-	hours_spent[hour_type] = int(hours_spent.get(hour_type, 0)) + from_type
+	var fam: String = family_of(hour_type)
+	kind_spent[kind_of(hour_type)] = int(kind_spent.get(kind_of(hour_type), 0)) + cost
+	var from_type: int = mini(cost, maxi(0, hours_available(fam)))
+	hours_spent[fam] = int(hours_spent.get(fam, 0)) + from_type
 	var spill: int = cost - from_type
 	if spill <= 0:
 		return
-	var other: String = HOUR_PLANNING if hour_type == HOUR_OPERATING else HOUR_OPERATING
+	var other: String = HOUR_PLANNING if fam == HOUR_OPERATING else HOUR_OPERATING
 	hours_spent[other] = int(hours_spent.get(other, 0)) + spill
 
 
@@ -191,7 +277,8 @@ func grant_hours(amount: int, hour_type: String = HOUR_OPERATING) -> void:
 	everything else -- begin_month resets both pools."""
 	if amount <= 0:
 		return
-	hours_total[hour_type] = int(hours_total.get(hour_type, 0)) + amount
+	var fam: String = family_of(hour_type)
+	hours_total[fam] = int(hours_total.get(fam, 0)) + amount
 	attention_total += amount
 
 
@@ -202,12 +289,15 @@ func refund_attention(cost: int, hour_type: String = HOUR_OPERATING) -> void:
 	if cost <= 0:
 		return
 	attention_spent = maxi(0, attention_spent - cost)
-	var booked: int = int(hours_spent.get(hour_type, 0))
+	var fam: String = family_of(hour_type)
+	var kind: String = kind_of(hour_type)
+	kind_spent[kind] = maxi(0, int(kind_spent.get(kind, 0)) - cost)
+	var booked: int = int(hours_spent.get(fam, 0))
 	var from_type: int = mini(cost, booked)
-	hours_spent[hour_type] = booked - from_type
+	hours_spent[fam] = booked - from_type
 	var spill: int = cost - from_type
 	if spill > 0:
-		var other: String = HOUR_PLANNING if hour_type == HOUR_OPERATING else HOUR_OPERATING
+		var other: String = HOUR_PLANNING if fam == HOUR_OPERATING else HOUR_OPERATING
 		hours_spent[other] = maxi(0, int(hours_spent.get(other, 0)) - spill)
 
 
@@ -252,6 +342,12 @@ func pay_from_reserve(cost: int) -> bool:
 	if reserve_remaining() < cost:
 		return false
 	reserve_used += cost
+	# 4-way LABEL only: the reserve kind mirrors reserve_used, it does not book into
+	# hours_spent. Ballot 4 names `reserve` as one of the four kinds; T2's judgment call 2
+	# left the crisp reserve's ACCOUNTING deliberately untyped and un-gated (an emergency is
+	# exactly where the type wall may break). Both hold at once because this storey labels
+	# rather than gates -- see the PR body's reconciliation note.
+	kind_spent[KIND_RESERVE] = reserve_used
 	return true
 
 
@@ -290,6 +386,7 @@ func to_dict() -> Dictionary:
 		"month_ordinal": month_ordinal,
 		"hours_total": hours_total.duplicate(),
 		"hours_spent": hours_spent.duplicate(),
+		"kind_spent": kind_spent.duplicate(),
 		"queued_strategic": queued_strategic.duplicate(true),
 	}
 
@@ -322,7 +419,21 @@ func from_dict(data: Dictionary) -> void:
 		}
 	else:
 		hours_spent = {HOUR_PLANNING: 0, HOUR_OPERATING: 0}
+		kind_spent = {KIND_DOORS: 0, KIND_APPROVALS: 0, KIND_AUDITS: 0, KIND_RESERVE: 0}
 		_debit_hours(attention_spent, HOUR_OPERATING)
+	# 4-way kind labels. A pre-Ballot-4 save has no `kind_spent`: rebuild it by labelling
+	# each family's booked hours with that family's DEFAULT kind, so the invariant
+	# sum(doors, approvals, audits) == attention_spent holds on load rather than reading zero.
+	var raw_kinds: Variant = data.get("kind_spent", null)
+	if raw_kinds is Dictionary and not (raw_kinds as Dictionary).is_empty():
+		kind_spent = {}
+		for kind in HOUR_KINDS:
+			kind_spent[kind] = int((raw_kinds as Dictionary).get(kind, 0))
+	else:
+		kind_spent = {KIND_DOORS: 0, KIND_APPROVALS: 0, KIND_AUDITS: 0, KIND_RESERVE: 0}
+		kind_spent[KIND_APPROVALS] = int(hours_spent.get(HOUR_PLANNING, 0))
+		kind_spent[KIND_DOORS] = maxi(0, attention_spent - int(hours_spent.get(HOUR_PLANNING, 0)))
+		kind_spent[KIND_RESERVE] = reserve_used
 	queued_strategic = []
 	for item in data.get("queued_strategic", []):
 		if item is Dictionary:

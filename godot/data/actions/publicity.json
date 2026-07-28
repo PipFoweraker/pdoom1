@@ -8,7 +8,8 @@
 			"costs": {
 				"attention": 1
 			},
-			"category": "influence"
+			"category": "influence",
+			"hour_type": "doors"
 		},
 		{
 			"id": "media_campaign",
@@ -18,7 +19,8 @@
 				"money": 30000,
 				"attention": 2
 			},
-			"category": "influence"
+			"category": "influence",
+			"hour_type": "doors"
 		},
 		{
 			"id": "lobby_government",
@@ -28,7 +30,8 @@
 				"money": 80000,
 				"attention": 2
 			},
-			"category": "influence"
+			"category": "influence",
+			"hour_type": "doors"
 		},
 		{
 			"id": "release_warning",
@@ -38,7 +41,8 @@
 				"attention": 2,
 				"reputation": 15
 			},
-			"category": "influence"
+			"category": "influence",
+			"hour_type": "approvals"
 		},
 		{
 			"id": "open_source_release",
@@ -48,7 +52,8 @@
 				"papers": 3,
 				"attention": 1
 			},
-			"category": "influence"
+			"category": "influence",
+			"hour_type": "approvals"
 		}
 	]
 }

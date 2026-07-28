@@ -8,7 +8,8 @@
 			"costs": {
 				"attention": 1
 			},
-			"category": "office"
+			"category": "office",
+			"hour_type": "doors"
 		},
 		{
 			"id": "sign_lease_coworking_corner",
@@ -17,7 +18,8 @@
 			"costs": {
 				"attention": 1
 			},
-			"category": "office"
+			"category": "office",
+			"hour_type": "approvals"
 		},
 		{
 			"id": "sign_lease_walkup_office",
@@ -26,7 +28,8 @@
 			"costs": {
 				"attention": 1
 			},
-			"category": "office"
+			"category": "office",
+			"hour_type": "approvals"
 		},
 		{
 			"id": "sign_lease_university_annex",
@@ -35,7 +38,8 @@
 			"costs": {
 				"attention": 1
 			},
-			"category": "office"
+			"category": "office",
+			"hour_type": "approvals"
 		}
 	]
 }
