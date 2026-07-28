@@ -9,12 +9,19 @@ changelog entries, and download links to make releases easily discoverable.
 Usage:
     python scripts/generate_release_metadata.py --version v0.10.1
     python scripts/generate_release_metadata.py --latest
+    python scripts/generate_release_metadata.py --version v0.10.1 --verify
+
+--verify HEADs every generated download URL (via scripts/verify_release_urls.py)
+after writing the files and exits nonzero on any non-200. This is the same
+check CI runs (blocking) after a release's assets are uploaded -- use it
+locally to catch a generator/build-pipeline mismatch before pushing a tag.
 """
 
 import argparse
 import datetime
 import json
 import subprocess
+import sys
 import xml.etree.ElementTree as ElementTree
 from pathlib import Path
 from typing import Dict, List, Optional
@@ -125,12 +132,21 @@ class ReleaseMetadataGenerator:
             "commit_hash": tag_info["commit"],
             "is_prerelease": is_prerelease,
             "changelog": changelog,
+            # Asset names must match what scripts/build_all_platforms.py actually
+            # produces and enhanced-release.yml actually uploads (build-windows/
+            # **/*.zip, build-linux/**/*.zip, build-mac/**/*.zip) -- NOT a guessed
+            # shape. Verified against the real v0.13.1 release asset list
+            # (issue #963: PDoom.exe / PDoom.x86_64 / pdoom-*-source.* were all
+            # 404s because no such assets are ever produced).
             "downloads": {
-                "windows": f"{base_url}/PDoom.exe",
-                "linux": f"{base_url}/PDoom.x86_64",
-                "mac": f"{base_url}/PDoom.app.zip",
-                "source_zip": f"{base_url}/pdoom-{version_num}-source.zip",
-                "source_tar": f"{base_url}/pdoom-{version_num}-source.tar.gz",
+                "windows": f"{base_url}/PDoom-Windows-{version}.zip",
+                "linux": f"{base_url}/PDoom-Linux-{version}.zip",
+                "mac": f"{base_url}/PDoom-macOS-{version}.zip",
+                # GitHub auto-generates these codeload archives for every tag;
+                # they are not uploaded release assets, so this URL shape works
+                # even though no matching file appears in `gh release view`.
+                "source_zip": f"https://github.com/{github_repo}/archive/refs/tags/{version}.zip",
+                "source_tar": f"https://github.com/{github_repo}/archive/refs/tags/{version}.tar.gz",
             },
             "metadata": {
                 "engine": "Godot 4.5.1",
@@ -222,8 +238,9 @@ class ReleaseMetadataGenerator:
         dom = minidom.parseString(xml_string)
         return dom.toprettyxml(indent="  ")
 
-    def generate_all_metadata(self, specific_version: Optional[str] = None):
-        """Generate all metadata files."""
+    def generate_all_metadata(self, specific_version: Optional[str] = None) -> List[Path]:
+        """Generate all metadata files. Returns the list of individual
+        per-release JSON files written (used by --verify)."""
         print("[*] Generating release metadata for P(Doom)...")
 
         # Get all release tags
@@ -234,12 +251,13 @@ class ReleaseMetadataGenerator:
 
         if not tags:
             print("[!] No release tags found!")
-            return
+            return []
 
         print(f"[*] Found {len(tags)} release(s)")
 
         # Generate metadata for each release
         releases = []
+        release_files: List[Path] = []
         for tag in tags:
             print(f"  Processing {tag}...")
             tag_info = self.get_git_tag_info(tag)
@@ -253,6 +271,7 @@ class ReleaseMetadataGenerator:
                 with open(release_file, "w", encoding="utf-8") as f:
                     json.dump(release_data, f, indent=2, ensure_ascii=False)
                 print(f"    [+] Generated {release_file.name}")
+                release_files.append(release_file)
 
         # Generate releases index
         index_data = self.generate_releases_index(releases)
@@ -273,6 +292,8 @@ class ReleaseMetadataGenerator:
         print(f"[*] Latest version: {index_data['latest_version']}")
         print(f"[*] Latest stable: {index_data['latest_stable']}")
 
+        return release_files
+
 
 def main():
     parser = argparse.ArgumentParser(
@@ -284,6 +305,12 @@ def main():
     parser.add_argument(
         "--latest", action="store_true", help="Only generate metadata for the latest release"
     )
+    parser.add_argument(
+        "--verify",
+        action="store_true",
+        help="After generating, HEAD every download URL and exit nonzero on any non-200 "
+        "(see scripts/verify_release_urls.py)",
+    )
 
     args = parser.parse_args()
 
@@ -292,15 +319,27 @@ def main():
 
     generator = ReleaseMetadataGenerator(repo_root)
 
+    generated_files: List[Path] = []
     if args.latest and not args.version:
         # Get latest tag
         tags = generator.get_all_release_tags()
         if tags:
-            generator.generate_all_metadata(specific_version=tags[0])
+            generated_files = generator.generate_all_metadata(specific_version=tags[0])
         else:
             print("WARNING  No release tags found!")
     else:
-        generator.generate_all_metadata(specific_version=args.version)
+        generated_files = generator.generate_all_metadata(specific_version=args.version)
+
+    if args.verify:
+        sys.path.insert(0, str(Path(__file__).parent))
+        import verify_release_urls  # noqa: E402  (deliberate late import, sys.path just set)
+
+        print("\n[*] --verify: checking generated download URLs resolve...")
+        exit_code = 0
+        for release_file in generated_files:
+            exit_code = max(exit_code, verify_release_urls.cmd_file(release_file))
+        if exit_code != 0:
+            sys.exit(exit_code)
 
 
 if __name__ == "__main__":
