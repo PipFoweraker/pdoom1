@@ -97,7 +97,7 @@ func update_game_state():
 	lines.append("Research: %.1f" % state.research)
 	lines.append("Papers: %d" % state.papers)
 	lines.append("Reputation: %.1f" % state.reputation)
-	lines.append("Action Points: %d / %d" % [state.action_points, state.max_action_points if "max_action_points" in state else 3])
+	lines.append("Attention: %d free / %d granted" % [state.get_available_attention(), state.month_plan.attention_total if state.month_plan != null else 0])
 	lines.append("")
 
 	# Doom
@@ -341,7 +341,8 @@ func _on_add_money_button_pressed():
 func _on_add_ap_button_pressed():
 	var gm = _live_gm()
 	if gm and gm.state:
-		gm.state.action_points += 5
+		if gm.state.month_plan != null:
+			gm.state.month_plan.grant_hours(5, MonthPlan.HOUR_OPERATING)
 		gm.game_state_updated.emit(gm.state.to_dict())
 		ErrorHandler.info(ErrorHandler.Category.VALIDATION, "Debug: Added 5 AP", {})
 

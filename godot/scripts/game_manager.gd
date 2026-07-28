@@ -191,14 +191,16 @@ func select_action(action_id: String) -> bool:
 		error_occurred.emit("Action not found: " + action_id)
 		return false
 
-	# L2 (ADR-0011): the action's legacy `action_points` cost is now its ATTENTION cost --
-	# the founder spends the monthly Attention budget (month_plan), not a per-turn AP pool.
-	var attention_cost = action.get("costs", {}).get("action_points", 0)
+	# T2 (ADR-0011): the founder spends the monthly Attention budget (month_plan). Queuing a
+	# strategic action is PLANNER MIND -- it bills PLANNING hours (2-way founder-hour floor).
+	var attention_cost: int = GameActions.attention_cost(action)
+	var hour_type: String = GameActions.hour_type(action)
 
 	# Validation: Sufficient Attention this plan-month (checks REMAINING = total - spent -
 	# reserved, so an explicitly-held reserve is protected from over-queuing).
 	var available_attention = state.month_plan.available() if state.month_plan != null else 0
-	if available_attention < attention_cost:
+	var hours_ok: bool = state.month_plan != null and state.month_plan.can_spend_hours(attention_cost, hour_type)
+	if available_attention < attention_cost or not hours_ok:
 		var _err = ErrorHandler.warning(  # Underscore prefix indicates intentionally unused
 			ErrorHandler.Category.RESOURCES,
 			"Insufficient Attention",
@@ -211,14 +213,18 @@ func select_action(action_id: String) -> bool:
 				"attention_spent": state.month_plan.attention_spent if state.month_plan else 0
 			}
 		)
-		error_occurred.emit("Not enough Attention: %d needed, %d left this month" % [attention_cost, available_attention])
+		if available_attention >= attention_cost:
+			error_occurred.emit("Not enough %s hours: %d needed, %d left this month" % [
+				hour_type, attention_cost, state.get_available_hours(hour_type)])
+		else:
+			error_occurred.emit("Not enough Attention: %d needed, %d left this month" % [attention_cost, available_attention])
 		return false
 
-	# Validation: Can afford NON-Attention costs (money/compute/research/... ). The
-	# action_points key is the Attention cost, gated above -- strip it here so the legacy
-	# per-turn AP pool never blocks the plan queue (that duality was the L2 bug).
+	# Validation: Can afford NON-Attention costs (money/compute/research/... ). Attention is
+	# gated above against the month plan, so strip it here -- letting can_afford re-check it
+	# would double-gate the same budget.
 	var afford_costs = action.get("costs", {}).duplicate()
-	afford_costs.erase("action_points")
+	afford_costs.erase("attention")
 	if not state.can_afford(afford_costs):
 		var costs = action.get("costs", {})
 		var _err = ErrorHandler.warning(  # Underscore prefix indicates intentionally unused
@@ -390,7 +396,7 @@ func reserve_ap(amount: int):
 		# Emit updated state
 		game_state_updated.emit(state.to_dict())
 	else:
-		error_occurred.emit("Not enough Attention to reserve (need %d, have %d)" % [amount, state.get_available_ap()])
+		error_occurred.emit("Not enough Attention to reserve (need %d, have %d operating hours)" % [amount, state.get_available_hours(MonthPlan.HOUR_OPERATING)])
 
 func clear_action_queue():
 	"""Clear all queued actions and refund their committed Attention."""
@@ -400,7 +406,7 @@ func clear_action_queue():
 	var refunded := _queued_attention_cost()
 	state.queued_actions.clear()
 	if state.month_plan != null:
-		state.month_plan.attention_spent = max(0, state.month_plan.attention_spent - refunded)
+		state.month_plan.refund_attention(refunded, MonthPlan.HOUR_PLANNING)
 
 	print("[GameManager] Queue cleared, refunded %d Attention" % refunded)
 	game_state_updated.emit(state.to_dict())
@@ -408,10 +414,10 @@ func clear_action_queue():
 
 func _queued_attention_cost() -> int:
 	"""Sum the Attention cost of the currently queued founder actions (their legacy
-	action_points cost re-read as Attention). Used to refund on clear/remove."""
+	`attention` cost). Used to refund on clear/remove."""
 	var total := 0
 	for aid in state.queued_actions:
-		total += int(_get_action_by_id(aid).get("costs", {}).get("action_points", 0))
+		total += GameActions.attention_cost(_get_action_by_id(aid))
 	return total
 
 func set_research_quality(mode: String):
@@ -435,14 +441,14 @@ func remove_queued_action(action_id: String):
 			break
 
 	if removed_index >= 0:
-		# Get Attention cost before removing (legacy action_points cost = Attention cost)
+		# Get Attention cost before removing
 		var action = _get_action_by_id(action_id)
-		var attention_cost = action.get("costs", {}).get("action_points", 0)
+		var attention_cost: int = GameActions.attention_cost(action)
 
-		# Remove and refund Attention
+		# Remove and refund Attention (queued cards billed PLANNING hours)
 		state.queued_actions.remove_at(removed_index)
 		if state.month_plan != null:
-			state.month_plan.attention_spent = max(0, state.month_plan.attention_spent - attention_cost)
+			state.month_plan.refund_attention(attention_cost, GameActions.hour_type(action))
 
 		print("[GameManager] Removed %s from queue, refunded %d Attention (available: %d)" % [action_id, attention_cost, state.month_plan.available() if state.month_plan else 0])
 		game_state_updated.emit(state.to_dict())
@@ -622,7 +628,7 @@ func surface_pending_events() -> void:
 		return
 	turn_phase_changed.emit("turn_start")
 	for event in state.pending_events:
-		event_triggered.emit(WindowResolver.strip_ap(event))
+		event_triggered.emit(WindowResolver.strip_attention(event))
 
 
 func end_month():
@@ -710,7 +716,7 @@ func _run_month_playback() -> void:
 				for w in month_controller.window_queue:
 					# AP pre-stripped so the dialog's cost display matches what window
 					# resolution actually charges (Attention, not AP).
-					event_triggered.emit(WindowResolver.strip_ap(w))
+					event_triggered.emit(WindowResolver.strip_attention(w))
 				return  # playback resumes via resolve_event once answered
 			"month_open":
 				_finish_month_playback()
@@ -935,25 +941,36 @@ func _apply_difficulty_settings():
 		print("[GameManager] ERROR: Invalid difficulty value (%d), defaulting to Standard" % GameConfig.difficulty)
 		GameConfig.difficulty = 1
 
-	# Difficulty modifiers come from the Balance surface ("difficulty.*", L9 #621);
-	# fallbacks are the pre-L9 literals (easy 1.5x/4AP, standard 1.0x/3AP, hard 0.75x/2AP).
-	# This replaces the dormant data/events/balancing/difficulty.json (deleted in L9).
+	# Difficulty modifiers come from the Balance surface ("difficulty.*", L9 #621).
+	# T2: difficulty scales the MONTHLY ATTENTION GRANT, not a per-turn AP cap (the AP pool
+	# is deleted). Fallbacks keep the old easy/standard/hard ORDERING at the Attention
+	# denomination (24 / 20 / 16 against a 20 default grant).
 	match GameConfig.difficulty:
 		0:  # Easy
 			print("[GameManager] Applying EASY difficulty modifiers")
 			state.money *= Balance.num("difficulty.easy.money_multiplier", 1.5)  # 50% more starting money
-			state.max_action_points = Balance.inum("difficulty.easy.max_action_points", 4)  # Extra AP
+			_set_attention_grant(Balance.inum("difficulty.easy.attention_per_month", 24))
 		1:  # Standard
 			print("[GameManager] Applying STANDARD difficulty (default)")
 			state.money *= Balance.num("difficulty.standard.money_multiplier", 1.0)
-			state.max_action_points = Balance.inum("difficulty.standard.max_action_points", 3)
+			_set_attention_grant(Balance.inum("difficulty.standard.attention_per_month", 20))
 		2:  # Hard
 			print("[GameManager] Applying HARD difficulty modifiers")
 			state.money *= Balance.num("difficulty.hard.money_multiplier", 0.75)  # 25% less starting money
-			state.max_action_points = Balance.inum("difficulty.hard.max_action_points", 2)  # Less AP
+			_set_attention_grant(Balance.inum("difficulty.hard.attention_per_month", 16))
 		_:  # Safety default case (should never reach here after validation)
 			print("[GameManager] WARNING: Unexpected difficulty value, using Standard")
 			# Apply standard difficulty (no changes)
+
+
+func _set_attention_grant(per_month: int) -> void:
+	"""Set the founder's monthly Attention grant and re-open the CURRENT month at the new
+	size. Difficulty/scenario overrides are applied AFTER GameState.reset() has opened month
+	0, so the grant has to be restated -- month 0 is untouched at that point (nothing spent),
+	which is why a plain re-begin is safe here and would not be mid-month."""
+	state.attention_per_month = per_month
+	if state.month_plan != null:
+		state.month_plan.begin_month(per_month, state.month_plan.month_ordinal)
 
 func _apply_scenario_overrides():
 	"""Apply scenario pack overrides to game state (Issue #483)"""
@@ -992,9 +1009,13 @@ func _apply_scenario_overrides():
 		if state.doom_system:
 			state.doom_system.current_doom = state.doom
 		print("  Doom: %.1f" % state.doom)
-	if resources.has("action_points"):
-		state.action_points = int(resources["action_points"])
-		print("  Action Points: %d" % state.action_points)
+	# T2: scenario packs override the monthly ATTENTION grant. `action_points` is read as a
+	# legacy alias so pre-migration scenario JSON keeps loading instead of silently doing
+	# nothing (the scenario surface is content, and content lags a code migration).
+	if resources.has("attention_per_month") or resources.has("action_points"):
+		var grant: int = int(resources.get("attention_per_month", resources.get("action_points", 0)))
+		_set_attention_grant(grant)
+		print("  Attention per month: %d" % state.attention_per_month)
 	if resources.has("stationery"):
 		state.stationery = float(resources["stationery"])
 		print("  Stationery: %.1f" % state.stationery)

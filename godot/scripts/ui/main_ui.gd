@@ -962,17 +962,17 @@ func _on_end_turn_button_pressed():
 		screen_mode.enter_watch()
 
 func _on_commit_plan_button_pressed():
-	"""Commit queued actions AND reserve remaining AP (no warnings)"""
+	"""Commit queued actions AND reserve the remaining Attention (no warnings)"""
 	var current_state = game_manager.get_game_state()
-	var available_ap = current_state.get("available_ap", 0)
+	var available_ap = current_state.get("attention", 0)
 
 	# If there are queued actions, commit them + reserve balance
 	if plan_controller.queue_size() > 0:
-		log_message("[color=cyan]Committing %d queued actions + reserving %d remaining AP...[/color]" % [plan_controller.queue_size(), available_ap])
+		log_message("[color=cyan]Committing %d queued actions + reserving %d remaining Attention...[/color]" % [plan_controller.queue_size(), available_ap])
 	else:
 		# No queued actions - just reserve all AP (reactive strategy). PlanController owns the
 		# reserve-all queue mutation (mirror entry + backend pass id); the view just logs + redraws.
-		log_message("[color=cyan]Committing plan: Reserving all %d AP for reactive responses...[/color]" % available_ap)
+		log_message("[color=cyan]Committing plan: Reserving all %d Attention for reactive responses...[/color]" % available_ap)
 		plan_controller.append_reserve_all()
 		update_queued_actions_display()
 
@@ -1061,39 +1061,42 @@ func _on_game_state_updated(state: Dictionary):
 	for _i in range(compute_eng):
 		blob_display += "[color=dodger_blue]*[/color]"
 
-	# L2 (ADR-0011): the founder currency is the monthly ATTENTION budget (month_plan), not
-	# the retired per-turn AP pool. Read the plan's Attention split so the HUD is honest --
-	# "~20 decisions this month" is now the true, spendable number.
+	# T2 (ADR-0011): the founder currency is the monthly ATTENTION budget (month_plan); the
+	# per-turn AP pool no longer exists anywhere. Read the plan's Attention split so the HUD
+	# is honest -- "~20 decisions this month" is the true, spendable number.
 	var mp = state.get("month_plan", {})
-	var total_ap = int(mp.get("attention_total", 0))
-	var committed_ap = int(mp.get("attention_spent", 0))
-	var reserved_ap = int(mp.get("attention_reserved", 0))
-	var remaining_ap = total_ap - committed_ap - reserved_ap
+	var total_att = int(mp.get("attention_total", 0))
+	var committed_att = int(mp.get("attention_spent", 0))
+	var reserved_att = int(mp.get("attention_reserved", 0))
+	var remaining_att = total_att - committed_att - reserved_att
 
 	# Color-code Attention text based on remaining budget
 	var ap_color_name = "white"  # Default
-	if remaining_ap <= 0:
+	if remaining_att <= 0:
 		ap_color_name = "red"  # Depleted
-	elif remaining_ap == 1:
+	elif remaining_att == 1:
 		ap_color_name = "yellow"  # Low
-	elif remaining_ap < total_ap:
+	elif remaining_att < total_att:
 		ap_color_name = "lime"  # Partially committed
 
 	# Build BBCode text for RichTextLabel
 	var ap_text = ""
-	if reserved_ap > 0:
-		ap_text = "[color=%s]Attention: %d (%d free, %d reserved)[/color]  %s" % [ap_color_name, total_ap, remaining_ap, reserved_ap, blob_display]
-	elif committed_ap > 0:
-		ap_text = "[color=%s]Attention: %d (%d free, %d queued)[/color]  %s" % [ap_color_name, total_ap, remaining_ap, committed_ap, blob_display]
+	if reserved_att > 0:
+		ap_text = "[color=%s]Attention: %d (%d free, %d reserved)[/color]  %s" % [ap_color_name, total_att, remaining_att, reserved_att, blob_display]
+	elif committed_att > 0:
+		ap_text = "[color=%s]Attention: %d (%d free, %d queued)[/color]  %s" % [ap_color_name, total_att, remaining_att, committed_att, blob_display]
 	else:
-		ap_text = "[color=%s]Attention: %d[/color]  %s" % [ap_color_name, total_ap, blob_display]
+		ap_text = "[color=%s]Attention: %d[/color]  %s" % [ap_color_name, total_att, blob_display]
 
 	ap_label.text = ap_text
-	# AP tooltip: base is difficulty-set (state.max_action_points), per-staff bonus
-	# from Balance -- both the real inputs to turn_manager._step_grant_action_points.
-	var ap_base := int(state.get("max_action_points", 3))
-	var per_staff = Balance.num("action_points.per_staff", 0.5)
-	ap_label.tooltip_text = "Action Points. Limits actions per turn. Base %d + %s per staff." % [ap_base, str(per_staff)]
+	# Attention tooltip: the monthly grant is difficulty-set (attention_per_month), and the
+	# 2-way founder-hour split is what actually binds -- surface both, because "I have
+	# Attention left but the button is dead" is otherwise an unexplainable UI state.
+	ap_label.tooltip_text = "Attention -- the founder's month. Grant %d/month. Hours left: %d planning, %d operating. Planning hours queue strategic work; operating hours pay response windows, hiring and travel. A crisis can eat your planning hours; planning can never buy back presence." % [
+		int(state.get("attention_per_month", 20)),
+		int(state.get("planning_hours_left", 0)),
+		int(state.get("operating_hours_left", 0)),
+	]
 
 	# Update doom displays (both text label and visual meter)
 	var doom = state.get("doom", 0)
@@ -1145,8 +1148,9 @@ func _on_game_state_updated(state: Dictionary):
 
 	# Enable controls after first init
 	if state.get("turn", 0) >= 0:
-		# Enable/disable Reserve AP button based on available AP
-		var available = state.get("available_ap", 0)
+		# Enable/disable the Reserve button based on available OPERATING hours -- the crisp
+		# reserve is operating capacity by definition (MonthPlan.set_reserve).
+		var available = state.get("operating_hours_left", 0)
 		reserve_ap_button.disabled = (available < 1)
 
 		# Note: Actions are now included in init_game response
@@ -1522,11 +1526,14 @@ func _on_dynamic_action_pressed(action_id: String, action_name: String):
 
 	# Check if action can be afforded before adding to UI queue (#456)
 	var action_def = _get_action_by_id(action_id)
-	var ap_cost = action_def.get("costs", {}).get("action_points", 0)
-	var available_ap = game_manager.state.get_available_ap()
+	var attention_cost: int = GameActions.attention_cost(action_def)
+	var hour_type: String = GameActions.hour_type(action_def)
+	var available_attention = game_manager.state.get_available_attention()
+	var available_hours = game_manager.state.get_available_hours(hour_type)
 
-	if available_ap < ap_cost:
-		log_message("[color=red]Not enough AP: need %d, have %d[/color]" % [ap_cost, available_ap])
+	if available_attention < attention_cost or available_hours < attention_cost:
+		log_message("[color=red]Not enough Attention: need %d %s hours, have %d[/color]" % [
+			attention_cost, hour_type, mini(available_hours, available_attention)])
 		return
 
 	if not game_manager.state.can_afford(action_def.get("costs", {})):
@@ -1692,12 +1699,12 @@ func _format_costs_inline(costs: Dictionary) -> String:
 	"""Shared cost-summary formatter for the icon-grid submenus (fundraising / publicity /
 	strategic / travel / operations). Cost-display sweep (2026-07-24, Pip playtest): these
 	buttons were only showing cost on hover (tooltip_text) -- this is what now also goes ON
-	the button face via a dedicated cost label, so a hidden-AP surprise (e.g. Compute
+	the button face via a dedicated cost label, so a hidden-Attention surprise (e.g. Compute
 	Partnership, Intelligence Opportunity) can't happen here. Returns 'Free' for an empty/
 	zero-cost dict."""
 	var parts: Array[String] = []
-	if costs.get("action_points", 0) > 0:
-		parts.append("%d AP" % int(costs["action_points"]))
+	if int(costs.get("attention", 0)) > 0:
+		parts.append("%d Attention" % int(costs["attention"]))
 	if costs.get("money", 0) > 0:
 		parts.append(GameConfig.format_money(costs["money"]))
 	if costs.get("reputation", 0) > 0:
@@ -1714,16 +1721,18 @@ func _format_costs_inline(costs: Dictionary) -> String:
 
 
 func _costs_affordable(costs: Dictionary, state: Dictionary) -> bool:
-	"""Shared affordability check for the icon-grid submenus. IMPORTANT: action_points must be
-	checked against the monthly Attention budget (available_ap), not the raw legacy
-	action_points primitive -- get_available_ap() nets out what's already committed/reserved
-	this plan month (see GameState.get_available_ap docstring). Using the raw field under-
-	reported unaffordable options as affordable (cost-display sweep, #822-adjacent)."""
+	"""Shared affordability check for the icon-grid submenus. IMPORTANT: `attention` must be
+	checked against the monthly Attention budget, which nets out what is already committed
+	and reserved this plan month (GameState.get_available_attention). Checking a raw field
+	under-reported unaffordable options as affordable (cost-display sweep, #822-adjacent).
+	`hour_type` is a TYPE TAG, not a resource -- it must never be treated as a cost."""
 	for resource in costs.keys():
+		if resource == "hour_type":
+			continue
 		var need = costs[resource]
 		if need <= 0:
 			continue
-		var have = state.get("available_ap", 0) if resource == "action_points" else state.get(resource, 0)
+		var have = state.get("attention", 0) if resource == "attention" else state.get(resource, 0)
 		if have < need:
 			return false
 	return true
@@ -1846,12 +1855,12 @@ func update_queued_actions_display():
 			label.add_theme_font_size_override("font_size", 11)
 			vbox.add_child(label)
 
-			# AP cost indicator
+			# Attention cost indicator
 			var action_def = _get_action_by_id(action_id)
-			var ap_cost = action_def.get("costs", {}).get("action_points", 0)
+			var ap_cost: int = GameActions.attention_cost(action_def)
 			if ap_cost > 0:
 				var ap_cost_label = Label.new()
-				ap_cost_label.text = "-%d AP" % ap_cost
+				ap_cost_label.text = "-%d Attention" % ap_cost
 				ap_cost_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 				ap_cost_label.add_theme_color_override("font_color", Color(0.9, 0.7, 0.2))
 				ap_cost_label.add_theme_font_size_override("font_size", 10)
@@ -1894,8 +1903,8 @@ func update_queued_actions_display():
 				var formatted = ""
 				if resource == "money":
 					formatted = GameConfig.format_money(-cost_value)
-				elif resource == "action_points":
-					formatted = "-%d AP" % cost_value
+				elif resource == "attention":
+					formatted = "-%d Attention" % cost_value
 				else:
 					formatted = "-%d %s" % [cost_value, resource]
 				cost_label.text = formatted
@@ -1975,8 +1984,8 @@ func _on_action_hover(action: Dictionary, can_afford: bool, missing_resources: A
 		var cost_parts = []
 
 		# Format each resource cost with appropriate color
-		if action_costs.has("action_points"):
-			cost_parts.append("[color=magenta]%d AP[/color]" % action_costs["action_points"])
+		if action_costs.has("attention"):
+			cost_parts.append("[color=magenta]%d Attention[/color]" % action_costs["attention"])
 		if action_costs.has("money"):
 			cost_parts.append("[color=gold]%s[/color]" % GameConfig.format_money(action_costs["money"]))
 		if action_costs.has("reputation"):
@@ -2074,12 +2083,12 @@ func _on_pass_button_pressed():
 		log_message("[color=red]Cannot pass - not in action selection phase[/color]")
 		return
 
-	# Check AP availability (pass costs 0 AP but still need to verify game state)
-	var available_ap = game_manager.state.get_available_ap()
-	var ap_cost = pass_action.get("costs", {}).get("action_points", 0)
+	# Check Attention availability (pass costs 0 but still verify game state)
+	var available_ap = game_manager.state.get_available_attention()
+	var ap_cost: int = GameActions.attention_cost(pass_action)
 
 	if available_ap < ap_cost:
-		log_message("[color=red]Not enough AP: need %d, have %d[/color]" % [ap_cost, available_ap])
+		log_message("[color=red]Not enough Attention: need %d, have %d[/color]" % [ap_cost, available_ap])
 		return
 
 	log_message("[color=gray]%s - skipping this action[/color]" % action_name)

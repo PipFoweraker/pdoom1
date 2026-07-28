@@ -24,7 +24,7 @@
 			"description": "Conduct AI safety research",
 			"costs": {
 				"research": 10,
-				"action_points": 1
+				"attention": 1
 			},
 			"category": "research"
 		},
@@ -34,7 +34,7 @@
 			"description": "Advance AI capabilities",
 			"costs": {
 				"research": 10,
-				"action_points": 1
+				"attention": 1
 			},
 			"category": "research"
 		},
@@ -44,7 +44,7 @@
 			"description": "Publish research to raise global alarm (adopted safety concern)",
 			"costs": {
 				"research": 20,
-				"action_points": 1
+				"attention": 1
 			},
 			"category": "research"
 		},
@@ -70,7 +70,7 @@
 			"description": "Improve morale",
 			"costs": {
 				"money": 10000,
-				"action_points": 1
+				"attention": 1
 			},
 			"category": "management",
 			"unlock_conditions": {
@@ -83,7 +83,7 @@
 			"description": "Comprehensive safety review",
 			"costs": {
 				"money": 40000,
-				"action_points": 2
+				"attention": 2
 			},
 			"category": "research",
 			"unlock_conditions": {

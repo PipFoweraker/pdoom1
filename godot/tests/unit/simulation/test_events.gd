@@ -321,7 +321,6 @@ func test_execute_event_choice_checks_affordability():
 	assert_false(ai_breakthrough.is_empty(), "AI breakthrough event should exist")
 
 	state.money = 5000  # Not enough for safety review
-	state.action_points = 0  # No AP
 
 	# Try safety review option (costs $20k + 1 AP)
 	var result = GameEvents.execute_event_choice(ai_breakthrough, "safety_review", state)
@@ -569,7 +568,7 @@ const HANDLED_EFFECT_KEYS := [
 
 # Every cost key can_afford/spend_resources actually checks and deducts.
 const PAYABLE_COST_KEYS := [
-	"money", "compute", "research", "papers", "reputation", "action_points",
+	"money", "compute", "research", "papers", "reputation", "attention",
 ]
 
 func test_all_core_event_effect_keys_are_handled():

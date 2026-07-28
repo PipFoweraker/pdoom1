@@ -280,7 +280,6 @@ func test_hiring_action_creates_researcher():
 func test_hiring_all_specializations():
 	var state = GameState.new("test_all_specs")
 	state.money = 500000.0  # Enough for all hires
-	state.action_points = 10
 
 	GameActions.execute_action("hire_safety_researcher", state)
 	GameActions.execute_action("hire_capability_researcher", state)

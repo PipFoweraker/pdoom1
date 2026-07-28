@@ -6,7 +6,7 @@
 			"name": "Modest Funding Round",
 			"description": "Conservative fundraising - lower amounts, lower risk, always available",
 			"costs": {
-				"action_points": 1,
+				"attention": 1,
 				"reputation": 2
 			},
 			"gains": {
@@ -20,7 +20,7 @@
 			"name": "Major Funding Round",
 			"description": "Aggressive funding - higher amounts but requires strong reputation",
 			"costs": {
-				"action_points": 2,
+				"attention": 2,
 				"reputation": 8
 			},
 			"gains": {
@@ -34,7 +34,7 @@
 			"name": "Business Loan",
 			"description": "Immediate funds via debt - creates future repayment obligation",
 			"costs": {
-				"action_points": 1
+				"attention": 1
 			},
 			"gains": {
 				"money": 75000,
@@ -47,7 +47,7 @@
 			"name": "Research Grant",
 			"description": "Government/foundation funding - requires published papers",
 			"costs": {
-				"action_points": 1,
+				"attention": 1,
 				"papers": 1
 			},
 			"gains": {

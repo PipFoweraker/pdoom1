@@ -57,7 +57,7 @@ static func features(state) -> Dictionary:
 		"capability_researchers": state.capability_researchers,
 		"papers": state.papers,
 		"turn": state.turn,
-		"ap": state.action_points,
+		"ap": state.get_available_attention(),
 		"attention_available": plan.available() if plan != null else 0,
 		"reserve_remaining": plan.reserve_remaining() if plan != null else 0,
 		"ledger_outstanding": ledger_outstanding,

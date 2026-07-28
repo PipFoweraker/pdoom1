@@ -37,7 +37,7 @@ func _init(gm = null) -> void:
 # --- Cost aggregation (was main_ui._calculate_queued_costs) -------------------------------
 
 func calculate_queued_costs() -> Dictionary:
-	"""Total the projected costs of every queued action for the turn preview. action_points is
+	"""Total the projected costs of every queued action for the turn preview. attention is
 	tracked separately as Attention, so it is skipped here (verbatim from the pre-carve view)."""
 	var total_costs: Dictionary = {}
 	for queued_action in queued_actions:
@@ -45,7 +45,7 @@ func calculate_queued_costs() -> Dictionary:
 		var action_def: Dictionary = GameActions.get_action_by_id(action_id)
 		var costs = action_def.get("costs", {})
 		for resource in costs.keys():
-			if resource == "action_points":
+			if resource == "attention" or resource == "hour_type":
 				continue  # AP is already tracked separately
 			if not total_costs.has(resource):
 				total_costs[resource] = 0
@@ -83,7 +83,7 @@ func remove_action(action_id: String) -> Dictionary:
 	queued_actions.remove_at(removed_index)
 	game_manager.remove_queued_action(action_id)
 	var action_def: Dictionary = GameActions.get_action_by_id(action_id)
-	var attention_cost: int = action_def.get("costs", {}).get("action_points", 0)
+	var attention_cost: int = GameActions.attention_cost(action_def)
 	return {"removed": true, "attention_cost": attention_cost}
 
 

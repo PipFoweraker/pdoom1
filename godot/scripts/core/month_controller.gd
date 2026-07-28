@@ -288,7 +288,7 @@ func resolve_current_window_option(option_id: String, event: Dictionary = {}, al
 	if WindowResolver.window_config(window).has("option_verbs"):
 		return result
 	var option_present := false
-	for opt in WindowResolver.strip_ap(window).get("options", []):
+	for opt in WindowResolver.strip_attention(window).get("options", []):
 		if opt is Dictionary and String(opt.get("id", "")) == option_id:
 			option_present = true
 			break
@@ -392,7 +392,7 @@ func _open_plan_month(mi: int) -> void:
 	current_month_index = mi
 	windows_surfaced_this_month = 0
 	var ordinal := Clock.month_ordinal_since_start(state.turn, state.start_year, state.start_month, state.start_day)
-	state.month_plan.begin_month(Balance.inum("attention.per_month", 20), ordinal)
+	state.month_plan.begin_month(state.attention_per_month, ordinal)
 	# Office rent (#791): the predictable monthly cash sink, on the payroll rail (a direct
 	# deduction, not a compounding ledger payable -- see office.gd's rail decision). No-op
 	# for an unsigned run, so a bedroom-only game is economically unchanged.

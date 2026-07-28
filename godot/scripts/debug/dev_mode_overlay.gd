@@ -329,8 +329,8 @@ func _advance_turn() -> void:
 	var gm := _live_gm()
 	if not is_instance_valid(gm) or gm.state == null or gm.turn_manager == null:
 		return
-	gm.state.action_points -= gm.state.committed_ap
-	gm.state.committed_ap = 0
+	# T2: there is no per-turn AP pool to un-commit. Queued cards already debited the
+	# month plan's Attention; GameManager.clear_action_queue does the refund.
 	gm.turn_manager.execute_turn()
 	gm.game_state_updated.emit(gm.state.to_dict())
 	if not gm.state.game_over:

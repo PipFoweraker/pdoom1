@@ -15,7 +15,7 @@
 					"id": "emergency_fundraise",
 					"text": "Emergency Fundraising",
 					"costs": {
-						"action_points": 1
+						"attention": 1
 					},
 					"effects": {
 						"money": 75000
@@ -26,7 +26,7 @@
 					"id": "sell_assets",
 					"text": "Sell Lab Equipment",
 					"costs": {
-						"action_points": 2
+						"attention": 2
 					},
 					"effects": {
 						"money": 120000,
@@ -59,7 +59,7 @@
 					"text": "Fast-Track Hiring",
 					"costs": {
 						"money": 25000,
-						"action_points": 1
+						"attention": 1
 					},
 					"effects": {
 						"safety_researchers": 1
@@ -121,7 +121,7 @@
 					"id": "safety_review",
 					"text": "Conduct Safety Review First",
 					"costs": {
-						"action_points": 1,
+						"attention": 1,
 						"money": 20000
 					},
 					"effects": {
@@ -216,7 +216,7 @@
 					"text": "Emergency Intervention",
 					"costs": {
 						"money": 30000,
-						"action_points": 2
+						"attention": 2
 					},
 					"effects": {
 						"reputation": 8
@@ -334,7 +334,7 @@
 					"text": "Publicly Support",
 					"costs": {
 						"money": 50000,
-						"action_points": 1
+						"attention": 1
 					},
 					"effects": {
 						"global_alarm": 20,
@@ -460,7 +460,7 @@
 					"id": "mediate_personally",
 					"text": "Mediate Personally",
 					"costs": {
-						"action_points": 1
+						"attention": 1
 					},
 					"effects": {
 						"reputation": 3
@@ -504,7 +504,7 @@
 					"id": "thorough_investigation",
 					"text": "Full Investigation",
 					"costs": {
-						"action_points": 2,
+						"attention": 2,
 						"money": 25000
 					},
 					"effects": {
@@ -561,7 +561,7 @@
 					"id": "explain_structure",
 					"text": "Explain Compensation Structure",
 					"costs": {
-						"action_points": 1
+						"attention": 1
 					},
 					"effects": {
 						"reputation": 2
@@ -647,7 +647,7 @@
 					"id": "team_meeting",
 					"text": "Address at Team Meeting",
 					"costs": {
-						"action_points": 1
+						"attention": 1
 					},
 					"effects": {
 						"reputation": 2
@@ -681,7 +681,7 @@
 					"id": "formal_discipline",
 					"text": "Formal Disciplinary Action",
 					"costs": {
-						"action_points": 1
+						"attention": 1
 					},
 					"effects": {
 						"reputation": 5
@@ -722,7 +722,7 @@
 					"id": "investigate_leak",
 					"text": "Full Investigation",
 					"costs": {
-						"action_points": 2,
+						"attention": 2,
 						"money": 30000
 					},
 					"effects": {
@@ -735,7 +735,7 @@
 					"id": "publish_immediately",
 					"text": "Publish Research Publicly",
 					"costs": {
-						"action_points": 1
+						"attention": 1
 					},
 					"effects": {
 						"papers": 1,
@@ -782,7 +782,7 @@
 					"id": "report_intel",
 					"text": "Report to Authorities",
 					"costs": {
-						"action_points": 1
+						"attention": 1
 					},
 					"effects": {
 						"reputation": 10,
@@ -816,7 +816,7 @@
 					"id": "full_support",
 					"text": "Fully Support & Publicize",
 					"costs": {
-						"action_points": 2,
+						"attention": 2,
 						"money": 50000
 					},
 					"effects": {
@@ -842,7 +842,7 @@
 					"text": "Hire Them Instead",
 					"costs": {
 						"money": 60000,
-						"action_points": 1
+						"attention": 1
 					},
 					"effects": {
 						"safety_researchers": 1
@@ -875,7 +875,7 @@
 					"id": "address_concerns",
 					"text": "Open Forum Discussion",
 					"costs": {
-						"action_points": 1
+						"attention": 1
 					},
 					"effects": {
 						"reputation": 8,
@@ -920,7 +920,7 @@
 					"text": "Plant a Source",
 					"costs": {
 						"money": 80000,
-						"action_points": 1
+						"attention": 1
 					},
 					"effects": {
 						"safety_absorption": 100,
@@ -932,7 +932,7 @@
 					"id": "legitimate_partnership",
 					"text": "Propose Legitimate Partnership",
 					"costs": {
-						"action_points": 1,
+						"attention": 1,
 						"money": 40000
 					},
 					"effects": {
@@ -966,7 +966,7 @@
 					"text": "Announce Public Security Audit",
 					"costs": {
 						"money": 40000,
-						"action_points": 1
+						"attention": 1
 					},
 					"effects": {
 						"reputation": 15,
@@ -998,7 +998,7 @@
 					"id": "exploit_weakness",
 					"text": "Exploit Their Weakness (Poach Clients)",
 					"costs": {
-						"action_points": 1
+						"attention": 1
 					},
 					"effects": {
 						"money": 50000,
@@ -1025,7 +1025,7 @@
 					"text": "Full Security Overhaul",
 					"costs": {
 						"money": 60000,
-						"action_points": 2
+						"attention": 2
 					},
 					"effects": {
 						"reputation": 8,
@@ -1082,7 +1082,7 @@
 					"id": "counter_promotion",
 					"text": "Counter with Promotion",
 					"costs": {
-						"action_points": 1,
+						"attention": 1,
 						"money": 30000
 					},
 					"effects": {

@@ -7,7 +7,7 @@
 			"description": "Submit research paper to a conference (multi-turn review process)",
 			"costs": {
 				"research": 15,
-				"action_points": 1
+				"attention": 1
 			},
 			"category": "travel"
 		},
@@ -16,7 +16,7 @@
 			"name": "Attend Conference",
 			"description": "[Coming Soon] Travel to present accepted paper or network at a conference -- day-bound scheduling is not available yet",
 			"costs": {
-				"action_points": 2
+				"attention": 2
 			},
 			"category": "travel",
 			"is_stub": true

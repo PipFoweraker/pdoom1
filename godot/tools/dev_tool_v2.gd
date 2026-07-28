@@ -108,8 +108,8 @@ func test_game_state():
 	print("  Staff: %d" % gs.staff)
 	print("  Reputation: %.1f" % gs.reputation)
 	print("  Doom: %.1f%%" % gs.doom)
-	if "action_points" in gs and "max_action_points" in gs:
-		print("  Action Points: %d / %d" % [gs.action_points, gs.max_action_points])
+	if "attention_per_month" in gs:
+		print("  Attention: %d free / %d granted" % [gs.get_available_attention(), gs.attention_per_month])
 
 	# Test turn advancement
 	print("\n[INFO] Testing turn advancement...")

@@ -84,11 +84,11 @@ func test_travel_option_set_and_costs_are_pinned():
 
 	# submit_paper: the paper-submission entry, 1 AP (matches the "Submit Paper (1 AP)" sub-dialog button).
 	var submit: Dictionary = by_id["submit_paper"]
-	assert_eq(int(submit.get("costs", {}).get("action_points", -1)), 1, "submit_paper costs 1 AP")
+	assert_eq(int(submit.get("costs", {}).get("attention", -1)), 1, "submit_paper costs 1 Attention")
 
 	# attend_conference: the attendance entry, 2 AP (matches the "Attend (2 AP)" sub-dialog button).
 	var attend: Dictionary = by_id["attend_conference"]
-	assert_eq(int(attend.get("costs", {}).get("action_points", -1)), 2, "attend_conference costs 2 AP")
+	assert_eq(int(attend.get("costs", {}).get("attention", -1)), 2, "attend_conference costs 2 Attention")
 
 	# send_delegation is still the not-yet-built stub (Issue #411) -- the panel greys it out.
 	var deleg: Dictionary = by_id["send_delegation"]

@@ -172,9 +172,9 @@ func test_all_hiring_options_cost_money_and_ap():
 	for option in hiring_options:
 		var costs = option["costs"]
 		assert_has(costs, "money", "Hiring option should cost money")
-		assert_has(costs, "action_points", "Hiring option should cost AP")
+		assert_has(costs, "attention", "Hiring option should cost Attention")
 		assert_gt(costs["money"], 0, "Money cost should be positive")
-		assert_gt(costs["action_points"], 0, "AP cost should be positive")
+		assert_gt(costs["attention"], 0, "Attention cost should be positive")
 
 func test_safety_audit_execution():
 	# Test safety audit action - action id is "audit_safety" not "safety_audit"
@@ -204,7 +204,6 @@ func test_unknown_action_returns_empty_dict():
 func test_lobby_government_affordable_without_reputation():
 	# Issue #449: lobby_government should not require reputation as a cost
 	state.money = 100000
-	state.action_points = 3
 	state.reputation = 5  # Low reputation - should NOT block action
 
 	# lobby_government is a submenu item (under publicity), not a top-level action

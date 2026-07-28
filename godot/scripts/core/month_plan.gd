@@ -6,8 +6,9 @@ extends RefCounted
 ##
 ## Holds the founder currency **Attention** (workshop#3 addendum #5): ~N decisions/month,
 ## admin as painful overhead. Staff spend a SEPARATE per-person `actions` currency -- there
-## is no global pool here (this is NOT the legacy AP pool; L2 deletes that and migrates cost
-## dicts onto Attention/staff -- L1 introduces Attention alongside, seam left clean).
+## is no global pool here. **T2 (2026-07-28): the legacy AP pool is DELETED** -- Attention
+## is now the ONLY founder currency; action/event cost dicts carry an `attention` key and
+## nothing anywhere reads `action_points` (ADR-0011 amendment (a), ruled 2026-07-27 11:37).
 ##
 ## Attention splits three ways within a month:
 ##   available  -- free to fund queued strategic actions (plan speed)
@@ -17,14 +18,45 @@ extends RefCounted
 ## Unspent reserve EVAPORATES at month end (ADR-0009 S4 -- no banking, ever): begin_month()
 ## resets the pools, discarding any carry.
 ##
+## FOUNDER-HOUR TYPING (2-way, T3-rung FLOOR -- ADR-0011 point 2 / amendment (c)).
+## Every Attention spend is one of two HOUR TYPES:
+##   PLANNING  -- the planner mind: deciding direction, queuing strategic work, approvals.
+##                Does NOT require being in the building (this is the #980 seam: away at a
+##                conference you lose OPERATOR PRESENCE, not PLANNER MIND).
+##   OPERATING -- presence work: face-time, firefighting, response windows, running the
+##                hiring loop, being in the room.
+## The typed pools are ADDITIVE ACCOUNTING over an AUTHORITATIVE SCALAR -- the same shape
+## N2 used for typed reputation (ruled 2026-07-27). `attention_total`/`attention_spent`
+## stay the authoritative aggregate; `hours_total`/`hours_spent` type it. Every legacy
+## caller that only knows the aggregate keeps working unchanged.
+##
+## OVERFLOW IS ASYMMETRIC and that asymmetry is the whole design point:
+##   OPERATING may overflow into PLANNING hours -- a crisis eats the time you meant to
+##     spend thinking. (ADR-0011: "reserve -- instant-speed firefighting".)
+##   PLANNING may NOT overflow into OPERATING -- you cannot retroactively have been in the
+##     room. Running out of planner hours BLOCKS more strategic queuing this month.
+## The 4-way refinement (doors / approvals / audits / reserve, ADR-0011 amendment (c)) is a
+## LATER lane; it subdivides these two, it does not replace them.
+##
 ## Strategic actions carry DURATIONS (ADR-0009 S5 -- nothing strategic resolves instantly);
 ## queued items land on a future resolution tick. This is the seam L2 workstreams extend.
+
+# --- Founder hour types (2-way floor) ---
+const HOUR_PLANNING := "planning"
+const HOUR_OPERATING := "operating"
+const HOUR_TYPES := [HOUR_PLANNING, HOUR_OPERATING]
 
 # --- Attention accounting (all integer Attention units) ---
 var attention_total: int = 0        # granted this plan-month (Balance attention.per_month)
 var attention_spent: int = 0        # committed to queued strategic actions
 var attention_reserved: int = 0     # explicitly held for response windows (the crisp reserve)
 var reserve_used: int = 0           # reserve consumed by HANDLE-from-reserve this month
+
+# Typed founder hours (additive over the authoritative scalar above). hours_total sums to
+# attention_total by construction in begin_month; hours_spent sums to attention_spent for
+# every spend that goes through spend_attention/queue_strategic/the window payers.
+var hours_total: Dictionary = {HOUR_PLANNING: 0, HOUR_OPERATING: 0}
+var hours_spent: Dictionary = {HOUR_PLANNING: 0, HOUR_OPERATING: 0}
 
 # Which plan-month this is (0-based from run start) -- stamps the replay artifact (ADR-0016).
 var month_ordinal: int = 0
@@ -36,16 +68,63 @@ var month_ordinal: int = 0
 var queued_strategic: Array = []
 
 
-func begin_month(attention_per_month: int, ordinal: int) -> void:
+func begin_month(attention_per_month: int, ordinal: int, planning_share: float = -1.0) -> void:
 	"""Open a fresh plan phase. Crisp reserve evaporation happens HERE by construction:
-	the pools reset, so last month's unspent reserve is simply gone (ADR-0009 S4)."""
+	the pools reset, so last month's unspent reserve is simply gone (ADR-0009 S4).
+	`planning_share` splits the grant into PLANNING vs OPERATING hours; < 0 reads the
+	Balance dial (`attention.planning_share`). The remainder after integer division goes
+	to OPERATING, so an odd grant never silently loses an hour."""
 	attention_total = attention_per_month
 	attention_spent = 0
 	attention_reserved = 0
 	reserve_used = 0
 	month_ordinal = ordinal
+	var share: float = planning_share
+	if share < 0.0:
+		share = Balance.num("attention.planning_share", 0.6)
+	share = clampf(share, 0.0, 1.0)
+	var planning: int = int(floor(float(attention_per_month) * share))
+	planning = clampi(planning, 0, attention_per_month)
+	hours_total = {HOUR_PLANNING: planning, HOUR_OPERATING: attention_per_month - planning}
+	hours_spent = {HOUR_PLANNING: 0, HOUR_OPERATING: 0}
 	# In-flight strategic actions persist across the boundary (they have durations);
 	# resolved ones are pruned by the controller, not here.
+
+
+# --- Typed founder hours (2-way floor) ---
+
+func hours_available(hour_type: String) -> int:
+	"""Hours of `hour_type` not yet spent. This is the TYPE gate only -- a spend must also
+	fit inside the authoritative aggregate available() (which nets out the reserve)."""
+	return int(hours_total.get(hour_type, 0)) - int(hours_spent.get(hour_type, 0))
+
+
+func can_spend_hours(cost: int, hour_type: String) -> bool:
+	"""Would a `cost`-hour spend of `hour_type` be admissible right now? Applies both the
+	aggregate gate and the asymmetric-overflow type rule."""
+	if cost <= 0:
+		return true
+	if available() < cost:
+		return false
+	if hours_available(hour_type) >= cost:
+		return true
+	# OPERATING may eat PLANNING hours (a crisis costs you thinking time). PLANNING may not
+	# eat OPERATING hours -- you cannot retroactively have been in the room.
+	return hour_type == HOUR_OPERATING
+
+
+func _debit_hours(cost: int, hour_type: String) -> void:
+	"""Record `cost` hours against the typed pools, spilling into the other type per the
+	asymmetric-overflow rule. Callers gate with can_spend_hours() first; this only books."""
+	if cost <= 0:
+		return
+	var from_type: int = mini(cost, maxi(0, hours_available(hour_type)))
+	hours_spent[hour_type] = int(hours_spent.get(hour_type, 0)) + from_type
+	var spill: int = cost - from_type
+	if spill <= 0:
+		return
+	var other: String = HOUR_PLANNING if hour_type == HOUR_OPERATING else HOUR_OPERATING
+	hours_spent[other] = int(hours_spent.get(other, 0)) + spill
 
 
 func available() -> int:
@@ -67,6 +146,13 @@ func set_reserve(amount: int) -> bool:
 	# The new reserve must fit within total minus what's spent on strategic work.
 	if amount > attention_total - attention_spent:
 		return false
+	# T2 (2-way hour typing): the crisp reserve is OPERATING capacity BY DEFINITION -- it
+	# exists to be present for response windows. You cannot hold back more firefighting
+	# capacity than you have operating hours left. (reserve_used deliberately does NOT book
+	# into hours_spent: the invariant kept here is sum(hours_spent) == attention_spent, and
+	# reserve draw is accounted by reserve_used against this operating-gated hold.)
+	if amount > hours_available(HOUR_OPERATING):
+		return false
 	attention_reserved = amount
 	return true
 
@@ -75,28 +161,64 @@ func can_queue(attention_cost: int) -> bool:
 	return available() >= attention_cost
 
 
-func spend_attention(cost: int) -> bool:
+func spend_attention(cost: int, hour_type: String = HOUR_OPERATING) -> bool:
 	"""Spend `cost` Attention from the AVAILABLE (un-reserved) pool at plan speed, without
 	minting a queued-strategic WIP entry. This is the primitive the hiring pipeline (and
 	other duration subsystems that track their own jobs) use: the founder currency is still
 	debited here, but the duration/target bookkeeping lives in the subsystem. Returns false
-	(no charge) if the cost doesn't fit within available Attention."""
+	(no charge) if the cost doesn't fit within available Attention OR within the hour type
+	(PLANNING cannot borrow OPERATING hours -- see the header).
+
+	DEFAULT IS OPERATING: an un-typed spend is presence work. Callers that are genuinely
+	planner-mind work (queuing strategic direction) pass HOUR_PLANNING explicitly."""
 	if cost <= 0:
 		return true
-	if available() < cost:
+	if not can_spend_hours(cost, hour_type):
 		return false
 	attention_spent += cost
+	_debit_hours(cost, hour_type)
 	return true
+
+
+func grant_hours(amount: int, hour_type: String = HOUR_OPERATING) -> void:
+	"""Add `amount` hours of ONE type to this month's budget mid-month. This is ADR-0011
+	point 6 ("ops/admin staff reduce the founder-price of routine actions") -- bought
+	presence, e.g. a contractor absorbing routine operating load. It is deliberately NOT a
+	way for staff to top up the founder's PLANNING mind (ADR-0011 point 1: the pool illusion
+	is dead; staff never add founder capacity to think). Grants evaporate at month end like
+	everything else -- begin_month resets both pools."""
+	if amount <= 0:
+		return
+	hours_total[hour_type] = int(hours_total.get(hour_type, 0)) + amount
+	attention_total += amount
+
+
+func refund_attention(cost: int, hour_type: String = HOUR_OPERATING) -> void:
+	"""Give back `cost` Attention (queue clear / removed card / a subsystem rolling back).
+	Clamped at zero on both the aggregate and the typed pool so a mismatched refund can
+	never mint Attention out of nothing."""
+	if cost <= 0:
+		return
+	attention_spent = maxi(0, attention_spent - cost)
+	var booked: int = int(hours_spent.get(hour_type, 0))
+	var from_type: int = mini(cost, booked)
+	hours_spent[hour_type] = booked - from_type
+	var spill: int = cost - from_type
+	if spill > 0:
+		var other: String = HOUR_PLANNING if hour_type == HOUR_OPERATING else HOUR_OPERATING
+		hours_spent[other] = maxi(0, int(hours_spent.get(other, 0)) - spill)
 
 
 func queue_strategic(action_id: String, attention_cost: int, duration_ticks: int, current_turn: int) -> bool:
 	"""Queue a strategic action at plan speed. Spends Attention now; the EFFECT lands
 	`duration_ticks` resolution ticks later (ADR-0009 S5). duration_ticks <= 0 is coerced
-	to 1 -- nothing strategic resolves on the same tick it was queued."""
-	if not can_queue(attention_cost):
+	to 1 -- nothing strategic resolves on the same tick it was queued.
+	Queuing strategic work is PLANNER MIND -- it bills PLANNING hours (T2 2-way floor)."""
+	if not can_queue(attention_cost) or not can_spend_hours(attention_cost, HOUR_PLANNING):
 		return false
 	var ticks: int = max(1, duration_ticks)
 	attention_spent += attention_cost
+	_debit_hours(attention_cost, HOUR_PLANNING)
 	queued_strategic.append({
 		"action_id": action_id,
 		"attention_cost": attention_cost,
@@ -138,9 +260,12 @@ func pay_by_cannibalizing(cost: int) -> Dictionary:
 	var cancelled: Array = []
 	var free: int = available()
 	# Cancel most-recent queued strategic WIP until we can cover the cost from free Attention.
+	# Cancelled cards refund PLANNING hours (that is what queue_strategic billed); the window
+	# then bills OPERATING and overflows into those freed planning hours -- which IS the
+	# designed pain: the crisis you handled is the strategy month you did not get.
 	while free < cost and not queued_strategic.is_empty():
 		var victim: Dictionary = queued_strategic.pop_back()
-		attention_spent -= int(victim.get("attention_cost", 0))
+		refund_attention(int(victim.get("attention_cost", 0)), HOUR_PLANNING)
 		cancelled.append(String(victim.get("action_id", "")))
 		free = available()
 	if free < cost:
@@ -148,6 +273,7 @@ func pay_by_cannibalizing(cost: int) -> Dictionary:
 		# reflects the cancellations, which is correct -- cancelling WIP is a real refund.)
 		return {"paid": false, "cancelled": cancelled}
 	attention_spent += cost  # the window consumes this much of the freed/available capacity
+	_debit_hours(cost, HOUR_OPERATING)
 	return {"paid": true, "cancelled": cancelled}
 
 
@@ -160,6 +286,8 @@ func to_dict() -> Dictionary:
 		"attention_reserved": attention_reserved,
 		"reserve_used": reserve_used,
 		"month_ordinal": month_ordinal,
+		"hours_total": hours_total.duplicate(),
+		"hours_spent": hours_spent.duplicate(),
 		"queued_strategic": queued_strategic.duplicate(true),
 	}
 
@@ -170,6 +298,29 @@ func from_dict(data: Dictionary) -> void:
 	attention_reserved = int(data.get("attention_reserved", 0))
 	reserve_used = int(data.get("reserve_used", 0))
 	month_ordinal = int(data.get("month_ordinal", 0))
+	# Typed hours. A pre-T2 save has neither key: rebuild the split from the grant and book
+	# everything already spent as OPERATING (the un-typed default), so an old save loads
+	# into a legal, invariant-satisfying state rather than a zeroed one that would block
+	# every further spend.
+	var raw_total: Variant = data.get("hours_total", null)
+	if raw_total is Dictionary and not (raw_total as Dictionary).is_empty():
+		hours_total = {
+			HOUR_PLANNING: int((raw_total as Dictionary).get(HOUR_PLANNING, 0)),
+			HOUR_OPERATING: int((raw_total as Dictionary).get(HOUR_OPERATING, 0)),
+		}
+	else:
+		var planning: int = int(floor(float(attention_total) * clampf(Balance.num("attention.planning_share", 0.6), 0.0, 1.0)))
+		planning = clampi(planning, 0, attention_total)
+		hours_total = {HOUR_PLANNING: planning, HOUR_OPERATING: attention_total - planning}
+	var raw_spent: Variant = data.get("hours_spent", null)
+	if raw_spent is Dictionary and not (raw_spent as Dictionary).is_empty():
+		hours_spent = {
+			HOUR_PLANNING: int((raw_spent as Dictionary).get(HOUR_PLANNING, 0)),
+			HOUR_OPERATING: int((raw_spent as Dictionary).get(HOUR_OPERATING, 0)),
+		}
+	else:
+		hours_spent = {HOUR_PLANNING: 0, HOUR_OPERATING: 0}
+		_debit_hours(attention_spent, HOUR_OPERATING)
 	queued_strategic = []
 	for item in data.get("queued_strategic", []):
 		if item is Dictionary:

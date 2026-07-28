@@ -144,10 +144,13 @@ func on_option_selected(action_id: String, action_name: String, dialog: Control,
 	host.active_dialog_buttons = []
 
 	var action_def = host._get_action_by_id(action_id)
-	var ap_cost = action_def.get("costs", {}).get("action_points", 0)
-	var available_ap = host.game_manager.state.get_available_ap()
-	if available_ap < ap_cost:
-		host.log_message("[color=red]Not enough AP: need %d, have %d[/color]" % [ap_cost, available_ap])
+	var attention_cost: int = GameActions.attention_cost(action_def)
+	var hour_type: String = GameActions.hour_type(action_def)
+	var available_hours: int = host.game_manager.state.get_available_hours(hour_type)
+	var available_attention: int = host.game_manager.state.get_available_attention()
+	if available_attention < attention_cost or available_hours < attention_cost:
+		host.log_message("[color=red]Not enough Attention: need %d %s hours, have %d[/color]" % [
+			attention_cost, hour_type, mini(available_hours, available_attention)])
 		return
 	if not host.game_manager.state.can_afford(action_def.get("costs", {})):
 		host.log_message("[color=red]Cannot afford: %s[/color]" % action_name)
@@ -368,8 +371,8 @@ func _build_financing_submenu() -> void:
 		btn.custom_minimum_size = Vector2(0, 44)
 		var key = key_labels[idx] if idx < key_labels.size() else ""
 		var cost_bits := []
-		if opt_costs.get("action_points", 0) > 0:
-			cost_bits.append("%d AP" % opt_costs["action_points"])
+		if int(opt_costs.get("attention", 0)) > 0:
+			cost_bits.append("%d Attention" % int(opt_costs["attention"]))
 		if opt_costs.get("money", 0) > 0:
 			cost_bits.append(GameConfig.format_money(opt_costs["money"]))
 		var cost_txt = (" (%s)" % ", ".join(cost_bits)) if cost_bits.size() > 0 else ""

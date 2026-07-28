@@ -58,8 +58,7 @@ func _play_full_turn(tm: TurnManager, state: GameState) -> void:
 
 func _end_turn(tm: TurnManager, state: GameState) -> void:
 	# Mirrors GameManager.end_turn(): committed AP converts to spent AP.
-	state.action_points -= state.committed_ap
-	state.committed_ap = 0
+	# T2: no AP pool to reconcile -- queued-card Attention already sits in month_plan.
 	tm.execute_turn()
 
 
@@ -150,7 +149,7 @@ func test_save_load_roundtrip_deep_equality_and_next_turn_identical():
 	# Mid-planning snapshot: an action queued but not yet executed
 	# (mirrors GameManager.select_action's bookkeeping).
 	state1.queued_actions.append("fundraise")
-	state1.committed_ap += 1
+	state1.month_plan.spend_attention(1, MonthPlan.HOUR_PLANNING)
 
 	# SAVE -> LOAD through the real file path (JSON coercions included).
 	assert_eq(SaveLoad.save_game(state1, TEST_SAVE_PATH), OK, "save must write")
@@ -172,8 +171,10 @@ func test_save_load_roundtrip_deep_equality_and_next_turn_identical():
 			"ledger entry %d" % i)
 	assert_eq(state2.governance, state1.governance, "governance")
 	assert_eq(state2.queued_actions, state1.queued_actions, "queued_actions")
-	assert_eq(state2.committed_ap, state1.committed_ap, "committed_ap")
-	assert_eq(state2.max_action_points, state1.max_action_points, "max_action_points (difficulty)")
+	assert_eq(state2.month_plan.attention_spent, state1.month_plan.attention_spent, "attention_spent")
+	assert_eq(state2.month_plan.hours_spent, state1.month_plan.hours_spent, "typed founder hours spent")
+	assert_eq(state2.month_plan.hours_total, state1.month_plan.hours_total, "typed founder hours granted")
+	assert_eq(state2.attention_per_month, state1.attention_per_month, "attention_per_month (difficulty)")
 	assert_eq(state2.rng.state, state1.rng.state, "rng stream position")
 	assert_eq(state2.rival_labs.size(), state1.rival_labs.size(), "rival count")
 	for i in range(state1.rival_labs.size()):

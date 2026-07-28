@@ -19,6 +19,34 @@ class_name GameActions
 # execute_action, so replays recorded before the collapse still verify.
 const PASS_ACTION_ID := "pass"
 
+# --- Founder Attention cost API (T2 / ADR-0011 amendment (a)) -------------------------------
+# The AP pool is DELETED. An action's founder cost is `costs.attention`, and it bills one of
+# the two founder HOUR TYPES (2-way floor: planning / operating). Every consumer -- the plan
+# queue, the cost preview, the submenu tooltips -- reads these two statics, so the later
+# 4-way lane (doors / approvals / audits / reserve) changes ONE file, not forty call sites.
+#
+# `action_points` is accepted as a READ-ONLY legacy alias. In-repo data is fully migrated; the
+# alias exists because action defs are content (scenario packs, historical timeline, saved
+# mods) and content lags a code migration. Nothing WRITES it.
+
+static func attention_cost(action: Dictionary) -> int:
+	"""Founder Attention an action costs to queue. 0 when free or when `action` is empty."""
+	var costs: Dictionary = action.get("costs", {})
+	if costs.has("attention"):
+		return int(costs["attention"])
+	return int(costs.get("action_points", 0))
+
+
+static func hour_type(action: Dictionary) -> String:
+	"""Which founder hour type an action bills. Data may declare `costs.hour_type`; the
+	DEFAULT for a queued strategic action is PLANNING -- picking what the org does next is
+	planner mind, not presence (the #980 seam: that is exactly the part you keep while
+	away). Actions that are inherently presence work declare "operating" in their data."""
+	var declared: String = String(action.get("costs", {}).get("hour_type", MonthPlan.HOUR_PLANNING))
+	if declared == MonthPlan.HOUR_OPERATING:
+		return MonthPlan.HOUR_OPERATING
+	return MonthPlan.HOUR_PLANNING
+
 
 ## Check if an action is unlocked based on game state
 static func is_action_unlocked(action: Dictionary, state: Dictionary) -> bool:
@@ -225,8 +253,9 @@ static func get_pass_action() -> Dictionary:
 
 static func execute_action(action_id: String, state: GameState) -> Dictionary:
 	"""Execute an action, modify state, return result
-	Note: AP costs are handled by the commit system in game_manager.gd (committed_ap).
-	Only non-AP costs (money, research, etc.) are spent here."""
+	Note: the founder ATTENTION cost was already debited from the month plan when the action
+	was queued (game_manager.select_action). Only the non-Attention costs (money, research,
+	...) are spent here -- charging attention again would double-bill the month."""
 	# LEGACY replay-input alias (L0 #620): "pass_turn" was a twin "do nothing" id queued
 	# by the commit-plan path; new code queues PASS_ACTION_ID. Kept ONLY so replay
 	# artifacts recorded before the collapse still execute identically (no state, no RNG).
@@ -237,15 +266,17 @@ static func execute_action(action_id: String, state: GameState) -> Dictionary:
 	if action.is_empty():
 		return {"success": false, "message": "Unknown action: " + action_id}
 
-	# Build costs without AP (AP already deducted via committed_ap system)
+	# Build costs without Attention (already debited from the month plan at queue time)
 	var execution_costs = action["costs"].duplicate()
-	execution_costs.erase("action_points")
+	execution_costs.erase("attention")
+	execution_costs.erase("action_points")  # legacy alias, never billed here either
+	execution_costs.erase("hour_type")      # a type tag, not a resource
 
-	# Check affordability (non-AP costs only)
+	# Check affordability (non-Attention costs only)
 	if not state.can_afford(execution_costs):
 		return {"success": false, "message": "Cannot afford " + action["name"]}
 
-	# Spend non-AP costs
+	# Spend non-Attention costs
 	state.spend_resources(execution_costs)
 
 	# Apply effects based on action type
@@ -481,10 +512,15 @@ static func execute_action(action_id: String, state: GameState) -> Dictionary:
 			result["message"] = "Pulled a desperation lever (brief reprieve now; a SECRET liability is planted)"
 
 		"staff_rider":
-			state.action_points += 2
+			# T2 judgment call: this used to mint +2 AP into the founder pool, which ADR-0011
+			# point 1 explicitly forbids ("staff never add founder AP"). Re-expressed as
+			# ADR-0011 point 6 instead -- a contractor absorbs routine OPERATING load, buying
+			# back presence hours. It cannot buy planner mind.
+			if state.month_plan != null:
+				state.month_plan.grant_hours(2, MonthPlan.HOUR_OPERATING)
 			if state.ledger:
 				state.ledger.add(Ledger.staff_rider("Contractor"))
-			result["message"] = "Brought on a contractor (+2 AP; a governance rider bills later)"
+			result["message"] = "Brought on a contractor (+2 operating hours this month; a governance rider bills later)"
 
 		# --- ADR-0013 cost-of-debt engine (L5 #616): the raise-as-campaign flow ---
 		"seek_financing":
@@ -836,9 +872,10 @@ static func submit_paper_to_conference(state: GameState, conf_id: String, topic:
 	if state.research < research_amount:
 		return {"success": false, "message": "Not enough research points"}
 
-	# Check AP cost
-	if state.action_points < 1:
-		return {"success": false, "message": "Not enough action points"}
+	# Check the founder Attention cost. Submitting a paper is OPERATING work -- writing up,
+	# chasing co-authors, hitting the deadline; it is presence, not direction-setting.
+	if not state.can_afford({"attention": 1, "hour_type": MonthPlan.HOUR_OPERATING}):
+		return {"success": false, "message": "Not enough Attention (1 operating hour required)"}
 
 	# Calculate paper quality (media_savvy trait retired -> no press bonus for now)
 	var lead_skill = lead_researcher.skill_level if lead_researcher != null else 3
@@ -861,7 +898,11 @@ static func submit_paper_to_conference(state: GameState, conf_id: String, topic:
 	paper.title = PaperSubmissions.generate_paper_title(topic, state.rng)
 
 	# Spend resources
-	state.spend_resources({"research": research_amount, "action_points": 1})
+	state.spend_resources({
+		"research": research_amount,
+		"attention": 1,
+		"hour_type": MonthPlan.HOUR_OPERATING,
+	})
 
 	# Add to tracking
 	state.add_paper_submission(paper)
@@ -915,11 +956,18 @@ static func attend_conference_action(state: GameState, conf_id: String, travel_c
 	var travel_cost = get_travel_cost_with_class(conf, travel_class)
 
 	# Check affordability
-	if not state.can_afford({"money": travel_cost.total, "action_points": 2}):
-		return {"success": false, "message": "Cannot afford: %s + 2 AP required" % GameConfig.format_money(travel_cost.total)}
+	# Travel is OPERATING work by definition -- it is the loss of presence at home that the
+	# conference lane priced (#980: away costs operator presence, not planner mind).
+	var travel_costs := {
+		"money": travel_cost.total,
+		"attention": 2,
+		"hour_type": MonthPlan.HOUR_OPERATING,
+	}
+	if not state.can_afford(travel_costs):
+		return {"success": false, "message": "Cannot afford: %s + 2 operating hours required" % GameConfig.format_money(travel_cost.total)}
 
 	# Spend resources
-	state.spend_resources({"money": travel_cost.total, "action_points": 2})
+	state.spend_resources(travel_costs)
 	state.mark_conference_attended(conf_id)
 
 	# Apply jet lag to traveler if specified (Issue #469)

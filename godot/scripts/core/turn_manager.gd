@@ -31,13 +31,12 @@ func start_turn() -> Dictionary:
 	_step_apply_scheduled_causes()
 	var ledger_result: Dictionary = _step_ledger_tick_and_bill()
 	var total_staff: int = state.get_total_staff()
-	var max_ap: int = _step_grant_action_points(total_staff)
 	var lifecycle_notes: Array = _step_process_researcher_lifecycles()
 	var staff_salaries: float = _step_pay_salaries(total_staff)
 	var prod: Dictionary = _step_researcher_productivity()
 	var workstream_notes: Array = _step_workstream_accrual()
 	var stationery: Dictionary = _step_consume_stationery()
-	var messages: Array = _build_start_turn_messages(max_ap, total_staff, staff_salaries, prod, stationery, ledger_result)
+	var messages: Array = _build_start_turn_messages(total_staff, staff_salaries, prod, stationery, ledger_result)
 	messages.append_array(lifecycle_notes)
 	messages.append_array(workstream_notes)
 	var triggered_events: Array[Dictionary] = _step_check_events(messages)
@@ -82,17 +81,11 @@ func _step_ledger_tick_and_bill() -> Dictionary:
 		exposed_entries = state.ledger.check_exposures(state, Balance.num("ledger.exposure_chance_per_turn", 0.15))
 	return {"billed": billed_entries, "exposed": exposed_entries}
 
-func _step_grant_action_points(total_staff: int) -> int:
-	"""Grant this turn's AP: difficulty base + staff bonus (0.5 per staff member).
-	FIX #541: use state.max_action_points (set by difficulty: Easy=4, Standard=3,
-	Hard=2) as the base instead of a hardcoded 3, so difficulty actually changes AP.
-	Per-staff bonus sourced from Balance ("action_points.per_staff", L9 #621)."""
-	var max_ap = state.max_action_points + int(total_staff * Balance.num("action_points.per_staff", 0.5))
-	state.action_points = max_ap
-
-	# Reset AP tracking for new turn (reserve system)
-	state.reset_turn_ap()
-	return max_ap
+# T2 (ADR-0011 amendment (a)): _step_grant_action_points is DELETED. There is no per-turn
+# founder currency any more -- Attention is granted per PLAN MONTH by MonthController
+# (MonthPlan.begin_month), and staff never top up the founder's budget (ADR-0011 point 1:
+# "the pool illusion dies; staff never add founder AP"). Removing the step is RNG-safe:
+# it drew nothing from state.rng, so the recorded-replay stream is unchanged.
 
 func _step_process_researcher_lifecycles() -> Array:
 	"""=== RESEARCHER TURN PROCESSING ===
@@ -406,7 +399,7 @@ func _step_consume_stationery() -> Dictionary:
 		"supply_auto_ordered": supply_auto_ordered,
 	}
 
-func _build_start_turn_messages(max_ap: int, total_staff: int, staff_salaries: float, prod: Dictionary, stationery: Dictionary, ledger_result: Dictionary) -> Array:
+func _build_start_turn_messages(total_staff: int, staff_salaries: float, prod: Dictionary, stationery: Dictionary, ledger_result: Dictionary) -> Array:
 	"""Assemble the turn-start message list. Pure reads -- no sim mutation, no RNG."""
 	var billed_entries: Array = ledger_result.get("billed", [])
 	var exposed_entries: Array = ledger_result.get("exposed", [])
@@ -426,7 +419,12 @@ func _build_start_turn_messages(max_ap: int, total_staff: int, staff_salaries: f
 
 	var messages = [
 		"Turn %d started" % state.turn,
-		"Action Points: %d (base 3 + %d from %d staff)" % [max_ap, max_ap - 3, total_staff]
+		"Attention: %d free of %d this month (%d planning / %d operating hours left)" % [
+			state.get_available_attention(),
+			state.month_plan.attention_total if state.month_plan != null else 0,
+			state.get_available_hours(MonthPlan.HOUR_PLANNING),
+			state.get_available_hours(MonthPlan.HOUR_OPERATING),
+		]
 	]
 
 	# EE-7 (ADR-0012): the ledger's kill path must be LEGIBLE -- every bill, its

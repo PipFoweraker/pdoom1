@@ -12,7 +12,9 @@ func test_game_state_initialization_defaults():
 	assert_eq(state.reputation, 50.0, "Should start with 50 reputation")
 	# Start doom is Balance-driven (dial 2, #638: the 2017 spawn starts LOW -- 20, was 50).
 	assert_eq(state.doom, Balance.num("starting_resources.doom", 20.0), "Start doom matches Balance starting_resources.doom")
-	assert_eq(state.action_points, 3, "Should start with 3 AP")
+	# T2: no AP pool. The founder starts a fresh PLAN MONTH with the Balance grant.
+	assert_eq(state.attention_per_month, Balance.inum("attention.per_month", 20), "Attention grant matches Balance")
+	assert_eq(state.get_available_attention(), state.attention_per_month, "Full month's Attention available at boot")
 	assert_eq(state.turn, 0, "Should start at turn 0")
 	assert_false(state.game_over, "Game should not be over initially")
 	assert_false(state.victory, "Should not be victorious initially")
@@ -38,8 +40,8 @@ func test_can_afford_sufficient_resources():
 
 	assert_true(state.can_afford({"money": 50000}), "Should afford $50k")
 	assert_true(state.can_afford({"compute": 50}), "Should afford 50 compute")
-	assert_true(state.can_afford({"action_points": 2}), "Should afford 2 AP")
-	assert_true(state.can_afford({"money": 50000, "action_points": 1}), "Should afford combo")
+	assert_true(state.can_afford({"attention": 2}), "Should afford 2 Attention")
+	assert_true(state.can_afford({"money": 50000, "attention": 1}), "Should afford combo")
 
 func test_can_afford_insufficient_resources():
 	# Test can_afford returns false when resources are insufficient
@@ -47,7 +49,7 @@ func test_can_afford_insufficient_resources():
 
 	assert_false(state.can_afford({"money": 300000}), "Should not afford $300k")
 	assert_false(state.can_afford({"compute": 500}), "Should not afford 500 compute")
-	assert_false(state.can_afford({"action_points": 5}), "Should not afford 5 AP")
+	assert_false(state.can_afford({"attention": 999}), "Should not afford 999 Attention")
 	assert_false(state.can_afford({"money": 50000, "compute": 500}), "Should not afford if one resource insufficient")
 
 func test_spend_resources_deducts_correctly():
@@ -57,9 +59,10 @@ func test_spend_resources_deducts_correctly():
 	state.spend_resources({"money": 10000})
 	assert_eq(state.money, 235000.0, "Money should decrease by $10k")
 
-	state.spend_resources({"compute": 20, "action_points": 1})
+	var attention_before := state.get_available_attention()
+	state.spend_resources({"compute": 20, "attention": 1})
 	assert_eq(state.compute, 80.0, "Compute should decrease by 20")
-	assert_eq(state.action_points, 2, "AP should decrease by 1")
+	assert_eq(state.get_available_attention(), attention_before - 1, "Attention should decrease by 1")
 
 func test_add_resources_increases_correctly():
 	# Test add_resources increases the correct amounts
@@ -171,7 +174,9 @@ func test_to_dict_serialization():
 	assert_eq(dict["turn"], 5, "Serialized turn should match")
 	assert_has(dict, "doom", "Should include doom")
 	assert_has(dict, "reputation", "Should include reputation")
-	assert_has(dict, "action_points", "Should include AP")
+	assert_has(dict, "attention", "Should include Attention")
+	assert_has(dict, "planning_hours_left", "Should include planning hours")
+	assert_has(dict, "operating_hours_left", "Should include operating hours")
 
 func test_queued_actions_initialization():
 	# Test that queued_actions starts empty
@@ -200,7 +205,7 @@ func test_can_afford_reputation_sufficient():
 
 	assert_true(state.can_afford({"reputation": 5}), "Should afford 5 reputation")
 	assert_true(state.can_afford({"reputation": 50}), "Should afford 50 reputation (exact match)")
-	assert_true(state.can_afford({"reputation": 10, "action_points": 1}), "Should afford combo with reputation")
+	assert_true(state.can_afford({"reputation": 10, "attention": 1}), "Should afford combo with reputation")
 
 func test_can_afford_reputation_insufficient():
 	# Test can_afford returns false when reputation is insufficient (FIX #407)
@@ -217,9 +222,10 @@ func test_spend_resources_reputation_deduction():
 	state.spend_resources({"reputation": 10})
 	assert_eq(state.reputation, 40.0, "Reputation should decrease by 10")
 
-	state.spend_resources({"reputation": 5, "action_points": 1})
+	var att_before := state.get_available_attention()
+	state.spend_resources({"reputation": 5, "attention": 1})
 	assert_eq(state.reputation, 35.0, "Reputation should decrease by another 5")
-	assert_eq(state.action_points, 2, "AP should also decrease")
+	assert_eq(state.get_available_attention(), att_before - 1, "Attention should also decrease")
 
 func test_spend_resources_reputation_clamped_to_zero():
 	# Test that reputation is clamped to 0 when spending
@@ -243,13 +249,12 @@ func test_action_validation_fundraise_with_insufficient_reputation():
 
 func test_action_validation_fundraise_with_sufficient_reputation():
 	# Test that fundraise_big action is allowed with enough reputation (FIX #407)
-	# fundraise_big costs 2 AP + 8 reputation
+	# fundraise_big costs 2 Attention + 8 reputation
 	var state = GameState.new("test_seed")
 	state.reputation = 50.0  # Default starting value (well above 8)
-	state.action_points = 3
 
 	var fundraise_action = GameActions.get_action_by_id("fundraise_big")
-	assert_true(state.can_afford(fundraise_action["costs"]), "Should afford fundraise_big with 50 reputation and 3 AP")
+	assert_true(state.can_afford(fundraise_action["costs"]), "Should afford fundraise_big with 50 reputation and a fresh Attention month")
 
 # FIX #424: Unmanaged employee productivity tests
 func test_get_unmanaged_count_legacy():

@@ -27,13 +27,12 @@ func test_lobby_government_no_reputation_cost():
 	var costs = lobby_action.get("costs", {})
 	assert_false(costs.has("reputation"), "lobby_government should NOT cost reputation (issue #449)")
 	assert_true(costs.has("money"), "lobby_government should cost money")
-	assert_true(costs.has("action_points"), "lobby_government should cost AP")
+	assert_true(costs.has("attention"), "lobby_government should cost Attention")
 
 func test_lobby_government_applies_reputation_penalty():
 	# Test that lobby_government applies -10 reputation as effect, not cost
 	var initial_reputation = state.reputation
 	state.money = 100000  # Ensure we can afford it
-	state.action_points = 3
 
 	var result = GameActions.execute_action("lobby_government", state)
 
@@ -44,10 +43,9 @@ func test_lobby_government_applies_reputation_penalty():
 func test_lobby_government_affordable_with_money_and_ap():
 	# Test that action is affordable with just money and AP (no rep requirement)
 	state.money = 100000
-	state.action_points = 3
 	state.reputation = 5  # Low reputation - but shouldn't block action
 
-	var can_afford = state.can_afford({"money": 80000, "action_points": 2})
+	var can_afford = state.can_afford({"money": 80000, "attention": 2})
 	assert_true(can_afford, "Should be affordable with money and AP only (issue #449)")
 
 ## Issue #447: Difficulty validation
@@ -167,7 +165,6 @@ func test_all_actions_execute_without_errors():
 	# Ensure all actions can be executed without crashing
 	# Set up state with sufficient resources
 	state.money = 1000000
-	state.action_points = 10
 	state.reputation = 100
 	state.research = 100
 	state.compute = 100
@@ -192,15 +189,14 @@ func test_all_actions_execute_without_errors():
 func test_can_afford_validates_all_resources():
 	# Test that can_afford checks all resource types correctly
 	state.money = 50000
-	state.action_points = 2
 	state.reputation = 30
 	state.papers = 5
 
 	# Should afford if all resources are available
-	assert_true(state.can_afford({"money": 40000, "action_points": 1}), "Should afford with sufficient resources")
+	assert_true(state.can_afford({"money": 40000, "attention": 1}), "Should afford with sufficient resources")
 
 	# Should not afford if any resource is insufficient
 	assert_false(state.can_afford({"money": 60000}), "Should not afford with insufficient money")
-	assert_false(state.can_afford({"action_points": 5}), "Should not afford with insufficient AP")
+	assert_false(state.can_afford({"attention": 999}), "Should not afford with insufficient Attention")
 	assert_false(state.can_afford({"reputation": 50}), "Should not afford with insufficient reputation")
 	assert_false(state.can_afford({"papers": 10}), "Should not afford with insufficient papers")

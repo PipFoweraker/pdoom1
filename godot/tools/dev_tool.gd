@@ -122,14 +122,14 @@ func test_game_state():
 	print("    Staff: %d" % game_state.staff)
 	print("    Reputation: %.1f" % game_state.reputation)
 	print("    Doom: %.1f%%" % game_state.doom)
-	print("    Action Points: %d / %d" % [game_state.action_points, game_state.max_action_points])
+	print("    Attention: %d free / %d granted" % [game_state.get_available_attention(), game_state.attention_per_month])
 
 	# Test turn advancement
 	print("\n  Testing turn advancement...")
 	var initial_turn = game_state.turn
 	game_state.advance_turn()
 	print("    Turn advanced: %d -> %d" % [initial_turn, game_state.turn])
-	print("    Action Points reset: %d" % game_state.action_points)
+	print("    Attention reset: %d" % game_state.get_available_attention())
 
 	game_state.free()
 	print("\n[[OK]] GameState working correctly")

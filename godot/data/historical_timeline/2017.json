@@ -65,7 +65,7 @@
         {
           "id": "study_transformers",
           "text": "Assign researchers to study transformer architecture",
-          "costs": {"action_points": 1, "money": 5000},
+          "costs": {"attention": 1, "money": 5000},
           "effects": {"research": 15, "compute": 10}
         },
         {
@@ -100,13 +100,13 @@
         {
           "id": "study_paper",
           "text": "Assign researchers to study concrete safety problems",
-          "costs": {"action_points": 1},
+          "costs": {"attention": 1},
           "effects": {"research": 10, "safety_absorption": 10, "reputation": 2}
         },
         {
           "id": "organize_reading_group",
           "text": "Organize safety reading group (costs 2 AP)",
-          "costs": {"action_points": 2, "money": 3000},
+          "costs": {"attention": 2, "money": 3000},
           "effects": {"research": 20, "safety_absorption": 20, "reputation": 5}
         },
         {
@@ -140,13 +140,13 @@
         {
           "id": "endorse_principles",
           "text": "Publicly endorse Asilomar Principles",
-          "costs": {"action_points": 1},
+          "costs": {"attention": 1},
           "effects": {"reputation": 8, "global_alarm": 1}
         },
         {
           "id": "integrate_principles",
           "text": "Integrate principles into lab policy (costs 2 AP, $10k)",
-          "costs": {"action_points": 2, "money": 10000},
+          "costs": {"attention": 2, "money": 10000},
           "effects": {"reputation": 15, "safety_absorption": 20}
         },
         {

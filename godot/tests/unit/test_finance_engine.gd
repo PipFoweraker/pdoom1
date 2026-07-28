@@ -27,7 +27,6 @@ var _created: Array = []
 func _fresh_state(seed_str: String = "l5-test") -> GameState:
 	var s := GameState.new(seed_str)
 	s.money = 300000
-	s.action_points = 6
 	_created.append(s)
 	return s
 

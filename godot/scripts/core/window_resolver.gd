@@ -168,9 +168,9 @@ static func resolve_chosen_option(state: GameState, plan: MonthPlan, event: Dict
 	if option_id == ignore_option_id(event) and not EventTiers.is_unignorable(event):
 		return resolve(state, plan, event, "ignore", rng)
 
-	# HANDLE with the chosen option. Check the option's own (AP-stripped) costs BEFORE
-	# drawing Attention, so a failed money check doesn't consume the reserve.
-	var cleaned := strip_ap(event)
+	# HANDLE with the chosen option. Check the option's own (Attention-stripped) costs
+	# BEFORE drawing Attention, so a failed money check doesn't consume the reserve.
+	var cleaned := strip_attention(event)
 	var chosen: Dictionary = {}
 	for opt in cleaned.get("options", []):
 		if opt is Dictionary and String(opt.get("id", "")) == option_id:
@@ -212,9 +212,10 @@ static func resolve_chosen_option(state: GameState, plan: MonthPlan, event: Dict
 
 
 static func _apply_option(state: GameState, event: Dictionary, option_id: String) -> Dictionary:
-	"""Apply an event option by id, STRIPPING any legacy action_point cost (windows spend
-	Attention, not AP). Returns the execute_event_choice result (or an empty success if the
-	option id is blank -- a no-op ignore)."""
+	"""Apply an event option by id, STRIPPING the option's own Attention cost -- the window's
+	Attention was already drawn from the reserve/cannibalize path above, so re-charging it
+	here would double-bill. Returns the execute_event_choice result (or an empty success if
+	the option id is blank -- a no-op ignore)."""
 	if option_id == "":
 		return {"success": true, "message": "No action", "deltas": {}}
 	# #789: hiring prompt cards mutate pipeline state (onboarding flags + money), not
@@ -222,17 +223,21 @@ static func _apply_option(state: GameState, event: Dictionary, option_id: String
 	# was already drawn before this call; the pipeline charges money only.
 	if String(event.get("kind", "")).begins_with("hiring_") and state.hiring != null:
 		return state.hiring.apply_prompt_option(state, event, option_id)
-	var cleaned := strip_ap(event)
+	var cleaned := strip_attention(event)
 	return Events.execute_event_choice(cleaned, option_id, state)
 
 
-static func strip_ap(event: Dictionary) -> Dictionary:
-	"""Clone an event with action_points removed from every option's costs. Public: month
-	playback presents windows through the event_dialog with AP already stripped, so the
-	dialog's affordability display matches what resolution will actually charge."""
+static func strip_attention(event: Dictionary) -> Dictionary:
+	"""Clone an event with the founder Attention cost removed from every option's costs.
+	Public: month playback presents windows through the event_dialog with Attention already
+	stripped, so the dialog's affordability display matches what resolution will actually
+	charge (the window Attention is drawn once, by resolve()).
+	T2: renamed from strip_ap and now erases `attention`; the legacy `action_points` key is
+	erased too so un-migrated content cannot resurrect a second founder charge."""
 	var clone := event.duplicate(true)
 	for opt in clone.get("options", []):
 		if opt is Dictionary and opt.has("costs") and opt["costs"] is Dictionary:
+			opt["costs"].erase("attention")
 			opt["costs"].erase("action_points")
 	return clone
 

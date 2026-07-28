@@ -73,8 +73,12 @@ var player_frontier: float:
 	get:
 		return float(frontier_capability.get("player", 0.0))
 
-var action_points: int = 3
-var max_action_points: int = 3  # Per-turn AP cap; difficulty modifiers adjust this (game_manager._apply_difficulty_settings)
+# T2 / ADR-0011 amendment (a): the per-turn ACTION POINT pool is DELETED. There is no
+# `action_points` field, no per-turn grant, no AP in any cost dict. The founder currency is
+# ATTENTION, granted per PLAN MONTH and held by month_plan (MonthPlan), typed 2-way into
+# planning vs operating hours. `attention_per_month` is the grant size -- difficulty scales
+# THIS now (it used to scale max_action_points).
+var attention_per_month: int = 20
 var stationery: float = 100.0  # Office supplies, depletes with staff usage
 
 # Governance: institutional legitimacy the Liability Ledger bills against (ADR-0003).
@@ -143,10 +147,9 @@ var technical_debt: float = 0.0  # 0-100 scale
 const MAX_TECHNICAL_DEBT: float = 100.0
 const TECH_DEBT_DOOM_MULTIPLIER: float = 0.05  # 5% doom increase per debt point at high levels
 
-# AP Reserve System (for event responses)
-var committed_ap: int = 0      # AP spent on queued actions
-var reserved_ap: int = 0       # AP held back for events
-var used_event_ap: int = 0     # AP spent on event responses
+# (T2: the per-turn AP reserve trio -- committed_ap / reserved_ap / used_event_ap -- is
+# DELETED. Its job is done by MonthPlan's attention_spent / attention_reserved /
+# reserve_used, which are per PLAN MONTH and survive the day tick.)
 
 # Staff (legacy counts for backward compatibility)
 var safety_researchers: int = 0
@@ -171,8 +174,9 @@ var pending_hire_queue: Array[Researcher] = []  # Queue of candidates selected f
 # workstream: with an empty list the accrual hook only records self-directed effort and
 # bills no compute, so an untouched run is byte-identical to the pre-substrate build.
 #
-# NOT in this lane: AP-pool deletion / Attention migration, founder-hour typing, manager
-# shields. Nothing below reads action_points.
+# NOT in this lane: manager shields. (AP-pool deletion / Attention migration and the 2-way
+# founder-hour typing landed in T2; nothing below reads either -- workstream effort is a
+# STAFF currency, never founder Attention.)
 # ============================================================================
 var workstreams: Array = []                          # Array[Workstream], live + finished
 var workstream_backlog_taken: Array[String] = []     # backlog entry ids already started
@@ -308,7 +312,7 @@ func reset():
 	rep_org = {REP_KIND_SAFETY: 0.0, REP_KIND_CAPABILITY: 0.0}
 	rep_operator = {REP_KIND_SAFETY: 0.0, REP_KIND_CAPABILITY: 0.0}
 	doom = Balance.num("starting_resources.doom", 50.0)
-	action_points = Balance.inum("starting_resources.action_points", 3)
+	attention_per_month = Balance.inum("attention.per_month", 20)
 	stationery = Balance.num("starting_resources.stationery", 100.0)
 	governance = Balance.num("starting_resources.governance", 50.0)
 	hype = Balance.num("starting_resources.hype", 0.0)
@@ -320,7 +324,7 @@ func reset():
 	# L1/ADR-0009: fresh month plan, opened with the first month's Attention grant. The plan
 	# month ordinal is derived from the calendar (turn 0 -> ordinal 0).
 	month_plan = MonthPlan.new()
-	month_plan.begin_month(Balance.inum("attention.per_month", 20), 0)
+	month_plan.begin_month(attention_per_month, 0)
 	hiring = HiringPipeline.new()  # Phase B: fresh pipeline per game (created BEFORE candidates
 	                               # are populated so add_candidate can stamp their ids)
 	cause_log.clear()      # EE-8: fresh attribution trail per game
@@ -521,9 +525,24 @@ func can_afford(costs: Dictionary) -> bool:
 		return false
 	if costs.has("reputation") and reputation < costs["reputation"]:
 		return false
-	if costs.has("action_points") and action_points < costs["action_points"]:
-		return false
+	# T2: `attention` is the founder currency and lives on the month plan, not on a per-turn
+	# pool. An un-typed cost dict bills OPERATING hours (see MonthPlan.spend_attention).
+	if costs.has("attention"):
+		if month_plan == null:
+			return false
+		if not month_plan.can_spend_hours(int(costs["attention"]), _cost_hour_type(costs)):
+			return false
 	return true
+
+
+func _cost_hour_type(costs: Dictionary) -> String:
+	"""Which founder hour type a cost dict bills. Data may name it explicitly with an
+	`hour_type` key ("planning" | "operating"); anything else is OPERATING (presence work).
+	Kept in ONE place so the later 4-way lane subdivides here, not at 40 call sites."""
+	var declared: String = String(costs.get("hour_type", MonthPlan.HOUR_OPERATING))
+	if declared == MonthPlan.HOUR_PLANNING:
+		return MonthPlan.HOUR_PLANNING
+	return MonthPlan.HOUR_OPERATING
 
 func spend_resources(costs: Dictionary):
 	"""Spend resources (assumes can_afford was checked) (FIX #407: added reputation deduction)"""
@@ -540,7 +559,7 @@ func spend_resources(costs: Dictionary):
 					"research": research,
 					"papers": papers,
 					"reputation": reputation,
-					"action_points": action_points
+					"attention": get_available_attention()
 				}
 			}
 		)
@@ -572,10 +591,13 @@ func spend_resources(costs: Dictionary):
 		if reputation <= 0:
 			ErrorHandler.warning(ErrorHandler.Category.RESOURCES, "Reputation reached zero", {})
 
-	if costs.has("action_points"):
-		action_points -= costs["action_points"]
-		if action_points < 0:
-			ErrorHandler.warning(ErrorHandler.Category.RESOURCES, "Action points went negative", {"action_points": action_points})
+	if costs.has("attention") and month_plan != null:
+		if not month_plan.spend_attention(int(costs["attention"]), _cost_hour_type(costs)):
+			ErrorHandler.warning(
+				ErrorHandler.Category.RESOURCES,
+				"Attention spend rejected by the month plan",
+				{"cost": costs["attention"], "available": month_plan.available()}
+			)
 
 func add_resources(gains: Dictionary):
 	"""Add resources"""
@@ -1032,48 +1054,27 @@ func add_upgrade(upgrade_id: String):
 		if upgrade_id == "cat_adoption":
 			has_cat = true
 
-# AP Reserve System Methods
-func get_available_ap() -> int:
-	"""Founder Attention available for queuing actions this PLAN MONTH (L2 / ADR-0011).
-	The founder currency is the monthly Attention budget (month_plan), NOT the retired
-	per-turn AP pool. Named get_available_ap() for source compat -- every caller that used
-	to read the per-turn pool now reads the monthly Attention budget/spend/reserve. The
-	legacy action_points field survives only as a low-level resource primitive (paper/
-	conference costs, difficulty display); it no longer gates the plan queue."""
+# --- Founder Attention accessors (T2: the AP reserve system is gone; these read the plan) ---
+func get_available_attention() -> int:
+	"""Founder Attention free to fund new commitments this PLAN MONTH (ADR-0011 / T2).
+	Nets out what is already spent and what is explicitly reserved for response windows.
+	Zero when there is no month plan -- there is no fallback pool any more."""
 	if month_plan != null:
 		return month_plan.available()
-	return action_points - committed_ap - reserved_ap
+	return 0
 
-func get_event_ap() -> int:
-	"""AP available for event responses"""
-	return reserved_ap - used_event_ap
+func get_reserve_attention() -> int:
+	"""Attention still held in the crisp reserve for response windows (ADR-0009 S3)."""
+	if month_plan != null:
+		return month_plan.reserve_remaining()
+	return 0
 
-func reserve_ap_amount(amount: int) -> bool:
-	"""Reserve AP for events"""
-	if get_available_ap() >= amount:
-		reserved_ap += amount
-		return true
-	return false
-
-func commit_ap_amount(amount: int) -> bool:
-	"""Commit AP to queued action"""
-	if get_available_ap() >= amount:
-		committed_ap += amount
-		return true
-	return false
-
-func spend_event_ap(amount: int) -> bool:
-	"""Spend reserved AP on event response"""
-	if get_event_ap() >= amount:
-		used_event_ap += amount
-		return true
-	return false
-
-func reset_turn_ap():
-	"""Reset AP tracking for new turn"""
-	committed_ap = 0
-	reserved_ap = 0
-	used_event_ap = 0
+func get_available_hours(hour_type: String) -> int:
+	"""Founder hours of one TYPE still unspent this month (2-way floor: planning /
+	operating). The 4-way refinement subdivides these; it does not replace them."""
+	if month_plan != null:
+		return month_plan.hours_available(hour_type)
+	return 0
 
 # Paper Submission System Methods (Issue #468)
 func add_paper_submission(paper: PaperSubmissions.PaperSubmission):
@@ -1318,11 +1319,14 @@ func to_dict() -> Dictionary:
 		"sacred_chain_log": sacred_chain_log.duplicate(true),
 		"doom_system": doom_data,
 		"risk_system": risk_data,
-		"action_points": action_points,
-		"committed_ap": committed_ap,
-		"reserved_ap": reserved_ap,
-		"available_ap": get_available_ap(),
-		"event_ap": get_event_ap(),
+		# T2: founder currency in the state dict is ATTENTION. "attention" is what the HUD
+		# and every affordability readout wants (free-to-spend now); the pool breakdown
+		# rides month_plan (already serialized below).
+		"attention": get_available_attention(),
+		"attention_total": month_plan.attention_total if month_plan != null else 0,
+		"attention_reserved": get_reserve_attention(),
+		"planning_hours_left": get_available_hours(MonthPlan.HOUR_PLANNING),
+		"operating_hours_left": get_available_hours(MonthPlan.HOUR_OPERATING),
 		"stationery": stationery,
 		# Technical Debt System (Issue #416)
 		"technical_debt": technical_debt,
@@ -1370,8 +1374,7 @@ func to_dict() -> Dictionary:
 		"pending_events": pending_events.duplicate(true),  # event defs are pure-data dicts
 		"current_phase": current_phase,
 		"can_end_turn": can_end_turn,
-		"used_event_ap": used_event_ap,
-		"max_action_points": max_action_points,  # difficulty modifier -- next-turn AP base
+		"attention_per_month": attention_per_month,  # difficulty modifier -- next month's grant
 		"conference_year": conference_year,
 		"start_year": start_year,
 		"start_month": start_month,
@@ -1435,11 +1438,10 @@ func from_dict(data: Dictionary) -> void:
 	doom_dampers = (data.get("doom_dampers", []) as Array).duplicate(true)
 	doom_pulses = (data.get("doom_pulses", []) as Array).duplicate(true)
 	sacred_chain_log = (data.get("sacred_chain_log", []) as Array).duplicate(true)
-	action_points = int(data.get("action_points", 3))
-	max_action_points = int(data.get("max_action_points", 3))
-	committed_ap = int(data.get("committed_ap", 0))
-	reserved_ap = int(data.get("reserved_ap", 0))
-	used_event_ap = int(data.get("used_event_ap", 0))
+	# T2: pre-migration saves carry action_points / max_action_points / the *_ap trio. They
+	# are read for NOTHING -- the fields no longer exist. The founder budget restores from
+	# the serialized month_plan; only the grant size is carried here.
+	attention_per_month = int(data.get("attention_per_month", Balance.inum("attention.per_month", 20)))
 	stationery = float(data.get("stationery", 100.0))
 	technical_debt = float(data.get("technical_debt", 0.0))
 

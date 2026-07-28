@@ -68,7 +68,6 @@ func run_test_game(seed: String) -> String:
 	# Simulate 5 turns
 	for turn in range(1, 6):
 		state.turn = turn
-		state.action_points = 3
 
 		# Turn start
 		print("  Turn %d..." % turn)
@@ -107,7 +106,6 @@ func run_test_game_variant(seed: String) -> String:
 
 	for turn in range(1, 6):
 		state.turn = turn
-		state.action_points = 3
 
 		# Different actions
 		match turn:
