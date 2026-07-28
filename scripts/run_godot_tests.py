@@ -18,6 +18,14 @@ old runner did NOT, each of which is why CI was green while running zero tests:
      skips (parse error, or `extends Node` instead of GutTest) => count mismatch
      => hard failure naming the offending files. Silence is failure.
 
+Non-blocking-tier surfacing (#964): the simulation tier is intentionally
+non-blocking in CI (slow, run-simulating). A failure there must still be LOUD,
+not silently green -- format_summary_markdown() emits a "[!] <MODE> TIER RED"
+banner plus a per-test failure table for any non-blocking mode that failed.
+This is written to GITHUB_STEP_SUMMARY automatically, and available via
+--summary (stdout) / --summary-file PATH for CI steps that need it as a file
+(e.g. to attach to a PR comment) so local runs and CI share one formatter.
+
 Usage:
     python scripts/run_godot_tests.py                 # unit (fast) + simulation + integration
     python scripts/run_godot_tests.py --quick         # fast unit gate only (tests/unit, non-recursive)
@@ -25,6 +33,8 @@ Usage:
     python scripts/run_godot_tests.py --integration-only
     python scripts/run_godot_tests.py --smoke-only
     python scripts/run_godot_tests.py --quick --ci-mode --min-tests 300
+    python scripts/run_godot_tests.py --simulation --summary            # print the RED-banner table locally
+    python scripts/run_godot_tests.py --simulation --summary-file out.md
 """
 
 import argparse
@@ -151,7 +161,10 @@ def _disk_test_files(test_dir):
 def _parse_junit(junit_path):
     """Parse a GUT JUnit XML file.
 
-    Returns dict {tests, failures, suites:set(basenames)} or None if unparseable.
+    Returns dict {tests, failures, suites:set(basenames), failing_tests:list}
+    or None if unparseable. failing_tests is a list of dicts
+    {suite, test, message} -- one per failed <testcase>, message truncated to
+    one line so it is safe to drop straight into a markdown table cell.
     """
     if not junit_path.exists():
         return None
@@ -160,10 +173,35 @@ def _parse_junit(junit_path):
         tests = int(root.get("tests", "0"))
         failures = int(root.get("failures", "0"))
         suites = set()
+        failing_tests = []
         for suite in root.findall("testsuite"):
             name = suite.get("name", "")  # e.g. "tests/unit/test_foo.gd"
-            suites.add(Path(name).name)
-        return {"tests": tests, "failures": failures, "suites": suites}
+            suite_basename = Path(name).name
+            suites.add(suite_basename)
+            for case in suite.findall("testcase"):
+                fail_el = case.find("failure")
+                if fail_el is None:
+                    continue
+                msg = (fail_el.get("message") or fail_el.text or "").strip()
+                msg = msg.splitlines()[0] if msg else "(no message)"
+                # Keep table rows sane-length; full text is still in the XML artifact.
+                if len(msg) > 160:
+                    msg = msg[:157] + "..."
+                # Markdown table cells can't contain a literal pipe.
+                msg = msg.replace("|", "\\|")
+                failing_tests.append(
+                    {
+                        "suite": suite_basename,
+                        "test": case.get("name", "?"),
+                        "message": msg,
+                    }
+                )
+        return {
+            "tests": tests,
+            "failures": failures,
+            "suites": suites,
+            "failing_tests": failing_tests,
+        }
     except ET.ParseError as e:
         print(f"[PARSE][ERROR] JUnit XML at {junit_path} is malformed: {e}")
         return None
@@ -172,7 +210,7 @@ def _parse_junit(junit_path):
 def run_gut_tests(godot_path, mode, test_dir, log_level, min_tests):
     """Run one test directory and hard-gate on the JUnit results.
 
-    Returns (ok: bool, tests: int, failures: int).
+    Returns (ok: bool, tests: int, failures: int, failing_tests: list).
     """
     disk_files = _disk_test_files(test_dir)
     if disk_files is None:
@@ -180,11 +218,11 @@ def run_gut_tests(godot_path, mode, test_dir, log_level, min_tests):
         # runner skipped missing dirs, which is exactly how the smoke gate
         # "passed" while pointing at a nonexistent tests/smoke (#629).
         print(f"\n[FAIL] Test directory {test_dir} does not exist -- cannot run '{mode}'.")
-        return (False, 0, 0)
+        return (False, 0, 0, [])
 
     if not disk_files:
         print(f"\n[FAIL] No test_*.gd files found in {test_dir} for '{mode}'.")
-        return (False, 0, 0)
+        return (False, 0, 0, [])
 
     junit_fs = GODOT_PROJECT / f"test-results-{mode}.xml"
     junit_res = f"res://test-results-{mode}.xml"
@@ -215,10 +253,10 @@ def run_gut_tests(godot_path, mode, test_dir, log_level, min_tests):
         exit_code = result.returncode
     except subprocess.TimeoutExpired:
         print("\n[FAIL] Tests timed out after 15 minutes!")
-        return (False, 0, 0)
+        return (False, 0, 0, [])
     except Exception as e:
         print(f"\n[FAIL] Failed to run tests: {e}")
-        return (False, 0, 0)
+        return (False, 0, 0, [])
 
     # --- The gate: trust the JUnit file, not the exit code. ---
     parsed = _parse_junit(junit_fs)
@@ -227,11 +265,12 @@ def run_gut_tests(godot_path, mode, test_dir, log_level, min_tests):
             f"\n[FAIL] '{mode}': no parseable JUnit results at {junit_fs}. "
             "GUT ran nothing or quit early (missing import pass? bad args?)."
         )
-        return (False, 0, 0)
+        return (False, 0, 0, [])
 
     tests = parsed["tests"]
     failures = parsed["failures"]
     collected = parsed["suites"]
+    failing_tests = parsed["failing_tests"]
 
     ok = True
 
@@ -271,29 +310,84 @@ def run_gut_tests(godot_path, mode, test_dir, log_level, min_tests):
         f"\n[{status}] '{mode}': {tests} tests, {failures} failures, "
         f"{len(collected)}/{len(disk_files)} files collected."
     )
-    return (ok, tests, failures)
+    return (ok, tests, failures, failing_tests)
+
+
+# Modes considered "non-blocking" tiers in CI: a failure here does not fail the
+# required gate, so it needs its own loud banner or nobody will ever see it
+# (issue #964 -- the simulation tier was red on 5 straight main runs, silently,
+# because the only visible signal was a job that stayed green via
+# continue-on-error). Keyed by MODE_DIRS name.
+NON_BLOCKING_MODES = {"simulation"}
+
+
+def format_summary_markdown(rows):
+    """Build one markdown report shared by GITHUB_STEP_SUMMARY, --summary, and
+    the PR-comment step (issue #964). `rows` is a list of
+    (mode, tests, failures, ok, failing_tests) tuples.
+
+    Non-blocking tiers (currently: simulation) get an unmissable
+    '[!] <MODE> TIER RED' banner plus a per-test failure table when they fail,
+    since a plain PASS/FAIL row in a wall of green is exactly what went
+    unnoticed for 5 main-branch runs before this was added.
+    """
+    lines = []
+
+    for mode, tests, failures, ok, failing_tests in rows:
+        if not ok and failing_tests and mode in NON_BLOCKING_MODES:
+            lines.append("")
+            lines.append(f"## [!] {mode.upper()} TIER RED (non-blocking, but real)")
+            lines.append("")
+            lines.append(
+                f"`{mode}` tier: {failures}/{tests} test failures. This tier does "
+                "NOT block merges -- it is surfaced here so it is not silently red. "
+                "See docs/ARCHITECTURE.md / the sim-tier test files for context."
+            )
+            lines.append("")
+            lines.append("| Suite | Test | Failure |")
+            lines.append("|---|---|---|")
+            for ft in failing_tests:
+                lines.append(f"| {ft['suite']} | {ft['test']} | {ft['message']} |")
+            lines.append("")
+
+    lines.append("")
+    lines.append("### Godot test results")
+    lines.append("")
+    lines.append("| Suite | Tests | Failures | Result |")
+    lines.append("|---|---:|---:|---|")
+    for mode, tests, failures, ok, _failing_tests in rows:
+        tier_note = " (non-blocking)" if mode in NON_BLOCKING_MODES else ""
+        lines.append(f"| {mode}{tier_note} | {tests} | {failures} | {'PASS' if ok else 'FAIL'} |")
+    lines.append("")
+
+    return "\n".join(lines)
 
 
 def _write_step_summary(rows):
-    """Append a counts table to GITHUB_STEP_SUMMARY so a human sees 'N tests ran'."""
+    """Append the shared markdown report to GITHUB_STEP_SUMMARY so a human sees
+    'N tests ran' -- and, for non-blocking tiers, the [!] RED banner -- with one
+    click on the GitHub Actions run page.
+    """
     path = os.environ.get("GITHUB_STEP_SUMMARY")
     if not path:
         return
-    lines = [
-        "",
-        "### Godot test results",
-        "",
-        "| Suite | Tests | Failures | Result |",
-        "|---|---:|---:|---|",
-    ]
-    for name, tests, failures, ok in rows:
-        lines.append(f"| {name} | {tests} | {failures} | {'PASS' if ok else 'FAIL'} |")
-    lines.append("")
     try:
         with open(path, "a", encoding="utf-8") as f:
-            f.write("\n".join(lines))
+            f.write(format_summary_markdown(rows))
     except Exception as e:
         print(f"[WARN] Could not write step summary: {e}")
+
+
+def _write_summary_file(rows, out_path):
+    """Write the shared markdown report to a plain file (used by --summary /
+    downstream CI steps such as the PR-comment job, which cannot see another
+    job's GITHUB_STEP_SUMMARY and needs the content as a build artifact).
+    """
+    try:
+        out_path.write_text(format_summary_markdown(rows), encoding="utf-8")
+        print(f"\n[SUMMARY] Wrote markdown summary to {out_path}")
+    except Exception as e:
+        print(f"[WARN] Could not write summary file {out_path}: {e}")
 
 
 def main():
@@ -344,6 +438,26 @@ def main():
         help="Skip the headless import pass (only if the class cache is already warm)",
     )
     parser.add_argument("--verbose", action="store_true", help="Verbose GUT output (log level 3)")
+    parser.add_argument(
+        "--summary",
+        action="store_true",
+        help=(
+            "Print the shared markdown summary (counts table + [!] RED banner/"
+            "failure table for any non-blocking tier that failed) to stdout at "
+            "the end of the run. Same formatter CI uses for GITHUB_STEP_SUMMARY "
+            "and the PR-comment step (#964), so local runs and CI agree."
+        ),
+    )
+    parser.add_argument(
+        "--summary-file",
+        dest="summary_file",
+        default=None,
+        help=(
+            "Also write the shared markdown summary to this path (e.g. for a "
+            "downstream CI job / artifact to consume, since GITHUB_STEP_SUMMARY "
+            "is not visible across jobs)."
+        ),
+    )
 
     args = parser.parse_args()
 
@@ -379,19 +493,24 @@ def main():
     all_passed = True
     summary_rows = []
     for mode in modes:
-        ok, tests, failures = run_gut_tests(
+        ok, tests, failures, failing_tests = run_gut_tests(
             godot_path, mode, MODE_DIRS[mode], log_level, args.min_tests
         )
-        summary_rows.append((mode, tests, failures, ok))
+        summary_rows.append((mode, tests, failures, ok, failing_tests))
         all_passed = all_passed and ok
 
     _write_step_summary(summary_rows)
+    if args.summary_file:
+        _write_summary_file(summary_rows, Path(args.summary_file))
+    if args.summary:
+        print("\n" + format_summary_markdown(summary_rows))
 
     print("\n" + "=" * 60)
     print(
         "[TOTALS] "
         + " | ".join(
-            f"{m}: {t} tests, {fl} fail ({'ok' if o else 'FAIL'})" for (m, t, fl, o) in summary_rows
+            f"{m}: {t} tests, {fl} fail ({'ok' if o else 'FAIL'})"
+            for (m, t, fl, o, _ft) in summary_rows
         )
     )
     if all_passed:
