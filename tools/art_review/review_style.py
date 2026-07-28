@@ -151,7 +151,7 @@ font-family:monospace;}
 /* cell grid */
 .rs-grid{display:flex;flex-wrap:wrap;gap:12px;margin:10px 0 14px;}
 .rs-cell{background:var(--bg2);border:1px solid var(--accent,var(--line));border-radius:8px;
-padding:10px 10px 8px;width:190px;display:flex;flex-direction:column;position:relative;
+padding:10px 10px 8px;width:240px;display:flex;flex-direction:column;position:relative;
 transition:border-color .12s,opacity .2s;}
 .rs-cell:hover{filter:brightness(1.08);}
 .rs-thumb{background:"""
@@ -176,13 +176,21 @@ margin-top:5px;user-select:none;text-align:left;}
 margin-top:4px;max-height:150px;overflow:auto;border-top:1px dashed var(--line);padding-top:4px;
 white-space:pre-wrap;text-align:left;}
 .prompt-body.on{display:block;}
-/* verdict chips on a cell */
-.rs-vtags{display:flex;flex-wrap:wrap;gap:3px;margin-top:7px;justify-content:center;}
-.vtag{font-size:8px;font-family:monospace;padding:2px 5px;border-radius:5px;cursor:pointer;
-border:1px solid var(--line);background:transparent;color:var(--dim);text-transform:uppercase;
-letter-spacing:.3px;line-height:1;transition:all .1s;}
+/* per-item free-text notes (issue #900 follow-up): generous, always-visible,
+   autosaves into the same localStorage record as the verdict tags. */
+.rs-note{width:100%;box-sizing:border-box;margin-top:7px;background:var(--bg3);
+color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:6px 7px;
+font-family:monospace;font-size:11px;line-height:1.4;resize:vertical;min-height:56px;}
+.rs-note:focus{outline:none;border-color:var(--amber);}
+.rs-note::placeholder{color:var(--dim);}
+/* verdict chips on a cell -- deliberately BIG tap targets (Pip: rapid-fire
+   triage, screen real-estate greed explicitly approved, 2026-07-28). */
+.rs-vtags{display:flex;flex-wrap:wrap;gap:7px;margin-top:9px;justify-content:center;}
+.vtag{font-size:13px;font-family:monospace;padding:9px 16px;border-radius:8px;cursor:pointer;
+border:2px solid var(--line);background:transparent;color:var(--dim);text-transform:uppercase;
+letter-spacing:.4px;line-height:1;transition:all .1s;font-weight:600;}
 .vtag:hover{color:var(--fg);border-color:var(--vc);}
-.vtag.on{background:var(--vc);color:#12100c;border-color:var(--vc);font-weight:700;}
+.vtag.on{background:var(--vc);color:#12100c;border-color:var(--vc);font-weight:800;}
 footer{color:var(--dim);font-size:11px;padding:20px 18px;border-top:1px solid var(--line);
 font-family:monospace;line-height:1.6;}
 #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#2a2419;
@@ -314,14 +322,35 @@ const VCOLORS=__RS_VCOLORS__;
 const KEY='__RS_KEY__';
 const EXPORT_NAME='__RS_EXPORT__';
 let V={},storageOK=false;
-function loadV(){try{const s=localStorage.getItem(KEY);V=s?JSON.parse(s):{};storageOK=true;}
+// Per-item record is {tags:[...], note:"..."}. Legacy exports/localStorage
+// (pre-notes) stored a bare array of tags per rel -- normalize() upgrades
+// those on load/import so old in-progress verdicts survive a sheet rebuild.
+// The localStorage KEY itself never changes (Pip has in-progress verdicts).
+function normalize(raw){
+  const out={};
+  if(!raw||typeof raw!=='object')return out;
+  for(const k in raw){
+    const v=raw[k];
+    if(Array.isArray(v))out[k]={tags:v.slice(),note:''};
+    else if(v&&typeof v==='object')
+      out[k]={tags:Array.isArray(v.tags)?v.tags.slice():[],note:typeof v.note==='string'?v.note:''};
+  }
+  return out;
+}
+function loadV(){try{const s=localStorage.getItem(KEY);V=normalize(s?JSON.parse(s):{});storageOK=true;}
   catch(e){V={};storageOK=false;}}
 function saveV(){if(!storageOK)return;try{localStorage.setItem(KEY,JSON.stringify(V));}catch(e){storageOK=false;}}
-function tagsOf(r){return V[r]||[];}
+function tagsOf(r){return (V[r]&&V[r].tags)||[];}
+function noteOf(r){return (V[r]&&V[r].note)||'';}
 function hasTag(r,t){return tagsOf(r).indexOf(t)>=0;}
-function setTag(r,t,on){let a=V[r]?V[r].slice():[];const i=a.indexOf(t);
+function setTag(r,t,on){const cur=V[r]||{tags:[],note:''};
+  const a=cur.tags.slice();const i=a.indexOf(t);
   if(on&&i<0)a.push(t);else if(!on&&i>=0)a.splice(i,1);
-  if(a.length)V[r]=a;else delete V[r];}
+  const note=cur.note||'';
+  if(a.length||note.trim())V[r]={tags:a,note:note};else delete V[r];}
+function setNote(r,text){const cur=V[r]||{tags:[],note:''};
+  const tags=cur.tags||[];
+  if(tags.length||text.trim())V[r]={tags:tags,note:text};else delete V[r];}
 let activeVerdicts=new Set();
 const cells=Array.from(document.querySelectorAll('.rs-cell[data-rel]'));
 function applyFilter(){
@@ -342,13 +371,15 @@ function applyFilter(){
 }
 function refreshCounts(){
   const c={};for(const v of VERDICTS)c[v]=0;let any=0;
-  for(const r in V){for(const t of V[r])if(c[t]!==undefined)c[t]++;any++;}
+  for(const r in V){const tags=tagsOf(r);for(const t of tags)if(c[t]!==undefined)c[t]++;
+    if(tags.length)any++;}
   for(const v of VERDICTS){const el=document.getElementById('rs-vcount-'+v);
     if(el)el.textContent=c[v];}
   const tg=document.getElementById('rs-taggedn');if(tg)tg.textContent=any;
 }
 function syncCell(c){const r=c.dataset.rel;
-  for(const b of c.querySelectorAll('.vtag'))b.classList.toggle('on',hasTag(r,b.dataset.v));}
+  for(const b of c.querySelectorAll('.vtag'))b.classList.toggle('on',hasTag(r,b.dataset.v));
+  const nt=c.querySelector('.rs-note');if(nt)nt.value=noteOf(r);}
 // ---- bulk-select (ported from gen_contact_sheet.py, issue #900/#912 follow-up) ----
 // data-rel is the stable handle (README compare-mode note); shift-click range
 // select walks DOM order and skips cells hidden by the current show-filter.
@@ -406,6 +437,13 @@ window.addEventListener('DOMContentLoaded',()=>{
     cb.title='select';
     cb.addEventListener('click',e=>{e.stopPropagation();onSelClick(r,e.shiftKey,cb.checked);});
     c.insertBefore(cb,c.firstChild);
+    const nt=c.querySelector('.rs-note');
+    if(nt){nt.value=noteOf(r);let noteT=null;
+      const commit=()=>{setNote(r,nt.value);saveV();};
+      nt.addEventListener('input',()=>{clearTimeout(noteT);noteT=setTimeout(commit,400);});
+      nt.addEventListener('blur',()=>{clearTimeout(noteT);commit();});
+      nt.addEventListener('click',e=>e.stopPropagation());
+    }
   }
   for(const vc of document.querySelectorAll('.vchip[data-v]')){
     vc.onclick=()=>{const v=vc.dataset.v;
@@ -433,7 +471,7 @@ window.addEventListener('DOMContentLoaded',()=>{
       const rd=new FileReader();
       rd.onload=()=>{try{const obj=JSON.parse(rd.result);
         if(typeof obj!=='object'||Array.isArray(obj))throw 0;
-        V=obj;saveV();for(const c of cells)syncCell(c);
+        V=normalize(obj);saveV();for(const c of cells)syncCell(c);
         refreshCounts();rsCompleteness.updateCounts();applyFilter();toast('Imported verdicts');
       }catch(err){toast('Import failed -- not a valid verdicts JSON');}};
       rd.readAsText(f);e.target.value='';});}
@@ -486,6 +524,14 @@ def _bulk_bar():
 
 
 # ---------------------------------------------------------------- components
+
+# Per-item notes textarea (issue #900 follow-up). image_cell() emits this
+# automatically when rel is set; sheets that hand-roll their own cell markup
+# (most of them -- image_cell() is the exception, not the rule) should append
+# this literally after their own '<div class="rs-vtags"></div>' so every
+# reviewable card gets the same notes box, wired by VERDICT_JS's per-cell
+# '.rs-note' lookup (no per-sheet JS needed).
+NOTE_HTML = '<textarea class="rs-note" rows="3" placeholder="notes..."></textarea>'
 
 
 def esc(s):
@@ -569,6 +615,7 @@ def image_cell(
         )
     if rel:
         parts.append('<div class="rs-vtags"></div>')
+        parts.append('<textarea class="rs-note" rows="3" placeholder="notes..."></textarea>')
     parts.append("</div>")
     return "".join(parts)
 
