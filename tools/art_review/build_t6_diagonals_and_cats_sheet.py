@@ -86,7 +86,7 @@ def anim_player(rel_root, char, anim, direction, frames, px, scale, is_new=False
         f"var on=b.classList.toggle('on');"
         f"this.textContent=on?'frames [-]':'frames [+]'\">frames [+]</div>"
         f'<div class="prompt-body wr-filmstrip">{strip}</div>'
-        f'<div class="rs-vtags"></div>'
+        f'<div class="rs-vtags"></div>{rs.NOTE_HTML}'
         f'<script>(window.rsAnimQueue=window.rsAnimQueue||[]).push(["{pid}",{json.dumps(uris)}]);</script>'
         f"</div>"
     )

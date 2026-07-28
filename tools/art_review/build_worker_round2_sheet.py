@@ -98,7 +98,7 @@ def anim_player(variant: str, anim: str, direction: str, frames):
         f"var on=b.classList.toggle('on');"
         f"this.textContent=on?'frames [-]':'frames [+]'\">frames [+]</div>"
         f'<div class="prompt-body wr-filmstrip">{strip}</div>'
-        f'<div class="rs-vtags"></div>'
+        f'<div class="rs-vtags"></div>{rs.NOTE_HTML}'
         f'<script>(window.rsAnimQueue=window.rsAnimQueue||[]).push(["{pid}",{json.dumps(uris)}]);</script>'
         f"</div>"
     )
@@ -150,7 +150,7 @@ def main() -> int:
         body.append(
             f'<div class="rs-cell" style="width:auto" data-rel="{rs.esc(rel)}">'
             + rotations_row(variant)
-            + '<div class="rs-label">rotations (8-dir stills)</div><div class="rs-vtags"></div></div>'
+            + f'<div class="rs-label">rotations (8-dir stills)</div><div class="rs-vtags"></div>{rs.NOTE_HTML}</div>'
         )
         anim_root = vdir / "animations"
         if anim_root.is_dir():

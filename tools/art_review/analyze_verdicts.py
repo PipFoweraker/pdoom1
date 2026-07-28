@@ -297,7 +297,12 @@ def build_hero_inventory(gen_dir=GEN_DIR):
 
 def load_verdicts(path):
     """Return {rel: [tags]} with POSIX keys and known tags only, or None if the
-    file is missing. Raises ValueError on a malformed (non-object) file."""
+    file is missing. Raises ValueError on a malformed (non-object) file.
+
+    Per-item value accepts two shapes: the legacy bare tag array/string, and
+    the notes-era {"tags": [...], "note": "..."} object (review_style.py's
+    per-item free-text notes, issue #900 follow-up) -- the note is not needed
+    for this report so it is simply dropped here."""
     if not os.path.isfile(path):
         return None
     with open(path, "r", encoding="utf-8") as f:
@@ -309,6 +314,8 @@ def load_verdicts(path):
         key = str(k).replace("\\", "/")
         if isinstance(v, str):
             v = [v]
+        elif isinstance(v, dict):
+            v = v.get("tags") or []
         tags = [t for t in (v or []) if t in VERDICTS]
         if tags:
             out[key] = tags

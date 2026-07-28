@@ -1000,6 +1000,7 @@ def field_cell(f):
             f"scout suggests: {rs.esc(f['suggested'])}</div>"
         ),
         '<div class="rs-vtags"></div>',
+        rs.NOTE_HTML,
         "</div>",
     ]
     return "".join(parts)

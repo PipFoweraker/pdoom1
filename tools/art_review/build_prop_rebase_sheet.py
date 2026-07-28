@@ -63,37 +63,39 @@ def data_uri(p: Path) -> str:
 
 EXTRA_CSS = (
     """
+/* .pr-cell is also .rs-cell (house verdict chrome), but rs-cell's fixed
+   width was clipping wide props at x4 display (e.g. the 72x48 desk ->
+   288x192) and overlapping the next card. Size the card to its content
+   instead -- width:auto + max-width so a runaway image still wraps rather
+   than overflowing. */
+.pr-cell.rs-cell{width:auto;max-width:360px;}
 .pr-cell{background:"""
     + rs.CHECKER
     + """;border-radius:5px;padding:8px;display:flex;flex-direction:column;
 align-items:center;gap:4px;}
-.pr-cell img{image-rendering:pixelated;display:block;}
-.pr-native{border:2px solid var(--amber);border-radius:4px;padding:4px;background:#0000;}
+.pr-cell img{image-rendering:pixelated;display:block;max-width:100%;height:auto;}
+.pr-native{border:2px solid var(--amber);border-radius:4px;padding:4px;background:#0000;
+max-width:100%;box-sizing:border-box;}
+.pr-native img{max-width:100%;height:auto;}
 .pr-dims{font-size:9px;color:var(--dim);font-family:monospace;}
 .pr-missing{color:#e0a0a0;font-family:monospace;font-size:11px;padding:20px;text-align:center;
 border:1px dashed #cc5a4a;width:160px;}
+.pr-ab{display:flex;gap:10px;align-items:flex-start;}
+.pr-ab .pr-cell.rs-cell{width:auto;max-width:220px;}
+.pr-ab-label{font-size:10px;color:var(--amber2);font-family:monospace;text-align:center;
+margin-bottom:2px;text-transform:uppercase;letter-spacing:.5px;}
 """
 )
 
 
-def cell(stem: str) -> str:
-    native_p = NATIVE / f"{stem}.png"
-    large_p = LARGE / f"{stem}.png"
-    rel = f"{RELROOT}/native/{stem}.png"
-    if not native_p.exists():
-        return (
-            f'<div class="pr-missing rs-cell" data-rel="{rs.esc(rel)}">'
-            f'missing<br>{rs.esc(stem)}<div class="rs-vtags"></div></div>'
-        )
+def _downscale_variant(stem: str, suffix: str, native_p, label: str, method_note: str) -> str:
+    """One downscale-method candidate card (own data-rel -> own verdict + note)."""
     from PIL import Image
 
+    rel = f"{RELROOT}/native/{native_p.name}"
     nw, nh = Image.open(native_p).size
     scale = 4
-    native_img = (
-        f'<div class="pr-native"><img src="{data_uri(native_p)}" '
-        f'width="{nw*scale}" height="{nh*scale}" alt="{rs.esc(stem)}"></div>'
-        f'<div class="pr-dims">native {nw}x{nh} (x{scale} display)</div>'
-    )
+    large_p = LARGE / f"{stem}.png"
     large_toggle = ""
     if large_p.exists():
         lw, lh = Image.open(large_p).size
@@ -104,15 +106,37 @@ def cell(stem: str) -> str:
             f'<div class="prompt-body"><img src="{data_uri(large_p)}" '
             f'width="{lw}" height="{lh}" style="image-rendering:pixelated" '
             f'alt="{rs.esc(stem)} large"><div class="pr-dims">gen {lw}x{lh} -> '
-            f"LANCZOS downscale -> {nw}x{nh}</div></div>"
+            f"{method_note} -> {nw}x{nh}</div></div>"
         )
     return (
         f'<div class="pr-cell rs-cell" data-rel="{rs.esc(rel)}">'
-        f"{native_img}"
+        f'<div class="pr-ab-label">{rs.esc(label)}</div>'
+        f'<div class="pr-native"><img src="{data_uri(native_p)}" '
+        f'width="{nw*scale}" height="{nh*scale}" alt="{rs.esc(stem)} {label}"></div>'
+        f'<div class="pr-dims">native {nw}x{nh} (x{scale} display)</div>'
         f'<div class="rs-label mono">{rs.esc(stem)}</div>'
         f"{large_toggle}"
-        f'<div class="rs-vtags"></div></div>'
+        f'<div class="rs-vtags"></div>{rs.NOTE_HTML}</div>'
     )
+
+
+def cell(stem: str) -> str:
+    native_p = NATIVE / f"{stem}.png"
+    nearest_p = NATIVE / f"{stem}_nearest.png"
+    rel = f"{RELROOT}/native/{stem}.png"
+    if not native_p.exists():
+        return (
+            f'<div class="pr-missing rs-cell" data-rel="{rs.esc(rel)}">'
+            f'missing<br>{rs.esc(stem)}<div class="rs-vtags"></div></div>'
+        )
+    lanczos = _downscale_variant(
+        stem, "lanczos", native_p, "lanczos (kept native)", "PIL LANCZOS downscale"
+    )
+    if nearest_p.exists():
+        nearest = _downscale_variant(stem, "nearest", nearest_p, "nearest", "PIL NEAREST downscale")
+    else:
+        nearest = '<div class="pr-missing rs-cell">no nearest variant' f"<br>{rs.esc(stem)}</div>"
+    return f'<div class="pr-ab">{lanczos}{nearest}</div>'
 
 
 def main() -> int:
@@ -137,9 +161,13 @@ def main() -> int:
         "color outline, medium detail / medium shading (the 2026-07-26 dial probe's "
         "winning detail level, folded in as this run's default). GENERATE LARGE "
         "THEN DOWNSCALE per Pip's ruling: every prop is generated at 2x its native "
-        "canvas then downscaled with PIL LANCZOS -- amber-bordered image is the kept "
-        "native artifact; expand [2x source] to compare against the pre-downscale "
-        "render. desk_scummy was RE-PROMPTED (not re-rolled verbatim) after the "
+        "canvas then downscaled -- amber-bordered image is native-res; expand "
+        "[2x source] to compare against the pre-downscale render. LANCZOS vs "
+        "NEAREST A/B (2026-07-28 follow-up): the LANCZOS downscale reads muddy/soft "
+        "next to the crisp native worker batch, so each roll now also shows a "
+        "NEAREST-downscaled candidate from the same 2x source, side by side, each "
+        "with its own verdict buttons -- rule which downscale method wins per prop. "
+        "desk_scummy was RE-PROMPTED (not re-rolled verbatim) after the "
         "2026-07-26 vanguard flagged it as reading like a lone CRT with the desk "
         "surface lost -- the new prompt explicitly demands a wide visible desk "
         "surface on all sides of the monitor. Prop catalog is deliberately the 5 "
@@ -152,12 +180,16 @@ def main() -> int:
         "prop re-base + facing pilot",
         "office prop catalog at native grain, 2x-gen + downscale -- 2026-07-27",
         "".join(sections),
-        badges=[("rolls", str(total)), ("props", "5"), ("method", "2x + LANCZOS")],
+        badges=[("rolls", str(total)), ("props", "5"), ("method", "2x + LANCZOS/NEAREST A/B")],
         intro_html=intro,
         extra_css=EXTRA_CSS,
         verdict_key="prop_rebase_20260727:verdicts",
         export_name="prop_rebase_verdicts.json",
-        footer_note="Amber border = kept native artifact. Expand [2x source] per cell for provenance.",
+        footer_note=(
+            "Each roll shows a lanczos/nearest A/B pair (own data-rel, own verdict + "
+            "note) so a per-prop downscale-method call is possible. Expand [2x source] "
+            "per card for provenance."
+        ),
     )
     OUT.parent.mkdir(parents=True, exist_ok=True)
     rs.write_ascii(OUT, html_text)
