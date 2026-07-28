@@ -138,12 +138,23 @@ var _feed_important_only: bool = true    # default view hides the flavour spam
 var _feed_hide_rivals: bool = not GameConfig.show_rivals_feed
 const FEED_MAX_LINES: int = 500          # cap the backing model so a long run stays bounded (trim oldest)
 
-# Active dialog state for keyboard shortcuts
+# Active dialog state for keyboard shortcuts. #877: these two are still READ all over
+# _input/_unhandled_input, but ModalStack is now their ONLY writer -- nothing else may
+# assign them, or the dual-source-of-truth orphan class comes straight back.
 var active_dialog: Control = null
 var active_dialog_buttons: Array = []
+## #877: the shared LIFO overlay chokepoint. Every modal surface in the game --
+## submenus, ledger, doom trend, hiring, travel, the event dialog, the staff ID card and
+## the bug-report form -- registers here, so ESC/close always acts on the TOP one and no
+## panel can survive untracked. Created first thing in _ready: dialogs can be presented
+## from boot-time signals.
+var modal_stack: ModalStack = null
 
 func _ready():
 	print("[MainUI] Initializing UI...")
+
+	# #877: build the modal chokepoint BEFORE anything can present a dialog.
+	modal_stack = ModalStack.new(self)
 
 	# HUD tooltips that quote balance numbers are built from Balance here, so they
 	# track the mechanic instead of drifting from a hardcoded literal in the scene
@@ -524,16 +535,10 @@ func _input(event: InputEvent):
 			# ESC key: only close submenu dialogs (hiring, fundraising), NOT event dialogs
 			# Event dialogs must be completed to prevent soft-lock (issue #452)
 			if event.keycode == KEY_ESCAPE:
-				# Check if this is an event dialog by looking for "event_dialog" meta flag
-				if active_dialog.has_meta("is_event_dialog"):
-					# Event dialogs cannot be closed with ESC - player must make a choice
-					print("[MainUI] ESC pressed but this is an event dialog - ignoring (must complete event)")
-					get_viewport().set_input_as_handled()
-					return
-				else:
-					# Submenu dialogs can be closed with ESC
-					print("[MainUI] ESC pressed on submenu dialog - closing")
-					_close_active_submenu()
+				# #877: ESC goes to the chokepoint, which closes STRICTLY the topmost modal
+				# and refuses on an unanswered event dialog (#452). One rule, one place --
+				# no key path can reach past what the player is looking at.
+				if modal_stack.handle_escape():
 					get_viewport().set_input_as_handled()
 					return
 
@@ -588,7 +593,7 @@ func _input(event: InputEvent):
 		# N key to open bug reporter (backslash was reclaimed for the DEV MODE overlay)
 		elif event.keycode == KEY_N:
 			if bug_report_panel:
-				bug_report_panel.show_panel()
+				_open_bug_report_panel()
 				get_viewport().set_input_as_handled()
 
 		# Quick menu shortcuts (H, F, R, P, T)
@@ -849,8 +854,11 @@ func _show_conference_backlog(trip: Dictionary) -> void:
 		game_manager.surface_pending_events())
 	vbox.add_child(close_btn)
 
-	_present_modal_dialog(dialog)
+	# #877: assign BEFORE presenting -- _present_modal_dialog reads the slot to pick up the
+	# routed buttons and re-asserts the truth if the open is refused. Assigning after would
+	# stamp a discarded panel back into the tracked slot.
 	active_dialog = dialog
+	_present_modal_dialog(dialog)
 	# One compressed feed line is the persistent record; the panel is the readable surface.
 	log_message("[color=#c8b98a]Back from %s -- %d items waiting.[/color]" % [conf_name, backlog.size()])
 
@@ -1001,7 +1009,20 @@ func _on_open_employee_screen() -> void:
 
 func _on_bug_report_button_pressed():
 	"""Open bug report panel"""
-	if bug_report_panel:
+	_open_bug_report_panel()
+
+func _open_bug_report_panel() -> void:
+	"""#877 headline repro: BugReportPanel is a persistent scene member that used to live
+	OUTSIDE the modal bookkeeping entirely, so it could sit open UNDERNEATH a ledger. Its
+	focused LineEdit then tripped the #575 text-focus gate in _input, which returns before
+	ESC/L are read -- the top modal became un-closeable ('ESC twice, blind'). Registering it
+	in the stack (close_mode HIDE -- it must never be freed out of the scene) makes that
+	arrangement unreachable: opening the form pops whatever was up, and opening anything else
+	pops the form. An unanswered event still outranks it, so present() can refuse."""
+	if bug_report_panel == null:
+		return
+	if modal_stack.present(bug_report_panel, [], {
+			"kind": "bug_report", "close_mode": ModalStack.CloseMode.HIDE}):
 		bug_report_panel.show_panel()
 
 func _on_research_quality_selected(mode: String):
@@ -1579,11 +1600,10 @@ func _add_submenu_close_affordance(dialog: Control) -> void:
 	SubmenuChrome.add_close_affordance(dialog, _close_active_submenu)
 
 func _close_active_submenu() -> void:
-	"""Close the active submenu dialog (shared by [X] click and ESC)."""
-	if active_dialog != null and is_instance_valid(active_dialog):
-		active_dialog.queue_free()
-	active_dialog = null
-	active_dialog_buttons = []
+	"""Close the active submenu dialog (shared by [X] click and ESC). #877: delegates to
+	the chokepoint so it closes STRICTLY the topmost modal and honours each modal's close
+	mode (the bug-report form hides, it must not be freed out of the scene)."""
+	modal_stack.dismiss_top()
 
 func _present_modal_dialog(dialog: Control) -> void:
 	"""Mount a modal Panel over the board WITH a full-rect input barrier beneath it
@@ -1594,7 +1614,21 @@ func _present_modal_dialog(dialog: Control) -> void:
 	swallows every click to the board. The barrier is a sibling added just BEFORE the
 	dialog (so the dialog, a later sibling, still receives its own clicks) and is freed
 	automatically when the dialog leaves the tree -- via ANY close path (X, ESC, cancel,
-	or a replacing dialog's queue_free) -- so no call site needs to manage it."""
+	or a replacing dialog's queue_free) -- so no call site needs to manage it.
+
+	#877: this is also the REGISTRATION point for every board-mounted modal. Call sites
+	still assign active_dialog/active_dialog_buttons just before calling (that shape is
+	preserved so ~10 builders across four files stay untouched); those writes are read
+	back here and handed to ModalStack, which is what actually owns the slot afterwards.
+	If a higher-priority modal (an unanswered event, #452) holds the top, the newcomer is
+	REFUSED here: the freshly-built panel is discarded and the tracked slot re-asserted,
+	instead of the old free-first idiom silently orphaning the event dialog's blocker."""
+	var buttons: Array = active_dialog_buttons if active_dialog == dialog else []
+	if not modal_stack.can_present():
+		modal_stack.sync()          # undo the call site's optimistic active_dialog write
+		dialog.queue_free()
+		return
+
 	var barrier := ColorRect.new()
 	barrier.name = "ModalInputBarrier"
 	barrier.color = Color(0.0, 0.0, 0.0, 0.35)   # faint dim so the board reads as "behind"
@@ -1605,6 +1639,7 @@ func _present_modal_dialog(dialog: Control) -> void:
 	# Free the barrier whenever the dialog leaves the tree -- via ANY close path (X, ESC,
 	# cancel button, or a replacing dialog's queue_free). No call site manages it.
 	dialog.tree_exited.connect(barrier.queue_free)
+	modal_stack.present(dialog, buttons)
 
 
 func _debug_nudge_doom(delta: float) -> void:
@@ -1624,11 +1659,8 @@ func _debug_nudge_doom(delta: float) -> void:
 
 func _show_doom_trend_expanded() -> void:
 	"""Expanded full-history doom trend panel (#512), reusing the #510 close affordance."""
-	if active_dialog != null and is_instance_valid(active_dialog):
-		active_dialog.queue_free()
-		active_dialog = null
-		active_dialog_buttons = []
-
+	# #877: no local free-first block any more -- _present_modal_dialog -> ModalStack pops
+	# the previous modal (or refuses this open outright if an event is waiting on an answer).
 	var dialog := Panel.new()
 	dialog.custom_minimum_size = Vector2(560, 360)
 	dialog.size = Vector2(560, 360)
@@ -1756,12 +1788,9 @@ func _make_cost_label(cost_text: String, is_free: bool) -> Label:
 func _show_ledger_screen():
 	"""BL-1/#601: open the full Liability Ledger screen. #622 L10: the panel itself is
 	built by LedgerScreen; this stays the single entry point (L key, summary click,
-	financing submenu, dev overlay) and owns the active_dialog bookkeeping."""
-	if active_dialog != null and is_instance_valid(active_dialog):
-		active_dialog.queue_free()
-		active_dialog = null
-		active_dialog_buttons = []
-
+	financing submenu, dev overlay). #877: the free-first block moved into ModalStack --
+	_present_modal_dialog pops the previous modal, or refuses this open if an unanswered
+	event holds the top (which used to orphan the event's root-level blocker)."""
 	var ledger = game_manager.state.ledger if (game_manager and game_manager.state) else null
 	# fix/ui-no-dead-ends: build_screen now attaches the close [X] + intrinsic Esc
 	# (ui_cancel) affordance itself, wired to our _close_active_submenu so the dialog
@@ -1940,19 +1969,19 @@ func _on_event_dialog_opened(dialog: Control, buttons: Array) -> void:
 	"""EventDialog put its modal up (#622) -- route MainUI keyboard shortcuts to it.
 	The dialog carries the is_event_dialog meta, so ESC handling keeps refusing to
 	close it (#452)."""
-	# An event can fire while a submenu/ledger is already open. Overwriting active_dialog
-	# without freeing the prior panel ORPHANS it (visible with its input barrier, but
-	# untracked -> Esc/L/N no longer close it). Free it first so the visible overlay and
-	# the tracked slot can never diverge. (Mirrors _on_employee_dialog_opened.)
-	if active_dialog != null and is_instance_valid(active_dialog) and active_dialog != dialog:
-		active_dialog.queue_free()
-	active_dialog = dialog
-	active_dialog_buttons = buttons
+	# #877: an event can fire while a submenu/ledger is already open. The chokepoint pops
+	# the incumbent top-first (freeing it AND its barrier via tree_exited) before the event
+	# panel takes the slot, so the visible overlay and the tracked slot cannot diverge.
+	# PRIORITY_MUST_ANSWER also makes the inverse direction safe: nothing else may open
+	# over an unanswered event and orphan its root-level blocker.
+	modal_stack.present(dialog, buttons, {
+		"kind": "event", "priority": ModalStack.PRIORITY_MUST_ANSWER,
+	})
 
 func _on_event_dialog_closed() -> void:
-	"""EventDialog dismissed its modal -- clear the keyboard-routing state (#622)."""
-	active_dialog = null
-	active_dialog_buttons = []
+	"""EventDialog dismissed its modal -- clear the keyboard-routing state (#622).
+	#877: the panel already freed itself, so this is a re-sync, not a second close path."""
+	modal_stack.sync()
 
 func _on_event_choice_selected(event: Dictionary, choice_id: String) -> void:
 	"""Resolution stays signal-driven through game_manager.resolve_event (#622, L1 reuse).
@@ -2049,16 +2078,17 @@ func _reset_resource_highlights():
 	# ap_label is RichTextLabel - skip color override reset (it uses BBCode colors)
 
 func _on_employee_dialog_opened(dialog: Control) -> void:
-	"""EmployeePanel put the staff ID card up (#622). Preserves the old behavior:
-	any existing dialog is closed first, then the ID card becomes the active dialog
-	(the buttons array is left as-is, exactly as before the extraction)."""
-	if active_dialog != null and is_instance_valid(active_dialog) and active_dialog != dialog:
-		active_dialog.queue_free()
-	active_dialog = dialog
+	"""EmployeePanel put the staff ID card up (#622). #877: routed through the chokepoint,
+	which closes the incumbent top-first. EmployeePanel mounts the card before emitting, so
+	a REFUSAL (an unanswered event holds the top) has to unwind the mount -- freeing the
+	card also frees its blocker, which employee_panel now ties to the card's tree_exited."""
+	if not modal_stack.present(dialog, [], {"kind": "employee_card"}):
+		dialog.queue_free()
 
 func _on_employee_dialog_closed() -> void:
-	"""Staff ID card dismissed (blocker click or its own close button)."""
-	active_dialog = null
+	"""Staff ID card dismissed (blocker click or its own close button). #877: the card
+	frees itself, so this only re-syncs the routing slots."""
+	modal_stack.sync()
 
 func _on_employee_info_text(text: String) -> void:
 	"""Perk hover details from the staff ID card feed the shared info bar."""

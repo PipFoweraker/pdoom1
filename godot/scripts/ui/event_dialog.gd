@@ -39,6 +39,15 @@ var _pending_event: Dictionary = {}
 var _pending_choice_id: String = ""
 var _reason_label: Label = null
 
+## #877: the dialog currently on screen. The presenter used to have NO handle on an
+## externally-destroyed panel: click_blocker lived at the viewport root and was freed only by
+## report_choice_result(success), and is_showing_event was only ever cleared on that same path.
+## So a panel torn down any other way (a replacing modal, a scene teardown) stranded a
+## full-screen MOUSE_FILTER_STOP blocker AND left is_showing_event stuck true -- every future
+## event then queued forever behind a presenter that thought it was still busy. This handle +
+## the tree_exited hook below make the teardown self-healing whoever performs it.
+var _showing_dialog: Control = null
+
 func present(event: Dictionary) -> void:
 	"""Handle event trigger - queue event for sequential presentation"""
 	print("[EventDialog] === EVENT TRIGGERED: %s ===" % event.get("name", "Unknown"))
@@ -283,6 +292,12 @@ func _show_next_event() -> void:
 	# Mark this as an event dialog to prevent ESC from closing it (issue #452)
 	dialog.set_meta("is_event_dialog", true)
 
+	# #877: pin the root-level blocker to the panel's lifetime, so ANY teardown path takes the
+	# blocker with it -- the same idiom main_ui._present_modal_dialog uses for its barrier.
+	_showing_dialog = dialog
+	dialog.tree_exited.connect(click_blocker.queue_free)
+	dialog.tree_exited.connect(_on_shown_dialog_gone.bind(dialog))
+
 	# Hand the dialog + buttons to the host for keyboard routing (MainUI._input)
 	print("[EventDialog] Emitting dialog_opened with %d buttons" % buttons.size())
 	dialog_opened.emit(dialog, buttons)
@@ -341,6 +356,10 @@ func report_choice_result(success: bool, message: String) -> void:
 
 	# SUCCESS: the choice actually resolved -- close this dialog and move on.
 	message_logged.emit("[color=cyan]Event choice: %s[/color]" % _pending_choice_id)
+	# #877: hand the teardown off from the tree_exited safety net to this (correct) path, so
+	# the net does not double-fire dialog_closed / clobber the next event's presenter state.
+	if _showing_dialog == _pending_dialog:
+		_showing_dialog = null
 	if is_instance_valid(_pending_dialog):
 		_pending_dialog.queue_free()
 	if is_instance_valid(_pending_blocker):
@@ -360,6 +379,26 @@ func report_choice_result(success: bool, message: String) -> void:
 	else:
 		print("[EventDialog] Event resolved, queue empty")
 		is_showing_event = false
+
+
+func _on_shown_dialog_gone(dialog: Control) -> void:
+	"""#877 safety net: the on-screen event panel left the tree WITHOUT resolving (the success
+	path clears _showing_dialog first, so this only runs on an external teardown). Reset the
+	presenter instead of leaving it stuck 'busy' forever, and tell the host to clear its
+	key-routing slots. If events were waiting behind this one, present the next once the tree
+	settles -- an unanswered queue with an idle presenter is the stuck-queue failure."""
+	if _showing_dialog != dialog:
+		return
+	_showing_dialog = null
+	_pending_dialog = null
+	_pending_blocker = null
+	_pending_event = {}
+	_pending_choice_id = ""
+	_reason_label = null
+	is_showing_event = false
+	dialog_closed.emit()
+	if not event_queue.is_empty():
+		call_deferred("_show_next_event")
 
 
 func _show_reason(message: String) -> void:

@@ -166,11 +166,8 @@ func on_option_selected(action_id: String, action_name: String, dialog: Control,
 func _build_grid_submenu(id: String) -> void:
 	var cfg: Dictionary = GRID_CONFIG[id]
 
-	# Close any existing dialog first (single-active-submenu invariant).
-	if host.active_dialog != null and is_instance_valid(host.active_dialog):
-		host.active_dialog.queue_free()
-		host.active_dialog = null
-		host.active_dialog_buttons = []
+	# Single-active-submenu invariant. #877: free-first moved into ModalStack (via host._present_modal_dialog) -- it pops the
+	# incumbent top-first, or refuses this open when an unanswered event holds the top.
 
 	var dialog := Panel.new()
 	var psize: Vector2 = cfg["panel_size"]
@@ -331,10 +328,8 @@ func _build_financing_submenu() -> void:
 	button that opens the full switchable ledger screen. A LIST, not an icon grid, so it is a
 	sibling special-case; it still shares on_option_selected() and the modal mount. Verbatim
 	move of the pre-carve _show_financing_submenu."""
-	if host.active_dialog != null and is_instance_valid(host.active_dialog):
-		host.active_dialog.queue_free()
-		host.active_dialog = null
-		host.active_dialog_buttons = []
+	# #877: free-first moved into ModalStack (via host._present_modal_dialog) -- it pops the
+	# incumbent top-first, or refuses this open when an unanswered event holds the top.
 
 	var dialog := Panel.new()
 	dialog.custom_minimum_size = Vector2(440, 330)
