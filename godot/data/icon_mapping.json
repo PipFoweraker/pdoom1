@@ -55,6 +55,11 @@
       "icon": "res://assets/icons/employee_roles/employee_role_auditor_64.png",
       "status": "mapped"
     },
+    "audit_self_directed": {
+      "icon": "res://assets/icons/employee_roles/employee_role_auditor_64.png",
+      "status": "mapped",
+      "note": "shares the auditor icon with audit_safety -- both are the AUDITS founder-hour kind (Ballot 4); a dedicated skip-level/ground-truthing icon is queued"
+    },
     "lobby_government": {
       "icon": "res://assets/icons/actions_publicity/lobby_government_64.png",
       "status": "mapped",

@@ -6,40 +6,40 @@
 			"name": "Tour Offices",
 			"description": "Go and look at what is on the market. Three landlords will quote you terms; the offers stand for a while.",
 			"costs": {
-				"attention": 1,
-				"hour_type": "doors"
+				"attention": 1
 			},
-			"category": "office"
+			"category": "office",
+			"hour_type": "doors"
 		},
 		{
 			"id": "sign_lease_coworking_corner",
 			"name": "Sign: Co-working corner",
 			"description": "Cheap in, cheap out, low ceiling. Requires a current quote (tour first).",
 			"costs": {
-				"attention": 1,
-				"hour_type": "approvals"
+				"attention": 1
 			},
-			"category": "office"
+			"category": "office",
+			"hour_type": "approvals"
 		},
 		{
 			"id": "sign_lease_walkup_office",
 			"name": "Sign: Walk-up office",
 			"description": "Middle of everything -- more desks, more rent, a year on the term. Requires a current quote.",
 			"costs": {
-				"attention": 1,
-				"hour_type": "approvals"
+				"attention": 1
 			},
-			"category": "office"
+			"category": "office",
+			"hour_type": "approvals"
 		},
 		{
 			"id": "sign_lease_university_annex",
 			"name": "Sign: University annex",
 			"description": "The cheapest desk in town if you last two years. Big deposit. Requires a current quote.",
 			"costs": {
-				"attention": 1,
-				"hour_type": "approvals"
+				"attention": 1
 			},
-			"category": "office"
+			"category": "office",
+			"hour_type": "approvals"
 		}
 	]
 }

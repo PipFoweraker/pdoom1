@@ -24,10 +24,10 @@
 			"description": "Conduct AI safety research",
 			"costs": {
 				"research": 10,
-				"attention": 1,
-				"hour_type": "approvals"
+				"attention": 1
 			},
-			"category": "research"
+			"category": "research",
+			"hour_type": "approvals"
 		},
 		{
 			"id": "capability_research",
@@ -35,10 +35,10 @@
 			"description": "Advance AI capabilities",
 			"costs": {
 				"research": 10,
-				"attention": 1,
-				"hour_type": "approvals"
+				"attention": 1
 			},
-			"category": "research"
+			"category": "research",
+			"hour_type": "approvals"
 		},
 		{
 			"id": "publish_paper",
@@ -46,10 +46,10 @@
 			"description": "Publish research to raise global alarm (adopted safety concern)",
 			"costs": {
 				"research": 20,
-				"attention": 1,
-				"hour_type": "approvals"
+				"attention": 1
 			},
-			"category": "research"
+			"category": "research",
+			"hour_type": "approvals"
 		},
 		{
 			"id": "fundraise",
@@ -73,13 +73,13 @@
 			"description": "Improve morale",
 			"costs": {
 				"money": 10000,
-				"attention": 1,
-				"hour_type": "doors"
+				"attention": 1
 			},
 			"category": "management",
 			"unlock_conditions": {
 				"staff_min": 2
-			}
+			},
+			"hour_type": "doors"
 		},
 		{
 			"id": "audit_safety",
@@ -87,13 +87,13 @@
 			"description": "Comprehensive safety review",
 			"costs": {
 				"money": 40000,
-				"attention": 2,
-				"hour_type": "audits"
+				"attention": 2
 			},
 			"category": "research",
 			"unlock_conditions": {
 				"turn_min": 5
-			}
+			},
+			"hour_type": "audits"
 		},
 		{
 			"id": "operations",

@@ -7,10 +7,10 @@
 			"description": "Focused on AI safety and alignment research",
 			"costs": {
 				"money": 60000,
-				"attention": 1,
-				"hour_type": "approvals"
+				"attention": 1
 			},
-			"category": "hiring"
+			"category": "hiring",
+			"hour_type": "approvals"
 		},
 		{
 			"id": "hire_capability_researcher",
@@ -18,10 +18,10 @@
 			"description": "Advances AI capabilities (increases doom!)",
 			"costs": {
 				"money": 60000,
-				"attention": 1,
-				"hour_type": "approvals"
+				"attention": 1
 			},
-			"category": "hiring"
+			"category": "hiring",
+			"hour_type": "approvals"
 		},
 		{
 			"id": "hire_compute_engineer",
@@ -29,10 +29,10 @@
 			"description": "Improves compute efficiency",
 			"costs": {
 				"money": 50000,
-				"attention": 1,
-				"hour_type": "approvals"
+				"attention": 1
 			},
-			"category": "hiring"
+			"category": "hiring",
+			"hour_type": "approvals"
 		},
 		{
 			"id": "hire_manager",
@@ -40,10 +40,10 @@
 			"description": "Oversees a team of up to 8 researchers",
 			"costs": {
 				"money": 80000,
-				"attention": 1,
-				"hour_type": "approvals"
+				"attention": 1
 			},
-			"category": "hiring"
+			"category": "hiring",
+			"hour_type": "approvals"
 		},
 		{
 			"id": "hire_ethicist",
@@ -51,10 +51,10 @@
 			"description": "Add philosophical perspective to research (+5 reputation)",
 			"costs": {
 				"money": 70000,
-				"attention": 1,
-				"hour_type": "approvals"
+				"attention": 1
 			},
-			"category": "hiring"
+			"category": "hiring",
+			"hour_type": "approvals"
 		},
 		{
 			"id": "hire_interpretability_researcher",
@@ -62,10 +62,10 @@
 			"description": "Probes how models work internally (safety-aligned research)",
 			"costs": {
 				"money": 60000,
-				"attention": 1,
-				"hour_type": "approvals"
+				"attention": 1
 			},
-			"category": "hiring"
+			"category": "hiring",
+			"hour_type": "approvals"
 		},
 		{
 			"id": "hire_alignment_researcher",
@@ -73,10 +73,10 @@
 			"description": "Aligns AI goals with human values (safety-aligned research)",
 			"costs": {
 				"money": 60000,
-				"attention": 1,
-				"hour_type": "approvals"
+				"attention": 1
 			},
-			"category": "hiring"
+			"category": "hiring",
+			"hour_type": "approvals"
 		}
 	]
 }

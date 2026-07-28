@@ -7,14 +7,14 @@
 			"description": "Conservative fundraising - lower amounts, lower risk, always available",
 			"costs": {
 				"attention": 1,
-				"reputation": 2,
-				"hour_type": "doors"
+				"reputation": 2
 			},
 			"gains": {
 				"money_min": 30000,
 				"money_max": 60000
 			},
-			"category": "funding"
+			"category": "funding",
+			"hour_type": "doors"
 		},
 		{
 			"id": "fundraise_big",
@@ -22,28 +22,28 @@
 			"description": "Aggressive funding - higher amounts but requires strong reputation",
 			"costs": {
 				"attention": 2,
-				"reputation": 8,
-				"hour_type": "doors"
+				"reputation": 8
 			},
 			"gains": {
 				"money_min": 80000,
 				"money_max": 150000
 			},
-			"category": "funding"
+			"category": "funding",
+			"hour_type": "doors"
 		},
 		{
 			"id": "take_loan",
 			"name": "Business Loan",
 			"description": "Immediate funds via debt - creates future repayment obligation",
 			"costs": {
-				"attention": 1,
-				"hour_type": "doors"
+				"attention": 1
 			},
 			"gains": {
 				"money": 75000,
 				"debt": 90000
 			},
-			"category": "funding"
+			"category": "funding",
+			"hour_type": "doors"
 		},
 		{
 			"id": "apply_grant",
@@ -51,14 +51,14 @@
 			"description": "Government/foundation funding - requires published papers",
 			"costs": {
 				"attention": 1,
-				"papers": 1,
-				"hour_type": "approvals"
+				"papers": 1
 			},
 			"gains": {
 				"money_min": 50000,
 				"money_max": 100000
 			},
-			"category": "funding"
+			"category": "funding",
+			"hour_type": "approvals"
 		}
 	]
 }

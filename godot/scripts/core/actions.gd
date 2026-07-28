@@ -38,17 +38,28 @@ static func attention_cost(action: Dictionary) -> int:
 
 
 static func hour_type(action: Dictionary) -> String:
-	"""Which founder hour token an action bills. Data may declare `costs.hour_type` as either
-	a 2-way FAMILY ("planning" | "operating") or a 4-way KIND ("doors" | "approvals" |
-	"audits" | "reserve"); both are returned verbatim because MonthPlan.family_of/kind_of
-	resolve either. Unrecognised values fall back to the family default.
+	"""Which founder hour token an action bills. Declared as a 2-way FAMILY ("planning" |
+	"operating") or a 4-way KIND ("doors" | "approvals" | "audits" | "reserve"); both are
+	returned verbatim because MonthPlan.family_of/kind_of resolve either. Unrecognised values
+	fall back to the family default.
+
+	WHERE IT LIVES -- read the TOP-LEVEL `hour_type` field first, `costs.hour_type` second.
+	The 4-way lane MOVED action-def typing out of the cost dict: an hour type is a property
+	of the ACTION, not a resource price, and living inside `costs` meant every site that
+	iterates cost key/value pairs numerically tripped over a String (it broke the fresh-game
+	action render and test_bug_fixes' non-negative-costs sweep the moment the data pass
+	landed -- exactly the trap actions.gd:273 / main_ui.gd:1730 / plan_controller.gd:48 were
+	each patching one at a time). `costs.hour_type` survives as the fallback because a BARE
+	cost dict (a code-side subsystem charge with no action def) has nowhere else to put it;
+	that channel is read by GameState._cost_hour_type.
 
 	DEFAULT for a queued strategic action is PLANNING (booked as `approvals`) -- picking what
 	the org does next is planner mind, not presence (the #980 seam: that is exactly the part
-	you keep while away). Presence work declares "operating"/"doors"/"audits" in its data.
+	you keep while away). Presence work declares "doors"/"audits"/"operating" in its data.
 	KEPT (not fixed) from T2 judgment call 4: this default is PLANNING while the bare-cost-
 	dict default in GameState._cost_hour_type is OPERATING. See that function's note."""
-	var declared: String = String(action.get("costs", {}).get("hour_type", MonthPlan.HOUR_PLANNING))
+	var fallback: Variant = action.get("costs", {}).get("hour_type", MonthPlan.HOUR_PLANNING)
+	var declared: String = String(action.get("hour_type", fallback))
 	if MonthPlan.KIND_FAMILY.has(declared):
 		return declared
 	if declared == MonthPlan.HOUR_OPERATING:
@@ -294,6 +305,14 @@ static func execute_action(action_id: String, state: GameState) -> Dictionary:
 		"pass":
 			# Do nothing action - just waste the action point with no effect
 			result["message"] = "Passed this action. No resources spent."
+
+		"audit_self_directed":
+			# The AUDITS founder-hour kind, cashed out (Ballot 4). Attention was already
+			# debited at queue time by GameManager, so charge=false here.
+			var audit: Dictionary = state.audit_self_directed("", false)
+			result["success"] = bool(audit.get("ok", false))
+			result["message"] = String(audit.get("message", ""))
+			result["audit"] = audit
 
 		"hire_staff":
 			# Submenu action - doesn't execute, opens dialog

@@ -7,10 +7,10 @@
 			"description": "Buy struggling AI startup for talent and compute",
 			"costs": {
 				"money": 150000,
-				"attention": 2,
-				"hour_type": "doors"
+				"attention": 2
 			},
-			"category": "strategic"
+			"category": "strategic",
+			"hour_type": "doors"
 		},
 		{
 			"id": "sabotage_competitor",
@@ -19,10 +19,10 @@
 			"costs": {
 				"money": 100000,
 				"attention": 3,
-				"reputation": 20,
-				"hour_type": "doors"
+				"reputation": 20
 			},
-			"category": "strategic"
+			"category": "strategic",
+			"hour_type": "doors"
 		},
 		{
 			"id": "emergency_pivot",
@@ -30,10 +30,10 @@
 			"description": "Convert capability researchers to safety focus",
 			"costs": {
 				"money": 50000,
-				"attention": 2,
-				"hour_type": "approvals"
+				"attention": 2
 			},
-			"category": "strategic"
+			"category": "strategic",
+			"hour_type": "approvals"
 		},
 		{
 			"id": "grant_proposal",
@@ -41,10 +41,10 @@
 			"description": "Apply for government/foundation funding",
 			"costs": {
 				"attention": 1,
-				"papers": 1,
-				"hour_type": "approvals"
+				"papers": 1
 			},
-			"category": "strategic"
+			"category": "strategic",
+			"hour_type": "approvals"
 		}
 	]
 }

@@ -7,41 +7,39 @@
 			"description": "Submit research paper to a conference (multi-turn review process)",
 			"costs": {
 				"research": 15,
-				"attention": 1,
-				"hour_type": "doors"
+				"attention": 1
 			},
-			"category": "travel"
+			"category": "travel",
+			"hour_type": "doors"
 		},
 		{
 			"id": "attend_conference",
 			"name": "Attend Conference",
 			"description": "[Coming Soon] Travel to present accepted paper or network at a conference -- day-bound scheduling is not available yet",
 			"costs": {
-				"attention": 2,
-				"hour_type": "doors"
+				"attention": 2
 			},
 			"category": "travel",
-			"is_stub": true
+			"is_stub": true,
+			"hour_type": "doors"
 		},
 		{
 			"id": "attend_conference_trip",
 			"name": "Attend Conference (trip)",
 			"description": "Leave for a few days. Travel cash up front, ALL your remaining Attention for the window, and the world keeps running while you are gone -- you come home to a backlog.",
-			"costs": {
-				"hour_type": "doors"
-			},
+			"costs": {},
 			"category": "travel",
-			"_seam": "ADR-0014 rhythm-break SHELL (scripts/core/conference_trip.gd). Costs are {} on purpose: travel cash and Attention are consumed by ConferenceTrip at commit time, not by the plan queue, because the trip resolves synchronously instead of queueing. The legacy instant attend_conference (#468/#469) above is untouched -- the two merge when adoption-v1 lands."
+			"_seam": "ADR-0014 rhythm-break SHELL (scripts/core/conference_trip.gd). Costs are {} on purpose: travel cash and Attention are consumed by ConferenceTrip at commit time, not by the plan queue, because the trip resolves synchronously instead of queueing. The legacy instant attend_conference (#468/#469) above is untouched -- the two merge when adoption-v1 lands.",
+			"hour_type": "doors"
 		},
 		{
 			"id": "send_delegation",
 			"name": "Send Delegation",
 			"description": "[Coming Soon] Send researchers to attend on your behalf",
-			"costs": {
-				"hour_type": "approvals"
-			},
+			"costs": {},
 			"category": "travel",
-			"is_stub": true
+			"is_stub": true,
+			"hour_type": "approvals"
 		}
 	]
 }

@@ -952,6 +952,65 @@ func record_self_directed(topic_key: String, actual: float, reported: float) -> 
 	self_directed_progress[topic_key] = bucket
 
 
+func audit_self_directed(topic_key: String = "", charge: bool = true) -> Dictionary:
+	"""Spend a founder AUDIT hour to ground-truth one topic's self-directed progress.
+
+	This is the consumer the T1 substrate left a SEAM for at every touch point
+	(researcher.gd:129, record_self_directed above): unassigned staff self-direct and report
+	OPTIMISTICALLY, and until now nothing read `reported`. An audit is skip-level
+	ground-truthing -- the founder goes and looks -- so it bills the `audits` kind, which
+	sits in the OPERATING family and is therefore impossible while away (#980 falls out).
+
+	`topic_key` empty audits the topic with the LARGEST claimed-vs-true gap, tie-broken by
+	sorted key. Deterministic, no RNG source touched -- the optimism factor is already a
+	per-person hash (researcher.gd:632) and this only reads it.
+
+	EFFECT (the conservative S-cut answer to the ADR's open 'what do audits audit'): the
+	audited topic's ORG-LEVEL books are corrected -- `reported` collapses onto `actual`, so
+	the gap closes and cannot be double-counted by a later reader. Deliberately NOT taken:
+	reputation/trust penalties or departure risk against the individual (needs a target
+	system that does not exist pre-T4), and per-person `self_directed_reported` is left
+	alone on purpose -- an audit corrects what the ORG believes, not what the person
+	claimed. Returns {ok, topic, actual, reported, gap, message}."""
+	if month_plan == null:
+		return {"ok": false, "topic": "", "gap": 0.0, "message": "No month plan -- nothing to audit."}
+	if self_directed_progress.is_empty():
+		return {"ok": false, "topic": "", "gap": 0.0, "message": "Nobody is self-directing -- there is nothing to ground-truth."}
+	var target: String = topic_key
+	if target == "":
+		var topics: Array = self_directed_progress.keys()
+		topics.sort()  # order-stable pick regardless of Dictionary iteration order
+		var best_gap: float = -1.0
+		for t in topics:
+			var b: Dictionary = self_directed_progress[t]
+			var g: float = float(b.get("reported", 0.0)) - float(b.get("actual", 0.0))
+			if g > best_gap:
+				best_gap = g
+				target = String(t)
+	if not self_directed_progress.has(target):
+		return {"ok": false, "topic": target, "gap": 0.0, "message": "No self-directed work recorded on that topic."}
+	# `charge` false when the caller already paid at QUEUE time (the action path: GameManager
+	# debits the month plan when the card is queued, execute_action only applies the effect).
+	if charge and not month_plan.spend_attention(1, MonthPlan.KIND_AUDITS):
+		return {"ok": false, "topic": target, "gap": 0.0, "message": "No founder hours left to audit with."}
+	var bucket: Dictionary = self_directed_progress[target]
+	var actual: float = float(bucket.get("actual", 0.0))
+	var reported: float = float(bucket.get("reported", 0.0))
+	var gap: float = DoomSystem._snap(reported - actual)
+	bucket["reported"] = DoomSystem._snap(actual)
+	self_directed_progress[target] = bucket
+	return {
+		"ok": true,
+		"topic": target,
+		"actual": actual,
+		"reported": reported,
+		"gap": gap,
+		"message": "Audited %s: claimed %.1f, actually %.1f (overstated by %.1f). Books corrected." % [
+			target, reported, actual, gap,
+		],
+	}
+
+
 func workstream_readout() -> Array[String]:
 	"""Minimal ASCII debug readout for this lane (the plan-screen assignment verb is a
 	separate UI carve). Lists running workstreams, then the self-directed drift with the

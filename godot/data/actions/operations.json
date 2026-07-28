@@ -7,10 +7,10 @@
 			"description": "Restock stationery (+50 supplies). Staff consume supplies each turn.",
 			"costs": {
 				"money": 2000,
-				"attention": 1,
-				"hour_type": "doors"
+				"attention": 1
 			},
-			"category": "operations"
+			"category": "operations",
+			"hour_type": "doors"
 		},
 		{
 			"id": "office_maintenance",
@@ -18,10 +18,20 @@
 			"description": "Routine repairs and cleaning. Improves morale slightly.",
 			"costs": {
 				"money": 5000,
-				"attention": 1,
-				"hour_type": "doors"
+				"attention": 1
 			},
-			"category": "operations"
+			"category": "operations",
+			"hour_type": "doors"
+		},
+		{
+			"id": "audit_self_directed",
+			"name": "Audit Self-Directed Work",
+			"description": "Go and look. Unassigned staff report their own progress optimistically -- an audit hour ground-truths the biggest claimed-vs-true gap and corrects the books. Impossible while away.",
+			"costs": {
+				"attention": 1
+			},
+			"category": "operations",
+			"hour_type": "audits"
 		}
 	]
 }

@@ -6,10 +6,10 @@
 			"name": "Networking",
 			"description": "Build relationships and connections in the AI safety community",
 			"costs": {
-				"attention": 1,
-				"hour_type": "doors"
+				"attention": 1
 			},
-			"category": "influence"
+			"category": "influence",
+			"hour_type": "doors"
 		},
 		{
 			"id": "media_campaign",
@@ -17,10 +17,10 @@
 			"description": "Public outreach through press and social media",
 			"costs": {
 				"money": 30000,
-				"attention": 2,
-				"hour_type": "doors"
+				"attention": 2
 			},
-			"category": "influence"
+			"category": "influence",
+			"hour_type": "doors"
 		},
 		{
 			"id": "lobby_government",
@@ -28,10 +28,10 @@
 			"description": "Advocate for AI safety regulation (costly but impactful)",
 			"costs": {
 				"money": 80000,
-				"attention": 2,
-				"hour_type": "doors"
+				"attention": 2
 			},
-			"category": "influence"
+			"category": "influence",
+			"hour_type": "doors"
 		},
 		{
 			"id": "release_warning",
@@ -39,10 +39,10 @@
 			"description": "Warn public about AI risks - risky but high impact",
 			"costs": {
 				"attention": 2,
-				"reputation": 15,
-				"hour_type": "approvals"
+				"reputation": 15
 			},
-			"category": "influence"
+			"category": "influence",
+			"hour_type": "approvals"
 		},
 		{
 			"id": "open_source_release",
@@ -50,10 +50,10 @@
 			"description": "Release safety research publicly for community benefit",
 			"costs": {
 				"papers": 3,
-				"attention": 1,
-				"hour_type": "approvals"
+				"attention": 1
 			},
-			"category": "influence"
+			"category": "influence",
+			"hour_type": "approvals"
 		}
 	]
 }

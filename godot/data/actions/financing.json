@@ -6,30 +6,30 @@
 			"name": "Take Loan",
 			"description": "+$50k now; a balloon repayment (~$60k) bills in 4 turns and compounds until paid.",
 			"costs": {
-				"attention": 1,
-				"hour_type": "doors"
+				"attention": 1
 			},
-			"category": "financing"
+			"category": "financing",
+			"hour_type": "doors"
 		},
 		{
 			"id": "funding_strings",
 			"name": "Funding (Strings)",
 			"description": "+$40k now; a governance obligation bills in 6 turns.",
 			"costs": {
-				"attention": 1,
-				"hour_type": "doors"
+				"attention": 1
 			},
-			"category": "financing"
+			"category": "financing",
+			"hour_type": "doors"
 		},
 		{
 			"id": "desperation_lever",
 			"name": "Desperation Lever",
 			"description": "Suppress doom now; plants a SECRET, compounding governance liability that rivals can expose.",
 			"costs": {
-				"attention": 1,
-				"hour_type": "approvals"
+				"attention": 1
 			},
-			"category": "financing"
+			"category": "financing",
+			"hour_type": "approvals"
 		},
 		{
 			"id": "staff_rider",
@@ -37,40 +37,40 @@
 			"description": "+2 action points now; a small governance rider bills later.",
 			"costs": {
 				"money": 15000,
-				"attention": 1,
-				"hour_type": "doors"
+				"attention": 1
 			},
-			"category": "financing"
+			"category": "financing",
+			"hour_type": "doors"
 		},
 		{
 			"id": "seek_financing",
 			"name": "Seek Financing",
 			"description": "Run a raise (ADR-0013): the cost-of-debt engine quotes 2-3 concurrent offers priced by org type, counterparty, reputation and leverage. Offers stand until they expire; accept at plan speed.",
 			"costs": {
-				"attention": 1,
-				"hour_type": "doors"
+				"attention": 1
 			},
-			"category": "financing"
+			"category": "financing",
+			"hour_type": "doors"
 		},
 		{
 			"id": "accept_financing_offer",
 			"name": "Accept Offer",
 			"description": "Accept a standing financing offer by id (from Seek Financing) -- cash now, its quoted terms mint a ledger entry.",
 			"costs": {
-				"attention": 1,
-				"hour_type": "approvals"
+				"attention": 1
 			},
-			"category": "financing"
+			"category": "financing",
+			"hour_type": "approvals"
 		},
 		{
 			"id": "pay_bills",
 			"name": "Pay the Bill",
 			"description": "Settle the soonest-due affordable loan early from cash (#566), retiring its balloon before it bills.",
 			"costs": {
-				"attention": 1,
-				"hour_type": "approvals"
+				"attention": 1
 			},
-			"category": "financing"
+			"category": "financing",
+			"hour_type": "approvals"
 		}
 	]
 }
