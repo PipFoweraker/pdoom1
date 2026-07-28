@@ -473,18 +473,22 @@ func test_standard_difficulty_uses_base_money():
 		"Standard should use unmodified base money")
 
 func test_difficulty_changes_attention_grant():
-	# Issue #541, T2 denomination: difficulty sets the MONTHLY ATTENTION GRANT.
-	# Staff scaling is identical across difficulties, so Easy base (4) must exceed
-	# Hard base (2) by exactly 2 on turn 1.
+	# Issue #541, T2 denomination: difficulty sets the MONTHLY ATTENTION GRANT (24/20/16),
+	# not a per-turn AP cap. force=true on the second start is required -- start_new_game
+	# self-guards against silently destroying a live run (the #979 sibling fix), and without
+	# it the second call is REFUSED and both reads return the Easy grant.
 	GameConfig.difficulty = 0  # Easy
 	game_manager.start_new_game("difficulty_seed")
-	var easy_ap = game_manager.state.attention_per_month
+	var easy_grant: int = game_manager.state.attention_per_month
+	assert_eq(easy_grant, game_manager.state.month_plan.attention_total,
+		"the opening month was re-granted at the difficulty size, not the Balance default")
 
 	GameConfig.difficulty = 2  # Hard
-	game_manager.start_new_game("difficulty_seed")
-	var hard_ap = game_manager.state.attention_per_month
+	game_manager.start_new_game("difficulty_seed", true)
+	var hard_grant: int = game_manager.state.attention_per_month
 
-	assert_gt(easy_ap, hard_ap,
-		"Easy should grant more turn-1 AP than Hard (#541)")
-	assert_eq(easy_ap - hard_ap, 2,
-		"Easy base AP (4) minus Hard base AP (2) should be 2 on turn 1")
+	assert_gt(easy_grant, hard_grant,
+		"Easy should grant more monthly Attention than Hard (#541)")
+	assert_eq(easy_grant - hard_grant,
+		Balance.inum("difficulty.easy.attention_per_month", 24) - Balance.inum("difficulty.hard.attention_per_month", 16),
+		"the gap is exactly what the Balance surface declares")
