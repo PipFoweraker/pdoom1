@@ -28,7 +28,7 @@
       "style_tags": ["decent"],
       "sockets": [],
       "review": true,
-      "notes": "Footprint: subject is 52px wide = 1.6 tiles, rounded up to 2x1, but a filing cabinet may be intended as 1x1 -- Pip to rule. Height 3.125 rounded up to 3.25 (exact tie). Tier inferred as decent (no tier-variant art exists); Pip to confirm in the next review sweep."
+      "notes": "Footprint: subject is 52px wide = 1.6 tiles, rounded up to 2x1, but a filing cabinet may be intended as 1x1 -- Pip to rule. Height 3.125 rounded up to 3.25 (exact tie). Tier inferred as decent (no tier-variant art exists); Pip to confirm in the next review sweep. REBASE PENDING TRIAGE (2026-07-28): art_source/pixellab_2026-07-27_prop_rebase/native/ has 4 un-triaged candidates (filing_cabinet_decent_r1/r2, filing_cabinet_scummy_r1/r2) at a much smaller native canvas (40x52 vs 72x112 above) -- no prop_rebase_verdicts.json exists yet, so Pip's r1-vs-r2 pick has not happened. Measured candidate subject heights (PIL alpha bbox): decent_r1=49px, decent_r2=47px, scummy_r1=49px, scummy_r2=49px. Height/canvas/art NOT changed here -- do not promote a specific roll without a verdict."
     },
     "server_cluster": {
       "art": "res://assets/office_floor/props/server_cluster.png",
@@ -40,7 +40,7 @@
       "style_tags": ["decent"],
       "sockets": [],
       "review": true,
-      "notes": "Footprint: 118px wide = 3.7 tiles -> 4 wide; depth set to 1 but a server rack cluster plausibly occupies 2 tiles deep -- Pip to rule. Tier inferred as decent (no tier-variant art exists); Pip to confirm in the next review sweep."
+      "notes": "Footprint: 118px wide = 3.7 tiles -> 4 wide; depth set to 1 but a server rack cluster plausibly occupies 2 tiles deep -- Pip to rule. Tier inferred as decent (no tier-variant art exists); Pip to confirm in the next review sweep. REBASE PENDING TRIAGE (2026-07-28): art_source/pixellab_2026-07-27_prop_rebase/native/ has 2 un-triaged candidates (server_cluster_r1, server_cluster_r2) at a much smaller native canvas (112x80 vs 128x120 above) -- no prop_rebase_verdicts.json exists yet. Measured candidate subject heights (PIL alpha bbox): r1=72px (90px wide), r2=71px (62px wide) -- the two rolls differ enough in composition, not just noise, that picking one is a real Pip call. Height/canvas/art NOT changed here -- do not promote a specific roll without a verdict."
     },
     "water_cooler": {
       "art": "res://assets/office_floor/props/water_cooler.png",
@@ -53,7 +53,7 @@
       "style_tags": ["decent"],
       "sockets": [],
       "review": true,
-      "notes": "Tier inferred as decent (no tier-variant art exists); Pip to confirm in the next review sweep. Footprint confident (37px subject fits one 32px tile). approach_px: left/right side slots ~26 source px (~1.4x subject half-width) from the anchor, 2px front-biased -- walkers queue at the cooler's sides instead of standing in front (Pip, 2026-07-26)."
+      "notes": "Tier inferred as decent (no tier-variant art exists); Pip to confirm in the next review sweep. Footprint confident (37px subject fits one 32px tile). approach_px: left/right side slots ~26 source px (~1.4x subject half-width) from the anchor, 2px front-biased -- walkers queue at the cooler's sides instead of standing in front (Pip, 2026-07-26). REBASE PENDING TRIAGE (2026-07-28): art_source/pixellab_2026-07-27_prop_rebase/native/ has 4 un-triaged candidates (water_cooler_decent_r1/r2, water_cooler_scummy_r1/r2) at a much smaller native canvas (40x48 vs 64x120 above) -- no prop_rebase_verdicts.json exists yet. Measured candidate subject heights (PIL alpha bbox): decent_r1=48px, decent_r2=46px, scummy_r1=46px, scummy_r2=48px. Height/canvas/art NOT changed here -- do not promote a specific roll without a verdict."
     }
   }
 }
