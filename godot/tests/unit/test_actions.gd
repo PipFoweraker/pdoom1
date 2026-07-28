@@ -118,6 +118,60 @@ func test_safety_research_execution():
 		initial_absorb + 1.0 * Balance.num("doom.streams.action_safety_absorb", 0.0), 0.0001,
 		"Safety research raises safety_absorption by the Balance-priced amount")
 
+func test_capability_research_upgrade_computer_wired():
+	# #970: upgrade_computer claimed "Research actions now more effective!" with zero
+	# backing code. GameActions.execute_action("capability_research", ...) now reads it.
+	state.capability_researchers = 1
+	state.research = 100.0
+	var baseline = GameActions.execute_action("capability_research", state)
+	var baseline_gained: float = state.research
+
+	state.research = 100.0
+	state.add_upgrade("upgrade_computer")
+	GameActions.execute_action("capability_research", state)
+	var with_upgrade_gained: float = state.research
+
+	assert_gt(with_upgrade_gained, baseline_gained, "upgrade_computer should raise research gained by capability_research")
+
+func test_capability_research_hpc_cluster_wired():
+	# #970: hpc_cluster claimed "research 25% more effective!" with zero backing code.
+	state.capability_researchers = 1
+	state.research = 100.0
+	GameActions.execute_action("capability_research", state)
+	var baseline_gained: float = state.research
+
+	state.research = 100.0
+	state.add_upgrade("hpc_cluster")
+	GameActions.execute_action("capability_research", state)
+	var with_upgrade_gained: float = state.research
+
+	assert_gt(with_upgrade_gained, baseline_gained, "hpc_cluster should raise research gained by capability_research by 25%")
+
+func test_capability_research_research_automation_wired():
+	# #970: research_automation claimed "Research scales with compute!" with zero backing code.
+	state.capability_researchers = 1
+	state.compute = 200.0
+	state.research = 100.0
+	GameActions.execute_action("capability_research", state)
+	var baseline_gained: float = state.research
+
+	state.research = 100.0
+	state.compute = 200.0
+	state.add_upgrade("research_automation")
+	GameActions.execute_action("capability_research", state)
+	var with_upgrade_gained: float = state.research
+
+	assert_gt(with_upgrade_gained, baseline_gained, "research_automation should raise research gained when compute is available")
+
+func test_hire_ethicist_only_claims_reputation():
+	# #970: "improves safety research" was an unbacked claim (no state ever read it).
+	# Only the reputation gain, which fires, is claimed in the message now.
+	state.money = 200000.0
+	var result = GameActions.execute_action("hire_ethicist", state)
+	assert_true(result.get("success", false), "hire_ethicist should succeed")
+	assert_string_contains(String(result.get("message", "")), "reputation", "Message should mention reputation")
+	assert_false(String(result.get("message", "")).contains("safety research"), "Message should not claim an unbacked safety-research effect")
+
 func test_team_building_execution():
 	# Test team building action
 	var initial_reputation = state.reputation

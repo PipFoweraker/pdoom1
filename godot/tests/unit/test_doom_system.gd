@@ -80,6 +80,27 @@ func test_safety_absorption_reduces_overhang():
 	var result = ds.calculate_doom_change(state)
 	assert_eq(result["sources"]["overhang"], 0.0, "overhang clamps at 0 when absorption exceeds frontier (v1 R2-Q9)")
 
+func test_secure_cloud_dampens_player_frontier_growth():
+	# #970: secure_cloud claimed "reduces doom spikes from lab breakthroughs" with zero
+	# backing code. Wired into _advance_intermediaries: it dampens the player-frontier
+	# growth rate driven by productive capability researchers.
+	var ds_plain = _create_doom_system()
+	var state_plain = _create_minimal_game_state()
+	state_plain.capability_researchers = 1
+	ds_plain.calculate_doom_change(state_plain)
+	var frontier_without_upgrade: float = float(state_plain.frontier_capability.get("player", 0.0))
+	assert_gt(frontier_without_upgrade, 0.0, "capability researcher should grow player frontier at all")
+
+	var ds_upgraded = _create_doom_system()
+	var state_upgraded = _create_minimal_game_state()
+	state_upgraded.capability_researchers = 1
+	state_upgraded.add_upgrade("secure_cloud")
+	ds_upgraded.calculate_doom_change(state_upgraded)
+	var frontier_with_upgrade: float = float(state_upgraded.frontier_capability.get("player", 0.0))
+
+	assert_lt(frontier_with_upgrade, frontier_without_upgrade, "secure_cloud should dampen player-frontier growth")
+	assert_gt(frontier_with_upgrade, 0.0, "secure_cloud dampens, does not zero, frontier growth")
+
 func test_alarm_stream_is_negative_relief():
 	# global_alarm produces a small NEGATIVE stream (the natively-negative component).
 	var ds = _create_doom_system()

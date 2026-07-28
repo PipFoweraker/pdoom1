@@ -274,5 +274,12 @@
 				"availability": { "min_rep": 0, "org_types": [] }
 			}
 		}
+	},
+	"upgrades": {
+		"_description": "Issue #970: coefficients for the six upgrades that used to print effect claims with zero backing code. Wired into actions.gd (capability_research) and doom_system.gd (_advance_intermediaries).",
+		"upgrade_computer": { "research_bonus": 1.0 },
+		"hpc_cluster": { "research_multiplier": 0.25 },
+		"research_automation": { "compute_scale": 0.02 },
+		"secure_cloud": { "frontier_dampen": 0.15 }
 	}
 }

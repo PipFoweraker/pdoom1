@@ -47,3 +47,23 @@ func test_upgrade_ids_are_unique():
 		var id = upgrade["id"]
 		assert_false(ids.has(id), "Upgrade ID should be unique: " + id)
 		ids.append(id)
+
+func test_comfy_chairs_and_accounting_software_are_flavor_only():
+	# #970: both upgrades charged real money for claimed effects with zero backing code
+	# (no low-funds staff-attrition system; no cash-flow-tracking / board-oversight system).
+	# STOP SELLING: re-priced to 0 and relabelled as flavor-only pending a design ruling.
+	var comfy = GameUpgrades.get_upgrade_by_id("comfy_chairs")
+	assert_eq(int(comfy.get("cost", -1)), 0, "comfy_chairs should be free (no mechanical effect)")
+	assert_string_contains(String(comfy.get("description", "")), "970", "description should point at the tracking issue")
+
+	var accounting = GameUpgrades.get_upgrade_by_id("accounting_software")
+	assert_eq(int(accounting.get("cost", -1)), 0, "accounting_software should be free (no mechanical effect)")
+	assert_string_contains(String(accounting.get("description", "")), "970", "description should point at the tracking issue")
+
+func test_secure_cloud_purchase_succeeds_and_is_recorded():
+	# The purchase surface itself (money -> has_upgrade) for a WIRED upgrade; the mechanical
+	# effect (frontier-growth dampening) is covered by test_doom_system.gd.
+	state.money = 200000.0
+	var result = GameUpgrades.purchase_upgrade("secure_cloud", state)
+	assert_true(result.get("success", false), "secure_cloud purchase should succeed")
+	assert_true(state.has_upgrade("secure_cloud"), "secure_cloud should be recorded as purchased")
