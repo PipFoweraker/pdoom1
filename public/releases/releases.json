@@ -1,7 +1,512 @@
 {
-  "generated_at": "2026-07-28T00:00:00+00:00",
-  "latest_version": null,
-  "latest_stable": null,
-  "releases": [],
-  "total_releases": 0
+  "generated_at": "2026-07-29T10:53:34.426379+00:00",
+  "latest_version": "v0.13.1",
+  "latest_stable": "v0.13.1",
+  "releases": [
+    {
+      "version": "v0.13.1",
+      "version_number": "0.13.1",
+      "release_date": "2026-07-25T22:23:46+10:00",
+      "commit_hash": "409535dc0215d5e7bf4ff1b83025e8da98d7b4ef",
+      "is_prerelease": false,
+      "changelog": "Release v0.13.1\n\nSee CHANGELOG.md for details.",
+      "downloads": {
+        "windows": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.13.1/PDoom-Windows-v0.13.1.zip",
+        "linux": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.13.1/PDoom-Linux-v0.13.1.zip",
+        "mac": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.13.1/PDoom-macOS-v0.13.1.zip",
+        "source_zip": "https://github.com/PipFoweraker/pdoom1/archive/refs/tags/v0.13.1.zip",
+        "source_tar": "https://github.com/PipFoweraker/pdoom1/archive/refs/tags/v0.13.1.tar.gz"
+      },
+      "metadata": {
+        "engine": "Godot 4.5.1",
+        "platforms": [
+          "Windows",
+          "Linux",
+          "macOS"
+        ],
+        "tag_message": "fix(ui): tie staff-card blocker to panel lifetime -- fixes ESC dead-mouse soft-lock (non-forking, L2) (#887)\n\nThe staff ID card (EmployeePanel) raises a full-rect z=998 MOUSE_FILTER_STOP\nblocker behind the perks panel. The blocker was torn down ONLY by the panel's\nown click/close lambdas, and those lambdas free perks_panel FIRST -- so when\nESC frees the panel via MainUI._close_active_submenu (which frees active_dialog\n== perks_panel but never the blocker), the blocker is orphaned and swallows\nevery mouse click forever = dead UI. Double-opening stacks two unclosable\nblockers.\n\nFix (mirrors main_ui.gd _present_modal_dialog's tree_exited idiom): connect the\nblocker teardown to perks_panel.tree_exited so the blocker is freed whenever the\npanel leaves the tree by ANY path (ESC, replacing dialog, click, close). Also\nharden the close/click lambdas: guard each queue_free with is_instance_valid and\nfree the blocker BEFORE the panel so a freed panel can't strand the blocker even\nwithout the signal.\n\nNon-forking: pure UI-lifecycle fix, no game-state/board-key impact.\n\nRefs #886 (adversarial fuzz found it), #877 (scene-nav/chokepoint follow-up).\n\nCo-authored-by: Claude Opus 4.8 <noreply@anthropic.com>"
+      }
+    },
+    {
+      "version": "v0.13.0",
+      "version_number": "0.13.0",
+      "release_date": "2026-07-24T18:54:09+10:00",
+      "commit_hash": "ae0c2c237138e02837197ae2650d8f81a111c75d",
+      "is_prerelease": false,
+      "changelog": "Release v0.13.0\n\nSee CHANGELOG.md for details.",
+      "downloads": {
+        "windows": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.13.0/PDoom-Windows-v0.13.0.zip",
+        "linux": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.13.0/PDoom-Linux-v0.13.0.zip",
+        "mac": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.13.0/PDoom-macOS-v0.13.0.zip",
+        "source_zip": "https://github.com/PipFoweraker/pdoom1/archive/refs/tags/v0.13.0.zip",
+        "source_tar": "https://github.com/PipFoweraker/pdoom1/archive/refs/tags/v0.13.0.tar.gz"
+      },
+      "metadata": {
+        "engine": "Godot 4.5.1",
+        "platforms": [
+          "Windows",
+          "Linux",
+          "macOS"
+        ],
+        "tag_message": "Merge pull request #834 from PipFoweraker/build/v0.13-epoch\n\nrelease: v0.13.0 -- L2 epoch cut + launch batch"
+      }
+    },
+    {
+      "version": "v0.12.0",
+      "version_number": "0.12.0",
+      "release_date": "2026-07-22T21:50:31+10:00",
+      "commit_hash": "8200553c868924288fabfdc1d62c711d3bb0dde2",
+      "is_prerelease": false,
+      "changelog": "Release v0.12.0\n\nSee CHANGELOG.md for details.",
+      "downloads": {
+        "windows": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.12.0/PDoom-Windows-v0.12.0.zip",
+        "linux": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.12.0/PDoom-Linux-v0.12.0.zip",
+        "mac": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.12.0/PDoom-macOS-v0.12.0.zip",
+        "source_zip": "https://github.com/PipFoweraker/pdoom1/archive/refs/tags/v0.12.0.zip",
+        "source_tar": "https://github.com/PipFoweraker/pdoom1/archive/refs/tags/v0.12.0.tar.gz"
+      },
+      "metadata": {
+        "engine": "Godot 4.5.1",
+        "platforms": [
+          "Windows",
+          "Linux",
+          "macOS"
+        ],
+        "tag_message": "fix(ui): wire real icons to PLAN category headers (#795) (#797)\n\nThe proposed-layout grouped hand rendered each category header with its\naccent colour but IconLoader.get_action_icon(category_key) returned the\nneon placeholder (a category key is not an action id), so headers showed\ncheckerboard placeholders. Add a single CATEGORY_HEADER_ICONS const\nmapping each category to an existing main_navigation icon and load it\nguarded by ResourceLoader.exists so a missing asset degrades to an\nicon-less (still colour-coded) header rather than crashing.\n\nView-layer only: no gameplay, state, RNG, or scoring touched.\n\nCo-authored-by: Claude Opus 4.8 <noreply@anthropic.com>"
+      }
+    },
+    {
+      "version": "v0.11.0",
+      "version_number": "0.11.0",
+      "release_date": "2025-12-08T08:06:41+11:00",
+      "commit_hash": "23a8d039c45ff8983854bbc5a33270c069a63c47",
+      "is_prerelease": false,
+      "changelog": "Release v0.11.0\n\nSee CHANGELOG.md for details.",
+      "downloads": {
+        "windows": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.11.0/PDoom-Windows-v0.11.0.zip",
+        "linux": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.11.0/PDoom-Linux-v0.11.0.zip",
+        "mac": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.11.0/PDoom-macOS-v0.11.0.zip",
+        "source_zip": "https://github.com/PipFoweraker/pdoom1/archive/refs/tags/v0.11.0.zip",
+        "source_tar": "https://github.com/PipFoweraker/pdoom1/archive/refs/tags/v0.11.0.tar.gz"
+      },
+      "metadata": {
+        "engine": "Godot 4.5.1",
+        "platforms": [
+          "Windows",
+          "Linux",
+          "macOS"
+        ],
+        "tag_message": "v0.11.0 - Travel & Conferences System\n\nMajor Features:\n- Academic Conference System (Issue #468): Submit papers to NeurIPS, ICML, ICLR, AAAI, FAccT, AIES\n- Travel Cost System: Economy/Business/First class travel with realistic costs\n- Jet Lag Mechanics (Issue #469): Productivity impacts from travel\n- Public Opinion & Media System (Issue #186 Phase 1)\n- Responsive UI Layout: Percentage-based sizing\n\nBug Fixes:\n- AP Double-Spend Bug: Actions no longer deduct AP twice\n- Poaching Event Infinite Loop: Now respects probability and min_turn\n- Manager Threshold: First 9 researchers now founder-managed\n- Hiring Queue: Support for multiple hires per turn\n- Event Popup AP Display (Issue #453)\n\nSee CHANGELOG.md for full details."
+      }
+    },
+    {
+      "version": "v0.10.6",
+      "version_number": "0.10.6",
+      "release_date": "2025-11-25T17:44:13+11:00",
+      "commit_hash": "c75fb420764dca598d4df5e1db4f8ecfea7d9e2c",
+      "is_prerelease": false,
+      "changelog": "Release v0.10.6\n\nSee CHANGELOG.md for details.",
+      "downloads": {
+        "windows": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.10.6/PDoom-Windows-v0.10.6.zip",
+        "linux": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.10.6/PDoom-Linux-v0.10.6.zip",
+        "mac": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.10.6/PDoom-macOS-v0.10.6.zip",
+        "source_zip": "https://github.com/PipFoweraker/pdoom1/archive/refs/tags/v0.10.6.zip",
+        "source_tar": "https://github.com/PipFoweraker/pdoom1/archive/refs/tags/v0.10.6.tar.gz"
+      },
+      "metadata": {
+        "engine": "Godot 4.5.1",
+        "platforms": [
+          "Windows",
+          "Linux",
+          "macOS"
+        ],
+        "tag_message": "fix: Disable SteamManager autoload until GodotSteam is properly installed\n\nSteam Integration Postponed:\n- Remove SteamManager from autoloads (was causing parse errors)\n- Remove [steam] config section\n- GodotSteam plugin not yet installed in CI/CD environment\n- Pre-build validation correctly caught the missing dependency\n\nSteamManager code remains in godot/autoload/steam_manager.gd for future use.\nWill re-enable once GodotSteam plugin is properly installed across all build\nenvironments.\n\nValidation now passes:\n- All GDScript parse checks: PASS\n- Scene file structure: PASS\n- Missing resources: PASS\n- Autoload scripts: PASS\n\n Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>"
+      }
+    },
+    {
+      "version": "v0.10.5",
+      "version_number": "0.10.5",
+      "release_date": "2025-11-25T08:43:41+11:00",
+      "commit_hash": "65ab2bb231b5d909e9ee96e83712a0a3fded4e53",
+      "is_prerelease": false,
+      "changelog": "Release v0.10.5\n\nSee CHANGELOG.md for details.",
+      "downloads": {
+        "windows": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.10.5/PDoom-Windows-v0.10.5.zip",
+        "linux": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.10.5/PDoom-Linux-v0.10.5.zip",
+        "mac": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.10.5/PDoom-macOS-v0.10.5.zip",
+        "source_zip": "https://github.com/PipFoweraker/pdoom1/archive/refs/tags/v0.10.5.zip",
+        "source_tar": "https://github.com/PipFoweraker/pdoom1/archive/refs/tags/v0.10.5.tar.gz"
+      },
+      "metadata": {
+        "engine": "Godot 4.5.1",
+        "platforms": [
+          "Windows",
+          "Linux",
+          "macOS"
+        ],
+        "tag_message": "P(Doom) v0.10.5 - Music Controls & UI Polish"
+      }
+    },
+    {
+      "version": "v0.10.4",
+      "version_number": "0.10.4",
+      "release_date": "2025-11-22T21:29:32+11:00",
+      "commit_hash": "e67f68b1a01a4681f71062a7b43464d1259a2fcd",
+      "is_prerelease": false,
+      "changelog": "Release v0.10.4\n\nSee CHANGELOG.md for details.",
+      "downloads": {
+        "windows": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.10.4/PDoom-Windows-v0.10.4.zip",
+        "linux": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.10.4/PDoom-Linux-v0.10.4.zip",
+        "mac": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.10.4/PDoom-macOS-v0.10.4.zip",
+        "source_zip": "https://github.com/PipFoweraker/pdoom1/archive/refs/tags/v0.10.4.zip",
+        "source_tar": "https://github.com/PipFoweraker/pdoom1/archive/refs/tags/v0.10.4.tar.gz"
+      },
+      "metadata": {
+        "engine": "Godot 4.5.1",
+        "platforms": [
+          "Windows",
+          "Linux",
+          "macOS"
+        ],
+        "tag_message": "Release v0.10.4 - Music System Integration\n\nThis release adds atmospheric background music to enhance gameplay\nand create a more immersive experience.\n\n- **Music System**: Context-aware background music with crossfading\n  - Menu music for welcome/settings screens\n  - Gameplay music during active sessions\n  - Defeat music on game over\n  - 7 original tracks across different contexts\n\n- **Pause Menu**: ESC key access to settings and quit options\n- **Do Nothing Action**: Pass action available to prevent softlocks\n- **Music Controls**: Volume sliders in pause menu and settings\n\n- Fixed music_volume configuration persistence\n- Fixed scope errors in audio initialization\n- Fixed startup crashes from missing dependencies\n\n- 7 new music tracks (menu, gameplay, defeat contexts)\n- Smooth 2-second crossfade transitions between tracks\n\nSee CHANGELOG.md for full details.\n\n Generated with [Claude Code](https://claude.com/claude-code)"
+      }
+    },
+    {
+      "version": "v0.10.3",
+      "version_number": "0.10.3",
+      "release_date": "2025-11-17T09:40:48+11:00",
+      "commit_hash": "919548302ab22ac322a713aa9c14cd419a4bc8c3",
+      "is_prerelease": false,
+      "changelog": "Release v0.10.3\n\nSee CHANGELOG.md for details.",
+      "downloads": {
+        "windows": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.10.3/PDoom-Windows-v0.10.3.zip",
+        "linux": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.10.3/PDoom-Linux-v0.10.3.zip",
+        "mac": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.10.3/PDoom-macOS-v0.10.3.zip",
+        "source_zip": "https://github.com/PipFoweraker/pdoom1/archive/refs/tags/v0.10.3.zip",
+        "source_tar": "https://github.com/PipFoweraker/pdoom1/archive/refs/tags/v0.10.3.tar.gz"
+      },
+      "metadata": {
+        "engine": "Godot 4.5.1",
+        "platforms": [
+          "Windows",
+          "Linux",
+          "macOS"
+        ],
+        "tag_message": "v0.10.3 - Playtesting Fixes & Turn Philosophy Refinement\n\nRelease Date: 2025-11-17\n\nKey Features:\n- Bug reporter integration with office cat rewards (#446)\n- Comprehensive turn sequence documentation\n- Turn philosophy reframe: Monday Planning metaphor\n\nUX Improvements:\n- Event dialog styling (forest green background, crisp borders)\n- Keyboard controls documentation updated\n- Turn advancement now supports reactive strategy (empty queue valid)\n\nBug Fixes:\n- Turn advancement with empty action queue\n- Event AP logic (use available instead of reserved AP)\n- Employee screen display\n- Bug reporter UX improvements\n- Warning cleanup\n\nDocumentation:\n- 803-line turn sequence technical reference\n- Monday Planning metaphor throughout docs\n- Strategic simulation clarity (not satire)\n\nFull changelog: CHANGELOG.md"
+      }
+    },
+    {
+      "version": "v0.10.2",
+      "version_number": "0.10.2",
+      "release_date": "2025-11-08T15:03:01+11:00",
+      "commit_hash": "ff83e778d4a8f670e2e3cd48a79d37e0e5b832d1",
+      "is_prerelease": false,
+      "changelog": "Release v0.10.2\n\nSee CHANGELOG.md for details.",
+      "downloads": {
+        "windows": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.10.2/PDoom-Windows-v0.10.2.zip",
+        "linux": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.10.2/PDoom-Linux-v0.10.2.zip",
+        "mac": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.10.2/PDoom-macOS-v0.10.2.zip",
+        "source_zip": "https://github.com/PipFoweraker/pdoom1/archive/refs/tags/v0.10.2.zip",
+        "source_tar": "https://github.com/PipFoweraker/pdoom1/archive/refs/tags/v0.10.2.tar.gz"
+      },
+      "metadata": {
+        "engine": "Godot 4.5.1",
+        "platforms": [
+          "Windows",
+          "Linux",
+          "macOS"
+        ],
+        "tag_message": "v0.10.2: Multi-Platform Release & Enhanced CI/CD\n\nMajor milestone release with multi-platform builds,\nenhanced CI/CD pipeline, and comprehensive UI improvements.\n\nSee CHANGELOG.md for complete details."
+      }
+    },
+    {
+      "version": "v0.10.1",
+      "version_number": "0.10.1",
+      "release_date": "2025-11-06T18:02:28+11:00",
+      "commit_hash": "943d646d424eee25bc41968cf6fb824b9cf8dbb6",
+      "is_prerelease": false,
+      "changelog": "Release v0.10.1\n\nSee CHANGELOG.md for details.",
+      "downloads": {
+        "windows": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.10.1/PDoom-Windows-v0.10.1.zip",
+        "linux": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.10.1/PDoom-Linux-v0.10.1.zip",
+        "mac": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.10.1/PDoom-macOS-v0.10.1.zip",
+        "source_zip": "https://github.com/PipFoweraker/pdoom1/archive/refs/tags/v0.10.1.zip",
+        "source_tar": "https://github.com/PipFoweraker/pdoom1/archive/refs/tags/v0.10.1.tar.gz"
+      },
+      "metadata": {
+        "engine": "Godot 4.5.1",
+        "platforms": [
+          "Windows",
+          "Linux",
+          "macOS"
+        ],
+        "tag_message": "fix: Correct _err variable references in error handlers"
+      }
+    },
+    {
+      "version": "v0.9.0",
+      "version_number": "0.9.0",
+      "release_date": "2025-09-28T11:58:20+10:00",
+      "commit_hash": "cd054e6b9e4cc2fb0bca7464280a843e9d6f0cc4",
+      "is_prerelease": false,
+      "changelog": "Release v0.9.0\n\nSee CHANGELOG.md for details.",
+      "downloads": {
+        "windows": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.9.0/PDoom-Windows-v0.9.0.zip",
+        "linux": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.9.0/PDoom-Linux-v0.9.0.zip",
+        "mac": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.9.0/PDoom-macOS-v0.9.0.zip",
+        "source_zip": "https://github.com/PipFoweraker/pdoom1/archive/refs/tags/v0.9.0.zip",
+        "source_tar": "https://github.com/PipFoweraker/pdoom1/archive/refs/tags/v0.9.0.tar.gz"
+      },
+      "metadata": {
+        "engine": "Godot 4.5.1",
+        "platforms": [
+          "Windows",
+          "Linux",
+          "macOS"
+        ],
+        "tag_message": "v0.9.0: Alpha Stability & Audio System\n\nMajor milestone release featuring:\n- Complete audio system breakthrough (fixed since inception)\n- Monolith architecture extraction (558+ lines)\n- Critical stability improvements (5 GitHub issues resolved)\n- Comprehensive documentation reorganization\n- Enhanced test suite with re-enabled sound tests\n- Ready for stable alpha and beta progression"
+      }
+    },
+    {
+      "version": "v0.7.4",
+      "version_number": "0.7.4",
+      "release_date": "2025-09-16T21:43:04+10:00",
+      "commit_hash": "1ceaec4a265555c1930e6dc67d130dc75896ed17",
+      "is_prerelease": false,
+      "changelog": "### Added\n- **MAJOR: Privacy Controls User Interface**: Complete frontend implementation for Game Run Logger privacy controls\n  - Comprehensive settings menu accessible from main game settings with dedicated privacy controls screen\n  - Five logging levels (Disabled, Minimal, Standard, Verbose, Debug) with clear descriptions and privacy implications\n  - Real-time data summary display showing collected information and storage details\n  - One-click data deletion with confirmation dialog for complete user control\n  - First-time access flow with privacy education and opt-in defaults ensuring user consent\n  - **Full Test Coverage**: 26 comprehensive integration tests covering UI functionality, persistence, and edge cases\n- **Enhanced Settings Architecture**: Upgraded settings menu system with modular privacy integration\n  - Updated main.py navigation flow to support dedicated privacy controls state\n  - Seamless integration with existing visual feedback system for consistent UI experience\n  - Settings persistence via existing PrivacyManager system ensuring cross-session reliability\n  - **Navigation Flow**: Settings Menu -> Privacy Controls -> [All 5 logging levels + data management]\n- **Privacy-First User Experience**: Comprehensive user education and transparent data practices\n  - Welcome dialog for first-time users explaining privacy controls and their importance\n  - Clear descriptions for each logging level helping users make informed privacy decisions\n  - Data summary showing exactly what information is collected at current privacy level\n  - Immediate deletion capability with confirmation dialog protecting against accidental data loss\n\n### Fixed\n- Settings menu navigation now properly returns to settings menu instead of main menu for sounds and keybinding options\n- Visual feedback system import paths corrected for proper UI component integration\n- Privacy controls properly dismiss first-time information dialog after user makes logging level selection\n\n### Technical Implementation\n- **New Component**: `src/ui/privacy_controls.py` (500+ lines) with complete privacy controls interface\n- **Enhanced Integration**: Updated main.py with privacy controls state management and event handling\n- **Test Suite**: `tests/test_privacy_controls_ui.py` with 26 tests covering UI, persistence, navigation, and edge cases\n- **Architecture**: Follows established P(Doom) UI patterns with proper state management and visual feedback integration",
+      "downloads": {
+        "windows": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.7.4/PDoom-Windows-v0.7.4.zip",
+        "linux": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.7.4/PDoom-Linux-v0.7.4.zip",
+        "mac": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.7.4/PDoom-macOS-v0.7.4.zip",
+        "source_zip": "https://github.com/PipFoweraker/pdoom1/archive/refs/tags/v0.7.4.zip",
+        "source_tar": "https://github.com/PipFoweraker/pdoom1/archive/refs/tags/v0.7.4.tar.gz"
+      },
+      "metadata": {
+        "engine": "Godot 4.5.1",
+        "platforms": [
+          "Windows",
+          "Linux",
+          "macOS"
+        ],
+        "tag_message": "v0.7.4 Menu Improvements Hotfix\n\nCritical bug fixes and dashboard system implementation:\n- Fixed 5 critical bugs from playtesting feedback\n- Implemented Research Quality Dashboard with gentle orange theme\n- Established modular service architecture\n- ASCII-compliant documentation and commit messages\n- Ready for production deployment and playtesting"
+      }
+    },
+    {
+      "version": "v0.7.2",
+      "version_number": "0.7.2",
+      "release_date": "2025-09-16T00:43:07+10:00",
+      "commit_hash": "87dd0ce50d5196325aa73a0349fafd2c7046d825",
+      "is_prerelease": false,
+      "changelog": "### Fixed\n- **Researcher Pool Display**: Fixed empty dialog showing blank screen instead of helpful message\n  - Early return [] in `draw_researcher_pool_dialog` now shows 'No researchers available' message\n  - Improved user experience when no researchers are in hiring pool (ui.py line 2982)\n- **One-offs UI Overlap**: Enhanced upgrade button positioning to prevent screen overflow\n  - Dynamic button sizing in `get_compact_upgrade_rects` with 78% screen height cutoff\n  - Buttons automatically scale down when many upgrades present to fit available space\n  - Prevents overlap with context window at bottom of screen (src/ui/compact_ui.py)\n- **End Game Menu Positioning**: Verified and documented existing overflow protection\n  - `EndGameMenuRenderer` automatically switches to horizontal layout when vertical would overflow\n  - Prevents menu buttons from extending beyond screen boundaries\n\n### Added\n- **Intelligence Action System**: New strategic action category with consistent theming\n  - Added `ActionCategory.INTELLIGENCE` with dark purple color scheme (60, 40, 100)\n  - Two new placeholder actions: 'General News Reading' ($10) and 'General Networking' ($25)\n  - Both actions support delegation mechanics and proper cost evaluation\n- **Scroll Wheel Menu Navigation**: Enhanced main menu accessibility\n  - Mouse wheel up/down navigation for main menu items\n  - Wheel up moves selection up, wheel down moves selection down (main.py lines 1661-1678)\n- **Action Button Color Coding**: Visual distinction between action types\n  - Intelligence actions now display with consistent dark purple theme\n  - Improved UI clarity and user experience through category-based coloring\n\n### Infrastructure\n- **Modular UI System Migration**: Switched main menu imports to modular architecture\n  - Updated main.py to use `from src.ui.menus import draw_main_menu`\n  - Identified major refactoring opportunities (draw_version_footer duplicated in 7 places)\n- **GitHub Issue Management**: Created comprehensive Issue #309 documenting all fixes\n  - Systematic tracking and resolution of UI hotfixes with proper labeling\n  - Development blog entry created for session documentation",
+      "downloads": {
+        "windows": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.7.2/PDoom-Windows-v0.7.2.zip",
+        "linux": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.7.2/PDoom-Linux-v0.7.2.zip",
+        "mac": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.7.2/PDoom-macOS-v0.7.2.zip",
+        "source_zip": "https://github.com/PipFoweraker/pdoom1/archive/refs/tags/v0.7.2.zip",
+        "source_tar": "https://github.com/PipFoweraker/pdoom1/archive/refs/tags/v0.7.2.tar.gz"
+      },
+      "metadata": {
+        "engine": "Godot 4.5.1",
+        "platforms": [
+          "Windows",
+          "Linux",
+          "macOS"
+        ],
+        "tag_message": "UI Hotfixes v0.7.2 - Systematic Resolution\n\n- Fixed researcher pool empty dialog display\n- Added scroll wheel menu navigation\n- Added Intelligence category with new strategic actions\n- Fixed one-offs UI overlap with dynamic sizing\n- Added action button color coding\n- Complete documentation and testing\n\nResolves 6 major UI usability issues."
+      }
+    },
+    {
+      "version": "v0.7.0",
+      "version_number": "0.7.0",
+      "release_date": "2025-09-15T22:18:36+10:00",
+      "commit_hash": "668399eaf4bbb3be9735e7517755d11f4acfd1c6",
+      "is_prerelease": false,
+      "changelog": "Release v0.7.0\n\nSee CHANGELOG.md for details.",
+      "downloads": {
+        "windows": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.7.0/PDoom-Windows-v0.7.0.zip",
+        "linux": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.7.0/PDoom-Linux-v0.7.0.zip",
+        "mac": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.7.0/PDoom-macOS-v0.7.0.zip",
+        "source_zip": "https://github.com/PipFoweraker/pdoom1/archive/refs/tags/v0.7.0.zip",
+        "source_tar": "https://github.com/PipFoweraker/pdoom1/archive/refs/tags/v0.7.0.tar.gz"
+      },
+      "metadata": {
+        "engine": "Godot 4.5.1",
+        "platforms": [
+          "Windows",
+          "Linux",
+          "macOS"
+        ],
+        "tag_message": "v0.7.0 'Modular UI Architecture' - Major Technical Milestone\n\nComplete transformation of 4,235-line UI monolith into clean modular architecture.\n37.1% code reduction with zero functionality regression.\nSignificant developer experience and maintainability improvements."
+      }
+    },
+    {
+      "version": "v0.5.0",
+      "version_number": "0.5.0",
+      "release_date": "2025-09-14T15:15:49+10:00",
+      "commit_hash": "527315abe528490d14224d7869d601745c6f2774",
+      "is_prerelease": false,
+      "changelog": "### Added\n- **PyInstaller Windows Distribution System**: Complete single-file .exe distribution for alpha/beta testing\n  - Single-file Windows executable (19MB) with embedded Python runtime and all dependencies\n  - Resource management system for bundled vs development environments (`src/services/resource_manager.py`)\n  - Cross-platform build automation (`build.bat`, `build.sh`) with error handling and validation\n  - Comprehensive distribution documentation (`docs/DISTRIBUTION.md`) with Windows Defender workarounds\n  - Asset bundling system with proper path resolution for PyInstaller environments\n  - User data management in `%APPDATA%/PDoom/` for Windows compliance\n  - Build configuration (`pdoom.spec`) with module optimization and UPX compression\n  - Development workflow integration with automated build validation\n\n### Changed\n- **Lab Name Manager**: Updated to use new resource manager for cross-environment compatibility\n- **GitIgnore**: Updated to properly handle PyInstaller build artifacts while preserving .spec files\n- **Development Dependencies**: Added PyInstaller>=5.0.0 to requirements-dev.txt\n\n### Technical\n- **Build Process**: ~30-60 second build time producing 19MB executable\n- **Performance**: 2-5 second startup time with PyInstaller extraction overhead\n- **Compatibility**: Works identically in development and bundled environments\n- **User Experience**: Zero-installation download-and-run for Windows users",
+      "downloads": {
+        "windows": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.5.0/PDoom-Windows-v0.5.0.zip",
+        "linux": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.5.0/PDoom-Linux-v0.5.0.zip",
+        "mac": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.5.0/PDoom-macOS-v0.5.0.zip",
+        "source_zip": "https://github.com/PipFoweraker/pdoom1/archive/refs/tags/v0.5.0.zip",
+        "source_tar": "https://github.com/PipFoweraker/pdoom1/archive/refs/tags/v0.5.0.tar.gz"
+      },
+      "metadata": {
+        "engine": "Godot 4.5.1",
+        "platforms": [
+          "Windows",
+          "Linux",
+          "macOS"
+        ],
+        "tag_message": "Release v0.5.0: Windows Distribution Ready\n\nVersion and Documentation Updates:\n- Bump version to 0.5.0 (minor version for significant distribution feature)\n- Update CHANGELOG.md with comprehensive PyInstaller implementation details\n- Update README.md with Windows distribution section and download instructions\n- Rebuild executable as PDoom-v0.5.0-alpha.exe (19MB)\n- Add Windows download-and-run section to README for user accessibility\n\nMajor milestone: P(Doom) now supports both Python development and\nsingle-file Windows distribution for alpha/beta testing accessibility.\n\nDistribution features:\n- Zero-installation Windows experience\n- Complete asset bundling and resource management\n- User data in proper Windows directories (%APPDATA%/PDoom/)\n- Windows Defender workaround documentation\n- 19MB single-file executable with embedded Python runtime\n\nThis version completes the transition from development-only to\nuser-distributable software, enabling broader alpha/beta testing."
+      }
+    },
+    {
+      "version": "v0.3.1",
+      "version_number": "0.3.1",
+      "release_date": "2025-09-11T13:52:54+10:00",
+      "commit_hash": "46ea485695593a6a7740083ff3dba640fd1f05a4",
+      "is_prerelease": false,
+      "changelog": "Release v0.3.1\n\nSee CHANGELOG.md for details.",
+      "downloads": {
+        "windows": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.3.1/PDoom-Windows-v0.3.1.zip",
+        "linux": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.3.1/PDoom-Linux-v0.3.1.zip",
+        "mac": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.3.1/PDoom-macOS-v0.3.1.zip",
+        "source_zip": "https://github.com/PipFoweraker/pdoom1/archive/refs/tags/v0.3.1.zip",
+        "source_tar": "https://github.com/PipFoweraker/pdoom1/archive/refs/tags/v0.3.1.tar.gz"
+      },
+      "metadata": {
+        "engine": "Godot 4.5.1",
+        "platforms": [
+          "Windows",
+          "Linux",
+          "macOS"
+        ],
+        "tag_message": "v0.3.1: Critical Money Value Hotfix\n\nIMMEDIATE FIXES:\n- Starting money increased from ,000 to ,000\n- Improves early game balance and player experience\n- Critical economic accessibility improvement\n\nHOTFIX INFRASTRUCTURE:\n- Comprehensive hotfix planning documentation\n- Systematic issue tracking for critical bugs\n- Clear roadmap for v0.3.1+ development\n\nCRITICAL ISSUES DOCUMENTED:\n- Employee UI red crosses display bug\n- Action points counting system issues\n- Fundraising mechanics problems\n\nSTATUS: Production-ready hotfix with systematic bug resolution plan"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "version_number": "0.3.0",
+      "release_date": "2025-09-11T13:03:25+10:00",
+      "commit_hash": "9b027302ead430f7edb8305eff472c5b60555155",
+      "is_prerelease": false,
+      "changelog": "### Added\n- **[FEATURE] Longtermist Date Format**: Revolutionary 5-digit year date display system\n  - Dates now display as '21/May/02025' instead of '21/May/25' for longtermist flavor\n  - Complete GameClock service overhaul with backward compatibility\n  - Enhanced temporal immersion for long-term thinking gameplay\n  - All 13 GameClock tests updated and passing with new format expectations\n- **[ACCESSIBILITY] Universal Keyboard Navigation Framework**: Foundation for comprehensive accessibility\n  - Enhanced keyboard navigation infrastructure\n  - Systematic approach to 'every button has one default key assignment' rule\n  - Improved screen reader compatibility preparation\n  - Standardized navigation patterns across all UI components\n- **[INFRASTRUCTURE] Comprehensive Pre-Alpha Bug Sweep Plan**: Strategic approach to alpha readiness\n  - Identified 16 critical bugs including 4 game-breaking issues\n  - Systematic 2-day bug resolution roadmap with clear priorities\n  - Technical implementation strategy for common error patterns\n  - Risk assessment and mitigation framework\n- **[INFRASTRUCTURE] Enhanced Issue Documentation System**: Complete bug tracking infrastructure\n  - 8 new comprehensive issue documentation files\n  - Standardized bug reporting templates with impact assessment\n  - Root cause analysis and fix requirements for each issue\n  - Integration with GitHub issue tracking workflow\n\n### Changed\n- **[UI] Date Display Integration**: Turn counter now shows longtermist dates for enhanced immersion\n- **[CODEBASE] Error Handling Improvements**: Enhanced defensive coding patterns\n- **[DEVELOPMENT] Branch Management**: Systematic consolidation of experimental and feature branches\n\n### Fixed\n- **[CRITICAL] Duplicate Return Statements**: Resolved dead code in check_hover() method (Issue #263)\n- **[CRITICAL] Array Bounds Safety**: Added validation for GameClock month access (Issue #264)\n- **[HIGH] List Modification Safety**: Fixed race conditions in magical orb intelligence gathering (Issue #265)\n- **[MEDIUM] Configuration Error Handling**: Enhanced robustness for malformed config files (Issue #266)\n\n### Development Infrastructure\n- **[WORKFLOW]**: Fast branch consolidation methodology for team collaboration\n- **[QUALITY]**: Discovered and documented 6 additional critical bugs through systematic code audit\n- **[VERSIONING]**: Clean semantic versioning with consolidated feature releases\n- **[COLLABORATION]**: Enhanced multi-developer workflow with shared main branch access\n\n### Technical Notes\n- All longtermist date changes maintain full backward compatibility\n- Zero breaking changes to existing save files or configuration\n- Enhanced error resilience across core game systems\n- Ready for systematic pre-alpha bug resolution phase\n\n### Acknowledgments\n- Special thanks to collaborative development team including oldfartas for systematic testing and quality assurance\n- Community feedback integration for enhanced user experience\n- Continuous improvement philosophy driving systematic codebase enhancement",
+      "downloads": {
+        "windows": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.3.0/PDoom-Windows-v0.3.0.zip",
+        "linux": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.3.0/PDoom-Linux-v0.3.0.zip",
+        "mac": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.3.0/PDoom-macOS-v0.3.0.zip",
+        "source_zip": "https://github.com/PipFoweraker/pdoom1/archive/refs/tags/v0.3.0.zip",
+        "source_tar": "https://github.com/PipFoweraker/pdoom1/archive/refs/tags/v0.3.0.tar.gz"
+      },
+      "metadata": {
+        "engine": "Godot 4.5.1",
+        "platforms": [
+          "Windows",
+          "Linux",
+          "macOS"
+        ],
+        "tag_message": "P(Doom) v0.3.0 - Consolidated Feature Release\n\nFeatures:\n- Longtermist date format with 5-digit years\n- Accessibility keyboard navigation framework\n- Comprehensive pre-alpha bug sweep plan\n- Critical hotfixes for menu navigation\n- Enhanced issue documentation\n\nReady for father's PC main branch access and production deployment."
+      }
+    },
+    {
+      "version": "v0.2.12-hotfix",
+      "version_number": "0.2.12-hotfix",
+      "release_date": "2025-09-10T10:38:23+10:00",
+      "commit_hash": "d44270a3a2997b14dcb00a7f3545e4d768f2b7d0",
+      "is_prerelease": true,
+      "changelog": "Release v0.2.12-hotfix\n\nSee CHANGELOG.md for details.",
+      "downloads": {
+        "windows": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.2.12-hotfix/PDoom-Windows-v0.2.12-hotfix.zip",
+        "linux": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.2.12-hotfix/PDoom-Linux-v0.2.12-hotfix.zip",
+        "mac": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.2.12-hotfix/PDoom-macOS-v0.2.12-hotfix.zip",
+        "source_zip": "https://github.com/PipFoweraker/pdoom1/archive/refs/tags/v0.2.12-hotfix.zip",
+        "source_tar": "https://github.com/PipFoweraker/pdoom1/archive/refs/tags/v0.2.12-hotfix.tar.gz"
+      },
+      "metadata": {
+        "engine": "Godot 4.5.1",
+        "platforms": [
+          "Windows",
+          "Linux",
+          "macOS"
+        ],
+        "tag_message": "docs: Complete v0.2.12 development infrastructure documentation\n\nMAJOR MILESTONE: Development Infrastructure Enhancement\n\nDocumentation Updates:\n- Updated .github/copilot-instructions.md with comprehensive v0.2.12 status\n- Added complete type annotation progress tracking (ui.py 100%, game_state.py 85-90%)\n- Documented dev blog system usage and ASCII enforcement\n- Established quality assurance tool patterns (autoflake, pylance, validation)\n- Updated import patterns to use src.core.game_state and src.services.version\n\nDev Blog System:\n- Created comprehensive v0.2.12 release milestone entry\n- Updated dev-blog index with current entry metadata\n- Documented technical impact and future development roadmap\n\nInfrastructure Ready:\n- Type annotation methodology established and documented\n- Quality assurance tools configured and documented\n- Development workflow patterns ready for next phase\n- Context fully prepared for efficient future sessions\n\nEstimated Impact: 60-70% reduction in pylance issues, ~9,000 lines with type coverage\n\nNext Phase: Complete remaining ~10 game_state.py methods, autoflake cleanup, select next monolith"
+      }
+    },
+    {
+      "version": "v0.2.6",
+      "version_number": "0.2.6",
+      "release_date": "2025-09-08T12:27:30+10:00",
+      "commit_hash": "7d1fe5aef68db710779930716bff0987c663bfbc",
+      "is_prerelease": false,
+      "changelog": "Release v0.2.6\n\nSee CHANGELOG.md for details.",
+      "downloads": {
+        "windows": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.2.6/PDoom-Windows-v0.2.6.zip",
+        "linux": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.2.6/PDoom-Linux-v0.2.6.zip",
+        "mac": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.2.6/PDoom-macOS-v0.2.6.zip",
+        "source_zip": "https://github.com/PipFoweraker/pdoom1/archive/refs/tags/v0.2.6.zip",
+        "source_tar": "https://github.com/PipFoweraker/pdoom1/archive/refs/tags/v0.2.6.tar.gz"
+      },
+      "metadata": {
+        "engine": "Godot 4.5.1",
+        "platforms": [
+          "Windows",
+          "Linux",
+          "macOS"
+        ],
+        "tag_message": "v0.2.6: Lab Name System\n\n Lab Name System Implementation:\n- 104 unique AI lab names with thematic organization\n- Deterministic naming based on game seed\n- UI integration and pseudonymous leaderboard support\n- Enhanced player immersion and identity"
+      }
+    },
+    {
+      "version": "v0.2.5",
+      "version_number": "0.2.5",
+      "release_date": "2025-09-08T09:14:10+10:00",
+      "commit_hash": "0e5e0ac218612070640769b1ada7debbd5b47900",
+      "is_prerelease": false,
+      "changelog": "### Added\n- **[FIX] UI Interaction Fixes & Hint System Overhaul**: Major improvements to game usability and professional polish\n  - Fixed spacebar (end turn) being blocked by tutorial overlays - now works even during tutorials\n  - Fixed unprofessional staff hire popup showing automatically at game start\n  - Implemented Factorio-style hint system: hints show once, auto-dismiss, can be reset\n  - Added debug tools: Ctrl+D (UI state debug), Ctrl+E (emergency popup clear), Ctrl+R (reset hints)\n  - Separated hints from tutorials with independent configuration\n  - Automatic cleanup for stuck UI states (turn processing, overlay conflicts, orphaned popups)\n  - Improved button click consistency and modal dialog behavior\n  - Enhanced settings menu with hint status display and controls\n\n### Fixed\n- **Configuration Consistency**: Fixed starting staff count mismatch between JSON config and config manager\n- **Event Handling Priority**: Resolved conflicts between tutorial overlays and core game controls\n- **Modal Dialog Behavior**: Improved popup and dialog interaction handling",
+      "downloads": {
+        "windows": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.2.5/PDoom-Windows-v0.2.5.zip",
+        "linux": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.2.5/PDoom-Linux-v0.2.5.zip",
+        "mac": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.2.5/PDoom-macOS-v0.2.5.zip",
+        "source_zip": "https://github.com/PipFoweraker/pdoom1/archive/refs/tags/v0.2.5.zip",
+        "source_tar": "https://github.com/PipFoweraker/pdoom1/archive/refs/tags/v0.2.5.tar.gz"
+      },
+      "metadata": {
+        "engine": "Godot 4.5.1",
+        "platforms": [
+          "Windows",
+          "Linux",
+          "macOS"
+        ],
+        "tag_message": "v0.2.5: UI Interaction Fixes & Factorio-Style Hint System\n\n- Fixed spacebar blocking and button click issues\n- Implemented professional hint system with reset capability\n- Added debug tools (Ctrl+D, Ctrl+E, Ctrl+R)\n- Improved staff hire logic and starting game experience\n- Comprehensive documentation updates"
+      }
+    },
+    {
+      "version": "v0.2.0",
+      "version_number": "0.2.0",
+      "release_date": "2025-09-04T09:31:34+10:00",
+      "commit_hash": "040c9d7145b88ba636e5df3dea9e0bdc8abeb0d9",
+      "is_prerelease": false,
+      "changelog": "### Added\n- **[RETRO] Retro 80s Context Window System**: Complete overhaul of information display\n  - **80s Techno-Green Styling**: ALL CAPS DOS-style context window with retro color scheme\n  - **Dynamic Context Display**: Hover over actions/upgrades for detailed information\n  - **Green Matrix Theme**: Background (40,80,40), Text (200,255,200) for authentic retro feel\n  - **Smart Information Architecture**: Moved descriptions from cramped buttons to spacious context area\n- **[VISUAL] 8-bit Style Resource Icons**: Complete visual redesign of resource display\n  - **Money Icon**: Pixelated $ symbol in gold (255,230,60)\n  - **Staff Icon**: Simple person silhouette (head + body)\n  - **Reputation Icon**: Star polygon in blue (180,210,255)\n  - **Action Points Icon**: Lightning bolt with glow effects\n  - **Doom Icon**: Skull symbol in red (255,80,80)\n  - **Compute Icon**: '2^n' exponential notation for computing power\n  - **Research Icon**: Light bulb for research progress\n  - **Papers Icon**: Document with text lines for publications\n- **[DEV] Developer Tools & Quality of Life**\n  - **Screenshot Hotkey**: Press `[` key to capture game screenshots\n  - **Screenshot Management**: Auto-saves to `screenshots/` folder with timestamps\n  - **Window Mode Default**: Disabled fullscreen for better Alt+Tab and screen capture compatibility\n- **[UI] Action Filtering & UI Polish**\n  - **Smart Action Display**: Only show unlocked actions (12/24 visible initially)\n  - **Button Reorganization**: Moved 'Hire Staff' to logical position 5\n  - **Starting Resources**: Set default staff to 0 for better game balance\n  - **Tutorial Independence**: Resource display works regardless of tutorial state\n\n### Fixed\n- **Resource Display Alignment**: Fixed kerning issues between Reputation, Research, and AP\n- **Text Overflow**: Eliminated cramped button text by moving descriptions to context window\n- **UI Visibility**: Removed tutorial dependencies that hid UI improvements\n- **Spacing & Layout**: Consistent margins and alignment across all resource displays\n- **Screenshot Functionality**: Alt+Tab and screen capture tools now work properly",
+      "downloads": {
+        "windows": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.2.0/PDoom-Windows-v0.2.0.zip",
+        "linux": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.2.0/PDoom-Linux-v0.2.0.zip",
+        "mac": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.2.0/PDoom-macOS-v0.2.0.zip",
+        "source_zip": "https://github.com/PipFoweraker/pdoom1/archive/refs/tags/v0.2.0.zip",
+        "source_tar": "https://github.com/PipFoweraker/pdoom1/archive/refs/tags/v0.2.0.tar.gz"
+      },
+      "metadata": {
+        "engine": "Godot 4.5.1",
+        "platforms": [
+          "Windows",
+          "Linux",
+          "macOS"
+        ],
+        "tag_message": "Release v0.2.0: Retro UI Overhaul\n\nMajor UI transformation with 80s retro theming:\n- 8-bit style resource icons\n- Retro green context window system\n- Screenshot functionality ([ key)\n- Fixed alignment and kerning issues\n- Enhanced developer experience\n- Action filtering and UI polish\n\nPerfect for demonstrations and showcasing modern development practices."
+      }
+    }
+  ],
+  "total_releases": 21
 }

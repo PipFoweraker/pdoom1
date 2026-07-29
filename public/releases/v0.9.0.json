@@ -6,11 +6,11 @@
   "is_prerelease": false,
   "changelog": "Release v0.9.0\n\nSee CHANGELOG.md for details.",
   "downloads": {
-    "windows": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.9.0/PDoom.exe",
-    "linux": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.9.0/PDoom.x86_64",
-    "mac": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.9.0/PDoom.app.zip",
-    "source_zip": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.9.0/pdoom-0.9.0-source.zip",
-    "source_tar": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.9.0/pdoom-0.9.0-source.tar.gz"
+    "windows": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.9.0/PDoom-Windows-v0.9.0.zip",
+    "linux": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.9.0/PDoom-Linux-v0.9.0.zip",
+    "mac": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.9.0/PDoom-macOS-v0.9.0.zip",
+    "source_zip": "https://github.com/PipFoweraker/pdoom1/archive/refs/tags/v0.9.0.zip",
+    "source_tar": "https://github.com/PipFoweraker/pdoom1/archive/refs/tags/v0.9.0.tar.gz"
   },
   "metadata": {
     "engine": "Godot 4.5.1",

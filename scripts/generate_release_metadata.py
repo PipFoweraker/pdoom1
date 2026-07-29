@@ -20,12 +20,50 @@ locally to catch a generator/build-pipeline mismatch before pushing a tag.
 import argparse
 import datetime
 import json
+import re
 import subprocess
 import sys
 import xml.etree.ElementTree as ElementTree
 from pathlib import Path
 from typing import Dict, List, Optional
 from xml.dom import minidom
+
+# Matches vMAJOR.MINOR.PATCH with an optional suffix, e.g. v0.13.1 or v0.2.12-hotfix.
+_TAG_RE = re.compile(r"^v(\d+)\.(\d+)\.(\d+)(?:[-.](.+))?$")
+
+
+def _ascii_safe(text: str) -> str:
+    """Strip non-ASCII from generated feed text.
+
+    The repo enforces ASCII-only in .json (issue #744) and the feed files are
+    tracked, so any non-ASCII the generator copies out of git tag messages or
+    CHANGELOG.md blocks the commit. Historical tag messages contain emoji and
+    mojibake (U+00F0, U+00EF -- lone leading bytes of UTF-8 emoji sequences),
+    which is what made the regenerated index unstageable.
+
+    """
+    if not text:
+        return text
+    # Deliberately a plain strip with no transliteration table: this file is itself
+    # under the ASCII-only gate (#744), so a table of smart quotes and em dashes
+    # written as literals would fail the very check it exists to satisfy. Feed text
+    # is metadata, not prose, so losing the occasional dash costs nothing.
+    return "".join(ch for ch in text if ord(ch) < 128)
+
+
+def _semver_sort_key(tag: str):
+    """Sort key ordering version tags by NUMERIC semver, not string order.
+
+    Returns (major, minor, patch, is_final, suffix). `is_final` puts a bare
+    vX.Y.Z ahead of vX.Y.Z-something at the same numeric version, so a suffixed
+    tag never outranks the release it patches. Unparseable tags sort last rather
+    than raising, so a stray tag cannot break a release run.
+    """
+    match = _TAG_RE.match(tag)
+    if not match:
+        return (-1, -1, -1, 0, tag)
+    major, minor, patch, suffix = match.groups()
+    return (int(major), int(minor), int(patch), 0 if suffix else 1, suffix or "")
 
 
 class ReleaseMetadataGenerator:
@@ -131,7 +169,7 @@ class ReleaseMetadataGenerator:
             "release_date": tag_info["date"],
             "commit_hash": tag_info["commit"],
             "is_prerelease": is_prerelease,
-            "changelog": changelog,
+            "changelog": _ascii_safe(changelog),
             # Asset names must match what scripts/build_all_platforms.py actually
             # produces and enhanced-release.yml actually uploads (build-windows/
             # **/*.zip, build-linux/**/*.zip, build-mac/**/*.zip) -- NOT a guessed
@@ -151,7 +189,7 @@ class ReleaseMetadataGenerator:
             "metadata": {
                 "engine": "Godot 4.5.1",
                 "platforms": ["Windows", "Linux", "macOS"],
-                "tag_message": tag_info.get("message", ""),
+                "tag_message": _ascii_safe(tag_info.get("message", "")),
             },
         }
 
@@ -168,8 +206,11 @@ class ReleaseMetadataGenerator:
                 check=True,
             )
             tags = [line.strip() for line in result.stdout.split("\n") if line.strip()]
-            # Sort by version (newest first)
-            tags.sort(reverse=True)
+            # Sort by SEMVER, newest first. A plain string sort is WRONG here and was the
+            # live bug: "v0.9.0" > "v0.13.1" lexicographically (9 > 1 at the third char), so
+            # the feed reported v0.9.0 as `latest_version` from v0.10.0 onward. The website
+            # consumes this index, so the bug was player-visible.
+            tags.sort(key=_semver_sort_key, reverse=True)
             return tags
         except subprocess.CalledProcessError:
             return []
@@ -295,6 +336,58 @@ class ReleaseMetadataGenerator:
         return release_files
 
 
+def _run_check(generator: "ReleaseMetadataGenerator", repo_root: Path) -> int:
+    """Compare the TRACKED releases index against the git tags. Write nothing.
+
+    Deliberately compares SEMANTICS (which releases are listed, in what order, and
+    which is latest) rather than bytes: the generated files carry a `generated_at`
+    timestamp that changes every run, so a byte comparison would fail constantly
+    and train everyone to bypass the hook.
+    """
+    index_path = repo_root / "public" / "releases" / "releases.json"
+    if not index_path.exists():
+        print(f"[check] MISSING {index_path}")
+        print("[check] Run: python scripts/generate_release_metadata.py")
+        return 1
+
+    expected = generator.get_all_release_tags()
+    try:
+        tracked = json.loads(index_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        print(f"[check] UNREADABLE {index_path}: {exc}")
+        return 1
+
+    actual = [str(r.get("version", "")) for r in tracked.get("releases", [])]
+    problems: List[str] = []
+
+    if actual != expected:
+        missing = [t for t in expected if t not in actual]
+        extra = [t for t in actual if t not in expected]
+        if missing:
+            problems.append(f"missing from index: {', '.join(missing)}")
+        if extra:
+            problems.append(f"in index but not a git tag: {', '.join(extra)}")
+        if not missing and not extra:
+            problems.append("index is ordered differently from the semver tag order")
+
+    expected_latest = expected[0] if expected else None
+    if tracked.get("latest_version") != expected_latest:
+        problems.append(
+            f"latest_version is {tracked.get('latest_version')!r}, expected {expected_latest!r}"
+        )
+
+    if problems:
+        print("[check] Release index is stale:")
+        for problem in problems:
+            print(f"  - {problem}")
+        print("[check] Fix: python scripts/generate_release_metadata.py")
+        print("[check] (Expected right after tagging a release -- regenerate and commit.)")
+        return 1
+
+    print(f"[check] Release index matches {len(expected)} git tags; latest={expected_latest}")
+    return 0
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="Generate release metadata for website integration"
@@ -312,12 +405,23 @@ def main():
         "(see scripts/verify_release_urls.py)",
     )
 
+    parser.add_argument(
+        "--check",
+        action="store_true",
+        help="Write nothing. Exit 1 if the tracked releases index disagrees with the git "
+        "tags (missing/extra releases, or a wrong latest_version). Gates pre-commit + CI, "
+        "mirroring sync_version.py --check and generate_dq_index.py --check.",
+    )
+
     args = parser.parse_args()
 
     # Find repository root
     repo_root = Path(__file__).parent.parent
 
     generator = ReleaseMetadataGenerator(repo_root)
+
+    if args.check:
+        sys.exit(_run_check(generator, repo_root))
 
     generated_files: List[Path] = []
     if args.latest and not args.version:
