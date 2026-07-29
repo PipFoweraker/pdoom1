@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.2] - 2026-07-31
+
+League build. Ladder epoch **L3** -- this is a forking release: the effort
+economy was rebuilt, so scores are not comparable with L2 boards.
+
 ### 2026-07-27 build day (rides the next version bump)
 
 #### Added
