@@ -1,0 +1,481 @@
+<title>Runsheet -- Wed 2026-07-29 / Thu 07-30 (league week)</title>
+<style>
+  :root {
+    --bg: #f7f6f3; --fg: #1a1a18; --dim: #63615c; --line: #d8d5cd;
+    --card: #ffffff; --accent: #7a3b12; --ok: #2f6b3a; --warn: #8a6a10;
+    --stop: #9c2b2b; --code: #f0eee8;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #16161a; --fg: #e8e6e1; --dim: #97948d; --line: #33323a;
+      --card: #1e1e24; --accent: #d9955c; --ok: #7fc08d; --warn: #d9bd6a;
+      --stop: #e2807c; --code: #24242c;
+    }
+  }
+  :root[data-theme="light"] {
+    --bg: #f7f6f3; --fg: #1a1a18; --dim: #63615c; --line: #d8d5cd;
+    --card: #ffffff; --accent: #7a3b12; --ok: #2f6b3a; --warn: #8a6a10;
+    --stop: #9c2b2b; --code: #f0eee8;
+  }
+  :root[data-theme="dark"] {
+    --bg: #16161a; --fg: #e8e6e1; --dim: #97948d; --line: #33323a;
+    --card: #1e1e24; --accent: #d9955c; --ok: #7fc08d; --warn: #d9bd6a;
+    --stop: #e2807c; --code: #24242c;
+  }
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg); color: var(--fg); margin: 0;
+    font: 15px/1.55 ui-monospace, "Cascadia Mono", "Consolas", monospace;
+    padding: 24px 20px 80px;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; }
+  h1 { font-size: 20px; margin: 0 0 4px; letter-spacing: 0.02em; }
+  h2 {
+    font-size: 15px; margin: 34px 0 10px; padding-bottom: 6px;
+    border-bottom: 1px solid var(--line); letter-spacing: 0.06em;
+    text-transform: uppercase; color: var(--accent);
+  }
+  h3 { font-size: 14px; margin: 18px 0 6px; }
+  .sub { color: var(--dim); font-size: 13px; margin: 0 0 18px; }
+  .card {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 4px; padding: 14px 16px; margin: 10px 0;
+  }
+  .card.stop { border-left: 4px solid var(--stop); }
+  .card.warn { border-left: 4px solid var(--warn); }
+  .card.ok   { border-left: 4px solid var(--ok); }
+  table { border-collapse: collapse; width: 100%; font-size: 13px; }
+  .scroll { overflow-x: auto; }
+  th, td {
+    text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  th { color: var(--dim); font-weight: 600; white-space: nowrap; }
+  td.t { white-space: nowrap; color: var(--dim); }
+  code, .mono {
+    background: var(--code); padding: 1px 5px; border-radius: 3px;
+    font-size: 12px;
+  }
+  .tag {
+    display: inline-block; padding: 1px 7px; border-radius: 3px;
+    font-size: 11px; border: 1px solid var(--line); color: var(--dim);
+    white-space: nowrap;
+  }
+  .tag.done { color: var(--ok); border-color: var(--ok); }
+  .tag.now  { color: var(--accent); border-color: var(--accent); }
+  .tag.hot  { color: var(--stop); border-color: var(--stop); }
+  .tag.wait { color: var(--warn); border-color: var(--warn); }
+  .gate { font-weight: 600; }
+  ul { margin: 6px 0; padding-left: 20px; }
+  li { margin: 3px 0; }
+  .foot { color: var(--dim); font-size: 12px; margin-top: 40px;
+          border-top: 1px solid var(--line); padding-top: 12px; }
+  a { color: var(--accent); }
+</style>
+
+<div class="wrap">
+
+<h1>Runsheet -- Wed 2026-07-29 / Thu 07-30</h1>
+<p class="sub">
+  League week. Board opens Fri 07-31. Generated 2026-07-29 ~0840.
+  Sources: <code>docs/game-design/RUNSHEET_2026-07-27_to_29.md</code>,
+  <code>docs/game-design/LEAGUE_WEEK_PLAYBOOK.md</code>,
+  <code>docs/RELEASE_NOMENCLATURE.md</code> (CANONICAL).
+  Gate names + 1-6 sequence replace the old G0-G5 letters (numbering is ceremony order, so Gate 1 = old G0 ... Gate 6 = old G5).
+</p>
+
+<div class="card">
+  <strong>State right now.</strong>
+  main = <code>255c91d1</code> &middot; zero open PRs &middot;
+  <code>version.txt</code> = <code>0.13.1</code> &middot;
+  <code>ladder_version.txt</code> = <code>3</code> &middot;
+  board key = <code>L3</code> &middot; CI green (blog-automation red is fixed).
+  Last shipped release: v0.13.1 (2026-07-26), which shipped on <strong>L2</strong>.
+  <strong>No public build has ever shipped on L3.</strong>
+</div>
+
+<h2>RULED -- Friday's number</h2>
+
+<div class="card ok">
+  <h3>[RULED 2026-07-29 0845] Friday ships 0.13.2 on L3</h3>
+  <p>
+    Commissioner's ruling: <em>"I do not care about the ladder prior to today at
+    all... I don't care about version numbers today at all. Future discipline
+    post Friday is important."</em> Delegated to the Clerk; taken as
+    <strong>Option 2</strong> below.
+  </p>
+  <ul>
+    <li><code>version.txt</code> -&gt; <strong>0.13.2</strong> at
+        [Gate 2: THE FREEZE], Wed PM.</li>
+    <li><code>ladder_version.txt</code> stays <strong>3</strong>. Not touched,
+        not reverted, no back-reconciliation of the pre-today ladder.</li>
+    <li>Logged as a deliberate mid-month fork -- the hatch canon already grants
+        at <code>RELEASE_NOMENCLATURE.md:46</code> ("any rare mid-month fork")
+        and <code>:60</code> ("a discipline, not a hard rule").</li>
+    <li>Aug 7 v0.14 therefore takes <strong>L4</strong>; ladder column shifts by
+        one from v0.14 down in both docs.</li>
+    <li>Three people's prior-ladder scores are knowingly lost. Commissioner is
+        apologising personally. Not a technical problem to solve.</li>
+  </ul>
+  <p>
+    <strong>Post-Friday, the discipline resumes.</strong> The reasoning that
+    produced this ruling is kept below because the next mid-month fork should be
+    an explicit decision, not an accident.
+  </p>
+</div>
+
+<div class="card stop">
+  <h3>[superseded -- kept for the post-league retro] Is Friday an Epoch or a Seed?</h3>
+  <p>
+    <code>docs/RELEASE_NOMENCLATURE.md</code> is CANONICAL (2026-07-25, Pip) and says:
+  </p>
+  <ul>
+    <li><strong>Seed</strong> = weekly, every Friday, fresh board on UNCHANGED rules,
+        same <code>ladder_version</code>, <strong>no fork</strong> (line 32).</li>
+    <li><strong>Epoch = Monthly Theme</strong> = first Friday, forks by definition,
+        <strong>minor +1 AND ladder +1</strong> (line 33).</li>
+    <li>"Minor and ladder move <strong>together</strong>, monthly.
+        Patch <strong>never</strong> touches the ladder." (line 48)</li>
+    <li>Ladder bumps on "each forking monthly Epoch
+        (<strong>+ any rare mid-month fork</strong>)" (line 46).</li>
+    <li>"Not breaking the ladder is a <strong>discipline, not a hard rule</strong>"
+        (Pip, 2026-07-23; line 60).</li>
+  </ul>
+  <p>
+    Fri 07-31 is the <em>last</em> Friday of July, so by cadence it is a
+    <strong>Seed</strong> beat. But the rules have changed enormously since
+    v0.13.1 shipped -- AP pool killed, 4-way effort, 3-office lease + lock-in,
+    six upgrades wired, quirk rebalance. Canon's own fork rule (lines 52-57)
+    says a gameplay change forks. <strong>Friday cannot honestly be a pure Seed
+    beat.</strong>
+  </p>
+  <p>
+    Compounding it: <code>ladder_version.txt</code> was already bumped 2 -&gt; 3
+    mid-month by <code>9abe20a7</code> (#982, the office lease work -- a correct
+    bump by the checklist). But both <code>docs/ROADMAP.md</code> (line 46) and
+    <code>RELEASE_NOMENCLATURE.md</code> (line 89) reserve <strong>L3 for v0.14
+    on Aug 7</strong>. L3 is already spent. The ladder column of both docs is
+    now off by one from v0.14 onward.
+  </p>
+</div>
+
+<div class="scroll"><table>
+<tr><th>Option</th><th>Friday ships</th><th>Aug 7 becomes</th><th>Cost</th></tr>
+<tr>
+  <td><strong>1. Out-of-cadence Epoch</strong></td>
+  <td>0.14.0 / L3</td>
+  <td>v0.15 / L4</td>
+  <td>Canon-pure (minor+ladder move together), but pulls the "Per-tick &amp;
+      People" Theme name onto content that isn't per-tick, and shifts the
+      entire monthly table.</td>
+</tr>
+<tr>
+  <td><strong>2. Documented mid-month fork</strong> <span class="tag now">recommended</span></td>
+  <td>0.13.2 / L3</td>
+  <td>v0.14 / L4</td>
+  <td>Uses the escape hatch canon already grants (line 46 "rare mid-month
+      fork"; line 60 "discipline, not a hard rule"). Theme table keeps its
+      names; only the ladder column shifts from v0.14 down. Least disruption.</td>
+</tr>
+<tr>
+  <td><strong>3. True Seed beat</strong></td>
+  <td>nothing new -- rotate the seed on the live v0.13.1 / L2 build</td>
+  <td>v0.14 / L3 (unchanged)</td>
+  <td>Fully canon-compliant and lowest risk, but strands Tuesday's entire
+      build day for a week and guts the proven-build gate this week was
+      built around.</td>
+</tr>
+</table></div>
+
+<div class="card warn">
+  <strong>Whichever you pick, two doc edits follow</strong> (1445 emit block):
+  the ladder column in <code>docs/ROADMAP.md</code> and
+  <code>docs/RELEASE_NOMENCLATURE.md</code>, and the stale comment at
+  <code>godot/autoload/game_config.gd:159-160</code>, which still reads
+  "Epoch L1 == the current ruleset" and predicts a bump "to 2 at the v0.13
+  epoch cut" while the const beneath it reads <code>"3"</code>.
+</div>
+
+<h2>Gate rail</h2>
+
+<div class="scroll"><table>
+<tr><th>Gate</th><th>When</th><th>Must be true</th><th>Status</th></tr>
+<tr>
+  <td class="gate">[Gate 1: LAST POUR]</td><td class="t">Wed ~1200</td>
+  <td>Last mechanics merge in review. Open-PR list snapshotted; review table complete.</td>
+  <td><span class="tag done">effectively passed</span> zero open PRs since ~0700</td>
+</tr>
+<tr>
+  <td class="gate">[Gate 2: THE FREEZE]</td><td class="t">Wed PM</td>
+  <td>Freeze announced in day-log; <code>ladder_version.txt</code> FINAL for the
+      league; no mechanics PR merges past this line.</td>
+  <td><span class="tag hot">blocked</span> on the epoch/number decision above</td>
+</tr>
+<tr>
+  <td class="gate">[Gate 3: PACK BLESSED]</td><td class="t">Wed EOD (Thu AM latest)</td>
+  <td>ADR-0016 league pack authored, schema-valid, ADR-0015 grep proves zero
+      printed doom; Commissioner has read every card.</td>
+  <td><span class="tag wait">not started</span></td>
+</tr>
+<tr>
+  <td class="gate">[Gate 4: PROVEN BUILD]</td><td class="t">Thu</td>
+  <td><code>python tools/build_release.py</code> (never raw export);
+      <code>sync_version.py --check</code> green; changelog carries the literal
+      version; playtest on the ARTIFACT incl. soft-lock sweep; every advertised
+      download URL answers 200.</td>
+  <td><span class="tag wait">Thu</span></td>
+</tr>
+<tr>
+  <td class="gate">[Gate 5: SEED BLESSING]</td><td class="t">Fri ~1645</td>
+  <td>Seed drawn + recorded; ladder stamped; <strong>board-key fork verified
+      clean</strong>; tag pushed; release workflows green.</td>
+  <td><span class="tag hot">at risk</span> -- see website #151 below</td>
+</tr>
+<tr>
+  <td class="gate">[Gate 6: BOARD OPENS]</td><td class="t">Fri ~1700</td>
+  <td>League live; announce posted; first runs observed; hotpatch window armed.</td>
+  <td><span class="tag wait">Fri</span></td>
+</tr>
+</table></div>
+
+<p class="sub">
+  Not allowed to slip (playbook lines 122-123): PACK BLESSED's clean-of-printed-doom,
+  PROVEN BUILD's freshness proof, SEED BLESSING's board-key check.
+  "Saying a line you have not verified is the cardinal sin of the ceremony"
+  (playbook line 44-45).
+</p>
+
+<h2>Wednesday 07-29</h2>
+
+<div class="scroll"><table>
+<tr><th>Time</th><th>Block</th><th>Note</th></tr>
+<tr><td class="t">0800-0830</td><td>Feed triage</td>
+    <td><span class="tag done">done</span> cross-repo sweep below</td></tr>
+<tr><td class="t">0830-0930</td><td>Build review</td>
+    <td><span class="tag done">no input</span> everything merged overnight.
+        <strong>Spend it on the epoch decision instead.</strong></td></tr>
+<tr><td class="t">0930-1030</td><td>Endgame + violence + cat doom-oracle</td>
+    <td>military-branch valence dial; what fires "violence arrives"; cat as
+        higher-resolution doom instrument</td></tr>
+<tr><td class="t">1030-1115</td><td>Colour architecture</td>
+    <td>doom-glow + overlay-compositing prototypes as demo input</td></tr>
+<tr><td class="t">1115-1200</td><td>Interior-decorating math + office fullness</td>
+    <td>downstream of Monday rulings 8-9</td></tr>
+<tr><td class="t">~1200</td><td class="gate">[Gate 1: LAST POUR]</td><td>-</td></tr>
+<tr><td class="t">1200-1300</td><td>Lunch / buffer</td><td>the movable middle</td></tr>
+<tr><td class="t">1300-1345</td><td>League + content cadence, Friday prep</td>
+    <td><strong>Rule the epoch question here if it hasn't been ruled by then.</strong>
+        Also: pdoom1 #1008, and the website #151 follow-up comment.</td></tr>
+<tr><td class="t">1345-1445</td><td>Next-epoch planning</td>
+    <td>lane manifest, roadmap epoch assignments, backlog update</td></tr>
+<tr><td class="t">1445-1515</td><td>Emit + commit</td>
+    <td>ADRs, DQ index regenerated (<code>python scripts/generate_dq_index.py</code>),
+        ladder-column doc fixes, glossary commit, gate-name rename in the two docs</td></tr>
+<tr><td class="t">Wed PM</td><td class="gate">[Gate 2: THE FREEZE] + [Gate 3: PACK BLESSED]</td>
+    <td>bump <code>version.txt</code> at the freeze, not at end of day</td></tr>
+<tr><td class="t">1515-1545</td><td>Anniversary beat</td>
+    <td>one year since issue #1 (2025-07-30). Devblog fodder, not a work item.
+        Can slip to Thursday at zero cost.</td></tr>
+<tr><td class="t">1600</td><td><strong>HARD STOP</strong></td><td>-</td></tr>
+</table></div>
+
+<h2>Thursday 07-30 -- the anniversary</h2>
+
+<div class="card warn">
+  <strong>Hard personal constraints.</strong> Date <strong>1200-1600</strong>.
+  Friend to dinner <strong>1700-1900</strong>. One year since issue #1
+  (2025-07-30).
+  <br><br>
+  Consequence: <strong>[Gate 4: PROVEN BUILD] has to pass before 1145.</strong>
+  There is no afternoon. Playbook line 22 -- <em>"Thu: no mechanics. Cleanup,
+  playtest THE RELEASE ARTIFACT (not the editor)"</em> -- so nothing else
+  competes for the morning.
+</div>
+
+<div class="scroll"><table>
+<tr><th>Time</th><th>Do</th><th>Why this order</th></tr>
+<tr>
+  <td class="t">0800-0810</td>
+  <td>State check: main unchanged since the freeze, <code>git status</code>
+      clean, <code>sync_version.py --check</code> green.</td>
+  <td>If anything merged past the freeze, you are re-cutting, not building.
+      Find that in ten minutes, not after a twenty-minute export.</td>
+</tr>
+<tr>
+  <td class="t">0810-0840</td>
+  <td><strong>Start the build first.</strong>
+      <code>python tools/build_release.py</code></td>
+  <td>The long pole. Nukes <code>godot/.godot</code>, full reimport, export,
+      freshness proof. Start it before anything else and let it run --
+      never a raw <code>godot --export</code>.</td>
+</tr>
+<tr>
+  <td class="t">0810-0840</td>
+  <td><em>(while it builds)</em> Changelog heading carries the literal
+      <code>0.13.2</code>; release notes drafted; site news stub ready.</td>
+  <td>Parallel work that needs no artifact. Do not start a second Godot
+      process against the same project while the export runs.</td>
+</tr>
+<tr>
+  <td class="t">0840-1000</td>
+  <td><strong>Playtest the artifact.</strong> Full run on the LEAGUE SEED to
+      game-over, then into the leaderboard. Soft-lock sweep.</td>
+  <td>The v0.11.0 segfault was <strong>release-build-only</strong> and fired on
+      the game-over -&gt; leaderboard transition. The editor cannot find it.
+      This is the single highest-value hour of the week.</td>
+</tr>
+<tr>
+  <td class="t">1000-1030</td>
+  <td>Release URL verification -- every advertised door answers 200
+      (the #998 fail-loud check). Confirm the download pointer resolves to
+      0.13.2, not a ghost build.</td>
+  <td>This is the exact failure that produced #963 / #998, and it is the same
+      hand-maintained-pointer family as #1008 and website #139 / #147.</td>
+</tr>
+<tr>
+  <td class="t">1030-1100</td>
+  <td><strong>[Gate 4: PROVEN BUILD]</strong> -- say the incantation, or do
+      not.</td>
+  <td><em>"The build is fresh and proves it. The version speaks with one voice.
+      A human has played the thing we ship, not the thing we meant."</em>
+      Every line true or the gate is not passed.</td>
+</tr>
+<tr>
+  <td class="t">1100-1145</td>
+  <td>Buffer. If clean: the anniversary devblog beat, one year of it.</td>
+  <td>The beat slipped from Wednesday lands better here anyway -- it is the
+      actual anniversary.</td>
+</tr>
+<tr><td class="t">1145</td><td><strong>STOP.</strong></td><td>Date at 1200.</td></tr>
+<tr>
+  <td class="t">1600-1650</td>
+  <td>Thin recovery slot. <strong>Use only if the morning found something.</strong>
+      Otherwise leave it empty.</td>
+  <td>Deliberately not scheduled. A 50-minute window between a date and dinner
+      is for triage, not for starting work.</td>
+</tr>
+<tr>
+  <td class="t">1700-1900</td>
+  <td>Dinner. <strong>OPTION (Pip, 0906): friend playtests while Pip cooks.</strong>
+      Hand them the build <em>early</em> in the window, not late. See the
+      cold-playtest card below.</td>
+  <td>A second human on the shipped artifact the night before the board opens,
+      at zero cost to the evening. Hand it over early so anything found still
+      has Friday's ~1500 re-cut window in front of it.</td>
+</tr>
+<tr>
+  <td class="t">1900+</td>
+  <td>Protected. No work.</td>
+  <td>Anniversary. Friday is a league day and starts early.</td>
+</tr>
+</table></div>
+
+<div class="card ok">
+  <h3>The cold playtest (Thu ~1700, while dinner cooks)</h3>
+  <p>
+    This is the highest-yield playtest available all week, because it is the
+    only one run by someone who does not know the intended path. Pip's own
+    Thursday-morning playtest proves the build works; this one probes whether a
+    stranger can get in.
+  </p>
+  <ul>
+    <li><strong>Hand over the shipped artifact</strong> -- the zip/exe that
+        <code>build_release.py</code> emitted. Not the editor, not a dev build.
+        What they play must be what Friday's players get.</li>
+    <li><strong>Do not coach.</strong> Not one hint. The cold open and
+        progressive-disclosure onboarding are live design questions (#814); a
+        coached playtest destroys exactly the signal worth having.</li>
+    <li><strong>One full run to game-over</strong> is the target -- roughly the
+        length of cooking. It also exercises the game-over -&gt; leaderboard
+        transition, the path that segfaulted in v0.11.0.</li>
+    <li><strong>Watch, do not discuss.</strong> Note where they hesitate, what
+        they click that does nothing, and anything they say out loud. Design
+        conversation can wait for dinner; it contaminates the run.</li>
+    <li><strong>Capture:</strong> the in-game bug reporter for anything broken;
+        your own notes for hesitations. The F7 capture rail is dev-build only
+        (#991), so it will not be in this artifact.</li>
+    <li><strong>Triage the same night, briefly:</strong> soft-lock or crash is
+        league-critical -&gt; Friday ~1500 re-cut. Confusion or roughness is
+        NOT league-critical -&gt; it is Saturday hotpatch or next month's
+        content, and it should not touch Friday's build.</li>
+  </ul>
+</div>
+
+<div class="card stop">
+  <h3>The contingency that actually matters</h3>
+  If Thursday morning finds a defect, the re-cut window is
+  <strong>Friday ~1500</strong> (playbook line 101) -- which is
+  <strong>1h45 before [Gate 5: SEED BLESSING] at 1645</strong>. That is thin.
+  So:
+  <ul>
+    <li>Anything found Thursday morning gets triaged <em>that morning</em>:
+        league-critical or not. No overnight ambiguity.</li>
+    <li><strong>League-critical</strong> -&gt; fix Thursday morning, re-cut,
+        re-run the whole [Gate 4] sequence. Not a patch on top.</li>
+    <li><strong>Not league-critical</strong> -&gt; it goes to the Saturday
+        hotpatch window, not into Friday's build. Friday's build is finished
+        Thursday.</li>
+  </ul>
+  <strong>The rule that protects the league:</strong> after the freeze, any
+  gameplay-shaped change means <strong>re-cut</strong>, not patch. Two builds
+  reporting the same epoch while playing differently is a lie the ladder guard
+  cannot catch -- both honestly report L3.
+</div>
+
+<h2>Cross-repo -- checked 2026-07-29 0830</h2>
+
+<div class="card stop">
+  <h3>pdoom1-website #151 -- the live coordination gap</h3>
+  "P(Doom)1 v0.13 ladder epoch cut -- backend/leaderboard needs". Open, last
+  updated <strong>2026-07-24</strong>. It briefed the backend on
+  <strong>L1 -&gt; L2</strong> and promised a follow-up comment with
+  "the EXACT board-key strings + the chosen new league seed". That comment was
+  never posted, and the ladder has since moved to L3.
+  <br><br>
+  [Gate 5: SEED BLESSING] requires "board-key fork verified clean". That line
+  cannot be honestly spoken about a backend that was never told the epoch.
+  <strong>Post the follow-up before Friday.</strong>
+</div>
+
+<div class="scroll"><table>
+<tr><th>Repo</th><th>Item</th><th>Bearing on the freeze</th></tr>
+<tr><td>website</td><td>#139 version SSOT -- site still hardcodes 0.4.1 / 0.6.0</td>
+    <td>A bump will not propagate to what players see</td></tr>
+<tr><td>website</td><td>#147 point downloads at current build</td>
+    <td>Open while v0.13.1 is live. Same hand-maintained-pointer failure as
+        pdoom1 #1008</td></tr>
+<tr><td>website</td><td>#126 league rollover false-positive concern</td>
+    <td>Your own verbatim note, unresolved -- and Friday is a rollover</td></tr>
+<tr><td>website</td><td>CI</td>
+    <td>Healthy. Data Contract Validation, Content Honesty, Health Checks all
+        green. Only <code>post-issue-to-forum.yml</code> failing</td></tr>
+<tr><td>pdoom-data</td><td>ALL workflows red since 2026-07-25</td>
+    <td>Known, tracked in their #30. <strong>Not freeze-blocking</strong></td></tr>
+<tr><td>pdoom-data</td><td>#37 frontier-labs dataset</td>
+    <td>pdoom1 #962 depends on it. Feature, not a league dependency. Leave it</td></tr>
+</table></div>
+
+<h2>Stacked, not this week</h2>
+<ul>
+  <li><strong>#1009</strong> -- devblog automation repaired as a draft-generator
+      (artifact output, never auto-publish). <code>post-launch</code>.</li>
+  <li><strong>#1008</strong> -- release feed index hand-maintained. Rule it in
+      the 1300 block; it is the same family as website #139 / #147.</li>
+  <li><code>BUILD_VS_LADDER_VERSION_SPLIT.md</code> still says
+      "Status: DRAFT ... promote to ADR-0018", but ADR-0018 is taken by the
+      render-only office doctrine, and the split is implemented and live.
+      Needs a number or an explicit superseded-by pointer.</li>
+  <li>Two <code>L&lt;n&gt;</code> namespaces collide: ladder epochs L1/L2/L3 and
+      the distribution update ladder L0-L3. Same notation, unrelated meanings,
+      both live in league-week talk.</li>
+</ul>
+
+<p class="foot">
+  Local working file, untracked. Regenerate or edit at
+  <code>tools/runsheet/wed-thu-2026-07-29.html</code>.
+  Authoritative sources remain the runsheet, the playbook, and
+  <code>docs/RELEASE_NOMENCLATURE.md</code> -- if this page disagrees with them,
+  they win.
+</p>
+
+</div>
