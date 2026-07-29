@@ -6,11 +6,49 @@
 
 ## Download & Play
 
-Grab the **[latest release](https://github.com/PipFoweraker/pdoom1/releases/latest)** -- Windows build:
+Grab the **[latest release](https://github.com/PipFoweraker/pdoom1/releases/latest)** --
+Windows, macOS and Linux builds are all published. No installer for any of them.
 
-- **[Windows](https://github.com/PipFoweraker/pdoom1/releases/latest/download/PDoom.exe)** -- download and run. No installer.
+| Platform | File on the release page | Status |
+|---|---|---|
+| Windows | `PDoom-Windows-<version>.zip` | Tested |
+| macOS | `PDoom-macOS-<version>.zip` | Ships, boot-test not yet confirmed by us |
+| Linux | `PDoom-Linux-<version>.zip` | Ships, boot-test not yet confirmed by us |
 
-Linux and macOS builds are not published yet. Until they are, run from source with Godot 4.5.1 (see [For Developers](#for-developers)).
+**Extract the zip before running it.** Launching the executable from inside the
+zip viewer will fail in confusing ways on every platform.
+
+### Running it -- first-launch friction, by platform
+
+The builds are **not code-signed yet** ([#917](https://github.com/PipFoweraker/pdoom1/issues/917)),
+so each OS will warn you that the developer is unidentified. This is expected,
+and here is how to get past it.
+
+**Windows.** SmartScreen shows "Windows protected your PC". Click **More info**,
+then **Run anyway**.
+
+**macOS.** Double-clicking gives "cannot be opened because it is from an
+unidentified developer". On macOS Sequoia (15.x) Apple **removed** the old
+right-click-then-Open workaround, so that route now offers only Cancel and Move
+to Trash. Instead:
+
+1. Try to open the app once and dismiss the warning.
+2. Open **System Settings -> Privacy & Security**, scroll to **Security**.
+3. Click **Open Anyway** next to the P(Doom) entry, then confirm.
+
+Or, from Terminal: `xattr -dr com.apple.quarantine /path/to/PDoom.app`
+
+*(We do not develop on macOS and have limited test coverage there. If these
+steps do not work for you, please
+[open an issue](https://github.com/PipFoweraker/pdoom1/issues) -- that is
+genuinely useful to us.)*
+
+**Linux.** Mark the binary executable before running it:
+`chmod +x PDoom.x86_64`
+
+### Or run from source
+
+Any platform, with Godot 4.5.1 -- see [For Developers](#for-developers).
 
 ## About the Game
 
