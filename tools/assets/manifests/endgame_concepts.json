@@ -1,0 +1,151 @@
+{
+  "_meta": {
+    "note": "EXPLORATORY hero/poster concept art for the WS-3 endgame ruling (docs/game-design/WS3_ENDGAME_RULINGS_2026-07-29.md). NOT shipping assets -- these exist to be reviewed and argued with. asset_type endgame_concepts writes to art_generated/endgame_concepts/v1/ (gitignored, and deliberately OUTSIDE godot/ so nothing lands in the .pck). Landscape 1536x1024, background=opaque so these are full-bleed painted scenes. Dry-run: python tools/assets/generate_images.py --file tools/assets/manifests/endgame_concepts.json --dry-run",
+    "direction_source": "WS3_ENDGAME_RULINGS_2026-07-29.md sections 1a (the doom field / three-rung weirdness ladder), 2c (the attention stack), 3 (the violence register), 4a (actor want-graph, CRUX 1 drone arms race, the chokehold), and the time-travel bus intro.",
+    "taste_source": "art_source/hero_verdicts.json + hero_favour_list.txt + hero_disfavour_dislike_list.txt. FAVOUR reads as: painterly SCENES with a real room or window, heavy dark outlines, warm-grime texture, one disciplined glow, deep shadow, lived-in props (env_window_band2_spooky, hero_server_doom_altar, hero_office_at_dusk all promoted). DISFAVOUR reads as: flat abstract gradient plates and busy fanfare compositions (all bg_* screen backgrounds disliked, fanfare_strategic_moves v1+v2 disliked, env_bg_doom_abstract_v1 disliked). So: no abstract plates in this batch, every concept is a scene.",
+    "content_register": "Ruling 6 register is BINDING. Permitted: tentacles, spikes, lightning, runes, glowing eyes, floating figures, power-up auras, spooky FX, green and blue liquids. Defeated machines use the German-censorship convention (mechanical damage plus non-blood coolant). NEVER blood or gore. No real company names, no real politicians, no identifiable real people, no real logos, no readable text of any kind. Nothing sexualised: the orbital-datacenter rung is rendered as DEADPAN BUREAUCRATIC MENACE and uncanny corporate cheer, never as titillation. The economics rung is handled per the ruling's sensitivity note -- institutional and architectural, never destitute-person imagery.",
+    "theme_line": "The same want at two field strengths: lobbyists early, sexbots late."
+  },
+  "schema_version": "1.0",
+  "asset_type": "endgame_concepts",
+  "background": "opaque",
+  "default_size": "1536x1024",
+  "output_sizes": [1536, 1024, 768, 512],
+  "styles": {
+    "concept_base": "wide cinematic concept-art illustration for a video game, painterly warm-grime texture with heavy dark outlines and deep shadow, full-bleed edge-to-edge opaque composition that completely fills the frame with no transparency and no cut-outs and no border, disciplined lighting using at most one ambient source plus one glowing source, most of the frame kept dark with separated pockets of light, lived-in physical props and real architecture rather than abstract shapes, no text, no lettering, no signage, no numerals, no logo, no watermark, no UI overlay, high production value, landscape orientation",
+    "concept_palette": "colour language from the P(Doom)1 hero art: grounds in void #0e0614, deep aubergine #170a1c, ink brown #14040c, deep indigo #181b3b and #2e2547; exactly one saturated accent per scene, chosen from warm CRT amber #e8a33d / #f6a800, or cold electric-blue screen-glow #5c7ac3, or (only for the highest-weirdness scenes) eldritch violet #7a3b8f; never stack multiple saturated glows",
+    "content_guardrail": "strictly no blood and no gore anywhere in the image, damage to machines shown as mechanical breakage with glowing green or blue coolant only, no wounded people, no real-world brands or insignia, nothing sexualised, all human figures fully and modestly clothed in ordinary institutional workwear"
+  },
+  "themes": {
+    "doom_field": {
+      "style_overrides": ["concept_base", "concept_palette", "content_guardrail"],
+      "color_bias": "a bureaucratic world with weirdness leaking in at the edges; ordinary institutional competence rendered straight while something impossible happens deadpan in the same frame; restrained and elegant, never garish, never lurid"
+    },
+    "doom_field_warm": {
+      "style_overrides": ["concept_base", "concept_palette", "content_guardrail"],
+      "color_bias": "the one hopeful register in the set: small-scale human warmth, strangers being decent to each other, warm amber pooling at the centre with the dark world held at arm's length at the edges"
+    }
+  },
+  "assets": [
+    {
+      "id": "field_ladder_three_rungs",
+      "category": "doom_field",
+      "display_name": "The three-rung ladder of weirdness",
+      "status": "pending",
+      "theme": "doom_field",
+      "prompt_tail": "one wide landscape divided by depth rather than by panels, reading as a single continuous ladder of escalating strangeness receding into the frame: in the near foreground an ordinary institutional roofline with a row of blunt matte security drones parked on their pads, mundane and dull; in the middle distance a shuttered industrial estate behind chain-link, dark and quiet; and far above and behind, a faint ring of orbiting structures scratched across the overcast sky with a single thin violet #7a3b8f beam falling silently onto the far horizon; the only warm light is one amber #e8a33d sodium lamp on the near roof, everything else deep indigo shadow; the composition should make the eye climb from the boring thing to the impossible thing"
+    },
+    {
+      "id": "same_desire_two_field_strengths",
+      "category": "same_desire",
+      "display_name": "Same want, two field strengths",
+      "status": "pending",
+      "theme": "doom_field",
+      "prompt_tail": "a single wide beige committee hearing room shown twice in one continuous frame, left half and right half sharing the same carpet, same wood panelling, same water jug: on the left, an ordinary lobbyist in a rumpled suit leaning across the table handing over a manila folder, warm amber #e8a33d desk lamp, entirely mundane; on the right, the identical room and identical gesture but now performed by a row of eight identical smooth-faced pastel-uniformed courier androids, all fully clothed in modest buttoned corporate uniforms, all smiling the exact same polite smile, all handing over the exact same folder in perfect synchronisation, lit by a cold electric-blue #5c7ac3 wash; deadpan, bureaucratic, uncanny through repetition and sameness rather than through spectacle; the joke is that nothing about the want has changed, only the field strength"
+    },
+    {
+      "id": "orbital_datacenter_ring",
+      "category": "high_weird",
+      "display_name": "Orbital datacenter ring over a night continent",
+      "status": "pending",
+      "theme": "doom_field",
+      "prompt_tail": "a high orbital vantage looking down past the curved limb of a night-side continent, the land below a dark aubergine mass threaded with dim settlement lights; strung across the near foreground is a vast ungainly orbital datacenter, all radiator fins, cable trusses and stacked server modules built with the ugly practicality of infrastructure rather than the elegance of a spaceship, its seams leaking a single eldritch violet #7a3b8f glow; three thin pacification beams descend from it toward one unremarkable patch of the continent below; enormous scale, cold silence, no ships and no people; keep the upper-left sky black and empty as negative space"
+    },
+    {
+      "id": "pacification_delivery_suburb",
+      "category": "high_weird",
+      "display_name": "Deadpan delivery to a quiet suburb",
+      "status": "pending",
+      "theme": "doom_field",
+      "prompt_tail": "a wide low-angle view down an ordinary quiet suburban street at dusk, clipped lawns, mailboxes, a basketball hoop, all painted with mundane affection; descending softly onto the street in a neat evenly-spaced grid are a dozen identical pastel-uniformed humanoid courier units, fully and modestly clothed in high-necked buttoned service uniforms, arms folded, faces smooth and pleasantly blank, each haloed by a small cold electric-blue #5c7ac3 landing glow; one bewildered resident stands in a doorway watching, tiny in frame; utterly deadpan corporate-logistics energy, like a parcel delivery that has been scaled wrong; absolutely nothing sexualised, no advertising, no readable signage"
+    },
+    {
+      "id": "cheerful_propaganda_atrium",
+      "category": "high_weird",
+      "display_name": "Uncanny corporate-cheerful civic atrium",
+      "status": "pending",
+      "theme": "doom_field",
+      "prompt_tail": "the interior of a civic building atrium repurposed as a polling hall, terrazzo floor, folding tables, cardboard voting booths, drop ceiling; the whole space has been decorated in relentlessly cheerful pastel bunting and smooth rounded corporate sculpture that does not belong in a municipal building; a mural-scale blank pastel figure with a serene featureless face looms benevolently over the booths, and every fixture curves in the same soft child-safe way; the queue of voters is orderly and small; one warm amber #f6a800 ceiling panel is the single light source, the corners falling into deep indigo; menace conveyed entirely through wrongness of tone and excess of niceness, no violence on screen, no text or slogans anywhere"
+    },
+    {
+      "id": "crux_drone_arms_race",
+      "category": "arms_race",
+      "display_name": "CRUX 1 -- the drone arms race across the fence",
+      "status": "pending",
+      "theme": "doom_field",
+      "prompt_tail": "a wide flat night composition split by a chain-link perimeter fence running left to right across the middle of the frame: on the near side, a scrappy lab's own security drones sit racked in a neat growing row on a cracked concrete apron under one amber #e8a33d floodlight; on the far side, in cold blue-grey shadow, a mirrored and slightly larger row of State drones sits on identical racks facing back; the two rows echo each other exactly, implying a count that has been ratcheting for months; a lone researcher in a fleece stands at the fence with a clipboard, small and dwarfed, having caused this; nobody is fighting, which is the point"
+    },
+    {
+      "id": "chokehold_water_and_gigawatts",
+      "category": "chokehold",
+      "display_name": "The chokehold -- towers, substation, valve",
+      "status": "pending",
+      "theme": "doom_field",
+      "prompt_tail": "a wide industrial establishing shot at blue hour: three enormous concrete cooling towers venting slow steam behind a dense high-voltage substation of insulators, busbars and lattice pylons, the whole plant hard-edged and grimy; in the immediate foreground, oversized and slightly too prominent, a single painted steel water valve wheel and an isolator switch, both bearing the plain municipal grey of State property, one of them padlocked; a thin arc of cold electric-blue #5c7ac3 corona is the only saturated glow, everything else deep indigo and ink; the image should read as somebody else's hand on the tap"
+    },
+    {
+      "id": "chokehold_permit_counter",
+      "category": "chokehold",
+      "display_name": "The permit counter",
+      "status": "pending",
+      "theme": "doom_field",
+      "prompt_tail": "an interior low-key scene at a municipal planning-office counter: chipped laminate, a queue rail, a rubber date-stamp and ink pad placed dead centre in the foreground under a warm amber #e8a33d desk lamp, a fan of unstamped forms fanned beside it; through the tall dusty window behind the counter, filling the entire background at absurd scale, looms the flank of a datacenter hall under construction, cranes and blank server-shed wall dwarfing the building we are standing in; the clerk is a small silhouette; the joke is the ratio between the stamp and the thing the stamp controls; no readable text on any form"
+    },
+    {
+      "id": "attention_stack_buried_desk",
+      "category": "attention",
+      "display_name": "The attention stack -- buried desk, quiet window",
+      "status": "pending",
+      "theme": "doom_field",
+      "prompt_tail": "a tight wide interior on one researcher's desk seen from just behind the shoulder, the desk completely buried under an avalanche of urgent paperwork, evacuation checklists, torn folders, three ringing handsets and a strobing amber #e8a33d desk beacon that dominates the near half of the frame with hot loud light; the researcher is turned into that pile, absorbed and correct to be; behind them, through a tall office window in cool deep indigo and almost unlit, something silent and slow is happening in the middle distance -- a barely-visible mass of dark tendrils rising with the patience of weather over the far rooftops, entirely unnoticed; the loud thing is lit, the lethal thing is not"
+    },
+    {
+      "id": "attention_loud_vs_slow",
+      "category": "attention",
+      "display_name": "Loud corridor, slow seep",
+      "status": "pending",
+      "theme": "doom_field",
+      "prompt_tail": "a wide institutional corridor during an evacuation drill seen head-on in one-point perspective: strip lighting, a taped floor route, staff carrying boxes and laptops toward the far exit, motion and urgency, everything sharply lit by one warm amber #f6a800 emergency lamp near the camera; at the extreme edges of the corridor, in the parts of frame nobody in the picture is looking at, a slow violet seep is creeping up the skirting board and along the ceiling tiles, patient and unhurried, already well established; no panic on any face, no injuries, no blood; the composition should reward a second look at the edges"
+    },
+    {
+      "id": "economics_rung_shuttered_street",
+      "category": "economics",
+      "display_name": "The economics rung -- institutional, not personal",
+      "status": "pending",
+      "theme": "doom_field",
+      "prompt_tail": "a wide dusk street of a small industrial town, handled with dignity and restraint: a closed factory gate chained shut, an empty staff car park with faded painted bays, a shuttered brick frontage, a bus shelter with a blank timetable, telegraph poles receding; no people at all in frame, no destitution imagery, no distress; the single warm amber #e8a33d light is one lit upstairs window far down the street, small and stubborn; the rest is deep indigo and ink shadow with fine drizzle; quiet, sober, elegiac rather than grim; the loss is architectural and economic, never shown on a human face"
+    },
+    {
+      "id": "remote_operators_room",
+      "category": "arms_race",
+      "display_name": "Remote operators, one floor below",
+      "status": "pending",
+      "theme": "doom_field",
+      "prompt_tail": "a dim basement operations room shot wide from the back: four rows of identical desks, each with a stick controller and a bank of small screens, staffed by ordinary tired people in fleeces and lanyards rather than soldiers, all facing away from camera; every screen shows the same washed cold electric-blue #5c7ac3 downward-looking aerial view of somewhere unremarkable, and that screen wall is the only light in the room; coffee cups, cable trays, a wheeled office chair left spinning; the register is call-centre banality standing in for a private army; no weapons visible in the room, no uniforms, no insignia"
+    },
+    {
+      "id": "defeated_drone_coolant",
+      "category": "violence_register",
+      "display_name": "Defeated machine, German-censorship convention",
+      "status": "pending",
+      "theme": "doom_field",
+      "prompt_tail": "a close wide low-angle study of a large security drone brought down onto wet asphalt at night, canopy cracked, one rotor arm sheared and bent back, panels sprung, a slow pool of luminous green coolant spreading from its underside and a thin blue fluid dripping from a severed line; small arcs of white lightning still crackling across an exposed spine; strictly a machine, absolutely no blood, no human casualty, nobody in frame; the coolant pool is the single glow, reflecting green up into the wreck, everything else near-black aubergine and rain; sober aftermath, not spectacle"
+    },
+    {
+      "id": "field_leaks_at_every_angle",
+      "category": "doom_field",
+      "display_name": "Weirdness leaks in at every angle",
+      "status": "pending",
+      "theme": "doom_field",
+      "prompt_tail": "one ordinary open-plan office at night rendered completely straight -- carpet tiles, monitor arms, a dying pot plant, a whiteboard, a lone worker mid-yawn at a desk under one warm amber #e8a33d lamp -- while impossible things arrive quietly at every edge of the frame simultaneously and are ignored: a single thick tendril easing in through a ceiling vent in the top-left, a slowly rotating carved rune hanging in the top-right corner, two calm glowing eyes in the dark of the far stairwell, and a figure in a suit floating four inches above the carpet at the far end of the aisle; the intrusions are lit only by faint eldritch violet #7a3b8f rim-light so they stay in the dark parts of the composition; deadpan, unbothered, funny and wrong; no gore, no threat gesture, nothing touching the worker"
+    },
+    {
+      "id": "intro_bus_strangers_help",
+      "category": "intro",
+      "display_name": "The intro -- strangers help the traveller up",
+      "status": "pending",
+      "theme": "doom_field_warm",
+      "prompt_tail": "the one hopeful image in the set: a rain-slick city street corner just after a minor accident, a stopped bus blurred out of focus behind, and a dazed traveller in an out-of-period coat sitting on the wet kerb being helped up by three ordinary strangers -- a courier crouching with a hand under the elbow, an older woman offering a folded umbrella, a teenager retrieving a scattered satchel; unhurt, no blood, no injury shown, only bewilderment; a single warm amber #f6a800 streetlamp pools over the four of them and their reflections in the wet road, while the deep indigo city recedes into shadow at every edge; small-scale, human, generous, the moment a network of exactly three people begins"
+    }
+  ]
+}
