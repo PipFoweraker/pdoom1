@@ -65,6 +65,20 @@ func _on_save_pressed():
 	else:
 		save_button.text = "Save failed"
 
+func _on_resign_pressed():
+	"""Accept your fate: end the run and go to the score screen (#959).
+
+	Unpause BEFORE resigning. The game-over screen and the leaderboard
+	transition run on a live tree; resigning while paused would fire the
+	state update into a frozen scene and leave the player looking at a paused
+	game that has quietly ended.
+	"""
+	print("[PauseMenu] Player accepted their fate -- ending run")
+	get_tree().paused = false
+	visible = false
+	GameManager.resign()
+
+
 func _on_main_menu_pressed():
 	"""Return to main menu"""
 	print("[PauseMenu] Returning to main menu...")
