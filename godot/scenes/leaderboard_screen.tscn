@@ -69,6 +69,14 @@ text = "Top scores across all seeds"
 theme_override_font_sizes/font_size = 18
 horizontal_alignment = 1
 
+[node name="LadderExplainer" type="Label" parent="MarginContainer/VBoxContainer/Header"]
+layout_mode = 2
+text = "A board is one SEED played on one LADDER EPOCH. A new seed opens a fresh board on the same rules -- the ladder does not move for a seed roll, so those scores stay comparable. A new epoch means the rules themselves changed, so scores are never compared across epochs."
+theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.65, 0.68, 0.72, 1)
+horizontal_alignment = 1
+autowrap_mode = 3
+
 [node name="HSeparator" type="HSeparator" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 
