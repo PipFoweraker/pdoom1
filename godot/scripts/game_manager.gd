@@ -455,6 +455,39 @@ func remove_queued_action(action_id: String):
 	else:
 		print("[GameManager] WARNING: Action not found in queue: %s" % action_id)
 
+func resign() -> void:
+	"""End the run deliberately and route to the game-over screen (#959, cheap form).
+
+	Deliberately NOT a new path into game-over. It drives doom to the lose
+	threshold and then calls the SAME check_win_lose() -> game_state_updated ->
+	MainUI -> game_over_screen route that every ordinary loss takes. The
+	game-over -> leaderboard transition is the one that segfaulted the v0.11.0
+	release, so this adds a new TRIGGER for a proven route rather than a new
+	route.
+
+	Doom is written through doom_system, not through state.doom: check_win_lose()
+	re-syncs `doom = doom_system.current_doom` before testing the threshold, so a
+	direct write to state.doom would be silently overwritten and the run would
+	simply carry on -- a failure that would have looked exactly like a dead
+	button.
+
+	Not routed through end_turn(): that refuses when the action queue is empty,
+	which is precisely the state a bored player is in.
+	"""
+	if not is_initialized or state == null:
+		push_warning("[GameManager] resign() ignored: no live run")
+		return
+	if state.game_over:
+		return
+	print("[GameManager] Player resigned at turn %d" % state.turn)
+	PerfLog.mark("player_resigned", {"turn": state.turn, "doom": state.doom})
+	if state.doom_system:
+		state.doom_system.current_doom = 100.0
+	state.doom = 100.0
+	state.check_win_lose()
+	game_state_updated.emit(state.to_dict())
+
+
 func end_turn():
 	"""Execute queued actions and process turn"""
 	# Validation: Game initialized
