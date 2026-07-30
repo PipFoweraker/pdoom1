@@ -12,9 +12,13 @@ var _main_ui_script: GDScript = load("res://scripts/ui/main_ui.gd")
 
 # --- EventDialog.format_cost_summary (event-dialog options) -------------------------------
 
-func test_format_cost_summary_shows_money_and_ap():
+func test_format_cost_summary_shows_money_and_attention():
 	var text := EventDialog.format_cost_summary({"money": 35000, "attention": 1})
-	assert_string_contains(text, "1 AP", "AP cost must be on the button face, not hover-only")
+	# "Attention", not "AP": the AP pool was retired in #996 and the founder currency is
+	# Attention. The ASSERTION is unchanged -- the cost must be on the button face, not
+	# hover-only -- only the currency's name moved. (#1037)
+	assert_string_contains(text, "1 Attention",
+		"Attention cost must be on the button face, not hover-only")
 	assert_string_contains(text, "$35,000", "money cost must be on the button face")
 
 func test_format_cost_summary_zero_cost_is_free():
@@ -24,7 +28,7 @@ func test_format_cost_summary_zero_cost_is_free():
 func test_format_cost_summary_zero_valued_entries_do_not_render_as_a_cost():
 	# An {"attention": 0} entry is not a real cost -- must not clutter the face.
 	var text := EventDialog.format_cost_summary({"attention": 0})
-	assert_eq(text, " (Free)", "a zero-valued cost entry must read as Free, not '0 AP'")
+	assert_eq(text, " (Free)", "a zero-valued cost entry must read as Free, not '0 Attention'")
 
 func test_format_cost_summary_reputation_cost_shown():
 	# Regression: reputation-only costs (e.g. compute_deal's "Negotiate Better Terms") must

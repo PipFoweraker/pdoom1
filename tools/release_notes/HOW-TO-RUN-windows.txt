@@ -15,7 +15,7 @@ WHATS IN HERE
    *.dll        Steam integration libraries (keep them here)
 
 FEEDBACK
-   In-game F8 saves a bug report to your disk and shows you the file path --
+   In-game N saves a bug report to your disk and shows you the file path --
    please email that file to team@pdoom1.com (the in-game reporter does not
    send anything itself yet).
 

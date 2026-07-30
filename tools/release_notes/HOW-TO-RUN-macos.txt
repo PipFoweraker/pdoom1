@@ -3,9 +3,19 @@ P(Doom) -- macOS
 HOW TO RUN
 1. EXTRACT this zip first (double-click it in Finder), then move the
    extracted P(Doom).app wherever you like (e.g. Applications).
-2. First launch: right-click (or Control-click) P(Doom).app -> Open ->
-   Open. A plain double-click may be blocked by Gatekeeper because the
-   build is unsigned / not notarized (alpha).
+2. First launch is blocked, because the build is not signed or notarized
+   yet (alpha). How you get past it depends on your macOS version:
+
+   macOS 15 (Sequoia) and later -- Apple REMOVED the old right-click
+   shortcut, so it will not appear for you:
+      a. Double-click P(Doom).app once and dismiss the warning.
+      b. Open System Settings -> Privacy & Security, scroll to Security.
+      c. Click "Open Anyway" next to P(Doom), and confirm.
+         You may need your admin password. First launch only.
+
+   macOS 14 (Sonoma) and earlier:
+      Right-click (or Control-click) P(Doom).app -> Open -> Open.
+
 3. If macOS still refuses ("cannot be opened" / "damaged"), clear the
    quarantine flag from a terminal:
       xattr -dr com.apple.quarantine "P(Doom).app"
@@ -19,7 +29,7 @@ HEADS UP
    Reports are very welcome.
 
 FEEDBACK
-   In-game F8 saves a bug report to your disk and shows you the file path --
+   In-game N saves a bug report to your disk and shows you the file path --
    please email that file to team@pdoom1.com (the in-game reporter does not
    send anything itself yet).
 

@@ -347,6 +347,12 @@ func _ready():
 	set_process_unhandled_input(true)
 	set_process_unhandled_key_input(true)  # For dialog shortcuts
 
+	# The feed's authored text is a placeholder, and log_message() APPENDS (+=), so without
+	# this the scene's own "--" stays as the permanent first line above every real event.
+	# `+=` does not establish runtime ownership of a node's text (#1030).
+	if message_log:
+		message_log.text = ""
+
 	# Auto-initialize game when scene loads
 	log_message("[color=cyan]Initializing game...[/color]")
 	log_message("[color=gray]Keyboard: 1-9 for actions, Space/Enter to commit[/color]")

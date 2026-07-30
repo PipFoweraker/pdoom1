@@ -75,7 +75,7 @@ static func format_cost_summary(costs: Dictionary) -> String:
 		if resource == "money":
 			parts.append(GameConfig.format_money(amount))
 		elif resource == "attention":
-			parts.append("%d AP" % int(amount))
+			parts.append("%d Attention" % int(amount))
 		else:
 			parts.append("%d %s" % [int(amount), str(resource).capitalize()])
 	if parts.is_empty():
@@ -254,7 +254,7 @@ func _show_next_event() -> void:
 			if available < cost:
 				can_afford = false
 				if resource == "attention":
-					missing_resources.append("AP (need %s, have %s available)" % [cost, available])
+					missing_resources.append("Attention (need %s, have %s available)" % [cost, available])
 				else:
 					missing_resources.append("%s (need %s, have %s)" % [resource, cost, available])
 
