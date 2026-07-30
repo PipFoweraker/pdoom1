@@ -305,7 +305,7 @@ text = "Action Queue:"
 layout_mode = 2
 size_flags_vertical = 0
 
-[node name="QueueContainer" type="HBoxContainer" parent="TabManager/MainUI/ContentArea/InstrumentColumn/QueuePanel"]
+[node name="QueueContainer" type="HFlowContainer" parent="TabManager/MainUI/ContentArea/InstrumentColumn/QueuePanel"]
 layout_mode = 2
 theme_override_constants/separation = 8
 

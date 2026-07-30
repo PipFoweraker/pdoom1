@@ -16,7 +16,10 @@ extends VBoxContainer
 @onready var doom_meter_zone: CenterContainer = $CoreZone/RightZones/DoomMeterZone
 @onready var roster_container: VBoxContainer = $EmployeeRosterZone/RosterScroll/RosterContainer
 @onready var queue_panel: PanelContainer = $QueuePanel
-@onready var queue_container: HBoxContainer = $QueuePanel/QueueContainer
+# HFlowContainer, not HBox: the queue was a single unbounded horizontal row, so a
+# handful of queued actions marched off the right edge and shoved the rest of the
+# interface out of view (2026-07-30 release playtest). HFlow wraps to new rows.
+@onready var queue_container: HFlowContainer = $QueuePanel/QueueContainer
 @onready var queue_hint: Label = $QueuePanel/QueueContainer/QueueHint
 
 

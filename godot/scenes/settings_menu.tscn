@@ -379,7 +379,7 @@ text = "Quick save"
 layout_mode = 2
 theme_override_colors/font_color = Color(0.9, 0.95, 1, 1)
 theme_override_font_sizes/font_size = 14
-text = "[F8]"
+text = "[N]"
 
 [node name="Desc6" type="Label" parent="VBox/Scroll/SettingsContainer/KeyboardShortcuts/ShortcutsGrid"]
 layout_mode = 2
