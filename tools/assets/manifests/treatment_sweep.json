@@ -1,0 +1,73 @@
+{
+  "_meta": {
+    "note": "EXPLORATORY BATCH 3 of 4 (2026-07-29 overnight). ONE fixed subject in six rendering treatments, to settle the rendering question. Subject is the water-and-power chokepoint, which drew the night's most enthusiastic response specifically for looking 'like an acrylic' rather than photoreal. Composition is identical across all six so the TREATMENT is the only variable. asset_type treatment_sweep writes to art_generated/treatment_sweep/v1/. Does not touch endgame_concepts (gen1) or endgame_concepts_gen2. Dry-run: python tools/assets/generate_images.py --file tools/assets/manifests/treatment_sweep.json --dry-run",
+    "direction_source": "docs/art/ENDGAME_CONCEPT_REVIEW_2026-07-29.md PART B item 7 (chokehold_water_and_gigawatts: V1 composition and pipe angle, V2 colour, small central electricity because it reads as possibly-normal electricity, 'acrylic-like rendering rather than photorealism, old school crackle lighting') plus item 5 (late-Soviet propaganda named admiringly) and PART A rules A1 A2 A5.",
+    "palette_note": "The base style block deliberately carries NO treatment and NO rendering medium; each asset's prompt_tail supplies the treatment. Palette follows the treatment rather than being pinned, since the treatment is the variable under test."
+  },
+  "schema_version": "1.0",
+  "asset_type": "treatment_sweep",
+  "background": "opaque",
+  "default_size": "1536x1024",
+  "output_sizes": [1536, 1024, 768, 512],
+  "styles": {
+    "subject_fixed": "THE SUBJECT AND COMPOSITION ARE FIXED AND IDENTICAL IN EVERY IMAGE, only the rendering treatment changes: a heavy industrial water-and-power chokepoint seen wide at slightly below eye level -- a massive riveted steel water main running diagonally from the lower left of the frame up and away to the upper right on concrete saddles, with a large flanged valve body and a bolted junction assembly filling the left third, and behind and to the right an electrical substation compound of transformers, insulator stacks, bus bars and a lattice gantry; heavy cable trays and lagged secondary pipework tie the two halves together; puddled standing water and oil staining on the concrete apron in the foreground; ONE small electrical arc crackling at mid-frame between two insulators, modest in size, close to the centre of the composition, small enough that it reads as possibly ordinary working electricity rather than a catastrophe; NO PEOPLE anywhere in the frame; identical camera position, identical pipe angle, identical framing and identical staging in every image",
+    "content_rules": "no text, no lettering, no signage glyphs, no numerals, no logo, no watermark, no UI overlay, no real-world brands or insignia, no recognisable real people, strictly no blood and no gore, nothing sexualised, no barbed wire, every object legible and identifiable as a specific real piece of industrial plant rather than a vague boxy mass, full-bleed edge-to-edge opaque composition that completely fills the frame with no transparency and no cut-outs and no border, landscape orientation, high production value",
+    "lighting_discipline": "IMPORTANT LIGHTING RULE: mood must never come from the main light source. The ambient light stays plain and uncoloured and honest to the space; colour comes from painted plant, materials, rust, coolant and the arc itself, never from tinting the ambient. The arc is the only discrete glowing source, kept small and restrained, old-school crackle rather than a bloom"
+  },
+  "themes": {
+    "chokepoint": {
+      "style_overrides": ["subject_fixed", "content_rules", "lighting_discipline"],
+      "color_bias": "heavy infrastructure as the quiet chokepoint on which everything else depends; industrial, unglamorous, monumental"
+    }
+  },
+  "assets": [
+    {
+      "id": "treat_acrylic",
+      "category": "treatment_sweep",
+      "display_name": "Treatment -- thick acrylic painting",
+      "status": "pending",
+      "theme": "chokepoint",
+      "prompt_tail": "TREATMENT: thick acrylic painting on board. Visible brush structure throughout, loaded opaque strokes, palette-knife edges on the pipe barrel and transformer housings, scumbled dry-brush over the concrete, paint sitting physically on the surface with visible ridges and bristle marks. Deliberately NOT photorealistic and NOT digital-smooth -- this must read unmistakably as an acrylic painting of the subject. Muted industrial colour mixed on the board: steel greys, iron oxide, ochre, a cool slate; the arc a small clean high-value white-blue note"
+    },
+    {
+      "id": "treat_painterly_dark",
+      "category": "treatment_sweep",
+      "display_name": "Treatment -- painterly low-key, single warm source",
+      "status": "pending",
+      "theme": "chokepoint",
+      "prompt_tail": "TREATMENT: low-key painterly rendering, heavy shadow, chiaroscuro. Most of the frame falls into deep shadow with form emerging only at the edges; a single warm practical source -- one caged incandescent work lamp mounted on the gantry -- picks out the top of the pipe barrel, the valve flange and the near rail of the cable tray, everything else described by reflected light and silhouette. Brushwork soft and tonal rather than textural. Palette: near-black ink browns and deep steel blues with one warm amber pool from the lamp; the arc reads as a small cold counterpoint"
+    },
+    {
+      "id": "treat_print_poster",
+      "category": "treatment_sweep",
+      "display_name": "Treatment -- limited-palette screen-print poster",
+      "status": "pending",
+      "theme": "chokepoint",
+      "prompt_tail": "TREATMENT: limited-palette screen-printed poster. Four flat inks only, hard-edged shapes, no gradients and no rendering, forms described by crisp overlapping colour separations with slight registration offset and visible ink texture, halftone dots used sparingly for one mid-tone. Bold graphic simplification of the plant into flat silhouette masses. Palette: off-white paper stock, a deep ink navy, a warm ochre and one bright accent used only for the arc"
+    },
+    {
+      "id": "treat_soviet_civic",
+      "category": "treatment_sweep",
+      "display_name": "Treatment -- late-Soviet civic mural",
+      "status": "pending",
+      "theme": "chokepoint",
+      "prompt_tail": "TREATMENT: late-Soviet civic mural. Monumental heroic-industrial mural painting as applied to a public building wall -- simplified confident shapes, strong rhythmic diagonals, flattened planes, dignified idealised machinery, matte mural paint with a faint plaster tooth, subtle stylised radiating structure behind the substation gantry. Sincere and celebratory in handling even though nothing is being celebrated. Palette: mural ochres, brick reds, industrial teal and off-white plaster, restrained and chalky"
+    },
+    {
+      "id": "treat_pulp_paperback",
+      "category": "treatment_sweep",
+      "display_name": "Treatment -- 1970s SF paperback cover",
+      "status": "pending",
+      "theme": "chokepoint",
+      "prompt_tail": "TREATMENT: 1970s science-fiction paperback cover art. Matte gouache-and-airbrush handling, slightly faded and sun-bleached as if the cover has sat in a shop window for a decade, gentle grain, soft airbrushed atmosphere behind the gantry, confident illustrative shorthand on the plant detail. Period-correct and unironic. Palette: faded olive, dusty orange, chalky sky blue and warm off-white, all slightly desaturated by age; the arc a small crisp highlight"
+    },
+    {
+      "id": "treat_technical_plate",
+      "category": "treatment_sweep",
+      "display_name": "Treatment -- precise technical plate",
+      "status": "pending",
+      "theme": "chokepoint",
+      "prompt_tail": "TREATMENT: precise technical and engineering illustration plate. Clean confident line work with controlled hatching and cutaway-style clarity, every flange bolt, insulator skirt, saddle and cable clamp drawn accurately and legibly, construction of the plant readable as if from a manufacturer's handbook, flat restrained wash colour laid inside the linework, no painterly texture, no dramatic lighting. Absolutely no callout text, no leader lines with labels, no numerals and no dimension annotations anywhere. Palette: warm paper white, graphite line, and restrained flat washes of steel blue-grey, oxide red and pale ochre; the arc drawn as a small precise stylised spark"
+    }
+  ]
+}

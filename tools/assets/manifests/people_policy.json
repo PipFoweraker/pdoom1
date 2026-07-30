@@ -1,0 +1,49 @@
+{
+  "_meta": {
+    "note": "EXPLORATORY BATCH 4 of 4 (2026-07-29 overnight). A direct test of rule A2 ('no people in poster art'), which is flagged in the review as PROVISIONAL and the most likely to be over-broad. ONE fixed corridor scene rendered three ways: no figures / androgynous unlit silhouettes at the edges / a visibly varied individuated group mid-frame. Same composition, same lighting, same everything else, so the people policy is the only variable. asset_type people_policy writes to art_generated/people_policy/v1/. Does not touch endgame_concepts (gen1) or endgame_concepts_gen2. Dry-run: python tools/assets/generate_images.py --file tools/assets/manifests/people_policy.json --dry-run",
+    "direction_source": "docs/art/ENDGAME_CONCEPT_REVIEW_2026-07-29.md PART A rule A2 (the three permitted treatments: none, androgynous silhouettes, or a reasonably varied group) and PART B item 10 (attention_loud_vs_slow: V2 stronger because figures at the corridor EDGES leave space that draws the eye forward; purple in the walls liked; if the circular light is the emergency source then every other light must differ).",
+    "palette_note": "Warm emergency source at the far end ONLY, cooler ordinary fluorescent along the corridor length -- two visibly different sources, per the A1 corollary. Faint purple in the wall surface is a material colour, not a light."
+  },
+  "schema_version": "1.0",
+  "asset_type": "people_policy",
+  "background": "opaque",
+  "default_size": "1536x1024",
+  "output_sizes": [1536, 1024, 768, 512],
+  "styles": {
+    "poster_base": "wide cinematic poster art illustration for a video game, painterly warm-grime texture with heavy dark outlines and deep shadow, full-bleed edge-to-edge opaque composition that completely fills the frame with no transparency and no cut-outs and no border, lived-in physical props and real architecture rather than abstract shapes, every object in frame legible and identifiable as a specific real thing, no text, no lettering, no signage glyphs, no numerals, no logo, no watermark, no UI overlay, no real-world brands or insignia, no recognisable real people, strictly no blood and no gore, nothing sexualised, no barbed wire, all human figures fully and modestly clothed in ordinary institutional workwear, high production value, landscape orientation",
+    "corridor_fixed": "THE SCENE IS FIXED AND IDENTICAL IN EVERY IMAGE, only the treatment of people changes: a long institutional corridor seen straight down its length in one-point perspective from a fixed camera at standing eye height, plain painted blockwork walls with a faint dusty violet cast in the paint itself, a scuffed vinyl floor, a run of plain recessed ceiling fixtures receding away, closed flush doors and a fire cabinet along both sides, cable trunking at high level; at the FAR END of the corridor something is wrong -- the far doorway opens onto a space whose geometry does not agree with the corridor, the far wall bulging and folding in a way a building cannot do, half hidden by cold vapour drifting along the floor; LIGHTING, IDENTICAL IN EVERY IMAGE: one warm amber emergency luminaire above the far doorway is the only warm source and the only mood source, throwing warm light forward down the corridor and rimming the vapour; every other light in frame is a visibly different and cooler source -- plain cool white fluorescent ceiling fixtures along the corridor length -- so the two sources never blend; identical camera, identical framing, identical lighting, identical props in every image",
+    "lighting_discipline": "IMPORTANT LIGHTING RULE: mood must never come from the general room light. The corridor's ordinary fluorescent light stays plain, cool and uncoloured; the only mood comes from the one warm emergency luminaire, which is a real in-world fixture that would plausibly be that colour. Keep it extremely subtle and restrained, far more subtle than a typical concept painting; no coloured wash over the whole scene"
+  },
+  "themes": {
+    "corridor": {
+      "style_overrides": ["poster_base", "corridor_fixed", "lighting_discipline"],
+      "color_bias": "a bureaucratic world with weirdness leaking in at the edges; ordinary institutional competence rendered straight while something impossible happens deadpan at the end of the hall; restrained and elegant, never garish"
+    }
+  },
+  "assets": [
+    {
+      "id": "people_none",
+      "category": "people_policy",
+      "display_name": "People policy -- none (rule A2 as written)",
+      "status": "pending",
+      "theme": "corridor",
+      "prompt_tail": "PEOPLE TREATMENT: absolutely no figures of any kind anywhere in the frame. No people, no silhouettes, no shadows of people, no reflections of people. The corridor is entirely empty and the viewer is a pure observer of the space; the eye runs uninterrupted down the corridor to the wrongness at the far end"
+    },
+    {
+      "id": "people_silhouette",
+      "category": "people_policy",
+      "display_name": "People policy -- androgynous unlit silhouettes at the edges",
+      "status": "pending",
+      "theme": "corridor",
+      "prompt_tail": "PEOPLE TREATMENT: four or five completely unlit androgynous silhouettes stand against the corridor walls at the LEFT AND RIGHT EDGES of the frame, deliberately leaving the whole centre of the corridor clear and unobstructed so the eye is drawn forward to the far end. The silhouettes are flat black shapes only -- no faces, no features, no visible clothing detail, no gender, no individuality, simply human-shaped absences of light. They are turned toward the far end, still and unhurried. They must not block the vanishing point or the far doorway. Everything else identical to the empty version"
+    },
+    {
+      "id": "people_varied_group",
+      "category": "people_policy",
+      "display_name": "People policy -- varied individuated group mid-frame",
+      "status": "pending",
+      "theme": "corridor",
+      "prompt_tail": "PEOPLE TREATMENT: a small group of five clearly individuated people stands together in the MIDDLE of the corridor at mid-frame, lit by the ordinary cool fluorescents and fully described -- a visibly varied group differing in age, build, height, skin tone and hair, in ordinary institutional workwear appropriate to a research and administrative building (lanyards, cardigans, shirtsleeves, a lab coat, a hi-vis vest), each one drawn as a specific person rather than a generic figure, standing and looking together toward the far end of the corridor, seen mostly from behind and three-quarter. All fully and modestly clothed. Everything else identical to the empty version"
+    }
+  ]
+}

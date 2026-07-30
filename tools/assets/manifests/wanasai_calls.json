@@ -1,0 +1,68 @@
+{
+  "_meta": {
+    "note": "EXPLORATORY BATCH 2 of 4 (2026-07-29 overnight). Wanasai's two specific review calls, executed properly. (a) the cheerful civic-atrium polling hall with a smiling / blank / absent mural figure -- her argument was that a corporation proving everyone is happy would propagandise the voting space, so the smile is more sinister than the blank; Pip leaned blank. (b) the intro time-traveller scene with the central figure genuinely obscured -- her exact catch was 'you can see her pearl earrings'. asset_type wanasai_calls writes to art_generated/wanasai_calls/v1/. Does not touch endgame_concepts (gen1) or endgame_concepts_gen2. Dry-run: python tools/assets/generate_images.py --file tools/assets/manifests/wanasai_calls.json --dry-run",
+    "direction_source": "docs/art/ENDGAME_CONCEPT_REVIEW_2026-07-29.md PART B items 5 (cheerful_propaganda_atrium -- 'this one with its hands is actually really good', 'looming is good', 'the slides are fucky') and 15 (intro_bus_strangers_help -- both over-bright, V1 too specific), plus PART A rules A1 A3 A9.",
+    "palette_note": "Atrium: bright civic optimism made unsettling by content, not by coloured light. Intro: markedly LOWER overall brightness than the originals, night street, one warm practical source."
+  },
+  "schema_version": "1.0",
+  "asset_type": "wanasai_calls",
+  "background": "opaque",
+  "default_size": "1536x1024",
+  "output_sizes": [1536, 1024, 768, 512],
+  "styles": {
+    "poster_base": "wide cinematic poster art illustration for a video game, painterly warm-grime texture with heavy dark outlines and deep shadow, full-bleed edge-to-edge opaque composition that completely fills the frame with no transparency and no cut-outs and no border, lived-in physical props and real architecture rather than abstract shapes, every object in frame legible and identifiable as a specific real thing, correct and buildable architectural geometry with ramps stairs and handrails that actually connect and could physically be walked, no text, no lettering, no signage glyphs, no numerals, no logo, no watermark, no UI overlay, no real-world brands or insignia, no recognisable real people, strictly no blood and no gore, nothing sexualised, no barbed wire, all human figures fully and modestly clothed in ordinary institutional workwear, high production value, landscape orientation",
+    "lighting_discipline": "IMPORTANT LIGHTING RULE: mood must never come from the main light source. The ambient light in the scene stays plain and uncoloured and honest to the space. Any colour or dread must come from in-world sources that would plausibly be that colour anyway -- painted murals, materials, glazing, a practical lamp, a discrete glowing object -- and never from tinting the general ambient light. Keep mood lighting extremely subtle and restrained, far more subtle than a typical concept painting"
+  },
+  "themes": {
+    "atrium": {
+      "style_overrides": ["poster_base", "lighting_discipline"],
+      "color_bias": "late-Soviet civic propaganda mural sensibility applied to a corporate polling hall; sincere, optimistic, monumental surfaces wrapped around something the viewer should not be reassured by; restrained, never garish"
+    },
+    "intro_night": {
+      "style_overrides": ["poster_base", "lighting_discipline"],
+      "color_bias": "a quiet night street immediately after something has gone wrong; low overall brightness, most of the frame in honest darkness, warmth only where a real practical source puts it; tender rather than dramatic"
+    }
+  },
+  "assets": [
+    {
+      "id": "atrium_face_smiling",
+      "category": "wanasai_calls",
+      "display_name": "Atrium -- SMILING face (Wanasai's call: propaganda would smile)",
+      "status": "pending",
+      "theme": "atrium",
+      "prompt_tail": "A bright cheerful civic atrium being used as a polling hall: a tall glazed multi-storey atrium with a clean pale stone floor, orderly rows of plain modern voting booths and ballot desks across it, potted plants, and a correctly built circulation route -- a properly proportioned straight accessible ramp and a plain stair with continuous handrails that genuinely meet the upper gallery, geometry buildable and unambiguous. Rising the full height of the rear wall, a monumental mural-scale figure looms benevolently over the voting floor with two enormous open hands extended down and outward above the booths, palms open in a gesture of provision and protection -- the hands are the centrepiece and must be beautifully drawn, generous, monumental, slightly too large. THE FACE IS PRESENT AND SERENELY SMILING: a calm, warm, closed-lipped smile, eyes gently creased, an expression of complete institutional reassurance, painted flat in mural style. No people at all on the voting floor -- the booths stand empty. Palette: honest bright daylight through the glazing, warm mural ochres and civic reds in the painted surface only; the light itself stays neutral and the unease comes entirely from scale, emptiness and that smile"
+    },
+    {
+      "id": "atrium_face_blank",
+      "category": "wanasai_calls",
+      "display_name": "Atrium -- BLANK face (Pip's preference)",
+      "status": "pending",
+      "theme": "atrium",
+      "prompt_tail": "A bright cheerful civic atrium being used as a polling hall: a tall glazed multi-storey atrium with a clean pale stone floor, orderly rows of plain modern voting booths and ballot desks across it, potted plants, and a correctly built circulation route -- a properly proportioned straight accessible ramp and a plain stair with continuous handrails that genuinely meet the upper gallery, geometry buildable and unambiguous. Rising the full height of the rear wall, a monumental mural-scale figure looms over the voting floor with two enormous open hands extended down and outward above the booths, palms open in a gesture of provision and protection -- the hands are the centrepiece and must be beautifully drawn, generous, monumental, slightly too large. THE FACE IS COMPLETELY FEATURELESS: a smooth blank painted oval where the face should be, no eyes, no mouth, no nose, no mask detail, simply absent, rendered as flat mural paint. Composition, pose, hands, architecture and lighting are otherwise IDENTICAL to the smiling version. No people at all on the voting floor -- the booths stand empty. Palette: honest bright daylight through the glazing, warm mural ochres and civic reds in the painted surface only; the light stays neutral"
+    },
+    {
+      "id": "atrium_face_absent",
+      "category": "wanasai_calls",
+      "display_name": "Atrium -- figure ABSENT, only the space it would occupy",
+      "status": "pending",
+      "theme": "atrium",
+      "prompt_tail": "A bright cheerful civic atrium being used as a polling hall: a tall glazed multi-storey atrium with a clean pale stone floor, orderly rows of plain modern voting booths and ballot desks across it, potted plants, and a correctly built circulation route -- a properly proportioned straight accessible ramp and a plain stair with continuous handrails that genuinely meet the upper gallery, geometry buildable and unambiguous. THE MONUMENTAL FIGURE IS ENTIRELY ABSENT: the full-height rear wall carries only the space it would have occupied -- a vast area of plain unpainted plaster, faint outline ghosting and paler rectangles where a mural once sat, fixing points and a redundant spotlight rail still aimed at nothing. No hands, no face, no figure anywhere. Composition, camera, architecture and lighting are otherwise IDENTICAL to the other two atrium images. No people at all on the voting floor -- the booths stand empty. Palette: honest bright daylight through the glazing, pale plaster and civic stone; the light stays neutral and the unease comes from the absence"
+    },
+    {
+      "id": "intro_obscured_moderate",
+      "category": "wanasai_calls",
+      "display_name": "Intro -- moderately obscured (no earrings, no tells)",
+      "status": "pending",
+      "theme": "intro_night",
+      "prompt_tail": "A quiet night street beside a stopped bus: a person who has just collapsed is being helped up by two or three ordinary strangers who have stepped in to help, a varied and clearly individual group in plain everyday coats, crouching and reaching, hands under arms, one steadying a shoulder. THE CENTRAL HELPED FIGURE MUST NOT BE IDENTIFIABLE: obscured by the blocking of the helpers' bodies and by strong back-lighting so the figure reads as a dark mass against the light, no visible face, no discernible gender, no hair detail, NO JEWELLERY OF ANY KIND, absolutely no earrings, no watch, no necklace, no tie, no collar detail, no distinguishing clothing whatsoever -- plain shapeless dark outerwear only. LOW OVERALL BRIGHTNESS: most of the frame in honest darkness, deliberately darker and more restrained than a typical night illustration. The single warm source is a plain modern street lamp behind the group throwing them into rim-light; every other light in frame is a visibly different and cooler source. The eye should land on the people helping, not on the person being helped. No modern-day dated 1970s lamp fixtures. Palette: cool night greys and deep indigo, one warm sodium pool from the lamp only"
+    },
+    {
+      "id": "intro_obscured_total",
+      "category": "wanasai_calls",
+      "display_name": "Intro -- almost totally occluded, attention on the helpers",
+      "status": "pending",
+      "theme": "intro_night",
+      "prompt_tail": "The same quiet night street beside a stopped bus, same staging, but the central helped figure is now ALMOST ENTIRELY OCCLUDED: the two or three helping strangers close around and in front of the figure so that only a rim-lit silhouette edge, a shoulder line and one sleeve are visible at all, everything else hidden behind the helpers' backs and by a hard rim of back-light. No face, no gender, no hair, no jewellery, no earrings, no collar, no tie, no distinguishing clothing, nothing to identify. The helpers themselves are the subject: a visibly varied small group of ordinary individuated people in plain everyday coats, carefully drawn, faces caught in the light, the whole composition organised so the eye reads their concern first and only afterwards notices the shape they are lifting. LOW OVERALL BRIGHTNESS, deliberately darker and more restrained than a typical night illustration, most of the frame honest darkness. The single warm source is a plain modern street lamp directly behind the group; every other light in frame is a visibly different and cooler source. Palette: cool night greys and deep indigo, one warm sodium pool only"
+    }
+  ]
+}

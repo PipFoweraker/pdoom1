@@ -1,0 +1,73 @@
+{
+  "_meta": {
+    "note": "EXPLORATORY BATCH 1 of 4 (2026-07-29 overnight). ONE fixed civic street corner rendered at six escalating doom-field levels. Same camera, same architecture, same time of day in all six; ONLY the strangeness and the palette change. asset_type doomfield_ladder writes to art_generated/doomfield_ladder/v1/. Does not touch endgame_concepts (gen1) or endgame_concepts_gen2. Dry-run: python tools/assets/generate_images.py --file tools/assets/manifests/doomfield_ladder.json --dry-run",
+    "direction_source": "docs/art/ENDGAME_CONCEPT_REVIEW_2026-07-29.md PART A rules A1-A10 (PROVISIONAL). A1 (mood never from the main light source) is the rule most at risk here, so every palette shift is sourced from in-world materials, sky state and discrete practical sources -- never from tinting the ambient daylight. A2 no people. A4 no drone cockpits. A8 no barbed wire. A10 the three flavours of weirdness (institutional, technology run amok, environmental, then eldritch) are walked in order up the ladder.",
+    "palette_note": "A7 palette anchoring: the ladder walks from neutral overcast daylight greys at level_1 to deep indigo #181b3b / #2e2547 dominance at level_6. Eldritch violet #7a3b8f appears only at level_6."
+  },
+  "schema_version": "1.0",
+  "asset_type": "doomfield_ladder",
+  "background": "opaque",
+  "default_size": "1536x1024",
+  "output_sizes": [1536, 1024, 768, 512],
+  "styles": {
+    "poster_base": "wide cinematic poster art illustration for a video game, painterly warm-grime texture with heavy dark outlines and deep shadow, full-bleed edge-to-edge opaque composition that completely fills the frame with no transparency and no cut-outs and no border, lived-in physical props and real architecture rather than abstract shapes, every object in frame legible and identifiable as a specific real thing rather than a vague boxy mass, no text, no lettering, no signage glyphs, no numerals, no logo, no watermark, no UI overlay, no real-world brands or insignia, strictly no blood and no gore, nothing sexualised, no barbed wire, high production value, landscape orientation",
+    "lighting_discipline": "IMPORTANT LIGHTING RULE: mood must never come from the main light source. The ambient daylight stays plain, neutral and uncoloured in every image. Any colour, dread or strangeness must come from in-world sources that would plausibly be that colour anyway -- painted surfaces, materials, glazing, coolant, a practical lamp, a discrete glowing object, the state of the sky itself -- and never from tinting the general room or street light. Keep any mood lighting extremely subtle and restrained, far more subtle than a typical concept painting; understated, never garish, never lurid",
+    "fixed_scene": "THE SCENE IS FIXED AND IDENTICAL IN EVERY IMAGE: a mid-sized civic and office street corner, seen from one unchanging camera position standing at eye level on the far pavement looking diagonally across the junction; on the left a four-storey grey stone-and-glass municipal building with a recessed entrance, a shallow accessible ramp with a plain steel handrail, and a stepped forecourt; on the right a lower two-storey brick office block with regular sash windows and a service door; between them the street corner with a kerb, three plain steel bollards, a glass-and-steel bus shelter, a single tall lamp standard, a public notice board on a post, and a short row of plain white parked delivery vans along the near kerb; flat overcast mid-morning daylight; the architecture, the camera position, the framing, the lens and the time of day are exactly the same in every image and ONLY the strangeness changes; absolutely no people, no pedestrians, no drivers, no figures of any kind anywhere in the frame"
+  },
+  "themes": {
+    "doomfield": {
+      "style_overrides": ["poster_base", "lighting_discipline", "fixed_scene"],
+      "color_bias": "a bureaucratic world with weirdness leaking in at the edges; ordinary institutional competence rendered straight while something impossible happens deadpan in the same frame; the viewer is an observer of a world, not a participant being addressed"
+    }
+  },
+  "assets": [
+    {
+      "id": "level_1",
+      "category": "doomfield_ladder",
+      "display_name": "Doom field level 1 -- control, entirely mundane",
+      "status": "pending",
+      "theme": "doomfield",
+      "prompt_tail": "DOOM FIELD LEVEL 1 OF 6, the control image: absolutely nothing is wrong. A completely ordinary working weekday street corner. Two delivery vans at the kerb, a notice board with four or five notices on it, the bus shelter intact, the bollards straight, the ramp handrail correct and continuous. Palette: neutral overcast daylight, honest greys, brick reds, weathered concrete, plain white van panels, a little municipal green from a planter; no saturated accent anywhere. Calm, dull, unremarkable, the baseline a player would forget they had seen"
+    },
+    {
+      "id": "level_2",
+      "category": "doomfield_ladder",
+      "display_name": "Doom field level 2 -- procedural anomaly",
+      "status": "pending",
+      "theme": "doomfield",
+      "prompt_tail": "DOOM FIELD LEVEL 2 OF 6, one small procedural anomaly and nothing else: the row of parked delivery units has quietly multiplied into far too many absolutely identical white vans, nose to tail, identically parked at identical spacing, continuing further down the street than makes any sense; and the public notice board is layered with far too many identical notices, overflowing its frame and pinned in overlapping drifts down the post. Everything else is exactly as in the control. Palette: still neutral overcast daylight, greys and brick, with only a faint cooling of the sky; no saturated accent. The wrongness is repetition and quantity, not colour and not lighting; deadpan, almost funny, easily missed"
+    },
+    {
+      "id": "level_3",
+      "category": "doomfield_ladder",
+      "display_name": "Doom field level 3 -- institutional overreach",
+      "status": "pending",
+      "theme": "doomfield",
+      "prompt_tail": "DOOM FIELD LEVEL 3 OF 6, institutional apparatus outgrowing the building: the municipal entrance is now fenced off behind rank upon rank of plain steel crowd barriers and queue rails snaking across the whole forecourt, blank permit and control signage boards on posts multiplying along the pavement (blank faces, no readable text), a temporary permit kiosk bolted to the steps, cable ducting and clipboard racks lashed to the handrail, the ramp half blocked by more barriers. No barbed wire anywhere. Everything else exactly as the control. Palette: neutral daylight, but the world is now dominated by galvanised steel grey, cold institutional blue-grey paint and municipal signage white; the colour comes from painted metal, not from the light. Bureaucratic, suffocating, still entirely explicable"
+    },
+    {
+      "id": "level_4",
+      "category": "doomfield_ladder",
+      "display_name": "Doom field level 4 -- technology run amok",
+      "status": "pending",
+      "theme": "doomfield",
+      "prompt_tail": "DOOM FIELD LEVEL 4 OF 6, technology run amok: blunt matte-finish autonomous drones are present in implausible numbers -- parked in dense grids across the forecourt, docked in racks bolted up the brick office wall, hovering in ordered ranks above the junction, queued along the roofline. All of them are blunt, dull, matte, purely functional machines, small enough to be manufactured by the thousand. CRITICAL: no cockpits, no canopies, no windows, no seats, no pilot positions anywhere -- these are directly manufactured machines and any cockpit is wrong. Everything else exactly as the control. Palette: neutral daylight still, dominated now by matte machine grey and dark olive drab hulls, with a single cold electric-blue #5c7ac3 status glow repeated in the drone housings as the only saturated accent; that glow comes from the machines themselves and the street light stays plain. Ordered, industrial, quietly overwhelming"
+    },
+    {
+      "id": "level_5",
+      "category": "doomfield_ladder",
+      "display_name": "Doom field level 5 -- the environment is wrong",
+      "status": "pending",
+      "theme": "doomfield",
+      "prompt_tail": "DOOM FIELD LEVEL 5 OF 6, the environment itself is wrong: enormous industrial cooling infrastructure has grown onto and around buildings that could never need it -- banks of cooling fans and finned heat exchangers strapped across the municipal facade, fat lagged coolant pipes running down the brickwork and along the kerb, condensation streaming off them, standing meltwater and pooled condensate across the whole forecourt, cold vapour sagging low along the street, frost blooming on the bus shelter glass in mid-morning. Light behaves oddly: reflections in the shelter glass and the meltwater do not agree with the street, and shadows fall at slightly inconsistent angles, but the daylight itself stays plain and uncoloured. Everything else exactly as the control. Palette: the neutral grey is now shot through with wet dark slate, condensation white and cold pipework blue-green, with glowing green coolant #4fb08a visible in a cracked pipe joint as the only saturated accent, sourced from the coolant itself. Damp, cold, physically wrong"
+    },
+    {
+      "id": "level_6",
+      "category": "doomfield_ladder",
+      "display_name": "Doom field level 6 -- eldritch",
+      "status": "pending",
+      "theme": "doomfield",
+      "prompt_tail": "DOOM FIELD LEVEL 6 OF 6, eldritch: the geometry of the corner no longer resolves correctly -- the municipal facade meets its own return wall at an angle that cannot exist, the ramp handrail continues into a direction the building does not have, the kerb line disagrees with itself where it passes behind the bollards, and the far end of the street folds back on the near end. At the extreme edge of frame, subtle and mostly out of the way, one dark tentacle rests along the roofline, unhurried, easy to miss. Faint runes are inscribed on the forecourt stone and the bollards: real dense internal structure, layered concentric marks and inner glyph detail, not empty scratches; still no readable text or real alphabet. Deep indigo dominates, and it must come from the world and not from tinted street lighting -- an enormous unlit mass has occluded the sky so the overcast has gone to a deep indigo #181b3b, the wet stone and glazing return indigo #2e2547, and the runes emit their own faint eldritch violet #7a3b8f as the single discrete saturated source. Everything else exactly as the control. Quiet, cold, deeply wrong, restrained rather than lurid"
+    }
+  ]
+}

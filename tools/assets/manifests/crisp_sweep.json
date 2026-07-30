@@ -1,0 +1,197 @@
+{
+  "_meta": {
+    "note": "CRISPNESS SWEEP. Four gen1 keeper concepts re-rendered along a single controlled axis: subject, composition and every concept-specific fix are held CONSTANT inside prompt_tail, and the only thing that varies between the three treatments is the crispness modifier carried by the theme's color_bias. asset_type crisp_sweep writes to art_generated/crisp_sweep/v1/ and touches no other batch. Landscape 1536x1024, background=opaque. Dry-run: python tools/assets/generate_images.py --file tools/assets/manifests/crisp_sweep.json --variants 2 --dry-run",
+    "axis": "crispness, three arms: _soft (control, current look) / _crisp (sharp throughout, high micro-detail, no haze) / _graphic (reduced tonal range, poster-like shape reading, survives being printed small).",
+    "subject_selection": "Chosen from the six PART B keepers as the four whose named weaknesses were about softness, blur or mush rather than composition. EXCLUDED: orbital_datacenter_ring (its fix is compositional -- extend the ring further through the frame) and attention_loud_vs_slow (its fix is compositional framing plus people removal). Neither would isolate the crispness variable.",
+    "size_cap": "gpt-image-1.5 caps landscape at 1536x1024 (stated in tools/assets/generate_images.py). There is NO true upscale path through this pipeline: 1536 is the master and everything else is a LANCZOS downscale. 'Crispen' here is therefore prompt language, not resolution.",
+    "feedback_source": "docs/art/ENDGAME_CONCEPT_REVIEW_2026-07-29.md (PART A rules A1-A10, PROVISIONAL; PART B per-concept verdicts).",
+    "prompt_recipes": "docs/art/PROMPT_RECIPES_2026-07-29.md"
+  },
+  "schema_version": "1.0",
+  "asset_type": "crisp_sweep",
+  "background": "opaque",
+  "default_size": "1536x1024",
+  "output_sizes": [
+    1536,
+    1024,
+    768,
+    512
+  ],
+  "styles": {
+    "poster_base": "wide cinematic POSTER ART illustration for a video game, painterly warm-grime texture with heavy dark outlines and deep shadow, full-bleed edge-to-edge opaque composition that completely fills the frame with no transparency and no cut-outs and no border, lived-in physical props and real architecture rather than abstract shapes, every object in frame must be immediately identifiable as a specific real thing -- a car, a filing cabinet, a pallet, a transformer -- and never a generic boxy shape, because an unrecognisable object is visual noise rather than a prop, no text, no lettering, no signage, no numerals, no logo, no watermark, no UI overlay, high production value, landscape orientation",
+    "poster_lighting": "DISCIPLINED AND UNDERSTATED LIGHTING, roughly 75 percent more subtle than a typical dramatic game illustration: mood must NEVER come from the main light source, so the ordinary room lights, street lights and work lights in the scene are plain neutral white or plain warm tungsten exactly as they would really be, never tinted red or green or purple for atmosphere; coloured light is permitted ONLY where a real fixture in the world would genuinely emit that colour, for example an emergency beacon, a screen, an indicator lamp, a corona arc or the impossible thing itself; if one emergency or alarm source IS the mood, then every other light in frame must be a visibly different and clearly ordinary source; at most one ambient source plus one glowing source, most of the frame kept dark with separated pockets of light, restraint over drama",
+    "poster_palette": "colour language from the P(Doom)1 hero art with palette anchored per weirdness tier so colour stays consistent across the set even when composition and style do not: grounds always in void #0e0614, deep aubergine #170a1c, ink brown #14040c, deep indigo #181b3b and #2e2547; LOW weirdness scenes take exactly one warm CRT amber accent #e8a33d / #f6a800; MEDIUM weirdness scenes take exactly one cold electric-blue screen-glow accent #5c7ac3; HIGH weirdness scenes take exactly one eldritch violet accent in the fixed indigo-violet range #7a3b8f; never stack multiple saturated glows in one image; small non-saturated secondary notes such as a single tiny distant green pinprick are allowed purely to open up depth",
+    "poster_people": "NO PEOPLE BY DEFAULT -- the player is a bureaucrat and the poster art is about everyone else, so incidental figures are removed rather than restyled, because default generated people read as interesting generic strangers and imply the viewer should be responding to a protagonist rather than simply observing; where a figure is unavoidable it must be an ANDROGYNOUS SILHOUETTE with no readable gender cues, no distinguishing jewellery, no distinctive hairstyle and no face detail; where several figures are unavoidable they must be a genuinely varied ordinary group of office staff in plain institutional workwear rather than a row of similar-looking models; the player character and any hero figure is NEVER shown, and any figure standing in for the viewer must have its identity destroyed by blocking, backlighting and occlusion rather than merely turned away",
+    "poster_props": "props must be era-correct and consistent with the game's own set dressing: a banker's desk lamp is ALWAYS the green glass shade on a brass stem, office chairs, rubber date stamps, manila folders, ring binders, CRT and early-flatscreen monitors, chain-link fencing that hangs correctly on its posts with a real top rail, real tension wire and believable sag rather than fading into nothing; ABSOLUTELY NO BARBED WIRE and no razor wire anywhere, it reads wrong; uncrewed machines are directly manufactured and therefore have NO COCKPIT, NO CANOPY and no windows for a pilot, which is the single clearest tell of a purpose-built drone",
+    "poster_safety": "strictly no blood and no gore anywhere in the image, damage to machines shown as mechanical breakage with glowing green or blue coolant and hydraulic fluid only, no wounded people, no real-world brands or insignia or logos, no identifiable real people, nothing sexualised, all human figures fully and modestly clothed in ordinary institutional workwear"
+  },
+  "themes": {
+    "crispness_soft": {
+      "style_overrides": [
+        "poster_base",
+        "poster_lighting",
+        "poster_palette",
+        "poster_people",
+        "poster_props",
+        "poster_safety"
+      ],
+      "color_bias": "a bureaucratic world with weirdness leaking in at the edges; ordinary institutional competence rendered straight while something impossible happens deadpan in the same frame; the three flavours of strangeness available are pure eldritch intrusion from another dimension, technology run amok, and environmental collapse, and any one image should commit to only one of them; restrained and elegant, never garish, never lurid; CRISPNESS TREATMENT -- SOFT (control arm): atmospheric and painterly, visible haze and aerial perspective separating the planes, softened and broken edges, diffuse falloff around every light, real depth-of-field blur in the near foreground and in the far distance, materials suggested with loose brushwork rather than described, small and distant forms allowed to dissolve into tone; the picture reads as mood first and detail second"
+    },
+    "crispness_crisp": {
+      "style_overrides": [
+        "poster_base",
+        "poster_lighting",
+        "poster_palette",
+        "poster_people",
+        "poster_props",
+        "poster_safety"
+      ],
+      "color_bias": "a bureaucratic world with weirdness leaking in at the edges; ordinary institutional competence rendered straight while something impossible happens deadpan in the same frame; the three flavours of strangeness available are pure eldritch intrusion from another dimension, technology run amok, and environmental collapse, and any one image should commit to only one of them; restrained and elegant, never garish, never lurid; CRISPNESS TREATMENT -- CRISP: sharp focus from the nearest foreground to the far background with NO depth-of-field blur anywhere in the frame, NO atmospheric haze, NO aerial perspective, NO fog, NO bloom and NO glow spill; high micro-detail in every material -- aggregate and form-tie marks in concrete, individual wires in mesh, tool marks, weld beads, paint chips and grime lines in metal, dust and fine scratches on glass, legible paper fibre and print texture; hard clean silhouette edges that separate the subject from what is behind it; small distant forms remain fully legible as specific identifiable objects at their scale; specular highlights are tight and hard-edged rather than soft glows; the picture reads as detail first and mood second"
+    },
+    "crispness_graphic": {
+      "style_overrides": [
+        "poster_base",
+        "poster_lighting",
+        "poster_palette",
+        "poster_people",
+        "poster_props",
+        "poster_safety"
+      ],
+      "color_bias": "a bureaucratic world with weirdness leaking in at the edges; ordinary institutional competence rendered straight while something impossible happens deadpan in the same frame; the three flavours of strangeness available are pure eldritch intrusion from another dimension, technology run amok, and environmental collapse, and any one image should commit to only one of them; restrained and elegant, never garish, never lurid; CRISPNESS TREATMENT -- GRAPHIC: poster-like flat clarity, compressed tonal range built from a small number of clearly separated value steps rather than continuous gradients, strong simplified shape reading in which every element is recognisable from its silhouette alone, deliberate flat areas carrying little internal texture, hard boundaries between shapes, high figure-to-ground contrast, no haze, no bloom, no soft gradient transitions, no depth-of-field blur; the whole composition must survive being reproduced small and in low fidelity and still read correctly"
+    }
+  },
+  "assets": [
+    {
+      "id": "defeated_drone_coolant_soft",
+      "category": "crisp_sweep",
+      "display_name": "Defeated drone, coolant (crispness sweep) [soft]",
+      "status": "pending",
+      "theme": "crispness_soft",
+      "sweep_subject": "defeated_drone_coolant",
+      "sweep_treatment": "soft",
+      "gen1_notes": "gen1 V2 kept, 'extremely cool'. Fixes carried: A4 no cockpit, machine dominates frame, spark implies residual life, hole in the screen wall above. Weakness was prop micro-detail and legibility, not composition.",
+      "prompt_tail": "a close low-angle study of a large uncrewed security drone brought down onto wet asphalt at night, framed so the machine DOMINATES AND FILLS THE FRAME, cropped by the edges, reading as genuinely enormous and physically heavy, the viewer right up against it rather than observing it from a polite distance; ABSOLUTELY NO COCKPIT, NO CANOPY, NO WINDSCREEN, NO GLASS BUBBLE and no windows of any kind -- this machine was directly manufactured and never had anywhere for a pilot to sit, so its upper surface is unbroken sensor housings, vents, lifting eyes and flush access panels; one rotor arm sheared and bent back, panels sprung open, a slow pool of luminous green coolant spreading from its underside and a thin blue hydraulic fluid dripping from a severed line; small white electrical arcs still crackling intermittently across an exposed spine, implying there is still some life in it; high above and behind, a large ragged hole punched through a glass screen wall, implying something came out of the building; strictly a machine, absolutely no blood, no human casualty, nobody in frame; MEDIUM weirdness tier -- the green coolant pool is the single glow, reflecting up into the wreck, and every other light is ordinary untinted street lighting far off; everything else near-black aubergine and rain; sober aftermath, not spectacle"
+    },
+    {
+      "id": "defeated_drone_coolant_crisp",
+      "category": "crisp_sweep",
+      "display_name": "Defeated drone, coolant (crispness sweep) [crisp]",
+      "status": "pending",
+      "theme": "crispness_crisp",
+      "sweep_subject": "defeated_drone_coolant",
+      "sweep_treatment": "crisp",
+      "gen1_notes": "gen1 V2 kept, 'extremely cool'. Fixes carried: A4 no cockpit, machine dominates frame, spark implies residual life, hole in the screen wall above. Weakness was prop micro-detail and legibility, not composition.",
+      "prompt_tail": "a close low-angle study of a large uncrewed security drone brought down onto wet asphalt at night, framed so the machine DOMINATES AND FILLS THE FRAME, cropped by the edges, reading as genuinely enormous and physically heavy, the viewer right up against it rather than observing it from a polite distance; ABSOLUTELY NO COCKPIT, NO CANOPY, NO WINDSCREEN, NO GLASS BUBBLE and no windows of any kind -- this machine was directly manufactured and never had anywhere for a pilot to sit, so its upper surface is unbroken sensor housings, vents, lifting eyes and flush access panels; one rotor arm sheared and bent back, panels sprung open, a slow pool of luminous green coolant spreading from its underside and a thin blue hydraulic fluid dripping from a severed line; small white electrical arcs still crackling intermittently across an exposed spine, implying there is still some life in it; high above and behind, a large ragged hole punched through a glass screen wall, implying something came out of the building; strictly a machine, absolutely no blood, no human casualty, nobody in frame; MEDIUM weirdness tier -- the green coolant pool is the single glow, reflecting up into the wreck, and every other light is ordinary untinted street lighting far off; everything else near-black aubergine and rain; sober aftermath, not spectacle"
+    },
+    {
+      "id": "defeated_drone_coolant_graphic",
+      "category": "crisp_sweep",
+      "display_name": "Defeated drone, coolant (crispness sweep) [graphic]",
+      "status": "pending",
+      "theme": "crispness_graphic",
+      "sweep_subject": "defeated_drone_coolant",
+      "sweep_treatment": "graphic",
+      "gen1_notes": "gen1 V2 kept, 'extremely cool'. Fixes carried: A4 no cockpit, machine dominates frame, spark implies residual life, hole in the screen wall above. Weakness was prop micro-detail and legibility, not composition.",
+      "prompt_tail": "a close low-angle study of a large uncrewed security drone brought down onto wet asphalt at night, framed so the machine DOMINATES AND FILLS THE FRAME, cropped by the edges, reading as genuinely enormous and physically heavy, the viewer right up against it rather than observing it from a polite distance; ABSOLUTELY NO COCKPIT, NO CANOPY, NO WINDSCREEN, NO GLASS BUBBLE and no windows of any kind -- this machine was directly manufactured and never had anywhere for a pilot to sit, so its upper surface is unbroken sensor housings, vents, lifting eyes and flush access panels; one rotor arm sheared and bent back, panels sprung open, a slow pool of luminous green coolant spreading from its underside and a thin blue hydraulic fluid dripping from a severed line; small white electrical arcs still crackling intermittently across an exposed spine, implying there is still some life in it; high above and behind, a large ragged hole punched through a glass screen wall, implying something came out of the building; strictly a machine, absolutely no blood, no human casualty, nobody in frame; MEDIUM weirdness tier -- the green coolant pool is the single glow, reflecting up into the wreck, and every other light is ordinary untinted street lighting far off; everything else near-black aubergine and rain; sober aftermath, not spectacle"
+    },
+    {
+      "id": "chokehold_water_and_gigawatts_soft",
+      "category": "crisp_sweep",
+      "display_name": "Chokehold: water and gigawatts (crispness sweep) [soft]",
+      "status": "pending",
+      "theme": "crispness_soft",
+      "sweep_subject": "chokehold_water_and_gigawatts",
+      "sweep_treatment": "soft",
+      "gen1_notes": "gen1 HYBRID target: V1 composition and V1 shallow raking pipe angle, V2 colour set, electricity cut to a small mid-frame corona, padlock small and unlit. Acrylic pipe rendering drew the most enthusiasm of the night.",
+      "prompt_tail": "a wide industrial establishing shot at blue hour: three enormous concrete cooling towers venting slow steam behind a dense high-voltage substation of insulators, busbars and lattice pylons, the whole plant hard-edged and grimy; THE HERO OBJECT IS THE PIPE -- a single large painted steel water main entering from the lower foreground and running diagonally across and away into the plant at a shallow raking angle, NOT vertical and NOT square to the camera, and it must be rendered in a distinctly ACRYLIC-PAINT manner, visible brush-loaded facets and thick semi-translucent glazes and painted highlights along its curve, deliberately painterly rather than photorealistic, with old-school crackle-lit sparkle along the top edge; its valve wheel sits on the pipe, plainly a valve wheel, in the municipal grey of State property; a padlock is present on the isolator but it is SMALL, dull, unlit and easy to miss, tucked into shadow and taking up very little of the frame, definitely not a symbol shouted at the viewer; the electric arc is a SMALL cold electric-blue #5c7ac3 corona confined to a compact patch placed at MID-FRAME height, roughly the size of a fist within the composition, restrained enough that it reads as possibly just normal electricity behaving normally rather than as a threat, and it is the only saturated colour in the picture; MEDIUM weirdness tier; the colour set overall is cooler and richer, steely blue-greys and deep indigo through the towers and sky; keep the BOTTOM OF THE FRAME NOTABLY DARK -- almost no light down low, the lower quarter falling away into ink and shadow; no people at all; the image should read as somebody else's hand on the tap"
+    },
+    {
+      "id": "chokehold_water_and_gigawatts_crisp",
+      "category": "crisp_sweep",
+      "display_name": "Chokehold: water and gigawatts (crispness sweep) [crisp]",
+      "status": "pending",
+      "theme": "crispness_crisp",
+      "sweep_subject": "chokehold_water_and_gigawatts",
+      "sweep_treatment": "crisp",
+      "gen1_notes": "gen1 HYBRID target: V1 composition and V1 shallow raking pipe angle, V2 colour set, electricity cut to a small mid-frame corona, padlock small and unlit. Acrylic pipe rendering drew the most enthusiasm of the night.",
+      "prompt_tail": "a wide industrial establishing shot at blue hour: three enormous concrete cooling towers venting slow steam behind a dense high-voltage substation of insulators, busbars and lattice pylons, the whole plant hard-edged and grimy; THE HERO OBJECT IS THE PIPE -- a single large painted steel water main entering from the lower foreground and running diagonally across and away into the plant at a shallow raking angle, NOT vertical and NOT square to the camera, and it must be rendered in a distinctly ACRYLIC-PAINT manner, visible brush-loaded facets and thick semi-translucent glazes and painted highlights along its curve, deliberately painterly rather than photorealistic, with old-school crackle-lit sparkle along the top edge; its valve wheel sits on the pipe, plainly a valve wheel, in the municipal grey of State property; a padlock is present on the isolator but it is SMALL, dull, unlit and easy to miss, tucked into shadow and taking up very little of the frame, definitely not a symbol shouted at the viewer; the electric arc is a SMALL cold electric-blue #5c7ac3 corona confined to a compact patch placed at MID-FRAME height, roughly the size of a fist within the composition, restrained enough that it reads as possibly just normal electricity behaving normally rather than as a threat, and it is the only saturated colour in the picture; MEDIUM weirdness tier; the colour set overall is cooler and richer, steely blue-greys and deep indigo through the towers and sky; keep the BOTTOM OF THE FRAME NOTABLY DARK -- almost no light down low, the lower quarter falling away into ink and shadow; no people at all; the image should read as somebody else's hand on the tap"
+    },
+    {
+      "id": "chokehold_water_and_gigawatts_graphic",
+      "category": "crisp_sweep",
+      "display_name": "Chokehold: water and gigawatts (crispness sweep) [graphic]",
+      "status": "pending",
+      "theme": "crispness_graphic",
+      "sweep_subject": "chokehold_water_and_gigawatts",
+      "sweep_treatment": "graphic",
+      "gen1_notes": "gen1 HYBRID target: V1 composition and V1 shallow raking pipe angle, V2 colour set, electricity cut to a small mid-frame corona, padlock small and unlit. Acrylic pipe rendering drew the most enthusiasm of the night.",
+      "prompt_tail": "a wide industrial establishing shot at blue hour: three enormous concrete cooling towers venting slow steam behind a dense high-voltage substation of insulators, busbars and lattice pylons, the whole plant hard-edged and grimy; THE HERO OBJECT IS THE PIPE -- a single large painted steel water main entering from the lower foreground and running diagonally across and away into the plant at a shallow raking angle, NOT vertical and NOT square to the camera, and it must be rendered in a distinctly ACRYLIC-PAINT manner, visible brush-loaded facets and thick semi-translucent glazes and painted highlights along its curve, deliberately painterly rather than photorealistic, with old-school crackle-lit sparkle along the top edge; its valve wheel sits on the pipe, plainly a valve wheel, in the municipal grey of State property; a padlock is present on the isolator but it is SMALL, dull, unlit and easy to miss, tucked into shadow and taking up very little of the frame, definitely not a symbol shouted at the viewer; the electric arc is a SMALL cold electric-blue #5c7ac3 corona confined to a compact patch placed at MID-FRAME height, roughly the size of a fist within the composition, restrained enough that it reads as possibly just normal electricity behaving normally rather than as a threat, and it is the only saturated colour in the picture; MEDIUM weirdness tier; the colour set overall is cooler and richer, steely blue-greys and deep indigo through the towers and sky; keep the BOTTOM OF THE FRAME NOTABLY DARK -- almost no light down low, the lower quarter falling away into ink and shadow; no people at all; the image should read as somebody else's hand on the tap"
+    },
+    {
+      "id": "cheerful_propaganda_atrium_soft",
+      "category": "crisp_sweep",
+      "display_name": "Cheerful propaganda atrium (crispness sweep) [soft]",
+      "status": "pending",
+      "theme": "crispness_soft",
+      "sweep_subject": "cheerful_propaganda_atrium",
+      "sweep_treatment": "soft",
+      "gen1_notes": "gen1 winner. Hands kept and featured, head kept blank/no-face (the face A/B arm lives in gen2, not here). Weakness was the 'fucky' display panels -- a legibility-of-small-forms failure, which is exactly what this axis tests.",
+      "prompt_tail": "the interior of a civic building atrium repurposed as a polling hall: terrazzo floor, folding tables, cardboard voting booths, drop ceiling; the space has been decorated in relentlessly cheerful pastel bunting and smooth rounded corporate sculpture that does not belong in a municipal building; KEEP AND FEATURE the enormous mural-scale pastel figure LOOMING benevolently over the booths, and above all KEEP ITS LARGE OPEN OUTSTRETCHED HANDS, which are the best thing in the image -- big, calm, welcoming, slightly too large, held out over the voters exactly like a late-Soviet civic propaganda mural, keeping an eye on the humans voting; the figure's head has NO FACE WHATSOEVER, a completely smooth blank featureless pastel surface with no eyes, no mouth, no suggestion of features, no expression at all; the flat panel displays and hanging display boards around the hall must be geometrically CORRECT -- true rectangles, straight unbroken edges, honest single-point perspective consistent with the room, plain blank flat pastel surfaces, no warped or melting or half-formed or nonsensically overlapping panels and no scribbled pseudo-content on them; the small queue of voters is a genuinely varied ordinary group of office workers in plain institutional clothing, all rendered as dark androgynous silhouettes with no face detail and no distinguishing jewellery, and they are small and incidental; LOW weirdness tier, one warm amber #f6a800 ceiling panel as the single accent, all other ceiling lighting plain ordinary fluorescent white, corners falling into deep indigo; menace conveyed entirely through wrongness of tone and excess of niceness, no violence on screen, no text or slogans anywhere"
+    },
+    {
+      "id": "cheerful_propaganda_atrium_crisp",
+      "category": "crisp_sweep",
+      "display_name": "Cheerful propaganda atrium (crispness sweep) [crisp]",
+      "status": "pending",
+      "theme": "crispness_crisp",
+      "sweep_subject": "cheerful_propaganda_atrium",
+      "sweep_treatment": "crisp",
+      "gen1_notes": "gen1 winner. Hands kept and featured, head kept blank/no-face (the face A/B arm lives in gen2, not here). Weakness was the 'fucky' display panels -- a legibility-of-small-forms failure, which is exactly what this axis tests.",
+      "prompt_tail": "the interior of a civic building atrium repurposed as a polling hall: terrazzo floor, folding tables, cardboard voting booths, drop ceiling; the space has been decorated in relentlessly cheerful pastel bunting and smooth rounded corporate sculpture that does not belong in a municipal building; KEEP AND FEATURE the enormous mural-scale pastel figure LOOMING benevolently over the booths, and above all KEEP ITS LARGE OPEN OUTSTRETCHED HANDS, which are the best thing in the image -- big, calm, welcoming, slightly too large, held out over the voters exactly like a late-Soviet civic propaganda mural, keeping an eye on the humans voting; the figure's head has NO FACE WHATSOEVER, a completely smooth blank featureless pastel surface with no eyes, no mouth, no suggestion of features, no expression at all; the flat panel displays and hanging display boards around the hall must be geometrically CORRECT -- true rectangles, straight unbroken edges, honest single-point perspective consistent with the room, plain blank flat pastel surfaces, no warped or melting or half-formed or nonsensically overlapping panels and no scribbled pseudo-content on them; the small queue of voters is a genuinely varied ordinary group of office workers in plain institutional clothing, all rendered as dark androgynous silhouettes with no face detail and no distinguishing jewellery, and they are small and incidental; LOW weirdness tier, one warm amber #f6a800 ceiling panel as the single accent, all other ceiling lighting plain ordinary fluorescent white, corners falling into deep indigo; menace conveyed entirely through wrongness of tone and excess of niceness, no violence on screen, no text or slogans anywhere"
+    },
+    {
+      "id": "cheerful_propaganda_atrium_graphic",
+      "category": "crisp_sweep",
+      "display_name": "Cheerful propaganda atrium (crispness sweep) [graphic]",
+      "status": "pending",
+      "theme": "crispness_graphic",
+      "sweep_subject": "cheerful_propaganda_atrium",
+      "sweep_treatment": "graphic",
+      "gen1_notes": "gen1 winner. Hands kept and featured, head kept blank/no-face (the face A/B arm lives in gen2, not here). Weakness was the 'fucky' display panels -- a legibility-of-small-forms failure, which is exactly what this axis tests.",
+      "prompt_tail": "the interior of a civic building atrium repurposed as a polling hall: terrazzo floor, folding tables, cardboard voting booths, drop ceiling; the space has been decorated in relentlessly cheerful pastel bunting and smooth rounded corporate sculpture that does not belong in a municipal building; KEEP AND FEATURE the enormous mural-scale pastel figure LOOMING benevolently over the booths, and above all KEEP ITS LARGE OPEN OUTSTRETCHED HANDS, which are the best thing in the image -- big, calm, welcoming, slightly too large, held out over the voters exactly like a late-Soviet civic propaganda mural, keeping an eye on the humans voting; the figure's head has NO FACE WHATSOEVER, a completely smooth blank featureless pastel surface with no eyes, no mouth, no suggestion of features, no expression at all; the flat panel displays and hanging display boards around the hall must be geometrically CORRECT -- true rectangles, straight unbroken edges, honest single-point perspective consistent with the room, plain blank flat pastel surfaces, no warped or melting or half-formed or nonsensically overlapping panels and no scribbled pseudo-content on them; the small queue of voters is a genuinely varied ordinary group of office workers in plain institutional clothing, all rendered as dark androgynous silhouettes with no face detail and no distinguishing jewellery, and they are small and incidental; LOW weirdness tier, one warm amber #f6a800 ceiling panel as the single accent, all other ceiling lighting plain ordinary fluorescent white, corners falling into deep indigo; menace conveyed entirely through wrongness of tone and excess of niceness, no violence on screen, no text or slogans anywhere"
+    },
+    {
+      "id": "economics_rung_shuttered_street_soft",
+      "category": "crisp_sweep",
+      "display_name": "Economics rung: shuttered street (crispness sweep) [soft]",
+      "status": "pending",
+      "theme": "crispness_soft",
+      "sweep_subject": "economics_rung_shuttered_street",
+      "sweep_treatment": "soft",
+      "gen1_notes": "gen1 V2 strong thumbs up on composition. The one named defect -- the chain-link fence fading into nothing and not hanging correctly -- is a mush failure, not a composition failure, so this is the cleanest test subject in the sweep.",
+      "prompt_tail": "a wide dusk street of a small industrial town seen down its length in strong receding perspective, handled with dignity and restraint: a closed factory gate chained shut, an empty staff car park with faded painted bays, a shuttered brick frontage, a bus shelter with a blank timetable, telegraph poles marching away into the distance; the CHAIN-LINK FENCE must be rendered with real-world accuracy and must be complete -- correctly gauged diamond mesh hung from a genuine galvanised top rail, tied at intervals to line posts set at believable spacing, a bottom tension wire, natural sag between posts, visible knuckled selvage at the top edge, and it must run continuously from foreground to a proper terminating end post rather than dissolving, fading out or trailing away into nothing; ABSOLUTELY NO BARBED WIRE and no razor wire on the fence or anywhere in frame; no people at all in frame, no destitution imagery, no distress; LOW weirdness tier, the single warm amber #e8a33d accent is one lit upstairs window far down the street, small and stubborn, and every other light is a plain ordinary untinted sodium street lamp; the rest is deep indigo and ink shadow with fine drizzle; quiet, sober, elegiac rather than grim; the loss is architectural and economic, never shown on a human face"
+    },
+    {
+      "id": "economics_rung_shuttered_street_crisp",
+      "category": "crisp_sweep",
+      "display_name": "Economics rung: shuttered street (crispness sweep) [crisp]",
+      "status": "pending",
+      "theme": "crispness_crisp",
+      "sweep_subject": "economics_rung_shuttered_street",
+      "sweep_treatment": "crisp",
+      "gen1_notes": "gen1 V2 strong thumbs up on composition. The one named defect -- the chain-link fence fading into nothing and not hanging correctly -- is a mush failure, not a composition failure, so this is the cleanest test subject in the sweep.",
+      "prompt_tail": "a wide dusk street of a small industrial town seen down its length in strong receding perspective, handled with dignity and restraint: a closed factory gate chained shut, an empty staff car park with faded painted bays, a shuttered brick frontage, a bus shelter with a blank timetable, telegraph poles marching away into the distance; the CHAIN-LINK FENCE must be rendered with real-world accuracy and must be complete -- correctly gauged diamond mesh hung from a genuine galvanised top rail, tied at intervals to line posts set at believable spacing, a bottom tension wire, natural sag between posts, visible knuckled selvage at the top edge, and it must run continuously from foreground to a proper terminating end post rather than dissolving, fading out or trailing away into nothing; ABSOLUTELY NO BARBED WIRE and no razor wire on the fence or anywhere in frame; no people at all in frame, no destitution imagery, no distress; LOW weirdness tier, the single warm amber #e8a33d accent is one lit upstairs window far down the street, small and stubborn, and every other light is a plain ordinary untinted sodium street lamp; the rest is deep indigo and ink shadow with fine drizzle; quiet, sober, elegiac rather than grim; the loss is architectural and economic, never shown on a human face"
+    },
+    {
+      "id": "economics_rung_shuttered_street_graphic",
+      "category": "crisp_sweep",
+      "display_name": "Economics rung: shuttered street (crispness sweep) [graphic]",
+      "status": "pending",
+      "theme": "crispness_graphic",
+      "sweep_subject": "economics_rung_shuttered_street",
+      "sweep_treatment": "graphic",
+      "gen1_notes": "gen1 V2 strong thumbs up on composition. The one named defect -- the chain-link fence fading into nothing and not hanging correctly -- is a mush failure, not a composition failure, so this is the cleanest test subject in the sweep.",
+      "prompt_tail": "a wide dusk street of a small industrial town seen down its length in strong receding perspective, handled with dignity and restraint: a closed factory gate chained shut, an empty staff car park with faded painted bays, a shuttered brick frontage, a bus shelter with a blank timetable, telegraph poles marching away into the distance; the CHAIN-LINK FENCE must be rendered with real-world accuracy and must be complete -- correctly gauged diamond mesh hung from a genuine galvanised top rail, tied at intervals to line posts set at believable spacing, a bottom tension wire, natural sag between posts, visible knuckled selvage at the top edge, and it must run continuously from foreground to a proper terminating end post rather than dissolving, fading out or trailing away into nothing; ABSOLUTELY NO BARBED WIRE and no razor wire on the fence or anywhere in frame; no people at all in frame, no destitution imagery, no distress; LOW weirdness tier, the single warm amber #e8a33d accent is one lit upstairs window far down the street, small and stubborn, and every other light is a plain ordinary untinted sodium street lamp; the rest is deep indigo and ink shadow with fine drizzle; quiet, sober, elegiac rather than grim; the loss is architectural and economic, never shown on a human face"
+    }
+  ]
+}
