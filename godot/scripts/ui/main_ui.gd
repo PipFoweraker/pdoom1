@@ -870,8 +870,8 @@ func _show_conference_backlog(trip: Dictionary) -> void:
 
 
 func _on_reserve_ap_button_pressed():
-	"""Reserve 1 AP for event responses"""
-	log_message("[color=cyan]Reserving 1 AP for events...[/color]")
+	"""Reserve 1 Attention for event responses"""
+	log_message("[color=cyan]Reserving 1 Attention for events...[/color]")
 	game_manager.reserve_ap(1)
 
 func _on_undo_last_button_pressed():
@@ -896,7 +896,7 @@ func _on_clear_queue_button_pressed():
 	# Update local display
 	update_queued_actions_display()
 
-	log_message("[color=yellow]Action queue cleared - AP refunded[/color]")
+	log_message("[color=yellow]Action queue cleared - Attention refunded[/color]")
 
 func _remove_queued_action(action_id: String, action_name: String):
 	"""Remove a specific action from the queue. The queue mutation + Attention refund live in
@@ -906,7 +906,7 @@ func _remove_queued_action(action_id: String, action_name: String):
 	var result := plan_controller.remove_action(action_id)
 	if result.get("removed", false):
 		var ap_cost: int = result.get("attention_cost", 0)
-		log_message("[color=yellow]Removed: %s (+%d AP)[/color]" % [action_name, ap_cost])
+		log_message("[color=yellow]Removed: %s (+%d Attention)[/color]" % [action_name, ap_cost])
 		update_queued_actions_display()
 	else:
 		print("[MainUI] ERROR: Could not find action to remove: %s" % action_id)
