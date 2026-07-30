@@ -1,0 +1,151 @@
+<title>P(Doom)1 -- playtest card</title>
+<style>
+  /* Print-first: white ground, black ink, one page. Screen just mirrors it. */
+  @page { size: A4 portrait; margin: 12mm; }
+  * { box-sizing: border-box; }
+  body {
+    background: #fff; color: #111; margin: 0 auto; max-width: 190mm;
+    padding: 10mm 8mm 16mm;
+    font: 10.5pt/1.35 "Segoe UI", Calibri, Arial, sans-serif;
+  }
+  h1 { font-size: 15pt; margin: 0 0 1mm; letter-spacing: .2px; }
+  .sub { color: #555; font-size: 8.5pt; margin: 0 0 4mm; }
+  h2 {
+    font-size: 10pt; text-transform: uppercase; letter-spacing: .8px;
+    margin: 5mm 0 1.5mm; padding-bottom: 0.8mm; border-bottom: 1.2pt solid #111;
+  }
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 4mm 7mm; }
+  ol, ul { margin: 1mm 0; padding-left: 5.5mm; }
+  li { margin: 0.9mm 0; }
+  table { border-collapse: collapse; width: 100%; font-size: 9.5pt; margin: 1mm 0; }
+  th, td { text-align: left; padding: 1mm 2mm; border-bottom: 0.5pt solid #bbb; vertical-align: top; }
+  th { font-size: 8.5pt; text-transform: uppercase; letter-spacing: .5px; color: #444; }
+  kbd {
+    font: 600 9pt/1 Consolas, monospace; border: 1pt solid #333; border-radius: 2pt;
+    padding: 0.6mm 1.4mm; background: #f2f2f2;
+  }
+  code { font: 9pt/1.3 Consolas, monospace; background: #f2f2f2; padding: 0.3mm 1mm; }
+  .say { border: 1.2pt solid #111; padding: 2mm 3mm; margin: 2mm 0; }
+  .say b { font-size: 11pt; }
+  .warn { border-left: 3pt solid #111; padding-left: 3mm; }
+  .known td:first-child { font-weight: 600; white-space: nowrap; }
+  .foot { margin-top: 5mm; padding-top: 1.5mm; border-top: 0.5pt solid #bbb;
+          color: #555; font-size: 8pt; }
+  @media print { .noprint { display: none; } body { padding-top: 0; } }
+</style>
+
+<h1>P(Doom)1 -- playtest card</h1>
+<p class="sub">Keep beside the keyboard. Revised 2026-07-30. Build under test: write it here ______________________</p>
+
+<h2>Say these out loud -- the recording is the notes</h2>
+<div class="say">
+  <b>1. At the start:</b> the version and build hash. ("Dev build 0.13.2, 9bbadf90.")<br>
+  <b>2. Before every finding:</b> the word <b>BUG</b> or the word <b>NOTE</b>.<br>
+  <b>3. When comparing two of anything:</b> say <b>V1</b> or <b>V2</b>. Never just point.
+</div>
+<p style="font-size:9.5pt;margin:1mm 0 0">
+  Marker words are what let the transcript be turned into a bug list with a screen-frame
+  attached to each item. Without them every finding has to be hunted for by hand.
+  Pointing at the screen is invisible to the recording -- this cost three unresolvable
+  verdicts in the 2026-07-29 art session.
+</p>
+
+<div class="cols">
+<div>
+  <h2>OBS, before you hit record</h2>
+  <table>
+    <tr><th>Setting</th><th>Value</th></tr>
+    <tr><td>Video &rarr; Output (Scaled)</td><td>1920x1080</td></tr>
+    <tr><td>Video &rarr; FPS</td><td>30</td></tr>
+    <tr><td>Audio &rarr; Sample Rate</td><td>48 kHz</td></tr>
+    <tr><td>Audio &rarr; Channels</td><td>Mono</td></tr>
+    <tr><td>Audio &rarr; Mic device</td><td><b>pick the RODE by name</b></td></tr>
+  </table>
+  <p class="warn" style="font-size:9pt">
+    Never leave the mic on "Default" -- it silently follows Windows. A session was lost
+    on 2026-07-30 because OBS captured desktop audio only and no voice reached the file.
+    <b>Check the mic meter moves before you start talking.</b>
+  </p>
+</div>
+
+<div>
+  <h2>Keys</h2>
+  <table>
+    <tr><th>Key</th><th>Does</th></tr>
+    <tr><td><kbd>N</kbd></td><td>Bug reporter <b>(settings menu wrongly says F8)</b></td></tr>
+    <tr><td><kbd>Space</kbd></td><td>End turn</td></tr>
+    <tr><td><kbd>Enter</kbd></td><td>Plan / confirm</td></tr>
+    <tr><td><kbd>Esc</kbd></td><td>Pause -- <b>kills all hotkeys below</b></td></tr>
+    <tr><td><kbd>F3</kbd></td><td>Debug overlay <i>(dev build only)</i></td></tr>
+    <tr><td><kbd>F6</kbd></td><td>Flight recorder <i>(dev build only)</i></td></tr>
+    <tr><td><kbd>F7</kbd></td><td>UI capture <i>(dev build only)</i></td></tr>
+  </table>
+  <p class="warn" style="font-size:9pt">
+    In a <b>release</b> build F3/F6/F7 do not exist. And pressing <kbd>Esc</kbd> disables
+    every global hotkey until you unpause. Screenshots land in
+    <code>%APPDATA%\Godot\app_userdata\P(Doom)\screenshots</code>.
+  </p>
+</div>
+</div>
+
+<h2>Already known -- do not spend breath re-reporting</h2>
+<table class="known">
+  <tr><th>What you will see</th><th>Tracked</th></tr>
+  <tr><td>Feed's first line reads "Game not started..."</td><td>#1030</td></tr>
+  <tr><td>Settings menu says bug key is F8; it is N</td><td>#1011</td></tr>
+  <tr><td>Action queue overflows sideways off screen</td><td>from 2026-07-30 playtest</td></tr>
+  <tr><td>A cat portrait renders as magenta/black checks</td><td>missing texture, 2026-07-30</td></tr>
+  <tr><td>"Turn N" counts days, not turns</td><td>2026-07-30 playtest</td></tr>
+  <tr><td>Anything saying "AP" / "Action Points"</td><td>#1037</td></tr>
+  <tr><td>Leaderboard: blank Duration, name display, off-by-one columns</td><td>2026-07-30 playtest</td></tr>
+</table>
+
+<div class="cols">
+<div>
+  <h2>The run that must work</h2>
+  <ol>
+    <li>Launch, customise a lab, start</li>
+    <li>Hire someone through the pipeline</li>
+    <li>Queue and resolve actions across several turns</li>
+    <li>Fundraise at least once</li>
+    <li>Drive doom to 100% and lose</li>
+    <li><b>Defeat screen &rarr; submit &rarr; leaderboard</b></li>
+    <li>Switch local/global, then back</li>
+  </ol>
+  <p style="font-size:9pt;margin-top:1mm">
+    Step 6 is not optional. The v0.11.0 release crashed on exactly that transition and
+    it only reproduces in a real build.
+  </p>
+</div>
+
+<div>
+  <h2>When something breaks</h2>
+  <ul>
+    <li>Say <b>BUG</b>, then describe it while it is on screen</li>
+    <li>Do not fix your camera or tidy the UI first -- capture it wrong</li>
+    <li>Press <kbd>N</kbd> and file it if the game still responds</li>
+    <li>Note whether it is <b>reproducible</b> or a one-off</li>
+  </ul>
+  <p class="warn" style="font-size:9pt">
+    <b>Crash, soft-lock, or the game not starting</b> &rarr; league-critical. Fix, then
+    <b>re-cut</b> the whole build. Never patch on top: two builds reporting the same
+    ladder epoch while playing differently is a lie nothing can detect.<br>
+    <b>Everything else</b> &rarr; next hotpatch window, not this build.
+  </p>
+</div>
+</div>
+
+<h2>Afterwards</h2>
+<p style="font-size:9.5pt;margin:1mm 0">
+  Drop the recording in <code>art_generated\audiodump\</code>, then:
+  <code>python tools\playtest_report.py art_generated\audiodump\&lt;file&gt;.mp4</code><br>
+  That strips the audio, transcribes it, finds every <b>BUG</b> and <b>NOTE</b> marker,
+  grabs the screen frame at each one, and writes a review page pairing every spoken
+  finding with what was on screen when you said it.
+</p>
+
+<p class="foot">
+  Sources: LEAGUE_WEEK_PLAYBOOK.md (gates), docs/guides/RECORDING_SETUP_OBS.md (room and
+  mic), keybind_manager.gd (keys -- the authority; printed labels drift from it).
+  If this card disagrees with the code, the code is right and this card is stale.
+</p>

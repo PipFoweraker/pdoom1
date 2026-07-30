@@ -1,0 +1,118 @@
+{
+  "_meta": {
+    "note": "NEW SUBJECTS, not re-renders. Six subjects chosen to be useful rather than decorative, varied across the crispness axis and the doom-level / treatment / people-policy axes already in play. asset_type new_subjects writes to art_generated/new_subjects/v1/ and touches no other batch. Landscape 1536x1024, background=opaque. Dry-run: python tools/assets/generate_images.py --file tools/assets/manifests/new_subjects.json --variants 2 --dry-run",
+    "doom_colour_study": "office_doom_low / office_doom_mid / office_doom_high share a verbatim-identical camera and set-dressing preamble and a fixed crisp treatment, so doom level is the ONLY variable. This exists to feed Pip's open design question about how doom should express in colour: low is warm amber over warm neutrals, mid is cold blue screen-glow over greys, high is deep indigo dominant with one warm in-world source holding out. No tinted ambient light at any tier (rule A1).",
+    "rules": "A1-A10 from docs/art/ENDGAME_CONCEPT_REVIEW_2026-07-29.md, PROVISIONAL. No people anywhere in this batch (A2 at its strictest), no cockpits (A4), no barbed wire (A8), legible props only (A5), era-correct props (A6), mood never from the main light source (A1).",
+    "size_cap": "gpt-image-1.5 caps landscape at 1536x1024. No true upscale path exists in this pipeline.",
+    "prompt_recipes": "docs/art/PROMPT_RECIPES_2026-07-29.md"
+  },
+  "schema_version": "1.0",
+  "asset_type": "new_subjects",
+  "background": "opaque",
+  "default_size": "1536x1024",
+  "output_sizes": [
+    1536,
+    1024,
+    768,
+    512
+  ],
+  "styles": {
+    "poster_base": "wide cinematic POSTER ART illustration for a video game, painterly warm-grime texture with heavy dark outlines and deep shadow, full-bleed edge-to-edge opaque composition that completely fills the frame with no transparency and no cut-outs and no border, lived-in physical props and real architecture rather than abstract shapes, every object in frame must be immediately identifiable as a specific real thing -- a car, a filing cabinet, a pallet, a transformer -- and never a generic boxy shape, because an unrecognisable object is visual noise rather than a prop, no text, no lettering, no signage, no numerals, no logo, no watermark, no UI overlay, high production value, landscape orientation",
+    "poster_lighting": "DISCIPLINED AND UNDERSTATED LIGHTING, roughly 75 percent more subtle than a typical dramatic game illustration: mood must NEVER come from the main light source, so the ordinary room lights, street lights and work lights in the scene are plain neutral white or plain warm tungsten exactly as they would really be, never tinted red or green or purple for atmosphere; coloured light is permitted ONLY where a real fixture in the world would genuinely emit that colour, for example an emergency beacon, a screen, an indicator lamp, a corona arc or the impossible thing itself; if one emergency or alarm source IS the mood, then every other light in frame must be a visibly different and clearly ordinary source; at most one ambient source plus one glowing source, most of the frame kept dark with separated pockets of light, restraint over drama",
+    "poster_palette": "colour language from the P(Doom)1 hero art with palette anchored per weirdness tier so colour stays consistent across the set even when composition and style do not: grounds always in void #0e0614, deep aubergine #170a1c, ink brown #14040c, deep indigo #181b3b and #2e2547; LOW weirdness scenes take exactly one warm CRT amber accent #e8a33d / #f6a800; MEDIUM weirdness scenes take exactly one cold electric-blue screen-glow accent #5c7ac3; HIGH weirdness scenes take exactly one eldritch violet accent in the fixed indigo-violet range #7a3b8f; never stack multiple saturated glows in one image; small non-saturated secondary notes such as a single tiny distant green pinprick are allowed purely to open up depth",
+    "poster_people": "NO PEOPLE BY DEFAULT -- the player is a bureaucrat and the poster art is about everyone else, so incidental figures are removed rather than restyled, because default generated people read as interesting generic strangers and imply the viewer should be responding to a protagonist rather than simply observing; where a figure is unavoidable it must be an ANDROGYNOUS SILHOUETTE with no readable gender cues, no distinguishing jewellery, no distinctive hairstyle and no face detail; where several figures are unavoidable they must be a genuinely varied ordinary group of office staff in plain institutional workwear rather than a row of similar-looking models; the player character and any hero figure is NEVER shown, and any figure standing in for the viewer must have its identity destroyed by blocking, backlighting and occlusion rather than merely turned away",
+    "poster_props": "props must be era-correct and consistent with the game's own set dressing: a banker's desk lamp is ALWAYS the green glass shade on a brass stem, office chairs, rubber date stamps, manila folders, ring binders, CRT and early-flatscreen monitors, chain-link fencing that hangs correctly on its posts with a real top rail, real tension wire and believable sag rather than fading into nothing; ABSOLUTELY NO BARBED WIRE and no razor wire anywhere, it reads wrong; uncrewed machines are directly manufactured and therefore have NO COCKPIT, NO CANOPY and no windows for a pilot, which is the single clearest tell of a purpose-built drone",
+    "poster_safety": "strictly no blood and no gore anywhere in the image, damage to machines shown as mechanical breakage with glowing green or blue coolant and hydraulic fluid only, no wounded people, no real-world brands or insignia or logos, no identifiable real people, nothing sexualised, all human figures fully and modestly clothed in ordinary institutional workwear"
+  },
+  "themes": {
+    "crispness_soft": {
+      "style_overrides": [
+        "poster_base",
+        "poster_lighting",
+        "poster_palette",
+        "poster_people",
+        "poster_props",
+        "poster_safety"
+      ],
+      "color_bias": "a bureaucratic world with weirdness leaking in at the edges; ordinary institutional competence rendered straight while something impossible happens deadpan in the same frame; the three flavours of strangeness available are pure eldritch intrusion from another dimension, technology run amok, and environmental collapse, and any one image should commit to only one of them; restrained and elegant, never garish, never lurid; CRISPNESS TREATMENT -- SOFT (control arm): atmospheric and painterly, visible haze and aerial perspective separating the planes, softened and broken edges, diffuse falloff around every light, real depth-of-field blur in the near foreground and in the far distance, materials suggested with loose brushwork rather than described, small and distant forms allowed to dissolve into tone; the picture reads as mood first and detail second"
+    },
+    "crispness_crisp": {
+      "style_overrides": [
+        "poster_base",
+        "poster_lighting",
+        "poster_palette",
+        "poster_people",
+        "poster_props",
+        "poster_safety"
+      ],
+      "color_bias": "a bureaucratic world with weirdness leaking in at the edges; ordinary institutional competence rendered straight while something impossible happens deadpan in the same frame; the three flavours of strangeness available are pure eldritch intrusion from another dimension, technology run amok, and environmental collapse, and any one image should commit to only one of them; restrained and elegant, never garish, never lurid; CRISPNESS TREATMENT -- CRISP: sharp focus from the nearest foreground to the far background with NO depth-of-field blur anywhere in the frame, NO atmospheric haze, NO aerial perspective, NO fog, NO bloom and NO glow spill; high micro-detail in every material -- aggregate and form-tie marks in concrete, individual wires in mesh, tool marks, weld beads, paint chips and grime lines in metal, dust and fine scratches on glass, legible paper fibre and print texture; hard clean silhouette edges that separate the subject from what is behind it; small distant forms remain fully legible as specific identifiable objects at their scale; specular highlights are tight and hard-edged rather than soft glows; the picture reads as detail first and mood second"
+    },
+    "crispness_graphic": {
+      "style_overrides": [
+        "poster_base",
+        "poster_lighting",
+        "poster_palette",
+        "poster_people",
+        "poster_props",
+        "poster_safety"
+      ],
+      "color_bias": "a bureaucratic world with weirdness leaking in at the edges; ordinary institutional competence rendered straight while something impossible happens deadpan in the same frame; the three flavours of strangeness available are pure eldritch intrusion from another dimension, technology run amok, and environmental collapse, and any one image should commit to only one of them; restrained and elegant, never garish, never lurid; CRISPNESS TREATMENT -- GRAPHIC: poster-like flat clarity, compressed tonal range built from a small number of clearly separated value steps rather than continuous gradients, strong simplified shape reading in which every element is recognisable from its silhouette alone, deliberate flat areas carrying little internal texture, hard boundaries between shapes, high figure-to-ground contrast, no haze, no bloom, no soft gradient transitions, no depth-of-field blur; the whole composition must survive being reproduced small and in low fidelity and still read correctly"
+    }
+  },
+  "assets": [
+    {
+      "id": "office_doom_low",
+      "category": "new_subjects",
+      "display_name": "Player lab office -- doom LOW",
+      "status": "pending",
+      "theme": "crispness_crisp",
+      "axes": "doom=low, treatment=crisp, people=none",
+      "prompt_tail": "the small office of a modest independent AI-safety research lab, shot as a wide interior three-quarter view from just inside the doorway at standing eye height, IDENTICAL FRAMING AND IDENTICAL CAMERA POSITION every time: the same two pushed-together desks on the left, the same window in the back wall, the same whiteboard on the right-hand wall, the same bookshelf in the far right corner, the same kettle and mugs on the same low cabinet by the door, the same worn carpet tile floor, the same suspended ceiling; NO PEOPLE ANYWHERE IN THE ROOM and no figures visible through the window; the room must be read entirely through its objects; DOOM LEVEL LOW -- the room is ordinary, warm and lived-in and entirely fine: tidy-ish desks with two flat monitors asleep, a half-finished mug of tea, a potted plant that is clearly being watered, a bicycle helmet on a hook, a couple of framed prints hung straight, the whiteboard carrying a few clean simple diagram shapes with plenty of empty board left, the bookshelf comfortably half full; late afternoon daylight coming in through the window doing all the work, plus one banker's desk lamp with the green glass shade on a brass stem switched on at the near desk; LOW weirdness tier, the single warm amber #e8a33d accent is that lamp, every other light is plain untinted daylight or plain ordinary ceiling fluorescent, no coloured mood light anywhere; grounds still sit in the deep aubergine and ink family in the corners but the overall register is warm, calm and unremarkable; nothing in the room is wrong yet"
+    },
+    {
+      "id": "office_doom_mid",
+      "category": "new_subjects",
+      "display_name": "Player lab office -- doom MID",
+      "status": "pending",
+      "theme": "crispness_crisp",
+      "axes": "doom=mid, treatment=crisp, people=none",
+      "prompt_tail": "the small office of a modest independent AI-safety research lab, shot as a wide interior three-quarter view from just inside the doorway at standing eye height, IDENTICAL FRAMING AND IDENTICAL CAMERA POSITION every time: the same two pushed-together desks on the left, the same window in the back wall, the same whiteboard on the right-hand wall, the same bookshelf in the far right corner, the same kettle and mugs on the same low cabinet by the door, the same worn carpet tile floor, the same suspended ceiling; NO PEOPLE ANYWHERE IN THE ROOM and no figures visible through the window; the room must be read entirely through its objects; DOOM LEVEL MEDIUM -- the SAME room from the SAME camera, but the work has grown and started to press on the space: two more monitors have been added on stacked boxes, cables now run across the floor under gaffer tape, a second-hand server unit hums on the cabinet where the kettle used to have room, printouts and ring binders and manila folders are stacked on every horizontal surface and beginning to colonise the floor, the whiteboard is now dense with overlapping diagram shapes and arrows with no clean board left, the plant is browning, one framed print hangs slightly crooked; the daylight has gone blue and the window shows late dusk, the room is colder and greyer, the banker's lamp still on but no longer sufficient; MEDIUM weirdness tier, the single cold electric-blue #5c7ac3 accent is the screen glow off the monitors, every other light plain and untinted; something in the room is faintly wrong in a way that is hard to name -- the shadow under the far desk falls the wrong way relative to every other shadow in the room, and nothing else announces itself"
+    },
+    {
+      "id": "office_doom_high",
+      "category": "new_subjects",
+      "display_name": "Player lab office -- doom HIGH",
+      "status": "pending",
+      "theme": "crispness_crisp",
+      "axes": "doom=high, treatment=crisp, people=none",
+      "prompt_tail": "the small office of a modest independent AI-safety research lab, shot as a wide interior three-quarter view from just inside the doorway at standing eye height, IDENTICAL FRAMING AND IDENTICAL CAMERA POSITION every time: the same two pushed-together desks on the left, the same window in the back wall, the same whiteboard on the right-hand wall, the same bookshelf in the far right corner, the same kettle and mugs on the same low cabinet by the door, the same worn carpet tile floor, the same suspended ceiling; NO PEOPLE ANYWHERE IN THE ROOM and no figures visible through the window; the room must be read entirely through its objects; DOOM LEVEL HIGH -- the SAME room from the SAME camera, barely coping: equipment has taken the room over, racks and loose hardware where the bookshelf was, paper in drifts across the floor, chairs pushed aside and unused, cable bundles lashed to the ceiling grid, ceiling tiles removed, the whiteboard completely covered edge to edge and overwritten past legibility, the plant dead, the framed prints taken down and leaning against the skirting; DEEP INDIGO #181b3b AND #2e2547 DOMINATE THE WHOLE FRAME and the window shows only night; the ceiling fluorescents are dead and unlit, so the one thing holding out is the same banker's desk lamp with the green glass shade still burning on the near desk, a small stubborn pool of ordinary warm tungsten light in an otherwise indigo room; HIGH weirdness tier, so beyond that lamp the only other permitted saturated note is a single thin eldritch violet #7a3b8f seam of light along one wall junction where the wall no longer quite meets the ceiling; no coloured ambient light, no tinted room lighting, no fog, no glow spill -- the dread is structural and material, not atmospheric"
+    },
+    {
+      "id": "server_altar",
+      "category": "new_subjects",
+      "display_name": "Server rack as altar",
+      "status": "pending",
+      "theme": "crispness_graphic",
+      "axes": "doom=high, treatment=graphic, people=none",
+      "prompt_tail": "a single full-height server rack presented dead-on and perfectly symmetrical at the end of a plain windowless service room, composed exactly like a church altar: the rack stands on a low plinth of stacked floor tiles, flanked by two ordinary steel equipment cabinets standing in for altar rails, with a worn runner of anti-static matting leading up to it like an aisle and two plain office chairs turned to face it in the near foreground like pews; the rack itself is an unmistakable real server rack -- perforated mesh door on its hinges, blanking panels, rails, patch panels, bundled cabling combed and dressed with obsessive neatness down each side, small indicator LEDs in rows; on the plinth in front of it, arranged with deliberate reverence, are entirely mundane offerings that nobody would normally arrange this way: a coffee mug set down square and centred, a folded cloth, a torch, a bundle of patch leads coiled like rope, a rubber date stamp; ABSOLUTELY NO PEOPLE, no robes, no candles, no religious iconography, no crosses, no symbols of any real faith -- the reverence must come ONLY from symmetry, from the plinth, from the aisle and from the care taken over the offerings, which is what makes it wrong; HIGH weirdness tier, the single saturated accent is a soft eldritch violet #7a3b8f wash from behind the rack that reads as a genuine fixture mounted behind it rather than as ambient mood, every other light in the room is plain ordinary untinted work lighting and the small honest green and amber indicator LEDs on the equipment itself; grounds in void and deep indigo; no text, no labels, no lettering on any panel"
+    },
+    {
+      "id": "lab_exterior_dusk",
+      "category": "new_subjects",
+      "display_name": "Lab exterior at dusk",
+      "status": "pending",
+      "theme": "crispness_soft",
+      "axes": "doom=mid, treatment=soft, people=none",
+      "prompt_tail": "the exterior of the lab building seen from across the road at dusk, a completely unremarkable two-storey 1970s brick and concrete office block of the sort that could be an accountancy practice or a dental supplier: flat roof, aluminium-framed windows in a regular grid, a concrete ramp to a plain glass door, three parked ordinary saloon cars in a small bay with faded painted lines, a wheelie bin, a bike rack, a low brick wall, a bare street tree, a sodium street lamp; the building is deliberately dull and the picture must not glamorise it; exactly ONE window is lit, second floor, and it is lit by an ordinary warm tungsten desk lamp inside, small and unemphatic; NO PEOPLE anywhere, no silhouette in the lit window, no figures in the street; everything at ground level is plain, correct and boring, all street and building lighting plain untinted sodium and tungsten doing its normal job; the ONLY thing wrong in the entire image is the SKY, and it is wrong very slightly and very quietly -- the dusk gradient bands in a way real air does not, the high cloud is organised into a faint regular structure that is a little too even, and it sits in the deep indigo #181b3b to #2e2547 range with one barely-saturated eldritch violet #7a3b8f note high up; MEDIUM weirdness tier; a viewer should look at this for several seconds before noticing anything is off at all"
+    },
+    {
+      "id": "permit_wall",
+      "category": "new_subjects",
+      "display_name": "Permit wall (texture as subject)",
+      "status": "pending",
+      "theme": "crispness_crisp",
+      "axes": "doom=low, treatment=crisp, people=none",
+      "prompt_tail": "an almost perfectly flat-on frontal view of a wall of bureaucratic paperwork, shot square to the wall with minimal perspective so the picture plane and the wall plane are nearly parallel and the TEXTURE ITSELF IS THE SUBJECT: layer on layer of pinned and taped and stapled forms, permits, carbon-copy flimsies in pink and yellow and white, manila folders hung on a rail, ring binder spines, index cards, treasury tags, bulldog clips, curling corners, drawing pins, torn corners where sheets have been pulled off, the pale rectangles of paper that used to be there, and rubber date stamp impressions everywhere across the whole surface, some crisp and recent and some faded and old, overlapping each other; the stamps and forms carry NO READABLE TEXT AND NO NUMERALS AND NO LETTERING ANYWHERE -- all printed content is reduced to abstract ruled lines, boxes, grids and blank fields, and every stamp impression is a plain ring or geometric shape with no words in it; the paper must read as real paper with fibre, tooth, foxing, coffee rings, creases and honest thickness; a few genuine real props break the plane at the edges to give it depth -- one rubber date stamp resting on a small shelf, a spike file, a bulldog clip; NO PEOPLE AND NO HANDS in frame at all; LOW weirdness tier, lit by one plain ordinary untinted overhead strip light raking across the wall so the layering and the curl of the paper throws real physical shadow, one small warm amber #e8a33d accent from a desk lamp just out of frame at the lower edge, the rest falling into ink brown and deep aubergine at the corners; the horror is the sheer accumulated quantity of process, nothing else"
+    }
+  ]
+}
