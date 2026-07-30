@@ -100,8 +100,7 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_TurnCounter")
 
 [node name="TurnCountLabel" type="Label" parent="TabManager/MainUI/TopBar"]
 layout_mode = 2
-text = "Turn 1"
-tooltip_text = "Turn counter — number of workdays elapsed this run."
+tooltip_text = "Turn counter -- number of workdays elapsed this run."
 theme_override_font_sizes/font_size = 14
 mouse_filter = 0
 
@@ -173,7 +172,7 @@ modulate = Color(0.4, 0.4, 0.5, 1)
 [node name="APLabel" type="RichTextLabel" parent="TabManager/MainUI/TopBar"]
 layout_mode = 2
 bbcode_enabled = true
-text = "AP: 0"
+text = "--"
 tooltip_text = "Action Points. Limits actions per turn. Base 3 + 0.5 per staff."
 fit_content = false
 custom_minimum_size = Vector2(300, 0)
@@ -352,7 +351,7 @@ theme_override_constants/separation = 3
 
 [node name="ReserveAPButton" type="Button" parent="TabManager/MainUI/BottomBar/ControlButtons"]
 layout_mode = 2
-text = "Reserve AP"
+text = "Reserve Attention"
 disabled = true
 theme_override_font_sizes/font_size = 12
 

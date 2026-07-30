@@ -135,8 +135,8 @@ func append_reserve_all() -> void:
 	(L0 #620: ONE pass id)."""
 	var reserve_action := {
 		"id": GameActions.PASS_ACTION_ID,
-		"name": "Reserve All AP",
-		"description": "No planned actions - keep all AP available for responding to events",
+		"name": "Reserve All Attention",
+		"description": "No planned actions - keep all Attention available for responding to events",
 		"ap_cost": 0,
 		"money_cost": 0
 	}

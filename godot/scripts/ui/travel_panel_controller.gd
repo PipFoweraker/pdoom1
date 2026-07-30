@@ -516,7 +516,7 @@ func _show_paper_submission_dialog():
 	button_hbox.add_child(cancel_btn)
 
 	var submit_btn = Button.new()
-	submit_btn.text = "Submit Paper (1 AP)"
+	submit_btn.text = "Submit Paper (1 Attention)"
 	submit_btn.disabled = current_research < 15
 	submit_btn.pressed.connect(func():
 		var conf_id = conf_dropdown.get_item_metadata(conf_dropdown.selected)
@@ -612,7 +612,7 @@ func _show_conference_attendance_dialog():
 		var conf = Conferences.get_conference_by_id(conf_id)
 		if conf:
 			var travel = conf.get_travel_cost()
-			cost_label.text = "Flights: %s | Hotel: %s | Registration: %s\nTotal: %s + 2 AP" % [
+			cost_label.text = "Flights: %s | Hotel: %s | Registration: %s\nTotal: %s + 2 Attention" % [
 				GameConfig.format_money(travel.flights),
 				GameConfig.format_money(travel.accommodation),
 				GameConfig.format_money(travel.registration),
@@ -635,7 +635,7 @@ func _show_conference_attendance_dialog():
 	button_hbox.add_child(cancel_btn)
 
 	var attend_btn = Button.new()
-	attend_btn.text = "Attend (2 AP)"
+	attend_btn.text = "Attend (2 Attention)"
 	attend_btn.pressed.connect(func():
 		var conf_id = conf_dropdown.get_item_metadata(conf_dropdown.selected)
 		# Issue #469: Apply jet lag to first researcher (economy class default)
