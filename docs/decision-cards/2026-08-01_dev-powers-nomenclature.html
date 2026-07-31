@@ -1,0 +1,264 @@
+<title>Decision card -- naming player-facing dev powers in an alpha, 2026-08-01</title>
+<style>
+  @page { size: A4 portrait; margin: 14mm 13mm; }
+  html { font-size: 12.5pt; }
+  body { font-family: "Segoe UI", Calibri, Arial, sans-serif; line-height: 1.45;
+         color: #000; background: #fff; max-width: 190mm; margin: 0 auto; }
+  .stamp { border: 3pt solid #000; background: #1a1a1a; color: #fff;
+           padding: 3mm 4mm; margin: 0 0 5mm; }
+  .stamp .big { font-size: 17pt; font-weight: 700; line-height: 1.15; }
+  .stamp .meta { font-size: 11.5pt; margin-top: 1.5mm; }
+  h1 { font-size: 18pt; margin: 0 0 2mm; line-height: 1.15; }
+  h2 { font-size: 15pt; margin: 6mm 0 2mm; padding: 1.7mm 2.5mm;
+       background: #1a1a1a; color: #fff; page-break-after: avoid; }
+  h3 { font-size: 13pt; margin: 4.5mm 0 1.5mm; page-break-after: avoid; }
+  p, li, td, th { font-size: 12.5pt; }
+  table { border-collapse: collapse; width: 100%; margin: 2.5mm 0 4mm; }
+  th, td { border: 1px solid #444; padding: 2.2mm 2.6mm; text-align: left; vertical-align: top; }
+  th { background: #e8e8e8; font-weight: 700; }
+  .box { border: 2.2pt solid #000; padding: 3mm 3.5mm; margin: 4mm 0; page-break-inside: avoid; }
+  .box.ask { border-width: 3pt; background: #f2f2f2; }
+  .chk { display: inline-block; width: 5mm; height: 5mm; border: 1.7pt solid #000;
+         margin-right: 2.4mm; vertical-align: -0.8mm; }
+  ul, ol { margin: 1.5mm 0 3mm; padding-left: 7mm; }
+  li { margin-bottom: 1.4mm; }
+  code { font-family: Consolas, "Courier New", monospace; font-size: 11.5pt;
+         background: #eee; padding: 0.3mm 1mm; }
+  .rec { border-left: 5pt solid #000; padding: 2mm 0 2mm 4mm; margin: 3mm 0; }
+  .note { font-size: 11.5pt; color: #222; }
+  .pb { page-break-before: always; }
+  .foot { font-size: 11.5pt; color: #333; border-top: 1.2pt solid #999;
+          margin-top: 5mm; padding-top: 2mm; }
+  @media (prefers-color-scheme: dark) { html, body { background:#fff; color:#000; } }
+</style>
+
+<div class="stamp">
+  <div class="big">DECISION CARD &nbsp;&middot;&nbsp; DEV POWERS IN AN ALPHA</div>
+  <div class="meta">Sat 1 Aug 2026, 09:05. Pip's question, verbatim:
+  <em>"what is the right nomenclature to use if I am shipping an alpha build that has a tool
+  that lets players do things they won't be able to do in the full version of the game? I don't
+  mind players having dev / mod powers during an alpha."</em></div>
+</div>
+
+<h1>The short answer</h1>
+
+<p>
+  <strong>The naming is the small half. The contract is the big half, and you have already
+  built it twice.</strong>
+</p>
+<p>
+  Players do not actually need to know whether a power is "dev", "debug", "mod" or "cheat".
+  They need to know three things, and every good implementation of this in the industry answers
+  exactly these:
+</p>
+<ol>
+  <li><strong>Does this count?</strong> (leaderboard, achievements, records)</li>
+  <li><strong>Is this permanent?</strong> (will it exist in the finished game)</li>
+  <li><strong>Did I turn it on by accident?</strong> (can I tell, later, that this run was touched)</li>
+</ol>
+<p>
+  A run that answers those three clearly can hand the player almost any power without damaging
+  anything. A run that leaves them ambiguous corrupts your data <em>and</em> the player's sense
+  of their own achievement, no matter what the button is called.
+</p>
+
+<h2>The mechanism already exists in this codebase</h2>
+
+<p>
+  On 2026-07-31 you ruled on a structurally identical problem. Scenario packs (Sandbox Mode
+  opens with $10,000,000) let players do things that make their score incomparable. The ruling
+  was not to remove them:
+</p>
+
+<div class="box">
+  <em>"I want scenarios to lock you out of the board and for players to be warned about it
+  explicitly when picking them. I have no problems with the scenario, the player just needs to
+  be actively warned."</em>
+</div>
+
+<p>That shipped as #1060, and it is a reusable pattern rather than a one-off:</p>
+
+<table>
+  <tr><th>Piece</th><th>Where it lives</th><th>What it does</th></tr>
+  <tr><td><code>GameConfig.is_ranked_run()</code></td><td>autoload, single source of truth</td><td>every board-write routes through it</td></tr>
+  <tr><td>Amber <code>[!] NOT RANKED</code> line</td><td>pre-game screen, on selection</td><td>warns at the moment of choice</td></tr>
+  <tr><td>Amber game-over notice</td><td>game-over screen</td><td>warns again, visibly, rather than failing silently</td></tr>
+</table>
+
+<p>
+  <strong>Dev powers are the same shape.</strong> The cheapest correct answer is not a new
+  system -- it is one more input to <code>is_ranked_run()</code>. Same warning colour, same
+  wording pattern, same choke point.
+</p>
+
+<div class="box">
+  <strong>One important difference, and it changes the design.</strong> A scenario is chosen
+  <em>before</em> the run starts, so a single pre-game check is enough. A dev power can be used
+  <em>mid-run</em>, at turn 30, after 20 honest turns. So the flag must be <strong>sticky and
+  one-way</strong>: once this run has touched a dev power, it is unranked for good, and turning
+  the tool back off does not restore it. Otherwise the exploit is trivial and, worse, accidental.
+</div>
+
+<h2>What the industry actually does, and what to steal</h2>
+
+<table>
+  <tr><th>Game</th><th>What it is called</th><th>The mechanism worth stealing</th></tr>
+  <tr>
+    <td><strong>Minecraft</strong></td>
+    <td>"Allow Cheats"</td>
+    <td>A flag <strong>on the world</strong>, not the build. Set at creation, shown in the world list forever, disables achievements. The player can always see which of their worlds is "tainted".</td>
+  </tr>
+  <tr>
+    <td><strong>Factorio</strong></td>
+    <td>"This save has been marked as cheated"</td>
+    <td><strong>Irreversible.</strong> One console command permanently marks the save and kills achievements. No path back. This is the sticky-flag pattern, and it is the right one.</td>
+  </tr>
+  <tr>
+    <td><strong>Kerbal Space Program</strong></td>
+    <td>"Cheats" / "Debug Toolbar"</td>
+    <td>Kept openly, documented, no shame framing. Players use it to learn, and nobody pretends otherwise.</td>
+  </tr>
+  <tr>
+    <td><strong>Slay the Spire</strong></td>
+    <td>"Custom Mode"</td>
+    <td>Name describes <em>what it is</em>, not who it is for. Runs are simply not scored. No pejorative.</td>
+  </tr>
+</table>
+
+<p class="note">
+  Common thread: <strong>the flag belongs to the RUN, not the BUILD</strong>, it is visible
+  after the fact, and the naming is descriptive rather than apologetic. None of them call it
+  "dev mode" to players, because "dev" describes <em>who wrote it</em>, not <em>what it
+  does</em>.
+</p>
+
+<h2>Naming options</h2>
+
+<table>
+  <tr><th>Name</th><th>For</th><th>Against</th></tr>
+  <tr>
+    <td><strong>Dev Tools</strong></td>
+    <td>Honest, signals transience, matches your internal language.</td>
+    <td>"Dev" describes the author, not the function. Slight "you are not meant to be here" flavour, which you do not want if you are happy for alpha players to use it.</td>
+  </tr>
+  <tr>
+    <td><strong>Lab Tools</strong> <span class="note">(or Lab Overrides)</span></td>
+    <td><strong>In-fiction.</strong> You run an AI lab; the settings screen is already called LABORATORY SETTINGS. Costs no immersion and needs no apology.</td>
+    <td>Slightly less obvious that it is temporary -- must be carried by the tooltip.</td>
+  </tr>
+  <tr>
+    <td><strong>Alpha Tools</strong></td>
+    <td>Transience is <strong>in the name</strong>, which is exactly the property you asked for. Self-deprecating in a way alpha players find charming rather than alarming.</td>
+    <td>Dates the feature. You will have to rename or remove it at beta -- though arguably that is a feature, since it forces the decision.</td>
+  </tr>
+  <tr>
+    <td><strong>Sandbox</strong></td>
+    <td>Widely understood.</td>
+    <td><strong>Already taken.</strong> "Sandbox Mode" is one of your scenario packs. Reusing it would collide, and collisions in this project have been expensive.</td>
+  </tr>
+</table>
+
+<div class="rec">
+  <strong>Recommendation: "Alpha Tools", styled in the same amber you already use for
+  NOT RANKED, wired into <code>is_ranked_run()</code> as a sticky one-way flag.</strong><br><br>
+  "Alpha" does the transience work in the name itself, so the tooltip does not have to carry it
+  alone, and it will not survive a beta by accident -- the name will look wrong the moment it
+  stops being true. Reusing the amber is not laziness: you have now established amber as
+  "this is off the record" in two places, and a third meaning for a fourth colour is how UI
+  languages rot.<br><br>
+  <strong>Argued against inventing a new colour or badge system.</strong> You have one already
+  and it is only two days old.
+</div>
+
+<h2 class="pb">The wording, if you want it ready-made</h2>
+
+<p><strong>On the toggle:</strong></p>
+<div class="box">
+  <code>[!] ALPHA TOOLS -- using any of these takes this run off the leaderboard, permanently.
+  These tools will not exist in the finished game.</code>
+</div>
+
+<p><strong>At the moment of first use, mid-run</strong> -- this is the one that matters, because
+it is the only place the player learns the flag is one-way:</p>
+<div class="box">
+  <code>[!] This run is now UNRANKED. Alpha Tools were used on turn 30. Turning them off does
+  not undo this.</code>
+</div>
+
+<p><strong>At game over</strong> -- shown, never silent:</p>
+<div class="box">
+  <code>NOT RANKED: Alpha Tools were used in this run. Play without them for the board.</code>
+</div>
+
+<h2>This connects to an issue already open</h2>
+
+<p>
+  <strong>#788 -- "Leaderboard: mark runs where dev mode was used (visible badge, NOT
+  exclusion)"</strong>, labelled <code>ship:hotpatch-48h</code>.
+</p>
+<p>
+  Note that #788 proposes <strong>mark, do not exclude</strong>, and this card proposes
+  <strong>exclude and tell them</strong>. Those are genuinely different rulings and both are
+  defensible:
+</p>
+<ul>
+  <li><strong>Mark, do not exclude</strong> keeps the player's run visible and lets the reader
+  judge. Kinder to the player. Requires the board to carry and render a flag, which is website
+  work and touches the submission surface that #191 froze.</li>
+  <li><strong>Exclude and tell them</strong> needs no board change at all -- it is entirely
+  client-side, it is the pattern already shipped for scenarios, and it keeps the board's
+  guarantee simple: <em>every entry here is a clean Standard run</em>.</li>
+</ul>
+
+<div class="rec">
+  <strong>Recommendation: exclude now, mark later.</strong> Excluding is free today and
+  preserves the board's one strong claim while the player base is tiny. Marking becomes the
+  better answer once the board is rich enough that losing entries costs more than the ambiguity
+  does. Worth resolving #788 with that reasoning rather than leaving two contradictory rulings
+  open.
+</div>
+
+<div class="box ask">
+  <h3 style="margin-top:0">THE ASK</h3>
+  <p><strong>1. Name:</strong>
+  <span class="chk"></span> <strong>Alpha Tools (recommended)</strong> &nbsp;
+  <span class="chk"></span> Lab Tools &nbsp;
+  <span class="chk"></span> Dev Tools &nbsp;
+  <span class="chk"></span> other: ....................</p>
+
+  <p><strong>2. Effect on the board:</strong>
+  <span class="chk"></span> <strong>unranked, warned (recommended)</strong> &nbsp;
+  <span class="chk"></span> ranked but badged (#788 as written) &nbsp;
+  <span class="chk"></span> both, badge later</p>
+
+  <p><strong>3. Sticky?</strong>
+  <span class="chk"></span> <strong>yes, one-way per run (recommended)</strong> &nbsp;
+  <span class="chk"></span> no, only while enabled</p>
+
+  <p style="margin-bottom:0"><strong>4. Colour:</strong>
+  <span class="chk"></span> <strong>reuse the NOT RANKED amber (recommended)</strong> &nbsp;
+  <span class="chk"></span> new dev colour</p>
+</div>
+
+<h2>One related thing to decide while you are here</h2>
+
+<p>
+  PR <strong>#1079</strong> (open, not merged) gates the <code>DEV BUILD</code> badge on
+  <code>OS.is_debug_build()</code>. Side effect the agent flagged: the <strong>dev overlay,
+  flight recorder, UI evolution recorder and perf log all gate on the same
+  <code>is_dev_build()</code></strong> -- so they were running in <em>release</em> builds until
+  now, and that PR silently switches them off.
+</p>
+<p>
+  That is probably right and probably desirable -- players stop having invisible recorders
+  writing to their disk. But it is a behaviour change well beyond a banner, and it is
+  <strong>the same question this card is about</strong>: which capabilities are build-gated,
+  which are run-gated, and which are player-facing on purpose. Worth deciding together rather
+  than accepting one as a side effect of the other.
+</p>
+
+<p class="foot">
+  Printed 09:05 Sat 2026-08-01 &middot; related: #1060 (scenarios unranked + warned),
+  #788 (mark dev runs), #1079 (dev badge gating) &middot; mechanism to extend:
+  <code>GameConfig.is_ranked_run()</code>
+</p>
