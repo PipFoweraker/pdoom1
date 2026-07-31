@@ -1,0 +1,285 @@
+<title>P(Doom)1 -- full ceremony runsheet, all six gates, 2026-07-31</title>
+<style>
+  @page { size: A4 portrait; margin: 13mm 12mm; }
+  html { font-size: 12.5pt; }
+  body { font-family: "Segoe UI", Calibri, Arial, sans-serif; line-height: 1.4;
+         color: #000; background: #fff; max-width: 190mm; margin: 0 auto; }
+  h1 { font-size: 19pt; margin: 0 0 1.5mm; line-height: 1.15; }
+  h2 { font-size: 15.5pt; margin: 6mm 0 2mm; padding: 1.8mm 2.5mm;
+       background: #1a1a1a; color: #fff; page-break-after: avoid; }
+  h3 { font-size: 13pt; margin: 4mm 0 1.5mm; page-break-after: avoid; }
+  p, li, td, th { font-size: 12.5pt; }
+  .sub { font-size: 12pt; color: #333; margin: 0 0 3mm; }
+  table { border-collapse: collapse; width: 100%; margin: 2mm 0 3.5mm; }
+  th, td { border: 1px solid #444; padding: 2mm 2.4mm; text-align: left; vertical-align: top; }
+  th { background: #e8e8e8; font-weight: 700; }
+  td.n { white-space: nowrap; font-weight: 700; width: 8mm; text-align: center; }
+  td.s { white-space: nowrap; width: 32mm; }
+  .box { border: 2.2pt solid #000; padding: 3mm 3.5mm; margin: 3.5mm 0; page-break-inside: avoid; }
+  .box.alarm { border-width: 3pt; background: #f2f2f2; }
+  .chk { display: inline-block; width: 4.6mm; height: 4.6mm; border: 1.6pt solid #000;
+         margin-right: 2.2mm; vertical-align: -0.7mm; }
+  ul, ol { margin: 1.2mm 0 2.5mm; padding-left: 7mm; }
+  li { margin-bottom: 1.2mm; }
+  code { font-family: Consolas, "Courier New", monospace; font-size: 11.5pt;
+         background: #eee; padding: 0.3mm 1mm; }
+  .say { border: 1.6pt solid #000; border-left: 5pt solid #000; padding: 3mm 3.5mm;
+         margin: 2.5mm 0; font-size: 13.5pt; font-weight: 700; line-height: 1.5; }
+  .new { background: #ddd; padding: 0.3mm 1.4mm; font-weight: 700; font-size: 11pt; }
+  .note { font-size: 11.5pt; color: #222; }
+  .pb { page-break-before: always; }
+  .foot { font-size: 11.5pt; color: #333; border-top: 1.2pt solid #999;
+          margin-top: 5mm; padding-top: 2mm; }
+  @media (prefers-color-scheme: dark) { html, body { background:#fff; color:#000; } }
+</style>
+
+<h1>Full ceremony runsheet -- all six gates</h1>
+<p class="sub">
+  Printed <strong>17:18 AEST, Friday 2026-07-31</strong>. Describes <code>main</code> at
+  <strong>022be550</strong>; the built artifact is from <strong>868c784e</strong>.
+  Version <strong>0.13.2</strong>, ladder <strong>L3</strong>, seed
+  <code>weekly-2026-w31</code>.<br>
+  Sections marked <span class="new">NEW</span> are today's adjustments. If the SHAs above are
+  not the SHAs in front of you, this sheet is stale -- reprint it.
+</p>
+
+<div class="box alarm">
+  <h3 style="margin-top:0">Read this before Gate 1</h3>
+  <p style="margin-bottom:0">
+    <strong>Gates 1, 2, 3 and 5 are ready to speak. Gate 4 needs only the recording.
+    Gate 6 is BLOCKED.</strong><br><br>
+    The block: there is <strong>no v0.13.2 tag and no v0.13.2 release</strong>. The site's
+    Download button resolves <code>releases/latest</code> to <strong>v0.13.1</strong>, which
+    ships <strong>ladder L2</strong> and seed <strong><code>weekly-2026-w30</code></strong>.
+    Bless w31/L3 and announce, and every downloader posts to a different board on both axes --
+    blessed board empty all night, nothing anywhere reporting an error.
+  </p>
+</div>
+
+<h2>[Gate 1: LAST POUR]</h2>
+<p class="note">Legacy G0. Anything not in review by the pour does not ship this league.</p>
+
+<table>
+  <tr><th class="n">#</th><th>Check</th><th class="s">Status</th></tr>
+  <tr><td class="n">1</td><td>Open-PR list snapshotted to a timestamped file</td><td class="s"><strong>PASS</strong></td></tr>
+  <tr><td class="n">2</td><td>Every row carries MERGE or PARK</td><td class="s"><strong>PASS</strong> #1059 merged</td></tr>
+  <tr><td class="n">3</td><td>Rows unaccounted for is zero</td><td class="s"><strong>PASS</strong> zero open PRs</td></tr>
+  <tr><td class="n">4</td><td>Nothing parked is league-critical</td><td class="s"><strong>SEE BELOW</strong></td></tr>
+</table>
+
+<div class="box">
+  <strong>Check 4 needs your ruling.</strong> Issue <strong>#735</strong> ("Leaderboard: enable
+  remote board + hardening minimums") is still open and still carries <code>ship:tonight</code>.
+  Either the label is stale and the issue should close, or something on it is genuinely
+  outstanding. A stale <code>ship:tonight</code> is a claim about tonight that nobody is
+  checking.
+  <br><br><span class="chk"></span> Ruled: ....................................................
+</div>
+
+<div class="say">
+  "The pour is closed. One merged, none parked, none unaccounted, and nothing parked is
+  league-critical.<br>
+  What is poured is poured. The month is what it is."
+</div>
+
+<h2>[Gate 2: THE FREEZE]</h2>
+<p class="note">Legacy G1. After this line: only pack content, art, docs, and bugfixes labelled league-critical.</p>
+
+<table>
+  <tr><th class="n">#</th><th>Check</th><th class="s">Status</th></tr>
+  <tr><td class="n">1</td><td>Frozen commit SHA recorded</td><td class="s"><strong>c7951b8f</strong> (#1019, Wed 22:28)</td></tr>
+  <tr><td class="n">2</td><td><code>sync_version.py --check</code> exits 0</td><td class="s"><strong>PASS</strong></td></tr>
+  <tr><td class="n">3</td><td>Fast gate green, >= 300 collected</td><td class="s"><strong>PASS</strong> 1001/0, 97-of-97</td></tr>
+  <tr><td class="n">4</td><td>Ladder declared final and written down</td><td class="s"><strong>L3</strong></td></tr>
+  <tr><td class="n">5</td><td><code>check_ladder_bump.py</code> warnings acked</td><td class="s"><strong>PASS</strong> "49 files, consistent"</td></tr>
+</table>
+
+<div class="box alarm">
+  <h3 style="margin-top:0">The freeze was porous. Say so out loud.</h3>
+  <p>Merged AFTER the freeze line, and <strong>none of them carried a league-critical
+  label</strong>, so the exemption that admits the bugfixes was never actually recorded:</p>
+  <table style="margin-bottom:2mm">
+    <tr><th>PR</th><th>What</th><th class="s">Legal?</th></tr>
+    <tr><td>#1022, #1039, #1058, #1060</td><td>bugfixes</td><td class="s">yes, unlabelled</td></tr>
+    <tr><td>#1045, #1047</td><td>tools/docs, seed roll</td><td class="s">yes</td></tr>
+    <tr><td>#1048, #1050</td><td>UI copy</td><td class="s">borderline</td></tr>
+    <tr><td><strong>#1051</strong></td><td><strong>"Accept Your Fate" -- a new feature</strong></td><td class="s"><strong>NO</strong></td></tr>
+  </table>
+  <p style="margin-bottom:0">
+    Not a proposal to revert -- it closed a real hole and it is tested. But the incantation says
+    <em>"No new law crosses this line"</em>, and tonight it did.
+    <strong>Speak the exception rather than the clean line.</strong>
+    <br><span class="chk"></span> Exception named aloud, or <span class="chk"></span> #1051
+    retroactively classified league-critical.
+  </p>
+</div>
+
+<div class="say">
+  "Main is frozen at c-seven-nine-five-one-b-eight-f.<br>
+  The ladder stands at L three and every copy of it agrees.<br>
+  The tests were counted, not assumed.<br>
+  No new law crosses this line -- <em>except</em> one-oh-five-one, admitted deliberately and
+  recorded.<br>
+  What is merged is the month. What is parked is the next."
+</div>
+
+<h2 class="pb">[Gate 3: PACK BLESSED] -- DISSOLVED</h2>
+<p>
+  The league ships <strong>pack-free</strong>. ADR-0005 seed schedules are inert -- nothing
+  loads them (#1020). There is no pack to bless.
+</p>
+<p class="note">
+  <strong>Skip it aloud, not silently.</strong> A gate that vanishes without being named looks
+  identical on the recording to a gate that was forgotten. Say that it was considered and why it
+  does not apply.
+</p>
+<div class="say">
+  "Gate 3 does not apply. The league ships pack-free; the schedules are inert.<br>
+  Considered, and dissolved."
+</div>
+
+<h2>[Gate 4: PROVEN BUILD]</h2>
+
+<table>
+  <tr><th class="n">#</th><th>Check</th><th class="s">Status</th></tr>
+  <tr><td class="n">1</td><td>Freshness marker PROVEN inside the <code>.pck</code></td><td class="s"><strong>PASS</strong> 16:19</td></tr>
+  <tr><td class="n">2</td><td><code>sync_version.py --check</code> exits 0</td><td class="s"><strong>PASS</strong></td></tr>
+  <tr><td class="n">3</td><td>Fast gate green, count above floor</td><td class="s"><strong>PASS</strong> 1001/0</td></tr>
+  <tr><td class="n">4</td><td>Changelog carries the literal version</td><td class="s"><strong>PASS</strong> <code>## [0.13.2]</code></td></tr>
+  <tr><td class="n">6</td><td>Cut number and base SHA written down</td><td class="s"><strong>868c784e</strong></td></tr>
+  <tr><td class="n">8</td><td><span class="new">NEW</span> The machine that proved it is clean</td><td class="s"><strong>PASS</strong> reset 16:04</td></tr>
+  <tr><td class="n">5</td><td><strong>Human plays the BUILT artifact</strong></td><td class="s"><strong>ON YOU</strong></td></tr>
+  <tr><td class="n">7</td><td>Release-URL verification</td><td class="s">deferred to Gate 6 -- currently FAILING</td></tr>
+</table>
+
+<p class="note">
+  <strong>No rebuild needed.</strong> Five commits landed since the cut; all are in
+  <code>tools/</code> and <code>docs/</code>, which Godot does not pack. The only
+  <code>godot/</code> delta is <code>build_stamp.txt</code>, whose newer content the pack
+  already holds because the build wrote it. Verified with
+  <code>git diff --stat 868c784e HEAD -- godot/</code>.
+</p>
+
+<h3>Check 5, step by step. This is the recording. ~4 minutes.</h3>
+<ol>
+  <li><span class="chk"></span> Launch <code>builds\windows_desktop\PDoom.exe</code> --
+    the real exe, not <code>godot --path godot</code>.</li>
+  <li><span class="chk"></span> On the pre-game screen, confirm aloud:
+    Scenario = <strong>Standard Game</strong>; Difficulty = <strong>Standard, greyed out</strong>;
+    Seed = <code>weekly-2026-w31</code>.</li>
+  <li><span class="chk"></span> <strong>Poke the new thing:</strong> open Scenario, pick
+    <strong>Sandbox Mode</strong>, confirm the amber <strong>"[!] NOT RANKED"</strong> line
+    appears, then set it back to <strong>Standard Game</strong>.</li>
+  <li><span class="chk"></span> Play -&gt; lose -&gt; leaderboard. <strong>Accept Your Fate</strong>
+    in the pause menu is the fast route, and doubles as its first real exercise.</li>
+  <li><span class="chk"></span> Confirm the score appears on the board.</li>
+  <li><span class="chk"></span> Soft-lock sweep: every screen you touched has a way back out.</li>
+</ol>
+
+<div class="say">
+  "This is the cut from eight-six-eight-c-seven-eight-four-e; every earlier cut is dead.<br>
+  The build is fresh and proves it.<br>
+  The version speaks with one voice.<br>
+  A human has played the thing we ship, not the thing we meant -- and the machine that proved it
+  is a clean machine.<br>
+  [Gate 4] is spoken. The build is proven."
+</div>
+
+<h2 class="pb">[Gate 5: SEED BLESSING]</h2>
+
+<table>
+  <tr><th class="n">#</th><th>Check</th><th class="s">Status</th></tr>
+  <tr><td class="n">1</td><td>Ladder value read aloud</td><td class="s"><strong>L3</strong></td></tr>
+  <tr><td class="n">2</td><td>Seed const matches the seed spoken</td><td class="s"><strong>PASS</strong> <code>weekly-2026-w31</code></td></tr>
+  <tr><td class="n">3</td><td>That const is inside the blessed cut</td><td class="s"><strong>PASS</strong> #1047 preceded the cut</td></tr>
+  <tr><td class="n">4</td><td>Board key from <code>get_board_version()</code>, not the build string</td><td class="s"><strong>PASS</strong></td></tr>
+  <tr><td class="n">5</td><td><code>sync_version.py --check</code></td><td class="s"><strong>PASS</strong></td></tr>
+  <tr><td class="n">8</td><td><span class="new">NEW</span> No non-Standard configuration can reach this board</td><td class="s"><strong>PASS</strong> #1058 + #1060</td></tr>
+  <tr><td class="n">6</td><td>Tag pushed, release workflows green</td><td class="s"><strong>NOT DONE -- no v0.13.2 tag</strong></td></tr>
+  <tr><td class="n">7</td><td>Website serves an empty board for (seed, L3)</td><td class="s"><strong>ATTESTATION -- needs a name</strong></td></tr>
+</table>
+
+<div class="box">
+  <strong>Check 8 is your change, and it earned itself twice today.</strong> #1058 locked
+  difficulty at 11:14; #1060 gated the scenario dropdown at 16:15 -- the same screen, four hours
+  apart, both posting incomparable runs to one board. The gap it closes:
+  <em>"the board key has not forked"</em> and <em>"everything landing on this board is
+  comparable"</em> are <strong>different claims</strong>, and only the first was ever checked.
+</div>
+
+<div class="box alarm">
+  <strong>Check 5's blind spot, found tonight.</strong> The sheet verifies the seed const against
+  <strong>main</strong>. It does not verify it against <strong>what the download actually
+  serves</strong>. That is precisely how v0.13.1 (L2 / w30) can sit behind the Download button
+  while main says w31 / L3, with every mechanical check passing.
+  <span class="note">Worth adding as check 9 after tonight.</span>
+</div>
+
+<div class="say">
+  "The ladder stands at L three. The seed is drawn: weekly-two-oh-two-six-w-thirty-one.<br>
+  The seed the client posts is the seed I speak, and it is inside the build we cut.<br>
+  The board key is weekly-two-oh-two-six-w-thirty-one, L three, and it is keyed on the ladder,
+  not the binary.<br>
+  And no non-Standard configuration can reach this board.<br>
+  The board itself is attested by .................... at ..........<br>
+  The seed is spoken. The wand is waved."
+</div>
+<p class="note">The wand can be a pencil. If nobody can attest check 7, say
+<em>"unattested at 17:xx"</em> rather than dropping the clause. Gate 5 owns the seed;
+Gate 6 owns the board.</p>
+
+<h2>[Gate 6: BOARD OPENS] -- BLOCKED</h2>
+
+<div class="box alarm">
+  <h3 style="margin-top:0">Must happen before this gate can be spoken</h3>
+  <ol style="margin-bottom:0">
+    <li><span class="chk"></span> <strong>Tag <code>v0.13.2</code> at <code>868c784e</code></strong>
+      -- the commit the artifact was built from. Tagging HEAD (<code>022be550</code>) would name
+      a commit no binary came from.</li>
+    <li><span class="chk"></span> <strong>Publish the release</strong> with tonight's Windows
+      assets, zipped as <code>PDoom-Windows.zip</code> so
+      <code>releases/latest/download/</code> keeps resolving.
+      <br><span class="note">DECISION OUTSTANDING -- Mac/Linux: (A) Windows-only, those links
+      404. (B) carry v0.13.1's mac/linux forward -- they are L2/w30 and recreate the bug we just
+      fixed. (C) Windows-only plus a release note saying mac/linux stay on v0.13.1 and are not
+      league-eligible. <strong>Recommend C.</strong></span></li>
+    <li><span class="chk"></span> <strong>Click the actual Download button on pdoom1.com</strong>
+      and confirm it gives 0.13.2. Not the API, the button.</li>
+    <li><span class="chk"></span> Post the blessed seed to pdoom1-website <strong>#151</strong>
+      and <strong>#201</strong>.</li>
+    <li><span class="chk"></span> Announce.</li>
+    <li><span class="chk"></span> <strong>Watch one real submission land</strong> -- not yours.
+      Submitted and visible are different claims; that is the lesson of #201.</li>
+    <li><span class="chk"></span> <strong>Alert dry-run.</strong> Throwaway issue, confirm the
+      phone buzzes, close it.</li>
+  </ol>
+</div>
+
+<div class="say">
+  "Gate 6. The board is open. Play begins."
+</div>
+
+<h3>Known-bad, not blocking Gate 5</h3>
+<p>
+  <strong>pdoom1-website "Sync Leaderboards" is failing</strong> -- a SCHEDULED job (~12:57 AEST
+  daily). Succeeded 29 Jul, failed 30 and 31 Jul. <strong>Will not retry before tomorrow
+  lunchtime</strong>; needs a manual dispatch. <strong>Root cause still unidentified</strong> --
+  the failure log only exposed the issue-filing step. If the board looks empty tonight, check
+  this before concluding nobody played.
+</p>
+
+<h3>Three things worth interrupting anything for</h3>
+<ol>
+  <li>A player reports a <strong>crash</strong>.</li>
+  <li><strong>Nothing on the board an hour after opening.</strong></li>
+  <li><strong>Board liveness goes red</strong> -- the automated <em>Board liveness (score API)</em>
+    check on pdoom1-website fails and files/updates issue <strong>#204</strong>. It means scores
+    exist that no visitor can see.</li>
+</ol>
+
+<p class="foot">
+  Generated 17:18 for main 022be550 / artifact 868c784e &middot; adjustments: Gate 4 check 8,
+  Gate 5 check 8, Gate 3 spoken-not-skipped, Gate 2 exception named &middot; sheets in
+  <code>docs/rituals/</code> &middot; reprint:
+  <code>python tools/print_doc.py &lt;file&gt; --printer "Brother HL-L2460DW Printer"</code>
+</p>
