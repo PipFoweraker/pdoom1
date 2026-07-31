@@ -178,11 +178,17 @@ func _make_floor_with_idle_worker_and_cat() -> Array:
 	add_child_autofree(f)
 	f.set_roster([{"id": 0, "name": "A", "loyalty": 8}])
 	var spr: OfficeEmployeeSprite = f._sprites[0]
-	spr.position = Vector2(180, 150)
+	# #793: place the pair relative to the floor's OWN walkable rect rather than at a
+	# hardcoded (180, 150). The floor now reserves a back-wall headroom band, so a
+	# hardcoded point can land in the wall and get clamped, which swamps the few px of
+	# separation travel this test is measuring. Deriving the spot keeps the test about
+	# separation whatever the bounds become.
+	var mid: Vector2 = f._bounds().get_center()
+	spr.position = mid
 	var cat := Node2D.new()
 	cat.add_to_group(OfficeFloor.CAT_GROUP)
 	f.add_child(cat)
-	cat.position = Vector2(186, 150)          # rendering inside the worker
+	cat.position = mid + Vector2(6, 0)        # rendering inside the worker
 	return [f, spr, cat]
 
 

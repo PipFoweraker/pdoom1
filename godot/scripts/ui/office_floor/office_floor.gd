@@ -55,9 +55,43 @@ const FLOOR_TILE_SCALE := 2
 # authored proportions via PropCatalogue; PROP_TARGET_H remains the force-scale for any
 # texture drawn WITHOUT a manifest id (PropCatalogue's own fallback reproduces it too).
 const PROP_TARGET_H := 46.0                    # #770: props drawn larger (was 30) to match the bigger floor
-# One floor tile on screen: 32 px art displayed at FLOOR_TILE_SCALE (matches
-# OfficeEmployeeSprite.TILE_PX = 64). PropCatalogue heights are in tiles of this size.
+# REFERENCE tile size only: 32 px art displayed at FLOOR_TILE_SCALE (matches
+# OfficeEmployeeSprite.TILE_PX = 64). This is what the floor CONCRETE is tiled at,
+# and it is the unit PropCatalogue heights were authored against. It is NOT the
+# subject scale any more -- see _subject_tile_px() below and #793.
 const DISPLAY_TILE_PX := 32.0 * FLOOR_TILE_SCALE
+
+# --- #793 scale + #793 layering: how big a "tile" is for SUBJECTS (people, props) ---
+# The bug this replaces: subjects were scaled against DISPLAY_TILE_PX (64), so the
+# WATCH strip's ~244 px-deep floor was only 3.8 tiles deep while a worker is authored
+# at 2 tiles and the server cluster at 3.5. A 3.5-tile prop in a 3.8-tile room is a
+# prop the height of the room; a 2-tile worker is a giant standing in a cupboard.
+# The manifest is authored in TILES and is authoritative, so the on-screen tile must
+# shrink until the room contains a plausible number of them. ROOM_DEPTH_TILES is that
+# ruling: the floor is treated as this many tiles deep whatever pixel height the
+# layout hands us, so the view stays proportionate at any strip size.
+const ROOM_DEPTH_TILES := 6.0
+# A worker is authored 2 tiles tall (OfficeEmployeeSprite.CHAR_TARGET_H / TILE_PX).
+const CHAR_TILE_HEIGHT := 2.0
+# Clamps stop a degenerate layout pass (zero/absurd size) producing invisible or
+# screen-filling art before the first real resize lands.
+const SUBJECT_TILE_PX_MIN := 8.0
+const SUBJECT_TILE_PX_MAX := DISPLAY_TILE_PX
+
+# --- #793 layering: headroom above the floor ---------------------------------
+# Props are FEET-anchored and extend UPWARD. Before this, the floor rect's top edge
+# WAS the control's top edge, so any prop standing near the back wall necessarily
+# painted above the control -- and a Control does not clip its own _draw() by
+# default, so it landed on top of the feed panel above it in the WATCH VBox. The
+# floor now reserves a wall band at the top that back-wall props rise into.
+const HEADROOM_RATIO := 0.30
+# Where the server-cluster decor piece stands, as a fraction of the walkable floor.
+# Single source of truth: _draw() and _rebuild_blocked_rects() BOTH placed it and had
+# silently drifted apart in the making of this fix. x moved 0.12 -> 0.20 because the
+# rack is ~110 px wide when centred on its feet anchor, so at 0.12 the left half of it
+# hung off the control's left edge as well as over the feed above.
+const SERVER_DECOR_FRACTION := Vector2(0.20, 0.18)
+const WALL_COLOR := Color(0.12, 0.13, 0.15)
 const FLOOR_DIM := Color(0.62, 0.63, 0.66)     # tint floor/props muted so sprites + UI read over them
 
 @export var tier: int = 0: set = set_tier
@@ -152,6 +186,11 @@ var _style_tex_cache: Dictionary = {}   # variant manifest id -> Texture2D (load
 
 func _ready() -> void:
 	custom_minimum_size = Vector2(360, 260)
+	# #793 (layering): the floor's own rect is the ONLY thing it may paint. Set in code
+	# as well as in office_floor.tscn so a code-instantiated floor (tests, sandbox)
+	# carries the same guarantee, and so a future art/anchor change can never again
+	# reach out of this control and land on the feed panel above it in the WATCH VBox.
+	clip_contents = true
 	# #770: nearest-neighbor so the upscaled floor tile + props stay crisp pixel art
 	# (sprites already force NEAREST per-node; this covers the floor/prop draws here).
 	texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
@@ -274,18 +313,48 @@ func _on_resized() -> void:
 	# Keep everyone inside the new bounds; landmark footprints move with them.
 	var b := _bounds()
 	_rebuild_blocked_rects()
+	var ch := char_target_height()
 	for id in _sprites:
 		var spr: OfficeEmployeeSprite = _sprites[id]
 		spr.bounds = b
 		spr.blocked_rects = _blocked_rects
+		spr.char_target_h = ch
 	_relayout_desks()
 	queue_redraw()
 
-func _bounds() -> Rect2:
+## Control-space size to lay out against, falling back to the minimum size before the
+## first real layout pass (a zero-size Control would otherwise produce nonsense scales).
+func _layout_size() -> Vector2:
 	var s := size
 	if s.x < 40.0 or s.y < 40.0:
 		s = custom_minimum_size
-	return Rect2(Vector2(8, 8), s - Vector2(16, 16))
+	return s
+
+## Height of the back-wall band reserved ABOVE the walkable floor. Feet-anchored props
+## standing at the back of the room draw up into this band instead of out of the
+## control (#793). Nothing walks here; it is wall, not floor.
+func _headroom() -> float:
+	return _layout_size().y * HEADROOM_RATIO
+
+## The WALKABLE floor rect. Now starts BELOW the headroom band (#793).
+func _bounds() -> Rect2:
+	var s := _layout_size()
+	var head := _headroom()
+	return Rect2(Vector2(8, 8 + head), s - Vector2(16, 16 + head))
+
+## On-screen px of one authored tile for SUBJECTS (people + manifest props). Derived
+## from the floor depth so the room always reads as ROOM_DEPTH_TILES deep, whatever
+## height the WATCH column gives us. See the ROOM_DEPTH_TILES comment for the why.
+func _subject_tile_px() -> float:
+	var depth := _bounds().size.y
+	if depth <= 0.0:
+		return SUBJECT_TILE_PX_MIN
+	return clampf(depth / ROOM_DEPTH_TILES, SUBJECT_TILE_PX_MIN, SUBJECT_TILE_PX_MAX)
+
+## Target on-screen height of a worker, in px. Public so tests (and a future Pip
+## eyeball pass) can assert the person-to-room proportion without redoing the maths.
+func char_target_height() -> float:
+	return _subject_tile_px() * CHAR_TILE_HEIGHT
 
 ## Observability only (see godot/autoload/perf_log.gd): the Titan-phase scaling cliff this
 ## class's own doc comment flags above (hundreds of staff, one-sprite-each not viable) makes
@@ -302,6 +371,8 @@ func set_roster(snapshot: Array) -> void:
 	var sw := PerfLog.time_section("office_roster_rebuild", {"count": snapshot.size()})
 	var b := _bounds()
 	var z := _zones(b)
+	# #793: workers are sized against the ROOM, not against a fixed 64px tile.
+	var ch := char_target_height()
 	var seen: Dictionary = {}
 	var total := snapshot.size()
 	for i in range(total):
@@ -328,12 +399,14 @@ func set_roster(snapshot: Array) -> void:
 			var spr: OfficeEmployeeSprite = _sprites[id]
 			spr.bounds = b
 			spr.blocked_rects = _blocked_rects
+			spr.char_target_h = ch
 			spr.configure(cfg)
 		else:
 			var spr2: OfficeEmployeeSprite = EmployeeSpriteScript.new()
 			spr2.tier = tier
 			spr2.bounds = b
 			spr2.blocked_rects = _blocked_rects
+			spr2.char_target_h = ch
 			spr2.position = desk
 			add_child(spr2)
 			spr2.configure(cfg)
@@ -445,8 +518,7 @@ func _rebuild_blocked_rects() -> void:
 	var z := _zones(b)
 	_add_landmark_prop("water_cooler", z["water_pos"])
 	_add_landmark_prop("filing_cabinet", z["fridge_pos"])
-	_add_landmark_prop("server_cluster",
-		b.position + Vector2(b.size.x * 0.12, b.size.y * 0.18))
+	_add_landmark_prop("server_cluster", _server_decor_pos(b))
 	_blocked_rects.append_array(_extra_blocked_rects)
 
 func _add_landmark_prop(id: String, feet: Vector2) -> void:
@@ -491,7 +563,7 @@ func _approach_slots_at(landmark: Vector2) -> Array:
 		var subject_h := float(subj[1]) if subj.size() == 2 else 0.0
 		if subject_h <= 0.0:
 			return []
-		var scl := PropCatalogue.height_px(id, DISPLAY_TILE_PX) / subject_h
+		var scl := PropCatalogue.height_px(id, _subject_tile_px()) / subject_h
 		var out: Array = []
 		for o in offs:
 			out.append(landmark + (o as Vector2) * scl)
@@ -514,8 +586,9 @@ func _slot_free(slot: Vector2, requester_id: String) -> bool:
 # from the feet point (same convention as the sandbox occupancy pass, #907).
 func _footprint_rect(id: String, feet: Vector2) -> Rect2:
 	var fp := PropCatalogue.footprint(id)
-	var w := fp.x * DISPLAY_TILE_PX
-	var d := fp.y * DISPLAY_TILE_PX
+	var tile := _subject_tile_px()
+	var w := fp.x * tile
+	var d := fp.y * tile
 	return Rect2(feet - Vector2(w * 0.5, d), Vector2(w, d))
 
 func _relayout_desks() -> void:
@@ -544,6 +617,10 @@ func _zones(b: Rect2) -> Dictionary:
 		"water_pos":  b.position + Vector2(b.size.x - inset.x, inset.y),                 # top-right
 		"fridge_pos": b.position + Vector2(b.size.x - inset.x, b.size.y - inset.y),      # bottom-right
 	}
+
+# Feet point of the server-cluster decor piece for a given floor rect.
+func _server_decor_pos(b: Rect2) -> Vector2:
+	return b.position + Vector2(b.size.x * SERVER_DECOR_FRACTION.x, b.size.y * SERVER_DECOR_FRACTION.y)
 
 # A couple of table centres in the central band (kept clear of the corner landmarks).
 func _table_centers(b: Rect2) -> Array:
@@ -582,7 +659,7 @@ func _build_floor_tile() -> Texture2D:
 
 # Draw a prop texture with its feet anchor at `at`, dimmed to match the floor.
 # #907 integration: when `id` has a manifest entry (PropCatalogue) the prop keeps its
-# AUTHORED proportions -- scaled so the opaque subject spans height_px(id, DISPLAY_TILE_PX)
+# AUTHORED proportions -- scaled so the opaque subject spans height_px(id, _subject_tile_px())
 # and anchored at the manifest anchor_px (subject feet) instead of the texture's
 # bottom-centre (which drifted with transparent padding). Without an id / entry it falls
 # back to the legacy PROP_TARGET_H force-scale, so unknown textures render like before.
@@ -598,7 +675,7 @@ func _draw_prop(tex: Texture2D, at: Vector2, id: String = "") -> void:
 		var subject_h := float(subj[1]) if subj.size() == 2 else src.y
 		if subject_h <= 0.0:
 			subject_h = src.y
-		var scl_m := PropCatalogue.height_px(id, DISPLAY_TILE_PX) / subject_h
+		var scl_m := PropCatalogue.height_px(id, _subject_tile_px()) / subject_h
 		var anchor := PropCatalogue.anchor(id)
 		if anchor == PropCatalogue.ANCHOR_UNSET:
 			anchor = Vector2(src.x * 0.5, src.y)   # no anchor data -> texture bottom-centre
@@ -632,6 +709,9 @@ func _draw_landmark_prop(id: String, default_tex: Texture2D, at: Vector2) -> voi
 func _draw() -> void:
 	var b := _bounds()
 	draw_rect(Rect2(Vector2.ZERO, size), Color(0.09, 0.10, 0.11))       # room
+	# #793: the reserved headroom band reads as BACK WALL, not as void. Nothing walks
+	# here; it is the space feet-anchored back-of-room props rise into.
+	draw_rect(Rect2(Vector2.ZERO, Vector2(size.x, b.position.y)), WALL_COLOR)
 	# Floor: tile the promoted concrete Wang base tile if available, else a flat fill.
 	if _floor_tile != null:
 		draw_texture_rect(_floor_tile, b, true, FLOOR_DIM)               # tiled concrete
@@ -653,20 +733,21 @@ func _draw() -> void:
 	# props stand in for the water/fridge markers + add a server-cluster decor piece; the
 	# window strip + cat corner stay procedural (cat art deferred to the #758 identity pass).
 	var z := _zones(b)
-	# window strip (top wall). Dev-hook: if a promoted wall texture was supplied via
-	# set_wall_strip_texture() it tiles across a slightly taller strip; default (null)
-	# draws the original flat blue rect unchanged.
+	# window strip -- now drawn ON the back wall (in the headroom band) rather than on
+	# the first row of floor, which is where a window actually is. Dev-hook: if a
+	# promoted wall texture was supplied via set_wall_strip_texture() it tiles across a
+	# slightly taller strip; default (null) draws the flat blue rect.
+	var wall_y: float = b.position.y - _headroom() * 0.55
 	if _wall_strip_tex != null:
-		draw_texture_rect(_wall_strip_tex, Rect2(Vector2(b.position.x + 6, b.position.y + 2), Vector2(b.size.x - 12, 12)), true, FLOOR_DIM)
+		draw_texture_rect(_wall_strip_tex, Rect2(Vector2(b.position.x + 6, wall_y), Vector2(b.size.x - 12, 12)), true, FLOOR_DIM)
 	else:
-		draw_rect(Rect2(Vector2(b.position.x + 6, b.position.y + 2), Vector2(b.size.x - 12, 5)), Color(0.45, 0.6, 0.75, 0.45))
+		draw_rect(Rect2(Vector2(b.position.x + 6, wall_y), Vector2(b.size.x - 12, 5)), Color(0.45, 0.6, 0.75, 0.45))
 	draw_circle(z["cat_pos"], 9.0, Color(0.9, 0.5, 0.7, 0.4))            # cat corner (pink)
 	# #907: landmark props render manifest-scaled/anchored, style-variant-aware.
 	_draw_landmark_prop("water_cooler", PROP_WATER_COOLER, z["water_pos"])          # top-right
 	_draw_water_bubbles(z["water_pos"])                                             # #913 juice
 	_draw_landmark_prop("filing_cabinet", PROP_FILING_CABINET, z["fridge_pos"])     # bottom-right
-	_draw_landmark_prop("server_cluster", PROP_SERVER,
-		b.position + Vector2(b.size.x * 0.12, b.size.y * 0.18))                     # top-left decor
+	_draw_landmark_prop("server_cluster", PROP_SERVER, _server_decor_pos(b))       # back-left decor
 
 # Pass-3 organic bubbles (#913 evolved): draw whichever emitters are mid-burst
 # right now. Two emitters on incommensurate timers (constants above) each rise
@@ -674,7 +755,7 @@ func _draw() -> void:
 # a short 3-frame burst; between bursts the jug is still. Pure function of the
 # emitter clock -- sparse, never visibly repeating, no RNG.
 func _draw_water_bubbles(feet: Vector2) -> void:
-	var h := PropCatalogue.height_px("water_cooler", DISPLAY_TILE_PX)
+	var h := PropCatalogue.height_px("water_cooler", _subject_tile_px())
 	if h <= 0.0:
 		return
 	var rise := h * 0.05                                   # px climbed per frame

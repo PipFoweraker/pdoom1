@@ -44,6 +44,20 @@ const ART_SUBJECT_H := 140.0                 # opaque subject height in that can
 const ART_FEET_Y := 158.0                    # bottom of the opaque bbox (the feet)
 const SPRITE_SCALE := Vector2(0.9, 0.9)      # ~= CHAR_TARGET_H / ART_SUBJECT_H
 
+# #793 (scale): CHAR_TARGET_H above is the REFERENCE height at the reference 64px tile.
+# The live WATCH strip is far too shallow for that -- a 128px worker in a ~244px-deep
+# room read as a giant, which is the scale half of #793. The owning OfficeFloor now
+# derives a room-proportionate height (OfficeFloor.char_target_height()) and pushes it
+# in here, so one worker is a fixed fraction of the ROOM rather than a fixed pixel
+# count. Default stays CHAR_TARGET_H, so a sprite constructed standalone (tests, the
+# sandbox harness) behaves exactly as before.
+var char_target_h: float = CHAR_TARGET_H:
+	set(value):
+		char_target_h = maxf(8.0, value)
+		_apply_art_transform()   # null-safe: the art nodes only exist after _ready()
+		if is_inside_tree():
+			queue_redraw()
+
 # Feet anchor: AnimatedSprite2D / Sprite2D are centre-anchored by default, while
 # props are feet-anchored (office_floor.gd _draw_prop), so characters floated.
 # Shift the texture up so the subject's feet sit on the node origin:
@@ -277,18 +291,23 @@ func _apply_art_transform() -> void:
 			var tex := _anim.sprite_frames.get_frame_texture(names[0], 0)
 			if tex != null and tex.get_height() < 100:
 				use_placeholder = true
+	# #793: derive from the live char_target_h rather than the baked-in constants, so
+	# the same art lands at whatever height the owning floor asked for. The feet
+	# OFFSETS are texture-space and so are unaffected by scale.
+	var real_scale := Vector2.ONE * (char_target_h / ART_SUBJECT_H)
+	var ph_scale := Vector2.ONE * (char_target_h / PLACEHOLDER_CANVAS_H)
 	if _anim:
-		_anim.scale = PLACEHOLDER_SCALE if use_placeholder else SPRITE_SCALE
+		_anim.scale = ph_scale if use_placeholder else real_scale
 		_anim.offset = PLACEHOLDER_FEET_OFFSET if use_placeholder else SPRITE_FEET_OFFSET
 	if _facing_sprite:
-		_facing_sprite.scale = SPRITE_SCALE
+		_facing_sprite.scale = real_scale
 		_facing_sprite.offset = SPRITE_FEET_OFFSET
 
 ## Radius of the walkable footprint around the feet (bounds clamping + wander
 ## targets). Tier 1: derived from the drawn height; tier 0: the blob radius.
 func _footprint_radius() -> float:
 	if tier == 1:
-		return FOOTPRINT_RATIO * CHAR_TARGET_H   # ~19px
+		return FOOTPRINT_RATIO * char_target_h   # ~0.15 of the DRAWN height
 	return BODY_RADIUS
 
 ## Rect the FEET may occupy inside `bounds`. Feet-anchored art extends UP from
@@ -297,7 +316,7 @@ func _footprint_radius() -> float:
 ## collapse to the vertical centre instead of inverting the clamp.
 func _feet_rect() -> Rect2:
 	var r := _footprint_radius()
-	var top_pad := CHAR_TARGET_H if tier == 1 else BODY_RADIUS
+	var top_pad := char_target_h if tier == 1 else BODY_RADIUS
 	var bottom_pad := FEET_BOTTOM_PAD if tier == 1 else BODY_RADIUS
 	var y_min := bounds.position.y + top_pad
 	var y_max := bounds.end.y - bottom_pad
