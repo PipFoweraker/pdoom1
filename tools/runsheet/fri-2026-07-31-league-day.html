@@ -1,0 +1,192 @@
+<title>Runsheet -- Fri 2026-07-31, league day</title>
+<style>
+  :root{--bg:#f7f6f3;--fg:#1a1a18;--dim:#63615c;--line:#d8d5cd;--card:#fff;
+        --acc:#7a3b12;--ok:#2f6b3a;--warn:#8a6a10;--stop:#9c2b2b;--code:#f0eee8}
+  @media(prefers-color-scheme:dark){:root{--bg:#16161a;--fg:#e8e6e1;--dim:#97948d;
+        --line:#33323a;--card:#1e1e24;--acc:#d9955c;--ok:#7fc08d;--warn:#d9bd6a;
+        --stop:#e2807c;--code:#24242c}}
+  :root[data-theme="light"]{--bg:#f7f6f3;--fg:#1a1a18;--dim:#63615c;--line:#d8d5cd;
+        --card:#fff;--acc:#7a3b12;--ok:#2f6b3a;--warn:#8a6a10;--stop:#9c2b2b;--code:#f0eee8}
+  :root[data-theme="dark"]{--bg:#16161a;--fg:#e8e6e1;--dim:#97948d;--line:#33323a;
+        --card:#1e1e24;--acc:#d9955c;--ok:#7fc08d;--warn:#d9bd6a;--stop:#e2807c;--code:#24242c}
+  *{box-sizing:border-box}
+  body{background:var(--bg);color:var(--fg);margin:0;padding:24px 20px 80px;
+       font:15px/1.55 ui-monospace,"Cascadia Mono",Consolas,monospace}
+  .wrap{max-width:1040px;margin:0 auto}
+  h1{font-size:20px;margin:0 0 4px}
+  .sub{color:var(--dim);font-size:13px;margin:0 0 18px}
+  h2{font-size:15px;margin:32px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--line);
+     letter-spacing:.06em;text-transform:uppercase;color:var(--acc)}
+  h3{font-size:14px;margin:16px 0 6px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:4px;
+        padding:14px 16px;margin:10px 0}
+  .card.stop{border-left:4px solid var(--stop)}
+  .card.ok{border-left:4px solid var(--ok)}
+  .card.warn{border-left:4px solid var(--warn)}
+  table{border-collapse:collapse;width:100%;font-size:13px}
+  .scroll{overflow-x:auto}
+  th,td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--dim);font-weight:600;white-space:nowrap}
+  td.t{white-space:nowrap;color:var(--dim)}
+  code{background:var(--code);padding:1px 5px;border-radius:3px;font-size:12px}
+  .gate{font-weight:600}
+  .tag{display:inline-block;padding:1px 7px;border-radius:3px;font-size:11px;
+       border:1px solid var(--line);color:var(--dim);white-space:nowrap}
+  .tag.done{color:var(--ok);border-color:var(--ok)}
+  .tag.hot{color:var(--stop);border-color:var(--stop)}
+  .tag.wait{color:var(--warn);border-color:var(--warn)}
+  ul{margin:6px 0;padding-left:20px} li{margin:3px 0}
+  .foot{color:var(--dim);font-size:12px;margin-top:40px;border-top:1px solid var(--line);padding-top:12px}
+  .say{border:1px solid var(--acc);border-radius:4px;padding:10px 14px;margin:8px 0;font-style:italic}
+</style>
+
+<div class="wrap">
+
+<h1>Runsheet -- Friday 2026-07-31, league day</h1>
+<p class="sub">
+  Generated Thu 21:50. The board opens tonight. Sources:
+  <code>LEAGUE_WEEK_PLAYBOOK.md</code>, <code>RELEASE_NOMENCLATURE.md</code>.
+  Gates numbered 1-6 in ceremony order.
+</p>
+
+<div class="card ok">
+  <strong>Where Thursday left it.</strong>
+  Build cut and proven (<code>0.13.2.0</code> stamped in the exe, freshness marker
+  proven inside the 58.1 MB <code>.pck</code>). Ladder held at <strong>L3</strong>.
+  Artifact played through the full loop twice, four league-critical UI bugs found
+  and fixed (#1039), re-cut, and the fixes confirmed on the rebuilt artifact --
+  leaderboard columns line up, twenty queued actions no longer push the UI
+  off-screen. Fast gate 995 tests / 0 failures.
+</div>
+
+<h2>The one thing that can still break tonight</h2>
+
+<div class="card stop">
+  <h3>pdoom1-website #201 -- scores are landing on a board nobody publishes</h3>
+  <p>
+    Their liveness probe re-confirmed it at <strong>17:14 Thursday</strong>:
+    <em>"Still true... orphaned entries."</em> Real finished runs are going to a
+    board the site does not publish, and no error is shown to anyone.
+  </p>
+  <p>
+    <strong>The game is correct and must not move.</strong>
+    <code>get_board_version()</code> returns <code>"L" + LADDER_VERSION</code> =
+    <strong>L3</strong>. Their own instruction is right: <em>"Do not resolve this
+    by re-stamping a version. That fabricates history."</em>
+  </p>
+  <p><strong>What the website needs to do:</strong> publish the
+  <code>(seed, L3)</code> board. Not one hardcoded key -- L3 generally, because
+  the seed rotates at the ceremony tonight.</p>
+  <p>
+    <strong>Resolve this BEFORE [Gate 5].</strong> Its check is "board-key fork
+    verified clean", and that line cannot be honestly spoken while the probe is
+    red. This is the difference between a league that records what people do and
+    one that quietly discards it.
+  </p>
+</div>
+
+<h2>The gate rail</h2>
+
+<div class="scroll"><table>
+<tr><th>Gate</th><th>When</th><th>Must be true</th><th>State</th></tr>
+<tr><td class="gate">[Gate 1: LAST POUR]</td><td class="t">Wed</td>
+    <td>last mechanics merge in review</td><td><span class="tag done">passed</span></td></tr>
+<tr><td class="gate">[Gate 2: THE FREEZE]</td><td class="t">Wed 22:28</td>
+    <td>ladder final, no mechanics past the line</td><td><span class="tag done">passed</span></td></tr>
+<tr><td class="gate">[Gate 3: PACK BLESSED]</td><td class="t">--</td>
+    <td>dissolved: the league ships pack-free (#1020)</td><td><span class="tag done">n/a</span></td></tr>
+<tr><td class="gate">[Gate 4: PROVEN BUILD]</td><td class="t">Thu</td>
+    <td>fresh + proves it; one voice; a human played it</td>
+    <td><span class="tag wait">say it</span></td></tr>
+<tr><td class="gate">[Gate 5: SEED BLESSING]</td><td class="t">~16:45</td>
+    <td>seed drawn + recorded; ladder stamped; <strong>board-key fork verified clean</strong>; tag pushed; workflows green</td>
+    <td><span class="tag hot">blocked on #201</span></td></tr>
+<tr><td class="gate">[Gate 6: BOARD OPENS]</td><td class="t">~17:00</td>
+    <td>league live; announce posted; first runs observed; hotpatch window armed</td>
+    <td><span class="tag wait">tonight</span></td></tr>
+</table></div>
+
+<h2>Schedule</h2>
+
+<div class="scroll"><table>
+<tr><th>Time</th><th>What</th><th>Notes</th></tr>
+<tr><td class="t">first thing</td><td><strong>Say [Gate 4].</strong></td>
+    <td>All three lines are true and verified. Costs a minute, and it is owed.</td></tr>
+<tr><td class="t">morning</td><td><strong>Chase #201 directly.</strong></td>
+    <td>Not another issue comment -- the tracker is not reaching anyone. This is the day's real work.</td></tr>
+<tr><td class="t">morning</td><td>Cold playtest, if anyone is available</td>
+    <td>Thursday's guest did not play. A stranger on the shipped build is still the highest-value test available, and the cold open now replays (config reset).</td></tr>
+<tr><td class="t">~15:00</td><td>Final build cut IF anything was found; otherwise re-verify [Gate 4]</td>
+    <td>Thin window: 1h45 to the blessing. Anything not league-critical goes to Saturday.</td></tr>
+<tr><td class="t">~16:30</td><td>Pre-blessing checks</td>
+    <td>See the checklist below. Do these BEFORE the ceremony, not during it.</td></tr>
+<tr><td class="t">~16:45</td><td><strong>[Gate 5: SEED BLESSING]</strong> -- the doom wand</td>
+    <td>Seed drawn and spoken aloud. Post it to website #151 and #201 immediately after.</td></tr>
+<tr><td class="t">~17:00</td><td><strong>[Gate 6: BOARD OPENS]</strong> + announce</td>
+    <td>Watch the first runs actually land on the board. Do not assume.</td></tr>
+<tr><td class="t">evening</td><td>Hotpatch window armed</td>
+    <td>Saturday morning is the watch window.</td></tr>
+</table></div>
+
+<h2>Pre-blessing checklist (~16:30)</h2>
+
+<div class="card warn">
+  <ol>
+    <li><strong>#201 resolved</strong> -- the site publishes the L3 board, probe green.</li>
+    <li><code>python tools/sync_version.py --check</code> green.</li>
+    <li><code>ladder_version.txt</code> still reads <strong>3</strong>. Nothing has moved it.</li>
+    <li>Nothing gameplay-shaped merged since the re-cut. If it did, <strong>re-cut</strong> -- never patch on top.</li>
+    <li>Decide the seed. Auto-derived would be <code>weekly-2026-w31</code>, but it is
+        <strong>pinned manually</strong> via <code>GameConfig.FEATURED_SEED_OVERRIDE</code>
+        (currently <code>weekly-2026-w30</code>). Rotating the league means editing that
+        const -- which is a code change, so decide EARLY, not at 16:44.</li>
+    <li>Tag pushed, release workflows green, every advertised download answers 200
+        (the #998 check -- runnable for real once the tag exists).</li>
+  </ol>
+</div>
+
+<h2>The incantations</h2>
+
+<div class="say">[Gate 4] "The build is fresh and proves it. The version speaks with one voice.
+A human has played the thing we ship, not the thing we meant."</div>
+<div class="say">[Gate 5] "The ladder stands at 3. The board-key forks clean. The seed is drawn:
+&lt;SEED&gt;. The seed is spoken. The wand is waved."</div>
+<div class="say">[Gate 6] "The board is open. Doom is patient. Play."</div>
+
+<p class="sub">
+  Every line must be true and verified. Saying a line you have not checked is
+  named the cardinal sin of the ceremony -- and [Gate 5]'s middle line is the one
+  currently at risk.
+</p>
+
+<h2>Known warts shipping tonight -- do not re-litigate</h2>
+
+<div class="scroll"><table>
+<tr><th>What players may hit</th><th>Tracked</th></tr>
+<tr><td>Actions resolve instantly; no send-and-return rhythm</td><td>#1044</td></tr>
+<tr><td>Plan screen scrolls; upgrades column cramped; dead middle</td><td>#1043</td></tr>
+<tr><td>Hiring pipeline cramped; hiring actions make no queue cards</td><td>#1041</td></tr>
+<tr><td>What's New shows no patch notes for 0.13.2</td><td>#1041</td></tr>
+<tr><td>"Turn N" counts days, not turns</td><td>#1041</td></tr>
+<tr><td>Leaderboard says Player/lab, not Operator/lab name</td><td>#812, #957</td></tr>
+<tr><td>A cat portrait goes magenta at high doom</td><td>#1041</td></tr>
+<tr><td>Builds unsigned -- OS warnings on first run</td><td>#683, #917, #1038</td></tr>
+</table></div>
+
+<h2>After the board opens</h2>
+<ul>
+  <li>Post the blessed seed to website <strong>#151</strong> and <strong>#201</strong>.</li>
+  <li>Watch the first submissions actually appear. The whole point of #201 is that
+      "submitted" and "visible" are different claims.</li>
+  <li>Saturday: hotpatch watch, then the retro -- <strong>#1025</strong> (the ritual
+      ordering flaw), <strong>#1026</strong> (five whys), <strong>#1027</strong>
+      (the phase transition). The playbook asks: which gate was theatre, and which
+      caught something real? This week, [Gate 4] caught four real things.</li>
+</ul>
+
+<p class="foot">
+  Local working file, untracked: <code>tools/runsheet/fri-2026-07-31-league-day.html</code>.
+  If this disagrees with the playbook or RELEASE_NOMENCLATURE.md, they win.
+</p>
+
+</div>

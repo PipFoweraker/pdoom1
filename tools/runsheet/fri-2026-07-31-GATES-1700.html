@@ -1,0 +1,180 @@
+<title>P(Doom)1 -- Gate 4/5/6 step-by-step, Friday 2026-07-31 17:00</title>
+<style>
+  @page { size: A4 portrait; margin: 13mm 12mm; }
+  html { font-size: 12.5pt; }
+  body { font-family: "Segoe UI", Calibri, Arial, sans-serif; line-height: 1.4;
+         color: #000; background: #fff; max-width: 190mm; margin: 0 auto; }
+  h1 { font-size: 19pt; margin: 0 0 1.5mm; line-height: 1.15; }
+  h2 { font-size: 15pt; margin: 6mm 0 2mm; padding: 1.6mm 2.5mm;
+       background: #1a1a1a; color: #fff; page-break-after: avoid; }
+  h3 { font-size: 13pt; margin: 4mm 0 1.5mm; page-break-after: avoid; }
+  p, li, td, th { font-size: 12.5pt; }
+  .sub { font-size: 12pt; color: #333; margin: 0 0 3mm; }
+  table { border-collapse: collapse; width: 100%; margin: 2mm 0 3.5mm; }
+  th, td { border: 1px solid #444; padding: 2mm 2.4mm; text-align: left; vertical-align: top; }
+  th { background: #e8e8e8; font-weight: 700; }
+  td.n { white-space: nowrap; font-weight: 700; width: 9mm; text-align: center; }
+  .box { border: 2.2pt solid #000; padding: 3mm 3.5mm; margin: 3.5mm 0; page-break-inside: avoid; }
+  .box.alarm { border-width: 3pt; background: #f4f4f4; }
+  .chk { display: inline-block; width: 4.6mm; height: 4.6mm; border: 1.6pt solid #000;
+         margin-right: 2.2mm; vertical-align: -0.7mm; }
+  ul, ol { margin: 1.2mm 0 2.5mm; padding-left: 7mm; }
+  li { margin-bottom: 1.2mm; }
+  code { font-family: Consolas, "Courier New", monospace; font-size: 11.5pt;
+         background: #eee; padding: 0.3mm 1mm; }
+  .say { border: 1.6pt solid #000; border-left: 5pt solid #000; padding: 3mm 3.5mm;
+         margin: 2.5mm 0; font-size: 13.5pt; font-weight: 700; line-height: 1.5; }
+  .note { font-size: 11.5pt; color: #222; }
+  .pb { page-break-before: always; }
+  .foot { font-size: 11.5pt; color: #333; border-top: 1.2pt solid #999;
+          margin-top: 5mm; padding-top: 2mm; }
+  @media (prefers-color-scheme: dark) { html, body { background:#fff; color:#000; } }
+</style>
+
+<h1>Gate 4 -&gt; 5 -&gt; 6, step by step</h1>
+<p class="sub">
+  Printed <strong>16:58 AEST, Friday 2026-07-31</strong>, describing commit
+  <strong>868c784e</strong> (version 0.13.2, ladder L3, seed <code>weekly-2026-w31</code>).
+  If the SHA on this page is not the SHA of the build in front of you, this sheet is stale --
+  reprint it. Run the gates in order. Do not skip 4 to reach 6.
+</p>
+
+<div class="box alarm">
+  <h3 style="margin-top:0">Do we need a final re-cut? NO.</h3>
+  <p style="margin-bottom:0">
+    The artifact in <code>builds/windows_desktop/</code> was cut at <strong>16:19</strong> from
+    <strong>868c784e</strong>, which already contains #1060 (scenario runs unranked). Two commits
+    have landed since -- <code>43aad94c</code> and <code>9b6ac0a6</code> -- and <strong>both are
+    entirely inside <code>tools/</code></strong>, which Godot does not pack. The only file under
+    <code>godot/</code> that differs is <code>build_stamp.txt</code>, and the pack already holds
+    the newer one because the build itself wrote it.<br><br>
+    <strong>Verified, not assumed:</strong>
+    <code>git diff --stat 868c784e origin/main -- godot/</code> returns that one stamp file and
+    nothing else. Re-cutting would produce the same game and cost you the 17:00 slot.
+  </p>
+</div>
+
+<h2>GATE 4 -- PROVEN BUILD. Do this first.</h2>
+
+<table>
+  <tr><th class="n">#</th><th>Check</th><th style="width:34mm">Status</th></tr>
+  <tr><td class="n">1</td><td>Freshness marker proven inside the <code>.pck</code></td><td><strong>PASS</strong> (auto, 16:19)</td></tr>
+  <tr><td class="n">2</td><td><code>sync_version.py --check</code> exits 0</td><td><strong>PASS</strong></td></tr>
+  <tr><td class="n">3</td><td>Fast gate green, above the floor</td><td><strong>PASS</strong> 1001/0, 97-of-97</td></tr>
+  <tr><td class="n">4</td><td>Changelog carries the literal version</td><td><strong>PASS</strong></td></tr>
+  <tr><td class="n">6</td><td>Cut number + base SHA written down</td><td><strong>868c784e</strong></td></tr>
+  <tr><td class="n">8</td><td><strong>Clean machine</strong> (new -- your change)</td><td><strong>PASS</strong> reset applied 16:04</td></tr>
+  <tr><td class="n">5</td><td><strong>Human plays the BUILT artifact</strong></td><td><strong>ON YOU -- below</strong></td></tr>
+</table>
+
+<h3>Step 5, the only one left. ~4 minutes.</h3>
+<ol>
+  <li><span class="chk"></span> Launch <code>builds\windows_desktop\PDoom.exe</code>.
+    <span class="note">The real exe, not <code>godot --path godot</code>. Check 5 is about the thing we ship.</span></li>
+  <li><span class="chk"></span> On the pre-game screen confirm by eye, out loud for the recording:
+    <ul>
+      <li>Scenario reads <strong>Standard Game</strong></li>
+      <li>Difficulty reads <strong>Standard</strong> and is <strong>greyed out</strong></li>
+      <li>Seed reads <code>weekly-2026-w31</code></li>
+    </ul>
+  </li>
+  <li><span class="chk"></span> <strong>Poke the new thing once:</strong> open the Scenario dropdown,
+    pick <strong>Sandbox Mode</strong>, and confirm the amber
+    <strong>"[!] NOT RANKED"</strong> line appears. Then set it back to <strong>Standard Game</strong>.
+    <span class="note">This is the fix that bought the re-cut. Sixty seconds to see it work with your own eyes.</span></li>
+  <li><span class="chk"></span> Play -&gt; lose -&gt; reach the leaderboard. Use
+    <strong>Accept Your Fate</strong> in the pause menu if you want it fast -- it is new today
+    and this doubles as its first real exercise.</li>
+  <li><span class="chk"></span> Confirm your score appears on the board.</li>
+</ol>
+
+<div class="say">
+  "This is the re-cut, from eight-six-eight-c-seven-eight-four-e; every earlier cut is dead.<br>
+  The build is fresh and proves it.<br>
+  The version speaks with one voice.<br>
+  A human has played the thing we ship, not the thing we meant -- and the machine that proved it
+  is a clean machine.<br>
+  [Gate 4] is spoken. The build is proven."
+</div>
+
+<h2 class="pb">GATE 5 -- SEED BLESSING. Straight after Gate 4.</h2>
+
+<table>
+  <tr><th class="n">#</th><th>Check</th><th style="width:34mm">Status</th></tr>
+  <tr><td class="n">1</td><td>Ladder value read aloud</td><td><strong>L3</strong></td></tr>
+  <tr><td class="n">2</td><td>Seed const matches the seed you will speak</td><td><strong>PASS</strong> <code>weekly-2026-w31</code></td></tr>
+  <tr><td class="n">3</td><td>That const is inside the blessed cut</td><td><strong>PASS</strong> (#1047, before the cut)</td></tr>
+  <tr><td class="n">4</td><td>Board key derives from <code>get_board_version()</code></td><td><strong>PASS</strong></td></tr>
+  <tr><td class="n">5</td><td><code>sync_version.py --check</code></td><td><strong>PASS</strong></td></tr>
+  <tr><td class="n">8</td><td><strong>No non-Standard config can reach this board</strong> (new -- your change)</td><td><strong>PASS</strong> difficulty locked #1058, scenario gated #1060</td></tr>
+  <tr><td class="n">7</td><td>Website serves an empty board for (seed, L3)</td><td><strong>ATTESTATION -- needs a name</strong></td></tr>
+</table>
+
+<div class="box">
+  <strong>Check 7 is not yours to verify and the sheet says so.</strong> It needs a named person,
+  a timestamp, and what they actually looked at -- not "it's fine". If nobody can attest it, you
+  may still bless the seed: Gate 5 owns the seed, Gate 6 owns the board.
+  <span class="note">Say "<em>unattested at 17:0X</em>" rather than skipping the clause.</span>
+</div>
+
+<div class="say">
+  "The ladder stands at L three. The seed is drawn: weekly-two-oh-two-six-w-thirty-one.<br>
+  The seed the client posts is the seed I speak, and it is inside the build we cut.<br>
+  The board key is weekly-two-oh-two-six-w-thirty-one, L three, and it is keyed on the ladder,
+  not the binary.<br>
+  And no non-Standard configuration can reach this board.<br>
+  The board itself is attested by ................ at ........<br>
+  The seed is spoken. The wand is waved."
+</div>
+
+<p class="note">
+  The wand can be a pencil. The new fourth line is your change, and it earned itself twice today:
+  difficulty at 11:14 (#1058), scenario at 16:15 (#1060) -- same screen, four hours apart.
+  "The board key has not forked" and "everything on this board is comparable" are different
+  claims, and only the first was ever being checked.
+</p>
+
+<h2>GATE 6 -- BOARD OPENS</h2>
+
+<ol>
+  <li><span class="chk"></span> <strong>Post the blessed seed</strong> to pdoom1-website
+    <strong>#151</strong> and <strong>#201</strong>. Seed <code>weekly-2026-w31</code>, ladder
+    <code>L3</code>, build <code>0.13.2</code>. One comment each, phone is fine.</li>
+  <li><span class="chk"></span> <strong>Announce.</strong></li>
+  <li><span class="chk"></span> <strong>Watch one real submission land</strong> -- not yours.
+    Submitted and visible are different claims; that is the whole lesson of #201.</li>
+  <li><span class="chk"></span> <strong>Alert dry-run before 17:45.</strong> Open a throwaway
+    issue on pdoom1, confirm the phone buzzes, close it. 60 seconds.</li>
+</ol>
+
+<div class="say">
+  "Gate 6. The board is open. Play begins."
+</div>
+
+<div class="box alarm">
+  <h3 style="margin-top:0">Gate 6 blocker you already know about</h3>
+  <p style="margin-bottom:0">
+    <strong>pdoom1-website "Sync Leaderboards" is failing</strong> and is a SCHEDULED job
+    (~12:57 AEST daily). It succeeded 29 Jul, failed 30 and 31 Jul. <strong>It will not retry
+    before tomorrow lunchtime</strong> -- it needs a manual dispatch on the website repo.
+    Root cause is <strong>still unidentified</strong>: the failure log only exposed the
+    issue-filing step, not the failing one.<br><br>
+    <strong>This does not block Gate 5.</strong> It is a Gate 6 consideration. If the board looks
+    empty tonight, check this <em>before</em> concluding nobody played.
+  </p>
+</div>
+
+<h3>Three things worth interrupting anything for</h3>
+<ol>
+  <li>A player reports a <strong>crash</strong>.</li>
+  <li><strong>Nothing on the board an hour after opening</strong> (~18:00).</li>
+  <li><strong>Board liveness goes red</strong> -- i.e. the automated <em>Board liveness (score
+    API)</em> check on pdoom1-website fails and files/updates issue <strong>#204</strong>.
+    It means scores exist that no visitor can see.</li>
+</ol>
+
+<p class="foot">
+  Sheet generated 16:58 for commit 868c784e &middot; Gate 4 check 8 and Gate 5 check 8 are new
+  as of today and are recorded in <code>docs/rituals/</code> &middot; reprint with
+  <code>python tools/print_doc.py &lt;file&gt; --printer "Brother HL-L2460DW Printer"</code>
+</p>
