@@ -51,7 +51,18 @@ func _ready():
 	player_name_input.text = GameConfig.player_name
 	lab_name_input.text = GameConfig.lab_name
 	seed_input.text = GameConfig.game_seed
-	difficulty_option.selected = GameConfig.difficulty
+	# ONE LADDER while the player base is small (Pip's ruling, 2026-07-31).
+	# Difficulty appears NOWHERE in the leaderboard submission or the board key --
+	# an Easy run and a Hard run post to the same (seed, epoch) board with nothing
+	# marking which is which, so their scores are silently incomparable. The honest
+	# options were: fork the board per difficulty (three near-empty boards for a
+	# handful of players), submit difficulty so the site can filter (needs website
+	# work), or ship one difficulty. This is the third, and it is reversible in one
+	# line once #1058 lands.
+	GameConfig.difficulty = 1  # Standard
+	difficulty_option.selected = 1
+	difficulty_option.disabled = true
+	difficulty_option.tooltip_text = "Locked to Standard for the first leagues -- every score sits on one comparable board. Difficulty tiers return once the board can tell them apart."
 
 	# Set up button icons
 	_setup_button_icons()
