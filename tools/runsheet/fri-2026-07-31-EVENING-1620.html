@@ -1,0 +1,236 @@
+<title>P(Doom)1 -- Friday 2026-07-31 evening runsheet (16:20 to midnight)</title>
+<style>
+  /* PRINT LEGIBILITY STANDARD (Pip's ask, 2026-07-31): 12pt floor, predictable
+     formatting, nothing below 11pt anywhere including notes and table cells. */
+  @page { size: A4 portrait; margin: 14mm 13mm; }
+  html { font-size: 12.5pt; }
+  body {
+    font-family: "Segoe UI", Calibri, Arial, sans-serif;
+    line-height: 1.42; color: #000; background: #fff; max-width: 190mm; margin: 0 auto;
+  }
+  h1 { font-size: 20pt; margin: 0 0 2mm; line-height: 1.15; }
+  h2 {
+    font-size: 15pt; margin: 7mm 0 2mm; padding: 1.6mm 2.5mm;
+    background: #1a1a1a; color: #fff; page-break-after: avoid;
+  }
+  h3 { font-size: 13pt; margin: 4.5mm 0 1.5mm; page-break-after: avoid; }
+  p, li, td, th { font-size: 12.5pt; }
+  .sub { font-size: 12pt; color: #333; margin: 0 0 4mm; }
+  table { border-collapse: collapse; width: 100%; margin: 2.5mm 0 4mm; }
+  th, td { border: 1px solid #444; padding: 2.2mm 2.6mm; text-align: left; vertical-align: top; }
+  th { background: #e8e8e8; font-weight: 700; }
+  td.t { white-space: nowrap; font-weight: 700; width: 24mm; }
+  .box { border: 2.2pt solid #000; padding: 3.5mm 4mm; margin: 4mm 0; page-break-inside: avoid; }
+  .box.alarm { border-width: 3pt; background: #f4f4f4; }
+  .chk { display: inline-block; width: 4.6mm; height: 4.6mm; border: 1.6pt solid #000;
+         margin-right: 2.4mm; vertical-align: -0.7mm; }
+  ul, ol { margin: 1.5mm 0 3mm; padding-left: 7mm; }
+  li { margin-bottom: 1.3mm; }
+  code { font-family: Consolas, "Courier New", monospace; font-size: 11.5pt;
+         background: #eee; padding: 0.3mm 1mm; }
+  .say { border-left: 4pt solid #000; padding: 2mm 0 2mm 4mm; margin: 2.5mm 0;
+         font-size: 13pt; font-weight: 700; }
+  .note { font-size: 11.5pt; color: #222; }
+  hr { border: 0; border-top: 1.2pt solid #999; margin: 5mm 0; }
+  .pb { page-break-before: always; }
+  @media (prefers-color-scheme: dark) {
+    /* This sheet is for PAPER. Force light so a screen preview matches the print. */
+    html, body { background: #fff; color: #000; }
+  }
+</style>
+
+<h1>P(Doom)1 -- Friday 2026-07-31, evening runsheet</h1>
+<p class="sub">
+  Printed 16:20 AEST. Covers <strong>now to midnight</strong>. Assumes you are on the
+  phone with an <em>emergence</em> until ~19:00, including the walk to Rektango.
+  Everything needed is on this paper -- no screen, no session, no memory of this afternoon.
+</p>
+
+<div class="box alarm">
+  <h3 style="margin-top:0">The one-paragraph situation</h3>
+  <p style="margin-bottom:0">
+    A live league-integrity hole was found at 15:25 and closed at 16:15: the pre-game
+    <strong>Scenario dropdown</strong> was fully live, and scenario is not in the board key --
+    so a player could pick <strong>Sandbox Mode ($10,000,000 opening)</strong> and post to the
+    same board as everyone else. Fixed in <strong>PR #1060, merged</strong>: scenarios stay
+    playable but are <strong>UNRANKED</strong>, with the player warned when they pick and again
+    at game over. A <strong>re-cut build is running now</strong>. The fast gate is
+    <strong>green: 1001 tests, 0 failures</strong>. The red gate you were told about at midday
+    was a <em>different</em>, harmless, pre-existing bug and is also fixed.
+  </p>
+</div>
+
+<h2>1. Actions that are ON YOU. Nothing else here needs a human.</h2>
+
+<table>
+  <tr><th class="t">When</th><th>Action</th></tr>
+  <tr>
+    <td class="t">Any time<br>you get 4<br>free minutes</td>
+    <td>
+      <strong><span class="chk"></span> Say [Gate 4] and [Gate 5] on camera.</strong>
+      OBS is standing by. Both are owed and both are true. Script is on page 2.
+      <span class="note">These are the only two things tonight that cannot be done without you.</span>
+    </td>
+  </tr>
+  <tr>
+    <td class="t">~17:00</td>
+    <td>
+      <strong><span class="chk"></span> Decide: open the board on time, or slip it.</strong>
+      Default if you say nothing: <strong>the board opens on time</strong> (it is already
+      live -- scores flow regardless), and the <em>announcement</em> waits for you.
+      Nobody is blocked by the ceremony.
+    </td>
+  </tr>
+  <tr>
+    <td class="t">~17:00</td>
+    <td>
+      <strong><span class="chk"></span> Post the blessed seed</strong> to
+      pdoom1-website <strong>#151</strong> and <strong>#201</strong>.
+      Seed: <code>weekly-2026-w31</code>, ladder <code>L3</code>.
+      <span class="note">One comment, both issues. Can be done from the phone.</span>
+    </td>
+  </tr>
+  <tr>
+    <td class="t">Before<br>17:45</td>
+    <td>
+      <strong><span class="chk"></span> Alert dry-run.</strong> Open a throwaway issue on
+      pdoom1, confirm the phone buzzes, close it. 60 seconds. Skipping this is how you
+      find out at 21:00 that no alert ever reaches you.
+    </td>
+  </tr>
+  <tr>
+    <td class="t">~20:00<br>(back from<br>Rektango)</td>
+    <td>
+      <strong><span class="chk"></span> Watch one real submission land</strong> end to end.
+      Submitted and visible are different claims -- that is the whole lesson of #201.
+    </td>
+  </tr>
+  <tr>
+    <td class="t">Sat</td>
+    <td>
+      <span class="chk"></span> Dev-blog drafts (you deferred these -- correct call).
+      <span class="chk"></span> Restful Mortems.
+    </td>
+  </tr>
+  <tr>
+    <td class="t">Mon<br>03 Aug</td>
+    <td>
+      <span class="chk"></span> <strong>IP / trademark with the Australian lawyers.</strong>
+      Filed as <strong>pdoom1 issue #1061</strong> with the full question list ready to hand over.
+    </td>
+  </tr>
+</table>
+
+<div class="box">
+  <h3 style="margin-top:0">Three things worth interrupting the phone call for</h3>
+  <ol style="margin-bottom:0">
+    <li><strong>A player reports a crash.</strong></li>
+    <li><strong>Nothing on the board an hour after opening</strong> (i.e. by ~18:00).</li>
+    <li><strong>Board liveness goes red.</strong>
+      <span class="note">Definitions, because you asked and the old sheet did not say:
+      <em>"board"</em> = the <code>(weekly-2026-w31, L3)</code> leaderboard that pdoom1.com
+      publishes. <em>"red"</em> = the automated <strong>Board liveness (score API)</strong>
+      check on pdoom1-website fails, which files or updates issue <strong>#204</strong>. It
+      means scores exist that no visitor can see.</span>
+    </li>
+  </ol>
+</div>
+
+<h2>2. Say-out-loud scripts (page-2 so you can hold just this)</h2>
+
+<h3>[Gate 4] -- PROVEN BUILD</h3>
+<div class="box" style="margin:2mm 0 3mm">
+  <strong>The re-cut is DONE and verified, 16:24.</strong><br>
+  commit <code>868c784e</code> &middot; version <code>0.13.2</code> &middot; ladder <code>L3</code><br>
+  <code>PDoom.exe</code> + <code>PDoom.pck</code> (58.1 MB) in <code>builds/windows_desktop/</code><br>
+  BUILD-VERIFY <strong>PASS</strong> -- a unique freshness marker was proven present inside the pack.
+  <span class="note">Still unproven by machine, and it is the real ship gate: <strong>play -&gt; lose
+  -&gt; leaderboard on a real GPU</strong>. A verified pack proves the right bits shipped, not that
+  the game runs.</span>
+</div>
+<p class="note">Three lines. All three are verified true of THIS build. Do not say it of any other.</p>
+<div class="say">
+  "Gate 4. The build is cut from main at the merge of one-zero-six-zero.<br>
+  The fast gate is green: one thousand and one tests, zero failures, ninety-seven of
+  ninety-seven files collected.<br>
+  The build is stamped, and the freshness marker is proven inside the pack.<br>
+  [Gate 4] is spoken. The build is proven."
+</div>
+
+<h3>[Gate 5] -- SEED BLESSING</h3>
+<div class="say">
+  "Gate 5. The seed is weekly-two-zero-two-six-w-thirty-one.<br>
+  The ladder stands at three.<br>
+  Difficulty is locked to Standard. Scenario runs are unranked and say so.<br>
+  The board key is seed and ladder epoch, and it has not forked.<br>
+  [Gate 5] is spoken. The seed is blessed."
+</div>
+
+<h3>[Gate 6] -- BOARD OPENS</h3>
+<div class="say">
+  "Gate 6. The board is open. Play begins."
+</div>
+
+<hr>
+
+<h2>3. Suggested ceremony changes (you asked)</h2>
+<p>Three, all earned by something that actually happened today rather than by taste:</p>
+<ol>
+  <li>
+    <strong>Add a line to Gate 5: "and no non-Standard configuration can reach this board."</strong>
+    Difficulty (#1058) and scenario (#1060) were <em>both</em> found on league day, hours apart,
+    on the <em>same screen</em>. Gate 5 currently asserts the board key has not forked -- it does
+    not assert that everything landing on the board is comparable. Those are different claims and
+    today proved it twice.
+  </li>
+  <li>
+    <strong>Add to Gate 4: "and the machine that proved it is a clean machine."</strong>
+    Your own config carried <code>scenario_id="crisis"</code>, which silently made this morning's
+    recorded playtest a Crisis Mode playtest and reddened four tests that were green in CI.
+    <code>python tools/reset_player_state.py --apply</code> now exists for exactly this and has
+    already been run.
+  </li>
+  <li>
+    <strong>Regenerate every ceremony sheet at the moment of the ceremony.</strong>
+    You caught this yourself at 14:23 -- the printed copy was stale by a working day of merges.
+    Make staleness impossible rather than remembered: the sheet should carry its own print
+    timestamp and the git SHA it describes. This sheet does not yet; that is the next iteration.
+  </li>
+</ol>
+<p class="note">
+  The seven ritual sheets in <code>docs/rituals/</code> are unchanged and still unreviewed --
+  they were written for next week, not tonight. I have not edited them; changing a ceremony
+  document an hour before the ceremony is how ceremonies stop meaning anything.
+</p>
+
+<h2>4. What is running without you</h2>
+<table>
+  <tr><th class="t">State</th><th>Item</th></tr>
+  <tr><td class="t">DONE</td><td>PR <strong>#1060</strong> merged -- scenario runs unranked + warned; orphan leak fixed; tests made config-independent.</td></tr>
+  <tr><td class="t">DONE</td><td>Hard local reset applied. Backup kept; <code>--restore</code> undoes it.</td></tr>
+  <tr><td class="t">DONE</td><td>Issues filed: <strong>#1061</strong> IP/trademark (due Mon), <strong>#1062</strong> duration column, <strong>#1063</strong> name on first screen, <strong>#1064</strong> Play Again logic, <strong>#1065</strong> the unresolved "ladder bug" quote.</td></tr>
+  <tr><td class="t">RUNNING</td><td>Re-cut build via <code>tools/build_release.py</code>.</td></tr>
+  <tr><td class="t">QUEUED</td><td>PR <strong>#1054</strong> (transcriber vocab) -- merging after the build, it cannot affect the artifact.</td></tr>
+  <tr><td class="t">THEIRS</td><td>pdoom1-website reds: <strong>#203</strong> sync failing, <strong>#204</strong> unpublished board, <strong>#149</strong> data contract, plus Encoding Safety red on main. All website-repo work.</td></tr>
+</table>
+
+<div class="box alarm">
+  <h3 style="margin-top:0">The one thing that will not fix itself</h3>
+  <p style="margin-bottom:0">
+    <strong>pdoom1-website "Sync Leaderboards" is a SCHEDULED job</strong> firing about
+    12:57 AEST daily. It succeeded 29 Jul, then <strong>failed 30 Jul and failed again
+    today</strong>. The next scheduled run is <strong>tomorrow lunchtime</strong> -- it will
+    not retry before the board opens tonight.<br><br>
+    Someone must fix it and <strong>manually dispatch</strong> it. Honest limit: I read the
+    failure log and it only showed the issue-filing step, <strong>not the failing step</strong>
+    -- I have <em>not</em> identified the root cause. If the board looks empty tonight, check
+    this before concluding nobody played.
+  </p>
+</div>
+
+<hr>
+<p class="note">
+  No transcripts from the lunch walk have arrived. The newest audio in
+  <code>art_generated/audiodump/</code> is still this morning's 10:24 playtest.
+  Nothing is waiting to be processed.
+</p>
