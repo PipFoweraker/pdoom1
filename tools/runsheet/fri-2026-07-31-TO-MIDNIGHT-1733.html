@@ -1,0 +1,145 @@
+<title>P(Doom)1 -- actions to midnight, printed 17:33</title>
+<style>
+  @page { size: A4 portrait; margin: 13mm 12mm; }
+  html { font-size: 12.5pt; }
+  body { font-family: "Segoe UI", Calibri, Arial, sans-serif; line-height: 1.4;
+         color: #000; background: #fff; max-width: 190mm; margin: 0 auto; }
+  .stamp { border: 3pt solid #000; background: #1a1a1a; color: #fff;
+           padding: 3mm 4mm; margin: 0 0 4mm; }
+  .stamp .big { font-size: 22pt; font-weight: 700; line-height: 1.1; letter-spacing: 0.3mm; }
+  .stamp .meta { font-size: 12pt; margin-top: 1.5mm; }
+  h1 { font-size: 18pt; margin: 0 0 2mm; line-height: 1.15; }
+  h2 { font-size: 15pt; margin: 6mm 0 2mm; padding: 1.7mm 2.5mm;
+       background: #1a1a1a; color: #fff; page-break-after: avoid; }
+  h3 { font-size: 13pt; margin: 4mm 0 1.5mm; page-break-after: avoid; }
+  p, li, td, th { font-size: 12.5pt; }
+  table { border-collapse: collapse; width: 100%; margin: 2mm 0 3.5mm; }
+  th, td { border: 1px solid #444; padding: 2.1mm 2.5mm; text-align: left; vertical-align: top; }
+  th { background: #e8e8e8; font-weight: 700; }
+  td.t { white-space: nowrap; font-weight: 700; width: 25mm; }
+  .box { border: 2.2pt solid #000; padding: 3mm 3.5mm; margin: 3.5mm 0; page-break-inside: avoid; }
+  .box.alarm { border-width: 3pt; background: #f2f2f2; }
+  .chk { display: inline-block; width: 4.8mm; height: 4.8mm; border: 1.7pt solid #000;
+         margin-right: 2.2mm; vertical-align: -0.8mm; }
+  ul, ol { margin: 1.2mm 0 2.5mm; padding-left: 7mm; }
+  li { margin-bottom: 1.3mm; }
+  code { font-family: Consolas, "Courier New", monospace; font-size: 11.5pt;
+         background: #eee; padding: 0.3mm 1mm; }
+  .note { font-size: 11.5pt; color: #222; }
+  .foot { font-size: 11.5pt; color: #333; border-top: 1.2pt solid #999;
+          margin-top: 5mm; padding-top: 2mm; }
+  @media (prefers-color-scheme: dark) { html, body { background:#fff; color:#000; } }
+</style>
+
+<div class="stamp">
+  <div class="big">PRINTED 17:33 &nbsp;&middot;&nbsp; FRI 31 JUL 2026</div>
+  <div class="meta">
+    main <strong>f321ee65</strong> &middot; artifact <strong>868c784e</strong> &middot;
+    v<strong>0.13.2</strong> &middot; ladder <strong>L3</strong> &middot; seed
+    <strong>weekly-2026-w31</strong> &middot; open PRs <strong>0</strong> &middot; CI
+    <strong>green</strong><br>
+    This supersedes the 16:20 sheet. If you are holding two, bin the older one.
+  </div>
+</div>
+
+<h1>Actions to midnight</h1>
+<p class="note">
+  Board has <strong>not</strong> opened. You are reviewing ceremonies now. Gate 6 is blocked on
+  one decision that is yours -- item 1 below.
+</p>
+
+<h2>1. THE DECISION BLOCKING EVERYTHING (2 minutes)</h2>
+
+<div class="box alarm">
+  <p><strong>There is no v0.13.2 tag and no v0.13.2 release.</strong> pdoom1.com's Download
+  button resolves <code>releases/latest</code> to <strong>v0.13.1</strong>, which ships
+  <strong>ladder L2</strong> and seed <strong><code>weekly-2026-w30</code></strong>. Bless
+  w31/L3, announce, and every downloader posts to a different board on both axes. Blessed board
+  empty all night. Nothing reports an error.</p>
+
+  <p style="margin-bottom:1.5mm"><strong>v0.13.1 shipped Mac and Linux builds. Tonight we have
+  Windows only.</strong> Those site buttons also point at <code>releases/latest/download/</code>.
+  Pick one:</p>
+  <ul style="margin-bottom:0">
+    <li><span class="chk"></span> <strong>A</strong> -- Windows-only. Mac/Linux links 404 tonight.</li>
+    <li><span class="chk"></span> <strong>B</strong> -- carry v0.13.1's Mac/Linux assets forward.
+      Links keep working, but those binaries are L2/w30 and <strong>recreate the exact bug we
+      just fixed</strong>. Argued against.</li>
+    <li><span class="chk"></span> <strong>C</strong> -- Windows-only, plus a release note saying
+      Mac/Linux stay on v0.13.1 and are <strong>not league-eligible tonight</strong>.
+      <strong>RECOMMENDED.</strong></li>
+  </ul>
+</div>
+
+<p>Say A, B or C and the following happens without you: tag <code>v0.13.2</code> at
+<code>868c784e</code> (the commit the artifact was actually built from), package, publish,
+then click the real Download button and confirm it serves 0.13.2.</p>
+
+<h2>2. Two rulings owed before you record</h2>
+<table>
+  <tr><th style="width:26mm">Gate</th><th>Ruling</th></tr>
+  <tr>
+    <td><strong>Gate 1</strong><br>check 4</td>
+    <td><span class="chk"></span> Issue <strong>#735</strong> still carries
+      <code>ship:tonight</code>. Stale label -&gt; close it. Real work -&gt; say what is left.
+      <span class="note">A stale ship:tonight is a claim about tonight nobody is checking.</span></td>
+  </tr>
+  <tr>
+    <td><strong>Gate 2</strong><br>the freeze</td>
+    <td><span class="chk"></span> <strong>#1051 "Accept Your Fate" is a NEW FEATURE merged after
+      the freeze</strong>, and no post-freeze PR carried a <code>league-critical</code> label --
+      so the exemption admitting the bugfixes was never recorded. Not a case for reverting.
+      <strong>Name the exception aloud</strong> instead of speaking "no new law crosses this
+      line" on a night when it did.</td>
+  </tr>
+</table>
+
+<h2>3. The gates, in order</h2>
+<table>
+  <tr><th style="width:30mm">Gate</th><th>State</th></tr>
+  <tr><td><strong>1 LAST POUR</strong></td><td>READY. Zero open PRs. Needs the #735 ruling.</td></tr>
+  <tr><td><strong>2 THE FREEZE</strong></td><td>READY with the exception named. All mechanicals pass.</td></tr>
+  <tr><td><strong>3 PACK BLESSED</strong></td><td>DISSOLVED -- <strong>skip it ALOUD</strong>. On a recording, dissolved and forgotten look identical.</td></tr>
+  <tr><td><strong>4 PROVEN BUILD</strong></td><td>Checks 1,2,3,4,6,8 <strong>PASS</strong>. Only <strong>check 5 -- you playing the built artifact</strong> remains. No rebuild needed.</td></tr>
+  <tr><td><strong>5 SEED BLESSING</strong></td><td>All mechanicals <strong>PASS</strong> incl. your new check 8. Check 7 needs a named attestation, or say "unattested at 17:xx".</td></tr>
+  <tr><td><strong>6 BOARD OPENS</strong></td><td><strong>BLOCKED</strong> until item 1 above is done.</td></tr>
+</table>
+
+<h2>4. After the gates, before you rest</h2>
+<table>
+  <tr><th class="t">When</th><th>Action</th></tr>
+  <tr><td class="t">On opening</td><td><span class="chk"></span> Post the blessed seed to pdoom1-website <strong>#151</strong> and <strong>#201</strong>. Seed <code>weekly-2026-w31</code>, ladder <code>L3</code>, build <code>0.13.2</code>.</td></tr>
+  <tr><td class="t">+5 min</td><td><span class="chk"></span> <strong>Watch one real submission land</strong> -- not yours. Submitted and visible are different claims.</td></tr>
+  <tr><td class="t">Before you<br>go out</td><td><span class="chk"></span> <strong>Alert dry-run.</strong> Open a throwaway issue on pdoom1, confirm the phone buzzes, close it. 60 seconds.</td></tr>
+  <tr><td class="t">~1 hr after<br>opening</td><td><span class="chk"></span> Board has entries on it. If not, read the box below <em>before</em> concluding nobody played.</td></tr>
+  <tr><td class="t">Late</td><td><span class="chk"></span> Dev-blog drafts stay <strong>untracked</strong> -- <code>sync-dev-blog.yml</code> fires on any push touching <code>dev-blog/entries/**</code> and does not filter <code>draft: true</code>. Committing publishes. Saturday is fine.</td></tr>
+  <tr><td class="t">Mon 03 Aug</td><td><span class="chk"></span> <strong>IP / trademark, Australian lawyers.</strong> Full question list ready in pdoom1 issue <strong>#1061</strong>.</td></tr>
+</table>
+
+<div class="box alarm">
+  <h3 style="margin-top:0">If the board looks empty tonight, check this FIRST</h3>
+  <p style="margin-bottom:0">
+    <strong>pdoom1-website "Sync Leaderboards" is failing.</strong> It is a SCHEDULED job
+    (~12:57 AEST daily). Succeeded 29 Jul, failed 30 Jul, failed 31 Jul. <strong>The next
+    scheduled run is tomorrow lunchtime -- it will not retry tonight.</strong> It needs a manual
+    dispatch on the website repo.<br><br>
+    <strong>Root cause is still unidentified.</strong> The failure log only exposed the
+    issue-filing step, not the failing one. An empty board tonight is at least as likely to be
+    this as it is to be nobody playing.
+  </p>
+</div>
+
+<h3>Three things worth interrupting anything for</h3>
+<ol>
+  <li>A player reports a <strong>crash</strong>.</li>
+  <li><strong>Nothing on the board an hour after opening.</strong></li>
+  <li><strong>Board liveness goes red</strong> -- the automated <em>Board liveness (score API)</em>
+    check on pdoom1-website fails and files/updates issue <strong>#204</strong>. It means scores
+    exist that no visitor can see.</li>
+</ol>
+
+<p class="foot">
+  Printed 17:33 for main f321ee65 / artifact 868c784e &middot; supersedes the 16:20 sheet
+  &middot; reprint:
+  <code>python tools/print_doc.py &lt;file&gt; --printer "Brother HL-L2460DW Printer"</code>
+</p>
