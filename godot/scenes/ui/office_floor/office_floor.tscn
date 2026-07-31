@@ -9,5 +9,6 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+clip_contents = true
 custom_minimum_size = Vector2(360, 260)
 script = ExtResource("1_officefloor")

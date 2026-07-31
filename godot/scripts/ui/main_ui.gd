@@ -1227,10 +1227,30 @@ func _setup_delta_chips() -> void:
 		chip.name = "DeltaChip_%s" % spec["key"]
 		chip.text = ""
 		chip.add_theme_font_size_override("font_size", 12)
+		chip.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 		chip.tooltip_text = "Change over the last turn"
 		var parent = anchor.get_parent()
-		parent.add_child(chip)
-		parent.move_child(chip, anchor.get_index() + 1)
+		# The doom readout's parent (main.tscn NumericDoomZone) is a CenterContainer,
+		# which centres EVERY child at its own minimum size -- so the chip landed
+		# exactly on top of the label and the two texts rendered through each other
+		# ("20.0%" + "(+0.9)" reading as garbage like "2099%" on the league recording).
+		# Money/compute/reputation sit in the TopBar HBox and were never affected.
+		# Give a CenterContainer anchor a real row to live in; every other parent
+		# (HBox/VBox) keeps the original sibling insert exactly as before.
+		if parent is CenterContainer:
+			var row := HBoxContainer.new()
+			row.name = "DeltaRow_%s" % spec["key"]
+			row.add_theme_constant_override("separation", 4)
+			row.alignment = BoxContainer.ALIGNMENT_CENTER
+			var at: int = anchor.get_index()
+			parent.remove_child(anchor)
+			parent.add_child(row)
+			parent.move_child(row, at)
+			row.add_child(anchor)
+			row.add_child(chip)
+		else:
+			parent.add_child(chip)
+			parent.move_child(chip, anchor.get_index() + 1)
 		_delta_labels[spec["key"]] = chip
 
 
