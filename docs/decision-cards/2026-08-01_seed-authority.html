@@ -1,0 +1,259 @@
+<title>Decision cards -- seed authority and orphaned boards, 2026-08-01</title>
+<style>
+  @page { size: A4 portrait; margin: 14mm 13mm; }
+  html { font-size: 12.5pt; }
+  body { font-family: "Segoe UI", Calibri, Arial, sans-serif; line-height: 1.45;
+         color: #000; background: #fff; max-width: 190mm; margin: 0 auto; }
+  .stamp { border: 3pt solid #000; background: #1a1a1a; color: #fff;
+           padding: 3mm 4mm; margin: 0 0 5mm; }
+  .stamp .big { font-size: 17pt; font-weight: 700; line-height: 1.15; }
+  .stamp .meta { font-size: 11.5pt; margin-top: 1.5mm; }
+  h1 { font-size: 18pt; margin: 0 0 2mm; line-height: 1.15; }
+  h2 { font-size: 15pt; margin: 6mm 0 2mm; padding: 1.7mm 2.5mm;
+       background: #1a1a1a; color: #fff; page-break-after: avoid; }
+  h3 { font-size: 13pt; margin: 4.5mm 0 1.5mm; page-break-after: avoid; }
+  p, li, td, th { font-size: 12.5pt; }
+  table { border-collapse: collapse; width: 100%; margin: 2.5mm 0 4mm; }
+  th, td { border: 1px solid #444; padding: 2.2mm 2.6mm; text-align: left; vertical-align: top; }
+  th { background: #e8e8e8; font-weight: 700; }
+  .box { border: 2.2pt solid #000; padding: 3mm 3.5mm; margin: 4mm 0; page-break-inside: avoid; }
+  .box.ask { border-width: 3pt; background: #f2f2f2; }
+  .chk { display: inline-block; width: 5mm; height: 5mm; border: 1.7pt solid #000;
+         margin-right: 2.4mm; vertical-align: -0.8mm; }
+  ul, ol { margin: 1.5mm 0 3mm; padding-left: 7mm; }
+  li { margin-bottom: 1.4mm; }
+  code { font-family: Consolas, "Courier New", monospace; font-size: 11.5pt;
+         background: #eee; padding: 0.3mm 1mm; }
+  pre { font-family: Consolas, "Courier New", monospace; font-size: 11pt;
+        background: #f2f2f2; padding: 2.5mm 3mm; border: 1px solid #ccc;
+        white-space: pre-wrap; }
+  .rec { border-left: 5pt solid #000; padding: 2mm 0 2mm 4mm; margin: 3mm 0; }
+  .note { font-size: 11.5pt; color: #222; }
+  .pb { page-break-before: always; }
+  .foot { font-size: 11.5pt; color: #333; border-top: 1.2pt solid #999;
+          margin-top: 5mm; padding-top: 2mm; }
+  @media (prefers-color-scheme: dark) { html, body { background:#fff; color:#000; } }
+</style>
+
+<div class="stamp">
+  <div class="big">DECISION CARDS &nbsp;&middot;&nbsp; SAT 1 AUG 2026, 08:40</div>
+  <div class="meta">
+    Two rulings that belong to <strong>pdoom1</strong>, not to the website. Both are blocked
+    on you and nothing else. Self-contained -- assumes no memory of yesterday.
+  </div>
+</div>
+
+<h1>Card 1 -- What is the canonical source of "the current league seed"?</h1>
+
+<h3>What happened</h3>
+<p>
+  On league night the seed was blessed at ~18:45 as <code>weekly-2026-w31</code>. pdoom1.com
+  went on serving the <strong>previous</strong> seed for roughly 90 minutes, with real scores
+  sitting unpublished, until it was corrected by hand.
+</p>
+<p>
+  The board probe (<code>scripts/check-board-liveness.py</code>, website repo) is
+  <strong>deliberately</strong> built to derive rather than hardcode. It draws candidate seeds
+  from the anomaly captures, <code>weekly/current.json</code>, <code>leaderboard.json</code>
+  and <code>published-board.json</code>. <strong>Every one of those is a record of a seed the
+  site has already seen.</strong> A seed drawn for the first time at a ceremony appears in none
+  of them.
+</p>
+<p>
+  So it probed 108 boards (6 seeds x 18 epochs), never asked about <code>weekly-2026-w31</code>,
+  and reported <code>OK: deployed board (weekly-2026-w30, L3) holds 3 entries.</code>
+  Green, confident, wrong.
+</p>
+
+<div class="box">
+  <strong>The asymmetry that explains it, and it is the whole lesson.</strong>
+  The <em>epoch</em> half of the board key is a <strong>counter</strong> (<code>L3</code>), so
+  the probe scans a forward window and finds a bump automatically. The <em>seed</em> half is a
+  <strong>drawn string</strong>. There is no "next" to look ahead to. You cannot enumerate a
+  drawn value, and the moment a new one exists is exactly the moment nobody is watching.
+</div>
+
+<h3>The second, separate problem: two formats are live</h3>
+
+<table>
+  <tr><th>Producer</th><th>Format</th><th>Example</th><th>How it is obtained</th></tr>
+  <tr>
+    <td><strong>The game</strong><br><code>game_config.gd:462</code></td>
+    <td>hyphens, lowercase w, not zero-padded</td>
+    <td><code>weekly-2026-w31</code></td>
+    <td><strong>DRAWN</strong> -- a hand-pinned const, changed by a human at a ceremony</td>
+  </tr>
+  <tr>
+    <td><strong>The website</strong><br><code>game-integration.py:470</code></td>
+    <td>underscores, uppercase W, zero-padded</td>
+    <td><code>weekly_2026_W31</code></td>
+    <td><strong>COMPUTED</strong> -- <code>datetime.isocalendar()</code> at runtime</td>
+  </tr>
+</table>
+
+<p>
+  These disagree on <em>punctuation</em>, which is annoying. They also disagree on
+  <strong>epistemology</strong>, which is fatal: one is a value a human chose, the other is a
+  value a clock produced. On league night the site's computed week had already ticked to
+  <code>W32</code> while the blessed seed was <code>w31</code>. <strong>Even with identical
+  formatting they would have disagreed.</strong> Any consumer that computes the seed will drift
+  from the game, every time, forever.
+</p>
+
+<h3>Options</h3>
+
+<table>
+  <tr><th>&nbsp;</th><th>Option</th><th>For</th><th>Against</th></tr>
+  <tr>
+    <td><strong>A</strong></td>
+    <td>Website parses <code>FEATURED_SEED_OVERRIDE</code> out of <code>game_config.gd</code> at the released tag</td>
+    <td>Zero game-side change. The value is genuinely authoritative -- it is what the shipped client posts to.</td>
+    <td>Parsing GDScript with a regex from another repo. Breaks silently if the const is renamed, moved, or made dynamic.</td>
+  </tr>
+  <tr>
+    <td><strong>B</strong></td>
+    <td>Game publishes <code>featured_seed</code> + <code>ladder_epoch</code> in <code>release_manifest.json</code>, already a release asset</td>
+    <td>Machine-readable JSON, already generated by CI on every tag, already carries <code>commit_hash</code> and <code>engine</code>. Small change. The release becomes the authority, which matches the standing rule that the game is the authority.</td>
+    <td>Only updates at a tagged release. A seed rolled without a release would not appear.</td>
+  </tr>
+  <tr>
+    <td><strong>C</strong></td>
+    <td>Game serves a small live <code>league.json</code> endpoint</td>
+    <td>Always current, independent of release cadence.</td>
+    <td>New infrastructure to host and keep up. More moving parts than the problem deserves right now.</td>
+  </tr>
+  <tr>
+    <td><strong>D</strong></td>
+    <td>Keep deriving; add the blessed seed to a config the ceremony updates</td>
+    <td>No cross-repo coupling.</td>
+    <td>Puts a manual step inside the ceremony -- the exact thing that failed. Ceremonies forget.</td>
+  </tr>
+</table>
+
+<div class="rec">
+  <strong>Recommendation: B, with a rule attached.</strong><br>
+  <code>release_manifest.json</code> already ships on every tag and already carries provenance.
+  Adding two fields makes it the single machine-readable answer to "what board is live", and it
+  is discoverable without parsing another language.<br><br>
+  <strong>The rule that matters more than the mechanism: a seed roll REQUIRES a release.</strong>
+  That is already true in practice -- the seed is a pinned const inside the client, so rolling
+  it without a rebuild produces a client that posts to the old board. Option B makes that
+  existing constraint explicit and machine-checkable rather than tribal.
+</div>
+
+<div class="box ask">
+  <h3 style="margin-top:0">THE ASK -- Card 1</h3>
+  <p><strong>1a. Canonical source of the current seed:</strong><br>
+  <span class="chk"></span> A parse the tag &nbsp;
+  <span class="chk"></span> <strong>B release manifest (recommended)</strong> &nbsp;
+  <span class="chk"></span> C live endpoint &nbsp;
+  <span class="chk"></span> D ceremony config</p>
+
+  <p><strong>1b. Canonical seed string format</strong> -- one of these becomes correct and the
+  other becomes a bug:<br>
+  <span class="chk"></span> <code>weekly-2026-w31</code> (game's current form) &nbsp;&nbsp;
+  <span class="chk"></span> <code>weekly_2026_W31</code> (website's current form) &nbsp;&nbsp;
+  <span class="chk"></span> something else: ......................</p>
+
+  <p class="note" style="margin-bottom:0"><strong>Note:</strong> changing the game's format
+  changes the board key and would <strong>fork every existing board</strong>. If you pick the
+  underscore form, that is an epoch-level event, not a rename. The cheap answer is almost
+  certainly to make the game's existing form canonical and fix the website.</p>
+</div>
+
+<h2 class="pb">Card 2 -- What happens to a board when the seed rolls?</h2>
+
+<h3>What happened, this morning</h3>
+<p>
+  The website corrected itself overnight and now publishes <code>weekly-2026-w31 / L3</code>
+  with 3 entries, matching the score API exactly. <strong>That failure is closed.</strong>
+</p>
+<p>
+  But the board-liveness check is now <strong>failing</strong> with verdict
+  <code>orphaned-scores</code>, and it is failing <em>correctly</em>. Rolling the seed left the
+  previous board's entries recorded on a board the site no longer publishes:
+</p>
+
+<pre>weekly-2026-w30 / L3   -- entries by "Applied AI Safety", "Intelligent Agents Studies"
+                          dated 2026-07-30, now unpublished and unviewable</pre>
+
+<p>
+  The probe's own words: <em>"Players finished those runs. No visitor can see them, and no error
+  was shown to anyone."</em> That is exactly what it was built to shout about, and it is
+  shouting about a consequence <strong>we chose deliberately</strong> -- the seed was rolled
+  (#1047) specifically so the league would not open with prior runs already standing.
+</p>
+
+<div class="box">
+  <strong>So the alarm is not wrong and the decision was not wrong.</strong> What is missing is
+  a policy for the state in between. Right now every future seed roll will re-raise this, on a
+  monthly cadence, forever -- and an alarm that fires predictably on an intended action is an
+  alarm people learn to ignore. That is how #203 got ignored for two weeks.
+</div>
+
+<h3>Options</h3>
+
+<table>
+  <tr><th>&nbsp;</th><th>Option</th><th>For</th><th>Against</th></tr>
+  <tr>
+    <td><strong>A</strong></td>
+    <td>Move rolled-off boards into the <strong>anomaly archive</strong> as acknowledged history (the mechanism already exists -- it currently holds 0 entries)</td>
+    <td>Uses machinery that is already built. Silences the false alarm without hiding anything. Honest: the runs are recorded, just not current.</td>
+    <td>"Anomaly" is the wrong word for a routine, intended roll. Risks the archive becoming a junk drawer.</td>
+  </tr>
+  <tr>
+    <td><strong>B</strong></td>
+    <td>Publish <strong>past boards</strong> as browsable history; only the newest is "current"</td>
+    <td>Nothing is ever orphaned. Players keep their runs visible. A league with history looks like a league rather than a demo.</td>
+    <td>Real website work. Needs a UI decision about how past seasons are presented.</td>
+  </tr>
+  <tr>
+    <td><strong>C</strong></td>
+    <td>Teach the probe that a <strong>superseded</strong> board is not an orphan, and check only the current one</td>
+    <td>Smallest change. Kills the recurring false alarm immediately.</td>
+    <td>Weakens the guard. "Superseded" and "we broke it" become indistinguishable -- the precise failure mode of #1027.</td>
+  </tr>
+</table>
+
+<div class="rec">
+  <strong>Recommendation: A now, B when there is a second real season.</strong><br>
+  A is minutes of work with existing machinery and stops the alarm crying wolf before the next
+  roll. B is the right end state and becomes worth building the moment there is history anyone
+  wants to look at -- which is not yet, with three entries.<br><br>
+  <strong>Argued against: C.</strong> It fixes the symptom by lowering the standard. This
+  project's whole diagnosis is that guards get quietly weakened until they report green about
+  nothing.
+</div>
+
+<div class="box ask">
+  <h3 style="margin-top:0">THE ASK -- Card 2</h3>
+  <p><strong>2a. Policy for boards left behind by a seed roll:</strong><br>
+  <span class="chk"></span> <strong>A archive as acknowledged history (recommended)</strong> &nbsp;
+  <span class="chk"></span> B publish past boards as history &nbsp;
+  <span class="chk"></span> C teach the probe to ignore superseded boards</p>
+
+  <p style="margin-bottom:0"><strong>2b. The three w30 entries specifically</strong> -- do they
+  stay visible somewhere, or become archive-only?<br>
+  <span class="chk"></span> archive-only &nbsp;&nbsp;
+  <span class="chk"></span> keep visible &nbsp;&nbsp;
+  <span class="chk"></span> decide with 2a</p>
+</div>
+
+<h2>Source links</h2>
+<table>
+  <tr><th>What</th><th>Where</th></tr>
+  <tr><td>Probe cannot discover a new seed</td><td>pdoom1-website <strong>#229</strong></td></tr>
+  <tr><td>Orphaned scores, rolling issue</td><td>pdoom1-website <strong>#230</strong></td></tr>
+  <tr><td>The seed const</td><td><code>godot/autoload/game_config.gd:462</code></td></tr>
+  <tr><td>Website's computed week</td><td><code>scripts/game-integration.py:470,523</code></td></tr>
+  <tr><td>Board key accessor</td><td><code>GameConfig.get_board_version()</code> -- returns <code>"L" + LADDER_VERSION</code></td></tr>
+  <tr><td>Why the seed was rolled</td><td>pdoom1 <strong>#1047</strong></td></tr>
+  <tr><td>Board-key surface frozen</td><td>pdoom1-website <strong>#191</strong></td></tr>
+  <tr><td>The failure family</td><td>pdoom1 <strong>#1027</strong>, <code>docs/POSTMORTEM_2026-07-31_LEAGUE_DAY.md</code></td></tr>
+</table>
+
+<p class="foot">
+  Printed 08:40 Sat 2026-08-01 &middot; both rulings belong to pdoom1; the website implements
+  against whatever you decide &middot; asking the website first gets a shrug, because their own
+  standing position (#201) is that the game is the authority
+</p>
