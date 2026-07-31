@@ -59,8 +59,19 @@ func set_cat_image(image_path: String) -> void:
 
 	current_cat_image = image_path
 
-	# Load texture
-	if FileAccess.file_exists(image_path):
+	# Load texture.
+	#
+	# MUST be ResourceLoader.exists(), NEVER FileAccess.file_exists() (issue #796).
+	# Godot's exporter does not put the source .jpg in the .pck at all -- it ships
+	# only the imported texture (.godot/imported/<name>.jpg-<md5>.ctex) plus the
+	# .import metadata that points at it. FileAccess reads the packed file table
+	# literally, so file_exists("res://assets/cats/simple/web-arwen.jpg") is FALSE
+	# for EVERY cat in a shipped build even though the artwork is right there.
+	# ResourceLoader goes through the import system and resolves the .ctex.
+	# The rest of this project already uses ResourceLoader.exists() for exactly
+	# this (music_manager, portrait_library, resource_bar, fanfare_popup, ...);
+	# office_cat was the last holdout.
+	if ResourceLoader.exists(image_path):
 		var texture = load(image_path) as Texture2D
 		if texture:
 			cat_texture.texture = texture
@@ -73,11 +84,20 @@ func set_cat_image(image_path: String) -> void:
 		use_placeholder()
 
 ## Use placeholder when image is missing
+##
+## Defence in depth for #796. The old body assigned a PlaceholderTexture2D, which
+## is not a real texture -- the renderer substitutes its missing-texture fill, and
+## what the player saw on screen was a magenta/black checkerboard the size of the
+## cat panel. That is the single loudest "this software is broken" signal a game
+## can show, and it was showing for a purely cosmetic optional asset.
+##
+## If a cat ever goes missing again, fail QUIETLY: a muted swatch that reads as
+## "no photo" rather than as a rendering fault. The push_warning() above is where
+## a developer is meant to learn about it, not the player's screen.
 func use_placeholder() -> void:
-	# Create a simple colored rectangle as placeholder
-	var placeholder_texture = PlaceholderTexture2D.new()
-	placeholder_texture.size = Vector2(256, 256)
-	cat_texture.texture = placeholder_texture
+	var img := Image.create(64, 64, false, Image.FORMAT_RGBA8)
+	img.fill(Color(0.16, 0.17, 0.20, 1.0))
+	cat_texture.texture = ImageTexture.create_from_image(img)
 
 ## Cycle to next cat (for future feature: click to cycle)
 func cycle_contributor() -> void:

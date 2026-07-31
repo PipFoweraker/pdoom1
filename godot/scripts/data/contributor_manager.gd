@@ -124,9 +124,12 @@ func get_cat_image_for_doom_level(doom_percentage: float) -> String:
 	var image_path_png = "res://assets/cats/%s/%s.png" % [cat_image_base, variant_name]
 	var image_path_svg = "res://assets/cats/%s/%s.svg" % [cat_image_base, variant_name]
 
-	if FileAccess.file_exists(image_path_png):
+	# ResourceLoader.exists(), not FileAccess.file_exists() -- see #796. The .png/
+	# .svg sources are stripped from the exported .pck and replaced by imported
+	# .ctex, so FileAccess answers "missing" for artwork that is present.
+	if ResourceLoader.exists(image_path_png):
 		return image_path_png
-	elif FileAccess.file_exists(image_path_svg):
+	elif ResourceLoader.exists(image_path_svg):
 		return image_path_svg
 	else:
 		push_warning("Contributor cat image not found: " + image_path_png + ", using default")
@@ -140,7 +143,8 @@ func get_default_cat_image(doom_percentage: float) -> String:
 	var png_path = "res://assets/cats/default/%s.png" % variant_name
 	var svg_path = "res://assets/cats/default/%s.svg" % variant_name
 
-	if FileAccess.file_exists(png_path):
+	# ResourceLoader.exists(), not FileAccess.file_exists() -- see #796.
+	if ResourceLoader.exists(png_path):
 		return png_path
 	else:
 		return svg_path  # Use SVG placeholder
