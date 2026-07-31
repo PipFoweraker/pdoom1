@@ -316,8 +316,8 @@ func _ready():
 	instruments.add_child(_inflight_hiring_box)
 	instruments.move_child(_inflight_hiring_box, instruments.queue_panel.get_index() + 1)
 
-	# Always-visible DEV BUILD corner badge so a playtester can confirm exactly which
-	# build he's running (version + git stamp). Draws on its own CanvasLayer over the UI.
+	# Build-identity corner badge: loud DEV BUILD + git stamp in dev/debug runs, quiet
+	# version-only label in exported release builds (issue #1067). Own CanvasLayer.
 	add_child(DevBuildBadge.new())
 
 	# DEV MODE overlay (backslash) -- full state readout + dev controls, on its own CanvasLayer.

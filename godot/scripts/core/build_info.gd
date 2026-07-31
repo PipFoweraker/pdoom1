@@ -13,8 +13,10 @@ class_name BuildInfo
 ## The pure readers here are unit-tested (test_dev_build_indicator.gd); the on-screen
 ## badge (dev_build_badge.gd) still needs a human eye.
 
-## Master switch for the DEV BUILD indicators. On by default in dev; flip to false
-## for a clean release cut (or gate on OS.is_debug_build() via is_dev_build()).
+## Manual kill-switch for the DEV BUILD indicators. Leave true: the real gate is
+## is_dev_build() below, which ALSO requires a debug run, so a release-template
+## export is never a "dev build" no matter what this const says. Flip false only
+## to force the indicators off even in a dev checkout.
 const DEV_BUILD := true
 
 ## res:// text file written by tools/write_build_stamp.py. Not a Godot resource, so
@@ -47,9 +49,18 @@ static func get_commit() -> String:
 static func get_build_date() -> String:
 	return String(_read_stamp().get("date", ""))
 
-## True while this build should show the DEV BUILD indicators.
+## True while this run should show the DEV BUILD indicators (badge, dev overlay,
+## flight recorder, perf log -- everything that gates on this function).
+##
+## Discriminator: OS.is_debug_build() (same signal as OS.has_feature("debug")) is
+## true in the editor AND in a debug-template export, and false ONLY in a
+## release-template export -- exactly the set of builds players download.
+## OS.has_feature("editor") is deliberately NOT used: it is false in an exported
+## debug build, which would misclassify tester debug exports as public releases.
+## Before this gate existed the const above shipped as-is, so the public v0.13.2
+## release showed the amber DEV BUILD banner on every screen (issue #1067).
 static func is_dev_build() -> bool:
-	return DEV_BUILD
+	return DEV_BUILD and OS.is_debug_build()
 
 # --- Live git identity (L1 follow-up: the stamp went stale and cost a playtest) --------
 #
@@ -123,7 +134,18 @@ static func get_stamp() -> String:
 		return "%s (stamp)" % date
 	return "unstamped"
 
-## One-line badge text for the corner indicator, e.g.
-## "DEV BUILD  v0.11.0  -  fd60eb6 - 2026-07-11". Always non-empty.
+## One-line badge text for the corner indicator. Dev/debug runs get the loud form
+## with the full stamp; exported release builds get a dignified version-only form
+## (players read "DEV BUILD" on a downloaded release as "I have the wrong file" --
+## issue #1067). Always non-empty either way.
 static func get_badge_text() -> String:
+	return get_dev_badge_text() if is_dev_build() else get_release_badge_text()
+
+## Dev form, e.g. "DEV BUILD  v0.11.0  -  fd60eb6 - 2026-07-11 (stamp)".
+static func get_dev_badge_text() -> String:
 	return "DEV BUILD  v%s  -  %s" % [GameConfig.CURRENT_VERSION, get_stamp()]
+
+## Release form: just the version, e.g. "v0.13.2". Keeps the support value ("which
+## build are you running?") without the scary label or the git plumbing.
+static func get_release_badge_text() -> String:
+	return "v%s" % GameConfig.CURRENT_VERSION
