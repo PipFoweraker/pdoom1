@@ -35,12 +35,37 @@ Usage:
 """
 
 import argparse
+import json
 import os
 import subprocess
 import sys
 from pathlib import Path
 
 MAX_UPLOAD_MB = 25
+
+# Whisper accepts a `prompt` that biases spelling and vocabulary. Without it,
+# real 2026-07-29/30 sessions produced "pdumedata" for pdoom-data, "0.3.2" for
+# 0.13.2, and "S6" for F6. A short vocabulary list fixes most of that class.
+# Kept as a plain file so it can be edited without touching this script, and so
+# other projects can point --vocab somewhere else entirely.
+DEFAULT_VOCAB = [
+    "P(Doom)1",
+    "pdoom1",
+    "pdoom-data",
+    "pdoom1-website",
+    "Godot",
+    "GDScript",
+    "ladder epoch",
+    "seed roll",
+    "leaderboard",
+    "board key",
+    "doom",
+    "Attention",
+    "founder hours",
+    "Manifund",
+    "Wanasai",
+    "Pip",
+]
 CHUNK_SECONDS = 600  # 10 min: short enough that a 500 costs one chunk, not the run
 
 
@@ -120,6 +145,28 @@ def split_audio(audio: Path, seconds: int) -> list:
     return sorted(out_dir.glob("part_*.mp3"))
 
 
+def load_vocab(path, disabled: bool) -> str:
+    """Build the Whisper `prompt` string that biases spelling.
+
+    Accepts a JSON array or a plain one-term-per-line file. Returns "" when
+    disabled, so a caller transcribing something unrelated is not nudged toward
+    this project's jargon.
+    """
+    if disabled:
+        return ""
+    terms = DEFAULT_VOCAB
+    if path is not None:
+        raw = Path(path).read_text(encoding="utf-8").strip()
+        try:
+            loaded = json.loads(raw)
+            terms = [str(t) for t in loaded] if isinstance(loaded, list) else DEFAULT_VOCAB
+        except json.JSONDecodeError:
+            terms = [ln.strip() for ln in raw.splitlines() if ln.strip() and not ln.startswith("#")]
+    # A prompt is a hint, not a glossary: Whisper reads it as prior context, so
+    # a comma list of proper nouns works better than instructions.
+    return "Terms that may appear: " + ", ".join(terms) + "."
+
+
 def stamp(seconds: float) -> str:
     minutes, secs = divmod(int(seconds), 60)
     hours, minutes = divmod(minutes, 60)
@@ -133,6 +180,19 @@ def main() -> int:
         "--model", default="whisper-1", help="whisper-1 (timestamps) or gpt-4o-transcribe"
     )
     parser.add_argument("--language", default="en")
+    parser.add_argument(
+        "--vocab",
+        type=Path,
+        help="file of domain terms (one per line, or a JSON array) to bias spelling. "
+        "Defaults to the built-in P(Doom)1 list; pass a different file for other projects.",
+    )
+    parser.add_argument("--no-vocab", action="store_true", help="send no vocabulary hint at all")
+    parser.add_argument(
+        "--out",
+        type=Path,
+        help="directory for the transcripts (default: alongside the recording). "
+        "Lets this be used on files outside any repo.",
+    )
     parser.add_argument(
         "--keep-audio", action="store_true", help="do not delete the stripped audio"
     )
@@ -168,6 +228,10 @@ def main() -> int:
             f"    Lower -b:a (try 24k), or split the file with ffmpeg -f segment."
         )
 
+    vocab_prompt = load_vocab(args.vocab, args.no_vocab)
+    if vocab_prompt:
+        print(f"[*] vocabulary hint: {len(vocab_prompt.split(','))} terms")
+
     print(f"[3/3] transcribing with {args.model}...")
     from openai import OpenAI
 
@@ -185,12 +249,15 @@ def main() -> int:
         size_mb = chunk.stat().st_size / 1_048_576
         print(f"      [{index}/{len(chunks)}] {chunk.name} ({size_mb:.1f} MB)...", flush=True)
         with chunk.open("rb") as handle:
-            piece = client.audio.transcriptions.create(
-                model=args.model,
-                file=handle,
-                language=args.language,
-                response_format="verbose_json" if wants_timestamps else "text",
-            )
+            create_kwargs = {
+                "model": args.model,
+                "file": handle,
+                "language": args.language,
+                "response_format": "verbose_json" if wants_timestamps else "text",
+            }
+            if vocab_prompt:
+                create_kwargs["prompt"] = vocab_prompt
+            piece = client.audio.transcriptions.create(**create_kwargs)
         piece_text = piece.text if wants_timestamps else str(piece)
         pieces.append(piece_text.strip())
         if wants_timestamps:
@@ -199,7 +266,9 @@ def main() -> int:
             offset += float(getattr(piece, "duration", CHUNK_SECONDS) or CHUNK_SECONDS)
 
     text = chr(10).join(pieces)  # blank line between chunk transcripts
-    txt_path = source.with_suffix(".transcript.txt")
+    out_dir = Path(args.out) if args.out else source.parent
+    out_dir.mkdir(parents=True, exist_ok=True)
+    txt_path = out_dir / (source.stem + ".transcript.txt")
     txt_path.write_text(text.strip() + "\n", encoding="utf-8", newline="\n")
     print(f"[+] {txt_path.name}  ({len(text.split()):,} words)")
 
@@ -216,7 +285,7 @@ def main() -> int:
         for start, seg_text in segments:
             lines.append(f"**[{stamp(start)}]** {seg_text.strip()}")
             lines.append("")
-        md_path = source.with_suffix(".transcript.md")
+        md_path = out_dir / (source.stem + ".transcript.md")
         md_path.write_text("\n".join(lines), encoding="utf-8", newline="\n")
         print(f"[+] {md_path.name}  ({len(segments):,} timestamped segments)")
 
