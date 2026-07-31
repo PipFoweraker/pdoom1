@@ -90,6 +90,57 @@ Stand where you will record and **clap once, sharply.** Listen to the tail.
 Do this before and after. It takes ten seconds and it is the only feedback loop
 you need for the room.
 
+### Reading the meter: what the numbers actually mean
+
+The meter shows **dBFS -- decibels below maximum**. So a BIGGER number is
+QUIETER, and the bar sits lower. This trips everyone once.
+
+Measured on this setup, 2026-07-31: moving the mic out of the lounge (gaming PC,
+fans running) into the hall took the floor from roughly **-30 to -40 dBFS**. That
+is a ~10 dB drop -- about a halving of perceived loudness, and a doubling of the
+gap between your voice and the room.
+
+Targets worth aiming at:
+
+| Reading | With speech peaking at -12 dBFS | Verdict |
+|---|---|---|
+| floor around -30 | ~18 dB of signal over noise | you can hear the room |
+| floor around -40 | ~28 dB | usable, a bit live |
+| **floor -50 or lower** | **~38 dB or better** | **stop optimising, go record** |
+
+Check it twice before a session: **silent room** gives you the floor, **speaking
+normally** gives you the peak. Floor at -50 or below, peaks -12 to -6, never
+touching 0.
+
+### Move away from noise BEFORE treating the room
+
+This is the ranking that matters, and it is not obvious:
+
+- A PC fan is **constant, broadband and near-field**. Distance works on it
+  directly -- every doubling of distance from the source buys roughly 6 dB, for
+  free. No blanket competes with that.
+- Sheets and duvets fix **reflections** -- your own voice returning a few
+  milliseconds late. They do almost nothing about a fan, and nothing at all
+  about traffic through a wall.
+
+So: **get away from the noise, then treat the room.** A quiet room two back from
+the street beats a treated room next to a tower.
+
+### What is left afterwards, and why software will not save you from it
+
+Once the fan is gone the remaining noise changes character: a low steady floor,
+with the occasional vehicle landing on top of it. That matters because of what
+noise suppression is:
+
+- **RNNoise is trained on speech and handles STEADY broadband noise well.** The
+  fan case is the one software could have half-rescued.
+- **Intermittent low-frequency noise -- traffic -- is the case it handles
+  badly.** It cannot learn a truck.
+
+The fix for a truck is to **say the sentence again**. Which costs nothing,
+because you are already narrating -- one more reason the say-BUG-out-loud habit
+pays for itself.
+
 ### Then hunt the constant noises
 
 Sit still for a full minute with your eyes closed and list what you hear. The
@@ -353,3 +404,14 @@ it first.** If a session needs to be shared, scrub it.
 7. Record 30 seconds and listen on headphones.
 
 That is a genuinely good spoken-word setup. Everything above it is refinement.
+
+---
+
+```
+doc: docs/guides/RECORDING_SETUP_OBS.md
+rev: 2026-07-31
+next review due: 2026-09, or immediately on moving rooms / changing mic
+trigger: first month of routine recorded sessions, or moving rooms /
+         changing mic -- convention: #1056
+source of truth: the file. If this printout disagrees with it, the file wins.
+```
