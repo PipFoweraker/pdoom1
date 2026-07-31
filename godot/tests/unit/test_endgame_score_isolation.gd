@@ -19,6 +19,7 @@ const UNREACHABLE := "https://10.255.255.1"  # unroutable: connect never complet
 
 var _prev_optin: bool
 var _prev_asked: bool
+var _prev_scenario: String
 
 func before_each():
 	# Isolate the outbox file per test.
@@ -30,8 +31,14 @@ func before_each():
 	_prev_asked = GameConfig.leaderboard_consent_asked
 	GameConfig.submit_scores_global = true
 	GameConfig.leaderboard_consent_asked = true
+	# RANKED RUN, pinned explicitly. GameConfig is an autoload reading the real user
+	# config, so on a machine with a scenario selected these tests were asserting
+	# against an UNRANKED run (2026-07-31). A test must state the state it needs.
+	_prev_scenario = GameConfig.scenario_id
+	GameConfig.scenario_id = ""
 
 func after_each():
+	GameConfig.scenario_id = _prev_scenario
 	GameConfig.submit_scores_global = _prev_optin
 	GameConfig.leaderboard_consent_asked = _prev_asked
 	if FileAccess.file_exists(LeaderboardSync.OUTBOX_PATH):
