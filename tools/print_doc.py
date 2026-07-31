@@ -25,6 +25,7 @@ stylesheet outright.
 from __future__ import annotations
 
 import argparse
+import os
 import shutil
 import subprocess
 import sys
@@ -125,7 +126,41 @@ def list_printers() -> int:
     return 0
 
 
+# Silent printers, in preference order. The shell "print" verb is LAST because it
+# hands the file to whatever owns .pdf -- on Pip's machine that is Acrobat, which
+# pops a window and steals mouse focus. A print helper that interrupts the person
+# it is printing for has defeated its own purpose (his note, 2026-07-31).
+SILENT_PRINTERS = [
+    Path(os.environ.get("LOCALAPPDATA", "")) / "SumatraPDF" / "SumatraPDF.exe",
+    Path(os.environ.get("ProgramFiles", "")) / "SumatraPDF" / "SumatraPDF.exe",
+    Path(os.environ.get("ProgramFiles(x86)", "")) / "SumatraPDF" / "SumatraPDF.exe",
+]
+
+
+def find_silent_printer() -> Path | None:
+    for cand in SILENT_PRINTERS:
+        if str(cand) and cand.exists():
+            return cand
+    found = shutil.which("SumatraPDF")
+    return Path(found) if found else None
+
+
 def send_to_printer(pdf: Path, printer: str | None) -> None:
+    sumatra = find_silent_printer()
+    if sumatra:
+        # -silent: no window, no dialog, no focus change. Exactly what we want.
+        cmd = [str(sumatra), "-silent"]
+        cmd += ["-print-to", printer] if printer else ["-print-to-default"]
+        cmd.append(str(pdf.resolve()))
+        res = subprocess.run(cmd, capture_output=True, text=True, timeout=120)
+        if res.returncode != 0:
+            raise SystemExit(
+                "SumatraPDF print failed (exit %d):\n%s" % (res.returncode, res.stderr[-1200:])
+            )
+        return
+
+    print("[warn] SumatraPDF not found -- falling back to the shell print verb.")
+    print("       That opens whatever owns .pdf (often Acrobat) and WILL steal focus.")
     if printer:
         ps = (
             'Start-Process -FilePath "%s" -Verb PrintTo -ArgumentList "%s" -PassThru | Out-Null'
