@@ -82,8 +82,8 @@ func _ready():
 	load_game_button.visible = false
 	load_game_button.disabled = true
 
-	# Always-visible DEV BUILD corner badge (version + git stamp) so a playtester can
-	# confirm which build he's on right from the welcome/loading screen.
+	# Build-identity corner badge: loud DEV BUILD + git stamp in dev/debug runs, quiet
+	# version-only label in exported release builds (issue #1067).
 	add_child(DevBuildBadge.new())
 
 	# Quiet launch notices next to the version label (#799 update check, #939

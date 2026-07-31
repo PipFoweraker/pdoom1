@@ -90,6 +90,31 @@ class MultiPlatformBuilder:
 
         return None
 
+    def _stamp_build(self) -> bool:
+        """Refresh godot/build_stamp.txt so it names the commit actually being built.
+
+        The committed stamp is structurally always stale: it is written BY a build
+        and committed AFTER it, so the value at any SHA describes the PREVIOUS
+        build. Only re-stamping at export time can make it right. build_release.py
+        (local builds) already does this; this method mirrors it for the CI path
+        (enhanced-release.yml -> this script), which previously shipped whatever
+        stamp happened to be committed -- the public v0.13.2 release displayed
+        fd60eb6 / 2026-07-11 from a dead feature branch (issue #1067).
+
+        Runs tools/write_build_stamp.py, which stamps from `git rev-parse HEAD`
+        of the checked-out ref. Blocking: a stale provenance display is the very
+        defect this exists to prevent, so failure fails the build loudly.
+        """
+        stamp_tool = self.repo_root / "tools" / "write_build_stamp.py"
+        if not stamp_tool.exists():
+            print(f"[ERROR] Missing {stamp_tool} -- the build would ship a stale stamp")
+            return False
+        result = subprocess.run([sys.executable, str(stamp_tool)], check=False)
+        if result.returncode != 0:
+            print("[ERROR] write_build_stamp.py failed -- refusing to ship a stale-stamped build")
+            return False
+        return True
+
     def _update_export_paths(self):
         """Update export_presets.cfg with current version paths."""
         export_presets = self.godot_dir / "export_presets.cfg"
@@ -159,6 +184,11 @@ class MultiPlatformBuilder:
         print("\n" + "=" * 60)
         print("P(Doom) Multi-Platform Build")
         print("=" * 60)
+
+        # Stamp BEFORE any export so the packed godot/build_stamp.txt names this
+        # ref, not whatever a previous build committed (issue #1067).
+        if not self._stamp_build():
+            return False
 
         # Update export paths first
         self._update_export_paths()
