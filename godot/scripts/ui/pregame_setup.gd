@@ -83,6 +83,11 @@ func _populate_scenarios():
 	"""Load and populate the scenarios dropdown"""
 	var loader = ScenarioLoader.new()
 	available_scenarios = loader.get_available_scenarios()
+	# ScenarioLoader extends Node and is never added to the tree, so dropping this
+	# local orphans it. Harmless in itself (no signals, no _process) but it is what
+	# reddens test_game_lifecycle_hygiene's orphan-delta assertion on any machine
+	# whose config has a scenario selected. Free it explicitly.
+	loader.free()
 
 	scenario_option.clear()
 
@@ -101,10 +106,24 @@ func _populate_scenarios():
 	print("[PreGameSetup] Loaded %d scenarios" % available_scenarios.size())
 
 func _update_scenario_description(index: int):
-	"""Update the scenario description label"""
-	if index >= 0 and index < available_scenarios.size():
-		var scenario = available_scenarios[index]
-		scenario_description.text = scenario.get("description", "No description available")
+	"""Update the scenario description label, and WARN when the pick costs the board.
+
+	Pip's ruling 2026-07-31: scenarios stay playable, but a scenario run is locked
+	out of the leaderboard (GameConfig.is_ranked_run) because scenario is not in the
+	board key -- Sandbox Mode's $10,000,000 opening would post turns-survived to the
+	same board as a Standard run. The player must be told AT THE MOMENT OF CHOICE,
+	not discover it at the game-over screen, so the warning rides on the description
+	label that already updates on every selection."""
+	if index < 0 or index >= available_scenarios.size():
+		return
+	var scenario = available_scenarios[index]
+	var desc: String = scenario.get("description", "No description available")
+	if String(scenario.get("id", "")).strip_edges().is_empty():
+		scenario_description.text = desc
+		scenario_description.remove_theme_color_override("font_color")
+		return
+	scenario_description.text = desc + "\n[!] NOT RANKED -- a run on this scenario does not go on the leaderboard. Scenarios change the starting position, so those scores cannot be compared. Pick Standard Game to play for the board."
+	scenario_description.add_theme_color_override("font_color", Color(1.0, 0.75, 0.25))
 
 func _setup_button_icons():
 	"""Replace button text/emoji with icons where available"""

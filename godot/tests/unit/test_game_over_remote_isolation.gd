@@ -15,6 +15,7 @@ var _prev_base: String
 var _prev_token: String
 var _prev_optin: bool
 var _prev_asked: bool
+var _prev_scenario: String
 
 func before_each():
 	_prev_enabled = LeaderboardSync.enabled
@@ -25,6 +26,12 @@ func before_each():
 	# Default these tests to an explicitly opted-in player (identity-consent
 	# ruling 2026-07-26); individual tests override where they test decline.
 	GameConfig.leaderboard_consent_asked = true
+	# RANKED RUN, pinned explicitly. GameConfig is an autoload that loads the real
+	# user config, so on a machine with a scenario selected these tests were asserting
+	# against an UNRANKED run and failing for a reason that had nothing to do with
+	# remote isolation (2026-07-31). A test must state the state it needs.
+	_prev_scenario = GameConfig.scenario_id
+	GameConfig.scenario_id = ""
 	if FileAccess.file_exists(LeaderboardSync.OUTBOX_PATH):
 		DirAccess.remove_absolute(LeaderboardSync.OUTBOX_PATH)
 
@@ -32,6 +39,7 @@ func after_each():
 	LeaderboardSync.enabled = _prev_enabled
 	LeaderboardSync.base_url = _prev_base
 	LeaderboardSync.token = _prev_token
+	GameConfig.scenario_id = _prev_scenario
 	GameConfig.submit_scores_global = _prev_optin
 	GameConfig.leaderboard_consent_asked = _prev_asked
 	if FileAccess.file_exists(LeaderboardSync.OUTBOX_PATH):

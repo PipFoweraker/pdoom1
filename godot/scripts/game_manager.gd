@@ -873,6 +873,7 @@ func load_saved_game(path: String = SaveLoad.QUICKSAVE_PATH, force: bool = false
 	if not save_scenario_id.is_empty():
 		var loader = ScenarioLoader.new()
 		var scenario = loader.load_scenario(save_scenario_id)
+		loader.free()  # extends Node, never added to the tree -- dropping it orphans it
 		var custom_events = scenario.get("events", [])
 		if custom_events.size() > 0:
 			state.set_meta("scenario_events", custom_events)
@@ -1013,6 +1014,9 @@ func _apply_scenario_overrides():
 
 	var loader = ScenarioLoader.new()
 	var scenario = loader.load_scenario(scenario_id)
+	loader.free()  # extends Node, never added to the tree -- dropping it orphans it
+	# (one leaked Node per run on any machine with a scenario selected; this is what
+	# reddened test_game_lifecycle_hygiene's orphan-delta assertion on 2026-07-31)
 
 	if scenario.is_empty():
 		push_warning("[GameManager] Failed to load scenario: %s" % scenario_id)

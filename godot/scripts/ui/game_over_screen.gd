@@ -246,6 +246,22 @@ func _persist_and_submit_score(final_state: Dictionary, game_seed: String) -> vo
 	error cannot lose it. The remote POST is fire-and-forget on the LeaderboardSync autoload
 	(lifecycle-independent from this screen) and internally bulletproof against network
 	failure, so nothing here can crash or freeze the end-game."""
+	# UNRANKED RUNS NEVER TOUCH THE BOARD (Pip's ruling, 2026-07-31). Scenario packs
+	# rewrite the starting position -- Sandbox opens with $10,000,000 -- and scenario
+	# is not part of the board key, so a scenario score is silently incomparable with
+	# every Standard score sitting beside it. Same hole #1058 closed for difficulty.
+	# Gated here rather than at the remote submit because the LOCAL board must stay
+	# clean too: it is what the leaderboard screen renders and what the player reads
+	# as "the board". The player was warned when they picked the scenario; this is the
+	# second telling, and it is deliberately SHOWN rather than failing quietly -- a
+	# score that just never appears is precisely this week's failure mode.
+	if not GameConfig.is_ranked_run():
+		print("[GameOverScreen] Unranked run (scenario '%s') - no local save, no remote submit" % GameConfig.scenario_id)
+		_ensure_sync_status_label()
+		sync_status_label.visible = true
+		sync_status_label.text = "NOT RANKED: scenario runs stay off the leaderboard. Play Standard Game for the board."
+		sync_status_label.add_theme_color_override("font_color", Color(1.0, 0.75, 0.25))
+		return
 	var duration = Time.get_ticks_msec() / 1000.0 - game_start_time
 	var entry = Leaderboard.ScoreEntry.new(
 		final_turns,

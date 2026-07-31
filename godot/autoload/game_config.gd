@@ -567,6 +567,26 @@ func get_current_version() -> String:
 ## not fork the existing board.
 func get_board_version() -> String:
 	return "L" + LADDER_VERSION
+
+## Does this run count for the leaderboard? (Pip's ruling, 2026-07-31)
+##
+## Scenario packs rewrite the starting state -- Sandbox Mode opens with $10,000,000
+## and 1000 compute, Crisis Mode with doom already at 65. Scenario appears NOWHERE
+## in the board key (see get_board_version above: seed + ladder epoch only), so
+## before this gate a Sandbox run posted turns-survived to the SAME board as a
+## Standard run, unmarked and silently incomparable. Exactly the hole #1058 closed
+## for difficulty, one control further down the same pre-game screen.
+##
+## The ruling was NOT to remove the scenarios -- they stay playable. An unranked
+## run is locked out of the board and the player is told so twice: at the moment
+## they pick the scenario, and again on the game-over screen. Warned, not blocked.
+##
+## SINGLE SOURCE OF TRUTH: every board-write site must route through this. There
+## is exactly one today (GameOverScreen._persist_and_submit_score); a second one
+## added later that forgets this check silently reopens the hole.
+func is_ranked_run() -> bool:
+	return scenario_id.strip_edges().is_empty()
+
 ## Should the first-launch welcome/help overlay be shown? (issue #720)
 ## True only on a genuine first launch (no games played yet), when it has never
 ## been shown before, and while gameplay hints are enabled. The welcome_seen gate
