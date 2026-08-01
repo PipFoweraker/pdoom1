@@ -19,7 +19,17 @@ var baseline_mode: int = 0
 # Audio Settings
 var master_volume: int = 50  # 0-100
 var sfx_volume: int = 50  # 0-100
-var music_volume: int = 20  # 0-100 (Pip 2026-07-24: downtuned from 50 -- too loud/intense on first playtest)
+# 0-100. DEFAULT ONLY -- load_config() below passes the current value as the
+# ConfigFile fallback, so an existing user://config.cfg always wins and nobody
+# who has already moved the slider is touched by a change here.
+# History: 50 -> 20 (Pip 2026-07-24, "too loud/intense on first playtest")
+#          20 -> 15 (Pip 2026-08-01 11:38, after twice turning it down by hand
+#          mid-playtest; he landed on 13% unprompted on 2026-07-31).
+# Buses multiply: default_bus_layout.tres routes Music -> Master, so the music a
+# fresh player actually hears is master 50% x music 15% = 0.075 linear
+# (-22.5 dBFS). The beds are normalised to ~-16 LUFS, so that is ~-38.5 LUFS at
+# the output -- audible under speech, roughly 1.2 dB above the 13% Pip chose.
+var music_volume: int = 15
 
 # Graphics Settings
 var graphics_quality: int = 1  # 0=Low, 1=Medium, 2=High
