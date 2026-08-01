@@ -1,0 +1,225 @@
+<title>Sabbath walkpack -- Sunday 2026-08-02</title>
+<style>
+  @page { size: A4 portrait; margin: 13mm 12mm; }
+  html { font-size: 12.5pt; }
+  body { font-family: "Segoe UI", Calibri, Arial, sans-serif; line-height: 1.42;
+         color: #000; background: #fff; max-width: 190mm; margin: 0 auto; }
+  .stamp { border: 3pt solid #000; background: #1a1a1a; color: #fff;
+           padding: 3mm 4mm; margin: 0 0 4mm; }
+  .stamp .big { font-size: 18pt; font-weight: 700; line-height: 1.15; }
+  .stamp .meta { font-size: 11.5pt; margin-top: 1.5mm; }
+  h1 { font-size: 16.5pt; margin: 0 0 2mm; line-height: 1.15; }
+  h2 { font-size: 14pt; margin: 5.5mm 0 2mm; padding: 1.6mm 2.5mm;
+       background: #1a1a1a; color: #fff; page-break-after: avoid; }
+  h3 { font-size: 12.8pt; margin: 4mm 0 1.5mm; page-break-after: avoid; }
+  p, li, td, th { font-size: 12.5pt; }
+  table { border-collapse: collapse; width: 100%; margin: 2mm 0 3.5mm; }
+  th, td { border: 1px solid #444; padding: 1.9mm 2.3mm; text-align: left; vertical-align: top; }
+  th { background: #e8e8e8; font-weight: 700; }
+  td.n { white-space: nowrap; font-weight: 700; width: 14mm; }
+  td.num { text-align: right; white-space: nowrap; font-weight: 700; }
+  .box { border: 2.2pt solid #000; padding: 2.8mm 3.4mm; margin: 3.5mm 0; page-break-inside: avoid; }
+  .box.hi { border-width: 3pt; background: #f2f2f2; }
+  .chk { display: inline-block; width: 4.8mm; height: 4.8mm; border: 1.7pt solid #000;
+         margin-right: 2.2mm; vertical-align: -0.7mm; }
+  ul, ol { margin: 1.2mm 0 2.5mm; padding-left: 7mm; }
+  li { margin-bottom: 1.2mm; }
+  code { font-family: Consolas, "Courier New", monospace; font-size: 11.3pt;
+         background: #eee; padding: 0.3mm 1mm; }
+  .note { font-size: 11.5pt; color: #222; }
+  .pb { page-break-before: always; }
+  .foot { font-size: 11.5pt; color: #333; border-top: 1.2pt solid #999;
+          margin-top: 4mm; padding-top: 2mm; }
+  @media (prefers-color-scheme: dark) { html, body { background:#fff; color:#000; } }
+</style>
+
+<div class="stamp">
+  <div class="big">SABBATH WALKPACK &nbsp;&middot;&nbsp; SUN 2 AUG, 08:15</div>
+  <div class="meta">
+    Reward reading. Wins, numbers, what is in flight, what is next, and the postmortem
+    material you have not seen. Lessons-learned deliberately elided -- you have read those.
+    <strong>One item on page 3 needs action and is not celebratory. It is flagged.</strong>
+  </div>
+</div>
+
+<h1>Wins</h1>
+
+<div class="box hi">
+  <h3 style="margin-top:0">The repository turned one year old on 30 July. The league opened on 31 July.</h3>
+  <p style="margin-bottom:0">
+    First commit <strong>2025-07-30</strong>. First public league <strong>2026-07-31</strong>.
+    You shipped the thing on its first birthday, to the day plus one, after a decade of not
+    making things. Nobody planned that.
+  </p>
+</div>
+
+<table>
+  <tr><th>Win</th><th>Detail</th></tr>
+  <tr><td><strong>The league shipped</strong></td><td>v0.13.2 live across Windows, Linux, macOS. Board correct and published. Gates 1-6 spoken and recorded.</td></tr>
+  <tr><td><strong>A live integrity hole caught with 90 minutes to spare</strong></td><td>Sandbox Mode opens with $10,000,000 and could post to the league board. Found 15:25, closed 16:15, shipped.</td></tr>
+  <tr><td><strong>Four visual fixes, verified by you on tape</strong></td><td>Cat, achievement toast, feed clipping, DEV BUILD banner. All confirmed in your own voice.</td></tr>
+  <tr><td><strong>Every decision card settled</strong></td><td>Alpha Tools, seed authority, orphaned boards, month review, settings direction. In one paper session.</td></tr>
+  <tr><td><strong>The outbox saved a four-day outage</strong></td><td>Built for crash-safety. Silently survived an API outage nobody knew about. No scores lost.</td></tr>
+  <tr><td><strong>Two repos converged independently</strong></td><td>pdoom1-website reached the same diagnosis in the same week, unprompted: "make one guard prove it can fail".</td></tr>
+  <tr><td><strong>The voice loop proved itself</strong></td><td>24 recordings, 33 minutes, transcribed on-device at <strong>5-9x realtime</strong>. Nothing uploaded anywhere.</td></tr>
+</table>
+
+<h2>Numbers</h2>
+
+<h3>Scale</h3>
+<table>
+  <tr><td>Commits, all time</td><td class="num">1,418</td><td>1,076 human / 280 agent</td></tr>
+  <tr><td>Active days, all time</td><td class="num">107</td><td>out of 368 calendar days</td></tr>
+  <tr><td>Lines added / removed</td><td class="num">2.0M / 1.3M</td><td>net ~717k</td></tr>
+  <tr><td>Open issues</td><td class="num">~110</td><td>19 filed Fri-Sun</td></tr>
+  <tr><td>Tests</td><td class="num">1,031</td><td>101 files, 0 failures</td></tr>
+</table>
+
+<h3>The ramp</h3>
+<table>
+  <tr><th>ISO week</th><th>Human commits</th><th>&nbsp;</th></tr>
+  <tr><td>2026-W25</td><td class="num">1</td><td>|</td></tr>
+  <tr><td>2026-W26</td><td class="num">7</td><td>||||</td></tr>
+  <tr><td>2026-W27</td><td class="num">21</td><td>|||||||||||</td></tr>
+  <tr><td>2026-W28</td><td class="num">24</td><td>|||||||||||||</td></tr>
+  <tr><td>2026-W29</td><td class="num">113</td><td>||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||</td></tr>
+  <tr><td><strong>2026-W30</strong></td><td class="num">171</td><td>||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||</td></tr>
+  <tr><td>2026-W31</td><td class="num">63</td><td>|||||||||||||||||||||||||||||||||</td></tr>
+</table>
+
+<div class="box">
+  <strong>Last 30 days: 396 human commits. The 30 days before: 14.</strong> Twenty-eight times.<br>
+  <strong>53%</strong> of all commits land between 09:00 and 18:00. <strong>29%</strong> on weekends.
+  <br><br>
+  <span class="note">The full six-estimator report is in your tray. The honest question it cannot
+  answer: the series is a <strong>ramp</strong>, not a step, and a ramp that steep is at least as
+  likely to be <strong>leverage</strong> (agent lanes, worktrees, tooling) as <strong>hours</strong>.
+  Both moved at once. Only you know which it felt like -- and the answer decides whether your
+  sustainable roadmap is better or worse than the baseline suggests.</span>
+</div>
+
+<h2 class="pb">Postmortem material you have not seen</h2>
+
+<p class="note">
+  Four independent inputs now exist, written from four different vantages, none of which had
+  read the others. The overlap between them is the signal.
+</p>
+
+<h3>#1074 -- the coordination layer (coordination terminal)</h3>
+<p>
+  Covers the <strong>capture -&gt; transcribe -&gt; route -&gt; print</strong> loop that ran
+  alongside the game work. Volume on league day: <strong>24 recordings, 33.0 minutes</strong>,
+  all transcribed on-device, routed across five repos.
+</p>
+<div class="box">
+  <strong>Its single sharpest observation:</strong> your 10:24 playtest ended with
+  <em>"I say don't ship, but when we've solved these things I'm happy to ship"</em> --
+  <strong>and that verdict existed in no document.</strong> It lived only in a gitignored audio
+  file. The most consequential judgement of the morning was one <code>rm</code> away from never
+  having been made.
+</div>
+
+<h3>#1075 -- one signature, five times (Beacon terminal)</h3>
+<p>The rule, stated better than I stated it:</p>
+<div class="box hi">
+  <strong>A check whose input is derived from the system it is checking cannot detect the class
+  of failure that changes that input.</strong>
+</div>
+<p>
+  Five instances, across <strong>two systems sharing no code, no language, and no author</strong>.
+  Every one produced a confident green light. As they put it: <em>"it does not look like a gap in
+  coverage, it looks like coverage."</em>
+</p>
+<p class="note">
+  Once is a bug. Five is a design defect in how checks get built. If the postmortem produces one
+  durable artefact, this sentence with its five instances underneath is the candidate -- because
+  unlike a metaphor, you can audit for it.
+</p>
+
+<h3>#1076 -- the parallel workstream (beacon-internal terminal)</h3>
+<p>
+  Mostly not about pdoom1. It is here because the failure shape was identical across both
+  workstreams on the same two days. <strong>It also corrects #1074 on a matter of fact</strong>,
+  which is the sort of thing that only happens when inputs are written independently.
+</p>
+
+<div class="box hi">
+  <h3 style="margin-top:0">THIS ONE NEEDS ACTION -- not a lesson, an open item</h3>
+  <p>
+    #1074 reported that a compensation document "was never committed and no exposure occurred".
+    <strong>All three clauses were wrong.</strong> Per <code>beacon-internal/operations/Mistakes.md</code>:
+  </p>
+  <ul>
+    <li>It <strong>was</strong> committed -- swept in by <code>git add -A operations/</code></li>
+    <li>It <strong>was</strong> pushed to origin, in PR #17</li>
+    <li>Window ~2 minutes, closed by force-push</li>
+  </ul>
+  <p style="margin-bottom:0">
+    <strong>A residual remains.</strong> GitHub retains force-pushed commits. Orphaned commit
+    <code>b68d6d3</code> reportedly still contains it. <strong>A force-push does not delete
+    anything on GitHub</strong> -- the commit stays reachable by SHA until GitHub garbage-collects,
+    which for a public repo can be indefinite. Closing this properly means GitHub Support, or
+    treating the content as disclosed and rotating whatever it exposed.
+    <br><br>
+    <span class="chk"></span> Raise with beacon-internal. Not a pdoom1 item, and not one to leave
+    in a postmortem doc as history.
+  </p>
+</div>
+
+<h2 class="pb">In flight</h2>
+<table>
+  <tr><th>What</th><th>State</th></tr>
+  <tr><td>Agents running</td><td><strong>None.</strong> All eight completed.</td></tr>
+  <tr><td>pdoom1 PRs</td><td><strong>Zero open.</strong> #1095 and #1096 merged this morning.</td></tr>
+  <tr><td>CI</td><td>Green, both repos</td></tr>
+  <tr><td>Board</td><td><code>weekly-2026-w31 / L3</code>, verdict <code>live</code>, 3 entries, stable 40h</td></tr>
+  <tr><td>coordination</td><td>PR <strong>#2</strong> open -- pdoom-data seat check-in</td></tr>
+  <tr><td>pdoom1-website</td><td>10 PRs open, oldest 28 Jul. <strong>Their backlog is now the bottleneck, not ours.</strong></td></tr>
+</table>
+
+<h2>Pending on you</h2>
+<table>
+  <tr><td class="n"><span class="chk"></span></td><td><strong>IP / trademark -- TOMORROW.</strong> #1061 has the question list</td></tr>
+  <tr><td class="n"><span class="chk"></span></td><td><strong>Pick a velocity estimator</strong> A-F</td></tr>
+  <tr><td class="n"><span class="chk"></span></td><td><strong>#1084</strong> -- difficulty lock enforced at a screen, not at consumption</td></tr>
+  <tr><td class="n"><span class="chk"></span></td><td><strong>#788 vs Alpha Tools</strong> -- two contradictory rulings open (mark vs exclude)</td></tr>
+  <tr><td class="n"><span class="chk"></span></td><td><strong>Gource install</strong> -- one winget command from an animation</td></tr>
+  <tr><td class="n"><span class="chk"></span></td><td><strong>coordination PR #2</strong></td></tr>
+  <tr><td class="n"><span class="chk"></span></td><td><strong>b68d6d3</strong> -- the residual above</td></tr>
+</table>
+
+<h2>Next week, if you want a shape</h2>
+
+<p>
+  Your own plan from Friday: ease off code, ramp UX/player experience, get a little natural
+  traffic. Everything below serves that.
+</p>
+
+<table>
+  <tr><th>Lane</th><th>What is already ruled and ready to build</th></tr>
+  <tr><td><strong>Settings</strong></td><td>Directions <strong>1 and 5</strong> proceed. Start with the 0.5h Spacer fix -- it un-hides six shipped sections and is direction-independent.</td></tr>
+  <tr><td><strong>Month review</strong></td><td><strong>A1-A10, B1-B5, A6 deferred.</strong> Note A2/A3 need a pre-reset snapshot first -- <code>begin_month()</code> destroys the data one call before the review draws.</td></tr>
+  <tr><td><strong>Rivals</strong></td><td>#1088. Your hardest call-out. A missing narrative layer, not a layout bug.</td></tr>
+  <tr><td><strong>Alpha Tools</strong></td><td>Settled. Wire to <code>is_ranked_run()</code> as a sticky one-way flag.</td></tr>
+  <tr><td><strong>Infrastructure</strong></td><td>Four raised, unruled: macOS never verified (#1071), release pipeline bypasses the freshness proof (#1069), <code>build_release.py</code> output naming (#1072), Linux 404 (#1068).</td></tr>
+  <tr><td><strong>Reach</strong></td><td>The one lane with no machinery. Five names, five questions, sent.</td></tr>
+</table>
+
+<div class="box">
+  <strong>The sequencing thought, offered once and then dropped:</strong> #1069 and #1072 get
+  worse as patch cadence rises, and your whole comms strategy depends on raising patch cadence.
+  They are cheap now and expensive in three weeks. If you want one infrastructure day before the
+  UX push, that is the argument for it.
+</div>
+
+<div class="box hi">
+  <strong>Rest properly.</strong> Nothing is broken, nothing is running, nothing degrades while
+  you are away. The board has been quietly correct for forty hours and will still be correct
+  tonight. You shipped a game on its first birthday after ten years of not making things --
+  the reading can wait until you feel like it, and so can everything else.
+</div>
+
+<p class="foot">
+  Printed 08:15 Sun 2026-08-02 &middot; pdoom1 <code>8a8fe63b</code> &middot; 0 open PRs,
+  1031 tests green &middot; board live &middot; postmortem inputs #1074 #1075 #1076 #1094
+</p>
