@@ -8,7 +8,12 @@ extends Control
 @onready var sfx_volume_label = $VBox/Scroll/SettingsContainer/AudioSettings/SFXVolumeRow/ValueLabel
 @onready var music_volume_slider = $VBox/Scroll/SettingsContainer/AudioSettings/MusicVolumeRow/Slider
 @onready var music_volume_label = $VBox/Scroll/SettingsContainer/AudioSettings/MusicVolumeRow/ValueLabel
-@onready var graphics_quality_option = $VBox/Scroll/SettingsContainer/GraphicsSettings/QualityRow/OptionButton
+# NOTE: there is no Graphics Quality control. GameConfig.graphics_quality still
+# exists and still persists, but apply_graphics_settings() has never done
+# anything with it ("TODO: Apply graphics quality settings"), so the dropdown
+# that used to sit here was a Low/Medium/High choice with no effect whatsoever.
+# It was removed 2026-08-01 rather than left rendering a lie. Fullscreen below
+# is real (DisplayServer.window_set_mode) and stays.
 @onready var fullscreen_checkbox = $VBox/Scroll/SettingsContainer/GraphicsSettings/FullscreenRow/CheckBox
 @onready var difficulty_option = $VBox/Scroll/SettingsContainer/GameplaySettings/DifficultyRow/OptionButton
 @onready var theme_dropdown = $VBox/Scroll/SettingsContainer/UISettings/ThemeRow/ThemeDropdown
@@ -127,7 +132,6 @@ func update_ui_from_game_config():
 	music_volume_slider.value = GameConfig.music_volume
 	music_volume_label.text = "%d%%" % GameConfig.music_volume
 
-	graphics_quality_option.selected = GameConfig.graphics_quality
 	fullscreen_checkbox.button_pressed = GameConfig.fullscreen
 	difficulty_option.selected = GameConfig.difficulty
 	colorblind_checkbox.button_pressed = GameConfig.colorblind_mode
@@ -149,11 +153,6 @@ func _on_music_volume_changed(value: float):
 	music_volume_label.text = "%d%%" % int(value)
 	# Update GameConfig (will apply to Music bus automatically)
 	GameConfig.set_setting("music_volume", int(value), false)
-
-func _on_graphics_quality_changed(index: int):
-	"""Handle graphics quality dropdown change"""
-	print("[SettingsMenu] Graphics quality changed to: ", ["Low", "Medium", "High"][index])
-	GameConfig.set_setting("graphics_quality", index, false)
 
 func _on_fullscreen_toggled(pressed: bool):
 	"""Handle fullscreen checkbox toggle"""

@@ -36,8 +36,23 @@ const MUSIC_TIER_BY_BAND := [0, 1, 1, 2, 2, 3, 4]
 ## each tier grows to a multi-stem AudioStreamSynchronized group
 ## (BASE / PULSE / WEIRD / FIRE) and nothing else has to change.
 ## M0-M2 share C @ 104 (one room souring); M3-M4 are D dorian @ 96.
+## TIER 0 IS THE TRACK A PLAYER (and Pip, on loop, for hours) HEARS MOST.
+## It was unit_tests_passing.ogg ("M0 cosy"); Pip 2026-08-01 11:06/11:30:
+## "that creeping one needs a bit of work ... the current theme is a little bit
+## intense, and I think the slower gentler one actually might just be more chill
+## -- especially when it's majority me listening to it". checkpoint_saved.ogg is
+## the first of the three swaps he named ("whatever that song was in the settings
+## menu") and the only candidate with a recorded positive verdict from him
+## (tools/music/jukebox_notes2.json, "menu": "Transitioning to something like
+## this is exceptional ... the attention-demands are diminished"). It is already
+## wired, imported and shipping as the MENU bed, so this costs no new asset.
+## CONSEQUENCE, deliberate: menu and calm-gameplay now share a bed, so launching
+## a run no longer changes the music. The run's musical arc is unchanged -- doom
+## still escalates through M1..M4 -- only the calm floor got calmer.
+## unit_tests_passing.ogg stays in the repo for the rework; restoring it is this
+## one line.
 const MUSIC_TIER_STEMS := [
-	[{"path": "res://assets/audio/music/unit_tests_passing.ogg", "volume_db": 0.0}],
+	[{"path": "res://assets/audio/music/checkpoint_saved.ogg", "volume_db": 0.0}],
 	[{"path": "res://assets/audio/music/distribution_shift.ogg", "volume_db": 0.0}],
 	[{"path": "res://assets/audio/music/proxy_gaming.ogg", "volume_db": 0.0}],
 	[{"path": "res://assets/audio/music/mesa_optimizer.ogg", "volume_db": 0.0}],
@@ -66,8 +81,9 @@ var music_library = {
 	],
 	MusicContext.GAMEPLAY: [
 		# Legacy-playlist fallback (used only if the adaptive build fails):
-		# same composed beds, in tier order.
-		"res://assets/audio/music/unit_tests_passing.ogg",
+		# same composed beds, in tier order -- kept in lockstep with
+		# MUSIC_TIER_STEMS so a fallback run starts as calm as the real one.
+		"res://assets/audio/music/checkpoint_saved.ogg",
 		"res://assets/audio/music/distribution_shift.ogg",
 		"res://assets/audio/music/proxy_gaming.ogg",
 		"res://assets/audio/music/mesa_optimizer.ogg",

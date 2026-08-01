@@ -72,6 +72,7 @@ layout_mode = 2
 layout_mode = 2
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
+vertical_scroll_mode = 2
 
 [node name="SettingsContainer" type="VBoxContainer" parent="VBox/Scroll"]
 layout_mode = 2
@@ -104,13 +105,13 @@ custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 max_value = 100.0
-value = 80.0
+value = 50.0
 
 [node name="ValueLabel" type="Label" parent="VBox/Scroll/SettingsContainer/AudioSettings/MasterVolumeRow"]
 custom_minimum_size = Vector2(50, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 16
-text = "80%"
+text = "50%"
 
 [node name="SFXVolumeRow" type="HBoxContainer" parent="VBox/Scroll/SettingsContainer/AudioSettings"]
 layout_mode = 2
@@ -127,13 +128,13 @@ custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 max_value = 100.0
-value = 80.0
+value = 50.0
 
 [node name="ValueLabel" type="Label" parent="VBox/Scroll/SettingsContainer/AudioSettings/SFXVolumeRow"]
 custom_minimum_size = Vector2(50, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 16
-text = "80%"
+text = "50%"
 
 [node name="MusicVolumeRow" type="HBoxContainer" parent="VBox/Scroll/SettingsContainer/AudioSettings"]
 layout_mode = 2
@@ -150,13 +151,13 @@ custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 max_value = 100.0
-value = 80.0
+value = 15.0
 
 [node name="ValueLabel" type="Label" parent="VBox/Scroll/SettingsContainer/AudioSettings/MusicVolumeRow"]
 custom_minimum_size = Vector2(50, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 16
-text = "80%"
+text = "15%"
 
 [node name="HSeparator2" type="HSeparator" parent="VBox/Scroll/SettingsContainer"]
 layout_mode = 2
@@ -170,28 +171,6 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0.91, 0.64, 0.24, 1)
 theme_override_font_sizes/font_size = 20
 text = "Graphics Settings"
-
-[node name="QualityRow" type="HBoxContainer" parent="VBox/Scroll/SettingsContainer/GraphicsSettings"]
-layout_mode = 2
-theme_override_constants/separation = 15
-
-[node name="Label" type="Label" parent="VBox/Scroll/SettingsContainer/GraphicsSettings/QualityRow"]
-custom_minimum_size = Vector2(250, 0)
-layout_mode = 2
-theme_override_font_sizes/font_size = 16
-text = "Graphics Quality:"
-
-[node name="OptionButton" type="OptionButton" parent="VBox/Scroll/SettingsContainer/GraphicsSettings/QualityRow"]
-custom_minimum_size = Vector2(200, 40)
-layout_mode = 2
-theme_override_font_sizes/font_size = 16
-selected = 1
-item_count = 3
-popup/item_0/text = "Low"
-popup/item_1/text = "Medium"
-popup/item_1/id = 1
-popup/item_2/text = "High"
-popup/item_2/id = 2
 
 [node name="FullscreenRow" type="HBoxContainer" parent="VBox/Scroll/SettingsContainer/GraphicsSettings"]
 layout_mode = 2
@@ -399,7 +378,6 @@ text = "Quick load"
 
 [node name="Spacer" type="Control" parent="VBox"]
 layout_mode = 2
-size_flags_vertical = 3
 
 [node name="ButtonRow" type="HBoxContainer" parent="VBox"]
 layout_mode = 2
@@ -423,7 +401,6 @@ text = "Back"
 [connection signal="value_changed" from="VBox/Scroll/SettingsContainer/AudioSettings/MasterVolumeRow/Slider" to="." method="_on_master_volume_changed"]
 [connection signal="value_changed" from="VBox/Scroll/SettingsContainer/AudioSettings/SFXVolumeRow/Slider" to="." method="_on_sfx_volume_changed"]
 [connection signal="value_changed" from="VBox/Scroll/SettingsContainer/AudioSettings/MusicVolumeRow/Slider" to="." method="_on_music_volume_changed"]
-[connection signal="item_selected" from="VBox/Scroll/SettingsContainer/GraphicsSettings/QualityRow/OptionButton" to="." method="_on_graphics_quality_changed"]
 [connection signal="toggled" from="VBox/Scroll/SettingsContainer/GraphicsSettings/FullscreenRow/CheckBox" to="." method="_on_fullscreen_toggled"]
 [connection signal="item_selected" from="VBox/Scroll/SettingsContainer/GameplaySettings/DifficultyRow/OptionButton" to="." method="_on_difficulty_changed"]
 [connection signal="toggled" from="VBox/Scroll/SettingsContainer/AccessibilitySettings/ColorblindRow/CheckBox" to="." method="_on_colorblind_toggled"]
