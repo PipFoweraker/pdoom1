@@ -1,0 +1,206 @@
+<title>Postmortem prep -- Sunday 2026-08-02</title>
+<style>
+  @page { size: A4 portrait; margin: 13mm 12mm; }
+  html { font-size: 12.5pt; }
+  body { font-family: "Segoe UI", Calibri, Arial, sans-serif; line-height: 1.45;
+         color: #000; background: #fff; max-width: 190mm; margin: 0 auto; }
+  .stamp { border: 3pt solid #000; background: #1a1a1a; color: #fff;
+           padding: 3mm 4mm; margin: 0 0 5mm; }
+  .stamp .big { font-size: 19pt; font-weight: 700; line-height: 1.15; }
+  .stamp .meta { font-size: 11.5pt; margin-top: 1.5mm; }
+  h1 { font-size: 17pt; margin: 0 0 2mm; line-height: 1.15; }
+  h2 { font-size: 14.5pt; margin: 6mm 0 2mm; padding: 1.7mm 2.5mm;
+       background: #1a1a1a; color: #fff; page-break-after: avoid; }
+  h3 { font-size: 13pt; margin: 4.5mm 0 1.5mm; page-break-after: avoid; }
+  p, li, td, th { font-size: 12.5pt; }
+  table { border-collapse: collapse; width: 100%; margin: 2.5mm 0 4mm; }
+  th, td { border: 1px solid #444; padding: 2.1mm 2.5mm; text-align: left; vertical-align: top; }
+  th { background: #e8e8e8; font-weight: 700; }
+  td.n { white-space: nowrap; font-weight: 700; width: 16mm; }
+  .box { border: 2.2pt solid #000; padding: 3mm 3.5mm; margin: 4mm 0; page-break-inside: avoid; }
+  .box.hi { border-width: 3pt; background: #f2f2f2; }
+  .chk { display: inline-block; width: 5mm; height: 5mm; border: 1.7pt solid #000;
+         margin-right: 2.4mm; vertical-align: -0.8mm; }
+  ul, ol { margin: 1.5mm 0 3mm; padding-left: 7mm; }
+  li { margin-bottom: 1.4mm; }
+  code { font-family: Consolas, "Courier New", monospace; font-size: 11.5pt;
+         background: #eee; padding: 0.3mm 1mm; }
+  .note { font-size: 11.5pt; color: #222; }
+  .pb { page-break-before: always; }
+  .foot { font-size: 11.5pt; color: #333; border-top: 1.2pt solid #999;
+          margin-top: 5mm; padding-top: 2mm; }
+  @media (prefers-color-scheme: dark) { html, body { background:#fff; color:#000; } }
+</style>
+
+<div class="stamp">
+  <div class="big">POSTMORTEM PREP &nbsp;&middot;&nbsp; SUN 2 AUG, 07:30</div>
+  <div class="meta">
+    For the walk. Everything since Friday, condensed. Nothing here needs a screen.
+    <strong>State: main <code>cf46e1db</code>, 1019 tests green, board live and correct,
+    zero live failures.</strong>
+  </div>
+</div>
+
+<h1>Where things stand</h1>
+
+<table>
+  <tr><th>Thing</th><th>State</th></tr>
+  <tr><td>League board</td><td><strong>LIVE and CORRECT</strong> -- <code>weekly-2026-w31 / L3</code>, 3 entries, site and API agree. The orphaned-scores alarm has cleared on its own.</td></tr>
+  <tr><td>v0.13.2 release</td><td>Live, <code>latest</code> resolves to it, Windows + macOS download 200. Linux still 404 (#1068).</td></tr>
+  <tr><td>Tier 1 visual fixes</td><td><strong>All four merged and confirmed by you on tape.</strong></td></tr>
+  <tr><td>Open PR</td><td><strong>#1095</strong> -- audio defaults + the settings fold fix. Not merged; needs your ears.</td></tr>
+  <tr><td>Issues filed Fri-Sat</td><td>19 new (#1061-#1095 range), all with evidence and mechanisms</td></tr>
+  <tr><td>pdoom1 open issues</td><td>~110. Triage is now itself a real task.</td></tr>
+</table>
+
+<h2>Three things happened while you were helping your friend</h2>
+
+<p><strong>1. The website side independently arrived at our diagnosis.</strong> Three new PRs there:</p>
+<ul>
+  <li><strong>#233</strong> -- "wire the 10 unwired pre-PR guards, and make one <strong>prove it can fail</strong>"</li>
+  <li><strong>#232</strong> -- "kill three manufactured reds"</li>
+  <li><strong>#234</strong> -- "cover the three highest-blast-radius untested generators"</li>
+</ul>
+<p class="note">
+  <em>"Make one prove it can fail"</em> is the exact lesson from #640 and #1082, reached
+  independently, in another repo, in the same week. That convergence is itself a postmortem
+  finding: the diagnosis is not one person's hobby-horse, it is the actual shape of the system.
+</p>
+
+<p>
+  <strong>2. #1094 landed -- a postmortem input written from an OUTSIDE vantage</strong>
+  (someone who watched only through endpoint probes and the GitHub API). It is the most valuable
+  input of the four, because it sees things we structurally cannot.
+</p>
+
+<p>
+  <strong>3. Nothing broke.</strong> No new failures, no red CI, no regressions. The board has
+  been quietly correct for 36 hours.
+</p>
+
+<h2>#1094's headline, and the answer to its open question</h2>
+
+<div class="box hi">
+  <h3 style="margin-top:0">The claim: api.pdoom1.com returned 502 from ~28 July until at least Sat 1 Aug 09:00</h3>
+  <p>
+    Four days. Nothing announced it. Found by human eyeball on the 29th, still 502 four days
+    later. <strong>There was no monitor on <code>/api/health</code>.</strong>
+  </p>
+  <p style="margin-bottom:0">
+    Their framing, and it is sharper than mine: <strong>the week's dominant failure mode was
+    ABSENCE of signal, not wrong signal.</strong> Three instances -- the dead API, a
+    scheduled-task script that never once executed (a PowerShell 5.1 parse error, so it failed
+    before running and nothing surfaced it), and an ops dashboard three days stale. In each case
+    <em>the failed state was indistinguishable from the working state from outside.</em>
+  </p>
+</div>
+
+<h3>Their open question -- and I have answered it from the code</h3>
+
+<p>
+  They asked: if the API was dead for four days, are those scores <strong>lost</strong> or
+  merely <strong>invisible</strong>? They flagged it as a one-file check they had not done.
+</p>
+
+<div class="box hi">
+  <p><strong>ANSWER: NOT LOST. The client spools and retries.</strong> Verified in
+  <code>godot/autoload/leaderboard_sync.gd</code>:</p>
+  <ul>
+    <li><code>_outbox_add(body)</code> writes the POST body to
+      <code>user://pending_scores.json</code> <strong>before dispatch</strong> (line 207) --
+      the comment says "persist FIRST -- survives a crash between here and the server ack"</li>
+    <li><code>_outbox_remove()</code> fires <strong>only on a server ack</strong> (line 211)</li>
+    <li><code>_ready()</code> calls <code>_flush_outbox()</code> (lines 51-52):
+      <em>"Retry anything left in the outbox from a previous session (prior crash / offline
+      run)"</em></li>
+  </ul>
+  <p style="margin-bottom:0">
+    <strong>The caveat that matters:</strong> recovery requires the player to <em>launch the
+    game again</em>. Someone who played once during the outage and never returned still has
+    their score sitting on their own disk, unsent, forever. So: not a data-loss bug, but a
+    recovery that depends on an event we do not control and cannot observe.
+  </p>
+</div>
+
+<p class="note">
+  This is worth noting as a small win in the postmortem: the durable outbox was built for
+  crash-safety, and it silently did a completely different job -- surviving a four-day server
+  outage nobody knew about. <strong>Defensive work paying off in a scenario it was not designed
+  for is rare enough to name.</strong>
+</p>
+
+<h2 class="pb">Postmortem inputs available -- four, plus mine</h2>
+
+<table>
+  <tr><th class="n">Source</th><th>Vantage</th></tr>
+  <tr><td class="n">#1074</td><td>The coordination layer on league day -- what the paper/voice loop did well, and six ways it failed</td></tr>
+  <tr><td class="n">#1075</td><td>One failure signature, five times this week -- <strong>a check whose input comes from the system it checks</strong></td></tr>
+  <tr><td class="n">#1076</td><td>One failure shape across both workstreams, and why the register did not stop it</td></tr>
+  <tr><td class="n">#1094</td><td><strong>Outside vantage</strong> -- endpoint probes and the GitHub API only. Sees absence-of-signal.</td></tr>
+  <tr><td class="n">docs/</td><td><code>POSTMORTEM_2026-07-31_LEAGUE_DAY.md</code> -- eleven findings written live during the event, plus finding 12-13 since</td></tr>
+</table>
+
+<div class="box">
+  <strong>#1075's title is a better diagnosis than mine.</strong> I wrote "a proxy detached from
+  the truth it stood for". They wrote <em>"a check whose input comes from the system it
+  checks"</em> -- which is the same insight, stated as a <strong>testable rule</strong> rather
+  than a metaphor. You can audit for it. You cannot audit for a metaphor.
+  <br><br>
+  If the postmortem produces one durable artefact, I would want it to be that rule, written
+  down, with the five instances under it.
+</div>
+
+<h2>Suggested postmortem agenda</h2>
+
+<ol>
+  <li><strong>Read the four inputs cold</strong>, before discussing. They were written
+    independently and the overlap is the signal.</li>
+  <li><strong>Name the failure rule.</strong> #1075's framing, with every instance from the week
+    listed under it. This is the durable output.</li>
+  <li><strong>The absence-of-signal half</strong> (#1094). This is the gap our own analysis
+    missed entirely, because we were inside. Concrete ask on the table: a 5-minute uptime check
+    on <code>/api/health</code> with email alert. Ten minutes of work, converts a four-day
+    outage into a five-minute one.</li>
+  <li><strong>What went RIGHT</strong>, and do not skip it: the slack hour paid for eleven
+    findings; <code>build_release.py</code> meant "is this pack fresh" never had to be
+    re-litigated; the #640 test floor made "no test vanished" a check not a hope; the outbox
+    survived an outage it was not built for.</li>
+  <li><strong>The sustainability question.</strong> Your words Friday: momentum built by
+    "sacrificing time and attention at my CEO job, which I can't sustainably do". Every velocity
+    number from this week was measured during a burst you have said you cannot repeat.</li>
+  <li><strong>Actions</strong>, with owners and dates.</li>
+</ol>
+
+<h2>Decisions still open -- all on printed cards already in your tray</h2>
+
+<table>
+  <tr><th class="n">&nbsp;</th><th>Decision</th></tr>
+  <tr><td class="n"><span class="chk"></span></td><td><strong>#1084</strong> -- the difficulty lock is enforced at a UI screen, not where difficulty is consumed. Force Standard at consumption, or route non-Standard through <code>is_ranked_run()</code>?</td></tr>
+  <tr><td class="n"><span class="chk"></span></td><td><strong>Seed authority</strong> -- canonical source and canonical format (two live formats, one drawn and one computed)</td></tr>
+  <tr><td class="n"><span class="chk"></span></td><td><strong>Orphaned boards</strong> -- archive as history, publish past boards, or teach the probe</td></tr>
+  <tr><td class="n"><span class="chk"></span></td><td><strong>Alpha Tools</strong> naming + the #788 contradiction (mark vs exclude)</td></tr>
+  <tr><td class="n"><span class="chk"></span></td><td><strong>Settings direction</strong> -- one of five</td></tr>
+  <tr><td class="n"><span class="chk"></span></td><td><strong>Month review</strong> -- from ten; and the button, from five</td></tr>
+  <tr><td class="n"><span class="chk"></span></td><td><strong>PR #1095</strong> -- needs your ears on a build before merge</td></tr>
+  <tr><td class="n"><span class="chk"></span></td><td><strong>IP / trademark -- TOMORROW.</strong> #1061 has the question list ready</td></tr>
+</table>
+
+<div class="box hi">
+  <h3 style="margin-top:0">The one I would not let the postmortem end without</h3>
+  <p style="margin-bottom:0">
+    <strong>You have no velocity number, and you are about to need one.</strong> The roadmap you
+    want to publish as a pre-FAQ ([7:37]-[8:16] on Friday's tape) is a promise to players about
+    timing. Right now the only data you have was generated at an effort level you have already
+    said is unsustainable. Publishing a roadmap built on that number is a commitment you will
+    miss, and then read as personal failure rather than as a bad baseline.<br><br>
+    The cheap fix is available today and gets harder every week: <strong>reconstruct the hours
+    this week actually cost</strong>, from commit timestamps, PR times, transcripts and
+    runsheets. You will never have better raw material than right now.
+  </p>
+</div>
+
+<p class="foot">
+  Printed 07:30 Sun 2026-08-02 &middot; main <code>cf46e1db</code> &middot; board live,
+  <code>weekly-2026-w31 / L3</code> &middot; 1 open PR, 0 live failures &middot; postmortem
+  inputs: #1074, #1075, #1076, #1094
+</p>
