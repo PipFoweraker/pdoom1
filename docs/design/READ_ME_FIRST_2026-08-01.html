@@ -1,0 +1,172 @@
+<title>Read me first -- Saturday 2026-08-01 pack</title>
+<style>
+  @page { size: A4 portrait; margin: 14mm 13mm; }
+  html { font-size: 12.5pt; }
+  body { font-family: "Segoe UI", Calibri, Arial, sans-serif; line-height: 1.45;
+         color: #000; background: #fff; max-width: 190mm; margin: 0 auto; }
+  .stamp { border: 3pt solid #000; background: #1a1a1a; color: #fff;
+           padding: 3mm 4mm; margin: 0 0 5mm; }
+  .stamp .big { font-size: 19pt; font-weight: 700; line-height: 1.15; }
+  .stamp .meta { font-size: 11.5pt; margin-top: 1.5mm; }
+  h1 { font-size: 17pt; margin: 0 0 2mm; line-height: 1.15; }
+  h2 { font-size: 14.5pt; margin: 6mm 0 2mm; padding: 1.7mm 2.5mm;
+       background: #1a1a1a; color: #fff; page-break-after: avoid; }
+  h3 { font-size: 13pt; margin: 4.5mm 0 1.5mm; page-break-after: avoid; }
+  p, li, td, th { font-size: 12.5pt; }
+  table { border-collapse: collapse; width: 100%; margin: 2.5mm 0 4mm; }
+  th, td { border: 1px solid #444; padding: 2.1mm 2.5mm; text-align: left; vertical-align: top; }
+  th { background: #e8e8e8; font-weight: 700; }
+  td.n { white-space: nowrap; font-weight: 700; width: 15mm; }
+  .box { border: 2.2pt solid #000; padding: 3mm 3.5mm; margin: 4mm 0; page-break-inside: avoid; }
+  .box.win { border-width: 3pt; background: #f2f2f2; }
+  .chk { display: inline-block; width: 5mm; height: 5mm; border: 1.7pt solid #000;
+         margin-right: 2.4mm; vertical-align: -0.8mm; }
+  ul, ol { margin: 1.5mm 0 3mm; padding-left: 7mm; }
+  li { margin-bottom: 1.4mm; }
+  code { font-family: Consolas, "Courier New", monospace; font-size: 11.5pt;
+         background: #eee; padding: 0.3mm 1mm; }
+  .note { font-size: 11.5pt; color: #222; }
+  .foot { font-size: 11.5pt; color: #333; border-top: 1.2pt solid #999;
+          margin-top: 5mm; padding-top: 2mm; }
+  @media (prefers-color-scheme: dark) { html, body { background:#fff; color:#000; } }
+</style>
+
+<div class="stamp">
+  <div class="big">READ ME FIRST &nbsp;&middot;&nbsp; SAT 1 AUG, 10:55</div>
+  <div class="meta">
+    Pack contents: this sheet, then <strong>SETTINGS MENU OPTIONS</strong> (5 directions),
+    then <strong>MONTH REVIEW OPTIONS</strong> (10 + 5). Earlier in the tray: decision cards,
+    postmortem, postmortem inputs, dev-powers card.
+  </div>
+</div>
+
+<h1>All four fixes landed. You said so yourself.</h1>
+
+<table>
+  <tr><th>Fix</th><th>Your words on the tape</th></tr>
+  <tr><td><strong>Achievement toast</strong></td><td>[8:22] <em>"Achievement toast, hire someone -- that works"</em></td></tr>
+  <tr><td><strong>Cat</strong></td><td>[8:24] <em>"The cat -- I now have an actual cat"</em></td></tr>
+  <tr><td><strong>Rack over feed</strong></td><td>[8:33] <em>"it kind of comes up into its own little area, so that's good for now"</em></td></tr>
+  <tr><td><strong>DEV BUILD banner</strong></td><td>[0:47] <em>"it's now v0.13.2, doesn't say dev build anywhere"</em></td></tr>
+  <tr><td><strong>Floor depth</strong></td><td>[8:45] <em>"I'm honestly not noticing it"</em> -- INCONCLUSIVE, needs side-by-side</td></tr>
+</table>
+
+<p class="note">
+  <strong>One correction I owe you.</strong> I told you the banner should still read DEV BUILD
+  because it was a local build. Wrong -- <code>build_release.py</code> exports with
+  <code>--export-release</code>, so it IS a release-template build and the gate correctly
+  suppressed the label. The fix worked as designed; my instructions were wrong, not the code.
+</p>
+
+<h2>Three root causes worth knowing before you read the options</h2>
+
+<div class="box win">
+  <h3 style="margin-top:0">1. The settings screen is not missing content. It is folded.</h3>
+  <p style="margin-bottom:0">
+    <code>settings_menu.tscn</code> <strong>already contains every section</strong>: graphics
+    quality, fullscreen, colorblind, keybinds, plus five code-injected toggles (leaderboard
+    consent, launch ping, intros, hints, UI-layout A/B). An empty <code>Spacer</code> node and
+    the <code>Scroll</code> both carry <code>size_flags_vertical = 3</code>, so the spacer eats
+    half the fixed 800x600 column and the real content scrolls inside a ~200px window.
+    <strong>The "empty Graphics section" you saw is the fold line.</strong>
+    Two-line fix, about half an hour, un-hides six shipped sections. Do this whichever direction
+    you pick.
+  </p>
+</div>
+
+<div class="box">
+  <h3 style="margin-top:0">2. The month review physically cannot show what you asked for.</h3>
+  <p style="margin-bottom:0">
+    You asked at [3:24] for "you planned 17 of 20, then reality intervened".
+    <code>MonthPlan.begin_month()</code> <strong>destroys last month's spend and reserve data
+    one call before the review renders.</strong> The information does not exist at draw time.
+    Any fix needs a pre-reset snapshot first -- which reframes about half the proposals from
+    "layout" to "capture the data, then lay it out".
+  </p>
+</div>
+
+<div class="box">
+  <h3 style="margin-top:0">3. The button sucks because it is wearing a costume.</h3>
+  <p style="margin-bottom:0">
+    It renders as <code>[Q] Begin planning August 2017 (Free)</code> because it is a
+    <strong>generic event-choice button</strong> -- the <code>(Free)</code> is
+    <code>format_cost_summary({})</code> and the <code>[Q]</code> is just the first dialog key
+    label. It is dark-grey 500x45 while END TURN is teal. And
+    <code>MainUI._input</code> <strong>deliberately blocks SPACE and ENTER whenever a dialog is
+    active</strong>, so the two keys a player tries first do nothing. Q working is an accident
+    of the letter map, not a design.
+  </p>
+</div>
+
+<h2>The one that needs a ruling, not a fix</h2>
+
+<div class="box win">
+  <h3 style="margin-top:0">#1084 -- the difficulty lock does not actually hold</h3>
+  <p>
+    #1058 set <code>GameConfig.difficulty = 1</code> in <strong>pregame_setup._ready()</strong>
+    -- one UI screen. But difficulty is CONSUMED in
+    <code>GameManager.start_new_game() -> _apply_difficulty_settings()</code>, where it scales
+    the <strong>monthly Attention grant</strong>. Real balance lever.
+  </p>
+  <p>
+    Meanwhile <code>settings_menu.gd:163</code> writes it freely and persists it to
+    <code>config.cfg</code> -- and <code>pregame_setup</code> is <strong>one of six routes into
+    main.tscn</strong>.
+  </p>
+  <p style="margin-bottom:0">
+    <strong>So "every board entry is a Standard run" is an accident of routing, not a property
+    of the design.</strong> I have NOT proven a specific route currently exploits it -- some may
+    resume rather than start. The defect is structural: it holds until someone adds a nav edge.
+    <strong>#1060 is the model (a named accessor at the consumption point); #1058 is the
+    anti-pattern (a variable set on a screen).</strong> Third instance of this shape in seven
+    days.
+  </p>
+</div>
+
+<h2>Filed this morning -- 9 new issues, 3 comments</h2>
+
+<table>
+  <tr><th class="n">#</th><th>What</th></tr>
+  <tr><td class="n">1085</td><td>Minimising the window does not minimise. <strong>Not diagnosed</strong> as a #1079 regression -- the badge callback only refits its own offsets. Needs a 30-second repro. Also: the version now appears TWICE on the main menu.</td></tr>
+  <tr><td class="n">1086</td><td>Hiring window: tooltip omits the Attention cost, prints raw <code>money: 3000.0</code>, Q and W read as the same option</td></tr>
+  <tr><td class="n">1087</td><td>No number-format policy -- <code>$197,207.69</code> beside <code>82.0</code>, <code>* 70</code> and <code>money: 3000.0</code> on one screen</td></tr>
+  <tr><td class="n">1088</td><td><strong>Rivals never introduced.</strong> Your hardest call-out. Mechanism found: the summary renders "visible" rivals but nothing ever makes them visible in the fiction</td></tr>
+  <tr><td class="n">1089</td><td>"Strategic Moves Unlocked" is bare text on black -- wants a hero slot</td></tr>
+  <tr><td class="n">1090</td><td>Research Quality still a global toggle. <strong>Your memory was right</strong> -- the ruling exists in <code>WORKSHOP_2_BACKLOG.md:520</code></td></tr>
+  <tr><td class="n">1091</td><td>No hire may be onboarded by silence. Your invariant, stated testably, plus the door/arrival beat</td></tr>
+  <tr><td class="n">1092</td><td>Events name physical things the office never shows (security system -&gt; no cameras). Sweep events, bulk-generate</td></tr>
+  <tr><td class="n">1093</td><td>Art generated and paid for, never reviewed -- inventory and package a decision session</td></tr>
+  <tr><td class="n">1084</td><td>Difficulty lock bypass (above)</td></tr>
+</table>
+
+<p class="note">
+  Commented rather than duplicated: <strong>#1043</strong> (plan screen wastes its middle -- your
+  [6:01]-[6:45] items were already its items 4-6), <strong>#1049</strong> (ADR/DQ correctness pass
+  -- you re-raised it unprompted at [7:18]), <strong>#818</strong> (music tooling pass, [11:21]).
+</p>
+
+<h2>What is on you</h2>
+
+<table>
+  <tr><th class="n">&nbsp;</th><th>Decision</th></tr>
+  <tr><td class="n"><span class="chk"></span></td><td><strong>Settings direction</strong> -- pick one of five, or a hybrid. Second doc in this pack.</td></tr>
+  <tr><td class="n"><span class="chk"></span></td><td><strong>Month review</strong> -- pick from 10; and the button, pick from 5. Third doc.</td></tr>
+  <tr><td class="n"><span class="chk"></span></td><td><strong>#1084</strong> -- force Standard at consumption, or route non-Standard through <code>is_ranked_run()</code> and let people play it unranked?</td></tr>
+  <tr><td class="n"><span class="chk"></span></td><td><strong>Seed authority + orphaned boards</strong> -- earlier card, still open</td></tr>
+  <tr><td class="n"><span class="chk"></span></td><td><strong>Alpha Tools naming</strong> -- earlier card, still open. Note it collides with #788, which says the opposite</td></tr>
+  <tr><td class="n"><span class="chk"></span></td><td><strong>IP / trademark, Monday</strong> -- #1061 has the question list</td></tr>
+</table>
+
+<div class="box">
+  <strong>The line from your own tape I would most want you to sit with:</strong><br>
+  [12:27] <em>"I'm not actually constrained by effort here, I'm constrained by CHOICE."</em><br><br>
+  That is a different operating model from the one we have been running, and it is probably
+  right. It also collides with the roadmap problem: a director surrounded by options still has
+  to know how many of them fit in a month -- and that number does not exist yet, because every
+  measurement so far was taken during a burst you have said you cannot sustain.
+</div>
+
+<p class="foot">
+  Printed 10:55 Sat 2026-08-01 &middot; main <code>16c9cb5b</code> &middot; 4 PRs merged, 1019
+  tests green &middot; one agent still running (audio defaults + settings fold fix)
+</p>
