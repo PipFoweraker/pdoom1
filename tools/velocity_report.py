@@ -36,19 +36,53 @@ import html
 import subprocess
 import sys
 from collections import Counter, defaultdict
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 from pathlib import Path
 
-# Windows we report over. Name -> (days back, or None for all history).
-WINDOWS = [
-    ("League week (Mon 27 Jul -> Sun 2 Aug)", 7),
-    ("Last 14 days", 14),
-    ("Last 30 days", 30),
-    ("June baseline (31-60 days back)", None),  # handled specially
-    ("All history", None),
-]
-
 BOT_MARKERS = ("bot]", "[bot", "copilot", "github-actions")
+
+# ---------------------------------------------------------------------------------
+# PIP'S ESTIMATOR PORTFOLIO -- elicited 2026-08-02, ruling on issue #1097.
+#
+# Provenance and method (do not silently change these numbers): Pip COVERED the
+# method column of the estimator table, looked only at the hours each estimator
+# produced for the window, then split a 100% portfolio of bets on which method a
+# future omniscient time-log would vindicate. He also gave a separate 1..6 ranking
+# (A=1, B=2, E=3, C=4, D=5, F=6); his instruction is that THE PERCENTAGES BELOW ARE
+# LATER AND BETTER than that ranking where they conflict. He flagged the tension
+# himself (B and D split league week 40/40 while D ranks fifth) and asked that it be
+# examined, not smoothed. The weighted sum below is his considered hours answer and
+# beats any single estimator.
+# ---------------------------------------------------------------------------------
+PORTFOLIO_WEIGHTS: dict[str, dict[str, float]] = {
+    "League week (last 7 days)": {
+        "A": 0.08,
+        "B": 0.40,
+        "C": 0.06,
+        "D": 0.40,
+        "E": 0.06,
+        "F": 0.00,
+    },
+    "Last 14 days": {
+        "A": 0.10,
+        "B": 0.40,
+        "C": 0.02,
+        "D": 0.35,
+        "E": 0.03,
+        "F": 0.10,
+    },
+}
+PORTFOLIO_RANKING = "A > B > E > C > D > F (1 = most bought; superseded by the percentages)"
+
+
+def week_of_label(iso_year: int, iso_week: int) -> str:
+    """Translate an ISO week into the calendar week a human reads.
+
+    Pip's ruling 2026-08-02: ISO is the right standard but not the readable one --
+    render 'week of Mon 27 Jul' in anything a person looks at.
+    """
+    monday = date.fromisocalendar(iso_year, iso_week, 1)
+    return monday.strftime("week of Mon %d %b %Y")
 
 
 def git(repo: Path, *args: str) -> str:
@@ -302,6 +336,8 @@ code { font-family:Consolas,"Courier New",monospace; font-size:11.5pt; backgroun
         ("All history", None, 0),
     ]
 
+    weighted_hours: dict[str, float] = {}
+
     for title, days, offset in win_defs:
         sel = window_times(commits, days, offset)
         times = [c["when"] for c in sel]
@@ -313,9 +349,12 @@ code { font-family:Consolas,"Courier New",monospace; font-size:11.5pt; backgroun
             continue
         rows = estimators(times, len(times))
         peak = max(r[2] for r in rows) or 1.0
+        cal_lo = min(times).strftime("%a %d %b")
+        cal_hi = max(times).strftime("%a %d %b %Y")
         P.append(
-            '<p class="note">%d human commits &middot; +%s / -%s lines &middot; '
-            "%d active days</p>" % (len(times), f"{ins:,}", f"{dels:,}", active_days(times))
+            '<p class="note">%s -> %s &middot; %d human commits &middot; +%s / -%s lines '
+            "&middot; %d active days</p>"
+            % (cal_lo, cal_hi, len(times), f"{ins:,}", f"{dels:,}", active_days(times))
         )
         P.append(
             "<table><tr><th>&nbsp;</th><th>Estimator</th><th>Hours</th>"
@@ -344,30 +383,101 @@ code { font-family:Consolas,"Courier New",monospace; font-size:11.5pt; backgroun
             "work.</p>" % (lo, hi, (hi / lo) if lo else 0)
         )
 
+        if title in PORTFOLIO_WEIGHTS:
+            weights = PORTFOLIO_WEIGHTS[title]
+            by_label = {r[0]: r[2] for r in rows}
+            wsum = sum(weights.get(lab, 0.0) * by_label[lab] for lab in by_label)
+            weighted_hours[title] = wsum
+            P.append(
+                '<div class="box"><h3 style="margin-top:0">Weighted estimate '
+                "(Pip's portfolio, 2026-08-02): <b>%.1f h</b></h3>" % wsum
+            )
+            P.append(
+                "<table><tr><th>&nbsp;</th><th>Weight</th><th>Hours</th>"
+                "<th>Contribution</th></tr>"
+            )
+            for lab in "ABCDEF":
+                w = weights.get(lab, 0.0)
+                hrs = by_label.get(lab, 0.0)
+                P.append(
+                    "<tr><td class='lab'>%s</td><td class='num'>%.0f%%</td>"
+                    "<td class='num'>%.1f</td><td class='num'>%.1f</td></tr>"
+                    % (lab, w * 100, hrs, w * hrs)
+                )
+            P.append("</table>")
+            P.append(
+                '<p class="note" style="margin-bottom:0">Method-blind elicitation: Pip '
+                "covered the method column, saw only the hours, and split 100%% of bets "
+                "on which estimator a future time-log would vindicate. These percentages "
+                "supersede his earlier ranking (%s). Standing tension he flagged himself: "
+                "B and D split the league week 40/40 while D ranks fifth -- examine, do "
+                "not smooth.</p>" % html.escape(PORTFOLIO_RANKING)
+            )
+            P.append("</div>")
+
     # ---- weekly series -------------------------------------------------------------
+    # Full history, not a tail slice: Pip confirmed the shape from memory (Dec, then
+    # near-silence until scattered touches in Feb and Mar, early June, a real push
+    # through June, exploding through July) and the series has to be long enough to
+    # show it. Runs of 3+ empty weeks collapse into a single gap row.
     P.append('<h2 class="pb">Weekly shape -- the burst, and what preceded it</h2>')
     by_week: Counter = Counter()
     for c in human:
         iso = c["when"].isocalendar()
-        by_week["%d-W%02d" % (iso[0], iso[1])] += 1
-    weeks = sorted(by_week)[-20:]
-    peak = max((by_week[w] for w in weeks), default=1)
-    P.append("<table><tr><th>ISO week</th><th>Human commits</th><th>&nbsp;</th></tr>")
-    for w in weeks:
+        by_week[(iso[0], iso[1])] += 1
+    first_monday = date.fromisocalendar(*min(by_week)[:2], 1)
+    last_monday = date.fromisocalendar(*max(by_week)[:2], 1)
+    all_weeks: list[tuple[int, int]] = []
+    m = first_monday
+    while m <= last_monday:
+        iso = m.isocalendar()
+        all_weeks.append((iso[0], iso[1]))
+        m += timedelta(days=7)
+    peak = max(by_week.values(), default=1)
+    P.append(
+        "<table><tr><th>ISO week</th><th>Calendar</th><th>Human commits</th>" "<th>&nbsp;</th></tr>"
+    )
+    i = 0
+    while i < len(all_weeks):
+        yr, wk = all_weeks[i]
+        n = by_week.get((yr, wk), 0)
+        if n == 0:
+            j = i
+            while j < len(all_weeks) and by_week.get(all_weeks[j], 0) == 0:
+                j += 1
+            gap = j - i
+            if gap >= 3:
+                P.append(
+                    "<tr><td colspan='4' class='note'>... %d quiet weeks, 0 commits "
+                    "(%s -> %s) ...</td></tr>"
+                    % (
+                        gap,
+                        week_of_label(yr, wk),
+                        week_of_label(*all_weeks[j - 1]),
+                    )
+                )
+                i = j
+                continue
         P.append(
-            "<tr><td>%s</td><td class='num'>%d</td><td>%s</td></tr>"
-            % (w, by_week[w], bar(by_week[w], peak, 90))
+            "<tr><td>%d-W%02d</td><td class='note'>%s</td><td class='num'>%d</td>"
+            "<td>%s</td></tr>" % (yr, wk, week_of_label(yr, wk), n, bar(n, peak, 70))
         )
+        i += 1
     P.append("</table>")
 
     P.append(
         '<div class="box hi"><h3 style="margin-top:0">The number that matters most</h3>'
-        "<p style='margin-bottom:0'>The recent weeks are not a velocity, they are a "
+        "<p>The recent weeks are not a velocity, they are a "
         "<b>burst</b>. Compare the league weeks against the baseline windows above. A "
         "roadmap built on the burst assumes a person who does not exist on an ordinary "
         "week, and missing it will read as personal failure rather than as a bad "
         "baseline. <b>The sustainable number is the quiet weeks, possibly plus a "
-        "little.</b></p></div>"
+        "little.</b></p>"
+        "<p style='margin-bottom:0'>The full series above now shows the precedent: this "
+        "is the <b>second</b> burst. The Sep-Nov 2025 burst peaked at a comparable "
+        "commits-per-week and was followed by roughly six months of near-silence. One "
+        "prior observation is thin evidence, but it is the only base rate we have for "
+        "what follows a burst here.</p></div>"
     )
 
     # ---- when do you work ----------------------------------------------------------
@@ -411,6 +521,12 @@ code { font-family:Consolas,"Courier New",monospace; font-size:11.5pt; backgroun
     # ---- decision ------------------------------------------------------------------
     P.append("<h2>Pick one</h2>")
     P.append(
+        '<p class="note"><b>Done once already:</b> Pip ran a method-blind portfolio '
+        "elicitation on 2026-08-02 (weights baked into this script as "
+        "<code>PORTFOLIO_WEIGHTS</code>, with provenance). The checklist below stays "
+        "for the next re-elicitation, once real time-logs exist to score it against.</p>"
+    )
+    P.append(
         "<table><tr><th>&nbsp;</th><th>Choose the estimator that matches how you "
         "actually worked</th></tr>"
     )
@@ -441,6 +557,8 @@ code { font-family:Consolas,"Courier New",monospace; font-size:11.5pt; backgroun
         "     %d commits (%d human, %d bot), %s -> %s"
         % (len(commits), len(human), len(bots), first.date(), last.date())
     )
+    for title, wsum in weighted_hours.items():
+        print("     weighted estimate, %s: %.1f h (Pip's portfolio, 2026-08-02)" % (title, wsum))
     return 0
 
 

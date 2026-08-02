@@ -146,36 +146,37 @@ python tools/build_release.py --preset "Linux/X11" --output builds/linux
 python tools/build_release.py --preset "macOS" --output builds/mac
 ```
 
-Pass `--output` explicitly on every platform. The reason is mechanical: the tool
-hardcodes its output filename as `PDoom.exe` regardless of preset
-(`exe_path = out_dir / "PDoom.exe"`), so three presets sharing one output
-directory would overwrite each other's artifact silently. Separate directories
-make that impossible.
+Separate `--output` directories per platform are still the recommended habit,
+but they are no longer load-bearing. **Both hazards this section used to warn
+about are FIXED (issue #1072).**
 
-### Two consequences of that hardcoded filename, flagged as predictions
+### What changed, and what it means for the three cut commands
 
-Neither was tested here -- the constraint on the session that wrote this sheet
-was that a build was already running and must not be collided with. Both are
-read off the source and should be confirmed the first time all three are cut:
+- **The output filename now comes from the preset**, read out of that preset's
+  own `export_path` in `godot/export_presets.cfg`
+  (`output_name_for_preset()` in `tools/build_release.py`). Windows lands as
+  `PDoom.exe`, Linux as `PDoom.x86_64`, macOS as `PDoom.app.zip` -- the same
+  names a manual editor export produces, because it is the same source of truth.
+  No rename step, and three presets sharing one output directory can no longer
+  silently overwrite each other. Unit-covered in
+  `tests/test_build_release_paths.py`, including a check against the real
+  `export_presets.cfg` so the derivation cannot drift.
+- **The freshness check now descends into zip containers** (`find_marker()`).
+  The old raw-byte scan could not see the marker's filename inside a macOS
+  `.app.zip`, because it lives in a *compressed* `.pck` entry rather than in the
+  zip's plaintext central directory -- a false FAILURE waiting to happen. The
+  check now searches zip entry names and then entry contents. It was NOT
+  weakened: a zip genuinely lacking the marker still fails, and `--no-clean` is
+  still the wrong answer to a `[BUILD-VERIFY]` failure.
 
-- **Linux:** the export lands as `builds/linux/PDoom.exe` plus
-  `builds/linux/PDoom.pck`. Renaming the binary to `PDoom.x86_64` before zipping
-  is expected to be safe, because Godot resolves the pack from the executable's
-  basename with its extension stripped (`PDoom.exe` and `PDoom.x86_64` both
-  resolve to `PDoom.pck`). *Expected, not proven.* Rename, then have a human on
-  Linux launch it before shipping. Also set the executable bit -- a Windows
-  filesystem carries no mode bits, so a zip built on Windows can ship a Linux
-  binary that will not execute.
-- **macOS:** the export is a single `.app.zip` and the tool will write it named
-  `PDoom.exe`. It must be renamed to `PDoom.app.zip` (or the shipped asset name)
-  afterwards. More seriously, **the freshness check may report a false FAILURE
-  here**: the check scans the raw bytes of the output file for the marker token,
-  and inside a `.app.zip` the marker's filename lives in a *compressed* `.pck`
-  entry rather than in the zip's plaintext central directory. A macOS
-  `[BUILD-VERIFY]` failure is therefore ambiguous in a way the Windows one is
-  not. Do not wave it through and do not "fix" it with `--no-clean`; establish
-  which it is (e.g. by unzipping and grepping the extracted pack) and record the
-  answer here so the next person does not re-derive it.
+Still true, still unproven, still a job for a human on the relevant machine:
+
+- **Linux:** Godot resolves the pack from the executable's basename with its
+  extension stripped, so `PDoom.x86_64` pairs with `PDoom.pck`. Set the
+  executable bit -- a Windows filesystem carries no mode bits, so a zip built on
+  Windows can ship a Linux binary that will not execute.
+- **macOS:** no macOS build has ever been verified to RUN (issue #1071). That
+  needs a person with a Mac, not code.
 
 ---
 
@@ -283,11 +284,14 @@ runner) plus an Apple Developer account. Until then, every macOS release ships
 with a friction step and that should be stated in the release body rather than
 discovered.
 
-### Linux: no launch proof, and two mechanical traps
+### Linux: no launch proof, and one remaining mechanical trap
 
-Covered in section 2 -- the `PDoom.exe` filename and the missing executable bit.
-Both are the kind of thing that is obvious to whoever launches it and invisible
-to whoever built it on Windows.
+The wrong-filename trap is closed (issue #1072 -- the binary now lands as
+`PDoom.x86_64`, from the preset). What remains is the **missing executable
+bit**: a Windows filesystem carries no mode bits, so a zip packaged on Windows
+can ship a Linux binary that will not execute. That is the kind of thing that is
+obvious to whoever launches it and invisible to whoever built it on Windows.
+No Linux build has ever been verified to run.
 
 ---
 
@@ -333,9 +337,26 @@ Recommended asset set per release, so both paths stay alive:
 
 ```
 PDoom-Windows-v<X.Y.Z>.zip      PDoom-Windows.zip       (alias -- the button)
-PDoom-Linux-v<X.Y.Z>.zip        PDoom-Linux.zip         (alias -- add it; v0.13.1 had none)
+PDoom-Linux-v<X.Y.Z>.zip        PDoom-Linux.zip         (alias -- ADDED, issue #1068)
 PDoom-macOS-v<X.Y.Z>.zip        PDoom.app.zip           (alias, existing name -- keep it)
 ```
+
+**`PDoom-Linux.zip` is now produced automatically** by
+`scripts/build_all_platforms.py` (same `shutil.copy2` alias step Windows already
+had), and the release workflow's `verify-release-urls` job asserts all three
+alias assets exist on the tag before the run goes green. The website's Linux
+button pointed at `PDoom.x86_64`, which was never an asset -- the game repo
+publishes `PDoom-Linux.zip`, and the website repo repoints the button at that.
+A bare `PDoom.x86_64` would be the wrong thing to publish anyway: without the
+sibling `PDoom.pck` and the GodotSteam `.so` libraries it cannot run, which is
+exactly why the other two platforms ship zips.
+
+Note the shape of how #1068 hid: `verify_release_urls.py` only checks URLs the
+generated FEED lists, and the feed lists versioned zips only. So the "Verify
+Release Download URLs" job passed green on every release while the site's Linux
+button 404'd. The proxy ("the checked downloads work") had detached from the
+thing ("all the downloads people actually click work"). The new alias step is
+the missing half.
 
 Do not rename an existing alias to something tidier. The alias names are a
 contract with a fixed string in someone else's repository, and `[Gate 6]` check 3

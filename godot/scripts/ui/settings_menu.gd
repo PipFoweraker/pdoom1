@@ -1,50 +1,92 @@
 extends Control
-## Settings Menu - Comprehensive settings management using GameConfig
+## Settings -- two views in one scene (Pip's ruling 2026-08-02, memo #1096:
+## "settings directions 1 and 5 proceed, diegetic deferred").
+##
+## FRONT CARD (Direction 5, THE FIRST FIVE MINUTES): the five controls nearly
+## every early settings visit is for -- volume, music, fullscreen, hints,
+## colorblind -- on one small centered card, plus exactly one door.
+##
+## OPERATIONS BOARD (Direction 1): behind the ">> ALL PROTOCOLS" door. Every
+## remaining control on one dense three-column board, zero navigation, nothing
+## scrolls, so nothing can hide below a fold (the old screen buried six shipped
+## sections behind a mis-flagged Spacer -- see docs/design/SETTINGS_MENU_OPTIONS.md
+## section 0). Columns group by the player's question: my machine / my game /
+## my data + my hands.
+##
+## PERSISTENCE MODEL -- there is no Apply button. Every control applies live
+## (unchanged) and now also SAVES via a debounced timer plus a flush on exit.
+## The old model applied live but persisted only on Apply, so Back-without-Apply
+## silently reverted on next launch -- the exact silent-wrongness flavour league
+## week taught us to fear. One honest rule, stated on screen.
+##
+## The duplicated controls (volume/music/fullscreen/hints/colorblind exist on
+## both views) share one handler each and are re-read from GameConfig on every
+## view switch, so the two views cannot disagree while visible.
 
-# UI References
-@onready var master_volume_slider = $VBox/Scroll/SettingsContainer/AudioSettings/MasterVolumeRow/Slider
-@onready var master_volume_label = $VBox/Scroll/SettingsContainer/AudioSettings/MasterVolumeRow/ValueLabel
-@onready var sfx_volume_slider = $VBox/Scroll/SettingsContainer/AudioSettings/SFXVolumeRow/Slider
-@onready var sfx_volume_label = $VBox/Scroll/SettingsContainer/AudioSettings/SFXVolumeRow/ValueLabel
-@onready var music_volume_slider = $VBox/Scroll/SettingsContainer/AudioSettings/MusicVolumeRow/Slider
-@onready var music_volume_label = $VBox/Scroll/SettingsContainer/AudioSettings/MusicVolumeRow/ValueLabel
-# NOTE: there is no Graphics Quality control. GameConfig.graphics_quality still
-# exists and still persists, but apply_graphics_settings() has never done
-# anything with it ("TODO: Apply graphics quality settings"), so the dropdown
-# that used to sit here was a Low/Medium/High choice with no effect whatsoever.
-# It was removed 2026-08-01 rather than left rendering a lie. Fullscreen below
-# is real (DisplayServer.window_set_mode) and stays.
-@onready var fullscreen_checkbox = $VBox/Scroll/SettingsContainer/GraphicsSettings/FullscreenRow/CheckBox
-@onready var difficulty_option = $VBox/Scroll/SettingsContainer/GameplaySettings/DifficultyRow/OptionButton
-@onready var theme_dropdown = $VBox/Scroll/SettingsContainer/UISettings/ThemeRow/ThemeDropdown
-@onready var colorblind_checkbox = $VBox/Scroll/SettingsContainer/AccessibilitySettings/ColorblindRow/CheckBox
+const KEYBIND_SCENE := "res://scenes/keybind_screen.tscn"
 
-# Built programmatically (no .tscn row): global-leaderboard opt-out (default ON).
-var global_leaderboard_checkbox: CheckButton = null
+# How long after the last change before the config is written. Sliders fire
+# value_changed continuously while dragging; this coalesces a drag into one write.
+const SAVE_DEBOUNCE_SECONDS := 0.75
 
-# Built programmatically (no .tscn row): anonymous launch-ping opt-out (#799).
-# Honest label -- the ping carries a random install UUID + version + OS only.
-var launch_ping_checkbox: CheckButton = null
+# --- Front card (Direction 5) ---
+@onready var front_card: Control = $FrontCard
+@onready var fc_volume_slider: HSlider = $FrontCard/Card/Margin/CardVBox/VolumeRow/Slider
+@onready var fc_volume_label: Label = $FrontCard/Card/Margin/CardVBox/VolumeRow/ValueLabel
+@onready var fc_music_slider: HSlider = $FrontCard/Card/Margin/CardVBox/MusicRow/Slider
+@onready var fc_music_label: Label = $FrontCard/Card/Margin/CardVBox/MusicRow/ValueLabel
+@onready var fc_fullscreen_checkbox: CheckButton = $FrontCard/Card/Margin/CardVBox/FullscreenRow/CheckBox
+@onready var fc_hints_checkbox: CheckButton = $FrontCard/Card/Margin/CardVBox/HintsRow/CheckBox
+@onready var fc_colorblind_checkbox: CheckButton = $FrontCard/Card/Margin/CardVBox/ColorblindRow/CheckBox
+@onready var all_protocols_button: Button = $FrontCard/Card/Margin/CardVBox/AllProtocolsButton
+@onready var fc_keybindings_button: Button = $FrontCard/Card/Margin/CardVBox/KeybindingsButton
+@onready var back_button: Button = $FrontCard/Card/Margin/CardVBox/FooterRow/BackButton
+@onready var fc_saved_label: Label = $FrontCard/Card/Margin/CardVBox/FooterRow/SavedLabel
 
-# Built programmatically (no .tscn row): story-intro toggle (#801). The reversible
-# ESCAPE HATCH for the "auto-flip on player signal + reversible settings toggle" pattern
-# (see GameConfig.play_intros): a hold-to-skip auto-flips play_intros off; this re-enables.
-var play_intros_checkbox: CheckButton = null
+# --- Operations board (Direction 1) ---
+@onready var board: Control = $Board
+@onready var version_label: Label = $Board/BoardVBox/HeaderRow/VersionLabel
+@onready var board_master_slider: HSlider = $Board/BoardVBox/Columns/Col1/MasterSlider
+@onready var board_master_label: Label = $Board/BoardVBox/Columns/Col1/MasterLabelRow/ValueLabel
+@onready var board_sfx_slider: HSlider = $Board/BoardVBox/Columns/Col1/SFXSlider
+@onready var board_sfx_label: Label = $Board/BoardVBox/Columns/Col1/SFXLabelRow/ValueLabel
+@onready var board_music_slider: HSlider = $Board/BoardVBox/Columns/Col1/MusicSlider
+@onready var board_music_label: Label = $Board/BoardVBox/Columns/Col1/MusicLabelRow/ValueLabel
+@onready var board_fullscreen_checkbox: CheckButton = $Board/BoardVBox/Columns/Col1/FullscreenRow/CheckBox
+@onready var board_intros_checkbox: CheckButton = $Board/BoardVBox/Columns/Col2/IntrosRow/CheckBox
+@onready var board_hints_checkbox: CheckButton = $Board/BoardVBox/Columns/Col2/HintsRow/CheckBox
+@onready var board_rivals_checkbox: CheckButton = $Board/BoardVBox/Columns/Col2/RivalsRow/CheckBox
+@onready var difficulty_option: OptionButton = $Board/BoardVBox/Columns/Col2/DifficultyRow/OptionButton
+@onready var theme_dropdown: OptionButton = $Board/BoardVBox/Columns/Col2/ThemeRow/ThemeDropdown
+@onready var board_ui_layout_checkbox: CheckButton = $Board/BoardVBox/Columns/Col2/UILayoutRow/CheckBox
+@onready var board_colorblind_checkbox: CheckButton = $Board/BoardVBox/Columns/Col2/ColorblindRow/CheckBox
+@onready var board_leaderboard_checkbox: CheckButton = $Board/BoardVBox/Columns/Col3/LeaderboardRow/CheckBox
+@onready var board_launch_ping_checkbox: CheckButton = $Board/BoardVBox/Columns/Col3/LaunchPingRow/CheckBox
+@onready var board_keybindings_button: Button = $Board/BoardVBox/Columns/Col3/KeybindingsButton
+@onready var front_card_button: Button = $Board/BoardVBox/FooterRow/FrontCardButton
+@onready var board_saved_label: Label = $Board/BoardVBox/FooterRow/SavedLabel
 
-# Section header labels for icon integration
-@onready var audio_label = $VBox/Scroll/SettingsContainer/AudioSettings/AudioLabel
-@onready var graphics_label = $VBox/Scroll/SettingsContainer/GraphicsSettings/GraphicsLabel
-@onready var gameplay_label = $VBox/Scroll/SettingsContainer/GameplaySettings/GameplayLabel
-@onready var ui_label = $VBox/Scroll/SettingsContainer/UISettings/UILabel
-@onready var accessibility_label = $VBox/Scroll/SettingsContainer/AccessibilitySettings/AccessibilityLabel
-@onready var keyboard_label = $VBox/Scroll/SettingsContainer/KeyboardShortcuts/KeyboardLabel
-@onready var back_button: Button = $VBox/ButtonRow/BackButton
+# Debounced-save state. _dirty means "applied live but not yet on disk"; the
+# window where that is true is at most SAVE_DEBOUNCE_SECONDS + the exit flush.
+var _dirty: bool = false
+var _save_timer: Timer = null
+
 
 func _ready():
-	print("[SettingsMenu] Initializing...")
+	print("[SettingsMenu] Initializing (front card + operations board)...")
 
-	# Load settings from GameConfig singleton
-	update_ui_from_game_config()
+	_save_timer = Timer.new()
+	_save_timer.one_shot = true
+	_save_timer.wait_time = SAVE_DEBOUNCE_SECONDS
+	_save_timer.timeout.connect(_on_save_timer_timeout)
+	add_child(_save_timer)
+
+	version_label.text = "v%s  board %s" % [
+		GameConfig.get_current_version(), GameConfig.get_board_version()]
+
+	_refresh_controls()
+	_setup_section_icons()
+	_connect_signals()
 
 	# Scene-reentry run-killer family (sibling of #979): reached mid-run (dev-overlay jump,
 	# or any future nav) with the run still live and unfinished in the GameManager autoload.
@@ -53,40 +95,53 @@ func _ready():
 	if back_button != null and _live_run_active():
 		back_button.text = "[BACK TO GAME]"
 
-	# Add icons to section headers
-	_setup_section_icons()
 
-	# Add the global-leaderboard opt-out under Gameplay (built in code, not the .tscn)
-	_add_global_leaderboard_toggle()
-	# Add the anonymous launch-ping opt-out right below it (#799)
-	_add_launch_ping_toggle()
+func _connect_signals():
+	# Duplicated controls share one handler each; the hidden view is re-synced by
+	# _refresh_controls() on every view switch, never inside a handler.
+	fc_volume_slider.value_changed.connect(_on_master_volume_changed)
+	board_master_slider.value_changed.connect(_on_master_volume_changed)
+	fc_music_slider.value_changed.connect(_on_music_volume_changed)
+	board_music_slider.value_changed.connect(_on_music_volume_changed)
+	board_sfx_slider.value_changed.connect(_on_sfx_volume_changed)
+	fc_fullscreen_checkbox.toggled.connect(_on_fullscreen_toggled)
+	board_fullscreen_checkbox.toggled.connect(_on_fullscreen_toggled)
+	fc_hints_checkbox.toggled.connect(_on_show_hints_toggled)
+	board_hints_checkbox.toggled.connect(_on_show_hints_toggled)
+	fc_colorblind_checkbox.toggled.connect(_on_colorblind_toggled)
+	board_colorblind_checkbox.toggled.connect(_on_colorblind_toggled)
 
-	# Add the story-intro toggle under Gameplay (built in code, not the .tscn)
-	_add_play_intros_toggle()
-	# Add the "Show gameplay hints" onboarding toggle under Gameplay (issue #720)
-	_add_show_hints_toggle()
-
-	# Add the experimental A/B UI layout toggle under UI (built in code, not the .tscn)
-	_add_ui_layout_toggle()
-
-	# Connect theme dropdown
+	board_intros_checkbox.toggled.connect(_on_play_intros_toggled)
+	board_rivals_checkbox.toggled.connect(_on_rivals_feed_toggled)
+	board_ui_layout_checkbox.toggled.connect(_on_ui_layout_toggled)
+	board_leaderboard_checkbox.toggled.connect(_on_global_leaderboard_toggled)
+	board_launch_ping_checkbox.toggled.connect(_on_launch_ping_toggled)
 	theme_dropdown.item_selected.connect(_on_theme_changed)
 
-	# Set current theme
-	var themes = ThemeManager.get_available_themes()
-	for i in range(themes.size()):
-		if themes[i] == ThemeManager.current_theme:
-			theme_dropdown.selected = i
-			break
+	# Research Intensity: issue #1084 owns this row's write path (the #1058 league-lock
+	# contradiction). _on_difficulty_changed is kept byte-identical to the pre-rebuild
+	# handler on purpose; only the debounced save is attached as a SEPARATE connection
+	# so the rebuild does not alter what the handler itself does.
+	difficulty_option.item_selected.connect(_on_difficulty_changed)
+	difficulty_option.item_selected.connect(func(_index: int): _schedule_save())
+
+	all_protocols_button.pressed.connect(_show_board)
+	front_card_button.pressed.connect(_show_front_card)
+	fc_keybindings_button.pressed.connect(_open_keybindings)
+	board_keybindings_button.pressed.connect(_open_keybindings)
+	back_button.pressed.connect(_on_back_pressed)
+
 
 func _setup_section_icons():
-	"""Add icons to settings section headers"""
-	_add_icon_to_label(audio_label, IconLoader.get_settings_icon("audio"))
-	_add_icon_to_label(graphics_label, IconLoader.get_settings_icon("graphics"))
-	_add_icon_to_label(gameplay_label, IconLoader.get_settings_icon("gameplay"))
-	_add_icon_to_label(ui_label, IconLoader.get_settings_icon("theme"))
-	_add_icon_to_label(accessibility_label, IconLoader.get_settings_icon("accessibility"))
-	_add_icon_to_label(keyboard_label, IconLoader.get_settings_icon("controls"))
+	"""Add icons to the board's section headers (same IconLoader set the old
+	single-column screen used; DISCLOSURE has no matching icon and stays bare)."""
+	_add_icon_to_label($Board/BoardVBox/Columns/Col1/AudioHeader, IconLoader.get_settings_icon("audio"))
+	_add_icon_to_label($Board/BoardVBox/Columns/Col1/DisplayHeader, IconLoader.get_settings_icon("graphics"))
+	_add_icon_to_label($Board/BoardVBox/Columns/Col2/OperationsHeader, IconLoader.get_settings_icon("gameplay"))
+	_add_icon_to_label($Board/BoardVBox/Columns/Col2/InterfaceHeader, IconLoader.get_settings_icon("theme"))
+	_add_icon_to_label($Board/BoardVBox/Columns/Col2/AccessHeader, IconLoader.get_settings_icon("accessibility"))
+	_add_icon_to_label($Board/BoardVBox/Columns/Col3/ControlsHeader, IconLoader.get_settings_icon("controls"))
+
 
 func _add_icon_to_label(label: Label, icon: Texture2D):
 	"""Replace a label with an HBox containing icon + label"""
@@ -96,11 +151,9 @@ func _add_icon_to_label(label: Label, icon: Texture2D):
 	var parent = label.get_parent()
 	var index = label.get_index()
 
-	# Create container
 	var hbox = HBoxContainer.new()
 	hbox.add_theme_constant_override("separation", 8)
 
-	# Create icon
 	var icon_rect = TextureRect.new()
 	icon_rect.texture = icon
 	icon_rect.custom_minimum_size = Vector2(24, 24)
@@ -108,64 +161,152 @@ func _add_icon_to_label(label: Label, icon: Texture2D):
 	icon_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	hbox.add_child(icon_rect)
 
-	# Clone label properties to new label
 	var new_label = Label.new()
 	new_label.text = label.text
 	new_label.add_theme_color_override("font_color", label.get_theme_color("font_color"))
 	new_label.add_theme_font_size_override("font_size", label.get_theme_font_size("font_size"))
 	hbox.add_child(new_label)
 
-	# Replace in parent
 	parent.remove_child(label)
 	parent.add_child(hbox)
 	parent.move_child(hbox, index)
 	label.queue_free()
 
-func update_ui_from_game_config():
-	"""Update all UI elements to reflect GameConfig settings"""
-	master_volume_slider.value = GameConfig.master_volume
-	master_volume_label.text = "%d%%" % GameConfig.master_volume
 
-	sfx_volume_slider.value = GameConfig.sfx_volume
-	sfx_volume_label.text = "%d%%" % GameConfig.sfx_volume
+## Re-read every control from GameConfig / ThemeManager. Uses the no-signal
+## setters: this is a display sync, not a player change -- it must not mark the
+## config dirty or re-fire handlers.
+func _refresh_controls():
+	fc_volume_slider.set_value_no_signal(GameConfig.master_volume)
+	board_master_slider.set_value_no_signal(GameConfig.master_volume)
+	fc_volume_label.text = "%d%%" % GameConfig.master_volume
+	board_master_label.text = "%d%%" % GameConfig.master_volume
 
-	music_volume_slider.value = GameConfig.music_volume
-	music_volume_label.text = "%d%%" % GameConfig.music_volume
+	board_sfx_slider.set_value_no_signal(GameConfig.sfx_volume)
+	board_sfx_label.text = "%d%%" % GameConfig.sfx_volume
 
-	fullscreen_checkbox.button_pressed = GameConfig.fullscreen
-	difficulty_option.selected = GameConfig.difficulty
-	# League lock (#1058, #1084): show the locked value, disabled, with the same
+	fc_music_slider.set_value_no_signal(GameConfig.music_volume)
+	board_music_slider.set_value_no_signal(GameConfig.music_volume)
+	fc_music_label.text = "%d%%" % GameConfig.music_volume
+	board_music_label.text = "%d%%" % GameConfig.music_volume
+
+	fc_fullscreen_checkbox.set_pressed_no_signal(GameConfig.fullscreen)
+	board_fullscreen_checkbox.set_pressed_no_signal(GameConfig.fullscreen)
+	fc_hints_checkbox.set_pressed_no_signal(GameConfig.show_hints)
+	board_hints_checkbox.set_pressed_no_signal(GameConfig.show_hints)
+	fc_colorblind_checkbox.set_pressed_no_signal(GameConfig.colorblind_mode)
+	board_colorblind_checkbox.set_pressed_no_signal(GameConfig.colorblind_mode)
+
+	board_intros_checkbox.set_pressed_no_signal(GameConfig.play_intros)
+	board_rivals_checkbox.set_pressed_no_signal(GameConfig.show_rivals_feed)
+	board_ui_layout_checkbox.set_pressed_no_signal(GameConfig.ui_layout == "proposed")
+	# Identity consent renders its EFFECTIVE state: un-consented (never asked) shows
+	# OFF even if a legacy config persisted submit_scores_global=true from the old
+	# default-ON era (privacy ruling 2026-07-26).
+	board_leaderboard_checkbox.set_pressed_no_signal(
+		GameConfig.submit_scores_global and GameConfig.leaderboard_consent_asked)
+	board_launch_ping_checkbox.set_pressed_no_signal(GameConfig.send_launch_ping)
+
+	# League lock (#1058, #1084). Show the locked value, disabled, with the same
 	# tooltip pregame_setup uses -- never silently accept a value the game will not
-	# honour. The lock itself is enforced at consumption
-	# (GameConfig.effective_difficulty()); this is only the honest reflection of it.
+	# honour. The lock is ENFORCED AT CONSUMPTION (GameConfig.effective_difficulty());
+	# this is only the honest reflection of it, so the control cannot lie about a
+	# setting the run will ignore. Unlocked, the stored preference shows as-is.
 	if GameConfig.is_difficulty_locked():
 		difficulty_option.selected = GameConfig.effective_difficulty()
 		difficulty_option.disabled = true
 		difficulty_option.tooltip_text = GameConfig.DIFFICULTY_LOCK_TOOLTIP
-	colorblind_checkbox.button_pressed = GameConfig.colorblind_mode
+	else:
+		difficulty_option.selected = GameConfig.difficulty
+		difficulty_option.disabled = false
+
+	var themes = ThemeManager.get_available_themes()
+	for i in range(themes.size()):
+		if themes[i] == ThemeManager.current_theme:
+			theme_dropdown.selected = i
+			break
+
+
+# --- View switching (the Direction 5 door onto the Direction 1 board) ---
+
+func _show_board():
+	_refresh_controls()
+	front_card.visible = false
+	board.visible = true
+
+
+func _show_front_card():
+	_refresh_controls()
+	board.visible = false
+	front_card.visible = true
+
+
+# --- Debounced autosave (replaces the Apply button) ---
+
+func _schedule_save():
+	_dirty = true
+	_set_saved_text("saving...")
+	_save_timer.start()  # restarts if already running -- coalesces a slider drag
+
+
+func _on_save_timer_timeout():
+	if not _dirty:
+		return
+	GameConfig.save_config()
+	_dirty = false
+	_set_saved_text("[OK] saved")
+
+
+## Write immediately if anything is pending. Called on every exit path so a
+## change can never be lost to navigation -- the failure the Apply button caused.
+func _flush_save():
+	if not _dirty:
+		return
+	_save_timer.stop()
+	GameConfig.save_config()
+	_dirty = false
+	_set_saved_text("[OK] saved")
+
+
+func _exit_tree():
+	# Backstop for exits that bypass _on_back_pressed (scene swaps, quit).
+	_flush_save()
+
+
+func _set_saved_text(status_text: String):
+	if fc_saved_label != null:
+		fc_saved_label.text = status_text
+	if board_saved_label != null:
+		board_saved_label.text = status_text
+
+
+# --- Handlers (apply live via GameConfig, then schedule the save) ---
 
 func _on_master_volume_changed(value: float):
-	"""Handle master volume slider change"""
-	master_volume_label.text = "%d%%" % int(value)
-	# Update GameConfig (will apply to audio bus automatically)
+	fc_volume_label.text = "%d%%" % int(value)
+	board_master_label.text = "%d%%" % int(value)
 	GameConfig.set_setting("master_volume", int(value), false)
+	_schedule_save()
+
 
 func _on_sfx_volume_changed(value: float):
-	"""Handle SFX volume slider change"""
-	sfx_volume_label.text = "%d%%" % int(value)
-	# Update GameConfig (will apply when SFX bus is implemented)
+	board_sfx_label.text = "%d%%" % int(value)
 	GameConfig.set_setting("sfx_volume", int(value), false)
+	_schedule_save()
+
 
 func _on_music_volume_changed(value: float):
-	"""Handle Music volume slider change"""
-	music_volume_label.text = "%d%%" % int(value)
-	# Update GameConfig (will apply to Music bus automatically)
+	fc_music_label.text = "%d%%" % int(value)
+	board_music_label.text = "%d%%" % int(value)
 	GameConfig.set_setting("music_volume", int(value), false)
+	_schedule_save()
+
 
 func _on_fullscreen_toggled(pressed: bool):
-	"""Handle fullscreen checkbox toggle"""
 	print("[SettingsMenu] Fullscreen: ", pressed)
 	GameConfig.set_setting("fullscreen", pressed, false)
+	_schedule_save()
+
 
 func _on_difficulty_changed(index: int):
 	"""Handle difficulty dropdown change"""
@@ -177,153 +318,75 @@ func _on_difficulty_changed(index: int):
 	print("[SettingsMenu] Difficulty changed to: ", ["Easy", "Standard", "Hard"][index])
 	GameConfig.set_setting("difficulty", index, false)
 
-func _add_global_leaderboard_toggle():
-	"""Append the global-leaderboard IDENTITY-CONSENT toggle to the Gameplay section
-	(privacy ruling 2026-07-26). Submitting shares player + lab name + score, so it
-	is an explicit opt-in: shown OFF until the player has actually made the choice
-	(consent_asked), and flipping the toggle here COUNTS as that explicit choice.
-	LeaderboardSync.should_submit reads both flags. Reversible any time."""
-	var gameplay = get_node_or_null("VBox/Scroll/SettingsContainer/GameplaySettings")
-	if gameplay == null:
-		return
-	var row = HBoxContainer.new()
-	var label = Label.new()
-	label.text = "Submit scores to global leaderboard (shares player + lab name)"
-	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	row.add_child(label)
-	global_leaderboard_checkbox = CheckButton.new()
-	# Display the EFFECTIVE state: un-consented (never asked) renders OFF even if a
-	# legacy config persisted submit_scores_global=true from the old default-ON era.
-	global_leaderboard_checkbox.button_pressed = (
-		GameConfig.submit_scores_global and GameConfig.leaderboard_consent_asked
-	)
-	global_leaderboard_checkbox.toggled.connect(_on_global_leaderboard_toggled)
-	row.add_child(global_leaderboard_checkbox)
-	gameplay.add_child(row)
-
-func _on_global_leaderboard_toggled(pressed: bool):
-	"""Identity-consent toggle: flipping it IS the explicit one-time choice, so it
-	also marks consent as asked (no game-over prompt afterwards)."""
-	print("[SettingsMenu] Submit scores to global leaderboard: ", pressed)
-	GameConfig.leaderboard_consent_asked = true
-	GameConfig.set_setting("submit_scores_global", pressed, false)
-	NotificationManager.info("Global leaderboard submission " + ("enabled" if pressed else "disabled"))
-
-func _add_launch_ping_toggle():
-	"""Append the 'Anonymous launch ping' opt-out under Gameplay (#799).
-	Honestly labelled: one event on boot with a random install UUID + version + OS,
-	nothing else (UpdateCheck.build_ping_body is the whitelist). Default ON.
-	DECOUPLED from the leaderboard toggle above (coordinator ruling 2026-07-26,
-	flagged in PR #942 for Pip's veto): that toggle now means IDENTITY consent,
-	and the ping carries no identity, so only THIS toggle gates it
-	(UpdateCheck.should_send_ping). The update CHECK is separate again and
-	carries no identifiers at all, so it sits behind no toggle."""
-	var gameplay = get_node_or_null("VBox/Scroll/SettingsContainer/GameplaySettings")
-	if gameplay == null:
-		return
-	var row = HBoxContainer.new()
-	var label = Label.new()
-	label.text = "Anonymous launch ping (counts installs; no personal data)"
-	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	row.add_child(label)
-	launch_ping_checkbox = CheckButton.new()
-	launch_ping_checkbox.button_pressed = GameConfig.send_launch_ping
-	launch_ping_checkbox.toggled.connect(_on_launch_ping_toggled)
-	row.add_child(launch_ping_checkbox)
-	gameplay.add_child(row)
-
-func _on_launch_ping_toggled(pressed: bool):
-	"""Handle the anonymous launch-ping opt-out toggle (#799)."""
-	print("[SettingsMenu] Anonymous launch ping: ", pressed)
-	GameConfig.set_setting("send_launch_ping", pressed, false)
-	NotificationManager.info("Anonymous launch ping " + ("enabled" if pressed else "disabled"))
-
-func _add_play_intros_toggle():
-	"""Append a 'Play story intros' toggle to the Gameplay section (#801). Reversible escape
-	hatch: hold-to-skip auto-flips play_intros off; this lets the player turn intros back on."""
-	var gameplay = get_node_or_null("VBox/Scroll/SettingsContainer/GameplaySettings")
-	if gameplay == null:
-		return
-	var row = HBoxContainer.new()
-	var label = Label.new()
-	label.text = "Play story intros"
-	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	row.add_child(label)
-	play_intros_checkbox = CheckButton.new()
-	play_intros_checkbox.button_pressed = GameConfig.play_intros
-	play_intros_checkbox.toggled.connect(_on_play_intros_toggled)
-	row.add_child(play_intros_checkbox)
-	gameplay.add_child(row)
-
-func _on_play_intros_toggled(pressed: bool):
-	"""Handle story-intro opt-in/out toggle"""
-	print("[SettingsMenu] Play story intros: ", pressed)
-	GameConfig.set_setting("play_intros", pressed, false)
-	NotificationManager.info("Story intros " + ("enabled" if pressed else "disabled"))
-
-var show_hints_checkbox: CheckButton = null
-
-func _add_show_hints_toggle():
-	"""Append a 'Show gameplay hints' toggle to the Gameplay section (issue #720).
-	Master switch for onboarding help surfaces (getting-started hint + first-launch
-	welcome overlay). Respects the player's choice (GameConfig.show_hints). Default ON."""
-	var gameplay = get_node_or_null("VBox/Scroll/SettingsContainer/GameplaySettings")
-	if gameplay == null:
-		return
-	var row = HBoxContainer.new()
-	var label = Label.new()
-	label.text = "Show gameplay hints"
-	label.tooltip_text = "Show onboarding help: the getting-started hint and the first-launch welcome overlay."
-	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	row.add_child(label)
-	show_hints_checkbox = CheckButton.new()
-	show_hints_checkbox.button_pressed = GameConfig.show_hints
-	show_hints_checkbox.toggled.connect(_on_show_hints_toggled)
-	row.add_child(show_hints_checkbox)
-	gameplay.add_child(row)
 
 func _on_show_hints_toggled(pressed: bool):
-	"""Handle the show-gameplay-hints toggle (issue #720)."""
+	"""Master switch for onboarding help surfaces (issue #720)."""
 	print("[SettingsMenu] Show gameplay hints: ", pressed)
 	GameConfig.set_setting("show_hints", pressed, false)
 	NotificationManager.info("Gameplay hints " + ("enabled" if pressed else "disabled"))
+	_schedule_save()
 
-var ui_layout_checkbox: CheckButton = null
 
-func _add_ui_layout_toggle():
-	"""Append a 'Proposed UI layout (experimental)' toggle to the UI section. A/B scaffolding
-	(UI_PROPOSALS_2026-07-22): OFF = classic PLAN/WATCH; ON = the proposed grouped-hand + gantt +
-	reclaim assembly. Applies on the next game load; the in-game F9 hotkey flips it live."""
-	var ui_section = get_node_or_null("VBox/Scroll/SettingsContainer/UISettings")
-	if ui_section == null:
-		return
-	var row = HBoxContainer.new()
-	var label = Label.new()
-	label.text = "Proposed UI layout (experimental)"
-	label.tooltip_text = "A/B test: proposed PLAN/WATCH (grouped actions, operations gantt, reclaimed space). Applies on next game load."
-	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	row.add_child(label)
-	ui_layout_checkbox = CheckButton.new()
-	ui_layout_checkbox.button_pressed = (GameConfig.ui_layout == "proposed")
-	ui_layout_checkbox.toggled.connect(_on_ui_layout_toggled)
-	row.add_child(ui_layout_checkbox)
-	ui_section.add_child(row)
+func _on_colorblind_toggled(pressed: bool):
+	print("[SettingsMenu] Colorblind mode: ", pressed)
+	GameConfig.set_setting("colorblind_mode", pressed, false)
+	NotificationManager.info("Colorblind mode " + ("enabled" if pressed else "disabled"))
+	_schedule_save()
+
+
+func _on_play_intros_toggled(pressed: bool):
+	"""Reversible escape hatch (#801): hold-to-skip auto-flips play_intros off;
+	this toggle turns intros back on."""
+	print("[SettingsMenu] Play story intros: ", pressed)
+	GameConfig.set_setting("play_intros", pressed, false)
+	NotificationManager.info("Story intros " + ("enabled" if pressed else "disabled"))
+	_schedule_save()
+
+
+func _on_rivals_feed_toggled(pressed: bool):
+	"""Rival-intel lines in the WATCH feed. The WATCH screen's own filter button is
+	the other UI for the same persisted preference (GameConfig.show_rivals_feed);
+	a live run picks a change here up on its next feed rebuild, not instantly."""
+	print("[SettingsMenu] Rival intel feed: ", pressed)
+	GameConfig.set_setting("show_rivals_feed", pressed, false)
+	NotificationManager.info("Rival intel feed " + ("shown" if pressed else "hidden"))
+	_schedule_save()
+
 
 func _on_ui_layout_toggled(pressed: bool):
-	"""Handle the proposed-UI-layout toggle."""
+	"""A/B scaffolding (UI_PROPOSALS_2026-07-22): OFF = classic PLAN/WATCH; ON = the
+	proposed grouped-hand + gantt + reclaim assembly. Applies on next game load."""
 	var layout = "proposed" if pressed else "classic"
 	print("[SettingsMenu] UI layout: ", layout)
 	GameConfig.set_setting("ui_layout", layout, false)
 	NotificationManager.info("Proposed UI layout " + ("enabled" if pressed else "disabled") + " (applies on next game load)")
+	_schedule_save()
 
-func _on_colorblind_toggled(pressed: bool):
-	"""Handle colorblind mode toggle"""
-	print("[SettingsMenu] Colorblind mode: ", pressed)
-	GameConfig.set_setting("colorblind_mode", pressed, false)
-	NotificationManager.info("Colorblind mode " + ("enabled" if pressed else "disabled"))
+
+func _on_global_leaderboard_toggled(pressed: bool):
+	"""Identity-consent toggle (privacy ruling 2026-07-26): flipping it IS the explicit
+	one-time choice, so it also marks consent as asked (no game-over prompt afterwards).
+	LeaderboardSync.should_submit reads both flags. Reversible any time."""
+	print("[SettingsMenu] Submit scores to global leaderboard: ", pressed)
+	GameConfig.leaderboard_consent_asked = true
+	GameConfig.set_setting("submit_scores_global", pressed, false)
+	NotificationManager.info("Global leaderboard submission " + ("enabled" if pressed else "disabled"))
+	_schedule_save()
+
+
+func _on_launch_ping_toggled(pressed: bool):
+	"""Anonymous launch-ping opt-out (#799). DECOUPLED from the identity toggle above
+	(coordinator ruling 2026-07-26): the ping carries no identity, so only this toggle
+	gates it (UpdateCheck.should_send_ping)."""
+	print("[SettingsMenu] Anonymous launch ping: ", pressed)
+	GameConfig.set_setting("send_launch_ping", pressed, false)
+	NotificationManager.info("Anonymous launch ping " + ("enabled" if pressed else "disabled"))
+	_schedule_save()
+
 
 func _on_theme_changed(index: int):
-	"""Handle theme dropdown change"""
+	"""ThemeManager persists to its own cfg file inside apply_theme(), so no
+	debounced save is scheduled here -- GameConfig does not own this value."""
 	var themes = ThemeManager.get_available_themes()
 	if index < themes.size():
 		var theme_name = themes[index]
@@ -331,19 +394,19 @@ func _on_theme_changed(index: int):
 		ThemeManager.apply_theme(theme_name)
 		NotificationManager.info("Theme changed to " + ThemeManager.themes[theme_name].display_name)
 
-func _on_apply_pressed():
-	"""Handle Apply button press - save all settings"""
-	print("[SettingsMenu] Saving settings to disk...")
-	GameConfig.save_config()
-	print("[SettingsMenu] Settings saved successfully!")
 
-	# Show confirmation feedback
-	NotificationManager.success("Settings saved successfully!")
+# --- Navigation ---
+
+func _open_keybindings():
+	"""The real keybind editor (profiles + rebinding). Replaces the old static
+	shortcuts grid, which advertised [F5] Quick save / [F9] Quick load -- neither
+	binding exists; the grid was stale text posing as documentation."""
+	_flush_save()
+	SceneTransition.go_to(KEYBIND_SCENE)
+
 
 func _on_back_pressed():
-	"""Handle Back button press"""
-	# Ask if user wants to save unsaved changes
-	# For now, just return (changes are applied in real-time anyway)
+	_flush_save()
 
 	if _live_run_active():
 		# Scene-reentry run-killer family (sibling of #979): a live, unfinished run is
@@ -363,8 +426,12 @@ func _live_run_active() -> bool:
 	"""True when a real, unfinished run is sitting live in the GameManager autoload."""
 	return GameManager.is_initialized and GameManager.state != null and not GameManager.state.game_over
 
+
 func _input(event: InputEvent):
-	"""Handle keyboard shortcuts"""
+	"""ESC walks back out the way the player came in: board -> front card -> leave."""
 	if event is InputEventKey and event.pressed and not event.echo:
 		if event.keycode == KEY_ESCAPE:
-			_on_back_pressed()
+			if board.visible:
+				_show_front_card()
+			else:
+				_on_back_pressed()

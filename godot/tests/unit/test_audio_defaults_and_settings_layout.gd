@@ -103,64 +103,155 @@ func test_every_tier_bed_still_resolves():
 				"tier %d stem missing: %s" % [tier, stem["path"]])
 
 ## ---- 3. The settings screen ----
+##
+## Rebuilt 2026-08-02 per Pip's ruling (#1096): Direction 5 front card (the five
+## first-five-minutes controls) + Direction 1 operations board behind the
+## ">> ALL PROTOCOLS" door. The old single scrolling column is gone, so the old
+## fold-geometry assertions are restated against the new structure: the INTENT
+## each test guards is unchanged and named in its comment.
 
 func _build_settings_menu() -> Control:
 	var menu: Control = load(SETTINGS_MENU_SCENE).instantiate()
 	add_child_autofree(menu)
 	return menu
 
-func test_graphics_section_rows_are_visible_without_scrolling():
-	# THE DEFECT. VBox is anchor-centred with fixed +-400/+-300 offsets, so it is
-	# 800x600 at any window size and this measurement is screen-independent.
-	# Scroll and Spacer both carried size_flags_vertical = 3, so they split the
-	# leftover height evenly and the scroll viewport came out near 179 px -- just
-	# enough for the three audio sliders and the "Graphics Settings" header, and
-	# nothing else. Collapsing the (unused) Spacer hands that space back.
+func test_front_card_is_the_default_view():
+	# Direction 5's bet: a drive-by adjuster lands on five controls, not a wall.
 	var menu := _build_settings_menu()
+	await get_tree().process_frame
+	assert_true((menu.get_node("FrontCard") as Control).visible,
+		"the front card is the default view")
+	assert_false((menu.get_node("Board") as Control).visible,
+		"the operations board opens only through the ALL PROTOCOLS door")
+
+func test_nothing_can_hide_below_a_fold():
+	# THE ORIGINAL DEFECT, restated. Six shipped sections spent weeks invisible
+	# below the fold of a half-starved ScrollContainer. The rebuild's answer is
+	# structural: no scroll region exists anywhere in the scene, so there is no
+	# fold for a control to hide behind.
+	var menu := _build_settings_menu()
+	assert_null(_find_scroll(menu),
+		"no ScrollContainer in settings -- nothing scrolls, nothing hides")
+
+func _find_scroll(node: Node) -> Node:
+	if node is ScrollContainer:
+		return node
+	for child in node.get_children():
+		var hit := _find_scroll(child)
+		if hit != null:
+			return hit
+	return null
+
+func test_front_card_serves_the_five_first_minute_intents():
+	# Volume, music, fullscreen, hints, colorblind: the five intents nearly every
+	# early settings visit is one of (SETTINGS_MENU_OPTIONS.md, Direction 5).
+	var menu := _build_settings_menu()
+	var card := "FrontCard/Card/Margin/CardVBox"
+	for row in ["VolumeRow", "MusicRow", "FullscreenRow", "HintsRow", "ColorblindRow"]:
+		assert_not_null(menu.get_node_or_null(card + "/" + row),
+			"front card must carry %s" % row)
+	assert_not_null(menu.get_node_or_null(card + "/AllProtocolsButton"),
+		"the one door to everything else must exist")
+
+func test_board_carries_the_full_inventory():
+	# Direction 1's promise: EVERY remaining control visible at once on the board,
+	# so a privacy sweep or a settings audit is one glance, zero navigation.
+	var menu := _build_settings_menu()
+	var expectations := {
+		"Board/BoardVBox/Columns/Col1/MasterSlider": "master volume",
+		"Board/BoardVBox/Columns/Col1/SFXSlider": "sfx volume",
+		"Board/BoardVBox/Columns/Col1/MusicSlider": "music volume",
+		"Board/BoardVBox/Columns/Col1/FullscreenRow": "fullscreen",
+		"Board/BoardVBox/Columns/Col2/IntrosRow": "story intros",
+		"Board/BoardVBox/Columns/Col2/HintsRow": "gameplay hints",
+		"Board/BoardVBox/Columns/Col2/RivalsRow": "rival intel feed (new: was WATCH-screen-only)",
+		"Board/BoardVBox/Columns/Col2/DifficultyRow": "research intensity (write path owned by #1084)",
+		"Board/BoardVBox/Columns/Col2/ThemeRow": "visual theme",
+		"Board/BoardVBox/Columns/Col2/UILayoutRow": "UI layout A/B",
+		"Board/BoardVBox/Columns/Col2/ColorblindRow": "colorblind mode",
+		"Board/BoardVBox/Columns/Col3/LeaderboardRow": "leaderboard identity consent",
+		"Board/BoardVBox/Columns/Col3/LaunchPingRow": "anonymous launch ping",
+		"Board/BoardVBox/Columns/Col3/KeybindingsButton": "keybindings jump-off",
+	}
+	for path in expectations:
+		assert_not_null(menu.get_node_or_null(path),
+			"board must show %s (%s)" % [expectations[path], path])
+
+func test_board_fits_the_frame_without_overflow():
+	# The no-scroll bet only holds if the board actually FITS. Geometry check at
+	# the design viewport; smaller test windows can't judge this fairly, so they
+	# skip loudly instead of passing vacuously.
+	var menu := _build_settings_menu()
+	menu.call("_show_board")
 	await get_tree().process_frame
 	await get_tree().process_frame
 
-	var scroll: ScrollContainer = menu.get_node("VBox/Scroll")
-	var section := "VBox/Scroll/SettingsContainer/GraphicsSettings"
-	var header: Node = menu.get_node(section)
-	assert_not_null(header, "Graphics section must exist")
+	var vp := menu.get_viewport_rect()
+	if vp.size.x < 1280 or vp.size.y < 720:
+		pass_test("viewport %s too small to judge the 1080p board layout" % vp.size)
+		return
 
-	var row: Control = menu.get_node(section + "/FullscreenRow")
-	assert_true(scroll.get_global_rect().encloses(row.get_global_rect()),
-		"Fullscreen row must be inside the scroll viewport (scroll=%s row=%s)" % [
-			scroll.get_global_rect(), row.get_global_rect()])
-
-func test_graphics_section_is_not_an_empty_header():
-	# Stated separately from the geometry so the intent survives a future
-	# relayout: whatever the rects end up being, the section must have content.
-	var menu := _build_settings_menu()
-	await get_tree().process_frame
-	var section: Node = menu.get_node("VBox/Scroll/SettingsContainer/GraphicsSettings")
-	var rows := 0
-	for child in section.get_children():
-		if child is HBoxContainer:
-			rows += 1
-	assert_gt(rows, 0, "a section header with no rows under it is worse than no section")
-
-func test_scrollbar_is_always_visible():
-	# The list is longer than the viewport even after the fix, and it always will
-	# be. SHOW_ALWAYS (2) is the affordance that says so; on AUTO the dark-theme
-	# bar is easy to miss, which is half of why the cut-off section read as empty.
-	var menu := _build_settings_menu()
-	var scroll: ScrollContainer = menu.get_node("VBox/Scroll")
-	assert_eq(scroll.vertical_scroll_mode, ScrollContainer.SCROLL_MODE_SHOW_ALWAYS,
-		"settings list must advertise that it scrolls")
+	var board: Control = menu.get_node("Board")
+	for path in ["Board/BoardVBox/Columns/Col1/FullscreenRow",
+			"Board/BoardVBox/Columns/Col3/KeybindingsButton",
+			"Board/BoardVBox/FooterRow"]:
+		var row: Control = menu.get_node(path)
+		assert_true(board.get_global_rect().encloses(row.get_global_rect()),
+			"%s must sit inside the board frame (board=%s row=%s)" % [
+				path, board.get_global_rect(), row.get_global_rect()])
 
 func test_no_dead_graphics_quality_control():
 	# GameConfig.graphics_quality is still declared and still persists, but
 	# apply_graphics_settings() carries a TODO and does nothing with it. A
 	# Low/Medium/High dropdown wired to that is a control that lies. Guard both
-	# halves: the row is gone, and the handler that fed it is gone.
+	# halves: no such row anywhere in either view, and no handler to feed one.
 	var menu := _build_settings_menu()
-	assert_null(menu.get_node_or_null("VBox/Scroll/SettingsContainer/GraphicsSettings/QualityRow"),
+	assert_null(menu.find_child("QualityRow", true, false),
 		"do not re-add a quality dropdown until apply_graphics_settings() honours it")
 	assert_false(menu.has_method("_on_graphics_quality_changed"),
 		"handler for a control that does nothing must not linger")
+
+func test_apply_button_is_dead_and_autosave_replaces_it():
+	# The old model applied every change live but persisted only on Apply, so
+	# Back-without-Apply silently reverted on next launch -- settings that "worked"
+	# until the player restarted. The rebuild's rule: no Apply button anywhere,
+	# a debounced save on change, and a flush on every exit path.
+	var menu := _build_settings_menu()
+	await get_tree().process_frame
+	assert_null(menu.find_child("ApplyButton", true, false),
+		"there is no Apply button; saving is not the player's job")
+	assert_false(menu.has_method("_on_apply_pressed"), "Apply handler must be gone")
+
+	var src := FileAccess.get_file_as_string(SETTINGS_MENU_SCRIPT)
+	assert_string_contains(src, "func _exit_tree():",
+		"an exit backstop must exist so navigation can never discard changes")
+	assert_string_contains(src, "_flush_save()",
+		"exits must flush the debounced save")
+
+	# Mechanism check without touching any real setting value: scheduling arms
+	# the timer and marks dirty; disarm afterwards so autofree cannot write the
+	# machine's real user://config.cfg from a test.
+	menu.call("_schedule_save")
+	assert_true(bool(menu.get("_dirty")), "a change must mark the config dirty")
+	var timer: Timer = menu.get("_save_timer")
+	assert_false(timer.is_stopped(), "a change must arm the debounced save timer")
+	timer.stop()
+	menu.set("_dirty", false)
+
+func test_stale_shortcuts_grid_is_gone():
+	# The static grid advertised [F5] Quick save / [F9] Quick load; no F5 binding
+	# exists and F9 is a debug-only layout flip. Stale text posing as documentation
+	# -- the silent-wrongness flavour league week taught us to fear. The real,
+	# self-maintaining keybind screen is linked from BOTH views instead.
+	var menu := _build_settings_menu()
+	assert_null(menu.find_child("ShortcutsGrid", true, false),
+		"the hand-maintained shortcuts grid must stay dead (it drifted from reality)")
+	assert_null(menu.find_child("KeyboardShortcuts", true, false),
+		"no static keyboard-reference section; the keybind screen is the truth")
+	assert_not_null(menu.get_node_or_null("FrontCard/Card/Margin/CardVBox/KeybindingsButton"),
+		"front card must link the real keybind screen")
+	assert_not_null(menu.get_node_or_null("Board/BoardVBox/Columns/Col3/KeybindingsButton"),
+		"board must link the real keybind screen")
 
 func test_fullscreen_toggle_is_wired_to_something_real():
 	# The row that survived has to actually work. GameConfig.apply_graphics_settings()

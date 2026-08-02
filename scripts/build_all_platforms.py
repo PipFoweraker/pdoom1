@@ -321,19 +321,34 @@ class MultiPlatformBuilder:
                 success = False
 
         # Linux: ZIP executable + pck + GodotSteam .so libs + HOW-TO-RUN
+        #
+        # The unversioned PDoom-Linux.zip alias is REQUIRED, not a nicety (issue
+        # #1068). The website's download buttons are fixed strings against
+        # releases/latest/download/<name>, which resolves only if the release
+        # flagged Latest carries an asset with exactly that name. Windows has had
+        # PDoom-Windows.zip and macOS has had PDoom.app.zip since the versioned-zip
+        # pipeline landed; Linux never got one, so the site's Linux button 404'd
+        # across every release and nobody noticed (a user who cannot download
+        # cannot report it in-game). A convention applied to two of three platforms
+        # is not a convention, it is two special cases.
         linux_dir = self.repo_root / "builds" / "linux" / self.version
         if linux_dir.exists():
-            zip_path = linux_dir / f"PDoom-Linux-{self.version}.zip"
+            zip_path_versioned = linux_dir / f"PDoom-Linux-{self.version}.zip"
+            zip_path_simple = linux_dir / "PDoom-Linux.zip"
             try:
                 if not self._zip_native_build(
                     linux_dir,
-                    zip_path,
+                    zip_path_versioned,
                     "PDoom.x86_64",
                     "*.so",
                     self.EXPECTED_LINUX_LIBS,
                     "linux",
                 ):
                     success = False
+
+                # Also create simple-named zip for website compatibility
+                shutil.copy2(zip_path_versioned, zip_path_simple)
+                print(f"[SUCCESS] Created {zip_path_simple.name} (copy for website)")
             except Exception as e:
                 print(f"[ERROR] Failed to create Linux ZIP: {e}")
                 success = False
