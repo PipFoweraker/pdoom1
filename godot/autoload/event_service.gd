@@ -1,15 +1,19 @@
 extends Node
-## EventService - Fetches and caches historical events from external sources
+## EventService - Transforms the BUNDLED historical-events export into game events
 ##
 ## This service handles:
-## 1. Fetching historical AI safety timeline data from pdoom-data API or local cache
+## 1. Loading historical AI safety timeline data from the bundled export or local cache
 ## 2. Transforming raw historical data into game-playable events
 ## 3. Applying game-balance overrides from local config files
-## 4. Caching events locally for offline play
+## 4. Caching transformed events locally
 ## 5. Providing events to GameEvents system
 ##
 ## Data Flow:
-##   pdoom-data -> Fetch -> Apply Overrides -> Transform -> Cache -> GameEvents
+##   bundled export -> Apply Overrides -> Transform -> Cache -> GameEvents
+##
+## THERE IS NO NETWORK FETCH (issue #1101). The single source is
+## res://data/historical_events.json, a one-time pdoom-data export. Re-syncing it is a
+## build-time act, not a runtime one -- see docs/decision-cards/2026-08-02_pdoom-data-contract.md.
 ##
 ## Key Principle:
 ##   pdoom-data owns facts and defaults; pdoom1 owns balance tuning via overrides
@@ -23,7 +27,17 @@ extends Node
 const ResourceAccessorClass = preload("res://scripts/core/resource_accessor.gd")
 
 # Configuration
-const API_BASE_URL = "https://api.pdoom.org/v1"  # Future API endpoint
+# NO REMOTE ENDPOINT. See issue #1101. The API_BASE_URL const removed here pointed at
+# api.pdoom.org -- a subdomain of a domain WE DO NOT OWN (confirmed by Pip 2026-08-03;
+# our infrastructure is pdoom1.com / api.pdoom1.com). It was written as a placeholder,
+# commented 'Future API endpoint', and the fetch path it fed was UNREACHABLE -- nothing
+# ever called refresh_events(). So no shipped build ever contacted it.
+#
+# It is removed anyway, because dead code is not the same as safe code: a fully wired
+# response handler that ingested the reply WITHOUT SCHEMA VALIDATION sat one call away
+# from being live, behind a constant a future reader would reasonably assume pointed at
+# our own infrastructure. If a remote timeline is wanted later it must (a) point at a
+# host we control and (b) validate before ingest.
 const FALLBACK_DATA_PATH = "res://data/historical_events.json"  # Bundled pdoom-data export
 const CACHE_PATH = "user://event_cache.json"
 const CACHE_EXPIRY_HOURS = 24  # Re-fetch after this many hours
@@ -35,7 +49,6 @@ const OVERRIDES_DIR_PATH = "res://data/events/overrides/"
 
 # Signals
 signal events_loaded(event_count: int)
-signal events_fetch_failed(error: String)
 signal events_transformed(event_count: int)
 
 # State
@@ -43,7 +56,6 @@ var cached_events: Array[Dictionary] = []
 var transformed_events: Array[Dictionary] = []
 var is_loading: bool = false
 var last_fetch_time: float = 0.0
-var http_request: HTTPRequest = null
 
 # Config data (loaded from JSON files)
 var _variable_mapping: Dictionary = {}
@@ -54,12 +66,6 @@ var _default_effects: Dictionary = {}
 
 
 func _ready():
-	# Create HTTP request node for API calls
-	http_request = HTTPRequest.new()
-	http_request.timeout = 30.0  # 30 second timeout
-	add_child(http_request)
-	http_request.request_completed.connect(_on_request_completed)
-
 	# Load config files first
 	_load_variable_mapping()
 	_load_rarity_curves()
@@ -95,24 +101,6 @@ func get_events_by_category(category: String) -> Array[Dictionary]:
 		if event.get("category", "") == category:
 			filtered.append(event)
 	return filtered
-
-
-func refresh_events(force: bool = false) -> void:
-	"""Refresh events from API or cache"""
-	if is_loading:
-		push_warning("[EventService] Already loading events")
-		return
-
-	# Check if cache is still valid
-	if not force and _is_cache_valid():
-		print("[EventService] Using valid cache, skipping refresh")
-		events_loaded.emit(transformed_events.size())
-		return
-
-	is_loading = true
-
-	# Try API first, fall back to bundled data
-	_fetch_from_api()
 
 
 func get_event_count() -> int:
@@ -246,81 +234,6 @@ func _is_cache_valid() -> bool:
 	var current_time = Time.get_unix_time_from_system()
 	var expiry_seconds = CACHE_EXPIRY_HOURS * 3600
 	return (current_time - last_fetch_time) < expiry_seconds
-
-
-func _fetch_from_api() -> void:
-	"""Fetch events from external API"""
-	var url = "%s/events/timeline" % API_BASE_URL
-
-	print("[EventService] Fetching events from %s" % url)
-
-	var error = http_request.request(url)
-	if error != OK:
-		push_error("[EventService] HTTP request failed with error: %d" % error)
-		_handle_fetch_failure("HTTP request failed")
-
-
-func _on_request_completed(result: int, response_code: int, _headers: PackedStringArray, body: PackedByteArray) -> void:
-	"""Handle HTTP response"""
-	is_loading = false
-
-	if result != HTTPRequest.RESULT_SUCCESS:
-		_handle_fetch_failure("Request failed with result: %d" % result)
-		return
-
-	if response_code != 200:
-		_handle_fetch_failure("API returned status: %d" % response_code)
-		return
-
-	var json_text = body.get_string_from_utf8()
-	var json = JSON.new()
-	var error = json.parse(json_text)
-
-	if error != OK:
-		_handle_fetch_failure("Failed to parse API response: %s" % json.get_error_message())
-		return
-
-	var data = json.get_data()
-
-	# Clear and reload events
-	cached_events.clear()
-
-	if data is Array:
-		for event in data:
-			cached_events.append(event)
-	elif data is Dictionary and data.has("events"):
-		for event in data["events"]:
-			cached_events.append(event)
-	else:
-		_handle_fetch_failure("Unexpected API response format")
-		return
-
-	last_fetch_time = Time.get_unix_time_from_system()
-
-	# Save to cache
-	_save_to_cache()
-
-	# Transform events
-	_transform_all_events()
-
-	print("[EventService] Fetched and cached %d events from API" % cached_events.size())
-	events_loaded.emit(cached_events.size())
-
-
-func _handle_fetch_failure(error_message: String) -> void:
-	"""Handle API fetch failure by falling back to cache/bundled data"""
-	push_warning("[EventService] API fetch failed: %s" % error_message)
-
-	# Try loading from cache or bundled data
-	if cached_events.is_empty():
-		if _load_bundled_data():
-			events_loaded.emit(transformed_events.size())
-		else:
-			events_fetch_failed.emit(error_message)
-	else:
-		# Use existing cached data
-		print("[EventService] Using existing cached data after fetch failure")
-		events_loaded.emit(transformed_events.size())
 
 
 ## Event Transformation
