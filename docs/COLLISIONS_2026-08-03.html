@@ -1,0 +1,200 @@
+<title>Collisions -- what contradicts what, 2026-08-03</title>
+<style>
+  @page { size: A4 portrait; margin: 13mm 12mm; }
+  html { font-size: 12.5pt; }
+  body { font-family: "Segoe UI", Calibri, Arial, sans-serif; line-height: 1.42;
+         color: #000; background: #fff; max-width: 190mm; margin: 0 auto; }
+  .stamp { border: 3pt solid #000; background: #1a1a1a; color: #fff;
+           padding: 3mm 4mm; margin: 0 0 4mm; }
+  .stamp .big { font-size: 18pt; font-weight: 700; line-height: 1.15; }
+  .stamp .meta { font-size: 11.5pt; margin-top: 1.5mm; }
+  h1 { font-size: 16.5pt; margin: 0 0 2mm; }
+  h2 { font-size: 14pt; margin: 5.5mm 0 2mm; padding: 1.6mm 2.5mm;
+       background: #1a1a1a; color: #fff; page-break-after: avoid; }
+  h3 { font-size: 12.8pt; margin: 4mm 0 1.5mm; page-break-after: avoid; }
+  p, li, td, th { font-size: 12.5pt; }
+  table { border-collapse: collapse; width: 100%; margin: 2mm 0 3.5mm; }
+  th, td { border: 1px solid #444; padding: 1.9mm 2.3mm; text-align: left; vertical-align: top; }
+  th { background: #e8e8e8; font-weight: 700; }
+  td.n { white-space: nowrap; font-weight: 700; width: 13mm; text-align: center; }
+  .box { border: 2.2pt solid #000; padding: 2.8mm 3.4mm; margin: 3.5mm 0; page-break-inside: avoid; }
+  .box.hi { border-width: 3pt; background: #f2f2f2; }
+  .chk { display: inline-block; width: 4.8mm; height: 4.8mm; border: 1.7pt solid #000;
+         margin-right: 2.2mm; vertical-align: -0.7mm; }
+  ul, ol { margin: 1.2mm 0 2.5mm; padding-left: 7mm; }
+  li { margin-bottom: 1.2mm; }
+  code { font-family: Consolas, "Courier New", monospace; font-size: 11.3pt;
+         background: #eee; padding: 0.3mm 1mm; }
+  .note { font-size: 11.5pt; color: #222; }
+  .vs { font-weight: 700; }
+  .pb { page-break-before: always; }
+  .foot { font-size: 11.5pt; color: #333; border-top: 1.2pt solid #999;
+          margin-top: 4mm; padding-top: 2mm; }
+  @media (prefers-color-scheme: dark) { html, body { background:#fff; color:#000; } }
+</style>
+
+<div class="stamp">
+  <div class="big">COLLISIONS &nbsp;&middot;&nbsp; WHAT CONTRADICTS WHAT</div>
+  <div class="meta">
+    From a full audit of <strong>18 design ADRs + 4 runtime ADRs + 38 DQs</strong>.
+    Front sheet for the 467-line audit behind it. Everything here is a place where
+    <strong>two true-looking things disagree</strong> -- ranked by how much they block.
+  </div>
+</div>
+
+<h1>The five that block, ranked</h1>
+
+<div class="box hi">
+  <h3 style="margin-top:0">1. ADR-0010 vs the code. The REJECTED alternative is what shipped.</h3>
+  <p>
+    <code>doom_system.gd:266-271</code> lets private safety absorb the rival frontier --
+    <strong>which is the status-quo option ADR-0010 explicitly rejected.</strong> It is live in
+    the stream engine right now.
+  </p>
+  <p style="margin-bottom:0">
+    <strong>Widest fan-out of anything in the audit.</strong> ADR-0014's yields, ADR-0007,
+    DQ-9/16/20 and the whole research-depth line are being priced against a mechanic that is not
+    in the simulation. The R4 ballot record is ambiguous about whether the rung pick ever
+    happened ("5 DERIVED") and ADR-0010 carries no amendment.<br><br>
+    <strong>The auditor's call: this single confirmation unblocks more than anything else on
+    the list.</strong>
+    <br><br><span class="chk"></span> Confirm the rung pick &nbsp;&nbsp;
+    <span class="chk"></span> Re-run it &nbsp;&nbsp;
+    <span class="chk"></span> Amend ADR-0010 to match the code
+  </p>
+</div>
+
+<div class="box hi">
+  <h3 style="margin-top:0">2. The league is ruled MONTHLY and runs WEEKLY</h3>
+  <p style="margin-bottom:0">
+    <span class="vs">ADR-0016 + your 2026-07-21 ruling: MONTHLY.</span><br>
+    <span class="vs"><code>game_config.gd:475-488</code> and the live seed
+    <code>weekly-2026-w31</code>: WEEKLY.</span><br><br>
+    This is the timing question you raised yesterday morning, and it turns out not to be an open
+    question at all -- it is a <strong>documented contradiction</strong>. Rollover cadence,
+    archive policy and the website's publication rhythm all descend from whichever way it
+    resolves. Website has been told (their #247) not to build to either reading yet.
+    <br><br><span class="chk"></span> Monthly is right, the code is wrong &nbsp;&nbsp;
+    <span class="chk"></span> Weekly is right, the ADR is stale
+  </p>
+</div>
+
+<div class="box">
+  <h3 style="margin-top:0">3. The reality-tether has no wire</h3>
+  <p style="margin-bottom:0">
+    <strong>ADR-0005 seed schedules are fully built and completely inert.</strong>
+    <code>game_manager.gd:80</code> constructs <code>GameState.new(game_seed)</code> with no
+    schedule, so <code>SeedSchedule.apply_due_causes()</code> <strong>has never fired for any
+    player</strong> (#1020).<br><br>
+    <strong>ADR-0016's world-update pack does not exist at all</strong> -- no loader, no data,
+    and <code>league_id</code> is a fiction-derived constant (<code>game_manager.gd:104-109</code>).
+    <br><br>
+    Two near-canon ADRs and DQ-6/DQ-33 are dead until a v0.14 loader lands. A decision with no
+    mechanism is indistinguishable from a decision nobody made.
+  </p>
+</div>
+
+<div class="box">
+  <h3 style="margin-top:0">4. Board legitimacy: three half-closed holes</h3>
+  <ul style="margin-bottom:0">
+    <li><strong>#788 vs #1058 are NOT flatly contradictory</strong> -- the auditor found an
+      implicit consistent policy: <em>incomparable</em> runs excluded, <em>assisted</em> runs
+      marked. I had called it a contradiction; that was too strong.</li>
+    <li>But <strong>#788's marking is unimplemented in both directions</strong> --
+      <code>dev_mode_used</code> appears nowhere, so dev runs currently rank silently.</li>
+    <li>And <strong>#1058's lock covered one screen</strong> while
+      <code>settings_menu.gd:162-165</code> still wrote the value. <span class="note">Closed
+      today by #1104, which moved enforcement to consumption.</span></li>
+  </ul>
+</div>
+
+<div class="box">
+  <h3 style="margin-top:0">5. The decision layer itself is rotting</h3>
+  <p style="margin-bottom:0">
+    <strong>TWO ADR SERIES EXIST AND THEIR NUMBERS COLLIDE.</strong>
+    <code>docs/adr/0002</code> says "rare apex victory". <code>decisions/ADR-0002</code> says
+    "no victory". <strong>Those are opposite answers to the most fundamental question the game
+    has</strong> (#809).<br><br>
+    Also: <code>decisions/README.md</code> is missing ADR-0018; ADR-0018 still says DRAFT after
+    its confirmation; and the WS-3 endgame rulings from 07-29 were never promoted to an ADR --
+    violating the repo's own same-day write-back rule.
+  </p>
+</div>
+
+<h2 class="pb">The one you already knew, now measured</h2>
+
+<div class="box">
+  <h3 style="margin-top:0">The ruling the UI never received</h3>
+  <p>
+    ADR-0011 deleted the per-turn Action Point pool. <strong>Verified: it is gone from the
+    code.</strong> Still taught to players by:
+  </p>
+  <table style="margin-bottom:1.5mm">
+    <tr><td><code>main.tscn:176</code></td><td>tooltip teaching "Base 3 + 0.5 per staff"</td></tr>
+    <tr><td><code>player_guide.tscn:125, 184</code></td><td>"Actions cost Action Points (AP)"</td></tr>
+    <tr><td><code>financing.json:37</code></td><td>prices a reward in "+2 action points"</td></tr>
+    <tr><td><code>2017.json:108, 148</code></td><td>event text</td></tr>
+    <tr><td><code>docs/PLAYERGUIDE.md</code> + keybinds</td><td>same</td></tr>
+  </table>
+  <p style="margin-bottom:0">
+    #1050 was titled "finish killing player-facing AP". It found nine strings and missed at
+    least six. <span class="note">Same class: <code>ARCHITECTURE.md:24</code> still says
+    "frontier AI lab" against the POSITIONING ruling.</span>
+  </p>
+</div>
+
+<h2>Recommended close / lock -- you rule, this is a menu</h2>
+
+<table>
+  <tr><th>Action</th><th>Items</th></tr>
+  <tr><td><strong>LOCK</strong> <span class="note">(settled; mark status, guard where cheap)</span></td>
+      <td>ADR-0002 (finish removal + supersede <code>docs/adr/0002</code>), ADR-0009, ADR-0012, ADR-0017, ADR-0018 (flip DRAFT -&gt; ACCEPTED)</td></tr>
+  <tr><td><strong>MARK RULED</strong></td>
+      <td>DQ-24 RULED &middot; DQ-27 RESOLVED-PENDING-TRIGGER &middot; DQ-16 SHELL-EXECUTED</td></tr>
+  <tr><td><strong>MARK DEAD</strong></td>
+      <td>DQ-13 (absorbed by streams) &middot; DQ-8 (it is a process, not a question) &middot; EE-1 (file gone) &middot; #959 (stale-open)</td></tr>
+</table>
+
+<div class="box">
+  <strong>On <code>decisions/README.md</code>: do NOT hand-fix it.</strong> The auditor proposes
+  <code>scripts/generate_adr_index.py</code>, mirroring the existing
+  <code>generate_dq_index.py</code> anti-rot pattern with a pre-commit
+  <code>--check</code>. A hand-maintained index that has already gone stale twice will go stale
+  a third time. Spec is in Section 5 of the audit.
+  <br><br>
+  <span class="note">The DQ index was regenerated during the audit: <strong>byte-identical, zero
+  drift.</strong> The generated one held; the hand-maintained one rotted. That is the whole
+  argument.</span>
+</div>
+
+<h2>Two bonus findings</h2>
+<ul>
+  <li><strong>ADR-0009's month badge never shipped.</strong> The HUD shows
+    "Turn 14 -- Fri 21 Jul 2017" (<code>main_ui.gd:1863-1877</code>); <code>get_turn_display()</code>
+    is unread outside the dev overlay.</li>
+  <li><strong>Suspected months/workdays unit mismatch</strong> in the game-over share line
+    (<code>game_over_screen.gd:542-543</code>). Related to the earlier finding that
+    <code>rarity_curves.json</code> assumes 52 turns/year while the Clock runs ~260.</li>
+</ul>
+
+<h2>What I got wrong, for the record</h2>
+<p class="note">
+  I told you #788 and Alpha Tools were <em>contradictory rulings</em>. The audit found a
+  consistent implicit policy underneath them -- exclude the incomparable, mark the assisted.
+  The real defect is narrower and more actionable: <strong>#788's marking was never
+  implemented at all.</strong> I over-read a tension that mostly is not one.
+</p>
+
+<div class="box hi">
+  <strong>Ordered ask, if you only do three:</strong><br>
+  <span class="chk"></span> <strong>1.</strong> ADR-0010 rung pick -- unblocks the most<br>
+  <span class="chk"></span> <strong>2.</strong> League monthly-vs-weekly -- unblocks the website<br>
+  <span class="chk"></span> <strong>3.</strong> Which ADR-0002 is true -- it is the game's most
+  fundamental question and there are currently two answers
+</div>
+
+<p class="foot">
+  Front sheet for <code>docs/game-design/ADR_DQ_AUDIT_2026-08-03.md</code> (467 lines, printed
+  behind this) &middot; 18 design ADRs + 4 runtime ADRs + 38 DQs audited &middot; all six PRs
+  merged, main <code>f512e7a5</code>, 1059 tests green
+</p>
