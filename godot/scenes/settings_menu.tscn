@@ -36,180 +36,359 @@ grow_vertical = 2
 texture = ExtResource("3_overlay")
 stretch_mode = 1
 
-[node name="VBox" type="VBoxContainer" parent="."]
+[node name="FrontCard" type="CenterContainer" parent="."]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -400.0
-offset_top = -300.0
-offset_right = 400.0
-offset_bottom = 300.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 20
 
-[node name="Title" type="Label" parent="VBox"]
+[node name="Card" type="PanelContainer" parent="FrontCard"]
+layout_mode = 2
+
+[node name="Margin" type="MarginContainer" parent="FrontCard/Card"]
+layout_mode = 2
+theme_override_constants/margin_left = 28
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 28
+theme_override_constants/margin_bottom = 24
+
+[node name="CardVBox" type="VBoxContainer" parent="FrontCard/Card/Margin"]
+custom_minimum_size = Vector2(480, 0)
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="Title" type="Label" parent="FrontCard/Card/Margin/CardVBox"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.914, 0.949, 0.949, 1)
-theme_override_font_sizes/font_size = 48
-text = "LABORATORY SETTINGS"
-horizontal_alignment = 1
+theme_override_font_sizes/font_size = 32
+text = "SETTINGS"
 
-[node name="Subtitle" type="Label" parent="VBox"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.7, 0.78, 0.86, 1)
-theme_override_font_sizes/font_size = 18
-text = "Configure Operations & Protocols"
-horizontal_alignment = 1
-
-[node name="HSeparator" type="HSeparator" parent="VBox"]
-layout_mode = 2
-
-[node name="Scroll" type="ScrollContainer" parent="VBox"]
-layout_mode = 2
-size_flags_vertical = 3
-horizontal_scroll_mode = 0
-vertical_scroll_mode = 2
-
-[node name="SettingsContainer" type="VBoxContainer" parent="VBox/Scroll"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_constants/separation = 12
-
-[node name="AudioSettings" type="VBoxContainer" parent="VBox/Scroll/SettingsContainer"]
-layout_mode = 2
-theme_override_constants/separation = 8
-
-[node name="AudioLabel" type="Label" parent="VBox/Scroll/SettingsContainer/AudioSettings"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.91, 0.64, 0.24, 1)
-theme_override_font_sizes/font_size = 20
-text = "Audio Settings"
-
-[node name="MasterVolumeRow" type="HBoxContainer" parent="VBox/Scroll/SettingsContainer/AudioSettings"]
+[node name="VolumeRow" type="HBoxContainer" parent="FrontCard/Card/Margin/CardVBox"]
 layout_mode = 2
 theme_override_constants/separation = 15
 
-[node name="Label" type="Label" parent="VBox/Scroll/SettingsContainer/AudioSettings/MasterVolumeRow"]
-custom_minimum_size = Vector2(250, 0)
+[node name="Label" type="Label" parent="FrontCard/Card/Margin/CardVBox/VolumeRow"]
+custom_minimum_size = Vector2(160, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 16
-text = "Master Volume:"
+text = "Volume"
 
-[node name="Slider" type="HSlider" parent="VBox/Scroll/SettingsContainer/AudioSettings/MasterVolumeRow"]
-custom_minimum_size = Vector2(300, 0)
+[node name="Slider" type="HSlider" parent="FrontCard/Card/Margin/CardVBox/VolumeRow"]
+custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_vertical = 4
 max_value = 100.0
 value = 50.0
 
-[node name="ValueLabel" type="Label" parent="VBox/Scroll/SettingsContainer/AudioSettings/MasterVolumeRow"]
+[node name="ValueLabel" type="Label" parent="FrontCard/Card/Margin/CardVBox/VolumeRow"]
 custom_minimum_size = Vector2(50, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 16
 text = "50%"
 
-[node name="SFXVolumeRow" type="HBoxContainer" parent="VBox/Scroll/SettingsContainer/AudioSettings"]
+[node name="MusicRow" type="HBoxContainer" parent="FrontCard/Card/Margin/CardVBox"]
 layout_mode = 2
 theme_override_constants/separation = 15
 
-[node name="Label" type="Label" parent="VBox/Scroll/SettingsContainer/AudioSettings/SFXVolumeRow"]
-custom_minimum_size = Vector2(250, 0)
+[node name="Label" type="Label" parent="FrontCard/Card/Margin/CardVBox/MusicRow"]
+custom_minimum_size = Vector2(160, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 16
-text = "Sound Effects Volume:"
+text = "Music"
 
-[node name="Slider" type="HSlider" parent="VBox/Scroll/SettingsContainer/AudioSettings/SFXVolumeRow"]
-custom_minimum_size = Vector2(300, 0)
+[node name="Slider" type="HSlider" parent="FrontCard/Card/Margin/CardVBox/MusicRow"]
+custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 size_flags_horizontal = 3
-max_value = 100.0
-value = 50.0
-
-[node name="ValueLabel" type="Label" parent="VBox/Scroll/SettingsContainer/AudioSettings/SFXVolumeRow"]
-custom_minimum_size = Vector2(50, 0)
-layout_mode = 2
-theme_override_font_sizes/font_size = 16
-text = "50%"
-
-[node name="MusicVolumeRow" type="HBoxContainer" parent="VBox/Scroll/SettingsContainer/AudioSettings"]
-layout_mode = 2
-theme_override_constants/separation = 15
-
-[node name="Label" type="Label" parent="VBox/Scroll/SettingsContainer/AudioSettings/MusicVolumeRow"]
-custom_minimum_size = Vector2(250, 0)
-layout_mode = 2
-theme_override_font_sizes/font_size = 16
-text = "Music Volume:"
-
-[node name="Slider" type="HSlider" parent="VBox/Scroll/SettingsContainer/AudioSettings/MusicVolumeRow"]
-custom_minimum_size = Vector2(300, 0)
-layout_mode = 2
-size_flags_horizontal = 3
+size_flags_vertical = 4
 max_value = 100.0
 value = 15.0
 
-[node name="ValueLabel" type="Label" parent="VBox/Scroll/SettingsContainer/AudioSettings/MusicVolumeRow"]
+[node name="ValueLabel" type="Label" parent="FrontCard/Card/Margin/CardVBox/MusicRow"]
 custom_minimum_size = Vector2(50, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 16
 text = "15%"
 
-[node name="HSeparator2" type="HSeparator" parent="VBox/Scroll/SettingsContainer"]
+[node name="FullscreenRow" type="HBoxContainer" parent="FrontCard/Card/Margin/CardVBox"]
 layout_mode = 2
 
-[node name="GraphicsSettings" type="VBoxContainer" parent="VBox/Scroll/SettingsContainer"]
+[node name="Label" type="Label" parent="FrontCard/Card/Margin/CardVBox/FullscreenRow"]
 layout_mode = 2
-theme_override_constants/separation = 8
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+text = "Fullscreen"
 
-[node name="GraphicsLabel" type="Label" parent="VBox/Scroll/SettingsContainer/GraphicsSettings"]
+[node name="CheckBox" type="CheckButton" parent="FrontCard/Card/Margin/CardVBox/FullscreenRow"]
+layout_mode = 2
+
+[node name="HintsRow" type="HBoxContainer" parent="FrontCard/Card/Margin/CardVBox"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="FrontCard/Card/Margin/CardVBox/HintsRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+text = "Gameplay hints"
+
+[node name="CheckBox" type="CheckButton" parent="FrontCard/Card/Margin/CardVBox/HintsRow"]
+layout_mode = 2
+
+[node name="ColorblindRow" type="HBoxContainer" parent="FrontCard/Card/Margin/CardVBox"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="FrontCard/Card/Margin/CardVBox/ColorblindRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+text = "Colorblind mode"
+
+[node name="CheckBox" type="CheckButton" parent="FrontCard/Card/Margin/CardVBox/ColorblindRow"]
+layout_mode = 2
+tooltip_text = "Adds patterns and symbols alongside colors for better visibility"
+
+[node name="HSeparator" type="HSeparator" parent="FrontCard/Card/Margin/CardVBox"]
+layout_mode = 2
+
+[node name="AllProtocolsButton" type="Button" parent="FrontCard/Card/Margin/CardVBox"]
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = ">> ALL PROTOCOLS"
+
+[node name="AllProtocolsCaption" type="Label" parent="FrontCard/Card/Margin/CardVBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.78, 0.86, 1)
+theme_override_font_sizes/font_size = 12
+text = "sound detail, display, privacy, intros, rival feed, experiments"
+
+[node name="KeybindingsButton" type="Button" parent="FrontCard/Card/Margin/CardVBox"]
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = ">> KEYBINDINGS"
+
+[node name="HSeparator2" type="HSeparator" parent="FrontCard/Card/Margin/CardVBox"]
+layout_mode = 2
+
+[node name="FooterRow" type="HBoxContainer" parent="FrontCard/Card/Margin/CardVBox"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="BackButton" type="Button" parent="FrontCard/Card/Margin/CardVBox/FooterRow"]
+custom_minimum_size = Vector2(150, 48)
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Back"
+
+[node name="SavedLabel" type="Label" parent="FrontCard/Card/Margin/CardVBox/FooterRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.7, 0.78, 0.86, 1)
+theme_override_font_sizes/font_size = 12
+text = "changes save automatically"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="Board" type="MarginContainer" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 48
+theme_override_constants/margin_top = 28
+theme_override_constants/margin_right = 48
+theme_override_constants/margin_bottom = 24
+
+[node name="BoardVBox" type="VBoxContainer" parent="Board"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="HeaderRow" type="HBoxContainer" parent="Board/BoardVBox"]
+layout_mode = 2
+
+[node name="BoardTitle" type="Label" parent="Board/BoardVBox/HeaderRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.914, 0.949, 0.949, 1)
+theme_override_font_sizes/font_size = 28
+text = "LAB OPERATIONS // SETTINGS"
+
+[node name="VersionLabel" type="Label" parent="Board/BoardVBox/HeaderRow"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.78, 0.86, 1)
+theme_override_font_sizes/font_size = 14
+text = "v0.0.0"
+vertical_alignment = 1
+
+[node name="AutosaveNote" type="Label" parent="Board/BoardVBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.78, 0.86, 1)
+theme_override_font_sizes/font_size = 12
+text = "changes apply immediately and are saved -- there is no Apply button"
+
+[node name="HSeparator" type="HSeparator" parent="Board/BoardVBox"]
+layout_mode = 2
+
+[node name="Columns" type="HBoxContainer" parent="Board/BoardVBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 40
+
+[node name="Col1" type="VBoxContainer" parent="Board/BoardVBox/Columns"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
+[node name="AudioHeader" type="Label" parent="Board/BoardVBox/Columns/Col1"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.91, 0.64, 0.24, 1)
 theme_override_font_sizes/font_size = 20
-text = "Graphics Settings"
+text = "AUDIO"
 
-[node name="FullscreenRow" type="HBoxContainer" parent="VBox/Scroll/SettingsContainer/GraphicsSettings"]
+[node name="MasterLabelRow" type="HBoxContainer" parent="Board/BoardVBox/Columns/Col1"]
 layout_mode = 2
-theme_override_constants/separation = 15
 
-[node name="Label" type="Label" parent="VBox/Scroll/SettingsContainer/GraphicsSettings/FullscreenRow"]
-custom_minimum_size = Vector2(250, 0)
+[node name="Label" type="Label" parent="Board/BoardVBox/Columns/Col1/MasterLabelRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+text = "Master"
+
+[node name="ValueLabel" type="Label" parent="Board/BoardVBox/Columns/Col1/MasterLabelRow"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 16
-text = "Fullscreen:"
+text = "50%"
 
-[node name="CheckBox" type="CheckButton" parent="VBox/Scroll/SettingsContainer/GraphicsSettings/FullscreenRow"]
+[node name="MasterSlider" type="HSlider" parent="Board/BoardVBox/Columns/Col1"]
+layout_mode = 2
+max_value = 100.0
+value = 50.0
+
+[node name="SFXLabelRow" type="HBoxContainer" parent="Board/BoardVBox/Columns/Col1"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Board/BoardVBox/Columns/Col1/SFXLabelRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+text = "Effects"
+
+[node name="ValueLabel" type="Label" parent="Board/BoardVBox/Columns/Col1/SFXLabelRow"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 16
+text = "50%"
 
-[node name="HSeparator3" type="HSeparator" parent="VBox/Scroll/SettingsContainer"]
+[node name="SFXSlider" type="HSlider" parent="Board/BoardVBox/Columns/Col1"]
+layout_mode = 2
+max_value = 100.0
+value = 50.0
+
+[node name="MusicLabelRow" type="HBoxContainer" parent="Board/BoardVBox/Columns/Col1"]
 layout_mode = 2
 
-[node name="GameplaySettings" type="VBoxContainer" parent="VBox/Scroll/SettingsContainer"]
+[node name="Label" type="Label" parent="Board/BoardVBox/Columns/Col1/MusicLabelRow"]
 layout_mode = 2
-theme_override_constants/separation = 8
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+text = "Music"
 
-[node name="GameplayLabel" type="Label" parent="VBox/Scroll/SettingsContainer/GameplaySettings"]
+[node name="ValueLabel" type="Label" parent="Board/BoardVBox/Columns/Col1/MusicLabelRow"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "15%"
+
+[node name="MusicSlider" type="HSlider" parent="Board/BoardVBox/Columns/Col1"]
+layout_mode = 2
+max_value = 100.0
+value = 15.0
+
+[node name="HSeparator" type="HSeparator" parent="Board/BoardVBox/Columns/Col1"]
+layout_mode = 2
+
+[node name="DisplayHeader" type="Label" parent="Board/BoardVBox/Columns/Col1"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.91, 0.64, 0.24, 1)
 theme_override_font_sizes/font_size = 20
-text = "Gameplay Settings"
+text = "DISPLAY"
 
-[node name="DifficultyRow" type="HBoxContainer" parent="VBox/Scroll/SettingsContainer/GameplaySettings"]
+[node name="FullscreenRow" type="HBoxContainer" parent="Board/BoardVBox/Columns/Col1"]
 layout_mode = 2
-theme_override_constants/separation = 15
 
-[node name="Label" type="Label" parent="VBox/Scroll/SettingsContainer/GameplaySettings/DifficultyRow"]
-custom_minimum_size = Vector2(250, 0)
+[node name="Label" type="Label" parent="Board/BoardVBox/Columns/Col1/FullscreenRow"]
 layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+text = "Fullscreen"
+
+[node name="CheckBox" type="CheckButton" parent="Board/BoardVBox/Columns/Col1/FullscreenRow"]
+layout_mode = 2
+
+[node name="Col2" type="VBoxContainer" parent="Board/BoardVBox/Columns"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
+[node name="OperationsHeader" type="Label" parent="Board/BoardVBox/Columns/Col2"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.91, 0.64, 0.24, 1)
+theme_override_font_sizes/font_size = 20
+text = "OPERATIONS"
+
+[node name="IntrosRow" type="HBoxContainer" parent="Board/BoardVBox/Columns/Col2"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Board/BoardVBox/Columns/Col2/IntrosRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+text = "Play story intros"
+
+[node name="CheckBox" type="CheckButton" parent="Board/BoardVBox/Columns/Col2/IntrosRow"]
+layout_mode = 2
+
+[node name="HintsRow" type="HBoxContainer" parent="Board/BoardVBox/Columns/Col2"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Board/BoardVBox/Columns/Col2/HintsRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+text = "Show gameplay hints"
+tooltip_text = "Show onboarding help: the getting-started hint and the first-launch welcome overlay."
+
+[node name="CheckBox" type="CheckButton" parent="Board/BoardVBox/Columns/Col2/HintsRow"]
+layout_mode = 2
+
+[node name="RivalsRow" type="HBoxContainer" parent="Board/BoardVBox/Columns/Col2"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Board/BoardVBox/Columns/Col2/RivalsRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+text = "Rival intel in the WATCH feed"
+tooltip_text = "Show rival-lab intel lines in the WATCH feed. Also toggleable on the WATCH screen itself."
+
+[node name="CheckBox" type="CheckButton" parent="Board/BoardVBox/Columns/Col2/RivalsRow"]
+layout_mode = 2
+
+[node name="DifficultyRow" type="HBoxContainer" parent="Board/BoardVBox/Columns/Col2"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Board/BoardVBox/Columns/Col2/DifficultyRow"]
+layout_mode = 2
+size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 16
 text = "Research Intensity:"
 
-[node name="OptionButton" type="OptionButton" parent="VBox/Scroll/SettingsContainer/GameplaySettings/DifficultyRow"]
+[node name="OptionButton" type="OptionButton" parent="Board/BoardVBox/Columns/Col2/DifficultyRow"]
 custom_minimum_size = Vector2(200, 40)
 layout_mode = 2
 theme_override_font_sizes/font_size = 16
@@ -221,27 +400,25 @@ popup/item_1/id = 1
 popup/item_2/text = "Hard"
 popup/item_2/id = 2
 
-[node name="UISettings" type="VBoxContainer" parent="VBox/Scroll/SettingsContainer"]
+[node name="HSeparator" type="HSeparator" parent="Board/BoardVBox/Columns/Col2"]
 layout_mode = 2
-theme_override_constants/separation = 8
 
-[node name="UILabel" type="Label" parent="VBox/Scroll/SettingsContainer/UISettings"]
+[node name="InterfaceHeader" type="Label" parent="Board/BoardVBox/Columns/Col2"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.91, 0.64, 0.24, 1)
 theme_override_font_sizes/font_size = 20
-text = "UI Settings"
+text = "INTERFACE"
 
-[node name="ThemeRow" type="HBoxContainer" parent="VBox/Scroll/SettingsContainer/UISettings"]
+[node name="ThemeRow" type="HBoxContainer" parent="Board/BoardVBox/Columns/Col2"]
 layout_mode = 2
-theme_override_constants/separation = 15
 
-[node name="Label" type="Label" parent="VBox/Scroll/SettingsContainer/UISettings/ThemeRow"]
-custom_minimum_size = Vector2(250, 0)
+[node name="Label" type="Label" parent="Board/BoardVBox/Columns/Col2/ThemeRow"]
 layout_mode = 2
+size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 16
-text = "Visual Theme:"
+text = "Visual theme"
 
-[node name="ThemeDropdown" type="OptionButton" parent="VBox/Scroll/SettingsContainer/UISettings/ThemeRow"]
+[node name="ThemeDropdown" type="OptionButton" parent="Board/BoardVBox/Columns/Col2/ThemeRow"]
 custom_minimum_size = Vector2(200, 40)
 layout_mode = 2
 theme_override_font_sizes/font_size = 16
@@ -252,157 +429,140 @@ popup/item_1/id = 1
 popup/item_2/text = "High Contrast"
 popup/item_2/id = 2
 
-[node name="HSeparator4" type="HSeparator" parent="VBox/Scroll/SettingsContainer"]
+[node name="UILayoutRow" type="HBoxContainer" parent="Board/BoardVBox/Columns/Col2"]
 layout_mode = 2
 
-[node name="AccessibilitySettings" type="VBoxContainer" parent="VBox/Scroll/SettingsContainer"]
+[node name="Label" type="Label" parent="Board/BoardVBox/Columns/Col2/UILayoutRow"]
 layout_mode = 2
-theme_override_constants/separation = 8
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+text = "Proposed UI layout (experimental)"
+tooltip_text = "A/B test: proposed PLAN/WATCH (grouped actions, operations gantt, reclaimed space). Applies on next game load."
 
-[node name="AccessibilityLabel" type="Label" parent="VBox/Scroll/SettingsContainer/AccessibilitySettings"]
+[node name="CheckBox" type="CheckButton" parent="Board/BoardVBox/Columns/Col2/UILayoutRow"]
+layout_mode = 2
+
+[node name="UILayoutCaption" type="Label" parent="Board/BoardVBox/Columns/Col2"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.78, 0.86, 1)
+theme_override_font_sizes/font_size = 12
+text = "applies on next game load"
+
+[node name="HSeparator2" type="HSeparator" parent="Board/BoardVBox/Columns/Col2"]
+layout_mode = 2
+
+[node name="AccessHeader" type="Label" parent="Board/BoardVBox/Columns/Col2"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.91, 0.64, 0.24, 1)
 theme_override_font_sizes/font_size = 20
-text = "Accessibility"
+text = "ACCESS"
 
-[node name="ColorblindRow" type="HBoxContainer" parent="VBox/Scroll/SettingsContainer/AccessibilitySettings"]
+[node name="ColorblindRow" type="HBoxContainer" parent="Board/BoardVBox/Columns/Col2"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Board/BoardVBox/Columns/Col2/ColorblindRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+text = "Colorblind mode"
+
+[node name="CheckBox" type="CheckButton" parent="Board/BoardVBox/Columns/Col2/ColorblindRow"]
+layout_mode = 2
+tooltip_text = "Adds patterns and symbols alongside colors for better visibility"
+
+[node name="ColorblindCaption" type="Label" parent="Board/BoardVBox/Columns/Col2"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.78, 0.86, 1)
+theme_override_font_sizes/font_size = 12
+text = "patterns + symbols alongside colors"
+
+[node name="Col3" type="VBoxContainer" parent="Board/BoardVBox/Columns"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
+[node name="DisclosureHeader" type="Label" parent="Board/BoardVBox/Columns/Col3"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.91, 0.64, 0.24, 1)
+theme_override_font_sizes/font_size = 20
+text = "DISCLOSURE"
+
+[node name="LeaderboardRow" type="HBoxContainer" parent="Board/BoardVBox/Columns/Col3"]
 layout_mode = 2
 theme_override_constants/separation = 15
 
-[node name="Label" type="Label" parent="VBox/Scroll/SettingsContainer/AccessibilitySettings/ColorblindRow"]
-custom_minimum_size = Vector2(250, 0)
+[node name="Label" type="Label" parent="Board/BoardVBox/Columns/Col3/LeaderboardRow"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 16
-text = "Colorblind Mode:"
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 15
+text = "Submit scores to the global leaderboard -- shares player + lab name publicly. Opt-in."
+autowrap_mode = 3
 
-[node name="CheckBox" type="CheckButton" parent="VBox/Scroll/SettingsContainer/AccessibilitySettings/ColorblindRow"]
+[node name="CheckBox" type="CheckButton" parent="Board/BoardVBox/Columns/Col3/LeaderboardRow"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 16
-tooltip_text = "Adds patterns and symbols alongside colors for better visibility"
+size_flags_vertical = 0
 
-[node name="HSeparator5" type="HSeparator" parent="VBox/Scroll/SettingsContainer"]
+[node name="LaunchPingRow" type="HBoxContainer" parent="Board/BoardVBox/Columns/Col3"]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="Label" type="Label" parent="Board/BoardVBox/Columns/Col3/LaunchPingRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 15
+text = "Anonymous launch ping -- counts installs; no personal data."
+autowrap_mode = 3
+
+[node name="CheckBox" type="CheckButton" parent="Board/BoardVBox/Columns/Col3/LaunchPingRow"]
+layout_mode = 2
+size_flags_vertical = 0
+
+[node name="HSeparator" type="HSeparator" parent="Board/BoardVBox/Columns/Col3"]
 layout_mode = 2
 
-[node name="KeyboardShortcuts" type="VBoxContainer" parent="VBox/Scroll/SettingsContainer"]
-layout_mode = 2
-theme_override_constants/separation = 8
-
-[node name="KeyboardLabel" type="Label" parent="VBox/Scroll/SettingsContainer/KeyboardShortcuts"]
+[node name="ControlsHeader" type="Label" parent="Board/BoardVBox/Columns/Col3"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.91, 0.64, 0.24, 1)
 theme_override_font_sizes/font_size = 20
-text = "Keyboard Shortcuts"
+text = "CONTROLS"
 
-[node name="ShortcutsGrid" type="GridContainer" parent="VBox/Scroll/SettingsContainer/KeyboardShortcuts"]
+[node name="KeybindingsButton" type="Button" parent="Board/BoardVBox/Columns/Col3"]
+custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
-theme_override_constants/h_separation = 30
-theme_override_constants/v_separation = 4
-columns = 2
+theme_override_font_sizes/font_size = 18
+text = ">> KEYBINDINGS"
 
-[node name="Key1" type="Label" parent="VBox/Scroll/SettingsContainer/KeyboardShortcuts/ShortcutsGrid"]
+[node name="KeybindCaption" type="Label" parent="Board/BoardVBox/Columns/Col3"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.9, 0.95, 1, 1)
-theme_override_font_sizes/font_size = 14
-text = "[1-9]"
+theme_override_colors/font_color = Color(0.7, 0.78, 0.86, 1)
+theme_override_font_sizes/font_size = 12
+text = "edit all bindings and profiles"
 
-[node name="Desc1" type="Label" parent="VBox/Scroll/SettingsContainer/KeyboardShortcuts/ShortcutsGrid"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 14
-text = "Select action"
-
-[node name="Key2" type="Label" parent="VBox/Scroll/SettingsContainer/KeyboardShortcuts/ShortcutsGrid"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.9, 0.95, 1, 1)
-theme_override_font_sizes/font_size = 14
-text = "[Space/Enter]"
-
-[node name="Desc2" type="Label" parent="VBox/Scroll/SettingsContainer/KeyboardShortcuts/ShortcutsGrid"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 14
-text = "End turn"
-
-[node name="Key3" type="Label" parent="VBox/Scroll/SettingsContainer/KeyboardShortcuts/ShortcutsGrid"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.9, 0.95, 1, 1)
-theme_override_font_sizes/font_size = 14
-text = "[Esc]"
-
-[node name="Desc3" type="Label" parent="VBox/Scroll/SettingsContainer/KeyboardShortcuts/ShortcutsGrid"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 14
-text = "Cancel / Pause menu"
-
-[node name="Key4" type="Label" parent="VBox/Scroll/SettingsContainer/KeyboardShortcuts/ShortcutsGrid"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.9, 0.95, 1, 1)
-theme_override_font_sizes/font_size = 14
-text = "[Q/W/E/R]"
-
-[node name="Desc4" type="Label" parent="VBox/Scroll/SettingsContainer/KeyboardShortcuts/ShortcutsGrid"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 14
-text = "Dialog options"
-
-[node name="Key5" type="Label" parent="VBox/Scroll/SettingsContainer/KeyboardShortcuts/ShortcutsGrid"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.9, 0.95, 1, 1)
-theme_override_font_sizes/font_size = 14
-text = "[F5]"
-
-[node name="Desc5" type="Label" parent="VBox/Scroll/SettingsContainer/KeyboardShortcuts/ShortcutsGrid"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 14
-text = "Quick save"
-
-[node name="Key6" type="Label" parent="VBox/Scroll/SettingsContainer/KeyboardShortcuts/ShortcutsGrid"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.9, 0.95, 1, 1)
-theme_override_font_sizes/font_size = 14
-text = "[N]"
-
-[node name="Desc6" type="Label" parent="VBox/Scroll/SettingsContainer/KeyboardShortcuts/ShortcutsGrid"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 14
-text = "Bug report"
-
-[node name="Key7" type="Label" parent="VBox/Scroll/SettingsContainer/KeyboardShortcuts/ShortcutsGrid"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.9, 0.95, 1, 1)
-theme_override_font_sizes/font_size = 14
-text = "[F9]"
-
-[node name="Desc7" type="Label" parent="VBox/Scroll/SettingsContainer/KeyboardShortcuts/ShortcutsGrid"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 14
-text = "Quick load"
-
-[node name="Spacer" type="Control" parent="VBox"]
+[node name="HSeparator2" type="HSeparator" parent="Board/BoardVBox"]
 layout_mode = 2
 
-[node name="ButtonRow" type="HBoxContainer" parent="VBox"]
+[node name="FooterRow" type="HBoxContainer" parent="Board/BoardVBox"]
 layout_mode = 2
 theme_override_constants/separation = 20
-alignment = 1
 
-[node name="ApplyButton" type="Button" parent="VBox/ButtonRow"]
-custom_minimum_size = Vector2(150, 50)
+[node name="FrontCardButton" type="Button" parent="Board/BoardVBox/FooterRow"]
+custom_minimum_size = Vector2(200, 48)
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_font_sizes/font_size = 20
-text = "Apply"
+theme_override_font_sizes/font_size = 18
+text = "<< FRONT CARD"
 
-[node name="BackButton" type="Button" parent="VBox/ButtonRow"]
-custom_minimum_size = Vector2(150, 50)
+[node name="FooterHint" type="Label" parent="Board/BoardVBox/FooterRow"]
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_font_sizes/font_size = 20
-text = "Back"
+theme_override_colors/font_color = Color(0.7, 0.78, 0.86, 1)
+theme_override_font_sizes/font_size = 12
+text = "[ESC] front card"
+vertical_alignment = 1
 
-[connection signal="value_changed" from="VBox/Scroll/SettingsContainer/AudioSettings/MasterVolumeRow/Slider" to="." method="_on_master_volume_changed"]
-[connection signal="value_changed" from="VBox/Scroll/SettingsContainer/AudioSettings/SFXVolumeRow/Slider" to="." method="_on_sfx_volume_changed"]
-[connection signal="value_changed" from="VBox/Scroll/SettingsContainer/AudioSettings/MusicVolumeRow/Slider" to="." method="_on_music_volume_changed"]
-[connection signal="toggled" from="VBox/Scroll/SettingsContainer/GraphicsSettings/FullscreenRow/CheckBox" to="." method="_on_fullscreen_toggled"]
-[connection signal="item_selected" from="VBox/Scroll/SettingsContainer/GameplaySettings/DifficultyRow/OptionButton" to="." method="_on_difficulty_changed"]
-[connection signal="toggled" from="VBox/Scroll/SettingsContainer/AccessibilitySettings/ColorblindRow/CheckBox" to="." method="_on_colorblind_toggled"]
-[connection signal="pressed" from="VBox/ButtonRow/ApplyButton" to="." method="_on_apply_pressed"]
-[connection signal="pressed" from="VBox/ButtonRow/BackButton" to="." method="_on_back_pressed"]
+[node name="SavedLabel" type="Label" parent="Board/BoardVBox/FooterRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.7, 0.78, 0.86, 1)
+theme_override_font_sizes/font_size = 12
+text = "changes save automatically"
+horizontal_alignment = 2
+vertical_alignment = 1

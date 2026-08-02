@@ -370,6 +370,12 @@ func set_setting(key: String, value, save_immediately: bool = false) -> void:
 			colorblind_mode = value
 		"show_hints":
 			show_hints = value
+		"show_rivals_feed":
+			# Settings-menu row for the WATCH feed's rival-intel preference. The WATCH
+			# screen's own filter button predates this case and writes the var + saves
+			# directly (main_ui._on_rivals_filter_changed); both paths land on the same
+			# persisted field.
+			show_rivals_feed = value
 		"submit_scores_global":
 			submit_scores_global = value
 		"send_launch_ping":
