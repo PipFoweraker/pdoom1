@@ -207,7 +207,18 @@ func _refresh_controls():
 		GameConfig.submit_scores_global and GameConfig.leaderboard_consent_asked)
 	board_launch_ping_checkbox.set_pressed_no_signal(GameConfig.send_launch_ping)
 
-	difficulty_option.selected = GameConfig.difficulty
+	# League lock (#1058, #1084). Show the locked value, disabled, with the same
+	# tooltip pregame_setup uses -- never silently accept a value the game will not
+	# honour. The lock is ENFORCED AT CONSUMPTION (GameConfig.effective_difficulty());
+	# this is only the honest reflection of it, so the control cannot lie about a
+	# setting the run will ignore. Unlocked, the stored preference shows as-is.
+	if GameConfig.is_difficulty_locked():
+		difficulty_option.selected = GameConfig.effective_difficulty()
+		difficulty_option.disabled = true
+		difficulty_option.tooltip_text = GameConfig.DIFFICULTY_LOCK_TOOLTIP
+	else:
+		difficulty_option.selected = GameConfig.difficulty
+		difficulty_option.disabled = false
 
 	var themes = ThemeManager.get_available_themes()
 	for i in range(themes.size()):
@@ -299,6 +310,11 @@ func _on_fullscreen_toggled(pressed: bool):
 
 func _on_difficulty_changed(index: int):
 	"""Handle difficulty dropdown change"""
+	# Belt-and-braces for #1084: the dropdown is disabled while the league lock
+	# holds, but nothing may WRITE a difficulty the game will not honour either.
+	# (The real guarantee is at consumption -- GameConfig.effective_difficulty().)
+	if GameConfig.is_difficulty_locked():
+		return
 	print("[SettingsMenu] Difficulty changed to: ", ["Easy", "Standard", "Hard"][index])
 	GameConfig.set_setting("difficulty", index, false)
 

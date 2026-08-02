@@ -6,9 +6,40 @@ extends Node
 var player_name: String = "Researcher"
 var lab_name: String = "AI Safety Lab"
 var game_seed: String = ""  # Empty = weekly challenge seed
-var difficulty: int = 1  # 0=Easy, 1=Standard, 2=Hard
+var difficulty: int = 1  # 0=Easy, 1=Standard, 2=Hard -- the player's stored PREFERENCE. What a run actually PLAYS at is effective_difficulty() below (league lock, #1058/#1084).
 var org_type: String = "nonprofit"  # Early-game org form: "nonprofit" | "for_profit" (DQ-19). Set at pregame; default flow forces nonprofit.
 var scenario_id: String = ""  # Empty = standard game, otherwise scenario pack ID
+
+# --- League difficulty lock (#1058, enforced at CONSUMPTION per #1084) ---------------
+# While true, every run PLAYS at Standard: GameManager._apply_difficulty_settings()
+# reads effective_difficulty() below, so no menu write, config.cfg edit, or nav route
+# into main.tscn can start a non-Standard run. The raw `difficulty` field above stays
+# the player's stored preference, honoured again the day this const flips false.
+# Enforcing here -- where the value becomes game state -- rather than in pregame_setup
+# (one of six routes into main.tscn) is the #1060 shape: a named accessor at the choke
+# point, not a lock on one screen.
+const LEAGUE_DIFFICULTY_LOCK := true
+const LEAGUE_LOCKED_DIFFICULTY := 1  # Standard
+# One tooltip everywhere the lock disables a control (pregame_setup + settings_menu).
+const DIFFICULTY_LOCK_TOOLTIP := "Locked to Standard for the first leagues -- every score sits on one comparable board. Difficulty tiers return once the board can tell them apart."
+# TEST SEAM ONLY (the perf_log override pattern): null => follow the const; true/false
+# => forced. Lets the simulation tier keep exercising the Easy/Hard scaling machinery
+# that returns when the lock lifts. Never set this from UI or gameplay code.
+var _difficulty_lock_override = null
+
+func is_difficulty_locked() -> bool:
+	if _difficulty_lock_override != null:
+		return bool(_difficulty_lock_override)
+	return LEAGUE_DIFFICULTY_LOCK
+
+## The difficulty a run actually PLAYS at. EVERY consumer must route through this;
+## reading the raw field at a consumption site is how #1084 happened.
+func effective_difficulty() -> int:
+	if is_difficulty_locked():
+		return LEAGUE_LOCKED_DIFFICULTY
+	if difficulty < 0 or difficulty > 2:
+		return 1  # invalid persisted value degrades to Standard (issue #447 family)
+	return difficulty
 
 # Baseline Computation Mode (Issue #372)
 # 0 = Auto (precomputed for weekly, eager for custom)
@@ -399,9 +430,16 @@ func set_setting(key: String, value, save_immediately: bool = false) -> void:
 	if save_immediately:
 		save_config()
 
-## Get difficulty as string
+## Get difficulty as string (the RAW stored preference -- for settings UI)
 func get_difficulty_string() -> String:
-	match difficulty:
+	return _difficulty_name(difficulty)
+
+## The difficulty the run actually PLAYS at, as a string (league lock aware)
+func get_effective_difficulty_string() -> String:
+	return _difficulty_name(effective_difficulty())
+
+func _difficulty_name(value: int) -> String:
+	match value:
 		0:
 			return "Easy"
 		1:
@@ -600,8 +638,66 @@ func get_board_version() -> String:
 ## SINGLE SOURCE OF TRUTH: every board-write site must route through this. There
 ## is exactly one today (GameOverScreen._persist_and_submit_score); a second one
 ## added later that forgets this check silently reopens the hole.
+##
+## TWO inputs, one gate:
+##   1. scenario_id -- a scenario rewrites the starting position (chosen pre-game,
+##      so a single check covers it);
+##   2. alpha_tools_used -- the sticky one-way Alpha Tools flag below (a dev power
+##      can be used MID-RUN, so it must be a flag on the run, not a pre-game check).
 func is_ranked_run() -> bool:
+	if alpha_tools_used:
+		return false  # sticky one-way Alpha Tools flag (decision card 2026-08-01)
 	return scenario_id.strip_edges().is_empty()
+
+# --- Alpha Tools (decision card docs/decision-cards/2026-08-01_dev-powers-nomenclature.html;
+# ruled by Pip via PR #1096: "alpha-tools naming and wording settled") -----------------
+#
+# Player-facing name for the dev powers an alpha build ships (the F3 overlay's pokes,
+# the backslash overlay's nudges / day-step / event injection). Using ANY of them makes
+# the run UNRANKED via is_ranked_run() above. The flag is STICKY AND ONE-WAY per run
+# (Factorio's "this save has been marked" pattern): a dev power can be used at turn 30
+# after 20 honest turns, so a pre-game check cannot cover it, and turning the tool back
+# off must NOT restore ranking -- otherwise the exploit is trivial and, worse,
+# accidental. RUN-scoped, not build-scoped: reset ONLY at the run boundary
+# (GameManager.start_new_game), carried through the SaveLoad envelope so a save/load
+# cycle cannot launder it, and deliberately NOT persisted to config.cfg (that would
+# taint the NEXT run).
+var alpha_tools_used: bool = false
+var alpha_tools_first_use_turn: int = -1
+
+signal alpha_tools_first_used(turn: int)
+
+# Settled wording (the card's "ready-made" section). Shown in the established NOT
+# RANKED amber Color(1.0, 0.75, 0.25) -- amber already means "off the record" in two
+# places; do not invent another colour.
+const ALPHA_TOOLS_TOGGLE_WARNING := "[!] ALPHA TOOLS -- using any of these takes this run off the leaderboard, permanently. These tools will not exist in the finished game."
+const ALPHA_TOOLS_GAME_OVER_NOTICE := "NOT RANKED: Alpha Tools were used in this run. Play without them for the board."
+
+## Mark this run as having used an Alpha Tool. Returns true only on the FIRST use in
+## the run -- callers show the mid-run warning exactly then (shown, never silent: a
+## score that simply never appears is this project's signature failure, #1027).
+func mark_alpha_tools_used(turn: int = -1) -> bool:
+	if alpha_tools_used:
+		return false  # one-way: later uses (or toggling the tool off) change nothing
+	alpha_tools_used = true
+	alpha_tools_first_use_turn = turn
+	print("[GameConfig] ALPHA TOOLS used (turn %d) -- this run is now permanently UNRANKED" % turn)
+	alpha_tools_first_used.emit(turn)
+	return true
+
+## The mid-run first-use warning -- the one place the player learns the flag is one-way.
+func alpha_tools_first_use_message() -> String:
+	if alpha_tools_first_use_turn >= 0:
+		return "[!] This run is now UNRANKED. Alpha Tools were used on turn %d. Turning them off does not undo this." % alpha_tools_first_use_turn
+	return "[!] This run is now UNRANKED. Alpha Tools were used. Turning them off does not undo this."
+
+## RUN-boundary reset. Legitimate callers: GameManager.start_new_game() (fresh run
+## starts clean) and load_saved_game (which immediately restores the SAVED run's own
+## flag from the envelope). Nothing player-reachable may call this mid-run -- that
+## would un-stick the one-way flag.
+func reset_alpha_tools_flag() -> void:
+	alpha_tools_used = false
+	alpha_tools_first_use_turn = -1
 
 ## Should the first-launch welcome/help overlay be shown? (issue #720)
 ## True only on a genuine first launch (no games played yet), when it has never
@@ -624,7 +720,7 @@ func print_config() -> void:
 	print("  Player: %s" % player_name)
 	print("  Lab: %s" % lab_name)
 	print("  Seed: %s" % get_display_seed())
-	print("  Difficulty: %s" % get_difficulty_string())
+	print("  Difficulty: %s (stored preference: %s)" % [get_effective_difficulty_string(), get_difficulty_string()])
 	print("  Scenario: %s" % (scenario_id if not scenario_id.is_empty() else "Standard"))
 	print("  Master Volume: %d%%" % master_volume)
 	print("  SFX Volume: %d%%" % sfx_volume)

@@ -23,6 +23,12 @@ static func build_envelope(state: GameState) -> Dictionary:
 		# Scenario custom events live as node meta (Issue #483), not in state
 		# serialization -- record the pack id so load can re-attach them.
 		"scenario_id": GameConfig.scenario_id,
+		# Alpha Tools sticky flag (decision card 2026-08-01): the flag belongs to the
+		# RUN, and a save IS the run -- carrying it here is what stops "use a dev
+		# power, save, load" from laundering the taint. Additive optional keys; old
+		# saves load clean via the .get() defaults in GameManager.load_saved_game.
+		"alpha_tools_used": GameConfig.alpha_tools_used,
+		"alpha_tools_first_use_turn": GameConfig.alpha_tools_first_use_turn,
 		"state": state.to_dict(),
 	}
 

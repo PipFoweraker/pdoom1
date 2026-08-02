@@ -103,7 +103,10 @@ func _build_ui() -> void:
 	var header := HBoxContainer.new()
 	outer.add_child(header)
 	var title := Label.new()
-	title.text = " DEV MODE"
+	# Player-facing name is "ALPHA TOOLS" (decision card 2026-08-01, ruled via PR
+	# #1096): "dev" describes who wrote it, "alpha" says it will not survive to the
+	# finished game -- the transience is in the name on purpose.
+	title.text = " ALPHA TOOLS"
 	title.add_theme_font_size_override("font_size", 22)
 	title.add_theme_color_override("font_color", Color(1.0, 0.75, 0.2))
 	header.add_child(title)
@@ -125,6 +128,15 @@ func _build_ui() -> void:
 	hint.add_theme_font_size_override("font_size", 10)
 	hint.add_theme_color_override("font_color", Color(0.55, 0.55, 0.6))
 	outer.add_child(hint)
+
+	# Warn ON THE TOGGLE surface (decision card 2026-08-01), in the established NOT
+	# RANKED amber -- amber already means "off the record" in two places.
+	var warn := Label.new()
+	warn.text = GameConfig.ALPHA_TOOLS_TOGGLE_WARNING
+	warn.add_theme_font_size_override("font_size", 11)
+	warn.add_theme_color_override("font_color", Color(1.0, 0.75, 0.25))
+	warn.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	outer.add_child(warn)
 
 	var sep := HSeparator.new()
 	outer.add_child(sep)
@@ -264,11 +276,26 @@ func _render() -> void:
 
 # --- Control handlers ------------------------------------------------------
 
+## ALPHA TOOL boundary (decision card 2026-08-01): every state-MUTATING control below
+## (nudges, day-step, event injection) calls this at the moment of actual mutation.
+## First use flips the run's sticky one-way UNRANKED flag and warns mid-run. The JUMP
+## buttons and the readout are navigation/observation, NOT alpha tools.
+func _mark_alpha_tool_use() -> void:
+	var gm := _live_gm()
+	var turn: int = -1
+	if gm != null and gm.state != null:
+		turn = gm.state.turn
+	if GameConfig.mark_alpha_tools_used(turn) and is_instance_valid(NotificationManager):
+		NotificationManager.show_notification(GameConfig.alpha_tools_first_use_message(),
+			NotificationManager.NotificationType.WARNING, 6.0)
+
+
 func _nudge(field: String, delta: float) -> void:
 	var gm := _live_gm()
 	var s = gm.state if gm != null else null
 	if s == null:
 		return
+	_mark_alpha_tool_use()
 	match field:
 		"money":
 			s.money = max(0.0, s.money + delta)
@@ -329,6 +356,7 @@ func _advance_turn() -> void:
 	var gm := _live_gm()
 	if not is_instance_valid(gm) or gm.state == null or gm.turn_manager == null:
 		return
+	_mark_alpha_tool_use()  # forced day-step bypasses the game's own guards -- alpha tool
 	# T2: there is no per-turn AP pool to un-commit. Queued cards already debited the
 	# month plan's Attention; GameManager.clear_action_queue does the refund.
 	gm.turn_manager.execute_turn()
@@ -342,6 +370,7 @@ func _queue_event(event_id: String) -> void:
 	var gm := _live_gm()
 	if not is_instance_valid(gm) or gm.state == null or event_id == "":
 		return
+	_mark_alpha_tool_use()  # event injection mutates the run -- alpha tool
 	# Inject into the pending queue exactly like SeedSchedule's inject_event cause does.
 	gm.state.pending_events.append({"id": event_id, "scheduled": true})
 	if is_instance_valid(NotificationManager) and NotificationManager.has_method("info"):

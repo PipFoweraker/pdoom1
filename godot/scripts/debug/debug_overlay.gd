@@ -36,6 +36,19 @@ func _live_gm() -> Node:
 func _ready():
 	panel.visible = false
 
+	# ALPHA TOOLS contract (decision card 2026-08-01): warn ON THE TOGGLE surface, in
+	# the established NOT RANKED amber. Injected in code so the .tscn stays untouched
+	# (the settings-layout lane owns scene files this week).
+	var vbox := panel.get_node("MarginContainer/VBoxContainer") as VBoxContainer
+	if vbox != null:
+		var warn := Label.new()
+		warn.text = GameConfig.ALPHA_TOOLS_TOGGLE_WARNING
+		warn.add_theme_color_override("font_color", Color(1.0, 0.75, 0.25))
+		warn.add_theme_font_size_override("font_size", 11)
+		warn.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		vbox.add_child(warn)
+		vbox.move_child(warn, 1)  # directly under the header row
+
 	# Connect to keybind signals
 	KeybindManager.debug_overlay_toggled.connect(toggle_visibility)
 
@@ -87,7 +100,10 @@ func update_game_state():
 	# Header
 	lines.append("[b]Game State[/b]")
 	lines.append("Turn: %d | Phase: %s" % [state.turn, GameState.TurnPhase.keys()[state.current_phase]])
-	lines.append("Seed: %s" % state.seed)
+	# GameState renamed `seed` -> `game_seed_str` (shadowed the built-in); this read
+	# kept the old name and ABORTED update_game_state with an invalid-access script
+	# error on every live render. Found by test_ranked_run_integrity's toggle test.
+	lines.append("Seed: %s" % state.game_seed_str)
 	lines.append("")
 
 	# Resources
@@ -331,9 +347,25 @@ func _on_rate_slider_value_changed(value):
 	refresh_rate = value
 	rate_label.text = "%.1fs" % value
 
+## ALPHA TOOL boundary (decision card 2026-08-01): every state-MUTATING poke below
+## calls this at the moment of actual mutation. First use flips the run's sticky
+## one-way UNRANKED flag and warns the player mid-run -- the only moment they can
+## learn the flag is one-way. Read-only tabs (state readout, errors, performance)
+## are NOT alpha tools: looking is free, touching is not. Called after the
+## null-guards, so an idle click with no live game taints nothing.
+func _mark_alpha_tool_use() -> void:
+	var gm = _live_gm()
+	var turn: int = -1
+	if gm and gm.state:
+		turn = gm.state.turn
+	if GameConfig.mark_alpha_tools_used(turn) and is_instance_valid(NotificationManager):
+		NotificationManager.show_notification(GameConfig.alpha_tools_first_use_message(),
+			NotificationManager.NotificationType.WARNING, 6.0)
+
 func _on_add_money_button_pressed():
 	var gm = _live_gm()
 	if gm and gm.state:
+		_mark_alpha_tool_use()
 		gm.state.money += 50000
 		gm.game_state_updated.emit(gm.state.to_dict())
 		ErrorHandler.info(ErrorHandler.Category.VALIDATION, "Debug: Added $50k", {})
@@ -341,6 +373,7 @@ func _on_add_money_button_pressed():
 func _on_add_ap_button_pressed():
 	var gm = _live_gm()
 	if gm and gm.state:
+		_mark_alpha_tool_use()
 		if gm.state.month_plan != null:
 			gm.state.month_plan.grant_hours(5, MonthPlan.HOUR_OPERATING)
 		gm.game_state_updated.emit(gm.state.to_dict())
@@ -405,6 +438,7 @@ func _trigger_specific_event(event: Dictionary, popup: AcceptDialog):
 	var event_name = event.get("name", "Unknown Event")
 	var event_id = event.get("id", "")
 
+	_mark_alpha_tool_use()  # event injection mutates the run -- alpha tool
 	ErrorHandler.info(ErrorHandler.Category.EVENTS, "Debug: Triggering event '%s'" % event_name, {"event_id": event_id})
 
 	# Add to pending events so it will be shown to player
@@ -427,6 +461,9 @@ func _on_commit_plan_button_pressed():
 		# Would need to implement commit plan
 
 func _on_reset_game_button_pressed():
+	# Deliberately NOT an alpha-tool mark: this abandons the current run and starts a
+	# NEW one, and start_new_game resets the run-scoped flag anyway -- the fresh run
+	# is genuinely clean, it contains no dev-touched state.
 	var gm = _live_gm()
 	if gm:
 		ErrorHandler.info(ErrorHandler.Category.VALIDATION, "Debug: Reset game requested", {})
