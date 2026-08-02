@@ -538,6 +538,17 @@ func _input(event: InputEvent):
 			# else: key isn't a choice for this dialog (e.g. R on a 3-option event).
 			# Fall through to ESC handling; other keys are blocked below. No scary log.
 
+			# B1: SPACE advances a one-costless-option NAVIGATION popup (the month review).
+			# Checked before the block-everything branch below, and only for dialogs that
+			# opted in via the "space_advances" meta -- see dialog_key_advances().
+			if dialog_key_advances(active_dialog, event.keycode) and not active_dialog_buttons.is_empty():
+				var nav_btn = active_dialog_buttons[0]
+				if nav_btn != null and is_instance_valid(nav_btn) and not nav_btn.disabled:
+					print("[MainUI] *** SPACE advancing navigation dialog: %s ***" % nav_btn.text)
+					nav_btn.pressed.emit()
+					get_viewport().set_input_as_handled()
+					return
+
 			# ESC key: only close submenu dialogs (hiring, fundraising), NOT event dialogs
 			# Event dialogs must be completed to prevent soft-lock (issue #452)
 			if event.keycode == KEY_ESCAPE:
@@ -649,6 +660,23 @@ func _dialog_button_index_for_key(keycode: int) -> int:
 		return keycode - KEY_1
 	var letter_keys = [KEY_Q, KEY_W, KEY_E, KEY_R, KEY_A, KEY_S, KEY_D, KEY_F, KEY_Z]
 	return letter_keys.find(keycode)
+
+static func dialog_key_advances(dialog: Control, keycode: int) -> bool:
+	"""B1: does this key advance THIS dialog past the block-all rule in _input?
+
+	Only SPACE, and only on a dialog that opted in via the "space_advances" meta
+	(EventDialog sets it for a one-costless-option navigation popup -- the month review).
+	ENTER returns false unconditionally and there is no meta that can change that: Pip's
+	[5:03] ruling is that ENTER is the commit-plan key and must not be trainable as a
+	dismiss-the-popup reflex, or players will commit turns by muscle memory.
+
+	Static + parameterised on purpose -- it is the whole decision, so it is unit-testable
+	without instantiating the 3k-line MainUI or a live input stack."""
+	if keycode != KEY_SPACE:
+		return false
+	if dialog == null or not is_instance_valid(dialog):
+		return false
+	return bool(dialog.get_meta("space_advances", false))
 
 func _trigger_action_by_index(index: int):
 	"""Trigger action button by its index (for keyboard shortcuts)"""

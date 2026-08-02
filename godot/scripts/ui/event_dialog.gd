@@ -82,6 +82,32 @@ static func format_cost_summary(costs: Dictionary) -> String:
 		return " (Free)"
 	return " (%s)" % ", ".join(parts)
 
+
+## Teal of the bottom bar's END TURN button (scenes/main.tscn:378). The month loop's two
+## forward doors must look like siblings -- see is_navigation_popup below.
+const PRIMARY_TEAL := Color(0.118, 0.765, 0.702, 1.0)
+
+
+static func is_navigation_popup(event: Dictionary) -> bool:
+	"""True when this popup is a DOOR, not a decision: exactly one option, costing nothing.
+
+	B2/B3 (playtest 2026-08-01, [4:55]): the month review is a generic event, so its single
+	'Begin planning August 2017' option was wearing crisis-option chrome -- the letter-menu
+	prefix `[Q]` (an arbitrary index into dialog_key_labels) and the ` (Free)` cost suffix, a
+	price tag on a door that was never for sale. Neither communicates anything when there is
+	no choice to weigh, and the dark-gray option styling reads half-disabled next to the teal
+	END TURN.
+
+	Free-ness is decided by asking format_cost_summary what it WOULD have printed, so this
+	predicate can never disagree with the chrome it suppresses."""
+	var options = event.get("options", [])
+	if not (options is Array) or options.size() != 1:
+		return false
+	var only = options[0]
+	if not (only is Dictionary):
+		return false
+	return format_cost_summary(only.get("costs", {})) == " (Free)"
+
 func _show_next_event() -> void:
 	"""Show the next event in queue (sequential presentation)"""
 	if event_queue.is_empty():
@@ -202,6 +228,12 @@ func _show_next_event() -> void:
 	var buttons = []  # Store buttons for keyboard access
 	var dialog_key_labels = ["Q", "W", "E", "R", "A", "S", "D", "F", "Z"]
 
+	# B2/B3: a one-costless-option popup is navigation, not deliberation. Its button drops the
+	# letter-menu prefix and the "(Free)" price tag, hints the key the player actually reaches
+	# for, and takes primary-action styling. The letter key still WORKS (MainUI's key map is
+	# positional) -- it is only unadvertised.
+	var is_navigation := is_navigation_popup(event)
+
 	for option in options:
 		var choice_id = option.get("id", "")
 		var choice_text = option.get("text", "")
@@ -213,8 +245,15 @@ func _show_next_event() -> void:
 
 		# Add keyboard hint (LETTERS not numbers) + inline cost summary (#510)
 		var key_label = dialog_key_labels[button_index] if button_index < dialog_key_labels.size() else ""
-		btn.text = "[%s] %s%s" % [key_label, choice_text, format_cost_summary(costs)]
-		btn.custom_minimum_size = Vector2(500, 45)
+		if is_navigation:
+			btn.text = "%s   [SPACE]" % choice_text
+			btn.custom_minimum_size = Vector2(520, 54)
+			btn.add_theme_font_size_override("font_size", 16)
+			btn.add_theme_color_override("font_color", PRIMARY_TEAL)
+			btn.add_theme_color_override("font_hover_color", Color(1, 1, 1, 1))
+		else:
+			btn.text = "[%s] %s%s" % [key_label, choice_text, format_cost_summary(costs)]
+			btn.custom_minimum_size = Vector2(500, 45)
 
 		# Add button border for better definition
 		var button_style = StyleBoxFlat.new()
@@ -228,11 +267,19 @@ func _show_next_event() -> void:
 		button_style.corner_radius_top_right = 4
 		button_style.corner_radius_bottom_right = 4
 		button_style.corner_radius_bottom_left = 4
+		if is_navigation:
+			# Primary action: teal-on-dark, teal border. Deliberately NOT a flat teal fill --
+			# the label text sits on this panel and a saturated block would out-shout the
+			# review it is meant to close.
+			button_style.bg_color = Color(0.07, 0.20, 0.19, 1.0)
+			button_style.border_color = PRIMARY_TEAL
 		btn.add_theme_stylebox_override("normal", button_style)
 
 		# Hover state
 		var button_style_hover = button_style.duplicate()
 		button_style_hover.bg_color = Color(0.3, 0.3, 0.3, 1.0)  # Lighter on hover
+		if is_navigation:
+			button_style_hover.bg_color = PRIMARY_TEAL
 		btn.add_theme_stylebox_override("hover", button_style_hover)
 
 		# Affordability DISPLAY (grey-out + tooltip). This is player information, not
@@ -291,6 +338,14 @@ func _show_next_event() -> void:
 
 	# Mark this as an event dialog to prevent ESC from closing it (issue #452)
 	dialog.set_meta("is_event_dialog", true)
+
+	# B1 (Pip, [4:55]-[5:03]): "maybe a space bar or something as well -- maybe not enter, if
+	# enter is going to be the commit turn thing, we don't want people doing that accidentally."
+	# MainUI._input blocks SPACE and ENTER outright while any dialog is up (correct: it stops an
+	# accidental end-turn/commit landing on a crisis). This meta is the narrow, opt-in exception:
+	# a costless one-option navigation popup declares that SPACE means "go through the door".
+	# ENTER carries no such flag anywhere and stays inert by design.
+	dialog.set_meta("space_advances", is_navigation)
 
 	# #877: pin the root-level blocker to the panel's lifetime, so ANY teardown path takes the
 	# blocker with it -- the same idiom main_ui._present_modal_dialog uses for its barrier.

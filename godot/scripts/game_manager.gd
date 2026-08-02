@@ -26,6 +26,21 @@ var day_tick_seconds: float = 0.2
 # deliberately NOT serialized (a loaded game just shows "flat" on its first review). Never
 # read by the simulation, so it cannot touch determinism.
 var _rival_cap_snapshot: Dictionary = {}
+
+## A4 (playtest 2026-08-01): the month review showed LEVELS the HUD already shows. To show
+## MOVEMENT instead it needs two readings per stat.
+##   _month_stat_snapshot -- the reading taken at the last month boundary, i.e. the START of
+##                           the month now being reviewed. Empty before the first boundary.
+##   _last_tick_stats     -- the reading taken immediately BEFORE each day tick. At the moment
+##                           the boundary tick reports "month_open", this still holds the LAST
+##                           DAY of the old month. That matters: the boundary tick has already
+##                           run MonthController._open_plan_month(), which charges the NEW
+##                           month's office rent -- reading state.money at review time would
+##                           book next month's rent against last month's funds delta, every
+##                           month, in the same direction.
+## Display-only. Nothing here feeds the sim, so determinism/replay are untouched.
+var _month_stat_snapshot: Dictionary = {}
+var _last_tick_stats: Dictionary = {}
 # Synthetic month-review dialog id -- intercepted by resolve_event before any engine path.
 const MONTH_REVIEW_EVENT_ID := "__month_review__"
 
@@ -76,6 +91,8 @@ func start_new_game(game_seed: String = "", force: bool = false):
 	month_playback_active = false
 	_release_game_objects()
 	_rival_cap_snapshot.clear()  # fresh drift baseline for the new run
+	_month_stat_snapshot.clear()  # A4: no month has elapsed yet, so there is no movement to show
+	_last_tick_stats.clear()
 
 	state = GameState.new(game_seed)
 	# Early-game org-form choice (DQ-19): copy the pregame selection onto the pure state
@@ -728,6 +745,10 @@ func _run_month_playback() -> void:
 		await get_tree().create_timer(day_tick_seconds).timeout
 		if not month_playback_active or state == null or state.game_over:
 			break
+		# A4: last reading BEFORE the tick. If this tick turns out to be the boundary, this is
+		# the true end-of-month state -- captured before _open_plan_month charges the new
+		# month's rent. See the _last_tick_stats declaration.
+		_last_tick_stats = _capture_month_stats()
 		var r: Dictionary = month_controller.advance_tick()
 		game_state_updated.emit(state.to_dict())
 		for item in r.get("feed", []):
@@ -767,18 +788,116 @@ func _finish_month_playback() -> void:
 	month_playback_active = false
 	var label := Clock.month_label(state.turn, state.start_year, state.start_month, state.start_day)
 	var attention_now: int = state.month_plan.available() if state.month_plan else 0
+
+	# A4: end-of-month reading is the pre-boundary tick where we have one; a run resumed from a
+	# save (or a boundary reached without ticking) falls back to the live state.
+	var end_stats: Dictionary = _last_tick_stats if not _last_tick_stats.is_empty() else _capture_month_stats()
+
+	# A1 (Pip, [3:45]): "funds is good, but I CAN SEE THAT UP HERE, so this is NOT FRESH
+	# INFORMATION." The Funds/Doom/Staff LEVEL line is gone -- the top bar owns funds, the doom
+	# meter owns doom, the roster owns staff. What the HUD cannot show is what MOVED over the
+	# month, so that is all this block prints, and only for stats that actually moved.
+	var body := "%s begins.\n\nAttention: %d fresh decisions this month (last month's unspent reserve evaporated -- no banking).%s%s" % [
+		label, attention_now,
+		_build_month_movement_section(_month_stat_snapshot, end_stats),
+		_build_rivals_review_section()]
+
 	var review := {
 		"id": MONTH_REVIEW_EVENT_ID,
 		"name": "Month Review -- %s" % label,
-		"description": "%s begins.\n\nAttention: %d fresh decisions this month (last month's unspent reserve evaporated -- no banking).\nFunds: %s   |   Doom: %.1f%%   |   Staff: %d%s\n\nQueue this month's actions, then End Turn to play the month out." % [
-			label, attention_now, GameConfig.format_money(state.money), state.doom, state.get_total_staff(),
-			_build_rivals_review_section()],
+		"description": "%s\n\nQueue this month's actions, then End Turn to play the month out." % body,
 		"type": "popup",
 		"options": [
 			{"id": "begin_planning", "text": "Begin planning %s" % label, "costs": {}, "effects": {}}
 		],
 	}
+	# A10: the review is also the WATCH feed's permanent record, so dismissing the popup costs
+	# the player nothing and months can be compared by scrolling back. Emitted BEFORE the popup
+	# so the feed line exists even if the popup is torn down by some other path.
+	_log_month_review_to_feed(review.get("name", ""), body)
 	event_triggered.emit(review)
+
+	# The new month has begun; this reading is the baseline the NEXT review measures against.
+	_month_stat_snapshot = _capture_month_stats()
+
+
+func _capture_month_stats() -> Dictionary:
+	"""A4: the three headline stats, read off live state. Display-only, no RNG, no writes."""
+	if state == null:
+		return {}
+	return {
+		"money": float(state.money),
+		"doom": float(state.doom),
+		"staff": int(state.get_total_staff()),
+	}
+
+
+func _build_month_movement_section(start_stats: Dictionary, end_stats: Dictionary) -> String:
+	"""A4: start -> end movement for the month just played. Returns "" when there is no
+	baseline (first month of a run, or a freshly loaded save) or when nothing moved -- a
+	'Funds unchanged' line would be exactly the non-fresh information A1 deleted.
+
+	Doom is reported as BAND movement only, never a number and never per-cause. ADR-0015 makes
+	doom a computed consequence of world state, so a printed per-source delta would be a lie
+	about how doom works; per-cause attribution stays behind the paid doom-breakdown instrument
+	(ADR-0001, spending-buys-sight). A start/end band comparison is world-state display, using
+	ThemeManager's canonical band labels -- the same non-color channel the HUD already uses."""
+	if start_stats.is_empty() or end_stats.is_empty():
+		return ""
+	var lines: Array[String] = []
+
+	var money_start := float(start_stats.get("money", 0.0))
+	var money_end := float(end_stats.get("money", 0.0))
+	if not is_equal_approx(money_start, money_end):
+		var money_delta := money_end - money_start
+		lines.append("  Funds   %s -> %s   (%s%s)" % [
+			GameConfig.format_money(money_start), GameConfig.format_money(money_end),
+			"+" if money_delta > 0.0 else "-", GameConfig.format_money(abs(money_delta))])
+
+	var staff_start := int(start_stats.get("staff", 0))
+	var staff_end := int(end_stats.get("staff", 0))
+	if staff_start != staff_end:
+		lines.append("  Staff   %d -> %d   (%s%d)" % [
+			staff_start, staff_end, "+" if staff_end > staff_start else "-", abs(staff_end - staff_start)])
+
+	var doom_move := _doom_band_movement(float(start_stats.get("doom", 0.0)), float(end_stats.get("doom", 0.0)))
+	if doom_move != "":
+		lines.append("  Doom    %s" % doom_move)
+
+	if lines.is_empty():
+		return ""
+	return "\n\nLast month's movement:\n" + "\n".join(lines)
+
+
+func _doom_band_movement(doom_start: float, doom_end: float) -> String:
+	"""A4/ADR-0015: band crossing only. "" when the band did not change -- an unchanged band is
+	already legible on the doom meter, so printing it would re-open the A1 complaint."""
+	var band_start := ThemeManager.get_doom_band_index(doom_start)
+	var band_end := ThemeManager.get_doom_band_index(doom_end)
+	if band_start == band_end:
+		return ""
+	var direction := "crossed up" if band_end > band_start else "eased down"
+	return "%s -> %s   (%s)" % [
+		ThemeManager.get_doom_status_label(doom_start), ThemeManager.get_doom_status_label(doom_end),
+		direction]
+
+
+func _log_month_review_to_feed(review_name: String, body: String) -> void:
+	"""A10 (Pip, [3:49] "it's actually just kind of popping up and blocking the screen"): half
+	of why the modal feels bad is that dismissing it DESTROYS the only copy. Mirror every
+	review into the WATCH feed so closing it is free and past months stay comparable.
+
+	Channel "review" is new and unfiltered -- the existing toggles suppress only "flavour"
+	(the arxiv flood) and "rivals" (the intel toggle), so a review can never be silently
+	hidden. This is a palliative for the blocking complaint, not the fix: A5 (review as a
+	panel, or docked into the plan screen) is the structural answer and is NOT in this PR."""
+	var block := "[color=cyan]== %s ==[/color]" % review_name
+	for raw_line in body.split("\n"):
+		var line := String(raw_line).strip_edges()
+		if line == "":
+			continue
+		block += "\n[color=gray]  %s[/color]" % line
+	action_executed.emit({"success": true, "channel": "review", "message": block})
 
 
 func _build_rivals_review_section() -> String:
@@ -866,6 +985,11 @@ func load_saved_game(path: String = SaveLoad.QUICKSAVE_PATH, force: bool = false
 	# turn_manager on every load.
 	_release_game_objects()
 	_rival_cap_snapshot.clear()  # drift baseline restarts from the loaded snapshot
+	# A4: the movement baseline is NOT serialized (display-only). A loaded run therefore shows
+	# no movement block on its first review, then resumes normally -- degrade quietly rather
+	# than print a delta measured against a month the player did not play.
+	_month_stat_snapshot.clear()
+	_last_tick_stats.clear()
 	state = loaded
 	# Scenario custom events live as node meta (Issue #483), not in state
 	# serialization -- re-attach them from the pack recorded in the envelope.
