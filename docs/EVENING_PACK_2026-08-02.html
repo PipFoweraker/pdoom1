@@ -1,0 +1,185 @@
+<title>Evening pack -- Sunday session close</title>
+<style>
+  @page { size: A4 portrait; margin: 13mm 12mm; }
+  html { font-size: 12.5pt; }
+  body { font-family: "Segoe UI", Calibri, Arial, sans-serif; line-height: 1.42;
+         color: #000; background: #fff; max-width: 190mm; margin: 0 auto; }
+  .stamp { border: 3pt solid #000; background: #1a1a1a; color: #fff;
+           padding: 3mm 4mm; margin: 0 0 4mm; }
+  .stamp .big { font-size: 18pt; font-weight: 700; line-height: 1.15; }
+  .stamp .meta { font-size: 11.5pt; margin-top: 1.5mm; }
+  h1 { font-size: 16.5pt; margin: 0 0 2mm; }
+  h2 { font-size: 14pt; margin: 5.5mm 0 2mm; padding: 1.6mm 2.5mm;
+       background: #1a1a1a; color: #fff; page-break-after: avoid; }
+  h3 { font-size: 12.8pt; margin: 4mm 0 1.5mm; page-break-after: avoid; }
+  p, li, td, th { font-size: 12.5pt; }
+  table { border-collapse: collapse; width: 100%; margin: 2mm 0 3.5mm; }
+  th, td { border: 1px solid #444; padding: 1.9mm 2.3mm; text-align: left; vertical-align: top; }
+  th { background: #e8e8e8; font-weight: 700; }
+  td.n { white-space: nowrap; font-weight: 700; width: 15mm; }
+  .box { border: 2.2pt solid #000; padding: 2.8mm 3.4mm; margin: 3.5mm 0; page-break-inside: avoid; }
+  .box.hi { border-width: 3pt; background: #f2f2f2; }
+  .chk { display: inline-block; width: 4.8mm; height: 4.8mm; border: 1.7pt solid #000;
+         margin-right: 2.2mm; vertical-align: -0.7mm; }
+  ul, ol { margin: 1.2mm 0 2.5mm; padding-left: 7mm; }
+  li { margin-bottom: 1.2mm; }
+  code { font-family: Consolas, "Courier New", monospace; font-size: 11.3pt;
+         background: #eee; padding: 0.3mm 1mm; }
+  .note { font-size: 11.5pt; color: #222; }
+  .pb { page-break-before: always; }
+  .foot { font-size: 11.5pt; color: #333; border-top: 1.2pt solid #999;
+          margin-top: 4mm; padding-top: 2mm; }
+  @media (prefers-color-scheme: dark) { html, body { background:#fff; color:#000; } }
+</style>
+
+<div class="stamp">
+  <div class="big">EVENING PACK &nbsp;&middot;&nbsp; SESSION CLOSE</div>
+  <div class="meta">
+    Nine agents fired, nine home. <strong>Four PRs open, all green, none merged.</strong>
+    Two questions need you before anything ships. Everything else can wait.
+  </div>
+</div>
+
+<h1>The two questions</h1>
+
+<div class="box hi">
+  <h3 style="margin-top:0">1. Do we control <code>pdoom.org</code>? &nbsp;(issue #1101)</h3>
+  <p>
+    <code>event_service.gd:26</code> ships <code>const API_BASE_URL = "https://api.pdoom.org/v1"</code>
+    -- comment says <em>"Future API endpoint"</em> -- and fetches a timeline that is ingested
+    <strong>without schema validation</strong>.
+  </p>
+  <p>Measured:</p>
+  <table style="margin:1.5mm 0">
+    <tr><td><code>pdoom.org</code></td><td>185.199.108-111.153 &nbsp;<span class="note">(GitHub Pages)</span></td></tr>
+    <tr><td><code>api.pdoom.org</code></td><td>NXDOMAIN -- does not exist</td></tr>
+    <tr><td><code>pdoom1.com</code></td><td>173.236.253.218 &nbsp;<span class="note">(DreamHost, ours)</span></td></tr>
+  </table>
+  <p style="margin-bottom:0">
+    <strong>Inert today</strong> -- the subdomain does not resolve, the request fails.
+    <strong>If we own <code>pdoom.org</code>:</strong> dead config, delete it.
+    <strong>If we do not:</strong> every shipped binary looks up a subdomain on a stranger's
+    domain, and the day they add an <code>api</code> record our clients start parsing whatever
+    comes back. One word from you decides which.
+    <br><br><span class="chk"></span> ours &nbsp;&nbsp; <span class="chk"></span> not ours
+    &nbsp;&nbsp; <span class="chk"></span> don't know -- go find out
+  </p>
+</div>
+
+<div class="box hi">
+  <h3 style="margin-top:0">2. This is your SECOND burst</h3>
+  <p style="margin-bottom:0">
+    The extended series shows <strong>Sep-Nov 2025 peaked at 152 commits/week, followed by
+    roughly six months of near-silence.</strong> That is the only base rate this repo has for
+    what follows a burst, and it arrived as evidence for the box you double-ticked rather than
+    as an argument.<br><br>
+    Four launch models are in your tray. The question that collapses them:
+    <strong>"When the hours are withdrawn, does the leverage stay?"</strong> -- proposed test is
+    a calibration week, first ordinary August week, capped at 6h, hours logged honestly.
+  </p>
+</div>
+
+<h2>Four PRs, all green, none merged</h2>
+
+<table>
+  <tr><th class="n">PR</th><th>What</th><th>Tests</th></tr>
+  <tr><td class="n">#1099</td><td><strong>Release pipeline.</strong> Output names derived from the preset instead of hardcoded <code>PDoom.exe</code>; freshness check now descends into zips; <code>PDoom-Linux.zip</code> alias published from the next cut</td><td>+19 py</td></tr>
+  <tr><td class="n">#1100</td><td><strong>Month review.</strong> A1 cut redundant state, A4 deltas not levels, A10 reviews land in the feed; button B1 SPACE advances / B2 costume stripped / B3 primary styling</td><td>1031 -&gt; 1055</td></tr>
+  <tr><td class="n">#1103</td><td><strong>Settings.</strong> Front card (dir 5) + operations board (dir 1) in one scene. <strong>Apply killed</strong>, persist-on-change. No ScrollContainer anywhere -- the fold bug cannot recur</td><td>1031 -&gt; 1035</td></tr>
+  <tr><td class="n">#1104</td><td><strong>Ranked-run integrity.</strong> <code>effective_difficulty()</code> accessor closes #1084; Alpha Tools sticky one-way flag, carried in the save envelope</td><td>1031 -&gt; 1044</td></tr>
+</table>
+
+<h3>Three judgement calls inside them worth knowing</h3>
+
+<p>
+  <strong>#1099 refused a fix.</strong> It would not publish a bare <code>PDoom.x86_64</code> to
+  match the website's current button, because without the sibling <code>.pck</code> and the
+  GodotSteam <code>.so</code> it cannot run: <em>"converting a 404 into a silently-broken
+  download is worse."</em> The website needs the new name -- <code>PDoom-Linux.zip</code>.
+</p>
+
+<p>
+  <strong>#1103 killed Apply rather than fixing it.</strong> Reasoning: a discard-on-Back dialog
+  <em>"keeps the trap open for ESC/alt-F4 exits"</em>. Persist-on-change with a debounce and an
+  <code>_exit_tree</code> backstop instead. Reversible in one function if you disagree.
+</p>
+
+<p>
+  <strong>#1104 rejected the option I leaned toward.</strong> I suggested forcing Standard inside
+  <code>_apply_difficulty_settings()</code>. It argued that buries the rule in one function body
+  where the next consumer of the raw field misses it -- <em>"the #1058 mistake, one level
+  down"</em> -- and built a named <code>effective_difficulty()</code> accessor instead, the #1060
+  shape. It is right and I was wrong.
+</p>
+
+<h2 class="pb">Three bugs found incidentally, none of which anyone was looking for</h2>
+
+<div class="box">
+  <h3 style="margin-top:0">The month review would have booked next month's rent, forever</h3>
+  <p style="margin-bottom:0">
+    <code>MonthController.advance_tick()</code> runs <code>_open_plan_month()</code> -- which
+    <strong>charges the new month's office rent</strong> -- <em>before</em> the review is built.
+    Reading <code>state.money</code> at render time books next month's rent against last month's
+    delta, <strong>every month, in the same direction</strong>, and it looks entirely plausible.
+    Caught only because A4 required reading the number.
+  </p>
+</div>
+
+<div class="box">
+  <h3 style="margin-top:0">The first rival report is guaranteed to be empty</h3>
+  <p style="margin-bottom:0">
+    <code>game_manager.gd:796</code> seeds the drift baseline with the current value on first
+    read, so the first month review <strong>always prints "capabilities flat" three times</strong>
+    regardless of what rivals actually did. Your [3:58] complaint was even more right than it
+    looked -- the first framed appearance of rivals is structurally information-free.<br><br>
+    Related: the first UI element that ever names the concept is the WATCH screen's
+    <strong>"Hide rival intel" toggle</strong> -- a mute button for a channel never introduced.
+  </p>
+</div>
+
+<div class="box">
+  <h3 style="margin-top:0">The F3 debug overlay has been crashing on every render</h3>
+  <p style="margin-bottom:0">
+    <code>debug_overlay.gd</code> reads <code>state.seed</code>, renamed to
+    <code>game_seed_str</code>, aborting the Game State tab every time it drew. One-line fix,
+    regression-covered, in #1104. Found by a test written for something else.
+  </p>
+</div>
+
+<h2>Two guards proved they can fail</h2>
+<p>
+  Per the #1082 lesson, #1104 broke its own guards on purpose: reverting difficulty consumption
+  to the raw field turned <strong>2 tests red</strong> (Easy grant 24, Hard grant 16 reaching
+  game state); removing the alpha-tools check from <code>is_ranked_run()</code> turned
+  <strong>5 tests red</strong>. Both restored to green. #1100 did the same for its layout test.
+  <span class="note">A guard never observed failing has not been tested.</span>
+</p>
+
+<h2>Printed today</h2>
+<table>
+  <tr><td class="n">1</td><td>Postmortem prep -- and the answer to #1094 (scores were NOT lost; the outbox spools and retries)</td></tr>
+  <tr><td class="n">2</td><td>Sabbath walkpack -- wins, numbers, the three unseen postmortem inputs</td></tr>
+  <tr><td class="n">3</td><td>Velocity report -- six estimators, calendar weeks, your portfolio weights</td></tr>
+  <tr><td class="n">4</td><td><strong>Launch schedule models</strong> -- four, plus the deciding question</td></tr>
+  <tr><td class="n">5</td><td><strong>Rivals introduction</strong> -- seven options, build-first recommendation B2 "First Contact"</td></tr>
+  <tr><td class="n">6</td><td><strong>pdoom-data contract card</strong> -- field inventory, retire rarity, three options</td></tr>
+</table>
+
+<h2>Housekeeping done</h2>
+<p class="note">
+  Five stale worktrees and eighteen dangling branches removed, after verifying each merged fix's
+  marker is present in <code>main</code>. One stash dropped (build-stamp churn, regenerated by
+  every build). Repo is clean; only the four live PR worktrees remain.
+</p>
+
+<div class="box hi">
+  <strong>Nothing is merged, nothing is running, nothing degrades overnight.</strong>
+  Four PRs sit green and waiting. The board has been correct since Friday.
+  <strong>IP / trademark is tomorrow</strong> -- #1061 has the question list ready to hand to the
+  lawyers, and that is the only thing on the calendar.
+</div>
+
+<p class="foot">
+  Session close &middot; nine agents dispatched, nine returned &middot; 4 PRs open all green
+  &middot; issues filed today: #1097 #1099-#1104 &middot; main <code>ecc12773</code>
+</p>
