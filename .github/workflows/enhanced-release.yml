@@ -364,6 +364,30 @@ jobs:
         run: |
           python scripts/verify_release_urls.py --file "public/releases/${RELEASE_VERSION}.json"
 
+      # The step above only checks URLs the FEED lists, and the feed lists
+      # versioned zips only. The website's download buttons are a second,
+      # independent path: fixed strings against releases/latest/download/<name>.
+      # That is exactly how #1068 hid -- the feed check passed green on every
+      # release while the site's Linux button 404'd, because the unversioned
+      # PDoom-Linux.zip alias was never published and never checked. Assert the
+      # aliases exist ON THIS TAG (deterministic; `latest` may not have flipped
+      # yet, and a prerelease never becomes Latest at all).
+      - name: Verify the unversioned platform aliases were published
+        env:
+          RELEASE_VERSION: ${{ github.event.inputs.version || github.ref_name }}
+        run: |
+          fail=0
+          for asset in PDoom-Windows.zip PDoom-Linux.zip PDoom.app.zip; do
+            url="https://github.com/${GITHUB_REPOSITORY}/releases/download/${RELEASE_VERSION}/${asset}"
+            code=$(curl -sIL -o /dev/null -w '%{http_code}' "$url")
+            echo "  $code  $url"
+            if [ "$code" != "200" ]; then
+              echo "::error::Unversioned alias asset missing: ${asset} (HTTP ${code}). The website download button for this platform will 404."
+              fail=1
+            fi
+          done
+          exit $fail
+
       - name: Sweep committed feed index for rotted entries (report-only)
         # Report-only on purpose: an OLD entry going 404 (e.g. a release that
         # was later deleted, like v0.9.0) is a separate, non-urgent cleanup

@@ -25,6 +25,21 @@ FRESHNESS-ANCHOR NOTE (why a marker FILE, not a grepped string):
     DO survive in the pack file table. So we anchor on a unique FILENAME, which is a
     reliable, encoding-independent freshness proof.
 
+OUTPUT-NAME NOTE (issue #1072):
+    The output FILENAME is read from the chosen preset's own `export_path` in
+    `godot/export_presets.cfg` (`PDoom.exe` / `PDoom.x86_64` / `PDoom.app.zip`), never
+    hardcoded. One source of truth, so this tool cannot produce a differently-named
+    artifact than a manual editor export, and three presets sharing one `--output`
+    directory can no longer silently overwrite each other.
+
+ZIPPED-BUNDLE NOTE (issue #1072):
+    The macOS preset emits a `.app.zip`. Its marker filename lives inside a COMPRESSED
+    zip entry (the bundled `.pck`), not in the zip's plaintext central directory, so a
+    raw byte scan of the container would report a FALSE freshness failure. The check
+    therefore descends into zip entries. It is never weakened to compensate: skipping
+    verification (or reaching for `--no-clean`) would discard the single guarantee this
+    tool exists to provide.
+
 RENDER-GATE LIMITATION:
     A clean, verified pack proves the RIGHT BITS shipped. It does NOT prove the game runs
     on a real GPU -- headless tooling never GPU-decodes textures or runs the release
@@ -40,12 +55,14 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import re
 import shutil
 import subprocess
 import sys
 import uuid
-from pathlib import Path
-from typing import Optional
+import zipfile
+from pathlib import Path, PurePosixPath
+from typing import Dict, List, Optional
 
 DEFAULT_GODOT_CANDIDATES = [
     Path("C:/Program Files/Godot/Godot_v4.5.1-stable_win64.exe"),
@@ -55,6 +72,121 @@ DEFAULT_GODOT_CANDIDATES = [
     Path("/usr/local/bin/godot"),
     Path("/Applications/Godot.app/Contents/MacOS/Godot"),
 ]
+
+
+# --- preset -> output filename (issue #1072) ---------------------------------
+# export_presets.cfg is INI-SHAPED BUT NOT INI: the macOS preset carries
+# multi-line unindented dict values (e.g. application/copyright_localized={...}),
+# which configparser rejects. So this scans line-wise for exactly the three
+# top-level `[preset.N]` keys we need and ignores everything else, including the
+# `[preset.N.options]` sub-sections.
+_SECTION_RE = re.compile(r"^\[(?P<section>[^\]]+)\]\s*$")
+_PRESET_SECTION_RE = re.compile(r"^preset\.\d+$")
+_QUOTED_KV_RE = re.compile(r'^(?P<key>name|platform|export_path)\s*=\s*"(?P<value>.*)"\s*$')
+
+
+def parse_export_presets(text: str) -> List[Dict[str, str]]:
+    """Parse export_presets.cfg into an ordered list of top-level preset dicts.
+
+    Each dict carries whichever of name/platform/export_path the preset declared.
+    """
+    presets: List[Dict[str, str]] = []
+    current: Optional[Dict[str, str]] = None
+    for raw_line in text.splitlines():
+        section = _SECTION_RE.match(raw_line.strip())
+        if section:
+            if _PRESET_SECTION_RE.match(section.group("section")):
+                current = {}
+                presets.append(current)
+            else:
+                # [preset.N.options] or anything else -- stop collecting.
+                current = None
+            continue
+        if current is None:
+            continue
+        kv = _QUOTED_KV_RE.match(raw_line.strip())
+        if kv:
+            current[kv.group("key")] = kv.group("value")
+    return presets
+
+
+def output_name_for_preset(text: str, preset_name: str) -> str:
+    """Return the output FILENAME the given preset exports to.
+
+    Derived from the preset's own `export_path`, so it cannot drift from what a
+    manual (editor or `--export-release`) export produces. Raises ValueError with
+    the available preset names if the preset is missing or has no export_path.
+    """
+    presets = parse_export_presets(text)
+    available = [p["name"] for p in presets if p.get("name")]
+    for preset in presets:
+        if preset.get("name") != preset_name:
+            continue
+        export_path = (preset.get("export_path") or "").strip()
+        if not export_path:
+            raise ValueError(
+                f"preset {preset_name!r} has an empty export_path in export_presets.cfg; "
+                "set one in the Godot export dialog so the output filename has a source."
+            )
+        # export_path is written with forward slashes by Godot; normalise anyway.
+        name = PurePosixPath(export_path.replace("\\", "/")).name
+        if not name:
+            raise ValueError(
+                f"preset {preset_name!r} export_path {export_path!r} has no filename component."
+            )
+        return name
+    raise ValueError(
+        f"preset {preset_name!r} not found in export_presets.cfg. Available: {available}"
+    )
+
+
+# --- freshness-marker search (issue #1072: zipped bundles) --------------------
+_SCAN_CHUNK = 1 << 20  # 1 MiB
+
+
+def _stream_contains(fh, needle: bytes) -> bool:
+    """Chunked substring search over a binary stream (packs are hundreds of MB).
+
+    Carries a needle-1 byte tail between chunks so a match straddling a chunk
+    boundary is still found.
+    """
+    overlap = len(needle) - 1
+    tail = b""
+    while True:
+        chunk = fh.read(_SCAN_CHUNK)
+        if not chunk:
+            return False
+        if needle in tail + chunk:
+            return True
+        tail = (tail + chunk)[-overlap:] if overlap else b""
+
+
+def find_marker(path: Path, needle: bytes) -> Optional[str]:
+    """Look for the freshness marker in `path`. Returns a human-readable location
+    (or None if absent).
+
+    For a zip container (the macOS `.app.zip`), the marker's res:// filename sits
+    inside a COMPRESSED entry -- the bundled `.pck` -- so scanning the container's
+    raw bytes would find nothing and report a false failure. Descend into the
+    entries instead: entry NAMES first (cheap), then entry CONTENTS.
+    """
+    if zipfile.is_zipfile(path):
+        with zipfile.ZipFile(path) as zf:
+            infos = zf.infolist()
+            for info in infos:
+                if needle in info.filename.encode("utf-8", "replace"):
+                    return f"{path} (zip entry name: {info.filename})"
+            for info in infos:
+                if info.is_dir():
+                    continue
+                with zf.open(info) as entry:
+                    if _stream_contains(entry, needle):
+                        return f"{path} (inside zip entry: {info.filename})"
+        return None
+    with path.open("rb") as fh:
+        if _stream_contains(fh, needle):
+            return str(path)
+    return None
 
 
 def find_godot(explicit: Optional[str]) -> Path:
@@ -126,7 +258,20 @@ def main() -> int:
         else (repo_root / "builds" / args.preset.replace(" ", "_").lower())
     )
     out_dir.mkdir(parents=True, exist_ok=True)
-    exe_path = out_dir / "PDoom.exe"
+
+    # Output FILENAME comes from the preset's own export_path (issue #1072), so
+    # Linux gets PDoom.x86_64 and macOS gets PDoom.app.zip rather than all three
+    # landing as PDoom.exe and overwriting each other in a shared --output dir.
+    presets_cfg = project / "export_presets.cfg"
+    if not presets_cfg.exists():
+        fail(f"no export_presets.cfg under {project}")
+    try:
+        output_name = output_name_for_preset(presets_cfg.read_text(encoding="utf-8"), args.preset)
+    except ValueError as exc:
+        fail(str(exc))
+        raise SystemExit(1)  # unreachable; fail() exits
+    exe_path = out_dir / output_name
+    info(f"Output: {exe_path}   (filename from preset export_path)")
 
     dot_godot = project / ".godot"
 
@@ -204,18 +349,22 @@ def main() -> int:
             fail(f"export reported success but {exe_path} does not exist.")
 
         # ---- STEP 5: VERIFY the pack is fresh -----------------------------------
+        # A sibling .pck exists for Windows/Linux (PDoom.exe/PDoom.x86_64 both
+        # resolve to PDoom.pck); the macOS .app.zip embeds its pack instead, and
+        # find_marker() descends into the zip to reach it.
         pck_path = exe_path.with_suffix(".pck")
         search_targets = [p for p in (pck_path, exe_path) if p.exists()]
         needle = token.encode("ascii")
         found_in = None
         for tgt in search_targets:
-            data = tgt.read_bytes()
-            if needle in data:
-                found_in = tgt
+            found_in = find_marker(tgt, needle)
+            if found_in:
                 break
         if found_in is None:
             fail(
-                "FRESHNESS CHECK FAILED: marker '%s' NOT found in %s.\n"
+                "FRESHNESS CHECK FAILED: marker '%s' NOT found in %s\n"
+                "  (zip containers were searched entry-by-entry, so this is NOT the\n"
+                "  compressed-bundle false negative -- it is a real miss).\n"
                 "  The exported pack does NOT reflect the current working tree -- it was\n"
                 "  almost certainly served from a STALE .godot/exported cache. DO NOT SHIP.\n"
                 "  Re-run WITHOUT --no-clean." % (token, [str(t) for t in search_targets])
@@ -229,7 +378,7 @@ def main() -> int:
         print("[BUILD-VERIFY][PASS] pack is provably fresh.")
         print(f"  marker token : {token}")
         print(f"  found in     : {found_in}")
-        print(f"  exe          : {exe_path}")
+        print(f"  output       : {exe_path}")
         if pck_path.exists():
             print(f"  pck          : {pck_path}  ({size_mb:.1f} MB)")
         print(f"  mode         : {args.mode}")
