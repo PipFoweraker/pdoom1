@@ -256,10 +256,16 @@ func _persist_and_submit_score(final_state: Dictionary, game_seed: String) -> vo
 	# second telling, and it is deliberately SHOWN rather than failing quietly -- a
 	# score that just never appears is precisely this week's failure mode.
 	if not GameConfig.is_ranked_run():
-		print("[GameOverScreen] Unranked run (scenario '%s') - no local save, no remote submit" % GameConfig.scenario_id)
 		_ensure_sync_status_label()
 		sync_status_label.visible = true
-		sync_status_label.text = "NOT RANKED: scenario runs stay off the leaderboard. Play Standard Game for the board."
+		if GameConfig.alpha_tools_used:
+			# Third telling (decision card 2026-08-01: warn at the toggle, at first
+			# use, and again here) -- SHOWN, never silent (#1027).
+			print("[GameOverScreen] Unranked run (Alpha Tools first used turn %d) - no local save, no remote submit" % GameConfig.alpha_tools_first_use_turn)
+			sync_status_label.text = GameConfig.ALPHA_TOOLS_GAME_OVER_NOTICE
+		else:
+			print("[GameOverScreen] Unranked run (scenario '%s') - no local save, no remote submit" % GameConfig.scenario_id)
+			sync_status_label.text = "NOT RANKED: scenario runs stay off the leaderboard. Play Standard Game for the board."
 		sync_status_label.add_theme_color_override("font_color", Color(1.0, 0.75, 0.25))
 		return
 	var duration = Time.get_ticks_msec() / 1000.0 - game_start_time

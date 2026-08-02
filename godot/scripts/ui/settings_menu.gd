@@ -134,6 +134,14 @@ func update_ui_from_game_config():
 
 	fullscreen_checkbox.button_pressed = GameConfig.fullscreen
 	difficulty_option.selected = GameConfig.difficulty
+	# League lock (#1058, #1084): show the locked value, disabled, with the same
+	# tooltip pregame_setup uses -- never silently accept a value the game will not
+	# honour. The lock itself is enforced at consumption
+	# (GameConfig.effective_difficulty()); this is only the honest reflection of it.
+	if GameConfig.is_difficulty_locked():
+		difficulty_option.selected = GameConfig.effective_difficulty()
+		difficulty_option.disabled = true
+		difficulty_option.tooltip_text = GameConfig.DIFFICULTY_LOCK_TOOLTIP
 	colorblind_checkbox.button_pressed = GameConfig.colorblind_mode
 
 func _on_master_volume_changed(value: float):
@@ -161,6 +169,11 @@ func _on_fullscreen_toggled(pressed: bool):
 
 func _on_difficulty_changed(index: int):
 	"""Handle difficulty dropdown change"""
+	# Belt-and-braces for #1084: the dropdown is disabled while the league lock
+	# holds, but nothing may WRITE a difficulty the game will not honour either.
+	# (The real guarantee is at consumption -- GameConfig.effective_difficulty().)
+	if GameConfig.is_difficulty_locked():
+		return
 	print("[SettingsMenu] Difficulty changed to: ", ["Easy", "Standard", "Hard"][index])
 	GameConfig.set_setting("difficulty", index, false)
 

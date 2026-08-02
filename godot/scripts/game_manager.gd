@@ -66,7 +66,7 @@ func start_new_game(game_seed: String = "", force: bool = false):
 	print("  Player: %s" % GameConfig.player_name)
 	print("  Lab: %s" % GameConfig.lab_name)
 	print("  Seed: %s" % game_seed)
-	print("  Difficulty: %s" % GameConfig.get_difficulty_string())
+	print("  Difficulty: %s" % GameConfig.get_effective_difficulty_string())
 	print("  Scenario: %s" % (GameConfig.scenario_id if not GameConfig.scenario_id.is_empty() else "Standard"))
 
 	# Release the previous game's orphaned Node subsystems before replacing them. Without
@@ -76,6 +76,11 @@ func start_new_game(game_seed: String = "", force: bool = false):
 	month_playback_active = false
 	_release_game_objects()
 	_rival_cap_snapshot.clear()  # fresh drift baseline for the new run
+
+	# Alpha Tools flag is RUN-scoped (decision card 2026-08-01): a fresh run starts
+	# clean; the previous run's taint must not leak forward. This is the ONLY place
+	# the sticky one-way flag resets.
+	GameConfig.reset_alpha_tools_flag()
 
 	state = GameState.new(game_seed)
 	# Early-game org-form choice (DQ-19): copy the pregame selection onto the pure state
@@ -867,6 +872,12 @@ func load_saved_game(path: String = SaveLoad.QUICKSAVE_PATH, force: bool = false
 	_release_game_objects()
 	_rival_cap_snapshot.clear()  # drift baseline restarts from the loaded snapshot
 	state = loaded
+	# Alpha Tools flag travels WITH the save (decision card 2026-08-01): restore the
+	# ENVELOPE's value -- default clean for pre-feature saves. Restoring (not OR-ing)
+	# means a save/load cycle can neither launder a tainted run (the flag was saved
+	# with it) nor smear this session's taint onto a genuinely clean save.
+	GameConfig.alpha_tools_used = bool(envelope.get("alpha_tools_used", false))
+	GameConfig.alpha_tools_first_use_turn = int(envelope.get("alpha_tools_first_use_turn", -1))
 	# Scenario custom events live as node meta (Issue #483), not in state
 	# serialization -- re-attach them from the pack recorded in the envelope.
 	var save_scenario_id := String(envelope.get("scenario_id", ""))
@@ -975,11 +986,21 @@ func _apply_difficulty_settings():
 		print("[GameManager] ERROR: Invalid difficulty value (%d), defaulting to Standard" % GameConfig.difficulty)
 		GameConfig.difficulty = 1
 
+	# LEAGUE LOCK (#1058, enforced HERE per #1084): consume effective_difficulty(),
+	# never the raw field. The raw field is written freely by Settings and persisted
+	# in config.cfg, and pregame_setup is only one of six routes into main.tscn --
+	# enforcing at the single place difficulty becomes game state is what makes
+	# "every board entry is a Standard run" a property of the design instead of an
+	# accident of routing.
+	var effective: int = GameConfig.effective_difficulty()
+	if effective != GameConfig.difficulty:
+		print("[GameManager] League lock: stored difficulty %d plays as %s (#1058/#1084)" % [GameConfig.difficulty, GameConfig.get_effective_difficulty_string()])
+
 	# Difficulty modifiers come from the Balance surface ("difficulty.*", L9 #621).
 	# T2: difficulty scales the MONTHLY ATTENTION GRANT, not a per-turn AP cap (the AP pool
 	# is deleted). Fallbacks keep the old easy/standard/hard ORDERING at the Attention
 	# denomination (24 / 20 / 16 against a 20 default grant).
-	match GameConfig.difficulty:
+	match effective:
 		0:  # Easy
 			print("[GameManager] Applying EASY difficulty modifiers")
 			state.money *= Balance.num("difficulty.easy.money_multiplier", 1.5)  # 50% more starting money

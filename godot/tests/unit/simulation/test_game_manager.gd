@@ -30,8 +30,9 @@ func after_each():
 	# Restore historical events
 	if EventService:
 		EventService.transformed_events = _saved_historical_events
-	# Restore difficulty
+	# Restore difficulty, and drop any league-lock test override (#1084)
 	GameConfig.difficulty = _saved_difficulty
+	GameConfig._difficulty_lock_override = null
 	# Clean up
 	if game_manager:
 		game_manager.queue_free()
@@ -449,11 +450,16 @@ func test_multiple_actions_single_turn():
 		"All actions should be processed")
 
 # === DIFFICULTY TESTS (Issue #563 / #541) ===
+# These exercise the Easy/Hard SCALING MACHINERY that returns when the league lock
+# lifts, so they lift the lock via the test seam (#1084). The LOCKED behaviour --
+# every run plays Standard regardless of the raw field -- is covered in the fast
+# tier by test_ranked_run_integrity.gd. after_each() clears the override.
 
 const _BASE_MONEY := 245000.0  # GameState starting money (issue #436)
 
 func test_easy_difficulty_grants_more_starting_money():
 	# Issue #563: Easy = +50% starting money
+	GameConfig._difficulty_lock_override = false  # lift the league lock (test seam)
 	GameConfig.difficulty = 0  # Easy
 	game_manager.start_new_game("difficulty_seed")
 	assert_almost_eq(game_manager.state.money, _BASE_MONEY * 1.5, 0.01,
@@ -461,6 +467,7 @@ func test_easy_difficulty_grants_more_starting_money():
 
 func test_hard_difficulty_reduces_starting_money():
 	# Issue #563: Hard = -25% starting money
+	GameConfig._difficulty_lock_override = false  # lift the league lock (test seam)
 	GameConfig.difficulty = 2  # Hard
 	game_manager.start_new_game("difficulty_seed")
 	assert_almost_eq(game_manager.state.money, _BASE_MONEY * 0.75, 0.01,
@@ -477,6 +484,7 @@ func test_difficulty_changes_attention_grant():
 	# not a per-turn AP cap. force=true on the second start is required -- start_new_game
 	# self-guards against silently destroying a live run (the #979 sibling fix), and without
 	# it the second call is REFUSED and both reads return the Easy grant.
+	GameConfig._difficulty_lock_override = false  # lift the league lock (test seam)
 	GameConfig.difficulty = 0  # Easy
 	game_manager.start_new_game("difficulty_seed")
 	var easy_grant: int = game_manager.state.attention_per_month
