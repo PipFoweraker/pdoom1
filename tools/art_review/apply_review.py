@@ -55,6 +55,7 @@ from __future__ import annotations
 import argparse
 import datetime as _dt
 import json
+import re
 import shutil
 import sys
 from pathlib import Path
@@ -184,6 +185,12 @@ class Asset:
         self.category = None
         self.base_id = None  # gen only
         self.variant = None  # gen only
+        # Set by resolve_contested() when a sibling variant claims the plain
+        # filename; keeps this asset's _vN marker so both can ship (Pip, 2026-08-03).
+        self.keep_variant_in_name = False
+        # Set by resolve_contested() for px assets whose filename collides
+        # across BATCHES; carries the losing batch's date (e.g. '20260719').
+        self.batch_suffix = ""
         self.relpath = None  # px only
         self.pipeline = None  # "gpt" | "pixellab"
         self.sources = []  # list[Path] of resolved existing PNGs
@@ -310,15 +317,46 @@ class Asset:
             )
         return ("promotable", rule)
 
-    def dest_name(self, src: Path):
-        """Destination path RELATIVE to dest_dir (may contain subdirs for px)."""
+    def dest_name(self, src: Path, keep_variant: bool = False):
+        """Destination path RELATIVE to dest_dir (may contain subdirs for px).
+
+        keep_variant: retain the _vN marker instead of stripping it. Used to
+        resolve CONTESTED destinations, where two kept variants of one base would
+        otherwise collapse onto a single game filename and the last copy would
+        silently overwrite the rest.
+
+        Pip's ruling 2026-08-03 on the 35 contested keeps: "Keep both, you pick
+        naming variant." The scheme: the HIGHEST variant claims the plain name, so
+        whatever the game already references keeps working and the newest art is
+        what players see; every earlier variant keeps its _vN suffix and ships
+        alongside, available but unreferenced.
+
+        Deterministic on purpose -- no per-asset judgement, so re-running promote
+        cannot shuffle which variant is "current". Note the earlier variants are
+        packed-but-unreferenced, exactly the class ADR-0019 exists to end; they
+        stay until the demand manifest can rule on them (see #1109).
+        """
         # generated: strip the _<variant> suffix for a clean game path
         # (matches promote_assets.py convention: art id vN -> base name).
         if self.kind == "gen":
             stem = src.stem  # e.g. icon_doom_v2_1024
             marker = f"_{self.variant}_"
-            if marker in stem:
-                stem = stem.replace(marker, "_", 1)
+            if not keep_variant:
+                if marker in stem:
+                    stem = stem.replace(marker, "_", 1)
+                return stem + src.suffix
+            # Disambiguating this asset from a sibling variant. NOTE v1 is
+            # IMPLICIT in the file convention -- v1 files carry no _v1_ marker at
+            # all (button_hire_hover_512.png), so "keep the marker" is a no-op for
+            # them and the collision survives. Insert it before the trailing size
+            # token instead, which is what makes both variants nameable.
+            if marker not in stem:
+                head, sep, tail = stem.rpartition("_")
+                stem = (
+                    f"{head}_{self.variant}_{tail}"
+                    if sep and tail.isdigit()
+                    else f"{stem}_{self.variant}"
+                )
             return stem + src.suffix
         # pixellab: the leaf filename alone is NOT the identity -- e.g.
         # cat_walk_cat1/walk_east_0 vs cat_walk_cat2/walk_east_0 are different
@@ -332,7 +370,14 @@ class Asset:
         ]
         if not self._target_is_dir and parts:
             parts = parts[:-1]  # last segment names the file itself; use src.name
-        return "/".join(parts + [src.name]) if parts else src.name
+        name = src.name
+        if self.batch_suffix:
+            # Two BATCHES produced the same filename (e.g. the 07-19 original and
+            # its 07-21 reroll). Pip ruled both ship, so the older batch carries a
+            # date suffix and the newer keeps the plain name the game references.
+            stem, dot, ext = name.rpartition(".")
+            name = "%s_%s%s%s" % (stem or name, self.batch_suffix, dot, ext)
+        return "/".join(parts + [name]) if parts else name
 
 
 def _looks_like_size_stem(path: Path, base_id: str):
@@ -473,8 +518,67 @@ def _contested(promotables):
     for a in promotables:
         dest_dir = a.dest_dir()
         for src in a.promote_sources():
-            claims.setdefault(dest_dir / a.dest_name(src), []).append(a)
+            claims.setdefault(dest_dir / a.dest_name(src, a.keep_variant_in_name), []).append(a)
     return {d: ass for d, ass in claims.items() if len(ass) > 1}
+
+
+def _batch_date(asset):
+    """The YYYYMMDD embedded in a px asset's batch dir, or "" if absent."""
+    first = Path(asset.relpath).as_posix().split("/")[0]
+    m = re.search(r"(\d{4})-(\d{2})-(\d{2})", first)
+    return "".join(m.groups()) if m else ""
+
+
+def _variant_rank(asset):
+    """Sort key for picking which variant claims the plain filename.
+
+    'v12' must beat 'v2', so compare the trailing integer numerically and fall
+    back to the raw string when a variant is not vN-shaped.
+    """
+    raw = asset.variant or ""
+    m = re.search(r"(\d+)$", raw)
+    return (1, int(m.group(1))) if m else (0, 0)
+
+
+def resolve_contested(contested):
+    """Assign per-asset variant-suffix flags so BOTH variants can ship.
+
+    Pip's ruling 2026-08-03: "Keep both, you pick naming variant."
+
+    Scheme: within each contested destination the HIGHEST variant keeps the plain
+    name; every earlier one retains its _vN suffix. That means whatever the game
+    already references keeps resolving, the newest art is what players see, and no
+    copy can silently overwrite another.
+
+    Deterministic by construction -- re-running promote cannot shuffle which
+    variant is "current", which matters because a shuffling filename would be a
+    silent content change with a green build.
+
+    Returns the number of assets given a suffix.
+    """
+    suffixed = 0
+    for _dest, assets in contested.items():
+        gen = [a for a in assets if a.kind == "gen" and a.variant]
+        if len(gen) >= 2:
+            gen.sort(key=_variant_rank)
+            for a in gen[:-1]:
+                a.keep_variant_in_name = True
+                suffixed += 1
+            continue
+
+        # px: same leaf filename produced by two different BATCH dirs -- the
+        # 07-19 originals against their 07-21 rerolls. Newest batch keeps the
+        # plain name (it is the improvement, and the game already points at it);
+        # older batches carry their date. Same determinism rule as variants.
+        px = [a for a in assets if a.kind == "px" and a.relpath]
+        if len(px) >= 2 and len({_batch_date(a) for a in px}) == len(px):
+            px.sort(key=_batch_date)
+            for a in px[:-1]:
+                a.batch_suffix = _batch_date(a)
+                suffixed += 1
+            continue
+        continue  # not a shape we can resolve automatically; flag for a human
+    return suffixed
 
 
 def _promotion_gate(keeps):
@@ -490,6 +594,11 @@ def _promotion_gate(keeps):
     for a in keeps:
         buckets[a.promotion_status()[0]].append(a)
     contested = _contested(buckets["promotable"])
+    # Pip ruled 2026-08-03 that BOTH variants ship, so resolve collisions by
+    # suffixing all but the highest variant, then recompute. Anything still
+    # contested after this is NOT a variant collision and still needs a human.
+    if contested and resolve_contested(contested):
+        contested = _contested(buckets["promotable"])
     if contested:
         losers = []
         seen = set()
@@ -640,7 +749,7 @@ def action_promote(assets, dry_run):
         # under-cap source PNG. Over-cap files are NEVER copied -- pre-commit
         # check-added-large-files (--maxkb=1000) would reject the commit.
         for src in a.promote_sources():
-            dst = dest_dir / a.dest_name(src)
+            dst = dest_dir / a.dest_name(src, a.keep_variant_in_name)
             rel_src = _rel(src, a.art_root)
             rel_dst = _rel(dst, a.art_root)
             if dry_run:

@@ -249,21 +249,49 @@ class TestPromotionGate(_TmpArtRoot):
             rc = apply_review.action_report([a])
         self.assertEqual(rc, 0, "explicit Hold is a legitimate outcome, not a failure")
 
-    def test_both_variants_kept_is_contested_not_overwritten(self):
-        """v1 and v2 collapse onto one game filename (variant marker is
-        stripped) -- promoting both would let the last copy silently win."""
+    def test_both_variants_kept_ship_at_distinct_paths(self):
+        """Pip ruled 2026-08-03: "Keep both, you pick naming variant."
+
+        The guarantee under test is UNCHANGED from when this asserted a contested
+        failure -- NO SILENT OVERWRITE. What changed is the resolution: instead of
+        refusing, the highest variant claims the plain name and earlier ones carry
+        their marker, so both ship at distinct paths.
+        """
         self._write("art_generated/ui_icons/v1/icon_z_v1_512.png")
         self._write("art_generated/ui_icons/v1/icon_z_v2_512.png")
         a1 = _make_asset("gen:ui_icons:icon_z:v1", self.root)
         a2 = _make_asset("gen:ui_icons:icon_z:v2", self.root)
         buckets, n_blocked, contested = apply_review._promotion_gate([a1, a2])
-        self.assertEqual(len(buckets["contested"]), 2)
-        self.assertEqual(len(buckets["promotable"]), 0)
-        self.assertEqual(len(contested), 1)
-        buf = io.StringIO()
-        with redirect_stdout(buf):
-            rc = apply_review.action_report([a1, a2])
-        self.assertEqual(rc, 1)
+        self.assertEqual(contested, {}, "variant collision must resolve, not block")
+        self.assertEqual(len(buckets["promotable"]), 2, "both variants ship")
+        self.assertEqual(len(buckets["contested"]), 0)
+
+        dests = set()
+        for a in (a1, a2):
+            for src in a.promote_sources():
+                dests.add(a.dest_dir() / a.dest_name(src, a.keep_variant_in_name))
+        self.assertEqual(len(dests), 2, "distinct destinations -- nothing overwrites")
+        names = sorted(d.name for d in dests)
+        # HIGHEST variant takes the plain name the game already references.
+        self.assertEqual(names, ["icon_z_512.png", "icon_z_v1_512.png"])
+
+    def test_implicit_v1_gets_its_marker_inserted(self):
+        """v1 files carry NO _v1_ marker (icon_y_512.png), so "keep the marker" is
+        a no-op for them and the collision would survive. The loser must have the
+        marker INSERTED before the size token. This is the bug that made the first
+        implementation of Pip's ruling silently ineffective."""
+        self._write("art_generated/ui_icons/v1/icon_y_512.png")  # v1, no marker
+        self._write("art_generated/ui_icons/v1/icon_y_v2_512.png")
+        a1 = _make_asset("gen:ui_icons:icon_y:v1", self.root)
+        a2 = _make_asset("gen:ui_icons:icon_y:v2", self.root)
+        buckets, _n, contested = apply_review._promotion_gate([a1, a2])
+        self.assertEqual(contested, {})
+        names = sorted(
+            a.dest_name(src, a.keep_variant_in_name)
+            for a in (a1, a2)
+            for src in a.promote_sources()
+        )
+        self.assertEqual(names, ["icon_y_512.png", "icon_y_v1_512.png"])
 
     def test_clean_keep_promotes_and_dry_run_reports_bytes(self):
         self._write("art_generated/ui_icons/v1/icon_ok_v1_512.png", size=4096)
