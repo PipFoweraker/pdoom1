@@ -2,6 +2,7 @@
 
 - **Status:** ACCEPTED (shape); researcher archetype roster content owed (DQ-15)
 - **Date:** 2026-07-12
+- **Summary:** Replaces the single fungible AP pool with founder Attention + separate per-staff action lanes, compressed by managers.
 - **Session:** Fable workshop #2, beat 2 (issue #596)
 
 ## Context

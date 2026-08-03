@@ -1,4 +1,4 @@
-# ADR-000X — <short title>
+# ADR-000X -- <short title>
 
 - **Status:** PROPOSED | ACCEPTED | REJECTED | SUPERSEDED-BY-000X
 - **Date:**
