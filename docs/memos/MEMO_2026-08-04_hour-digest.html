@@ -1,0 +1,146 @@
+<title>Memo -- the last hour, 2026-08-04</title>
+<style>
+  @page { size: A4 portrait; margin: 15mm 14mm; }
+  html { font-size: 12.5pt; }
+  body { font-family: "Segoe UI", Calibri, Arial, sans-serif; line-height: 1.45;
+         color: #000; background: #fff; max-width: 190mm; margin: 0 auto; }
+  h1 { font-size: 17pt; margin: 0 0 1.5mm; line-height: 1.15; }
+  .meta { font-size: 11.5pt; color: #222; border-bottom: 1.2pt solid #000;
+          padding-bottom: 2mm; margin-bottom: 4mm; }
+  h2 { font-size: 13.5pt; margin: 5.5mm 0 2mm; text-transform: uppercase;
+       letter-spacing: 0.4mm; border-bottom: 1pt solid #666; padding-bottom: 1mm;
+       page-break-after: avoid; }
+  h3 { font-size: 12.5pt; margin: 4mm 0 1mm; page-break-after: avoid; }
+  p { margin: 0 0 2.5mm; }
+  p, li, td, th { font-size: 12.5pt; }
+  .core { border: 2.2pt solid #000; padding: 3mm 3.5mm; margin: 0 0 3mm; }
+  .actby { font-style: italic; margin: 0 0 4mm; }
+  table.dec { border-collapse: collapse; width: 100%; margin: 3mm 0 2mm; }
+  table.dec th, table.dec td { border: 1px solid #444; padding: 2mm 2.4mm;
+                               font-size: 12pt; text-align: left; }
+  table.dec th.c, table.dec td.c { text-align: center; width: 18mm; }
+  table.dec th { background: #e8e8e8; font-weight: 700; }
+  .sig { margin: 3mm 0 1mm; font-size: 12.5pt; }
+  .comments { border: 1px solid #444; height: 20mm; margin: 1.5mm 0 4mm; }
+  code { font-family: Consolas, "Courier New", monospace; font-size: 11.3pt;
+         background: #eee; padding: 0.3mm 1mm; }
+  .pb { page-break-before: always; }
+  @media (prefers-color-scheme: dark) { html, body { background:#fff; color:#000; } }
+</style>
+
+<h1>The last hour: three proposals delivered, one near-loss caught, one working method changed</h1>
+<div class="meta"><b>12:10</b> | Tue 2026-08-04 | memo <code>pdoom1/2026-08-04/121000</code> | supersedes: none<br>
+Companion to the <code>#1106</code> / <code>#1102</code> memos. Everything here is from the 11:00-12:10 block.</div>
+
+<div class="core">
+<b>Core message.</b> Three agent lanes returned -- intro art, event promotion, and the
+updater, the last as PR <code>#1110</code>. Separately, your 2,713 art verdicts were
+found gitignored and living on one disk; they are now tracked. Four rulings are queued
+and each is small.
+</div>
+
+<p class="actby"><b>Act by</b> end of Tuesday -- the event-timing fix gates the promotion
+pass, and the pass is the half-hour of your time you asked to spend.</p>
+
+<h2>Recommendations</h2>
+<p>1. <b>Approve</b> the event-timing correction (three numbers in
+<code>rarity_curves.json</code>), noting the intuitive fix is the wrong one.<br>
+2. <b>Approve</b> naming the turn unit -- an ADR-0009 amendment separating workday-turn
+from plan-month.<br>
+3. <b>Note</b> that the intro's "swirly video effects" are a procedural shader already
+shipping in the pack, referenced by no player-facing code.<br>
+4. <b>Note</b> that I have changed how I generate file content, following coordination
+<code>#10</code>.</p>
+
+<table class="dec">
+  <tr><th>Recommendation</th><th class="c">Approve</th><th class="c">Not appr</th><th class="c">Note</th><th class="c">Discuss</th></tr>
+  <tr><td>1. Event-timing correction (3 numbers)</td><td class="c">[ ]</td><td class="c">[ ]</td><td class="c">[ ]</td><td class="c">[ ]</td></tr>
+  <tr><td>2. Name the turn unit (ADR-0009 amendment)</td><td class="c">[ ]</td><td class="c">[ ]</td><td class="c">[ ]</td><td class="c">[ ]</td></tr>
+  <tr><td>3. The portal shader exists and is unused</td><td class="c">[ ]</td><td class="c">[ ]</td><td class="c">[ ]</td><td class="c">[ ]</td></tr>
+  <tr><td>4. Content generation method changed</td><td class="c">[ ]</td><td class="c">[ ]</td><td class="c">[ ]</td><td class="c">[ ]</td></tr>
+</table>
+<div class="sig">Signed ................................................ &nbsp;&nbsp; Date ......................</div>
+<div class="comments"></div>
+
+<h2>Key reasons</h2>
+
+<h3>Your art verdicts were one disk failure from gone</h3>
+<p><code>tools/art_review/review_state.json</code> was gitignored at line 137 as "local
+art-review app state". It is not local state: it is 2,713 curated verdicts and 111 notes,
+1,687 of them added by you this morning, several of which read as briefs for the next
+generation round. Ignored, that work had no history and no second copy, and the merge
+script's <code>.bak</code> sits on the same disk. It is 465 KB of diffable JSON and it is
+now tracked -- which is also precisely the split ADR-0019 is built on, the index in git
+and the blobs outside. Git was carrying 5,267 art files and dropping the meaning
+attached to them.</p>
+
+<h3>The obvious fix to the event timing would make things worse</h3>
+<p>Under the current 52-turns-per-year assumption, everything dated 2022 or later never
+fires -- nine of the thirteen core promotion candidates, including four of the top five.
+The intuitive correction is to make the curve calendar-true at 260 turns per year, and
+that would render <b>95 per cent of the corpus unreachable</b>. The workable fix is
+<code>turns_per_year 26, offset 13, spread 6</code>, which places the 2017-2025 arc
+across turns 14 to 222. Three numbers, and the wrong three are worse than none.</p>
+
+<h3>The intro asset you remembered as video is better than video</h3>
+<p>There are no video files anywhere in the repository. What exists is
+<code>godot/assets/shaders/time_portal.gdshader</code>: a procedural rotating vortex with
+fourteen tunable dials, three palettes, a tweened reveal, a live tuning harness and a
+deterministic capture tool. Its own header says it was built for the <code>#801</code>
+cold-open. <b>It ships in the pack today and is referenced only by two dev scripts.</b>
+The recommended first intro build therefore costs zero assets and zero megabytes. In the
+same batch, <code>fanfare_strategic_moves_v1/v3</code> were generated for the fanfare
+popup's image slot, marked keep, and never wired -- the slot exists, the art exists, and
+one to two hours closes your "just a black little screen" complaint from the 08-01
+playtest.</p>
+
+<h2 class="pb">Further reasons</h2>
+
+<h3>Three "turns" share one word, and that is the unpicking you are dreading</h3>
+<p><code>clock.gd</code> defines a turn as one workday, roughly 260 per year.
+<code>doom_system.gd</code> keeps its own 22 ticks per fiction month.
+<code>rarity_curves.json</code> assumed 52, which is weeks. Your own mental model is 12
+per year, which is the ADR-0009 plan-month layer. All four are defensible and all four
+are called "turn" somewhere. The consequence, measured: your league run of 47 turns is
+about 2.1 fiction months, the best board score of 153 turns is about seven months, and
+the 2017-2032 arc you were pricing content against is roughly 3,900 turns -- some
+twenty-five times beyond the longest run anyone has achieved. I would not rewrite
+<code>clock.gd</code>; it is 187 lines, its constants are named and sourced, and
+<code>#573</code> is a recent fix. The rot is in the consumers that never asked it. The
+cheap move is to forbid any module from naming its own turns-per-anything constant.</p>
+
+<h3>The historical corpus cannot carry the event volume, which confirms your instinct</h3>
+<p>At your own generous reading -- 180 month-turns with one or two interesting things
+each -- you need 180 to 360 event instances. The corpus realistically offers about 85.
+So history can be at most a quarter of the volume, and only if runs became far longer
+than they are. The bulk has to come from exactly what you listed: someone gets sick, a
+plane is delayed, a car accident, bureaucratic pain. Historical events are the anchoring
+texture, not the meal. That reframes the promotion pass as a flavour layer rather than
+the variety solution.</p>
+
+<h3>The updater design pre-empted two failures nobody asked it to look for</h3>
+<p>PR <code>#1110</code>, 1,072 to 1,089 tests, both guards proven to fail before being
+trusted. It moved the check off <code>pdoom1.com/data/version.json</code> -- a website
+file that must be synced from the game, the same cross-repo hop that rotted twice last
+week -- onto the release's own manifest, atomic with the assets. And it prefix-locked
+<code>OS.shell_open</code> to our GitHub URL, without which a tampered manifest could
+make the game open an arbitrary address on a player's machine. Integrity is sha256 per
+asset computed in CI, with nothing swapped without a hash match, and an honest limit
+recorded: <code>#1069</code> means the hash proves what CI uploaded is what you got, not
+that CI packed the right bits.</p>
+
+<h3>I have changed how I generate file content</h3>
+<p>Coordination <code>#10</code> rules that content be composed through file-writing
+tools rather than through a shell, and notes pdoom1 has had the same class of failure.
+The instance that persuades me is theirs: a word-boundary escape written into a non-raw
+Python string through a heredoc compiled to a literal backspace character, so a PII
+residue check reported clean while ten records still carried addresses -- invisible in
+terminal output, and below codepoint 127 so every ASCII gate passed it. I hit the same
+species four times today in mangled escapes, and routed around it only once. Adopted.</p>
+
+<h2>Context</h2>
+<p>Open pull requests: <code>#1107</code> art pipeline, <code>#1108</code> ADR index
+generator, <code>#1110</code> updater. All green, none merged. Documents printed this
+hour: the event promotion pass, the intro and poster art proposal, and the updater
+design. Rulings still queued from earlier: <code>icon_hires</code> re-verdict, ADR-0010
+rung pick, league monthly-versus-weekly, and which ADR-0002 is true.</p>

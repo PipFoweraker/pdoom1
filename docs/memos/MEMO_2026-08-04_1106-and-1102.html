@@ -1,0 +1,235 @@
+<title>Memos -- pdoom1 #1106 and #1102, 2026-08-04</title>
+<style>
+  @page { size: A4 portrait; margin: 15mm 14mm; }
+  html { font-size: 12.5pt; }
+  body { font-family: "Segoe UI", Calibri, Arial, sans-serif; line-height: 1.45;
+         color: #000; background: #fff; max-width: 190mm; margin: 0 auto; }
+  h1 { font-size: 17pt; margin: 0 0 1.5mm; line-height: 1.15; }
+  .meta { font-size: 11.5pt; color: #222; border-bottom: 1.2pt solid #000;
+          padding-bottom: 2mm; margin-bottom: 4mm; }
+  h2 { font-size: 13.5pt; margin: 5.5mm 0 2mm; text-transform: uppercase;
+       letter-spacing: 0.4mm; border-bottom: 1pt solid #666; padding-bottom: 1mm;
+       page-break-after: avoid; }
+  h3 { font-size: 12.5pt; margin: 4mm 0 1mm; page-break-after: avoid; }
+  p { margin: 0 0 2.5mm; }
+  p, li, td, th { font-size: 12.5pt; }
+  .core { border: 2.2pt solid #000; padding: 3mm 3.5mm; margin: 0 0 3mm; }
+  .actby { font-style: italic; margin: 0 0 4mm; }
+  table.dec { border-collapse: collapse; width: 100%; margin: 3mm 0 2mm; }
+  table.dec th, table.dec td { border: 1px solid #444; padding: 2mm 2.4mm;
+                               font-size: 12pt; text-align: left; }
+  table.dec th.c, table.dec td.c { text-align: center; width: 18mm; }
+  table.dec th { background: #e8e8e8; font-weight: 700; }
+  .sig { margin: 3mm 0 1mm; font-size: 12.5pt; }
+  .comments { border: 1px solid #444; height: 22mm; margin: 1.5mm 0 4mm; }
+  code { font-family: Consolas, "Courier New", monospace; font-size: 11.3pt;
+         background: #eee; padding: 0.3mm 1mm; }
+  .pb { page-break-before: always; }
+  .note { font-size: 11.5pt; color: #222; }
+  @media (prefers-color-scheme: dark) { html, body { background:#fff; color:#000; } }
+</style>
+
+<h1>Redacted contact addresses shipped in the game data, and the sync that was never going to deliver the fix</h1>
+<div class="meta"><b>12:05</b> | Tue 2026-08-04 | memo <code>pdoom1/2026-08-04/120500</code> | supersedes: none<br>
+Subject: pdoom1 <b>#1106</b> (merged) and <b>#1098</b>. Prepared from the merged diff and a static trace of the sync path.</div>
+
+<div class="core">
+<b>Core message.</b> Forty-two records in the game's bundled event data carried
+un-redacted email addresses of real researchers, taken from academic PDFs, and shipped
+in every public build. The fix is merged and HEAD is clean. You are briefed because two
+residues remain that a merge cannot reach, and because the mechanism that should have
+delivered the upstream fix has never once worked.
+</div>
+
+<p class="actby"><b>Act by</b> Friday 2026-08-08 -- before the next release cut, so a
+build does not go out while the disclosure question is still open.</p>
+
+<h2>Recommendations</h2>
+<p>1. <b>Note</b> that HEAD is redacted and the shipped v0.13.2 build is not, and that
+distributed builds cannot be recalled.<br>
+2. <b>Approve</b> treating the 42 addresses as disclosed, and decide whether any
+notification is owed.<br>
+3. <b>Approve</b> retiring <code>scripts/sync_from_pdoom_data.sh</code> and replacing it
+with a checked sync, or ruling the bundled copy a deliberate hand-managed snapshot.</p>
+
+<table class="dec">
+  <tr><th>Recommendation</th><th class="c">Approve</th><th class="c">Not appr</th><th class="c">Note</th><th class="c">Discuss</th></tr>
+  <tr><td>1. Residue in history and in shipped builds</td><td class="c">[ ]</td><td class="c">[ ]</td><td class="c">[ ]</td><td class="c">[ ]</td></tr>
+  <tr><td>2. Treat as disclosed; decide on notification</td><td class="c">[ ]</td><td class="c">[ ]</td><td class="c">[ ]</td><td class="c">[ ]</td></tr>
+  <tr><td>3. Retire or replace the sync script</td><td class="c">[ ]</td><td class="c">[ ]</td><td class="c">[ ]</td><td class="c">[ ]</td></tr>
+</table>
+<div class="sig">Signed ................................................ &nbsp;&nbsp; Date ......................</div>
+<div class="comments"></div>
+
+<h2>Key reasons</h2>
+
+<h3>The redaction fixes HEAD and cannot fix what has already been distributed</h3>
+<p>The merged change is a straight file copy: 42 insertions, 42 deletions, 1,194 records
+before and after, identical id set, zero records carrying an email-shaped string
+afterwards. Every difference was a redaction already present upstream and absent here.
+That is a clean fix for anyone who clones or builds from now on. It does nothing for the
+addresses sitting in this repository's git history, in every existing clone, and inside
+<b>v0.13.2 and earlier builds already downloaded</b>. A distributed build cannot be
+rewritten at all. This is the same permanence property that keeps orphaned commit
+<code>b68d6d3</code> alive in beacon-internal after a force-push.</p>
+
+<h3>The upstream fix existed for a day before anyone here could have received it</h3>
+<p>pdoom-data corrected this at source on 2026-08-02 in their <code>#50</code>. pdoom1's
+copy did not receive it, because <code>godot/data/historical_events.json</code> is a
+hand-commit dated 2025-12-25 and nothing syncs it. The script that ought to have carried
+the correction, <code>scripts/sync_from_pdoom_data.sh</code>, reads directories that no
+longer exist in pdoom-data and <b>has never successfully run</b>. So the corpus was
+frozen eight months ago, and the repair path was decorative.</p>
+
+<h3>The check that should have caught this class was silently disarmed</h3>
+<p>Worth knowing because it is not a pdoom1 defect but it explains why the addresses
+survived a scan. In pdoom-data's own account (coordination <code>#10</code>), a
+word-boundary escape written into a non-raw Python string through a shell heredoc
+compiled to a literal <b>backspace character</b>. The pattern could never match, so a PII
+residue check <b>reported clean while ten records still carried addresses</b>. It was
+invisible in terminal output because the character does not render, and it passed every
+ASCII gate because its codepoint is below 127.</p>
+
+<h2 class="pb">Further reasons</h2>
+
+<p>The disclosure question is genuinely a judgement call and it is yours. The addresses
+were published by their owners on academic papers, so this is republication rather than
+leak, and the population is 42 researchers rather than a customer database. Against that:
+they did not consent to appearing in a game's data file, the material was distributed in
+a public binary, and the honest description of the current state is that it is out. My
+reading is that treating it as disclosed and moving on is defensible, and that pursuing
+notification would be disproportionate -- but I am not the right party to decide what is
+owed to people whose names are in the file.</p>
+
+<p>On recommendation 3, the choice is between building a sync that actually runs and
+declaring the bundled corpus a deliberate snapshot that is updated by hand at known
+moments. The second is a legitimate answer and possibly the better one: the corpus is a
+one-time export supporting nineteen usable events, and a live sync would introduce a
+dependency for very little benefit. What is not acceptable is the present state, where a
+script exists, is documented, is referenced, and does nothing -- which reads as a working
+pipeline to anyone who does not open it.</p>
+
+<h2>Context</h2>
+<p>Raised by the pdoom-data seat and ruled by you on 2026-08-03 at 05:30 via coordination
+<code>#9</code>: reopen the pdoom1 PR replacing the events file with the redacted copy.
+That PR is <code>#1106</code>, merged 2026-08-03. The remaining items are the ones the
+merge could not reach.</p>
+
+<p>Attachments: pdoom1 <code>#1106</code>, <code>#1098</code>; pdoom-data
+<code>#50</code>; coordination <code>#9</code>, <code>#10</code>.</p>
+
+<h1 class="pb">What pdoom1 actually wants from pdoom-data</h1>
+<div class="meta"><b>12:05</b> | Tue 2026-08-04 | memo <code>pdoom1/2026-08-04/120501</code> | supersedes: none<br>
+Subject: pdoom1 <b>#1102</b>, raised at your direction under pdoom-data <code>#55</code>.
+Measurements from a static audit plus JSON measurement of the corpus. The game was not run.</div>
+
+<div class="core">
+<b>Core message.</b> pdoom-data supplies 1,194 records to fill nineteen slots that can
+actually open a decision, and the two fields meant to rank them discriminate almost
+nothing. The contract question is therefore not which fields to send but which records,
+and chosen how. One measurement contradicts three of our own documents and needs your
+ruling before anything is agreed.
+</div>
+
+<p class="actby"><b>Act by</b> Friday 2026-08-08 -- pdoom-data is holding
+<code>#51</code> and <code>#52</code> pending this, and their seat is idle on it.</p>
+
+<h2>Recommendations</h2>
+<p>1. <b>Approve</b> asking pdoom-data for salience tiers on the delivered collection, and
+for the four ADR-0012 fields (class, expiry, response-expected, carrying-cost hook).<br>
+2. <b>Approve</b> retiring <code>rarity</code> from the contract, with pdoom1 classifying
+its own nineteen window events.<br>
+3. <b>Please Discuss</b> whether literal <code>doom</code> effects from pdoom-data are
+intended, since the code does one thing and three of our documents say another.<br>
+4. <b>Note</b> that pdoom-data will keep its own vocabulary rather than encode ours, and
+that this is in our favour.</p>
+
+<table class="dec">
+  <tr><th>Recommendation</th><th class="c">Approve</th><th class="c">Not appr</th><th class="c">Note</th><th class="c">Discuss</th></tr>
+  <tr><td>1. Ask for salience tiers + the ADR-0012 fields</td><td class="c">[ ]</td><td class="c">[ ]</td><td class="c">[ ]</td><td class="c">[ ]</td></tr>
+  <tr><td>2. Retire <code>rarity</code> from the contract</td><td class="c">[ ]</td><td class="c">[ ]</td><td class="c">[ ]</td><td class="c">[ ]</td></tr>
+  <tr><td>3. Rule on literal doom effects (doc/code conflict)</td><td class="c">[ ]</td><td class="c">[ ]</td><td class="c">[ ]</td><td class="c">[ ]</td></tr>
+  <tr><td>4. Their vocabulary stays theirs</td><td class="c">[ ]</td><td class="c">[ ]</td><td class="c">[ ]</td><td class="c">[ ]</td></tr>
+</table>
+<div class="sig">Signed ................................................ &nbsp;&nbsp; Date ......................</div>
+<div class="comments"></div>
+
+<h2>Key reasons</h2>
+
+<h3>Nineteen records out of 1,194 can open a window, and none of them is a headline</h3>
+<p>The corpus delivers 1,194 records; nineteen can produce a player decision, and 1,174
+are demoted to an inert flavour feed whose effects are never applied. The nineteen are
+seventeen <code>common</code> and three <code>rare</code>. <b>Zero are
+<code>legendary</code></b> -- all 41 legendary records sit in the arxiv stream that gets
+demoted to a grey line. The tier meaning "always fires, key story beat" is applied
+exclusively to records the game then whispers.</p>
+
+<h3>Both ranking fields are measurably inert</h3>
+<p><code>rarity</code> is an exact <code>text_length &gt; 20000</code> threshold on a
+field that is not carried into the output, with correlation against the visible
+description length of <b>r = -0.0065</b>. <code>significance</code>, which scales every
+generated option's effects, scores <b>1,166 of 1,194 records at exactly 6</b>. Two fields
+that look like ranking signals are, in practice, one constant and one coin that always
+lands the same way. Meanwhile pdoom-data already computes real salience tiers on its
+candidate feed -- A 172, B 687, C 1717, D 858 -- and does not put them on the collection
+we actually read.</p>
+
+<h3>One measurement contradicts three of our own documents, and it matters for ADR-0015</h3>
+<p><code>events.gd:290-310</code> intercepts a literal <code>doom</code> key and reroutes
+it into <code>doom_system.add_stream_input("panic", ...)</code>, and its own comment names
+pdoom-data-derived events as the sole remaining producer of literal doom effects.
+<code>WS3_FINISH_OR_DROP.md</code>, <code>TECH_DEBT_BURNDOWN.md</code> and
+<code>resource_accessor.gd</code> all describe that path as an inert sink. <b>They cannot
+both be right.</b> This is load-bearing because pdoom-data's supplied vocabulary --
+<code>vibey_doom</code>, <code>stress</code>, <code>burnout_risk</code> -- maps onto
+<code>doom</code> through our own <code>variable_mapping.json</code>, which is exactly
+what ADR-0015 outlaws, and it survives only because of that reroute.</p>
+
+<h2 class="pb">Further reasons</h2>
+
+<p><b>Four fields are read by nothing.</b> <code>sources</code> (present on all 1,194),
+<code>tags</code>, <code>impacts[].condition</code> (3,636 entries, every one null) and
+<code>source_id</code> are never accessed anywhere in the tree. <code>pdoom_impact</code>
+is copied onto the transformed event and then read by nothing, and 1,187 of its 1,194
+values are null. If the answer to the contract question is "much less than you currently
+send", that is a good outcome and cheap for them to deliver.</p>
+
+<p><b>Three variables are silently dropped and still count.</b>
+<code>ethics_risk</code> (16 occurrences), <code>technical_debt</code> (12) and
+<code>media_reputation</code> (4) are unmapped, so their effects vanish -- but they still
+contribute to the significance sum that scales every option. A dropped variable that
+still moves the numbers is the same silent-wrongness shape as the rest of this week.</p>
+
+<p><b>Three asks already on our record go unanswered</b>, and none is a new request.
+ADR-0012, accepted 2026-07-12, names four event-content fields; pdoom-data supplies none,
+so everything defaults to <code>deferrable</code>. pdoom1 <code>#630</code> records the
+feed drowning in arxiv entries and names salience tiers as the principled fix.
+<code>TRIUMVIRATE_METABOLIC_CYCLE.md</code> asks for monthly facts-only packs and states
+the split -- they own the fact schema, we own the shaping schema -- and pdoom-data has
+since ratified their side as their ADR-007 and ADR-008.</p>
+
+<p><b>On recommendation 4, the trade is genuinely in our favour.</b> They could encode our
+DQ-21 vocabulary directly, and their ADR-007 says they should not: if they encode
+<code>frontier_capability</code> and we later rename or split it, every exported pack
+already in the wild silently means the wrong thing -- no error, no failed parse, just
+numbers attached to a concept that no longer exists. An external taxonomy plus a mapping
+table on our side keeps our vocabulary ours to revise. That is the better deal and we
+should take it knowingly rather than by default.</p>
+
+<h2>Context</h2>
+<p>You ruled on 2026-08-02 that the direction of authority runs pdoom1 to pdoom-data:
+we decide what we want, they draw it down, rather than them fixing their findings
+unilaterally. Their <code>#51</code> (rarity is a length threshold on a discarded field)
+and <code>#52</code> (<code>all_events.json</code> has no producer) predate the
+workshop-3 decisions and are held pending this. The audit deliberately carries
+measurements and questions and <b>no proposal</b>, which is the correct shape for a
+request from the party that does not get to decide.</p>
+
+<p>One item is outstanding and unrelated to schema, covered by the preceding memo: 42
+records in the bundled copy carried un-redacted addresses, and the sync path that should
+have delivered the upstream correction has never run.</p>
+
+<p>Attachments: pdoom1 <code>#1102</code>, <code>#630</code>, <code>#1098</code>;
+pdoom-data <code>#43</code>, <code>#51</code>, <code>#52</code>, <code>#55</code>;
+pdoom1-website <code>#240</code>; ADR-0012, ADR-0015; local card
+<code>docs/decision-cards/2026-08-02_pdoom-data-contract.md</code>.</p>
