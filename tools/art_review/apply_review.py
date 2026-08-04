@@ -7,8 +7,9 @@ The review app writes a verdict-state file (default
     gen:<category>:<base_id>:<variant>   generated art, file lives at
         <art-root>/art_generated/<category>/v1/<base_id>_<variant>_<size>.png
     px:<relpath>                         pixellab art, file/dir lives at
-        <art-root>/art_source/<relpath>  (relpath may point at a single PNG or a
-        rotation directory of PNGs)
+        <art-root>/art_source/<relpath>  (relpath may point at a single PNG, a
+        rotation directory of PNGs, or -- the review app's usual form -- a PNG
+        path WITHOUT its .png extension; the resolver tries all of these)
 
 Each value is ``{verdict, note, tags, updated_at}`` with verdict in
 {keep, iterate, discard} (the review app's v2 tri-state). Legacy files still
@@ -25,10 +26,20 @@ Verdict semantics:
 
 Three actions, all supporting --dry-run and --art-root (default "."):
 
-    report    Count + list keep/iterate/discard verdicts. Discards are surfaced
-              WITH their notes as a brief-reconsideration list.
-    promote   Copy each KEEP asset's PNG (largest size for generated art) into
-              the correct godot/assets/ destination, creating dirs as needed.
+    report    Count + list keep/iterate/discard verdicts, PLUS the promotion
+              gate: promotable vs blocked vs held counts for every KEEP.
+              EXITS NONZERO if any KEEP is blocked (unmapped category,
+              unresolvable source, or nothing under the 1MB git cap) -- an
+              approved asset that cannot move is a pipeline bug and must fail
+              at review time, not surface silently at promote time
+              (silent-wrongness family: issues #1027 / #1075). Discards are
+              surfaced WITH their notes as a brief-reconsideration list.
+    promote   Copy each KEEP asset's PNG (largest size that fits the 1MB git
+              cap, for generated art) into the correct godot/assets/
+              destination, creating dirs as needed. Files over the cap are
+              NEVER copied (pre-commit check-added-large-files --maxkb=1000
+              would reject the commit anyway; docs/art/ART_MASTERS_POLICY.md).
+              Exits nonzero if any KEEP was blocked.
     reroll    Emit tools/assets/manifests/reroll_<YYYY-MM-DD>.json describing each
               ITERATE asset (id, category, source_file, note, original_prompt),
               split by pipeline (gpt vs pixellab) to feed the next generation run.
@@ -44,6 +55,7 @@ from __future__ import annotations
 import argparse
 import datetime as _dt
 import json
+import re
 import shutil
 import sys
 from pathlib import Path
@@ -51,25 +63,97 @@ from pathlib import Path
 # --- category -> godot/assets destination map ------------------------------
 # Keyed by the asset's category. For generated art the category is the
 # art_generated/<category> subdir (== the manifest's asset_type). For pixellab
-# art the category is derived from the relpath (props/characters/tilesets/cats).
+# art the category is derived from the relpath (see _px_category).
+#
+# A mapping value is one of:
+#   str                     destination dir under the art root
+#   list[(prefix, str)]     per-base_id-prefix routing, first match wins,
+#                           "" as catch-all (round3_rerolls mixes action
+#                           icons with dossier/painterly portraits)
+#   Hold(reason)            EXPLICITLY not-for-promotion. Reviewed art that
+#                           must NOT enter godot/ -- Godot packs the entire
+#                           godot/ tree into the .pck (issue #787), so a
+#                           wrong destination silently bloats the build.
+#
+# INVARIANT (enforced by report's promotion gate + tests/test_art_promotion_pipeline.py):
+# every category that can appear in review_state.json MUST resolve to a str or
+# a Hold. An unmapped category is a loud failure, never a silent skip.
+
+
+class Hold:
+    """Explicit not-for-promotion marker: a legitimate mapping outcome."""
+
+    def __init__(self, reason):
+        self.reason = reason
+
+
 GEN_DEST = {
     "game_icons": "godot/assets/icons/generated",
     "ui_icons": "godot/assets/icons/generated",
+    "action_icons_missing": "godot/assets/icons/generated",
+    "iconset_round2": "godot/assets/icons/generated",
+    "core_resource_icons": "godot/assets/icons/generated",
+    "round3_rerolls": [
+        ("dossier_", "godot/assets/portraits/generated"),
+        ("painterly_", "godot/assets/portraits/generated"),
+        ("", "godot/assets/icons/generated"),
+    ],
+    "researcher_portraits_pilot": "godot/assets/portraits/generated",
     "hero_banners": "godot/assets/images/heroes",
+    "round3_rerolls_banners": "godot/assets/images/heroes",
     "screen_backgrounds": "godot/assets/images/backgrounds",
     "env_scenes": "godot/assets/images/scenes",
+    "scene_art_wave2": "godot/assets/images/scenes",
     "terminal_textures": "godot/assets/textures/generated",
     "env_textures": "godot/assets/textures/generated",
+    "crt_frame_overlay": "godot/assets/textures/generated",
     "ui_frames": "godot/assets/ui/frames",
 }
 PX_DEST = {
     "props": "godot/assets/office_floor/props",
     "characters": "godot/assets/office_floor/characters",
-    "tilesets": "godot/assets/office_floor/tiles",
+    # was office_floor/tiles -- no such dir exists; the game's tilesets live
+    # in godot/assets/office_floor/tilesets (latent wrong-destination fix).
+    "tilesets": "godot/assets/office_floor/tilesets",
     "cats": "godot/assets/cats/generated",
+    "icons": "godot/assets/icons/generated",
+    "backgrounds": "godot/assets/images/backgrounds",
+    "icon_hires": Hold(
+        "hi-res icon source variants (issue #787 bloat class): the game references "
+        "sized icons already in godot/assets/icons; re-importing ~318 files (~52MB) "
+        "needs Pip's explicit ruling"
+    ),
 }
-# pixellab category tokens we recognise inside a relpath, in priority order.
-PX_CATEGORY_TOKENS = ["props", "characters", "tilesets", "cats"]
+# first-path-segment overrides: batch dirs whose names would fool the token
+# scan (e.g. iconset_2026-07-21's gen_cat_doom_* must NOT land in cats/).
+PX_PREFIX_CATEGORY = {
+    "icon_hires": "icon_hires",
+    "iconset_2026-07-21": "icons",
+    "settings_bg_2026-07-21": "backgrounds",
+    "cats_incoming": "cats",
+}
+# relpath segment -> category (any segment, first match in path order).
+PX_TOKEN_CATEGORY = {
+    "props": "props",
+    "objects": "props",
+    "chairs": "props",
+    "kitchen": "props",
+    "windows": "props",
+    "environment": "props",
+    "characters": "characters",
+    "founder": "characters",
+    "cosmetics": "characters",
+    "tilesets": "tilesets",
+    "cats": "cats",
+    "icons": "icons",
+}
+# batch dirs whose ROOT-level loose files are character style probes.
+PX_BATCH_DEFAULT_CATEGORY = {"pixellab_2026-07-16": "characters"}
+
+# git art cap: pre-commit check-added-large-files runs with --maxkb=1000 and
+# docs/art/ART_MASTERS_POLICY.md forbids >1MB art in git. Anything bigger can
+# NEVER be committed, so promote must never copy it into godot/.
+MAX_PROMOTE_BYTES = 1000 * 1024
 
 DEFAULT_STATE = "tools/art_review/review_state.json"
 MANIFEST_DIR = "tools/assets/manifests"
@@ -101,10 +185,18 @@ class Asset:
         self.category = None
         self.base_id = None  # gen only
         self.variant = None  # gen only
+        # Set by resolve_contested() when a sibling variant claims the plain
+        # filename; keeps this asset's _vN marker so both can ship (Pip, 2026-08-03).
+        self.keep_variant_in_name = False
+        # Set by resolve_contested() for px assets whose filename collides
+        # across BATCHES; carries the losing batch's date (e.g. '20260719').
+        self.batch_suffix = ""
         self.relpath = None  # px only
         self.pipeline = None  # "gpt" | "pixellab"
         self.sources = []  # list[Path] of resolved existing PNGs
-        self.promote_file = None  # Path chosen to promote (largest for gen)
+        self.promote_file = None  # Path chosen to promote (largest UNDER-CAP for gen)
+        self.best_file = None  # largest file regardless of cap (reroll reporting)
+        self.size_capped = False  # True if the cap forced a smaller pick than best
         self.error = None
         self._parse()
 
@@ -144,21 +236,28 @@ class Asset:
             self.error = f"no file matching {gen_dir}/{pattern}"
             return
         self.sources = matches
-        self.promote_file = _largest_by_size(matches)
+        self.best_file = _largest_by_size(matches)
+        fits = [m for m in matches if m.stat().st_size <= MAX_PROMOTE_BYTES]
+        self.promote_file = _largest_by_size(fits) if fits else None
+        self.size_capped = bool(fits) and self.promote_file != self.best_file
 
     def _parse_px(self):
         self.relpath = self.id[len("px:") :]
         # relpath may be given relative to art_source/ (natural) or relative to
-        # the art-root (includes the leading art_source/). Try both.
-        candidates = [
-            self.art_root / "art_source" / self.relpath,
-            self.art_root / self.relpath,
-        ]
+        # the art-root (includes the leading art_source/). The review app also
+        # writes single-PNG relpaths WITHOUT the .png extension. Try, in order:
+        # each base as-is (file or rotation dir), then base + ".png".
+        candidates = []
+        for base in (self.art_root / "art_source" / self.relpath, self.art_root / self.relpath):
+            candidates.append(base)
+            candidates.append(base.with_name(base.name + ".png"))
         target = next((c for c in candidates if c.exists()), None)
         if target is None:
-            self.error = f"no file/dir at {candidates[0]} (or {candidates[1]})"
+            tried = "; ".join(str(c) for c in candidates)
+            self.error = f"no file/dir at any of: {tried}"
             return
-        if target.is_dir():
+        self._target_is_dir = target.is_dir()
+        if self._target_is_dir:
             self.sources = sorted(target.glob("*.png"))
             if not self.sources:
                 self.error = f"directory {target} has no PNGs"
@@ -166,30 +265,119 @@ class Asset:
         else:
             self.sources = [target]
         self.category = _px_category(self.relpath)
-        # promote copies every source PNG for px (rotation sets stay together);
-        # promote_file holds the first for single-file reporting convenience.
-        self.promote_file = self.sources[0]
+        # promote copies every under-cap source PNG for px (rotation sets stay
+        # together); promote_file holds the first for reporting convenience.
+        self.best_file = self.sources[0]
+        fits = [s for s in self.sources if s.stat().st_size <= MAX_PROMOTE_BYTES]
+        self.promote_file = fits[0] if fits else None
+        self.size_capped = bool(fits) and len(fits) != len(self.sources)
 
-    # -- destination directory for a promote --
-    def dest_dir(self):
+    # -- destination mapping for a promote --
+    def dest_rule(self):
+        """Raw mapping outcome: a destination str, a Hold, or None (unmapped)."""
         if self.kind == "gen":
-            rel = GEN_DEST.get(self.category)
-        elif self.kind == "px":
-            rel = PX_DEST.get(self.category) if self.category else None
-        else:
-            rel = None
-        return (self.art_root / rel) if rel else None
+            return _gen_dest_rel(self.category, self.base_id)
+        if self.kind == "px":
+            return PX_DEST.get(self.category) if self.category else None
+        return None
 
-    def dest_name(self, src: Path):
+    def dest_dir(self):
+        rel = self.dest_rule()
+        return (self.art_root / rel) if isinstance(rel, str) else None
+
+    def promote_sources(self):
+        """Source files promote would copy: all under-cap PNGs for px, the
+        largest under-cap size for gen. Empty if nothing fits the git cap."""
+        if self.kind == "gen":
+            return [self.promote_file] if self.promote_file else []
+        return [s for s in self.sources if s.stat().st_size <= MAX_PROMOTE_BYTES]
+
+    def promotion_status(self):
+        """Classify a KEEP asset for the promotion gate.
+
+        Returns (status, detail) with status one of:
+          promotable          -> detail = destination rel path
+          held                -> detail = Hold reason (explicit not-for-promotion)
+          blocked-unresolved  -> detail = resolution error (pipeline bug)
+          blocked-unmapped    -> detail = missing category mapping (pipeline bug)
+          blocked-size        -> detail = nothing fits the 1MB git cap
+        """
+        if self.error:
+            return ("blocked-unresolved", self.error)
+        rule = self.dest_rule()
+        if rule is None:
+            return ("blocked-unmapped", f"no destination for category {self.category!r}")
+        if isinstance(rule, Hold):
+            return ("held", rule.reason)
+        if not self.promote_sources():
+            return (
+                "blocked-size",
+                "every candidate file exceeds the 1MB git cap "
+                "(docs/art/ART_MASTERS_POLICY.md; pre-commit --maxkb=1000)",
+            )
+        return ("promotable", rule)
+
+    def dest_name(self, src: Path, keep_variant: bool = False):
+        """Destination path RELATIVE to dest_dir (may contain subdirs for px).
+
+        keep_variant: retain the _vN marker instead of stripping it. Used to
+        resolve CONTESTED destinations, where two kept variants of one base would
+        otherwise collapse onto a single game filename and the last copy would
+        silently overwrite the rest.
+
+        Pip's ruling 2026-08-03 on the 35 contested keeps: "Keep both, you pick
+        naming variant." The scheme: the HIGHEST variant claims the plain name, so
+        whatever the game already references keeps working and the newest art is
+        what players see; every earlier variant keeps its _vN suffix and ships
+        alongside, available but unreferenced.
+
+        Deterministic on purpose -- no per-asset judgement, so re-running promote
+        cannot shuffle which variant is "current". Note the earlier variants are
+        packed-but-unreferenced, exactly the class ADR-0019 exists to end; they
+        stay until the demand manifest can rule on them (see #1109).
+        """
         # generated: strip the _<variant> suffix for a clean game path
         # (matches promote_assets.py convention: art id vN -> base name).
         if self.kind == "gen":
             stem = src.stem  # e.g. icon_doom_v2_1024
             marker = f"_{self.variant}_"
-            if marker in stem:
-                stem = stem.replace(marker, "_", 1)
+            if not keep_variant:
+                if marker in stem:
+                    stem = stem.replace(marker, "_", 1)
+                return stem + src.suffix
+            # Disambiguating this asset from a sibling variant. NOTE v1 is
+            # IMPLICIT in the file convention -- v1 files carry no _v1_ marker at
+            # all (button_hire_hover_512.png), so "keep the marker" is a no-op for
+            # them and the collision survives. Insert it before the trailing size
+            # token instead, which is what makes both variants nameable.
+            if marker not in stem:
+                head, sep, tail = stem.rpartition("_")
+                stem = (
+                    f"{head}_{self.variant}_{tail}"
+                    if sep and tail.isdigit()
+                    else f"{stem}_{self.variant}"
+                )
             return stem + src.suffix
-        return src.name
+        # pixellab: the leaf filename alone is NOT the identity -- e.g.
+        # cat_walk_cat1/walk_east_0 vs cat_walk_cat2/walk_east_0 are different
+        # cats. Preserve the relpath below the batch dir (dropping segments
+        # that merely repeat this asset's category token), mirroring the
+        # existing per-set dirs under godot/assets/office_floor/.
+        parts = [
+            seg
+            for seg in Path(self.relpath).as_posix().split("/")[1:]
+            if PX_TOKEN_CATEGORY.get(seg) != self.category
+        ]
+        if not self._target_is_dir and parts:
+            parts = parts[:-1]  # last segment names the file itself; use src.name
+        name = src.name
+        if self.batch_suffix:
+            # Two BATCHES produced the same filename (e.g. the 07-19 original and
+            # its 07-21 reroll). Pip ruled both ship, so the older batch carries a
+            # date suffix and the newer keeps the plain name the game references.
+            stem, dot, ext = name.rpartition(".")
+            name = "%s_%s%s%s" % (stem or name, self.batch_suffix, dot, ext)
+        return "/".join(parts + [name]) if parts else name
 
 
 def _looks_like_size_stem(path: Path, base_id: str):
@@ -216,14 +404,40 @@ def _largest_by_size(paths):
 
 
 def _px_category(relpath: str):
+    """Category for a pixellab relpath. Precedence: batch-dir override,
+    then segment tokens, then the loose "cat" fallback, then batch default."""
     parts = Path(relpath).as_posix().split("/")
-    for token in PX_CATEGORY_TOKENS:
-        if token in parts:
-            return token
+    if parts and parts[0] in PX_PREFIX_CATEGORY:
+        return PX_PREFIX_CATEGORY[parts[0]]
+    for seg in parts:
+        if seg in PX_TOKEN_CATEGORY:
+            return PX_TOKEN_CATEGORY[seg]
     # loose fallback: any segment containing "cat" -> cats
     if any("cat" in seg for seg in parts):
         return "cats"
+    if parts and parts[0] in PX_BATCH_DEFAULT_CATEGORY:
+        return PX_BATCH_DEFAULT_CATEGORY[parts[0]]
     return None
+
+
+def _gen_dest_rel(category, base_id):
+    """Destination for a generated-art category: str, Hold, or None.
+    List rules route by base_id prefix, first match wins ("" = catch-all)."""
+    rule = GEN_DEST.get(category)
+    if rule is None or isinstance(rule, (str, Hold)):
+        return rule
+    for prefix, dest in rule:
+        if (base_id or "").startswith(prefix):
+            return dest
+    return None
+
+
+def _fmt_rule(rule):
+    if isinstance(rule, Hold):
+        return "[NOT FOR PROMOTION] " + rule.reason
+    if isinstance(rule, str):
+        return rule
+    return "; ".join("{} -> {}".format(p or "*", d) for p, d in rule)
 
 
 # --- review_state.json loading ---------------------------------------------
@@ -282,6 +496,123 @@ def build_prompt_index(art_root: Path):
 
 
 # --- actions ----------------------------------------------------------------
+STATUS_FLAG = {
+    "promotable": "",
+    "held": "  [HELD]",
+    "blocked-unresolved": "  [UNRESOLVED]",
+    "blocked-unmapped": "  [NO-DEST]",
+    "blocked-size": "  [OVER-1MB]",
+}
+BLOCKED_STATUSES = ("blocked-unmapped", "blocked-unresolved", "blocked-size")
+
+
+def _contested(promotables):
+    """Destinations claimed by more than one promotable KEEP.
+
+    dest_name strips the variant marker (art id vN -> base name), so keeping
+    BOTH v1 and v2 of a base makes them collapse onto ONE game path -- the
+    last copy would silently win. Returns {dest Path: [Asset, ...]} for every
+    contested destination.
+    """
+    claims = {}
+    for a in promotables:
+        dest_dir = a.dest_dir()
+        for src in a.promote_sources():
+            claims.setdefault(dest_dir / a.dest_name(src, a.keep_variant_in_name), []).append(a)
+    return {d: ass for d, ass in claims.items() if len(ass) > 1}
+
+
+def _batch_date(asset):
+    """The YYYYMMDD embedded in a px asset's batch dir, or "" if absent."""
+    first = Path(asset.relpath).as_posix().split("/")[0]
+    m = re.search(r"(\d{4})-(\d{2})-(\d{2})", first)
+    return "".join(m.groups()) if m else ""
+
+
+def _variant_rank(asset):
+    """Sort key for picking which variant claims the plain filename.
+
+    'v12' must beat 'v2', so compare the trailing integer numerically and fall
+    back to the raw string when a variant is not vN-shaped.
+    """
+    raw = asset.variant or ""
+    m = re.search(r"(\d+)$", raw)
+    return (1, int(m.group(1))) if m else (0, 0)
+
+
+def resolve_contested(contested):
+    """Assign per-asset variant-suffix flags so BOTH variants can ship.
+
+    Pip's ruling 2026-08-03: "Keep both, you pick naming variant."
+
+    Scheme: within each contested destination the HIGHEST variant keeps the plain
+    name; every earlier one retains its _vN suffix. That means whatever the game
+    already references keeps resolving, the newest art is what players see, and no
+    copy can silently overwrite another.
+
+    Deterministic by construction -- re-running promote cannot shuffle which
+    variant is "current", which matters because a shuffling filename would be a
+    silent content change with a green build.
+
+    Returns the number of assets given a suffix.
+    """
+    suffixed = 0
+    for _dest, assets in contested.items():
+        gen = [a for a in assets if a.kind == "gen" and a.variant]
+        if len(gen) >= 2:
+            gen.sort(key=_variant_rank)
+            for a in gen[:-1]:
+                a.keep_variant_in_name = True
+                suffixed += 1
+            continue
+
+        # px: same leaf filename produced by two different BATCH dirs -- the
+        # 07-19 originals against their 07-21 rerolls. Newest batch keeps the
+        # plain name (it is the improvement, and the game already points at it);
+        # older batches carry their date. Same determinism rule as variants.
+        px = [a for a in assets if a.kind == "px" and a.relpath]
+        if len(px) >= 2 and len({_batch_date(a) for a in px}) == len(px):
+            px.sort(key=_batch_date)
+            for a in px[:-1]:
+                a.batch_suffix = _batch_date(a)
+                suffixed += 1
+            continue
+        continue  # not a shape we can resolve automatically; flag for a human
+    return suffixed
+
+
+def _promotion_gate(keeps):
+    """Bucket KEEP assets by promotion status.
+
+    Returns (buckets, n_blocked, contested) where buckets adds a "contested"
+    bucket (assets whose destination collides with another keep's -- pulled
+    OUT of promotable), n_blocked counts per-asset pipeline bugs, and
+    contested is the {dest: [assets]} collision map.
+    """
+    buckets = {s: [] for s in STATUS_FLAG}
+    buckets["contested"] = []
+    for a in keeps:
+        buckets[a.promotion_status()[0]].append(a)
+    contested = _contested(buckets["promotable"])
+    # Pip ruled 2026-08-03 that BOTH variants ship, so resolve collisions by
+    # suffixing all but the highest variant, then recompute. Anything still
+    # contested after this is NOT a variant collision and still needs a human.
+    if contested and resolve_contested(contested):
+        contested = _contested(buckets["promotable"])
+    if contested:
+        losers = []
+        seen = set()
+        for ass in contested.values():
+            for a in ass:
+                if id(a) not in seen:
+                    seen.add(id(a))
+                    losers.append(a)
+        buckets["contested"] = losers
+        buckets["promotable"] = [a for a in buckets["promotable"] if id(a) not in seen]
+    n_blocked = sum(len(buckets[s]) for s in BLOCKED_STATUSES)
+    return buckets, n_blocked, contested
+
+
 def action_report(assets):
     groups = {v: [] for v in VERDICTS}
     for a in assets:
@@ -293,11 +624,67 @@ def action_report(assets):
         )
     )
     print("  keep    -> promote     iterate -> regenerate (reroll)     discard -> rethink brief")
+
+    # -- promotion gate: a keep that cannot move is a pipeline bug, and it
+    # must fail HERE, at review time -- not silently at promote time
+    # (silent-wrongness family, issues #1027 / #1075).
+    keeps = groups["keep"]
+    buckets, n_blocked, contested = _promotion_gate(keeps)
+    n_bytes = sum(f.stat().st_size for a in buckets["promotable"] for f in a.promote_sources())
+    print("\n== promotion gate (keeps only) ==")
+    print(
+        "promotable: {} of {} keeps ({:.1f} MB would enter godot/assets)".format(
+            len(buckets["promotable"]), len(keeps), n_bytes / 1e6
+        )
+    )
+    print(
+        "held (explicit not-for-promotion): {}    contested-destination: {}    "
+        "blocked: {} (unmapped-category={} unresolved-source={} over-size-cap={})".format(
+            len(buckets["held"]),
+            len(buckets["contested"]),
+            n_blocked,
+            len(buckets["blocked-unmapped"]),
+            len(buckets["blocked-unresolved"]),
+            len(buckets["blocked-size"]),
+        )
+    )
+    if buckets["held"]:
+        reasons = {}
+        for a in buckets["held"]:
+            reasons.setdefault(a.promotion_status()[1], []).append(a)
+        for reason, items in reasons.items():
+            print(f"  held x{len(items)}: {reason}")
+    if contested:
+        print(
+            "\n[FAIL] {} destination path(s) contested by {} keeps -- multiple kept "
+            "variants collapse onto one game filename (variant marker is stripped); "
+            "the last copy would silently overwrite the rest. Un-keep all but one "
+            "variant per base, or rule on a naming change:".format(
+                len(contested), len(buckets["contested"])
+            )
+        )
+        for dest, ass in sorted(contested.items(), key=lambda kv: str(kv[0]))[:15]:
+            ids = ", ".join(a.id for a in ass)
+            print(f"  {dest.name}  <-  {ids}")
+        if len(contested) > 15:
+            print(f"  ... and {len(contested) - 15} more contested destination(s)")
+    if n_blocked:
+        print("\n[FAIL] {} approved asset(s) cannot be promoted -- pipeline bug:".format(n_blocked))
+        for status in BLOCKED_STATUSES:
+            rollup = {}
+            for a in buckets[status]:
+                key = a.promotion_status()[1] if status != "blocked-unresolved" else a.category
+                rollup.setdefault(key, []).append(a)
+            for key, items in sorted(rollup.items(), key=lambda kv: -len(kv[1])):
+                print(f"  {status} x{len(items)}: {key}  (e.g. {items[0].id})")
+        print("  fix the map/resolver in tools/art_review/apply_review.py; this report")
+        print("  exits nonzero until every keep is promotable or explicitly held.")
+
     for v in VERDICTS:
         print(f"\n-- {v} ({len(groups[v])}) --")
         for a in groups[v]:
-            loc = a.error if a.error else str(a.promote_file)
-            flag = "  [UNRESOLVED]" if a.error else ""
+            loc = a.error if a.error else str(a.promote_file or a.best_file)
+            flag = STATUS_FLAG.get(a.promotion_status()[0], "") if a.verdict == "keep" else ""
             print(f"  {a.id}{flag}")
             print(f"      pipeline={a.pipeline} category={a.category} -> {loc}")
             if a.note:
@@ -315,6 +702,13 @@ def action_report(assets):
             note = a.note.strip() if a.note else "(no note given)"
             print(f"  - {a.id}")
             print(f"      {note}")
+    n_gate_fail = n_blocked + len(buckets["contested"])
+    if n_gate_fail:
+        print(
+            f"\n[FAIL] promotion gate: {n_blocked} keep(s) blocked, "
+            f"{len(buckets['contested'])} contested (see gate summary above)."
+        )
+        return 1
     return 0
 
 
@@ -323,43 +717,71 @@ def action_promote(assets, dry_run):
     print("== promote KEEP assets ==")
     print("category -> destination map in use:")
     for k, v in sorted(GEN_DEST.items()):
-        print(f"  gen  {k:<20} -> {v}")
+        print(f"  gen  {k:<28} -> {_fmt_rule(v)}")
     for k, v in sorted(PX_DEST.items()):
-        print(f"  px   {k:<20} -> {v}")
+        print(f"  px   {k:<28} -> {_fmt_rule(v)}")
     print()
     if not keeps:
         print("no keep verdicts -- nothing to promote.")
         return 0
-    n_copied = n_skipped = 0
+    _, _, contested = _promotion_gate(keeps)
+    contested_ids = {a.id for ass in contested.values() for a in ass}
+    n_copied = n_skipped = n_held = n_capped = n_contested = 0
+    n_bytes = 0
     for a in keeps:
-        if a.error:
-            print(f"SKIP {a.id}: {a.error}")
+        status, detail = a.promotion_status()
+        if status == "held":
+            print(f"HOLD {a.id}: {detail}")
+            n_held += 1
+            continue
+        if status in BLOCKED_STATUSES:
+            print(f"SKIP {a.id}: {detail}")
             n_skipped += 1
+            continue
+        if a.id in contested_ids:
+            print(f"CONTEST {a.id}: destination filename claimed by another keep (see report)")
+            n_contested += 1
             continue
         dest_dir = a.dest_dir()
-        if dest_dir is None:
-            print(f"SKIP {a.id}: no destination for category {a.category!r}")
-            n_skipped += 1
-            continue
-        # generated: one file (largest). pixellab: every source PNG.
-        srcs = [a.promote_file] if a.kind == "gen" else a.sources
-        for src in srcs:
-            dst = dest_dir / a.dest_name(src)
+        if a.size_capped:
+            n_capped += 1
+        # generated: one file (largest under the git cap). pixellab: every
+        # under-cap source PNG. Over-cap files are NEVER copied -- pre-commit
+        # check-added-large-files (--maxkb=1000) would reject the commit.
+        for src in a.promote_sources():
+            dst = dest_dir / a.dest_name(src, a.keep_variant_in_name)
             rel_src = _rel(src, a.art_root)
             rel_dst = _rel(dst, a.art_root)
             if dry_run:
                 print(f"DRY  {rel_src}  ->  {rel_dst}")
             else:
-                dest_dir.mkdir(parents=True, exist_ok=True)
+                dst.parent.mkdir(parents=True, exist_ok=True)
                 shutil.copy2(src, dst)
                 print(f"COPY {rel_src}  ->  {rel_dst}")
             n_copied += 1
+            n_bytes += src.stat().st_size
     verb = "would copy" if dry_run else "copied"
-    print(f"\n{verb} {n_copied} file(s); skipped {n_skipped} asset(s).")
+    print(
+        f"\n{verb} {n_copied} file(s), {n_bytes / 1e6:.1f} MB into godot/assets; "
+        f"skipped {n_skipped} asset(s); contested {n_contested} asset(s); "
+        f"held {n_held} asset(s)."
+    )
+    if n_capped:
+        print(
+            f"size cap: {n_capped} asset(s) had their largest file over the 1MB git cap; "
+            "the largest UNDER-cap size was chosen instead (masters stay in art_generated/, "
+            "see docs/art/ART_MASTERS_POLICY.md)."
+        )
     print(
         "NOTE: run a Godot --import pass to register the new files "
         "(e.g. `godot --headless --path godot --import`). This tool does not."
     )
+    if n_skipped or n_contested:
+        print(
+            f"[FAIL] {n_skipped} keep(s) blocked, {n_contested} contested -- "
+            "run `report` for the gate summary."
+        )
+        return 1
     return 0
 
 
@@ -380,7 +802,9 @@ def action_reroll(assets, prompt_index, art_root, dry_run):
     }
     unresolved = 0
     for a in rerolls:
-        src = a.promote_file if a.promote_file else None
+        # reroll cares about the SOURCE, not the git cap: prefer the promote
+        # pick but fall back to the best (possibly over-cap) file.
+        src = a.promote_file or a.best_file
         entry = {
             "id": a.id,
             "category": a.category,
@@ -441,8 +865,11 @@ def build_parser():
         epilog="asset_id scheme:\n"
         "  gen:<category>:<base_id>:<variant>  -> art_generated/<category>/v1/"
         "<base_id>_<variant>_<size>.png\n"
-        "  px:<relpath>                        -> art_source/<relpath> (file or "
-        "rotation dir)\n\n"
+        "  px:<relpath>                        -> art_source/<relpath> (file, "
+        "rotation dir, or extensionless PNG path)\n\n"
+        "exit codes: nonzero from report/promote when any KEEP asset is blocked\n"
+        "(unmapped category / unresolvable source / nothing under the 1MB cap).\n"
+        "Explicit Hold (not-for-promotion) entries are reported but do not fail.\n\n"
         "examples:\n"
         "  python tools/art_review/apply_review.py report\n"
         "  python tools/art_review/apply_review.py promote --dry-run\n"
@@ -453,9 +880,10 @@ def build_parser():
     p.add_argument(
         "action",
         choices=["report", "promote", "reroll"],
-        help="report: counts+list (+ discard brief-reconsideration list); "
-        "promote: copy keeps into godot/assets; reroll: emit reroll_<date>.json "
-        "of ITERATE assets to regenerate (discards excluded).",
+        help="report: counts+list + promotion gate (fails if any keep is "
+        "blocked); promote: copy keeps into godot/assets (over-1MB files never "
+        "copied); reroll: emit reroll_<date>.json of ITERATE assets to "
+        "regenerate (discards excluded).",
     )
     p.add_argument(
         "--art-root",
