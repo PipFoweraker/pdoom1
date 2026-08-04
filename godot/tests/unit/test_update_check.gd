@@ -81,6 +81,92 @@ func test_parse_feed_malformed_shapes():
 	assert_eq(CheckScript.parse_version_feed(""), "")
 
 
+# ---- parse_release_manifest: the release_manifest.json contract --------------
+# (scripts/generate_release_manifest.py publishes these fields; the Python side
+# has the mirror test tests/test_generate_release_manifest.py.)
+
+const FULL_MANIFEST := '{"version": "v0.14.0", "ladder_version": "4", "highlights": "### Fixed\\n- a bug", "download_page": "https://github.com/PipFoweraker/pdoom1/releases/tag/v0.14.0", "assets": [{"name": "PDoom-Windows.zip", "size": 1, "sha256": "aa"}], "commit_hash": "abc"}'
+
+func test_parse_manifest_happy_path():
+	var info: Dictionary = CheckScript.parse_release_manifest(FULL_MANIFEST)
+	assert_eq(info.get("version"), "v0.14.0")
+	assert_eq(info.get("ladder_version"), "4")
+	assert_eq(info.get("highlights"), "### Fixed\n- a bug")
+	assert_eq(info.get("download_page"), "https://github.com/PipFoweraker/pdoom1/releases/tag/v0.14.0")
+
+func test_parse_manifest_ladder_as_json_number_tolerated():
+	# JSON has no int-vs-string discipline; the generator writes a string but a
+	# hand-edited or future manifest may carry a bare number.
+	var info: Dictionary = CheckScript.parse_release_manifest('{"version": "v0.14.0", "ladder_version": 4}')
+	assert_eq(info.get("ladder_version"), "4")
+
+func test_parse_manifest_optional_fields_default_empty():
+	# Today's live manifests (pre-increment) carry none of the new fields; they
+	# must still parse -- version alone is enough for the notice.
+	var info: Dictionary = CheckScript.parse_release_manifest('{"version": "v0.13.2", "commit_hash": "abc"}')
+	assert_eq(info.get("version"), "v0.13.2")
+	assert_eq(info.get("ladder_version"), "")
+	assert_eq(info.get("highlights"), "")
+	assert_eq(info.get("download_page"), "")
+
+func test_parse_manifest_malformed_rejected():
+	assert_eq(CheckScript.parse_release_manifest("not json"), {})
+	assert_eq(CheckScript.parse_release_manifest("[1,2]"), {})
+	assert_eq(CheckScript.parse_release_manifest("{}"), {})
+	assert_eq(CheckScript.parse_release_manifest('{"version": 14}'), {})
+	assert_eq(CheckScript.parse_release_manifest('{"version": "latest"}'), {},
+		"unparseable version -> whole manifest treated as malformed so fallback runs")
+
+func test_parse_manifest_download_page_trusted_prefix_only():
+	# SECURITY GATE: download_page reaches OS.shell_open. Wrong scheme, wrong
+	# host, or wrong repo -> dropped ("" -> UPDATE_PAGE_URL fallback), so a
+	# tampered manifest cannot launch arbitrary URLs/apps on a player machine.
+	for evil in [
+		"file:///C:/Windows/System32/calc.exe",
+		"http://github.com/PipFoweraker/pdoom1/releases",
+		"https://github.com.evil.example/PipFoweraker/pdoom1/",
+		"https://github.com/EvilFork/pdoom1/releases",
+		"javascript:alert(1)",
+	]:
+		var body := '{"version": "v0.14.0", "download_page": "%s"}' % evil
+		var info: Dictionary = CheckScript.parse_release_manifest(body)
+		assert_eq(info.get("download_page"), "", "untrusted page rejected: %s" % evil)
+
+
+# ---- ladder epoch helpers: the board-fork guard ------------------------------
+# Board key is (seed, ladder_epoch); an update that changes the epoch FORKS
+# every board, and the notice must say so BEFORE the player acts.
+
+func test_normalize_ladder():
+	assert_eq(CheckScript.normalize_ladder("3"), "3")
+	assert_eq(CheckScript.normalize_ladder("L3"), "3")
+	assert_eq(CheckScript.normalize_ladder(" l3 "), "3")
+	assert_eq(CheckScript.normalize_ladder(""), "")
+	assert_eq(CheckScript.normalize_ladder("L"), "")
+	assert_eq(CheckScript.normalize_ladder("three"), "")
+	assert_eq(CheckScript.normalize_ladder("3.1"), "", "epochs are opaque integers, not semver")
+
+func test_epoch_change_detected_when_both_known():
+	assert_true(CheckScript.is_epoch_change("4", "3"))
+	assert_true(CheckScript.is_epoch_change("L4", "3"), "L-prefix and bare digits compare equal")
+
+func test_epoch_change_false_when_same():
+	assert_false(CheckScript.is_epoch_change("3", "3"))
+	assert_false(CheckScript.is_epoch_change("L3", "3"))
+
+func test_epoch_change_fails_closed_on_unknown():
+	# Missing data must not produce a scary board-fork warning.
+	assert_false(CheckScript.is_epoch_change("", "3"))
+	assert_false(CheckScript.is_epoch_change("4", ""))
+	assert_false(CheckScript.is_epoch_change("garbage", "3"))
+
+func test_notice_label_wording():
+	assert_eq(CheckScript.build_notice_label("0.14.0", false),
+		"v0.14.0 available >> [U]pdate page")
+	assert_eq(CheckScript.build_notice_label("0.14.0", true),
+		"v0.14.0 available (new board epoch) >> [U]pdate page")
+
+
 # ---- should_show_notice: newer AND not dismissed (#799 "don't re-nag") -------
 
 func test_notice_shows_for_newer_undismissed():
@@ -228,6 +314,94 @@ func test_handler_respects_dismissal():
 	checker.handle_check_response(HTTPRequest.RESULT_SUCCESS, 200, _feed_body(newer))
 	assert_eq(checker.available_version, "", "dismissed version does not re-nag")
 	assert_signal_not_emitted(checker, "update_available")
+	GameConfig.dismissed_update_version = prior_dismissed
+
+
+# ---- manifest handler with stubbed transport (no real HTTP) ------------------
+# _fallback_to_feed is headless-guarded, so these assert the DECISION (the
+# _fallback_used flag) without any network dispatch ever happening in CI.
+
+func _manifest_body(version: String, ladder: String = "", extras: String = "") -> String:
+	var body := '{"version": "%s"' % version
+	if ladder != "":
+		body += ', "ladder_version": "%s"' % ladder
+	body += extras
+	body += '}'
+	return body
+
+## A ladder epoch guaranteed different from the running build's, derived from
+## GameConfig.LADDER_VERSION so the test never goes stale on epoch bumps.
+func _other_ladder() -> String:
+	return str(int(GameConfig.LADDER_VERSION) + 1)
+
+func test_manifest_handler_newer_version_notices_with_epoch_state():
+	var newer := _newer_than_local()
+	var prior_dismissed = GameConfig.dismissed_update_version
+	GameConfig.dismissed_update_version = ""
+	var checker = _make_checker()
+	watch_signals(checker)
+	var page := "https://github.com/PipFoweraker/pdoom1/releases/tag/v%s" % newer
+	checker.handle_manifest_response(HTTPRequest.RESULT_SUCCESS, 200,
+		_manifest_body("v" + newer, _other_ladder(), ', "download_page": "%s"' % page))
+	assert_eq(checker.available_version, newer)
+	assert_eq(checker.available_ladder, _other_ladder())
+	assert_true(checker.available_epoch_change,
+		"different remote epoch -> the notice must flag a board fork")
+	assert_eq(checker.get_update_page_url(), page, "trusted tag page wins over generic latest")
+	assert_signal_emitted_with_parameters(checker, "update_available", [newer])
+	assert_false(checker._fallback_used, "good manifest -> no feed fallback")
+	GameConfig.dismissed_update_version = prior_dismissed
+
+func test_manifest_handler_same_epoch_not_flagged():
+	var newer := _newer_than_local()
+	var prior_dismissed = GameConfig.dismissed_update_version
+	GameConfig.dismissed_update_version = ""
+	var checker = _make_checker()
+	checker.handle_manifest_response(HTTPRequest.RESULT_SUCCESS, 200,
+		_manifest_body("v" + newer, str(GameConfig.LADDER_VERSION)))
+	assert_eq(checker.available_version, newer)
+	assert_false(checker.available_epoch_change, "same epoch -> cosmetic update, no fork warning")
+	GameConfig.dismissed_update_version = prior_dismissed
+
+func test_manifest_handler_same_version_no_notice():
+	var checker = _make_checker()
+	watch_signals(checker)
+	checker.handle_manifest_response(HTTPRequest.RESULT_SUCCESS, 200,
+		_manifest_body("v" + GameConfig.CURRENT_VERSION))
+	assert_eq(checker.available_version, "")
+	assert_signal_not_emitted(checker, "update_available")
+	assert_false(checker._fallback_used, "an up-to-date answer is an ANSWER; no fallback")
+
+func test_manifest_handler_http_failure_falls_back_to_feed():
+	var checker = _make_checker()
+	watch_signals(checker)
+	checker.handle_manifest_response(HTTPRequest.RESULT_TIMEOUT, 0, "")
+	assert_eq(checker.available_version, "")
+	assert_signal_not_emitted(checker, "update_available")
+	assert_true(checker._fallback_used, "unreachable manifest -> feed fallback attempted")
+
+func test_manifest_handler_malformed_body_falls_back_to_feed():
+	var checker = _make_checker()
+	checker.handle_manifest_response(HTTPRequest.RESULT_SUCCESS, 200, "<html>GitHub error page</html>")
+	assert_true(checker._fallback_used, "malformed manifest -> feed fallback attempted")
+
+func test_default_update_page_url_when_no_manifest():
+	var checker = _make_checker()
+	assert_eq(checker.get_update_page_url(), CheckScript.UPDATE_PAGE_URL)
+
+func test_dismiss_clears_manifest_state():
+	var newer := _newer_than_local()
+	var prior_dismissed = GameConfig.dismissed_update_version
+	GameConfig.dismissed_update_version = ""
+	var checker = _make_checker()
+	checker.handle_manifest_response(HTTPRequest.RESULT_SUCCESS, 200,
+		_manifest_body("v" + newer, _other_ladder()))
+	checker.dismiss_current_notice()
+	assert_eq(checker.available_version, "")
+	assert_eq(checker.available_ladder, "")
+	assert_false(checker.available_epoch_change)
+	assert_eq(checker.available_highlights, "")
+	assert_eq(checker.get_update_page_url(), CheckScript.UPDATE_PAGE_URL)
 	GameConfig.dismissed_update_version = prior_dismissed
 
 

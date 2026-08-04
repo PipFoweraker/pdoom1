@@ -78,6 +78,12 @@ unverified pck.
   anonymous install ping (Plausible, random install UUID, opt-out in settings)
   that #940's install-base metrics consume server-side. No auto-download; L3
   remains unbuilt (and per the Steam note below, may never be).
+  **UPDATED (2026-08-04, self-updater workstream):** the check's PRIMARY
+  source is now `release_manifest.json` from the latest GitHub release
+  (epoch-aware, carries changelog highlights + per-asset sha256); the website
+  feed is a one-shot fallback. Pip's 2026-08-04 ruling: the project owns its
+  updater, before and independent of Steam. Full design + failure modes:
+  `docs/design/UPDATER_DESIGN.md`.
 - **L3: in-game auto pck-swap patcher.** Download + hash-verify + mount/swap +
   relaunch, all in-game. Rare exe/engine updates fall back to re-running the
   installer, surfaced via the same L2 banner.
