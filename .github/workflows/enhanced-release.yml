@@ -225,44 +225,47 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.11'
+
+      # The built zips, so the manifest can publish per-asset sha256 hashes.
+      # These hashes are the integrity anchor the in-game updater verifies
+      # against BEFORE trusting any downloaded blob (self-updater workstream;
+      # docs/design/UPDATER_DESIGN.md). A manifest without them cannot ever
+      # authorize an auto-install.
+      - name: Download build artifacts for hashing
+        uses: actions/download-artifact@v8
+        with:
+          pattern: build-*
+          path: build-artifacts/
+
+      # scripts/generate_release_manifest.py replaced the old inline YAML
+      # heredoc: same fields plus ladder_version / highlights / download_page /
+      # assets, and it is unit-tested (tests/test_generate_release_manifest.py)
+      # where a heredoc could only be eyeballed. It fails LOUDLY (non-zero) on
+      # a malformed version, missing ladder_version.txt, or non-ASCII output --
+      # a bad manifest must fail the release, not ship.
       - name: Generate release manifest
         id: manifest
         env:
           RELEASE_VERSION: ${{ github.event.inputs.version || github.ref_name }}
+          VALIDATION_STATUS: ${{ needs.validate-data.outputs.validation_status }}
         run: |
-          VERSION="$RELEASE_VERSION"
-          COMMIT_HASH="${{ github.sha }}"
-          DATA_HASH="${{ needs.validate-data.outputs.validation_hash }}"
-          BUILD_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-
-          cat > release_manifest.json <<EOF
-          {
-            "version": "$VERSION",
-            "build_date": "$BUILD_DATE",
-            "commit_hash": "$COMMIT_HASH",
-            "commit_short": "${COMMIT_HASH:0:8}",
-            "data_batch_hash": "$DATA_HASH",
-            "schema_versions": {
-              "events": "1.0",
-              "organizations": "1.0",
-              "researchers": "1.0"
-            },
-            "engine": {
-              "name": "Godot",
-              "version": "4.5.1"
-            },
-            "platforms": ["windows", "linux", "macos"],
-            "validation_passed": true,
-            "build_pipeline": "github-actions",
-            "workflow_run": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
-            "provenance": {
-              "repository": "${{ github.repository }}",
-              "ref": "${{ github.ref }}",
-              "actor": "${{ github.actor }}",
-              "event": "${{ github.event_name }}"
-            }
-          }
-          EOF
+          if [ "$VALIDATION_STATUS" = "success" ]; then VALIDATED=true; else VALIDATED=false; fi
+          python scripts/generate_release_manifest.py \
+            --version "$RELEASE_VERSION" \
+            --commit "${{ github.sha }}" \
+            --repository "${{ github.repository }}" \
+            --data-hash "${{ needs.validate-data.outputs.validation_hash }}" \
+            --workflow-run "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+            --ref "${{ github.ref }}" \
+            --actor "${{ github.actor }}" \
+            --event "${{ github.event_name }}" \
+            --validation-passed "$VALIDATED" \
+            --assets-dir build-artifacts \
+            --output release_manifest.json
 
           # Generate manifest hash
           MANIFEST_HASH=$(sha256sum release_manifest.json | cut -d' ' -f1)
