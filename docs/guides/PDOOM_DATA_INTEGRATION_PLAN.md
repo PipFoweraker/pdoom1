@@ -1,8 +1,24 @@
 # pdoom-data Integration Plan
 ## Historical AI Safety Timeline Data Repository
 
+> # [!] RETIRED PLAN -- NOT BUILT, NOT THE CURRENT DIRECTION.
+>
+> **Marked dead 2026-08-04.** This is a 2025-11-03 plan whose sync pipeline,
+> loaders and directory layout were never built. The one thing that DID ship from
+> this era is a single one-off snapshot import (PR #503, 2025-12-25).
+>
+> - The sync script this plan specifies (`scripts/sync_from_pdoom_data.sh`) was
+>   DELETED 2026-08-04; it read pdoom-data directories that do not exist.
+> - `shared/data/historical_timeline/` and the `src/data/` loader referenced in
+>   the shell/Python blocks below do not exist.
+> - Current direction and the real field-by-field contract:
+>   `docs/decision-cards/2026-08-02_pdoom-data-contract.md` and issue #1102.
+> - The re-sync capability that is still genuinely wanted: issue #1115.
+>
+> Kept for the reasoning, not as a spec. Do not implement from it.
+
 **Created**: 2025-11-03
-**Status**: Planning Phase
+**Status**: RETIRED 2026-08-04 (was: Planning Phase -- never left it)
 **Related Repository**: pdoom-data (separate repo for cleaned historical data)
 
 ---

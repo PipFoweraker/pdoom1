@@ -1,5 +1,20 @@
 # Office Cat Assets
 
+> **[!] Audited 2026-08-04 -- half of this directory is wired to nothing.**
+>
+> - `simple/` is **LIVE**: `godot/scripts/ui/office_cat.gd` picks a random photo
+>   from it using a hardcoded `CAT_NAMES` dictionary.
+> - `default/` (the 5 doom-variant SVGs described below) is **ORPHANED**. Its
+>   only consumer was `godot/scripts/data/contributor_manager.gd`, deleted
+>   2026-08-04 for having zero callers. Nothing loads these SVGs. They are kept
+>   under the ADR-0019 grandfathering rule for already-packed assets, not because
+>   they are used.
+> - The doom-level variant system does not exist. `office_cat.gd`'s
+>   `update_doom_level()` is an explicit no-op.
+> - There is no contributor sync. `godot/data/contributors.json` (an empty stub)
+>   was deleted 2026-08-04; the sync script that was meant to fill it never ran.
+>   See issue #1115.
+
 This directory contains office cat images for the contributor recognition system.
 
 ## Directory Structure
@@ -67,7 +82,10 @@ Contributor cats are synced from the **pdoom-data** repository:
 
 ## Related Documentation
 
-- `docs/CONTRIBUTOR_SYSTEM.md`: Full contributor recognition system docs
-- `scripts/data/contributor_manager.gd`: Contributor manager implementation
+- `docs/CONTRIBUTOR_SYSTEM.md`: Full contributor recognition system docs (carries
+  its own "half dead" header -- read that before trusting it)
+- ~~`scripts/data/contributor_manager.gd`~~: **DELETED 2026-08-04** (zero callers;
+  carried the #796 `FileAccess.file_exists()` export-blindness bug)
+- `godot/scripts/ui/office_cat.gd`: what actually renders a cat today
 - pdoom-data issue #22: Contributor sync pipeline
 - pdoom1-website issue #70: Airtable CRM system

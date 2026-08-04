@@ -1,29 +1,16 @@
 {
-  "_description": "Example override file showing how to tune pdoom-data events for game balance",
+  "_WARNING_THIS_FILE_IS_LIVE": "Despite the name 'example', EventService loads EVERY .json in this directory at startup (event_service.gd _load_overrides) and applies it to the shipped corpus. This is NOT inert documentation -- anything in here changes the game. Audited 2026-08-04.",
+  "_description": "Live override file that doubles as the format example for tuning pdoom-data events for game balance",
   "_note": "Only include fields you want to override - unspecified fields keep base values",
+  "_verified_2026_08_04": "Every event id below was checked against godot/data/historical_events.json and EXISTS. Two ids that did NOT exist -- openai_founded, chatgpt_released -- were removed on 2026-08-04. They had been silent no-ops since they were written, because _apply_overrides only fires on an exact id match. The file teaching the format was itself wrong in 2 of 3 examples. If you add a key here, grep historical_events.json for it first: a typo fails silently and looks exactly like a working override.",
   "_adr_0015": "NEVER add a literal 'doom' impact here. The doom LEVEL is single-authority (DoomSystem); content writes a world-state INTERMEDIARY instead (global_alarm / global_panic / safety_absorption / frontier_capability / general_capability). The doom impacts this template used to demonstrate were inert no-ops AND the worst copy-me trap in the tree.",
 
   "ftx_future_fund_collapse_2022": {
     "_reason": "The FTX collapse was a massive blow to AI safety funding - making it legendary and high-impact",
+    "_status": "LIVE -- id confirmed present in historical_events.json on 2026-08-04. This override really does apply in shipped builds.",
     "rarity": "legendary",
     "impacts": [
       {"variable": "money", "change": -80}
-    ]
-  },
-
-  "openai_founded": {
-    "_reason": "Founding of OpenAI is a pivotal moment in AI history - legendary rarity",
-    "rarity": "legendary",
-    "impacts": [
-      {"variable": "reputation", "change": 10}
-    ]
-  },
-
-  "chatgpt_released": {
-    "_reason": "ChatGPT mainstreamed AI - legendary event with mixed impacts",
-    "rarity": "legendary",
-    "impacts": [
-      {"variable": "reputation", "change": 5}
     ]
   }
 }

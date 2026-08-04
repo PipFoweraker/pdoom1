@@ -1,5 +1,25 @@
 # P(Doom) Development Tool
 
+> # [!] MOST OF THIS FILE DOCUMENTS A TOOL THAT IS GONE.
+>
+> **Audited 2026-08-04.** The `dev_tool.py` manual that occupies the top of this
+> README describes an archived Python tool -- see `tools/DEPRECATED.md`.
+> `tools/dev_tool.py` does not exist.
+>
+> The LIVE tools in this directory are, roughly:
+> `build_release.py`, `sync_version.py`, `write_build_stamp.py`,
+> `check_scene_nav.py`, `assets/` (the gpt-image-1 icon pipeline),
+> `art_review/`, `runsheet/`.
+>
+> Also deleted 2026-08-04 as dead (all had zero callers, and each imported or
+> invoked a path that does not exist): `tools/web_export/`,
+> `tools/integration_test_v0_10_0.py`, `tools/setup_godot_migration.py`,
+> `tools/migration/`, `tools/testing/`, `tools/dev/`,
+> `tools/demo_sound_party_ready.py` (a 0-byte file),
+> `tools/cleanup_branches.sh`, `tools/pre-commit-issue-check`.
+>
+> Scroll to the build/release sections for anything current.
+
 A simple but extensible development tool for testing P(Doom) game functionality separately from the main game.
 
 ## Features

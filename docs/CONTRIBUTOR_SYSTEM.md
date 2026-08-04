@@ -1,5 +1,40 @@
 # Contributor System - Technical Documentation
 
+> # [!] HALF DEAD -- read this box before believing anything below.
+>
+> **Audited 2026-08-04.** This document covers TWO systems. One ships; one never
+> did, and the code that was supposed to implement it has now been deleted.
+>
+> **DEAD -- contributor cats / contributor data (never wired up):**
+>
+> - `godot/scripts/data/contributor_manager.gd` -- **DELETED 2026-08-04.** It had
+>   ZERO callers in game code, scenes or tests. It also carried the exact
+>   `FileAccess.file_exists()` export-blindness bug that produced the magenta-cat
+>   crash-look in issue #796 (`FileAccess` cannot see imported textures inside a
+>   shipped `.pck`; the correct call is `ResourceLoader.exists()`). It was a loaded
+>   gun for whoever revived this feature.
+> - `godot/data/contributors.json` -- **DELETED 2026-08-04.** An empty stub
+>   (`"contributors": []`) with no reader left once the manager went.
+> - `godot/assets/cats/default/` (5 doom-variant SVGs) -- orphaned; the only code
+>   that referenced them was `contributor_manager.gd`. KEPT under the ADR-0019
+>   grandfathering rule for already-packed assets. Not wired to anything.
+> - There is no sync of contributor data from pdoom-data. There never was; the
+>   script that claimed to do it (`scripts/sync_from_pdoom_data.sh`) was deleted
+>   2026-08-04 for reading directories that do not exist. See issue #1115.
+>
+> **LIVE -- and correctly described:**
+>
+> - Bug reporting: `godot/scripts/core/bug_reporter.gd`,
+>   `godot/scenes/ui/bug_report_panel.tscn`, `tools/process_bug_reports.py`.
+> - The office cat itself: `godot/scripts/ui/office_cat.gd` +
+>   `godot/scenes/ui/office_cat.tscn`, which picks a random photo from
+>   `godot/assets/cats/simple/` via a hardcoded `CAT_NAMES` dictionary. It does
+>   NOT use ContributorManager, does NOT read `contributors.json`, and has no
+>   doom variants (`update_doom_level()` is a deliberate no-op).
+>
+> Treat the contributor-cat sections below as a design sketch, not as a
+> description of running code.
+
 ## Architecture Overview
 
 The PDoom contributor recognition system is a multi-repository, privacy-first architecture for recognizing community contributions through the "Office Cat" feature.
@@ -63,15 +98,15 @@ The PDoom contributor recognition system is a multi-repository, privacy-first ar
 
 ```
 Player submits bug (F8 in-game)
-     v 
+     v
 Local save to user://bug_reports/
-     v 
+     v
 Admin runs tools/process_bug_reports.py
-     v 
+     v
 GitHub issue created (label: community-submission)
-     v 
+     v
 Webhook  ->  Airtable CRM (future)
-     v 
+     v
 Admin reviews and approves
 ```
 
@@ -79,17 +114,17 @@ Admin reviews and approves
 
 ```
 Contribution approved in Airtable CRM
-     v 
+     v
 Admin requests cat photo from contributor
-     v 
+     v
 Photo processed  ->  5 doom variants
-     v 
+     v
 Upload to pdoom-data repo: cats/{uuid}/
-     v 
+     v
 Add entry to pdoom-data: contributors.json
-     v 
+     v
 CI/CD syncs pdoom-data  ->  pdoom1
-     v 
+     v
 Next game release includes contributor cat
 ```
 
@@ -266,8 +301,15 @@ jobs:
 
 ### Testing Office Cat System
 
+**[!] THIS SNIPPET NO LONGER COMPILES.** `ContributorManager` was deleted on
+2026-08-04 (zero callers; carried the #796 `FileAccess` bug). Kept only to record
+the shape the dead design had. If the contributor-cat feature is revived, use
+`ResourceLoader.exists()` for every image probe -- never
+`FileAccess.file_exists()`, which returns false for imported textures in a
+shipped `.pck`.
+
 ```gdscript
-# In main UI or test scene
+# DEAD -- ContributorManager does not exist. Do not copy.
 var contributor_manager = ContributorManager.new()
 add_child(contributor_manager)
 

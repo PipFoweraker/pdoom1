@@ -1,5 +1,19 @@
 # Cross-Repository Documentation Strategy: P(Doom) Ecosystem
 
+> # [!] PROPOSAL ONLY -- NONE OF THIS WAS BUILT.
+>
+> **Audited 2026-08-04.** Every script this strategy is built on is absent:
+> `scripts/sync-docs.py`, `scripts/validate-links.py`, `scripts/init-docs.py`,
+> `scripts/doc-status.py`. Four for four. There is no automated doc sync between
+> pdoom1, pdoom1-website and pdoom-data.
+>
+> What actually exists: `scripts/sync_website_docs.py` (a different, narrower
+> thing) and manual coordination.
+>
+> Read as a design proposal. The future-tense wording below ("We'll implement")
+> is accurate and was never followed by an implementation -- do not read the
+> command examples as available tooling.
+
 ## The Problem: Documentation Drift
 
 In multi-repository architectures, documentation quickly becomes inconsistent across repositories. Common issues include:
@@ -112,18 +126,18 @@ jobs:
           - repo: pdoom-data
             docs: ['shared/', 'data/']
             destination: 'docs/'
-    
+
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
-        
+
       - name: Checkout target
         uses: actions/checkout@v4
         with:
           repository: PipFoweraker/${{ matrix.target.repo }}
           token: ${{ secrets.CROSS_REPO_TOKEN }}
           path: target-repo
-          
+
       - name: Sync documentation
         run: |
           for doc_dir in ${{ join(matrix.target.docs, ' ') }}; do
@@ -132,13 +146,13 @@ jobs:
               'docs/$doc_dir' \
               'target-repo/${{ matrix.target.destination }}'
           done
-          
+
       - name: Commit and push changes
         working-directory: target-repo
         run: |
           git config user.email 'docs-sync@pdoom.net'
           git config user.name 'Documentation Sync Bot'
-          
+
           if [[ -n $(git status --porcelain) ]]; then
             git add .
             git commit -m 'docs: sync from pdoom1@$(echo $GITHUB_SHA | head -c 7)'
@@ -199,30 +213,30 @@ class DocSyncer:
     def __init__(self, config_file: str = 'docs/sync-config.yml'):
         self.config = self._load_config(config_file)
         self.base_path = Path('.')
-        
+
     def _load_config(self, config_file: str) -> Dict:
         '''Load synchronization configuration'''
         with open(config_file, 'r') as f:
             return yaml.safe_load(f)
-    
+
     def sync_to_repository(self, target_repo: str) -> bool:
         '''Sync documentation to target repository'''
         config = self.config['repositories'][target_repo]
-        
+
         # Clone or update target repository
         repo_path = self._ensure_repo(target_repo, config['url'])
-        
+
         # Copy documentation files
         for source_path, dest_path in config['mappings'].items():
             self._copy_docs(source_path, repo_path / dest_path)
-        
+
         # Commit and push changes
         return self._commit_changes(repo_path, target_repo)
-    
+
     def _ensure_repo(self, repo_name: str, repo_url: str) -> Path:
         '''Ensure repository is available locally'''
         repo_path = Path(f'temp/{repo_name}')
-        
+
         if repo_path.exists():
             # Pull latest changes
             subprocess.run(['git', 'pull'], cwd=repo_path)
@@ -230,13 +244,13 @@ class DocSyncer:
             # Clone repository
             repo_path.parent.mkdir(exist_ok=True)
             subprocess.run(['git', 'clone', repo_url, str(repo_path)])
-        
+
         return repo_path
-    
+
     def _copy_docs(self, source: str, destination: Path):
         '''Copy documentation files with preprocessing'''
         source_path = self.base_path / 'docs' / source
-        
+
         if source_path.is_file():
             # Process single file
             content = self._process_file(source_path, destination.parent.name)
@@ -250,20 +264,20 @@ class DocSyncer:
                 content = self._process_file(file_path, destination.name)
                 dest_file.parent.mkdir(parents=True, exist_ok=True)
                 dest_file.write_text(content)
-    
+
     def _process_file(self, file_path: Path, target_repo: str) -> str:
         '''Process documentation file for target repository'''
         content = file_path.read_text()
-        
+
         # Apply repository-specific transformations
         transformations = self.config.get('transformations', {})
         repo_transforms = transformations.get(target_repo, {})
-        
+
         for pattern, replacement in repo_transforms.items():
             content = content.replace(pattern, replacement)
-        
+
         # Add sync metadata
-        sync_header = f'''<!-- 
+        sync_header = f'''<!--
 This file is automatically synced from pdoom1/docs/{file_path.relative_to(self.base_path / 'docs')}
 Last synced: {datetime.now().isoformat()}
 DO NOT EDIT DIRECTLY - Changes will be overwritten
@@ -271,41 +285,41 @@ DO NOT EDIT DIRECTLY - Changes will be overwritten
 
 '''
         return sync_header + content
-    
+
     def _commit_changes(self, repo_path: Path, repo_name: str) -> bool:
         '''Commit and push documentation changes'''
         try:
             # Check for changes
             result = subprocess.run(
-                ['git', 'status', '--porcelain'], 
-                cwd=repo_path, 
-                capture_output=True, 
+                ['git', 'status', '--porcelain'],
+                cwd=repo_path,
+                capture_output=True,
                 text=True
             )
-            
+
             if not result.stdout.strip():
                 print(f'No documentation changes for {repo_name}')
                 return True
-            
+
             # Commit changes
             subprocess.run(['git', 'add', '.'], cwd=repo_path)
             subprocess.run([
-                'git', 'commit', '-m', 
+                'git', 'commit', '-m',
                 f'docs: sync from pdoom1 ({datetime.now().strftime('%Y-%m-%d %H:%M:%S')})'
             ], cwd=repo_path)
-            
+
             # Push changes
             subprocess.run(['git', 'push'], cwd=repo_path)
             print(f'Successfully synced documentation to {repo_name}')
             return True
-            
+
         except subprocess.CalledProcessError as e:
             print(f'Failed to sync documentation to {repo_name}: {e}')
             return False
 
 if __name__ == '__main__':
     syncer = DocSyncer()
-    
+
     # Sync to all configured repositories
     for repo in syncer.config['repositories']:
         syncer.sync_to_repository(repo)
@@ -324,7 +338,7 @@ repositories:
       'shared/INTEGRATION_PLAN.md': 'docs/INTEGRATION_PLAN.md'
       'website/': 'docs/website/'
       'templates/README.template.md': 'docs/templates/README.template.md'
-    
+
   pdoom-data:
     url: 'https://github.com/PipFoweraker/pdoom-data.git'
     mappings:
@@ -338,7 +352,7 @@ transformations:
   pdoom1-website:
     'pdoom-data': 'pdoom-data'
     '../pdoom1/': '../'
-  
+
   pdoom-data:
     'pdoom1/docs/': 'docs/'
     'game repository': 'pdoom1 repository'
@@ -348,11 +362,11 @@ validation:
   cross_references:
     - pattern: '\[.*\]\(\.\.\/.*\.md\)'
       check: 'relative_links'
-  
+
   consistency:
     - files: ['shared/ECOSYSTEM_OVERVIEW.md']
       check: 'repository_list'
-    - files: ['shared/API_REFERENCE.md'] 
+    - files: ['shared/API_REFERENCE.md']
       check: 'endpoint_consistency'
 ```
 
@@ -364,13 +378,13 @@ validation:
 # docs/versions.yml
 documentation_versions:
   current: 'v0.4.1'
-  
+
   versions:
     'v0.4.1':
       pdoom1: 'main'
       pdoom1-website: 'main'
       pdoom-data: 'main'
-    
+
     'v0.4.0':
       pdoom1: 'v0.4.0'
       pdoom1-website: 'v0.4.0-website'
@@ -419,47 +433,47 @@ class LinkValidator:
             'pdoom1-website': 'https://github.com/PipFoweraker/pdoom1-website',
             'pdoom-data': 'https://github.com/PipFoweraker/pdoom-data'
         }
-    
+
     def validate_all_links(self) -> List[Tuple[str, str, bool]]:
         '''Validate all cross-repository links'''
         results = []
-        
+
         for md_file in Path('docs').rglob('*.md'):
             results.extend(self._validate_file_links(md_file))
-        
+
         return results
-    
+
     def _validate_file_links(self, file_path: Path) -> List[Tuple[str, str, bool]]:
         '''Validate links in a single file'''
         content = file_path.read_text()
         results = []
-        
+
         # Find all markdown links
         link_pattern = r'\[([^\]]+)\]\(([^)]+)\)'
         links = re.findall(link_pattern, content)
-        
+
         for link_text, link_url in links:
             if self._is_cross_repo_link(link_url):
                 valid = self._validate_cross_repo_link(link_url)
                 results.append((str(file_path), link_url, valid))
-        
+
         return results
-    
+
     def _is_cross_repo_link(self, url: str) -> bool:
         '''Check if link is a cross-repository reference'''
         return any(repo in url for repo in self.repositories.keys())
-    
+
     def _validate_cross_repo_link(self, url: str) -> bool:
         '''Validate a cross-repository link'''
         # Convert relative paths to absolute GitHub URLs
         github_url = self._convert_to_github_url(url)
-        
+
         try:
             response = requests.head(github_url, timeout=10)
             return response.status_code == 200
         except requests.RequestException:
             return False
-    
+
     def _convert_to_github_url(self, relative_url: str) -> str:
         '''Convert relative repository path to GitHub URL'''
         # Implementation to convert ../pdoom1-website/docs/file.md
@@ -469,7 +483,7 @@ class LinkValidator:
 if __name__ == '__main__':
     validator = LinkValidator()
     results = validator.validate_all_links()
-    
+
     # Report results
     broken_links = [r for r in results if not r[2]]
     if broken_links:
@@ -519,7 +533,7 @@ python scripts/doc-status.py
 
 This approach gives you:
 - **Single Source of Truth**: Clear ownership and authority
-- **Automated Consistency**: No manual synchronization needed  
+- **Automated Consistency**: No manual synchronization needed
 - **Version Control**: Full history of documentation changes
 - **Validation**: Automated checking for broken links and inconsistencies
 - **Scalability**: Easily add new repositories to the ecosystem
