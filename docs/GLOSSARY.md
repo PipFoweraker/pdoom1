@@ -345,6 +345,43 @@ Source: `docs/ARCHITECTURE.md:259-262`, `CLAUDE.md:23-28`
 
 ---
 
+## Player-facing vocabulary
+
+### Attention (NOT "Action Points" / "AP")
+The founder's ONLY currency: a grant of roughly N decisions per PLAN MONTH,
+typed into PLANNING and OPERATING hours. Staff never add to it -- they work
+their own per-person lanes. Unspent Attention evaporates at month end (no
+banking).
+
+**"Action Points" / "AP" is dead vocabulary.** The per-turn AP pool was killed
+as a design concept on 2026-07-27 (ADR-0011 amendment (a): *"AP confirmed dead
+(RIP AP, dead 1h03m. Long live A!)"*) and deleted in code by the T2 migration.
+`game_state.gd` states it in terms: *"There is no `action_points` field, no
+per-turn grant, no AP in any cost dict."* Any player-facing "AP" string is a
+defect, not a mechanic -- and a stale AP string is worse than a stale word,
+because #1073's worst case taught a FORMULA ("Base 3 + 0.5 per staff") for a
+mechanic that does not exist.
+
+Guarded by `godot/tests/unit/test_no_stale_ap_vocabulary.gd`, which asserts the
+ABSENCE of the vocabulary across scenes/data/UI scripts. #1050 tried to close
+this by enumerating nine strings and missed at least six; enumeration is the
+failure mode.
+
+Source: `docs/game-design/decisions/ADR-0011-*.md` (Decision point 1,
+Amendment 2026-07-27 (a)), `godot/scripts/core/game_state.gd:76-80`
+
+### number format policy
+One convention for every player-facing number: money in whole grouped dollars
+(never cents), resource scalars in whole grouped units, percentages to one
+decimal (the deliberate exception -- p(Doom)'s fraction is load-bearing), and
+deltas always signed. **A raw float must never reach the player.** All of it
+lives in `GameConfig`; nothing else may format a number for a player.
+
+Source: `docs/NUMBER_FORMATS.md`, `godot/autoload/game_config.gd` (the
+"NUMBER FORMAT POLICY" block), `godot/tests/unit/test_number_format_policy.gd`
+
+---
+
 ## Process and docs
 
 ### ADR

@@ -122,7 +122,7 @@ text = "[b]Mouse:[/b] Click buttons and UI elements
 
 [b]In-Game:[/b]
 • Select actions from the left panel
-• Actions cost Action Points (AP) and resources
+• Actions cost Attention -- the founder's month -- plus money and resources
 • End your turn to execute all queued actions
 • Watch resource changes in the top panel"
 
@@ -181,7 +181,7 @@ text = "1. [b]Early Game:[/b] Hire safety researchers and fundraise for sustaina
 3. [b]Reputation:[/b] Publish papers to boost reputation for better fundraising
 4. [b]Compute:[/b] Buy compute upgrades to accelerate research
 5. [b]Watch P(Doom):[/b] If it rises too fast, pivot to safety research
-6. [b]Action Points:[/b] Use all your AP each turn - wasted AP = wasted time
+6. [b]Attention:[/b] Unspent Attention evaporates at month end - there is no banking
 7. [b]Events:[/b] Random events can help or harm - read them carefully!"
 
 [node name="Spacer" type="Control" parent="Panel/VBox"]

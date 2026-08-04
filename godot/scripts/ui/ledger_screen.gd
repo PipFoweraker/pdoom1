@@ -229,7 +229,8 @@ func build_screen(ledger, viewport_size: Vector2, on_close: Callable = Callable(
 				var row_color = _LEDGER_INK_SECRET if e.secret else _LEDGER_INK_CLEAN
 				var cells = [
 					str(e.source),
-					"%s %.0f %s" % [side_txt, e.principal, e.currency],
+					# #1087: a money payable is money -- "owe 15000 money" now reads "owe $15,000".
+				("%s %s" % [side_txt, GameConfig.format_money(float(e.principal))]) if String(e.currency) == "money" else ("%s %s %s" % [side_txt, GameConfig.format_scalar(float(e.principal)), e.currency]),
 					"%s%s" % [_due_text(e.fuse, turn, start_year, start_month, start_day), interest_txt],
 					note_txt,
 				]

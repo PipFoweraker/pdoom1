@@ -1091,11 +1091,17 @@ func _on_game_state_updated(state: Dictionary):
 	# label and the now-redundant TurnCountLabel is hidden. VIEW-only (ADR-0006).
 	turn_label.text = _format_turn_datetime(state)
 	turn_count_label.visible = false
-	money_label.text = "%s" % GameConfig.format_money(state.get("money", 0))
-	compute_label.text = "%.1f" % state.get("compute", 0)
-	research_label.text = "%.1f" % state.get("research", 0)
-	papers_label.text = "%d" % state.get("papers", 0)
-	reputation_label.text = "* %.0f" % state.get("reputation", 0)
+	# #1087 number-format policy (docs/NUMBER_FORMATS.md): whole dollars, whole scalars,
+	# and the resource's NAME on its face. The bar previously read "$197,207.69 | 82.0 |
+	# 34.0 | 0 | * 70" -- four formats and two unlabelled numbers, one of them behind a
+	# star sigil that reads as a footnote marker. The scene file's own placeholder text
+	# ("Compute: 0", "Rep: 0") already declared this format; the runtime path had drifted
+	# off it. Labels only -- no control moved.
+	money_label.text = GameConfig.format_money(state.get("money", 0))
+	compute_label.text = "Compute: %s" % GameConfig.format_scalar(state.get("compute", 0))
+	research_label.text = "Research: %s" % GameConfig.format_scalar(state.get("research", 0))
+	papers_label.text = "Papers: %s" % GameConfig.format_scalar(state.get("papers", 0))
+	reputation_label.text = "Rep: %s" % GameConfig.format_scalar(state.get("reputation", 0))
 
 	# EE-7: refresh the per-resource "last turn" delta chips at turn boundaries
 	_update_delta_chips(state)
@@ -1309,14 +1315,23 @@ func _render_delta_chip(key: String, d: float) -> void:
 	var chip: Label = _delta_labels.get(key)
 	if chip == null:
 		return
-	if absf(d) < 0.05:
+	# Suppress a change too small to SHOW: doom renders one decimal, everything else
+	# renders whole units, so a 0.3 compute drift would otherwise print "(+0)" -- a
+	# rounding artefact that reads as a bug. Threshold matches the display grain.
+	var visible_grain: float = 0.05 if key == "doom" else 0.5
+	if absf(d) < visible_grain:
 		chip.text = ""
 		return
+	# #1087: deltas carry an explicit sign and the SAME base format as the resource they
+	# sit beside -- "(-$238)" not "(-$238.46)", "(-1)" not "(-1.0)". doom is the deliberate
+	# exception: its fraction is load-bearing, so it keeps a decimal point.
 	var txt: String
 	if key == "money":
-		txt = ("+" if d > 0.0 else "-") + GameConfig.format_money(absf(d))
-	else:
+		txt = GameConfig.format_money_delta(d)
+	elif key == "doom":
 		txt = "%+.1f" % d
+	else:
+		txt = GameConfig.format_scalar_delta(d)
 	chip.text = "(%s)" % txt
 	# Doom rising is bad; every other resource rising is good.
 	var good: bool = (d < 0.0) if key == "doom" else (d > 0.0)
@@ -2076,9 +2091,10 @@ func _on_action_hover(action: Dictionary, can_afford: bool, missing_resources: A
 		if action_costs.has("papers"):
 			cost_parts.append("[color=white]%d Papers[/color]" % action_costs["papers"])
 		if action_costs.has("compute"):
-			cost_parts.append("[color=blue]%.1f Compute[/color]" % action_costs["compute"])
+			# #1087: an action costing "3.0 Compute" implied a fractional cost exists.
+			cost_parts.append("[color=blue]%s Compute[/color]" % GameConfig.format_scalar(action_costs["compute"]))
 		if action_costs.has("research"):
-			cost_parts.append("[color=purple]%.1f Research[/color]" % action_costs["research"])
+			cost_parts.append("[color=purple]%s Research[/color]" % GameConfig.format_scalar(action_costs["research"]))
 
 		info_text += " - ".join(cost_parts)
 	else:
