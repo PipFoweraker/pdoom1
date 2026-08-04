@@ -568,19 +568,21 @@ func _input(event: InputEvent):
 			get_viewport().set_input_as_handled()
 			return
 
-		# Manual PLAN<->WATCH view toggle (V). VIEW-only quick-win: lets the player flip
-		# screens at will to look things over. Works in any phase; never touches the sim.
-		if event.keycode == KEY_V:
+		# Manual PLAN<->WATCH view toggle (V by default). VIEW-only quick-win: lets the player
+		# flip screens at will to look things over. Works in any phase; never touches the sim.
+		# #602 P4: read through KeybindManager ("toggle_view") so a rebind actually takes.
+		if KeybindManager.is_action_pressed(event, "toggle_view"):
 			if screen_mode:
 				screen_mode.toggle_mode()
 				get_viewport().set_input_as_handled()
 			return
 
 		# Main game shortcuts (when no dialog is active)
-		# Number keys 1-9 for action shortcuts
-		if event.keycode >= KEY_1 and event.keycode <= KEY_9:
-			var action_index = event.keycode - KEY_1  # 0-indexed
-			_trigger_action_by_index(action_index)
+		# Action-bar slots 1-9. #602 P4: matched through the action_1..action_9 binds rather
+		# than a raw KEY_1..KEY_9 range, so the rebind screen's nine Action rows are real.
+		var slot := _action_slot_for_event(event)
+		if slot >= 0:
+			_trigger_action_by_index(slot)
 			get_viewport().set_input_as_handled()
 
 		# Undo last action (Z key by default, configurable via KeybindManager)
@@ -595,45 +597,87 @@ func _input(event: InputEvent):
 				_on_clear_queue_button_pressed()
 				get_viewport().set_input_as_handled()
 
-		# Space to end turn (with warnings)
-		elif event.keycode == KEY_SPACE:
+		# Space to end turn (with warnings). #602 P4: via KeybindManager so a rebind takes.
+		elif KeybindManager.is_action_pressed(event, "end_turn"):
 			if not end_turn_button.disabled:
 				_on_end_turn_button_pressed()
 				get_viewport().set_input_as_handled()
 
 		# Enter to commit plan (no warnings)
-		elif event.keycode == KEY_ENTER:
+		elif KeybindManager.is_action_pressed(event, "commit_plan"):
 			if not commit_plan_button.disabled:
 				_on_commit_plan_button_pressed()
 				get_viewport().set_input_as_handled()
 
-		# N key to open bug reporter (backslash was reclaimed for the DEV MODE overlay)
-		elif event.keycode == KEY_N:
+		# N opens the bug reporter (backslash was reclaimed for the DEV MODE overlay).
+		# #602 P2: MIRRORED -- N closes the form it opened. L and H/F/P/T already were;
+		# N was the one that got missed, even though BugReportPanel.toggle_panel() had
+		# existed unused the whole time.
+		elif KeybindManager.is_action_pressed(event, "bug_reporter"):
 			if bug_report_panel:
-				_open_bug_report_panel()
+				if bug_report_panel.visible:
+					modal_stack.dismiss(bug_report_panel)
+				else:
+					_open_bug_report_panel()
 				get_viewport().set_input_as_handled()
 
-		# Quick menu shortcuts (H, F, R, P, T)
+		# F10 opens the full Settings screen (and with it the keybind editor). #602 P1:
+		# this bind existed and NOTHING consumed it -- mid-run, Settings had no door at
+		# all. Paired with the pause menu's new Settings button so it is not hotkey-only.
+		# SceneTransition defers the swap, so calling it from _input is safe (v0.11.0).
+		elif KeybindManager.is_action_pressed(event, "settings"):
+			get_viewport().set_input_as_handled()
+			SceneTransition.go_to("res://scenes/settings_menu.tscn")
+
+		# Quick menu shortcuts. MIRRORED (#602, principle P2): the key that opens a panel
+		# also closes it, exactly as L already did for the ledger (#601).
 		elif KeybindManager.is_action_pressed(event, "menu_hire"):
-			if current_turn_phase.to_upper() == "ACTION_SELECTION":
-				submenu_controller.open("hire_staff")
-				_decorate_active_submenu(_find_action_button("hire_staff"))
-				get_viewport().set_input_as_handled()
+			_toggle_submenu("hire_staff")
+			get_viewport().set_input_as_handled()
 		elif KeybindManager.is_action_pressed(event, "menu_fundraise"):
-			if current_turn_phase.to_upper() == "ACTION_SELECTION":
-				submenu_controller.open("fundraise")
-				_decorate_active_submenu(_find_action_button("fundraise"))
-				get_viewport().set_input_as_handled()
+			_toggle_submenu("fundraise")
+			get_viewport().set_input_as_handled()
 		elif KeybindManager.is_action_pressed(event, "menu_publicity"):
-			if current_turn_phase.to_upper() == "ACTION_SELECTION":
-				submenu_controller.open("publicity")
-				_decorate_active_submenu(_find_action_button("publicity"))
-				get_viewport().set_input_as_handled()
+			_toggle_submenu("publicity")
+			get_viewport().set_input_as_handled()
 		elif KeybindManager.is_action_pressed(event, "menu_travel"):
-			if current_turn_phase.to_upper() == "ACTION_SELECTION":
-				submenu_controller.open("travel")
-				_decorate_active_submenu(_find_action_button("travel"))
-				get_viewport().set_input_as_handled()
+			_toggle_submenu("travel")
+			get_viewport().set_input_as_handled()
+
+func _action_slot_for_event(event: InputEvent) -> int:
+	"""0-indexed action-bar slot this key selects, or -1. Reads the action_1..action_9
+	binds so a rebind actually takes (#602 P4); the DEFAULT binds are still 1..9, so
+	nothing changes for a player who never opens the rebind screen."""
+	for i in range(9):
+		if KeybindManager.is_action_pressed(event, "action_%d" % (i + 1)):
+			return i
+	return -1
+
+func _toggle_submenu(submenu_id: String) -> void:
+	"""#602 principle P2 (mirrored toggles): a menu hotkey is a TOGGLE. Pressing it while
+	its own panel is up closes that panel; pressing it while a DIFFERENT modal is up does
+	nothing (the caller still consumes the key, so the hotkey can never stomp a panel the
+	player is looking at, and an unanswered event dialog stays unanswerable-away per #452).
+
+	Only the dialog's own `submenu_id` meta decides identity -- not which button is
+	highlighted, not the last id opened, so the state cannot desync from the scene tree."""
+	if active_dialog != null and is_instance_valid(active_dialog):
+		if String(active_dialog.get_meta("submenu_id", "")) == submenu_id:
+			_close_active_submenu()
+		return
+	if current_turn_phase.to_upper() != "ACTION_SELECTION":
+		return
+	_open_submenu(submenu_id)
+
+func _open_submenu(submenu_id: String) -> void:
+	"""The ONE door into a submenu: build it, tag it with its id (so the mirrored toggle and
+	any future audit can ask a live panel WHAT it is), and align + decorate it. Both entry
+	paths -- the action-bar button and the hotkey -- go through here, so a panel reached by
+	key and a panel reached by click are the same panel in the same state (principle P1)."""
+	submenu_controller.open(submenu_id)
+	if active_dialog != null and is_instance_valid(active_dialog):
+		active_dialog.set_meta("submenu_id", submenu_id)
+	_decorate_active_submenu(_find_action_button(submenu_id))
 
 func _unhandled_input(event: InputEvent):
 	"""Handle keyboard shortcuts that weren't handled by UI elements"""
@@ -652,14 +696,14 @@ func _unhandled_input(event: InputEvent):
 					get_viewport().set_input_as_handled()
 
 func _dialog_button_index_for_key(keycode: int) -> int:
-	"""Map a pressed key to a dialog choice-button index, or -1 if unmapped.
-	Dialogs label buttons either with numbers ([1][2][3], e.g. the hire candidate
-	pool) or letters ([Q][W][E], e.g. event choices). Accept both schemes so the
-	keys always match whatever buttons are displayed (issues #567, #575)."""
-	if keycode >= KEY_1 and keycode <= KEY_9:
-		return keycode - KEY_1
-	var letter_keys = [KEY_Q, KEY_W, KEY_E, KEY_R, KEY_A, KEY_S, KEY_D, KEY_F, KEY_Z]
-	return letter_keys.find(keycode)
+	"""Map a pressed key to a dialog choice-button index, or -1 if the key names no
+	choice that is on screen.
+
+	#567: the mapping is NOT decided here any more. DialogKeys is the one table both
+	this router and every dialog builder read, so the key a button advertises and the
+	key that fires it cannot drift apart. Passing the live button count is what kills
+	the original symptom: R on a three-option event now returns -1 instead of index 3."""
+	return DialogKeys.index_for_keycode(keycode, active_dialog_buttons.size())
 
 static func dialog_key_advances(dialog: Control, keycode: int) -> bool:
 	"""B1: does this key advance THIS dialog past the block-all rule in _input?
@@ -1594,9 +1638,9 @@ func _on_dynamic_action_pressed(action_id: String, action_name: String):
 	if action.get("is_submenu", false):
 		# CARVE 2 (R5): one entry point. SubmenuController dispatches on action_id (grid submenus
 		# built from config; hiring/travel delegate back to the bespoke builders here).
-		submenu_controller.open(action_id)
-		# Align the submenu to the clicked button + add close affordance (#510)
-		_decorate_active_submenu(_find_action_button(action_id))
+		# #602 P1: the click path and the hotkey path share ONE door (_open_submenu), which
+		# also tags the panel with its id + aligns it to the clicked button (#510).
+		_open_submenu(action_id)
 		return
 
 	# Check if action can be afforded before adding to UI queue (#456)

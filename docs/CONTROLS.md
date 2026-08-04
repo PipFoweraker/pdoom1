@@ -1,217 +1,123 @@
-# P(Doom) Keyboard Controls
+# P(Doom) keyboard controls
 
-## Overview
+**Source of truth: `godot/autoload/keybind_manager.gd`.** If this page and that file ever
+disagree, the file is right and this page is stale -- that has happened before (issue
+#1011), which is why every key below was re-derived from the file on 2026-08-04 rather
+than edited in place. The rules that decide these bindings are in
+`docs/design/NAVIGATION_AUDIT.md`.
 
-P(Doom) features comprehensive keyboard navigation inspired by StarCraft 2. Every button has a keyboard shortcut for fast, efficient gameplay.
+Every key here is rebindable in Settings -> Keybindings, except the reserved keys called
+out at the bottom.
 
-**Tip:** Press **F10** to access the keybind configuration screen and customize controls to your preference!
-
-## Essential Controls
-
-### Gameplay
+## Gameplay
 
 | Key | Action | Description |
 |-----|--------|-------------|
-| **Space** | End Turn | Execute queued actions and advance to next turn |
-| **Enter** | Commit Plan & Reserve AP | Commit current plan and reserve remaining Action Points for reactive responses |
+| **Space** | End Turn | Execute queued actions and advance |
+| **Enter** | Commit Plan | Commit the current plan. Deliberately does nothing while a dialog is open, so you cannot commit a turn by reflex while answering an event. |
+| **1**-**9** | Action 1-9 | Trigger the corresponding action-bar slot, top to bottom |
+| **Z** | Undo | Undo the last queued action |
 | **C** | Clear Queue | Clear all queued actions |
-| **Esc** | Cancel/Back | Close dialogs, return to previous screen |
+| **V** | Toggle View | Flip between the PLAN and WATCH views |
 
-### Actions (Quick Access)
+## Menus
+
+Each of these is a TOGGLE: the key that opens the panel also closes it. Every one of them
+is also a visible button on the action bar -- no feature in this game is reachable only by
+hotkey.
+
+| Key | Panel |
+|-----|-------|
+| **H** | Hiring pipeline |
+| **F** | Fundraising |
+| **P** | Publicity |
+| **T** | Travel & Conferences |
+| **L** | Liability Ledger |
+
+## UI
 
 | Key | Action |
 |-----|--------|
-| **1-9** | Trigger Action 1-9 |
+| **N** | Open the in-game bug reporter |
+| **F10** | Settings menu |
+| **F3** | Debug overlay (available in all builds) |
+| **[** | Screenshot |
+| **]** | Admin mode |
+| **F12** | Export game log |
 
-Number keys 1-9 trigger the corresponding action in the actions list. Actions are ordered top-to-bottom, so pressing **1** executes the first visible action.
+## Inside a dialog
 
-**Example:**
-- If "Hire Safety Researcher" is first action  ->  Press **1**
-- If "Purchase Compute" is third action  ->  Press **3**
-
-### UI Navigation
-
-| Key | Action | Description |
-|-----|--------|-------------|
-| **Tab** | Next Tab | Switch to next UI tab |
-| **Shift+Tab** | Previous Tab | Switch to previous UI tab |
-| **E** | Employee Screen | Open employee management screen |
-| **F8** | Bug Reporter | Open in-game bug reporter |
-| **F10** | Settings | Open settings menu |
-
-### Screenshots & Logging
-
-| Key | Action | Description |
-|-----|--------|-------------|
-| **[** | Screenshot | Capture screenshot |
-| **\\** | Export Log | Export game log for debugging |
-
-### Debug & Admin (Dev Mode Only)
-
-| Key | Action | Description |
-|-----|--------|-------------|
-| **~** | Debug Overlay | Toggle debug information overlay |
-| **]** | Admin Mode | Toggle admin mode (dev builds) |
-
-## Dialog Navigation
-
-When a dialog is open (fundraising, events, etc.):
+Choice buttons show the key that fires them. The label on the button IS the key -- if a
+button carries no letter, no key selects it.
 
 | Key | Option |
 |-----|--------|
 | **Q** | First option |
-| **W** | Second option |
-| **E** | Third option |
-| **R** | Fourth option |
-| **A** | Fifth option |
-| **S** | Sixth option |
-| **D** | Seventh option |
-| **F** | Eighth option |
-| **Z** | Ninth option |
-| **Esc** | Close dialog |
+| **W** | Second |
+| **E** | Third |
+| **R** | Fourth |
+| **A** | Fifth |
+| **S** | Sixth |
+| **D** | Seventh |
+| **F** | Eighth |
+| **Z** | Ninth |
+| **Esc** | Close the dialog |
 
-Dialog options are mapped to convenient home-row keys for fast decision-making.
+Number keys **1**-**9** also work inside a dialog, but are not shown on the buttons --
+outside a dialog those digits mean "action-bar slot", so the letters are what the game
+advertises.
+
+A key that names an option the dialog does not have does nothing. Pressing **R** at a
+three-option event is silent, not an error.
+
+**Event dialogs cannot be dismissed with Esc.** An event has to be answered; that is
+deliberate, not a bug.
+
+## Reserved keys
+
+These are not rebindable, on purpose:
+
+| Key | Why |
+|-----|-----|
+| **Esc** | The universal back/close key. It goes back exactly one level: it closes the topmost dialog, or leaves a sub-screen for the view that opened it, and only opens the game menu when nothing else is up. Rebinding it could leave you stuck in a panel with no way out. |
+| **Tab** / **Shift+Tab** | Reserved for moving between fields in forms (like the bug reporter). No game action may claim them. |
+| Dialog choice letters | These are labels printed on the buttons themselves, not standalone actions, so there is nothing stable to rebind. |
+
+## Typing
+
+While you are typing in any text field -- the bug report form, the seed box, your lab name
+-- keyboard shortcuts are switched off, so letters go into the field instead of triggering
+game actions. Click away, or press **Esc**, to get the shortcuts back.
 
 ## Customization
 
-### Accessing Keybind Settings
+1. **F10** -> Keybindings
+2. Click an action, press the key you want
+3. Changes save automatically
 
-1. Press **F10** to open Settings
-2. Navigate to "Keybindings" tab
-3. Click on any action to rebind it
-4. Press your desired key
-5. Changes save automatically
+Profiles: create, switch and reset to defaults from the same screen. Note that when the
+game's DEFAULT bindings change in an update, saved profiles refresh to the new defaults --
+otherwise a stale saved bind would silently override a new default.
 
-### Keybind Profiles
+## Screenshots
 
-P(Doom) supports multiple keybind profiles:
+**[** saves to:
 
-- **Default Profile:** Standard controls listed above
-- **Custom Profiles:** Create your own profiles for different playstyles
-
-**Creating a Profile:**
-1. Open Settings  ->  Keybindings
-2. Click "New Profile"
-3. Enter profile name
-4. Customize keys as desired
-5. Switch between profiles anytime
-
-### Resetting Keybinds
-
-To reset all keybinds to defaults:
-1. Open Settings  ->  Keybindings
-2. Click "Reset to Defaults"
-3. Confirm
-
-## Quick Reference Card
-
-### Essential Shortcuts
-
-```
-+-------------------------------------------+
-|         P(Doom) Quick Reference         |
-|-------------------------------------------|
-| GAMEPLAY                                |
-|   Space      End Turn                   |
-|   Enter      Commit Plan & Reserve AP   |
-|   1-9        Trigger Actions            |
-|   C          Clear Queue                |
-|                                         |
-| UI NAVIGATION                           |
-|   E          Employee Screen            |
-|   Tab        Next Tab                   |
-|   F8         Bug Reporter               |
-|   F10        Settings                   |
-|   Esc        Cancel/Back                |
-|                                         |
-| UTILITY                                 |
-|   [          Screenshot                 |
-|   \\         Export Log                 |
-`-------------------------------------------`
-```
-
-## Accessibility
-
-### Mouse-Free Gameplay
-
-P(Doom) can be played entirely without a mouse:
-- All actions have keyboard shortcuts
-- Tab navigation between UI elements
-- Enter to activate focused button
-- Arrow keys for list navigation (where applicable)
-
-### One-Handed Play
-
-For one-handed play, all essential controls are accessible from the left side of the keyboard:
-- Number keys (1-9) for actions
-- Space for end turn
-- Tab for navigation
-- E for employee screen
-
-### Customization for Accessibility
-
-If default controls don't work for you:
-1. Press F10  ->  Keybindings
-2. Remap any action to your preferred key
-3. Create a custom profile for your setup
-
-## Tips & Tricks
-
-### Speed Play
-
-For fast gameplay:
-1. **Learn action positions** - Memorize which number corresponds to common actions
-2. **Use Space liberally** - End turn as soon as you've made decisions
-3. **Dialog shortcuts** - Use Q/W/E/R for quick dialog responses
-4. **Clear Queue with C** - Quickly undo accidental actions
-
-### Efficiency Workflow
-
-Experienced players often use this workflow:
-1. **Tab** through UI sections to review state
-2. **1-9** to queue multiple actions
-3. **C** to clear if needed, **Space** to commit
-4. **E** to check employees periodically
-5. **F8** to report bugs immediately when found
-
-### Screenshot Strategy
-
-The **[** key captures screenshots automatically saved to:
 - Windows: `%APPDATA%\Godot\app_userdata\pdoom1\screenshots\`
 - Linux: `~/.local/share/godot/app_userdata/pdoom1/screenshots/`
 - macOS: `~/Library/Application Support/Godot/app_userdata/pdoom1/screenshots/`
 
-Great for:
-- Capturing high scores
-- Recording interesting events
-- Documenting bugs (combine with F8 bug reporter!)
+## Dev-build-only keys
 
-## Advanced: Multi-Key Bindings
+Present only in development builds; in a public build these do nothing.
 
-Some actions support modifier keys (Shift, Ctrl, Alt):
+| Key | Action |
+|-----|--------|
+| **\\** | Dev-mode overlay (state readout + dev controls) |
+| **F6** | Flight recorder capture |
+| **F7** | UI evolution capture |
 
-| Combination | Action |
-|-------------|--------|
-| **Shift+Tab** | Previous Tab |
+## If a shortcut is not working
 
-More modifier key combinations may be added in future updates!
-
-## Reporting Issues
-
-If a keyboard shortcut isn't working:
-1. Press **F8** to open bug reporter
-2. Describe the issue
-3. Include which key isn't working
-4. Attach screenshot if helpful (press **[** first!)
-
-## Version History
-
-- **v0.11.0:** Added F8 bug reporter, comprehensive action shortcuts (1-9)
-- **v0.10.2:** Added keybind customization system
-- **v0.10.0:** Initial Godot migration with basic keyboard support
-
----
-
-**Can't remember a shortcut?** Most buttons show their keyboard shortcut in parentheses or tooltips!
-
-*Last Updated: 2025-01-10*
+Press **N** to open the bug reporter, say which key, and attach a screenshot (press **[**
+first).

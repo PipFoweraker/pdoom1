@@ -226,7 +226,7 @@ func _show_next_event() -> void:
 
 	var button_index = 0
 	var buttons = []  # Store buttons for keyboard access
-	var dialog_key_labels = ["Q", "W", "E", "R", "A", "S", "D", "F", "Z"]
+	# #567: labels come from DialogKeys, the same table MainUI routes with. No local copy.
 
 	# B2/B3: a one-costless-option popup is navigation, not deliberation. Its button drops the
 	# letter-menu prefix and the "(Free)" price tag, hints the key the player actually reaches
@@ -244,7 +244,6 @@ func _show_next_event() -> void:
 		btn.mouse_filter = Control.MOUSE_FILTER_PASS  # Still allow mouse clicks
 
 		# Add keyboard hint (LETTERS not numbers) + inline cost summary (#510)
-		var key_label = dialog_key_labels[button_index] if button_index < dialog_key_labels.size() else ""
 		if is_navigation:
 			btn.text = "%s   [SPACE]" % choice_text
 			btn.custom_minimum_size = Vector2(520, 54)
@@ -252,7 +251,7 @@ func _show_next_event() -> void:
 			btn.add_theme_color_override("font_color", PRIMARY_TEAL)
 			btn.add_theme_color_override("font_hover_color", Color(1, 1, 1, 1))
 		else:
-			btn.text = "[%s] %s%s" % [key_label, choice_text, format_cost_summary(costs)]
+			btn.text = "%s%s%s" % [DialogKeys.prefix_for(button_index), choice_text, format_cost_summary(costs)]
 			btn.custom_minimum_size = Vector2(500, 45)
 
 		# Add button border for better definition

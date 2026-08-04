@@ -178,6 +178,14 @@ size_flags_horizontal = 4
 theme_override_font_sizes/font_size = 16
 text = "Save Game"
 
+[node name="SettingsButton" type="Button" parent="Panel/VBox/ButtonContainer"]
+custom_minimum_size = Vector2(250, 40)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 16
+text = "Settings & Keybindings (F10)"
+tooltip_text = "Open the full settings screen, including the keybind editor. Your run is kept -- Back returns you to the game where you left it."
+
 [node name="MainMenuButton" type="Button" parent="Panel/VBox/ButtonContainer"]
 custom_minimum_size = Vector2(250, 40)
 layout_mode = 2
@@ -198,5 +206,6 @@ text = "Quit to Desktop"
 [connection signal="pressed" from="Panel/VBox/ButtonContainer/ResumeButton" to="." method="_on_resume_pressed"]
 [connection signal="pressed" from="Panel/VBox/ButtonContainer/ResignButton" to="." method="_on_resign_pressed"]
 [connection signal="pressed" from="Panel/VBox/ButtonContainer/SaveButton" to="." method="_on_save_pressed"]
+[connection signal="pressed" from="Panel/VBox/ButtonContainer/SettingsButton" to="." method="_on_settings_pressed"]
 [connection signal="pressed" from="Panel/VBox/ButtonContainer/MainMenuButton" to="." method="_on_main_menu_pressed"]
 [connection signal="pressed" from="Panel/VBox/ButtonContainer/QuitButton" to="." method="_on_quit_pressed"]

@@ -44,7 +44,6 @@ const GRID_CONFIG := {
 		"main_vbox_sep": -1,
 		"header": null,
 		"columns": 3, "h_sep": 8, "v_sep": 8, "btn_size": Vector2(100, 80),
-		"key_labels": ["Q", "W", "E", "R", "A", "S", "D", "F", "Z"],
 		"name_transform": [[" Funding", ""], ["Publish ", ""]],
 		"show_gains": true,
 		"summary": {"text": "Costs vary: 0-2 Papers, 0-20 Rep", "color": Color(0.6, 0.6, 0.6)},
@@ -55,7 +54,6 @@ const GRID_CONFIG := {
 		"main_vbox_sep": -1,
 		"header": null,
 		"columns": 3, "h_sep": 8, "v_sep": 8, "btn_size": Vector2(100, 80),
-		"key_labels": ["Q", "W", "E", "R", "A", "S", "D", "F", "Z"],
 		"name_transform": [[" Campaign", ""], ["Open Source ", ""]],
 		"show_gains": false,
 		"summary": {"text": "Build influence and public awareness", "color": Color(0.6, 0.6, 0.6)},
@@ -66,7 +64,6 @@ const GRID_CONFIG := {
 		"main_vbox_sep": -1,
 		"header": null,
 		"columns": 2, "h_sep": 12, "v_sep": 12, "btn_size": Vector2(120, 90),
-		"key_labels": ["Q", "W", "E", "R", "A", "S", "D", "F", "Z"],
 		"name_transform": [],
 		"show_gains": false,
 		"summary": {"text": "High-stakes moves - use wisely!", "color": Color(1.0, 0.6, 0.3)},
@@ -77,7 +74,6 @@ const GRID_CONFIG := {
 		"main_vbox_sep": 10,
 		"header": {"text": "OFFICE", "color": Color(0.7, 0.75, 0.9), "size": 14},
 		"columns": 2, "h_sep": 12, "v_sep": 12, "btn_size": Vector2(180, 80),
-		"key_labels": ["Q", "W", "E", "R"],
 		"name_transform": [["Sign: ", ""]],
 		"show_gains": false,
 		"summary": {"text": "Desks are the hard limit on headcount", "color": Color(0.6, 0.6, 0.6)},
@@ -88,7 +84,6 @@ const GRID_CONFIG := {
 		"main_vbox_sep": 10,
 		"header": {"text": "SCOUTING", "color": Color(0.6, 0.8, 0.6), "size": 14},
 		"columns": 3, "h_sep": 8, "v_sep": 8, "btn_size": Vector2(110, 80),
-		"key_labels": ["Q", "W", "E"],
 		"name_transform": [],
 		"show_gains": false,
 		"summary": {"text": "Different rooms, different people", "color": Color(0.6, 0.6, 0.6)},
@@ -99,7 +94,6 @@ const GRID_CONFIG := {
 		"main_vbox_sep": 10,
 		"header": {"text": "OPERATIONS", "color": Color(0.6, 0.8, 0.6), "size": 14},
 		"columns": 2, "h_sep": 12, "v_sep": 12, "btn_size": Vector2(140, 70),
-		"key_labels": ["Q", "W", "E", "R"],
 		"name_transform": [],
 		"show_gains": false,
 		"summary": null,
@@ -208,7 +202,6 @@ func _build_grid_submenu(id: String) -> void:
 
 	var button_index := 0
 	var buttons := []
-	var key_labels: Array = cfg["key_labels"]
 	var btn_size: Vector2 = cfg["btn_size"]
 	var name_transform: Array = cfg["name_transform"]
 	var show_gains: bool = cfg["show_gains"]
@@ -234,8 +227,11 @@ func _build_grid_submenu(id: String) -> void:
 			btn.expand_icon = true
 			btn.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
-		var key_label = key_labels[button_index] if button_index < key_labels.size() else ""
-		btn.text = key_label
+		# #567: label from DialogKeys, the same table MainUI routes with. The old per-panel
+		# key_labels arrays were truncated (office/scouting shipped 3-4 entries for grids that
+		# can hold more), so a 5th option rendered a blank label while the router still fired
+		# it from an undiscoverable key.
+		btn.text = DialogKeys.label_for(button_index)
 		btn.add_theme_font_size_override("font_size", 10)
 		btn.add_theme_color_override("font_color", Color(1, 1, 1, 0.6))
 
@@ -355,7 +351,6 @@ func _build_financing_submenu() -> void:
 
 	var current_state = host.game_manager.get_game_state()
 	var buttons := []
-	var key_labels := ["Q", "W", "E", "R"]
 	var idx := 0
 	for option in GameActions.get_financing_options():
 		var opt_id = option.get("id", "")
@@ -364,14 +359,13 @@ func _build_financing_submenu() -> void:
 		var btn := Button.new()
 		btn.focus_mode = Control.FOCUS_NONE
 		btn.custom_minimum_size = Vector2(0, 44)
-		var key = key_labels[idx] if idx < key_labels.size() else ""
 		var cost_bits := []
 		if int(opt_costs.get("attention", 0)) > 0:
 			cost_bits.append("%d Attention" % int(opt_costs["attention"]))
 		if opt_costs.get("money", 0) > 0:
 			cost_bits.append(GameConfig.format_money(opt_costs["money"]))
 		var cost_txt = (" (%s)" % ", ".join(cost_bits)) if cost_bits.size() > 0 else ""
-		btn.text = "[%s]  %s%s" % [key, opt_name, cost_txt]
+		btn.text = "%s %s%s" % [DialogKeys.prefix_for(idx), opt_name, cost_txt]
 		btn.tooltip_text = option.get("description", "")
 		var can_afford = host._costs_affordable(opt_costs, current_state)
 		if not can_afford:
