@@ -157,7 +157,28 @@ jobs:
           fi
           echo "SUCCESS All validation checks passed!"
 
-      - name: Build all platforms
+      # Issue #1069: the exports are routed through tools/build_release.py
+      # (one preset at a time, inside build_all_platforms.py), so CI inherits
+      # the SAME discipline a local cut gets: rm -rf godot/.godot before each
+      # export (defeats the stale .godot/exported cache that burned ~12 cycles
+      # in v0.11.0), a unique freshness-marker file, and post-export PROOF the
+      # marker landed inside the .pck/zip. If the marker is missing, the
+      # platform build exits non-zero and its outputs are discarded.
+      #
+      # The three platform builds are SEQUENTIAL and MUST STAY sequential:
+      # every build_release.py run deletes godot/.godot, so splitting this
+      # into parallel matrix jobs sharing a workspace (or parallel processes)
+      # would corrupt the import caches mid-export.
+      #
+      # Failure policy (ruled in #1069): Windows or Linux failing fails this
+      # job -- nothing is packaged, nothing publishes. macOS is BEST-EFFORT
+      # (issue #1071: the GodotSteam .framework loses its Versions/Current
+      # symlink on non-mac checkouts, so its export can fail through no fault
+      # of the tagged source): a macOS failure emits a warning annotation,
+      # drops the macOS assets, and lets Windows/Linux publish -- then the
+      # verify-release-urls alias check (PDoom.app.zip must answer 200) turns
+      # the run RED. Loud, but not blocking.
+      - name: Build all platforms (via tools/build_release.py, freshness-proven)
         env:
           RELEASE_VERSION: ${{ github.event.inputs.version || github.ref_name }}
         run: |
@@ -165,23 +186,30 @@ jobs:
           echo "Building P(Doom) $VERSION for all platforms..."
           python scripts/build_all_platforms.py --version "$VERSION" --godot-path "$(which godot)"
 
+      # Required platform: an empty artifact here means the freshness-proven
+      # build silently vanished -- fail loudly, never publish.
       - name: Upload Windows build
         uses: actions/upload-artifact@v7
         with:
           name: build-windows
           path: builds/windows/${{ github.event.inputs.version || github.ref_name }}/
+          if-no-files-found: error
 
       - name: Upload Linux build
         uses: actions/upload-artifact@v7
         with:
           name: build-linux
           path: builds/linux/${{ github.event.inputs.version || github.ref_name }}/
+          if-no-files-found: error
 
+      # Best-effort platform (issue #1071): the dir is empty when the macOS
+      # export failed; warn and continue so Windows/Linux still publish.
       - name: Upload macOS build
         uses: actions/upload-artifact@v7
         with:
           name: build-mac
           path: builds/mac/${{ github.event.inputs.version || github.ref_name }}/
+          if-no-files-found: warn
 
   generate-feeds:
     name: Generate Release Feeds & Metadata

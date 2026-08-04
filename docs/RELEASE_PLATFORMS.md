@@ -178,6 +178,21 @@ Still true, still unproven, still a job for a human on the relevant machine:
 - **macOS:** no macOS build has ever been verified to RUN (issue #1071). That
   needs a person with a Mac, not code.
 
+### CI parity (issue #1069)
+
+The release workflow (`.github/workflows/enhanced-release.yml` ->
+`scripts/build_all_platforms.py`) used to run a raw `godot --export-release`
+per platform: no cache nuke, no freshness marker, no proof -- the release path
+routed around the tool built after the v0.11.0 stale-cache disaster. Since
+issue #1069, `build_all_platforms.py` delegates every export to
+`tools/build_release.py` (sequentially, for the same never-concurrently reason
+as above), so CI artifacts carry the same `[BUILD-VERIFY]` marker proof in the
+workflow log that a local cut prints. Failure policy, ruled there: Windows or
+Linux failing fails the job and publishes nothing; macOS is best-effort
+(issue #1071) -- its failure drops the macOS assets and the
+`verify-release-urls` alias check turns the run red AFTER Windows/Linux
+publish. Loud, not blocking.
+
 ---
 
 ## 3. THE RELEASE CHECKLIST
