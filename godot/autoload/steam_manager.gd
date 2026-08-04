@@ -1,6 +1,28 @@
 extends Node
 ## Steam Integration Manager
 ##
+## [!] NOT WIRED UP. THIS SCRIPT NEVER RUNS. Audited 2026-08-04.
+##
+## It lives in autoload/ but is NOT registered in the [autoload] block of
+## project.godot (19 autoloads are; SteamManager is not). Nothing else in the
+## project references it either -- grep for "Steam" across godot/scripts and
+## godot/autoload returns this file and nothing else. So _ready() is never
+## called, no achievement ever reaches Steam, and is_steam_enabled is never
+## anything but its initial false.
+##
+## Kept rather than deleted because the surrounding scaffolding is real and
+## deliberate: addons/godotsteam/ (the GDExtension) IS installed, and
+## godot/steam_appid.txt exists. This file is the missing third piece, not a
+## corpse. See docs/STEAM_INTEGRATION_SUMMARY.md.
+##
+## Before switching it on, know these two things:
+##   1. steam_appid.txt currently contains 480 -- Valve's Spacewar TEST app id,
+##      not a real P(Doom)1 app id. Shipping that would be wrong.
+##   2. Registering this autoload makes _process() call Steam.run_callbacks()
+##      every frame. The godotsteam GDExtension is already implicated in
+##      cross-platform build breakage (issue #1071); do not enable without a
+##      verified build on each target OS.
+##
 ## Handles initialization, authentication, and Steam API interactions.
 ## Works as graceful fallback when Steam is not available.
 

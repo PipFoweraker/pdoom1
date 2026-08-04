@@ -13,68 +13,45 @@ This directory contains scripts for managing P(Doom) releases.
 
 ## Quick Start
 
-For a new release (e.g., v0.10.2):
+For a new release:
 
 ```bash
-# 1. Bump version across all files
-bash scripts/bump_version.sh 0.10.2
+# 1. Bump version (version.txt is the SSOT), then stamp the derived copies
+#    -- edit version.txt, then:
+python tools/sync_version.py
+python tools/sync_version.py --check   # must exit 0
 
 # 2. Review and update CHANGELOG.md manually
 
-# 3. Commit changes
-git add .
-git commit -m "chore: Bump version to v0.10.2"
+# 3. Commit changes (stage only what you changed -- never `git add -A`)
+git commit -m "chore: bump version to <version>"
 git push origin main
 
-# 4. Create and push tag
-git tag v0.10.2
-git push origin v0.10.2
+# 4. Tag
+git tag v<version>
+git push origin v<version>
 
-# 5. Export from Godot to builds/windows/v0.10.2/
-
-# 6. Package and release
-bash package_release.sh v0.10.2
-bash create_github_release.sh v0.10.2
+# 5. Build (this replaces every step 5/6 the old README described)
+python tools/build_release.py
 ```
 
 ## Scripts
 
-### `bump_version.sh`
-Updates version numbers across:
-- `godot/project.godot`
-- Release scripts
-- Reminds you to update CHANGELOG.md
-
-**Usage:**
-```bash
-bash scripts/bump_version.sh <version>
-# Example: bash scripts/bump_version.sh 0.10.2
-```
-
-### `package_release.sh` (root)
-Creates distributable .zip package with:
-- Game executable (.exe)
-- Game data (.pck)
-- README.txt
-- CHANGELOG.txt
-- Optional debug console .exe
-
-**Usage:**
-```bash
-bash package_release.sh [version]
-# Example: bash package_release.sh v0.10.2
-# Default: v0.10.1
-```
-
-### `create_github_release.sh` (root)
-Creates GitHub release and uploads package.
-
-**Usage:**
-```bash
-bash create_github_release.sh [version]
-# Example: bash create_github_release.sh v0.10.2
-# Default: v0.10.1
-```
+> **[!] Three release scripts documented here until 2026-08-04 did not exist or
+> could not run.** Removed from this README on that date:
+>
+> - `bump_version.sh` -- DELETED 2026-08-04. It ran `set -e` and then
+>   `sed -i ... package_release.sh`, so it hard-failed on a file that is not in
+>   the repo. Superseded by `version.txt` + `tools/sync_version.py`, which this
+>   README's own banner already described.
+> - `package_release.sh` (root) -- never existed in this repo. Superseded by
+>   `python tools/build_release.py`.
+> - `create_github_release.sh` (root) -- never existed in this repo. Use
+>   `gh release create`.
+>
+> A README documenting three commands that cannot run is the failure this sweep
+> exists to stop. If you add a script here, this file is where its deadness must
+> also be recorded when it goes.
 
 ## Automation
 

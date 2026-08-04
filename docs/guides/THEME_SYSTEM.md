@@ -81,8 +81,8 @@ ThemeManager.apply_label_style(my_label, "body")
 # Programmatic
 ThemeManager.apply_theme("retro")
 
-# In UI (theme_selector widget)
-# Automatically saves preference to user://theme.cfg
+# There is NO theme_selector widget -- it was deleted 2026-08-04 (never wired
+# to any scene). Theme switching is programmatic only.
 ```
 
 ### Responding to Theme Changes
@@ -171,7 +171,11 @@ Automatically saved to `user://theme.cfg` when modified.
 
 ## Files
 
-- `godot/autoload/theme_manager.gd` - Core theme system
-- `godot/scripts/ui/theme_selector.gd` - UI widget for theme switching
+- `godot/autoload/theme_manager.gd` - Core theme system (LIVE, autoloaded)
+- ~~`godot/scripts/ui/theme_selector.gd`~~ - **DELETED 2026-08-04.** Never
+  referenced by any scene or script, and could not have run: it declared
+  `@onready var theme_dropdown = $MarginContainer/HBoxContainer/ThemeDropdown`
+  for nodes that exist in no `.tscn`. There is currently NO in-game theme
+  switcher UI; `ThemeManager` is driven from code only.
 - `godot/assets/ASSETS_README.md` - Asset organization guide
 - `THEME_SYSTEM.md` - This file

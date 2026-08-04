@@ -1,5 +1,18 @@
 # Event Overrides
 
+> **[!] EVERY `.json` IN THIS DIRECTORY IS LOADED AND APPLIED AT STARTUP.**
+> There is no "examples are ignored" rule. `event_service.gd::_load_overrides()`
+> iterates the whole directory and merges every non-`_`-prefixed key. That
+> includes `example.json`, whose FTX override is live in shipped builds.
+> Do not park drafts or experiments here.
+>
+> **Overrides fail SILENTLY on a bad id.** `_apply_overrides()` only fires on an
+> exact `id` match against `godot/data/historical_events.json`; a typo or a
+> retired id is simply skipped, with no warning. `example.json` shipped two such
+> dead keys (`openai_founded`, `chatgpt_released`) until 2026-08-04 -- the file
+> teaching the format was wrong in 2 of its 3 examples and nothing said so.
+> **Grep `historical_events.json` for your id before trusting an override.**
+
 This directory contains game-balance overrides for pdoom-data events.
 
 ## Principle
@@ -33,8 +46,14 @@ Each override file is a JSON object mapping event IDs to override values:
 ## Available Override Fields
 
 - `impacts` - Array of `{variable, change}` pairs (replaces base impacts)
-- `rarity` - Override rarity tier: "common", "rare", or "legendary"
-- `pdoom_impact` - Direct doom impact value
+- `rarity` - Override rarity tier: "common", "rare", or "legendary".
+  NOTE: `docs/decision-cards/2026-08-02_pdoom-data-contract.md` proposes RETIRING
+  rarity from the contract. Do not build new tuning on it.
+- ~~`pdoom_impact`~~ - **DEAD FIELD. Setting it does nothing.** It is copied onto
+  the game event and then read by NOTHING (zero consumers in `godot/scripts`,
+  verified 2026-08-04). It also contradicts ADR-0015, which makes DoomSystem the
+  single authority on the doom level. Write a world-state intermediary via
+  `impacts` instead.
 - `category` - Override event category
 - `title` - Override display title
 - `description` - Override description text
