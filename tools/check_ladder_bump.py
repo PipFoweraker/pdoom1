@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Heuristic guard: did this diff need a ladder_version bump (or get one it didn't need)?
 
+Layer: OBSERVE -- warn-only smell detector; CI runs it non-blocking (|| true)
+
 Part of the build-vs-ladder version split
 (docs/game-design/BUILD_VS_LADDER_VERSION_SPLIT.md, Section 4.2). The dangerous
 silent failure is a HUMAN forgetting to bump ``ladder_version.txt`` on a

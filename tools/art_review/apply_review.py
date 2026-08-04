@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """apply_review.py -- wire art-review verdicts into the P(Doom)1 asset pipeline.
 
+Layer: SWEEP -- the report subcommand finds rot and never deletes; apply is opt-in
+
 The review app writes a verdict-state file (default
 ``tools/art_review/review_state.json``) keyed by asset_id:
 

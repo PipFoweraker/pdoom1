@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """build_full_gallery.py -- ONE stateful drive-by gallery over ALL art on disk.
 
+Layer: OBSERVE
+Invoked by: human
+
 Why a sibling and not an extension of build_morning_index.py: the morning index
 is a hand-curated map of eight named batches and is deliberately verdict-free
 ("the map, not the workbench"). This tool is the opposite: it WALKS THE DISK so
