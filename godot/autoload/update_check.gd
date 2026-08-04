@@ -5,11 +5,20 @@ extends Node
 ## never an auto-downloader).
 ##
 ## Two jobs, fired once per session at boot, both fire-and-forget:
-##   1. UPDATE CHECK -- GET the static version feed the website already publishes
-##      (https://pdoom1.com/data/version.json). No identifiers attached, so per
-##      #799 it does NOT sit behind the analytics opt-out. If the remote version
-##      is numerically newer, `update_available` fires and the welcome screen
-##      shows a quiet dismissible notice pointing at the releases page.
+##   1. UPDATE CHECK -- GET `release_manifest.json` from the latest GitHub
+##      release (the SAME release the download button serves, published
+##      atomically with the assets by enhanced-release.yml -- no cross-repo
+##      sync hop to rot; see docs/design/UPDATER_DESIGN.md). Carries version,
+##      board epoch (ladder_version), changelog highlights and per-asset
+##      sha256 hashes. If the manifest is unreachable or malformed, fall back
+##      to the website's static feed (https://pdoom1.com/data/version.json)
+##      so the check is never WORSE than the pre-manifest behaviour. No
+##      identifiers attached either way, so per #799 it does NOT sit behind
+##      the analytics opt-out. If the remote version is numerically newer,
+##      `update_available` fires and the welcome screen shows a quiet
+##      dismissible notice pointing at the release page -- flagged loudly
+##      when the update FORKS the board (ladder epoch change): the updater
+##      must never move a player across epochs without saying so.
 ##   2. ANONYMOUS PING -- POST a Plausible event to analytics.pdoom1.com with a
 ##      random UUIDv4 install_id persisted to user://. NEVER derived from
 ##      hardware/username/anything about the machine (#799: a random UUID that
@@ -35,10 +44,22 @@ extends Node
 ## AND the player has not dismissed the notice for that exact version.
 signal update_available(remote_version: String)
 
-## Canonical static version feed (auto-published by the website repo's workflow).
+## PRIMARY check endpoint: the release manifest published as an asset on every
+## tag (scripts/generate_release_manifest.py). `releases/latest/download/<name>`
+## resolves against whatever GitHub currently flags Latest -- i.e. exactly what
+## the website's download button will serve, which is the honest thing to
+## compare against (docs/RELEASE_PLATFORMS.md, the 2026-07-31 near-miss).
+const MANIFEST_URL := "https://github.com/PipFoweraker/pdoom1/releases/latest/download/release_manifest.json"
+## FALLBACK check endpoint: the website's static feed (the pre-manifest
+## behaviour). Only hit when the manifest fetch/parse fails.
 const VERSION_FEED_URL := "https://pdoom1.com/data/version.json"
 ## Where the notice sends the player. Latest release page; never a binary.
 const UPDATE_PAGE_URL := "https://github.com/PipFoweraker/pdoom1/releases/latest"
+## Manifest download_page links are opened via OS.shell_open, so an attacker
+## who could tamper with the manifest body must not gain an arbitrary-URL (or
+## arbitrary-scheme: file://, etc.) launch. Only this prefix is ever opened;
+## anything else falls back to UPDATE_PAGE_URL.
+const TRUSTED_PAGE_PREFIX := "https://github.com/PipFoweraker/pdoom1/"
 ## Plausible ingest endpoint (#799: verified live, returns 202, no auth).
 const ANALYTICS_URL := "https://analytics.pdoom1.com/api/event"
 ## Hard cap on either request. An update check that can stall launch is worse
@@ -57,9 +78,23 @@ const PATCH_CADENCE_SUNSET := "2026-08-04"
 ## The welcome screen reads this on _ready in case the HTTP response landed
 ## before the scene did, then also listens for update_available.
 var available_version: String = ""
+## Manifest extras ("" when the fallback feed answered instead -- the feed
+## carries none of these). Board epoch of the remote build, normalized digits.
+var available_ladder: String = ""
+## True when the available update changes the board epoch: taking it FORKS the
+## player's leaderboard (board key is (seed, ladder_epoch)). The notice must
+## say so -- never move a player across epochs silently.
+var available_epoch_change := false
+## ASCII changelog excerpt from the manifest (tooltip on the notice).
+var available_highlights: String = ""
+## Release tag page from the manifest (already prefix-validated), or "".
+var available_download_page: String = ""
 
 var _launched := false
 var _warned := false
+## The feed fallback fires at most once per session, and never in headless
+## runs (tests assert the flag, not the network).
+var _fallback_used := false
 
 func _ready() -> void:
 	# Keep polling even if the tree pauses right after boot (same rationale as
@@ -77,7 +112,7 @@ func _start_launch_call() -> void:
 	if _launched:
 		return
 	_launched = true
-	_dispatch_get(VERSION_FEED_URL, handle_check_response)
+	_dispatch_get(MANIFEST_URL, handle_manifest_response)
 	if should_send_ping():
 		_send_ping()
 	else:
@@ -142,6 +177,81 @@ static func parse_version_feed(body: String) -> String:
 	if typeof(version) != TYPE_STRING:
 		return ""
 	return String(version).strip_edges()
+
+## Parse release_manifest.json (scripts/generate_release_manifest.py contract).
+## Returns {} on ANY malformed shape (fail closed -> caller falls back to the
+## website feed). On success returns a Dictionary with:
+##   "version" (String, tag-shaped, guaranteed parseable) -- always present
+##   "ladder_version" (String, normalized digits) -- "" when absent/garbled
+##   "highlights" (String) -- "" when absent
+##   "download_page" (String) -- "" unless it passes the trusted-prefix gate
+static func parse_release_manifest(body: String) -> Dictionary:
+	var json := JSON.new()
+	if json.parse(body) != OK or typeof(json.data) != TYPE_DICTIONARY:
+		return {}
+	var data: Dictionary = json.data
+	var version = data.get("version", "")
+	if typeof(version) != TYPE_STRING:
+		return {}
+	var version_str := String(version).strip_edges()
+	if parse_version(version_str).is_empty():
+		# A manifest whose version does not parse can never show a notice;
+		# treat the whole document as malformed so the fallback still runs.
+		return {}
+	var out := {
+		"version": version_str,
+		"ladder_version": "",
+		"highlights": "",
+		"download_page": "",
+	}
+	# Ladder epoch: tolerate the integer-vs-string JSON ambiguity; anything
+	# else stays "" (epoch comparisons then fail closed to "unknown").
+	var ladder = data.get("ladder_version", null)
+	if typeof(ladder) == TYPE_STRING:
+		out["ladder_version"] = normalize_ladder(ladder)
+	elif typeof(ladder) == TYPE_FLOAT or typeof(ladder) == TYPE_INT:
+		out["ladder_version"] = normalize_ladder(str(int(ladder)))
+	var highlights = data.get("highlights", "")
+	if typeof(highlights) == TYPE_STRING:
+		out["highlights"] = String(highlights).strip_edges()
+	# SECURITY: this string reaches OS.shell_open. Trusted prefix or nothing.
+	var page = data.get("download_page", "")
+	if typeof(page) == TYPE_STRING and String(page).begins_with(TRUSTED_PAGE_PREFIX):
+		out["download_page"] = String(page)
+	return out
+
+## "L3" / "l3" / " 3 " -> "3"; anything non-numeric after stripping -> "".
+## Epochs are opaque integers (BUILD_VS_LADDER_VERSION_SPLIT.md section 2.1);
+## normalization exists only so "L3" and "3" compare equal.
+static func normalize_ladder(s: String) -> String:
+	var t := s.strip_edges()
+	if t.begins_with("L") or t.begins_with("l"):
+		t = t.substr(1)
+	if t == "":
+		return ""
+	for c in t:
+		if c < "0" or c > "9":
+			return ""
+	return t
+
+## True ONLY when both epochs are known and differ. Unknown either side ->
+## false: never scare a player with a board-fork warning on missing data
+## (and never claim "same board" either -- callers that need that distinction
+## check for "" themselves).
+static func is_epoch_change(remote_ladder: String, local_ladder: String) -> bool:
+	var r := normalize_ladder(remote_ladder)
+	var l := normalize_ladder(local_ladder)
+	if r == "" or l == "":
+		return false
+	return r != l
+
+## The one-line notice label the welcome screen shows. Epoch-forking updates
+## say so in the same breath -- the player must know BEFORE clicking that
+## updating moves them to a new board.
+static func build_notice_label(version: String, epoch_change: bool) -> String:
+	if epoch_change:
+		return "v%s available (new board epoch) >> [U]pdate page" % version
+	return "v%s available >> [U]pdate page" % version
 
 ## Notice gate: remote must be numerically newer AND not the version the player
 ## already dismissed (#799: "don't re-nag every launch for the same version").
@@ -243,9 +353,51 @@ func should_send_ping() -> bool:
 		return bool(GameConfig.send_launch_ping)
 	return true
 
-## Feed-response handler (public so tests can call it with stubbed transport
-## results -- no real HTTP in tests). Sets available_version + emits on a
-## genuine newer version; every failure path is a logged no-op.
+## Manifest-response handler (public so tests can call it with stubbed
+## transport results -- no real HTTP in tests). Success -> full notice state
+## (version + epoch + highlights + page). Any failure -> ONE fallback attempt
+## against the website feed, so the check is never worse than pre-manifest.
+func handle_manifest_response(result: int, code: int, body: String) -> void:
+	if result != HTTPRequest.RESULT_SUCCESS or code != 200:
+		_warn_once("release manifest unreachable (result=%d, http=%d); trying website feed" % [result, code])
+		_fallback_to_feed()
+		return
+	var info := parse_release_manifest(body)
+	if info.is_empty():
+		_warn_once("release manifest malformed; trying website feed")
+		_fallback_to_feed()
+		return
+	var remote: String = info["version"]
+	var local := _local_version()
+	if should_show_notice(remote, local, _dismissed_version()):
+		available_version = normalize_version(remote)
+		available_ladder = info["ladder_version"]
+		available_epoch_change = is_epoch_change(available_ladder, _local_ladder())
+		available_highlights = info["highlights"]
+		available_download_page = info["download_page"]
+		var epoch_note := ""
+		if available_epoch_change:
+			epoch_note = " -- BOARD EPOCH CHANGE (L%s -> L%s)" % [_local_ladder(), available_ladder]
+		print("[UpdateCheck] Newer version available: v%s (local v%s)%s" % [available_version, local, epoch_note])
+		update_available.emit(available_version)
+	else:
+		print("[UpdateCheck] Up to date (local v%s, manifest %s)" % [local, remote])
+
+## Fire the legacy website-feed check, once, never in headless runs (tests
+## exercise the decision by asserting the flag; players never run headless).
+func _fallback_to_feed() -> void:
+	if _fallback_used:
+		return
+	_fallback_used = true
+	if DisplayServer.get_name() == "headless":
+		print("[UpdateCheck] Headless run; feed fallback recorded, not dispatched.")
+		return
+	_dispatch_get(VERSION_FEED_URL, handle_check_response)
+
+## Feed-response handler (the FALLBACK path; public so tests can call it with
+## stubbed transport results -- no real HTTP in tests). Sets available_version +
+## emits on a genuine newer version; every failure path is a logged no-op.
+## The feed carries no ladder/highlights, so manifest extras stay "".
 func handle_check_response(result: int, code: int, body: String) -> void:
 	if result != HTTPRequest.RESULT_SUCCESS or code != 200:
 		_warn_once("version feed unreachable (result=%d, http=%d) -- offline is fine, carrying on" % [result, code])
@@ -271,10 +423,30 @@ func dismiss_current_notice() -> void:
 		GameConfig.dismissed_update_version = available_version
 		GameConfig.save_config()
 	available_version = ""
+	available_ladder = ""
+	available_epoch_change = false
+	available_highlights = ""
+	available_download_page = ""
+
+## Where the [U]pdate button actually goes: the manifest's (prefix-validated)
+## release tag page when we have one, else the generic latest-release page.
+func get_update_page_url() -> String:
+	if available_download_page != "":
+		return available_download_page
+	return UPDATE_PAGE_URL
 
 func _local_version() -> String:
 	if typeof(GameConfig) == TYPE_OBJECT:
 		return GameConfig.CURRENT_VERSION
+	return ""
+
+## The running build's board epoch (digits, e.g. "3"); "" if unavailable.
+## Direct const access (same pattern as _local_version above): `in` does not
+## see script constants, and a guard that silently returned "" would disable
+## the epoch warning while looking correct -- the house failure mode.
+func _local_ladder() -> String:
+	if typeof(GameConfig) == TYPE_OBJECT:
+		return normalize_ladder(str(GameConfig.LADDER_VERSION))
 	return ""
 
 func _dismissed_version() -> String:

@@ -1,6 +1,23 @@
 # Steam Integration - Quick Start Guide
 
-**Status**: Ready to implement - no technical blockers
+> **[!] Status corrected 2026-08-04 after an audit.** Phase 2 below is PARTLY
+> DONE, and the done part is inert -- which is worse than not started, because
+> the repo now looks Steam-ready and is not:
+>
+> - `godot/addons/godotsteam/` IS installed (win32/win64/linux32/linux64/osx
+>   binaries). It is also implicated in cross-platform build breakage -- issue
+>   #1071.
+> - `godot/steam_appid.txt` EXISTS and contains **480** -- Valve's Spacewar TEST
+>   app id. Not a P(Doom)1 id. Do not ship that.
+> - `godot/autoload/steam_manager.gd` EXISTS but is **NOT registered in the
+>   `[autoload]` block of `project.godot`**, so it never runs. No game code
+>   references Steam at all: `Achievements` (the live autoload) has zero Steam
+>   calls.
+>
+> So achievements do NOT reach Steam and no Steam call has ever executed in a
+> shipped build. "No technical blockers" was true of the SDK, not of the wiring.
+
+**Status**: Scaffolding half-landed and INERT (see box above) - was: "Ready to implement - no technical blockers"
 **Cost**: $100 (one-time Steamworks fee)
 **Timeline**: 1 week technical work + 1-2 weeks store page prep
 

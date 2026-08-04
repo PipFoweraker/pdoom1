@@ -1,12 +1,30 @@
 # GitHub Issue Management Strategy
 
+> # [!] RETIRED -- the problem it solves no longer exists and the tools it names do not.
+>
+> **Audited 2026-08-04.** Nothing in the "Implemented Solutions" section below is
+> implemented:
+>
+> - The `issues/` directory does not exist. Local markdown issues were abandoned;
+>   GitHub Issues is the sole tracker.
+> - `tools/github-issue-sync.py` does not exist and is not in git history at that
+>   path.
+> - `tools/pre-commit-issue-check` -- DELETED 2026-08-04. It was never installed
+>   (this repo uses `.pre-commit-config.yaml`, which never listed it), and it
+>   guarded `issues/*.md`, a directory that is gone.
+> - `scripts/sync_issue_names.py` -- DELETED 2026-08-04 for the same reason: it
+>   walked `PROJECT_ROOT / "issues"`.
+>
+> Use `gh issue` directly. Kept only so the local-markdown-issues experiment is
+> not reinvented.
+
 ## Problem Statement
 
 **CRITICAL**: P(Doom) has been creating local markdown issues in `issues/` directory without systematic GitHub synchronization, risking information loss and fragmenting issue tracking across local files and GitHub Issues.
 
 **Current State:**
 - 45 local markdown issues in `issues/` directory
-- 171+ GitHub issues in repository  
+- 171+ GitHub issues in repository
 - Manual synchronization required to prevent information loss
 - Risk of critical development tasks being lost in local-only files
 
@@ -62,7 +80,7 @@ chmod +x .git/hooks/pre-commit
 
 **Created GitHub Issues:**
 - #290: Type Annotation Campaign - Phase 2: Core Game Systems
-- #291: Enable Leaderboard System for Alpha Testing  
+- #291: Enable Leaderboard System for Alpha Testing
 - #292: Privacy-Respecting Player Run Logging System
 
 These were the most critical local-only issues that needed immediate GitHub tracking.
@@ -100,7 +118,7 @@ python tools/github-issue-sync.py --create
 
 ### Immediate (Today) [EMOJI]
 - [x] Create sync tool with dry-run capability
-- [x] Create GitHub Actions workflow  
+- [x] Create GitHub Actions workflow
 - [x] Create critical missing issues (#290, #291, #292)
 - [x] Document new workflow
 
@@ -165,7 +183,7 @@ python tools/github-issue-sync.py --create
 - **Developer adoption:** Pre-commit hook usage and GitHub-first creation
 - **Sync accuracy:** >95% successful matching/creation rate
 
-### Qualitative  
+### Qualitative
 - **Developer confidence:** No fear of losing track of issues
 - **Collaborative efficiency:** Single source of truth for all issues
 - **Process compliance:** Consistent GitHub-first issue creation

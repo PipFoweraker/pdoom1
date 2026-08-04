@@ -2,6 +2,7 @@
 
 - **Status:** DRAFT (formal confirm at 2026-07-27 R3a block; review-by 2027-07-27)
 - **Date:** 2026-07-27
+- **Summary:** The office floor renders state and never produces it -- no spatial fact (grid cell, occupancy, adjacency) may become a gameplay input, so the sim stays headless-testable and the view stays free to change.
 - **Session:** R3a prep / docs lane
 
 ## Context

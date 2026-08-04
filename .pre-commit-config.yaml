@@ -89,6 +89,13 @@ repos:
         files: 'docs/game-design/(WORKSHOP_2_BACKLOG|DQ_INDEX)\.md'
         pass_filenames: false
 
+      - id: adr-index-check
+        name: ADR index up to date
+        entry: python scripts/generate_adr_index.py --check
+        language: system
+        files: 'docs/game-design/decisions/.*\.md'
+        pass_filenames: false
+
       - id: scene-nav-check
         name: Scene navigation routes through SceneTransition
         entry: python tools/check_scene_nav.py

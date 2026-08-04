@@ -2,6 +2,7 @@
 
 - **Status:** ACCEPTED (v1 shape; yields/numbers owed to the sweep)
 - **Date:** 2026-07-12
+- **Summary:** Defines what "attending a conference" is (v1: minimal presence/location mechanic, not a full subgame) as the adoption chain's socialization step.
 - **Session:** Fable workshop #2, closing beat
 
 ## Context

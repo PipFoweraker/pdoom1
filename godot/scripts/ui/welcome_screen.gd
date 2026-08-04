@@ -301,12 +301,21 @@ func _setup_launch_notices():
 func _on_update_available(remote_version: String):
 	if update_notice_button == null:
 		return
-	update_notice_button.text = "v%s available >> [U]pdate page" % remote_version
+	# Label + epoch flag come from UpdateCheck so the wording is unit-tested;
+	# an epoch-forking update must announce itself BEFORE the player clicks.
+	update_notice_button.text = UpdateCheck.build_notice_label(
+		remote_version, UpdateCheck.available_epoch_change)
+	if UpdateCheck.available_highlights != "":
+		update_notice_button.tooltip_text = "What changed:\n%s" % UpdateCheck.available_highlights
+	else:
+		update_notice_button.tooltip_text = "Open the release page in your browser"
 	update_notice.visible = true
 
 func _on_update_notice_pressed():
 	print("[WelcomeScreen] Opening update page...")
-	OS.shell_open(UpdateCheck.UPDATE_PAGE_URL)
+	# Prefix-validated tag page from the manifest when available, else the
+	# generic latest-release page (UpdateCheck.get_update_page_url).
+	OS.shell_open(UpdateCheck.get_update_page_url())
 
 func _on_update_notice_dismissed():
 	print("[WelcomeScreen] Update notice dismissed for v%s" % UpdateCheck.available_version)

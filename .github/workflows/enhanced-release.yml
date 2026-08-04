@@ -157,7 +157,28 @@ jobs:
           fi
           echo "SUCCESS All validation checks passed!"
 
-      - name: Build all platforms
+      # Issue #1069: the exports are routed through tools/build_release.py
+      # (one preset at a time, inside build_all_platforms.py), so CI inherits
+      # the SAME discipline a local cut gets: rm -rf godot/.godot before each
+      # export (defeats the stale .godot/exported cache that burned ~12 cycles
+      # in v0.11.0), a unique freshness-marker file, and post-export PROOF the
+      # marker landed inside the .pck/zip. If the marker is missing, the
+      # platform build exits non-zero and its outputs are discarded.
+      #
+      # The three platform builds are SEQUENTIAL and MUST STAY sequential:
+      # every build_release.py run deletes godot/.godot, so splitting this
+      # into parallel matrix jobs sharing a workspace (or parallel processes)
+      # would corrupt the import caches mid-export.
+      #
+      # Failure policy (ruled in #1069): Windows or Linux failing fails this
+      # job -- nothing is packaged, nothing publishes. macOS is BEST-EFFORT
+      # (issue #1071: the GodotSteam .framework loses its Versions/Current
+      # symlink on non-mac checkouts, so its export can fail through no fault
+      # of the tagged source): a macOS failure emits a warning annotation,
+      # drops the macOS assets, and lets Windows/Linux publish -- then the
+      # verify-release-urls alias check (PDoom.app.zip must answer 200) turns
+      # the run RED. Loud, but not blocking.
+      - name: Build all platforms (via tools/build_release.py, freshness-proven)
         env:
           RELEASE_VERSION: ${{ github.event.inputs.version || github.ref_name }}
         run: |
@@ -165,23 +186,30 @@ jobs:
           echo "Building P(Doom) $VERSION for all platforms..."
           python scripts/build_all_platforms.py --version "$VERSION" --godot-path "$(which godot)"
 
+      # Required platform: an empty artifact here means the freshness-proven
+      # build silently vanished -- fail loudly, never publish.
       - name: Upload Windows build
         uses: actions/upload-artifact@v7
         with:
           name: build-windows
           path: builds/windows/${{ github.event.inputs.version || github.ref_name }}/
+          if-no-files-found: error
 
       - name: Upload Linux build
         uses: actions/upload-artifact@v7
         with:
           name: build-linux
           path: builds/linux/${{ github.event.inputs.version || github.ref_name }}/
+          if-no-files-found: error
 
+      # Best-effort platform (issue #1071): the dir is empty when the macOS
+      # export failed; warn and continue so Windows/Linux still publish.
       - name: Upload macOS build
         uses: actions/upload-artifact@v7
         with:
           name: build-mac
           path: builds/mac/${{ github.event.inputs.version || github.ref_name }}/
+          if-no-files-found: warn
 
   generate-feeds:
     name: Generate Release Feeds & Metadata
@@ -225,44 +253,47 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.11'
+
+      # The built zips, so the manifest can publish per-asset sha256 hashes.
+      # These hashes are the integrity anchor the in-game updater verifies
+      # against BEFORE trusting any downloaded blob (self-updater workstream;
+      # docs/design/UPDATER_DESIGN.md). A manifest without them cannot ever
+      # authorize an auto-install.
+      - name: Download build artifacts for hashing
+        uses: actions/download-artifact@v8
+        with:
+          pattern: build-*
+          path: build-artifacts/
+
+      # scripts/generate_release_manifest.py replaced the old inline YAML
+      # heredoc: same fields plus ladder_version / highlights / download_page /
+      # assets, and it is unit-tested (tests/test_generate_release_manifest.py)
+      # where a heredoc could only be eyeballed. It fails LOUDLY (non-zero) on
+      # a malformed version, missing ladder_version.txt, or non-ASCII output --
+      # a bad manifest must fail the release, not ship.
       - name: Generate release manifest
         id: manifest
         env:
           RELEASE_VERSION: ${{ github.event.inputs.version || github.ref_name }}
+          VALIDATION_STATUS: ${{ needs.validate-data.outputs.validation_status }}
         run: |
-          VERSION="$RELEASE_VERSION"
-          COMMIT_HASH="${{ github.sha }}"
-          DATA_HASH="${{ needs.validate-data.outputs.validation_hash }}"
-          BUILD_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-
-          cat > release_manifest.json <<EOF
-          {
-            "version": "$VERSION",
-            "build_date": "$BUILD_DATE",
-            "commit_hash": "$COMMIT_HASH",
-            "commit_short": "${COMMIT_HASH:0:8}",
-            "data_batch_hash": "$DATA_HASH",
-            "schema_versions": {
-              "events": "1.0",
-              "organizations": "1.0",
-              "researchers": "1.0"
-            },
-            "engine": {
-              "name": "Godot",
-              "version": "4.5.1"
-            },
-            "platforms": ["windows", "linux", "macos"],
-            "validation_passed": true,
-            "build_pipeline": "github-actions",
-            "workflow_run": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
-            "provenance": {
-              "repository": "${{ github.repository }}",
-              "ref": "${{ github.ref }}",
-              "actor": "${{ github.actor }}",
-              "event": "${{ github.event_name }}"
-            }
-          }
-          EOF
+          if [ "$VALIDATION_STATUS" = "success" ]; then VALIDATED=true; else VALIDATED=false; fi
+          python scripts/generate_release_manifest.py \
+            --version "$RELEASE_VERSION" \
+            --commit "${{ github.sha }}" \
+            --repository "${{ github.repository }}" \
+            --data-hash "${{ needs.validate-data.outputs.validation_hash }}" \
+            --workflow-run "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+            --ref "${{ github.ref }}" \
+            --actor "${{ github.actor }}" \
+            --event "${{ github.event_name }}" \
+            --validation-passed "$VALIDATED" \
+            --assets-dir build-artifacts \
+            --output release_manifest.json
 
           # Generate manifest hash
           MANIFEST_HASH=$(sha256sum release_manifest.json | cut -d' ' -f1)

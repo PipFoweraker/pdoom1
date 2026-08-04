@@ -69,7 +69,7 @@ func set_cat_image(image_path: String) -> void:
 	# for EVERY cat in a shipped build even though the artwork is right there.
 	# ResourceLoader goes through the import system and resolves the .ctex.
 	# The rest of this project already uses ResourceLoader.exists() for exactly
-	# this (music_manager, portrait_library, resource_bar, fanfare_popup, ...);
+	# this (music_manager, portrait_library, action_bar_renderer, fanfare_popup, ...);
 	# office_cat was the last holdout.
 	if ResourceLoader.exists(image_path):
 		var texture = load(image_path) as Texture2D

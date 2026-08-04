@@ -2,6 +2,7 @@
 
 - **Status:** ACCEPTED
 - **Date:** 2026-08-03
+- **Summary:** The pack becomes a function of DECLARED DEMAND rather than an accumulation of past approvals: Library admission is taste-gated, but only a demand manifest pulls a size-declared derivative into godot/assets, making "packed but undemanded" unrepresentable rather than merely rejected.
 - **Session:** asset-pipeline ruling, 2026-08-03 (post-mortem of the same-day promote incident)
 
 ## Context

@@ -2,8 +2,26 @@
 """
 Build P(Doom) for all platforms (Windows, Linux, macOS).
 
-This script automates Godot exports for all configured platforms,
-making it easy to create releases for distribution.
+This script orchestrates per-platform exports and packages the distribution
+zips. Since issue #1069 the EXPORT itself is delegated to
+tools/build_release.py, one preset at a time, so CI and local cuts share ONE
+build discipline: rm -rf godot/.godot before the export (defeats the stale
+.godot/exported cache that burned ~12 cycles in v0.11.0), a unique
+freshness-marker file, and post-export PROOF that the marker landed inside the
+exported .pck/zip. This script previously ran a raw `godot --export-release`,
+which had none of that -- the release path routed around the tool built to
+prevent the disaster.
+
+The per-platform builds are SEQUENTIAL BY DESIGN and must stay that way:
+every build_release.py invocation deletes godot/.godot, so parallel exports
+would destroy each other's import caches mid-flight.
+
+macOS is BEST-EFFORT (issue #1071): the GodotSteam .framework loses its
+Versions/Current symlink on non-mac checkouts, so the macOS export can fail
+through no fault of the tagged source. A macOS failure is reported LOUDLY and
+its outputs are discarded (never package an unproven artifact), but it does
+not block Windows and Linux from shipping. Windows or Linux failing fails the
+whole build, and nothing is packaged.
 
 Usage:
     python scripts/build_all_platforms.py --version v0.10.1
@@ -36,6 +54,16 @@ class MultiPlatformBuilder:
         "libgodotsteam.linux.template_release.x86_64.so",
         "libsteam_api.so",
     ]
+
+    # Platforms a release MUST ship. macOS is deliberately absent: issue #1071
+    # (the GodotSteam .framework's Versions/Current symlink does not survive a
+    # non-mac checkout, so the macOS export can fail through no fault of the
+    # tagged source). The ruling (issue #1069): a macOS failure must be LOUD
+    # and its outputs discarded, but it must not block Windows and Linux from
+    # publishing. The release workflow's alias check (PDoom.app.zip must
+    # answer 200) then turns the run red AFTER Windows/Linux publish -- a
+    # visible failure, not a silent one.
+    REQUIRED_PLATFORMS = {"Windows", "Linux"}
 
     def __init__(
         self, version: str, godot_path: Optional[str] = None, project_path: Optional[Path] = None
@@ -151,90 +179,143 @@ class MultiPlatformBuilder:
 
         print(f"[+] Updated export paths to version {self.version}")
 
-    def export_platform(self, preset_name: str, platform_name: str) -> bool:
-        """Export for a specific platform."""
-        print(f"\n[*] Building {platform_name}...")
-
-        cmd = [
-            str(self.godot_exe),
-            "--headless",
-            "--export-release",
+    def _build_release_cmd(self, preset_name: str, build_dir: Path) -> list:
+        """Command line for one tools/build_release.py invocation."""
+        return [
+            sys.executable,
+            str(self.repo_root / "tools" / "build_release.py"),
+            "--preset",
             preset_name,
-            "--path",
+            "--output",
+            str(build_dir),
+            "--godot-path",
+            str(self.godot_exe),
+            "--project",
             str(self.godot_dir),
         ]
 
-        try:
-            result = subprocess.run(cmd, capture_output=True, text=True, check=False)
+    def export_platform(self, preset_name: str, platform_name: str, build_dir: Path) -> bool:
+        """Export one platform VIA tools/build_release.py (issue #1069).
 
-            if result.returncode == 0:
-                print(f"[SUCCESS] {platform_name} build completed successfully")
-                return True
-            else:
-                print(f"[ERROR] {platform_name} build failed:")
-                print(f"  stdout: {result.stdout}")
-                print(f"  stderr: {result.stderr}")
-                return False
+        build_release.py is the single build discipline: it nukes godot/.godot
+        (stale .godot/exported cache defeat), stamps the build, exports, and
+        exits non-zero unless a unique freshness marker is PROVEN present in
+        the exported .pck/zip. The output filename comes from the preset's own
+        export_path (issue #1072), so --output <dir> is all we pass.
+        """
+        print(f"\n[*] Building {platform_name} via tools/build_release.py ...")
+
+        cmd = self._build_release_cmd(preset_name, build_dir)
+        try:
+            # Deliberately NOT capture_output: the [BUILD-VERIFY] marker proof
+            # must be readable in the CI log, or the proof proves nothing to
+            # anyone auditing the run.
+            result = subprocess.run(cmd, check=False)
         except Exception as e:
             print(f"[ERROR] Exception during {platform_name} build: {e}")
-            return False
+            result = None
+
+        if result is not None and result.returncode == 0:
+            print(f"[SUCCESS] {platform_name} build completed and freshness-verified")
+            return True
+
+        code = result.returncode if result is not None else "exception"
+        print(f"[ERROR] {platform_name} build failed (build_release.py exit: {code})")
+        # A build_release.py failure can happen AFTER the export wrote files
+        # (e.g. the freshness check missed). Clear the output dir so a stale
+        # or unverified artifact can never be packaged or uploaded.
+        if build_dir.exists():
+            shutil.rmtree(build_dir, ignore_errors=True)
+            build_dir.mkdir(parents=True, exist_ok=True)
+            print(f"[*] Cleared {build_dir} -- no unverified artifact may be packaged")
+        return False
 
     def build_all(self) -> bool:
-        """Build for all platforms."""
+        """Build all platforms via tools/build_release.py, then package zips.
+
+        Returns True iff every REQUIRED platform (Windows, Linux) exported,
+        proved its freshness marker, and packaged. macOS is best-effort: its
+        failure is loud but non-blocking (see REQUIRED_PLATFORMS).
+        """
         print("\n" + "=" * 60)
-        print("P(Doom) Multi-Platform Build")
+        print("P(Doom) Multi-Platform Build (via tools/build_release.py)")
         print("=" * 60)
 
         # Stamp BEFORE any export so the packed godot/build_stamp.txt names this
         # ref, not whatever a previous build committed (issue #1067).
+        # build_release.py re-stamps per invocation (same HEAD, idempotent);
+        # this early call also fails fast if the stamp tool is broken.
         if not self._stamp_build():
             return False
 
         # Update export paths first
         self._update_export_paths()
 
-        # Create build directories
-        for platform in ["windows", "linux", "mac"]:
-            build_dir = self.repo_root / "builds" / platform / self.version
-            build_dir.mkdir(parents=True, exist_ok=True)
-            print(f"[+] Created build directory: {build_dir}")
-
         platforms = [
-            ("Windows Desktop", "Windows"),
-            ("Linux/X11", "Linux"),
-            ("macOS", "macOS"),
+            ("Windows Desktop", "Windows", "windows"),
+            ("Linux/X11", "Linux", "linux"),
+            ("macOS", "macOS", "mac"),
         ]
 
         results = {}
-        for preset_name, platform_name in platforms:
-            results[platform_name] = self.export_platform(preset_name, platform_name)
+        # SEQUENTIAL ON PURPOSE: every build_release.py run deletes
+        # godot/.godot to defeat the stale-export cache, so parallel exports
+        # would destroy each other's import caches mid-flight. Do not
+        # "optimize" this loop into concurrent builds.
+        for preset_name, platform_name, platform_key in platforms:
+            build_dir = self.repo_root / "builds" / platform_key / self.version
+            build_dir.mkdir(parents=True, exist_ok=True)
+            print(f"[+] Build directory: {build_dir}")
+            results[platform_name] = self.export_platform(preset_name, platform_name, build_dir)
 
         # Print summary
         print("\n" + "=" * 60)
         print("Build Summary")
         print("=" * 60)
 
-        all_success = True
         for platform, success in results.items():
             status = "[SUCCESS]" if success else "[FAILED]"
-            print(f"  {status} {platform}")
-            if not success:
-                all_success = False
+            tier = "" if platform in self.REQUIRED_PLATFORMS else " (best-effort, issue #1071)"
+            print(f"  {status} {platform}{tier}")
 
-        if all_success:
-            print(f"\n[SUCCESS] All platforms built successfully for {self.version}")
+        required_failed = [
+            p for p, ok in results.items() if not ok and p in self.REQUIRED_PLATFORMS
+        ]
+        best_effort_failed = [
+            p for p, ok in results.items() if not ok and p not in self.REQUIRED_PLATFORMS
+        ]
 
-            # Create distribution ZIPs
-            zip_success = self.zip_builds()
-            if not zip_success:
-                print("\n[ERROR] ZIP packaging failed -- refusing to ship incomplete zips")
-                all_success = False
+        if required_failed:
+            print(f"\n[ERROR] Required platform build(s) failed: {', '.join(required_failed)}")
+            print(
+                "[ERROR] Refusing to package ANYTHING -- a half-built release is worse than none."
+            )
+            return False
 
-            print(f"\nBuilds location: {self.repo_root / 'builds'}")
-        else:
-            print("\n[WARNING] Some builds failed. Check errors above.")
+        for p in best_effort_failed:
+            print(f"\n[WARNING] Best-effort platform FAILED: {p} (issue #1071).")
+            print("          Its assets will be MISSING from this release. The release")
+            print("          workflow's alias check (PDoom.app.zip must answer 200) will")
+            print("          turn the run red after Windows/Linux publish -- that red is")
+            print("          the intended loud signal, not a flake.")
+            # GitHub Actions annotation: visible on the run summary page even
+            # though this step exits 0. Plain print noise in a local run.
+            print(
+                f"::warning::{p} build failed (best-effort, issue #1071); "
+                "its release assets will be missing and verify-release-urls will fail."
+            )
 
-        return all_success
+        # Create distribution ZIPs for the platforms that built and verified.
+        zip_success = self.zip_builds()
+        if not zip_success:
+            print("\n[ERROR] ZIP packaging failed -- refusing to ship incomplete zips")
+            return False
+
+        print(
+            f"\n[SUCCESS] Required platforms built, verified fresh, and packaged for {self.version}"
+        )
+        print(f"\nBuilds location: {self.repo_root / 'builds'}")
+        return True
 
     def _release_note(self, platform_key: str) -> Optional[Path]:
         """Per-platform HOW-TO-RUN template shipped inside each zip."""
@@ -358,10 +439,17 @@ class MultiPlatformBuilder:
         # (verified against the CI-built v0.13.1 asset). Verify that, add
         # HOW-TO-RUN.txt beside the .app inside the zip, then copy to the
         # versioned name.
+        #
+        # BEST-EFFORT (issues #1069/#1071): a macOS packaging problem must not
+        # block Windows/Linux from shipping, but a broken bundle must never
+        # ship either -- so on ANY problem the macOS zips are DELETED (loudly)
+        # and `success` is left alone. The missing PDoom.app.zip asset then
+        # turns the release workflow's alias check red.
         mac_dir = self.repo_root / "builds" / "mac" / self.version
         old_mac_zip = mac_dir / "PDoom.app.zip"
         new_mac_zip = mac_dir / f"PDoom-macOS-{self.version}.zip"
         if old_mac_zip.exists():
+            mac_ok = True
             try:
                 with zipfile.ZipFile(old_mac_zip, "a", zipfile.ZIP_DEFLATED) as zf:
                     names = zf.namelist()
@@ -371,23 +459,40 @@ class MultiPlatformBuilder:
                             "[ERROR] macOS .app bundle has no Contents/Frameworks/ -- "
                             "GodotSteam GDExtension was not embedded by the export"
                         )
-                        success = False
+                        mac_ok = False
                     else:
                         print(f"[INFO] macOS bundle embeds {len(frameworks)} Frameworks/ entries")
                     note = self._release_note("macos")
                     if note is None:
-                        success = False
+                        mac_ok = False
                     elif "HOW-TO-RUN.txt" not in names:
                         zf.write(note, "HOW-TO-RUN.txt")
                         print("    + HOW-TO-RUN.txt (added beside the .app inside the zip)")
 
-                # Copy (overwrite) so the versioned zip matches the updated one
-                shutil.copy2(old_mac_zip, new_mac_zip)
-                size_mb = new_mac_zip.stat().st_size / (1024 * 1024)
-                print(f"[SUCCESS] Created {new_mac_zip.name} ({size_mb:.1f} MB)")
+                if mac_ok:
+                    # Copy (overwrite) so the versioned zip matches the updated one
+                    shutil.copy2(old_mac_zip, new_mac_zip)
+                    size_mb = new_mac_zip.stat().st_size / (1024 * 1024)
+                    print(f"[SUCCESS] Created {new_mac_zip.name} ({size_mb:.1f} MB)")
             except Exception as e:
                 print(f"[ERROR] Failed to package macOS ZIP: {e}")
-                success = False
+                mac_ok = False
+
+            if not mac_ok:
+                for stale in (old_mac_zip, new_mac_zip):
+                    if stale.exists():
+                        stale.unlink()
+                        print(f"[*] Deleted {stale.name} -- a broken macOS bundle must not ship")
+                print("[WARNING] macOS packaging failed (best-effort); its assets are dropped.")
+                print(
+                    "::warning::macOS packaging failed (best-effort, issue #1071); "
+                    "PDoom.app.zip will be missing and verify-release-urls will fail."
+                )
+        else:
+            print(
+                "[INFO] No macOS PDoom.app.zip present -- skipping macOS packaging "
+                "(best-effort platform; expected when the macOS export failed, issue #1071)"
+            )
 
         return success
 
