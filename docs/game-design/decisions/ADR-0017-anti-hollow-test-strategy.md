@@ -2,6 +2,7 @@
 
 - **Status:** ACCEPTED
 - **Date:** 2026-07-17
+- **Summary:** Targets "hollow" tests that pass without exercising what they protect (zero-test CI, UI-parse-error-with-436-passing); adds load-time smoke and property-based invariants so a green suite means the code actually ran.
 - **Session:** test-strategy-uplift (feat/test-strategy-uplift)
 
 ## Context
