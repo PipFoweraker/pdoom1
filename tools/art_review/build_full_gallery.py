@@ -80,10 +80,31 @@ def migrate(v):
     return VERDICT_MIGRATE.get(v, "")
 
 
+# Directories that hold IMAGES but are not ART CANDIDATES. audiodump/ holds OBS
+# playtest recordings and the frames extracted from them for timestamp analysis --
+# 535 files across 5 frames_* dirs. Pip hit them in the 2026-08-04 review pass:
+# "For some reason all these frames from my video grab of our audio review came in
+# ... We do not want those showing up." A review tool that shows non-reviewable
+# items spends the reviewer's attention on nothing, which is the scarcest thing
+# in this loop.
+SKIP_DIR_NAMES = {"audiodump", "logs", "velocity", "ceremony_2026-07-31"}
+SKIP_DIR_PREFIXES = ("frames_",)
+
+
+def _is_skipped(rel_parts):
+    for seg in rel_parts:
+        if seg in SKIP_DIR_NAMES or seg.startswith(SKIP_DIR_PREFIXES):
+            return True
+    return False
+
+
 def iter_images(root):
     for p in sorted(root.rglob("*")):
-        if p.is_file() and p.suffix.lower() in IMAGE_EXTS:
-            yield p
+        if not (p.is_file() and p.suffix.lower() in IMAGE_EXTS):
+            continue
+        if _is_skipped(p.relative_to(root).parts[:-1]):
+            continue
+        yield p
 
 
 class AssetGroup:
@@ -368,6 +389,7 @@ TEMPLATE = """<!doctype html>
   <div id="bindings"><b>J/K</b> or arrows move | <b>L</b> like/keep |
     <b>I</b> iterate/remix | <b>X</b> discard | <b>U</b> clear | <b>N</b> note |
     <b>B</b>/<b>Shift+B</b> batch jump | <b>H</b> hide reviewed |
+    <b>Shift+L/I/X</b> WHOLE BATCH (unreviewed only) |
     <b>Enter/O</b> open full | <b>E</b> export | <b>?</b> help</div>
 </div>
 
@@ -389,6 +411,13 @@ __SECTIONS__
   full-size | <kbd>B</kbd>/<kbd>Shift+B</kbd> next/prev batch |
   <kbd>H</kbd> hide reviewed | <kbd>E</kbd> export JSON<br>
   Verdicts auto-advance to the next visible asset. Click a card to select it.<br><br>
+  <h3>Whole-batch verdicts</h3>
+  <kbd>Shift+L</kbd> / <kbd>Shift+I</kbd> / <kbd>Shift+X</kbd> apply keep /
+  iterate / discard to <b>every UNREVIEWED asset in the current batch</b>, after a
+  confirm showing the count. For rotation sets and walk cycles, where eight files
+  are one artistic decision.<br>
+  <b>Assets you have already judged are never overwritten</b> -- a sweep only fills
+  gaps, so it can follow a careful pass without undoing it.<br><br>
   <h3>Where state lives</h3>
   Verdicts persist in this browser's localStorage immediately on keypress.
   They are NOT in the repo until you press <kbd>E</kbd> (downloads
@@ -535,6 +564,49 @@ function setVerdict(v) {
   select(sel, false);
   if (v) move(1);
 }
+// ---- BATCH verdicts -------------------------------------------------------
+// Pip, 2026-08-04: "I don't like the idea of having to manually review all the
+// frames of a walking animation, or if I do, there should be a batch selection
+// option." A rotation set is ONE artistic decision spread over 8 files; making
+// the reviewer press a key 8 times does not make the judgement any better, it
+// just makes the pile look bigger than it is.
+//
+// Applies only to cards with NO existing verdict, so a considered per-asset call
+// is never overwritten by a sweep. Confirms with a count first -- a bulk action
+// that fires silently is how you lose an hour of judgement to one keystroke.
+function setBatchVerdict(v) {
+  if (sel < 0) return;
+  var b = cards[sel].dataset.b;
+  var targets = [];
+  var seen = {};
+  for (var i = 0; i < cards.length; i++) {
+    if (cards[i].dataset.b !== b) continue;
+    var id = cards[i].dataset.id;
+    if (seen[id]) continue;
+    if (eff(id).v) continue;            // never stomp an existing verdict
+    seen[id] = 1;
+    targets.push(id);
+  }
+  if (!targets.length) {
+    alert("Nothing unreviewed left in this batch.");
+    return;
+  }
+  var label = v ? v.toUpperCase() : "CLEAR";
+  if (!confirm("Set " + label + " on " + targets.length +
+               " UNREVIEWED asset(s) in this batch?
+
+" +
+               "Already-judged assets are left alone.")) return;
+  var now = new Date().toISOString();
+  targets.forEach(function (id) {
+    local[id] = { verdict: v, note: eff(id).n, tags: [], updated_at: now };
+  });
+  save();
+  targets.forEach(function (id) { cardsFor(id).forEach(paintCard); });
+  refreshCounts();
+  select(sel, false);
+  if (!visible(cards[sel])) move(1);
+}
 var notebox = document.getElementById("notebox");
 var notein = document.getElementById("notein");
 function openNote() {
@@ -586,13 +658,16 @@ document.addEventListener("keydown", function (ev) {
   var handled = true;
   if (k === "j" || k === "J" || k === "ArrowRight" || k === "ArrowDown") move(1);
   else if (k === "k" || k === "K" || k === "ArrowLeft" || k === "ArrowUp") move(-1);
-  else if (k === "l" || k === "L" || k === "1") setVerdict("keep");
-  else if (k === "i" || k === "I" || k === "2") setVerdict("iterate");
-  else if (k === "x" || k === "X" || k === "3") setVerdict("discard");
+  else if (k === "l" || k === "1") setVerdict("keep");
+  else if (k === "i" || k === "2") setVerdict("iterate");
+  else if (k === "x" || k === "3") setVerdict("discard");
   else if (k === "u" || k === "U" || k === "0") setVerdict("");
   else if (k === "n" || k === "N") openNote();
   else if (k === "b") jumpBatch(1);
   else if (k === "B") jumpBatch(-1);
+  else if (k === "L") setBatchVerdict("keep");
+  else if (k === "I") setBatchVerdict("iterate");
+  else if (k === "X") setBatchVerdict("discard");
   else if (k === "h" || k === "H") {
     document.body.classList.toggle("hiderev");
     if (sel >= 0 && !visible(cards[sel])) move(1);

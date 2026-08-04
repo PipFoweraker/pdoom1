@@ -133,8 +133,15 @@ test-results-*-summary.md
 art_generated/
 generated_icons/
 asset_gallery.html
-# Local art-review app state (per-reviewer verdicts/notes; written by serve_review.py)
-tools/art_review/review_state.json
+# tools/art_review/review_state.json is TRACKED, deliberately (2026-08-04).
+# It was ignored here as "local app state", which it is not: it is 2,700+ curated
+# human verdicts and 111 notes -- the provenance record for every art decision this
+# project has made. Ignored, it lived on ONE disk with no history, one bad merge run
+# from being unrecoverable. It is ~465 KB of JSON: small, diffable, and exactly the
+# "index in git, blobs outside" split ADR-0019 is built around.
+# Its .bak-* siblings ARE regenerable churn and stay ignored.
+tools/art_review/review_state.json.bak-*
+gallery_verdicts_*.json
 # Art-review pipeline v2 regenerable artifacts (tools/art_review/). The verdicts
 # JSONs (pixellab_verdicts.json, hero_verdicts.json) and the generator/analyzer
 # tools ARE tracked -- only these derived outputs are ignored. hero_gallery.html
