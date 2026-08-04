@@ -62,6 +62,22 @@ runtime -- the old Python bridge is gone). Python exists only for CI/tooling in
   any working-tree edits made during the run. Background commits + parallel
   work = repeated mystery failures (cost 4 attempts on 2026-07-19).
 
+## Talking to Pip
+- **ALWAYS give the ABSOLUTE path when he has to open something himself** -- an
+  HTML tool, a built `.exe`, a generated report, a launch command. Full
+  `G:\Documents\Organising_Life\Code\...` every time, even if you named it three
+  messages ago, even if it is "obvious" from the repo root. He should never have
+  to scroll back or keep a bookmark. Standing request 2026-08-04, in force at
+  least until the tooling settles. Repeat the path in the SAME message as the
+  instruction to open it, not in a separate one.
+- **Compose file content with the file-writing tools, NOT shell heredocs.**
+  Ruled in `coordination#9`/`#10` and adopted here. A heredoc silently compiled a
+  `\b` in a non-raw Python string to a literal BACKSPACE, so a PII residue check
+  reported clean while ten records still carried email addresses -- invisible in
+  terminal output, and below U+007F so every ASCII gate passed it. Same class hit
+  this repo repeatedly (mangled `\d`/`\s`/`\u` escapes, `gh issue create` bodies
+  dying on quoting). Write the file, then act on it.
+
 ## Agent gotchas (hard-won 2026-07-20..22)
 - **Pushes hang on Git Credential Manager** (interactive prompt, no GUI):
   prefix `GIT_TERMINAL_PROMPT=0` on `git push` -- pushes instantly via gh's
