@@ -34,7 +34,7 @@
 		{
 			"id": "staff_rider",
 			"name": "Contractor",
-			"description": "+2 action points now; a small governance rider bills later.",
+			"description": "+2 operating hours this month (a contractor absorbs routine load); a small governance rider bills later.",
 			"costs": {
 				"money": 15000,
 				"attention": 1

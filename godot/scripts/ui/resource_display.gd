@@ -12,7 +12,7 @@ var resources: Dictionary = {
 	"papers": {"value": 0, "icon": null, "color": "text"},
 	"reputation": {"value": 0, "icon": null, "color": "accent"},
 	"doom": {"value": 0, "icon": null, "color": "error"},
-	"ap": {"value": 0, "icon": null, "color": "text"},
+	"attention": {"value": 0, "icon": null, "color": "text"},
 }
 
 func _ready():
@@ -35,7 +35,7 @@ func update_resources(state: Dictionary):
 	resources["papers"]["value"] = state.get("papers_published", 0)
 	resources["reputation"]["value"] = state.get("reputation", 0)
 	resources["doom"]["value"] = state.get("doom", 0)
-	resources["ap"]["value"] = state.get("attention", 0)
+	resources["attention"]["value"] = state.get("attention", 0)
 
 	_update_display()
 
@@ -44,17 +44,12 @@ func _update_display():
 	# This is a simple version - you can expand with icons, progress bars, etc.
 	pass
 
-## Format resource value for display
+## Format resource value for display.
+## #1087: this was a SECOND, divergent formatter -- "$%.0f" gave an ungrouped
+## "$197208" and "%.1f" gave the "82.0" the playtest flagged. Delegates to the one
+## policy in GameConfig (docs/NUMBER_FORMATS.md) instead of competing with it.
 func format_value(key: String, value: float) -> String:
-	match key:
-		"money":
-			return "$%.0f" % value
-		"compute", "research":
-			return "%.1f" % value
-		"doom":
-			return "%.1f%%" % value
-		_:
-			return "%.0f" % value
+	return GameConfig.format_resource_amount(key, value)
 
 ## Get color for resource
 func get_resource_color(key: String) -> Color:
