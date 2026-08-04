@@ -39,6 +39,7 @@ Usage:
 
 import argparse
 import os
+import re
 import subprocess
 import sys
 import xml.etree.ElementTree as ET
@@ -113,41 +114,116 @@ def run_import(godot_path):
         return False
 
 
-def check_syntax(godot_path):
-    """Check GDScript syntax by attempting to load the project."""
-    print("\n[CHECK] Checking GDScript syntax...")
+SYNTAX_WALK_SCENE = "res://tools/syntax_walk.tscn"
+SYNTAX_WALK_MARKER = re.compile(r"SYNTAX_WALK_COMPLETE files=(\d+)")
 
-    cmd = [godot_path, "--headless", "--path", str(GODOT_PROJECT), "--quit"]
+
+def _disk_gd_files():
+    """Every .gd under godot/ that the syntax walker is expected to compile.
+
+    MUST mirror the walk in godot/tools/syntax_walk.gd exactly: skip the
+    top-level addons/ dir (third-party) and any dot-directory (.godot etc).
+    The counts are compared as a manifest check -- a mismatch means the
+    walker and this gate disagree about what "everything" is, which is
+    itself a failure (the #590 silence-is-failure pattern).
+    """
+    files = []
+    for p in GODOT_PROJECT.rglob("*.gd"):
+        rel_parts = p.relative_to(GODOT_PROJECT).parts
+        if rel_parts[0] == "addons":
+            continue
+        if any(part.startswith(".") for part in rel_parts):
+            continue
+        files.append(p)
+    return sorted(files)
+
+
+def check_syntax(godot_path):
+    """Compile-check EVERY non-addon .gd, not just the ones the boot reaches.
+
+    History (issue #1082): the old check ran `--headless --quit`, which BOOTS
+    the project -- only autoloads and whatever they pull in get parsed. A file
+    with a hard parse error that nothing reaches sailed through as [PASS].
+    Per-file `--check-only` is no fix either: in isolation scripts cannot see
+    autoloads, so 186/260 real files "fail" (Identifier not found: Balance).
+
+    The fix: run res://tools/syntax_walk.tscn. Booting a scene boots the
+    project NORMALLY (autoloads + class_name cache live), then the walker
+    force-load()s every .gd outside addons/, which makes the engine parse and
+    compile each one; a broken file emits SCRIPT ERROR / "Failed to load
+    script" on stderr. Passing requires ALL of:
+      (a) the SYNTAX_WALK_COMPLETE marker is present -- proof the walk
+          actually ran (#640: silence is failure, the gate fails CLOSED),
+      (b) the walker's file count equals this script's own disk glob
+          (manifest check, as in #590),
+      (c) none of the parse/compile markers appear in the output.
+    """
+    print("\n[CHECK] Checking GDScript syntax (compile-all walker)...")
+
+    cmd = [godot_path, "--headless", "--path", str(GODOT_PROJECT), SYNTAX_WALK_SCENE]
 
     # Godot emits benign ERROR lines on headless shutdown (ObjectDB leaks,
     # resources still in use) and for missing imported assets. Only match
-    # markers that indicate genuinely broken GDScript source. Patterns broadened
-    # under #629: the old set missed Godot's actual "Parse error" /
-    # "Failed to load script" strings, so real parse failures passed the gate.
+    # markers that indicate genuinely broken GDScript source. Matched
+    # case-insensitively: the CLI emits "Parse error" but runtime load()
+    # emits "SCRIPT ERROR: Parse Error: ..." (different capitalisation).
     REAL_ERROR_MARKERS = [
-        "Cannot load source code",
-        "GDScript error",
-        "Parse error",
-        "Failed to load script",
+        "cannot load source code",
+        "gdscript error",
+        "parse error",
+        "failed to load script",
+        "compile error",
     ]
 
     try:
-        result = subprocess.run(cmd, capture_output=True, text=True, timeout=60)
-
-        output = result.stdout + result.stderr
-        found_errors = [m for m in REAL_ERROR_MARKERS if m in output]
-
-        if found_errors:
-            print("[FAIL] GDScript syntax errors found (markers: %s):" % found_errors)
-            print(output)
-            return False
-        else:
-            print("[PASS] GDScript syntax check passed! CHECKED")
-            return True
-
-    except Exception as e:
-        print(f"[ERROR] Syntax check failed: {e}")
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=300)
+    except subprocess.TimeoutExpired:
+        print("[ERROR] Syntax walker timed out after 300s.")
         return False
+    except Exception as e:
+        print(f"[ERROR] Syntax check failed to run: {e}")
+        return False
+
+    output = result.stdout + result.stderr
+    lower = output.lower()
+    found_errors = [m for m in REAL_ERROR_MARKERS if m in lower]
+
+    # (a) proof the walk ran at all
+    marker = SYNTAX_WALK_MARKER.search(output)
+    if marker is None:
+        print(
+            "[FAIL] Syntax walker did not report completion "
+            f"({SYNTAX_WALK_SCENE} missing/broken, or the project failed to boot). "
+            "Refusing to pass on silence."
+        )
+        print(output[-4000:])
+        return False
+
+    # (b) manifest: walker count must equal what is on disk
+    walked = int(marker.group(1))
+    on_disk = len(_disk_gd_files())
+    if walked != on_disk:
+        print(
+            f"[FAIL] Syntax walker compiled {walked} scripts but {on_disk} .gd files "
+            "are on disk (excluding addons/). Walker and gate disagree about "
+            "coverage -- fix the mismatch, do not trust this run."
+        )
+        return False
+
+    # (c) no parse/compile markers
+    if found_errors:
+        print("[FAIL] GDScript syntax errors found (markers: %s):" % found_errors)
+        marker_lines = [
+            line
+            for line in output.splitlines()
+            if any(m in line.lower() for m in REAL_ERROR_MARKERS)
+        ]
+        for line in marker_lines[:80]:
+            print("    " + line)
+        return False
+
+    print(f"[PASS] GDScript syntax check passed! Compiled {walked}/{on_disk} scripts. CHECKED")
+    return True
 
 
 def _disk_test_files(test_dir):
