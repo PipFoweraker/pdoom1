@@ -150,7 +150,6 @@ godot/
 |   |   |--- test_turn_manager.gd
 |   |   |--- test_actions.gd
 |   |   `--- test_events.gd
-|   `--- run_tests.gd          # Test runner
 |--- theme/
 |   `--- menu_theme.tres       # shared menu/screen chrome Theme (#743)
 `--- addons/
