@@ -186,11 +186,12 @@ func show_game_over(is_victory: bool, final_state: Dictionary):
 
 	# Resources accumulated
 	stats_text += "[color=cyan]* Resources:[/color]\n"
-	stats_text += "  [color=gold]Money:[/color] $%d\n" % final_state.get("money", 0)
-	stats_text += "  [color=blue]Compute:[/color] %.1f\n" % final_state.get("compute", 0)
-	stats_text += "  [color=purple]Research:[/color] %.1f\n" % final_state.get("research", 0)
-	stats_text += "  [color=white]Papers:[/color] %d\n" % final_state.get("papers", 0)
-	stats_text += "  [color=orange]Reputation:[/color] %.0f\n\n" % final_state.get("reputation", 0)
+	# #1087: the run summary carried its own formats ("$197208", "82.0"). One policy.
+	stats_text += "  [color=gold]Money:[/color] %s\n" % GameConfig.format_money(final_state.get("money", 0))
+	stats_text += "  [color=blue]Compute:[/color] %s\n" % GameConfig.format_scalar(final_state.get("compute", 0))
+	stats_text += "  [color=purple]Research:[/color] %s\n" % GameConfig.format_scalar(final_state.get("research", 0))
+	stats_text += "  [color=white]Papers:[/color] %s\n" % GameConfig.format_scalar(final_state.get("papers", 0))
+	stats_text += "  [color=orange]Reputation:[/color] %s\n\n" % GameConfig.format_scalar(final_state.get("reputation", 0))
 
 	# Team composition -- count via GameState.get_total_staff() (L0 #620: the legacy
 	# field sum below missed the researchers[] roster, showing 0 employees mid-era).

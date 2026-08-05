@@ -26,7 +26,7 @@ A bootstrap strategy game about managing a scrappy AI safety lab with realistic 
 - [Milestone Events & Employee Management](#milestone-events--employee-management)
 - [Controls & Interface](#controls--interface)
 - [Visual Feedback & UI Transitions](#visual-feedback--ui-transitions)
-- [Action Points Strategy](#action-points-strategy)
+- [Attention Strategy](#attention-strategy)
 - [Competitors & Intelligence](#competitors--intelligence)
 - [Screen Layout](#screen-layout)
 - [Actions You Can Take](#actions-you-can-take)
@@ -80,18 +80,18 @@ this guide, and there are no per-mechanic popups.
 
 ### Planned: interactive tutorial (not implemented)
 A step-by-step walkthrough on a first playthrough, skippable, covering:
-1. **Resources**: money, staff, reputation, Action Points, and p(Doom)
-2. **Actions**: taking actions and spending Action Points
-3. **Action Points**: resource management and staff scaling
+1. **Resources**: money, staff, reputation, Attention, and p(Doom)
+2. **Actions**: taking actions and spending Attention
+3. **Attention**: the founder's monthly budget and how staff lanes differ from it
 4. **Turn Management**: ending turns and handling events
 5. **Events & Milestones**: random events and growth milestones
 6. **Upgrades**: permanent improvements to your lab
 
 ### Planned: first-time help triggers (not implemented)
 The Phase-2 spec names four one-shot popups, fired the first time a player:
-- **Hires beyond starting staff** -- explains Action Point scaling
+- **Hires beyond starting staff** -- explains that staff work their own lanes and do NOT add founder Attention
 - **Purchases a first upgrade** -- explains permanent benefits
-- **Runs out of Action Points** -- explains how to increase capacity
+- **Runs out of Attention** -- explains the planning/operating hour split and reserving
 - **Reaches high p(Doom)** -- warning and mitigation advice
 
 These four triggers are the reference list for issues #720/#721. None fire in the
@@ -172,7 +172,7 @@ Survive as long as possible while managing your AI safety lab. Avoid catastrophe
 ### Keyboard Controls
 These are the default binds (customisable on the Keybindings screen):
 - **Space**: End turn
-- **Enter**: Commit plan and reserve Action Points
+- **Enter**: Commit plan and reserve Attention
 - **Number keys (1-9)**: Trigger actions 1-9 directly
 - **Z**: Undo last action
 - **C**: Clear the action queue
@@ -200,7 +200,7 @@ builds and are not part of normal play.
 - **[EMOJI] Money**: Spend on actions and upgrades, earn through fundraising
 - **[EMOJI] Staff**: Your team (costs money each turn, can quit if unpaid)
 - **[EMOJI] Reputation**: Affects fundraising and events
-- **[LIGHTNING] Action Points (AP)**: Limit actions per turn (3 AP max, resets each turn)
+- **[LIGHTNING] Attention**: The founder's month -- a monthly grant of decisions, split into planning and operating hours. Staff never add to it; unspent Attention evaporates at month end.
 - **[EMOJI][EMOJI] p(Doom)**: AI catastrophe risk (game over at 100%)
 - **[DESKTOP][EMOJI] Compute**: Powers employee productivity and research
 - **[EMOJI] Research**: Progress toward publishing papers (boosts reputation, plays celebratory sound)
@@ -314,8 +314,8 @@ Each researcher generates research and affects doom based on their specializatio
 
 **[EMOJI] Keyboard Shortcuts for Actions:**
 - **1-9 keys**: Execute actions 1-9 directly (displayed as [1], [2], etc. on action buttons)
-- **Audio feedback**: Hear a satisfying sound when spending Action Points
-- **Visual feedback**: Watch the AP counter glow when Action Points are spent
+- **Audio feedback**: Hear a satisfying sound when spending Attention
+- **Visual feedback**: Watch the Attention counter change colour as the month's budget is committed
 - **Achievement feedback**: Celebratory 'Zabinga!' sound when research papers are completed
 - **Error handling**: Audio beep after 3 repeated identical errors (easter egg)
 
@@ -335,7 +335,7 @@ Each researcher generates research and affects doom based on their specializatio
 - **Layout**: Horizontal information layout optimized for the thin terminal window
 
 **What You'll See:**
-- **Action Details**: Full descriptions, AP/money costs, delegation options, requirements (in ALL CAPS)
+- **Action Details**: Full descriptions, Attention/money costs, delegation options, requirements (in ALL CAPS)
 - **Resource Information**: Current values, explanations, and how they're used
 - **Upgrade Information**: Effects, costs, unlock requirements, and benefits
 - **Filtered Actions**: Only available/unlocked actions appear in the interface
@@ -361,7 +361,7 @@ When you purchase upgrades, they don't just disappear - they smoothly animate fr
 - **Clear Feedback**: You can see exactly where your purchased upgrade ends up
 
 ### Other Visual Feedback
-- **Action Points**: AP counter glows yellow when spent, showing strategic impact
+- **Attention**: the counter turns yellow when the month's budget is nearly gone, red when it is spent
 - **Cash Flow**: Balance changes appear when accounting software is purchased
 - **Employee Animations**: Staff blobs animate in from the side when hired
 - **UI State Changes**: All UI state changes include visual transitions for clarity
@@ -375,53 +375,49 @@ These animations aren't just decoration - they serve important gameplay function
 
 ---
 
-## Action Points Strategy
+## Attention Strategy
 
-The Action Points (AP) system creates strategic depth through resource management and staff scaling.
+Attention is the founder's month, and it is the ONLY currency you spend as the founder.
 
-### How Action Points Work
-- **Base AP**: You start with 3 Action Points per turn
-- **Staff Scaling**: Regular staff provide +0.5 AP each (hire more for higher capacity)
-- **Admin Assistants**: Specialized staff providing +1.0 AP each (expensive but powerful)
-- **Turn Reset**: AP automatically resets to calculated maximum each turn
-- **Dynamic Scaling**: Your max AP grows as you hire staff (3 + staff*0.5 + admin*1.0)
+> Historical note: earlier builds ran a per-turn "Action Point" pool that staff topped
+> up. That pool was deleted (ADR-0011). If you see "AP" anywhere in the game, it is a
+> stale string, not a mechanic -- please file it.
 
-### Staff Types & AP Bonuses
-- **[CHECKLIST] Admin Assistants**: High-cost specialists (+1.0 AP each) for maximum action capacity
-- **[EMOJI] Research Staff**: Enable delegation of research actions with reduced effectiveness
-- **[GEAR][EMOJI] Operations Staff**: Enable delegation of operational tasks, often with lower AP costs
-- **[EMOJI] Regular Staff**: Provide base +0.5 AP bonus and general productivity
+### How Attention works
+- **A monthly grant, not a per-turn allowance.** You get roughly a fixed number of
+  founder decisions per plan month. Difficulty scales the size of the grant.
+- **Staff never add to it.** Hiring does not buy you more founder Attention. What
+  hiring buys is separate per-person effort in the staff's own lanes.
+- **Unspent Attention evaporates at month end.** There is no banking (ADR-0009). A
+  hoarded reserve is not saved for later; it is simply not used.
+- **Two hour types.** The grant splits into PLANNING hours (queueing strategic work)
+  and OPERATING hours (response windows, hiring, travel, presence work). Overflow is
+  asymmetric: a crisis can eat your planning hours, but planning hours can never buy
+  back presence. This is why an action can be greyed out while the Attention counter
+  still shows a number.
 
-### Delegation System
-**Research Delegation:**
-- Safety Research and Governance Research can be delegated to research staff
-- Requires 2+ research staff, maintains same AP cost, but 80% effectiveness
-- Good for managing multiple priorities when you have the staff
+### What staff actually buy you
+- **Researchers** work their own lanes on the workstream backlog. Unassigned staff do
+  not idle -- they self-direct, and they report their progress optimistically.
+- **Ops/admin staff** reduce the founder-price of routine actions rather than adding
+  to your pool.
+- **Audits** spend founder hours to ground-truth what your team reported. The
+  simulation never lies to you; characters sometimes do.
 
-**Operations Delegation:**
-- Buy Compute can be delegated to operations staff for routine procurement
-- Requires 1+ operations staff, costs 0 AP when delegated, full effectiveness
-- Automatically delegated when beneficial (lower AP cost)
+### Visual indicators
+- **Attention readout**: top bar, e.g. `Attention: 20 (14 free, 3 reserved)`; hover it
+  for the planning/operating split.
+- **Button states**: an action greys out when you cannot pay its Attention, its money,
+  or its hour type.
+- **Cost display**: every action and every event option shows its full cost on its
+  face, never hover-only.
 
-### Visual Indicators
-- **AP Counter**: Displayed as 'AP: 2/3' in the top resource bar
-- **Glow Effect**: AP counter glows yellow when Action Points are spent
-- **Button States**: Action buttons gray out when you lack sufficient AP
-- **Cost Display**: Each action shows both money cost and AP cost
-
-
-### Strategic Tips
-[TARGET] **Early Game (3-4 AP)**: Focus on essential actions like fundraising and safety research
-[GRAPH] **Growth Phase (5-8 AP)**: Invest in staff hiring to expand action capacity
-[LIGHTNING] **Late Game (9+ AP)**: Leverage delegation and specialized staff for complex operations
-[EMOJI] **Admin Investment**: Admin assistants are expensive but provide the highest AP return
-[EMOJI] **Delegation Planning**: Build research/ops staff for long-term delegation benefits
-
-### Staff Investment Guide
-- **Cost-Effective**: Regular staff (60$ for +0.5 AP = 120$ per AP)
-- **High-Impact**: Admin assistants (80$ for +1.0 AP = 80$ per AP)
-- **Specialized**: Research/Ops staff (70$ for delegation capabilities)
-- **Balanced Approach**: Mix of regular staff, 1-2 admins, and specialists based on strategy
+### Strategic tips
+- **Reserve deliberately.** Committing a plan with nothing queued holds all Attention
+  for reacting to events. That is a real strategy, not a wasted month.
+- **Watch the hour type, not just the total.** Running out of operating hours is the
+  usual cause of "I have Attention but the button is dead".
+- **Hire for lanes, not for capacity.** More staff does not mean more founder decisions.
 
 ---
 
@@ -669,7 +665,7 @@ Your AI safety lab can gain reputation and reduce doom by publishing papers at a
 
 ### Paper Submission Process
 
-1. **Submit Paper** (Action: 15 research points, 1 AP)
+1. **Submit Paper** (Action: 15 research, 1 Attention)
    - Select a target conference
    - Your paper enters review for 3-5 turns
    - Quality depends on: research invested + researcher skill + traits

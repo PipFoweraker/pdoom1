@@ -32,9 +32,10 @@ asset_id compatibility with apply_review.py / review_state.json:
       verbatim (no duplicate keys). New px assets get the relpath WITH
       extension, which apply_review.py can actually resolve.
   file:<relpath-from-repo-root>       ADDITIVE extension, only for files no
-      existing scheme can express (e.g. audiodump frames, loose files outside
-      a v1/ dir). apply_review.py will list these as UNRESOLVED; they are
-      review-notes-only until someone teaches it the prefix.
+      existing scheme can express (e.g. webp scene art, off-grid size stems,
+      loose files outside a v1/ dir). apply_review.py resolves these since
+      2026-08-04: single file, category derived from the path, destination
+      filename kept verbatim.
 
 Usage:
     python tools/art_review/build_full_gallery.py [--open]
@@ -46,9 +47,15 @@ import argparse
 import html
 import json
 import re
+import sys
 import time
 import webbrowser
 from pathlib import Path
+
+# Sibling module (this script runs from tools/art_review/, which is
+# sys.path[0] when invoked as a script). Supplies dest_rule_for_id -- the ONE
+# mapping-coverage predicate shared with the report gate and the tests.
+import apply_review
 
 REPO = Path(__file__).resolve().parents[2]
 ART_GEN = REPO / "art_generated"
@@ -276,14 +283,58 @@ def href_of(p):
         return html.escape("../art_source/" + rel.as_posix(), quote=True)
 
 
+def preflight_mapping(batches):
+    """Batches whose asset ids cannot map to a destination or explicit Hold.
+
+    Returns {batch_title: [unmappable asset ids]}. This is the pre-review
+    gate for the #1093/#1107 recurrence (2026-08-04): a batch indexed without
+    a mapping lets a whole review pass strand its own keeps -- the verdicts
+    land, then apply_review's promotion gate fails AFTER the reviewing was
+    spent. Failing HERE means the one-line map entry (destination or
+    Hold(reason)) exists BEFORE any verdict is cast."""
+    unmapped = {}
+    for b in batches:
+        bad = [g.id for g in b["assets"] if apply_review.dest_rule_for_id(g.id) is None]
+        if bad:
+            unmapped[b["title"]] = bad
+    return unmapped
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--open", action="store_true")
+    ap.add_argument(
+        "--allow-unmapped",
+        action="store_true",
+        help="index batches that have no destination mapping anyway (their "
+        "keep verdicts WILL be stranded until the map rules on them; the "
+        "default is to refuse so the map gets its one-line entry first).",
+    )
     args = ap.parse_args()
 
     t0 = time.time()
     state = load_state()
     batches = scan(state)
+
+    unmapped = preflight_mapping(batches)
+    if unmapped:
+        print(
+            "[!] {} batch(es) have assets with NO destination mapping -- a "
+            "review pass over them would strand its own keeps:".format(len(unmapped))
+        )
+        for title, ids in sorted(unmapped.items()):
+            print(f"    {title}  ({len(ids)} unmappable; e.g. {ids[0]})")
+        print(
+            "    Fix: add a godot/assets/... destination or an explicit "
+            "Hold(reason) per batch in tools/art_review/apply_review.py "
+            "(GEN_DEST / PX_DEST / PX_PREFIX_CATEGORY). A Hold is a "
+            "first-class outcome for concept/reference/master material."
+        )
+        if not args.allow_unmapped:
+            print("    Refusing to build (override: --allow-unmapped).")
+            sys.exit(2)
+        print("    --allow-unmapped given: building anyway.")
+
     page, n_assets, n_files, n_matched = build_page(batches, state)
     OUT.write_text(page, encoding="utf-8", newline="\n")
     dt = time.time() - t0

@@ -537,41 +537,110 @@ func get_display_seed() -> String:
 		return get_weekly_seed()
 	return game_seed
 
+# =============================================================================
+# NUMBER FORMAT POLICY (#1087) -- the ONE place player-facing numbers are made.
+# Ruling and rationale: docs/NUMBER_FORMATS.md. Short version:
+#   money      -> whole dollars, grouped, NO cents ("$197,208")
+#   scalars    -> whole units, grouped ("82", "3,400") -- compute/research/rep/papers
+#   percent    -> one decimal, because p(doom) fractions DO carry meaning ("14.2%")
+#   deltas     -> explicit sign, same base format ("+$1,200", "-3")
+# A raw float must never reach the player. Anything that prints a number to a
+# player MUST route through one of these; `str(value)` / "%s" on a Variant is
+# how `money: 3000.0` shipped into a tooltip.
+# =============================================================================
+
+## Group an integer magnitude with thousands separators. Rounds (never truncates:
+## truncation made $1,999.99 read as "$1,999", understating the balance).
+func format_grouped(value: float) -> String:
+	var n: int = int(round(abs(value)))
+	var s := str(n)
+	var out := ""
+	var count := 0
+	for i in range(s.length() - 1, -1, -1):
+		if count > 0 and count % 3 == 0:
+			out = "," + out
+		out = s[i] + out
+		count += 1
+	return out
+
 ## Format money with comma separators (e.g., $245,000)
 ## Issue #436 - Player feedback: add commas to all $ references
+## Issue #1087 - CENTS ARE NEVER SHOWN. A lab budget rendered to the cent
+## ("$197,207.69") implies cent-grain decisions exist; none do. Rounded, not
+## truncated, so the displayed figure is the nearest true dollar.
 ## Note: Not static because GameConfig is an autoload singleton
 func format_money(amount: float) -> String:
-	var is_negative = amount < 0
-	var abs_amount = abs(amount)
+	var sign_str := "-" if amount < 0 else ""
+	return "%s$%s" % [sign_str, format_grouped(amount)]
 
-	# Convert to string and split at decimal point
-	var int_part = int(abs_amount)
-	var decimal_part = abs_amount - int_part
+## A money CHANGE. Always signed, so "+$1,200" and "-$238" are unambiguous.
+func format_money_delta(amount: float) -> String:
+	var sign_str := "+" if amount >= 0.0 else "-"
+	return "%s$%s" % [sign_str, format_grouped(amount)]
 
-	# Format integer part with commas
-	var int_str = str(int_part)
-	var formatted = ""
-	var count = 0
+## A resource scalar (compute, research, reputation, papers, staff, attention).
+## Whole units: the engine carries floats, but no mechanic trades in 0.1 compute,
+## so "82.0" was precision the player could not act on.
+func format_scalar(value: float) -> String:
+	var sign_str := "-" if value < 0 else ""
+	return sign_str + format_grouped(value)
 
-	# Add commas from right to left
-	for i in range(int_str.length() - 1, -1, -1):
-		if count > 0 and count % 3 == 0:
-			formatted = "," + formatted
-		formatted = int_str[i] + formatted
-		count += 1
+## A resource-scalar CHANGE. Always signed.
+func format_scalar_delta(value: float) -> String:
+	var sign_str := "+" if value >= 0.0 else "-"
+	return sign_str + format_grouped(value)
 
-	# Add negative sign if needed
-	if is_negative:
-		formatted = "-$" + formatted
-	else:
-		formatted = "$" + formatted
+## A percentage. One decimal by default -- p(doom) is the one number whose
+## fraction is load-bearing (momentum is visible at sub-point grain).
+func format_percent(value: float, decimals: int = 1) -> String:
+	return ("%." + str(max(0, decimals)) + "f%%") % value
 
-	# Add decimal part if significant (for costs like $2,500.50)
-	if decimal_part > 0.01:
-		formatted += "%.2f" % decimal_part
-		formatted = formatted.replace("0.", ".")
+## Resources whose player-facing unit is a percentage.
+const _PERCENT_RESOURCES := ["doom", "p_doom", "pdoom"]
 
-	return formatted
+## Player-facing NAME for an internal resource key ("safety_absorption" ->
+## "Safety Absorption"). Kills dict-key leakage in cost/effect tooltips.
+func format_resource_name(key: String) -> String:
+	match key:
+		"money":
+			return "Money"
+		"attention":
+			return "Attention"
+		"doom":
+			return "p(Doom)"
+		"compute":
+			return "Compute"
+		"research":
+			return "Research"
+		"reputation":
+			return "Reputation"
+		"papers":
+			return "Papers"
+		_:
+			return key.replace("_", " ").capitalize()
+
+## Player-facing AMOUNT for an internal resource key. Never returns a raw float.
+func format_resource_amount(key: String, value) -> String:
+	var v := float(value)
+	if key == "money":
+		return format_money(v)
+	if key in _PERCENT_RESOURCES:
+		return format_percent(v)
+	return format_scalar(v)
+
+## "Money $3,000" / "Compute 12" -- the tooltip line form. Replaces
+## "  %s: %s" % [key, value], which is what printed `money: 3000.0` (#1087).
+func format_resource(key: String, value) -> String:
+	return "%s %s" % [format_resource_name(key), format_resource_amount(key, value)]
+
+## Signed line form for an EFFECT: "Reputation +5", "Money -$3,000".
+func format_resource_delta(key: String, value) -> String:
+	var v := float(value)
+	if key == "money":
+		return "%s %s" % [format_resource_name(key), format_money_delta(v)]
+	if key in _PERCENT_RESOURCES:
+		return "%s %s%s" % [format_resource_name(key), ("+" if v >= 0.0 else ""), format_percent(v)]
+	return "%s %s" % [format_resource_name(key), format_scalar_delta(v)]
 
 ## Check if there are unseen patch notes (new version since last seen)
 func has_unseen_patch_notes() -> bool:

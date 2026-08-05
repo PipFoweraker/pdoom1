@@ -32,7 +32,13 @@ var _built: bool = false
 
 ## Static entry point. `parent` defaults to the scene-tree root so callers can fire-and-forget.
 static func show_fanfare(title: String, body: String, image_path: String = "", parent: Node = null) -> FanfarePopup:
-	var popup: FanfarePopup = preload("res://scenes/ui/fanfare_popup.tscn").instantiate()
+	# load(), NOT preload(): the .tscn's root script is THIS script, so a
+	# compile-time preload forms a script<->scene cycle. Loading the SCRIPT
+	# first (e.g. the #1082 compile-all syntax walker, or any future
+	# ResourceLoader.load of the script) then errored with "[ext_resource]
+	# referenced non-existent resource". Runtime load() resolves lazily at
+	# first show_fanfare() call, long after both files are loadable.
+	var popup: FanfarePopup = load("res://scenes/ui/fanfare_popup.tscn").instantiate()
 	var host: Node = parent
 	if host == null:
 		var loop := Engine.get_main_loop()
