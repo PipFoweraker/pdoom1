@@ -337,6 +337,13 @@ jobs:
             echo "See CHANGELOG.md for details." >> release_notes.txt
           fi
 
+          # Unsigned-build / SmartScreen notice. Kept as a checked-in file rather than
+          # echo lines so the wording is reviewable, diffable, and reusable verbatim by
+          # the website. A downloading player meets SmartScreen BEFORE they ever open
+          # HOW-TO-RUN.txt inside the zip, so the release body has to carry it too.
+          echo "" >> release_notes.txt
+          cat tools/release_notes/RELEASE-BODY-security-notice.md >> release_notes.txt
+
           # Append manifest info
           echo "" >> release_notes.txt
           echo "## Build Information" >> release_notes.txt
