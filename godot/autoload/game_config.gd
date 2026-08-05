@@ -3,8 +3,14 @@ extends Node
 ## Manages persistent settings and game state across scenes
 
 # Player/Game Configuration
-var player_name: String = "Researcher"
-var lab_name: String = "AI Safety Lab"
+# Install-default identity as NAMED consts: the game-over default-identity
+# prompt (Pip 2026-08-06, after two friends' scores landed as identical
+# "AI Safety Lab" rows) compares against these, so the field initialisers,
+# reset_game_config() and has_default_identity() must all read the same pair.
+const DEFAULT_PLAYER_NAME := "Researcher"
+const DEFAULT_LAB_NAME := "AI Safety Lab"
+var player_name: String = DEFAULT_PLAYER_NAME
+var lab_name: String = DEFAULT_LAB_NAME
 var game_seed: String = ""  # Empty = weekly challenge seed
 var difficulty: int = 1  # 0=Easy, 1=Standard, 2=Hard -- the player's stored PREFERENCE. What a run actually PLAYS at is effective_difficulty() below (league lock, #1058/#1084).
 var org_type: String = "nonprofit"  # Early-game org form: "nonprofit" | "for_profit" (DQ-19). Set at pregame; default flow forces nonprofit.
@@ -106,6 +112,17 @@ var leaderboard_consent_asked: bool = false
 # reminder that the global board exists; this flag persists so later
 # playthroughs stay silent. See LeaderboardSync.consent_flow_state.
 var leaderboard_reminder_shown: bool = false
+# One-time default-identity prompt (Pip 2026-08-06): a player about to UPLOAD a
+# score while still carrying the unedited install defaults gets exactly ONE
+# chance to claim a name first -- a public board of identical "Researcher --
+# AI Safety Lab" rows is one nobody can find themselves on. Keeping the default
+# is a legitimate answer; this flag persists either way (set at SHOW time, the
+# leaderboard_reminder_shown shape above), so the question is never asked twice.
+# See LeaderboardSync.default_identity_prompt_state -- deliberately LAYERED ON
+# TOP of the consent flow, never a change to it: consent still decides WHETHER
+# an upload can happen; this only decides whether the name is worth a one-time
+# ask first.
+var default_identity_prompt_shown: bool = false
 
 # Privacy: anonymous launch ping opt-out (#799). The ping is a single Plausible
 # event on boot carrying ONLY a random install UUID + version + OS + first_launch
@@ -263,6 +280,7 @@ func save_config() -> void:
 	config.set_value("leaderboard", "submit_scores_global", submit_scores_global)
 	config.set_value("leaderboard", "consent_asked", leaderboard_consent_asked)
 	config.set_value("leaderboard", "reminder_shown", leaderboard_reminder_shown)
+	config.set_value("leaderboard", "identity_prompt_shown", default_identity_prompt_shown)
 
 	# Privacy + updates section (#799)
 	config.set_value("privacy", "send_launch_ping", send_launch_ping)
@@ -327,6 +345,7 @@ func load_config() -> void:
 	submit_scores_global = config.get_value("leaderboard", "submit_scores_global", submit_scores_global)
 	leaderboard_consent_asked = config.get_value("leaderboard", "consent_asked", leaderboard_consent_asked)
 	leaderboard_reminder_shown = config.get_value("leaderboard", "reminder_shown", leaderboard_reminder_shown)
+	default_identity_prompt_shown = config.get_value("leaderboard", "identity_prompt_shown", default_identity_prompt_shown)
 
 	# Load privacy + updates settings (#799)
 	send_launch_ping = config.get_value("privacy", "send_launch_ping", send_launch_ping)
@@ -494,10 +513,18 @@ func get_game_config() -> Dictionary:
 		"scenario_id": scenario_id
 	}
 
+## True while EITHER identity field still holds the unedited install default.
+## Either alone keeps the board entry generic (the board renders the lab name;
+## consent shares both names), so either alone keeps the one-time prompt armed.
+## Exact match on purpose: "unedited default" means literally these strings --
+## a player who deliberately typed something else, however close, has chosen it.
+func has_default_identity() -> bool:
+	return player_name.strip_edges() == DEFAULT_PLAYER_NAME or lab_name.strip_edges() == DEFAULT_LAB_NAME
+
 ## Reset game configuration to defaults (keep settings)
 func reset_game_config() -> void:
-	player_name = "Researcher"
-	lab_name = "AI Safety Lab"
+	player_name = DEFAULT_PLAYER_NAME
+	lab_name = DEFAULT_LAB_NAME
 	game_seed = ""
 	difficulty = 1
 	scenario_id = ""
