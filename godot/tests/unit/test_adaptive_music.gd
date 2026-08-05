@@ -8,9 +8,11 @@ var _saved_tier: int = 0
 
 func before_each():
 	_saved_tier = MusicManager._current_music_tier
+	MusicManager._tier_override = -1  # never let an audition override leak between tests
 
 func after_each():
 	MusicManager._current_music_tier = _saved_tier
+	MusicManager._tier_override = -1
 
 func test_tier_mapping_tracks_canonical_bands():
 	# One probe per canonical ThemeManager band (below: 15/37/52/67/80/92/101),
@@ -109,3 +111,80 @@ func test_doom_signal_wiring_is_listen_only():
 	# And the handler tolerates a minimal/malformed state dict.
 	MusicManager._on_game_state_for_music({})
 	assert_eq(MusicManager._current_music_tier, 0, "Missing doom key reads as 0")
+
+
+# === Audition override -- the ALPHA TOOLS music player (Pip 2026-08-05) ==============
+#
+# The point of the feature is that a track can be HELD against live game state, so the
+# thing to pin is exactly that: doom keeps moving and does NOT take the tier back.
+
+func test_override_holds_the_tier_against_live_doom():
+	MusicManager.set_doom_level(0.0)
+	MusicManager.set_tier_override(4)
+	assert_true(MusicManager.is_tier_overridden(), "override is engaged")
+	assert_eq(MusicManager.get_current_music_tier(), 4, "the held tier is what plays")
+	MusicManager.set_doom_level(10.0)   # automatic would be 0
+	MusicManager.set_doom_level(60.0)   # automatic would be 2
+	assert_eq(MusicManager.get_current_music_tier(), 4,
+		"doom must NOT reclaim the tier while a human is auditioning")
+	assert_eq(MusicManager.get_auto_music_tier(), 2,
+		"automatic tier is still tracked underneath, for the readout and the release")
+
+func test_release_snaps_to_where_doom_is_now_not_where_it_was():
+	MusicManager.set_doom_level(0.0)
+	MusicManager.set_tier_override(4)
+	MusicManager.set_doom_level(95.0)
+	MusicManager.clear_tier_override()
+	assert_false(MusicManager.is_tier_overridden(), "override released")
+	assert_eq(MusicManager.get_current_music_tier(), 4,
+		"release follows doom NOW (95 -> tier 4), not the tier doom had at override time")
+	MusicManager.set_doom_level(0.0)
+	assert_eq(MusicManager.get_current_music_tier(), 0, "and doom drives again afterwards")
+
+func test_override_releases_itself_at_the_run_boundary():
+	# The stated safety property: an override cannot silently ride into a scored run.
+	# Every start-run / return-to-menu / game-over transition calls play_context().
+	MusicManager.set_tier_override(3)
+	MusicManager.play_context(MusicManager.MusicContext.GAMEPLAY)
+	assert_false(MusicManager.is_tier_overridden(),
+		"entering a run must hand the tier back to doom")
+	_silence_music()
+
+func test_audition_is_not_an_alpha_tool():
+	# Auditioning writes nothing toward game state or scoring, so it must NOT set the
+	# sticky unranked flag the mutating pokes set (decision card 2026-08-01).
+	GameConfig.reset_alpha_tools_flag()
+	MusicManager.set_tier_override(4)
+	MusicManager.clear_tier_override()
+	assert_false(GameConfig.alpha_tools_used,
+		"playing a different track is not a state mutation and must not unrank the run")
+	assert_true(GameConfig.is_ranked_run(), "run stays ranked after an audition")
+
+func test_catalogue_lists_every_tier_once_and_dedupes_shared_beds():
+	var cat := MusicManager.audition_catalogue()
+	var tiers: Array = []
+	var paths: Array = []
+	for entry in cat:
+		assert_true(entry.has("label") and entry.has("kind") and entry.has("path"),
+			"catalogue entries carry label/kind/path")
+		if str(entry["kind"]) == "tier":
+			tiers.append(int(entry["tier"]))
+		assert_false(paths.has(str(entry["path"])),
+			"no bed listed twice (checkpoint_saved.ogg is both MENU and tier 0)")
+		paths.append(str(entry["path"]))
+	assert_eq(tiers.size(), MusicManager.MUSIC_TIER_NAMES.size(),
+		"every music tier is auditionable")
+	assert_gt(cat.size(), MusicManager.MUSIC_TIER_NAMES.size(),
+		"the standalone victory/defeat beds are auditionable too")
+
+func test_status_line_says_what_is_playing_and_why():
+	MusicManager._adaptive_active = true
+	MusicManager.set_doom_level(0.0)
+	assert_string_contains(MusicManager.audition_status_line(), "AUTO",
+		"unoverridden playback reports as automatic")
+	MusicManager.set_tier_override(4)
+	var line := MusicManager.audition_status_line()
+	assert_string_contains(line, "OVERRIDE", "an override says so")
+	assert_string_contains(line, "terminal", "and names the tier being heard")
+	assert_string_contains(line, "cosy", "and names the tier doom would have chosen")
+	_silence_music()
