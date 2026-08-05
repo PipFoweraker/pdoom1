@@ -592,8 +592,25 @@ func format_scalar_delta(value: float) -> String:
 
 ## A percentage. One decimal by default -- p(doom) is the one number whose
 ## fraction is load-bearing (momentum is visible at sub-point grain).
+##
+## TIES ROUND AWAY FROM ZERO, EXPLICITLY, ON EVERY PLATFORM. The obvious
+## implementation -- `"%.1f" % value` alone -- delegates to the platform's printf,
+## and the two disagree on exact halves: MSVC rounds half away from zero, glibc
+## rounds half to even. So `format_percent(14.25)` printed "14.3" on Pip's Windows
+## machine and "14.2" on the Ubuntu CI runner, and the test asserting it passed
+## locally while main's Godot Tests job was red (2026-08-05).
+##
+## Two players reading different doom figures from the same state is a small
+## inconsistency and an unacceptable one for a game whose score is a leaderboard
+## claim, so this rounds BEFORE formatting and the tie direction is a stated
+## decision rather than an inherited accident. round() in Godot is half-away-from-
+## zero on all platforms; the multiply/divide keeps the value on the same side of
+## the boundary that printf then renders.
 func format_percent(value: float, decimals: int = 1) -> String:
-	return ("%." + str(max(0, decimals)) + "f%%") % value
+	var places: int = max(0, decimals)
+	var factor: float = pow(10.0, places)
+	var rounded: float = round(value * factor) / factor
+	return ("%." + str(places) + "f%%") % rounded
 
 ## Resources whose player-facing unit is a percentage.
 const _PERCENT_RESOURCES := ["doom", "p_doom", "pdoom"]

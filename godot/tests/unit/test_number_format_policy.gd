@@ -62,9 +62,25 @@ func test_scalar_deltas_are_always_signed():
 # --- Percent: the one place a fraction is load-bearing ----------------------------------
 
 func test_percent_keeps_one_decimal():
-	assert_eq(GameConfig.format_percent(14.25), "14.3%",
+	assert_eq(GameConfig.format_percent(14.24), "14.2%",
 		"p(Doom) momentum is visible at sub-point grain -- this is the deliberate exception")
+	assert_eq(GameConfig.format_percent(14.26), "14.3%")
 	assert_eq(GameConfig.format_percent(14.0, 0), "14%")
+
+
+func test_percent_ties_round_away_from_zero_on_every_platform():
+	"""14.25 sits EXACTLY on the boundary, and platforms disagree about it.
+
+	MSVC printf rounds half away from zero; glibc rounds half to even. So this
+	assertion passed on Windows and failed on the Ubuntu CI runner, red on main
+	from 2026-08-04 until 2026-08-05 -- caught only because a PR inherited it.
+	The tie direction is now a stated decision in format_percent, not whatever
+	the host libc happens to do, because two players must not read different
+	doom figures from the same state.
+	"""
+	assert_eq(GameConfig.format_percent(14.25), "14.3%", "positive tie rounds up")
+	assert_eq(GameConfig.format_percent(-14.25), "-14.3%", "negative tie rounds away from zero")
+	assert_eq(GameConfig.format_percent(0.5, 0), "1%", "the same rule at zero decimals")
 
 
 # --- No internal dict dump can reach a tooltip ------------------------------------------
