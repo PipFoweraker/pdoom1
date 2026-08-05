@@ -143,8 +143,11 @@ func render(actions: Array) -> void:
 		_seen_unlocked_actions[id] = true
 	_actions_primed = true
 
-	# Define category order
-	var category_order = ["hiring", "resources", "research", "funding", "management", "influence", "strategic", "other"]
+	# Define category order. FUNDING LEADS (playtest 2026-08-05: 2 of 2 external players could
+	# not find Fundraising): money is the enabling resource -- it buys hires, compute and
+	# upgrades -- so the economic opener renders as tile 1 with keyboard badge [1]. The
+	# cold-open first-lever nudge is unaffected (it pulses its target by action id, not index).
+	var category_order = ["funding", "hiring", "resources", "research", "management", "influence", "strategic", "other"]
 
 	# Define category colors
 	var category_colors = {
@@ -179,10 +182,16 @@ func render(actions: Array) -> void:
 # --- LAYOUT: classic single-column icon grid (was inline in _on_actions_available) ---------
 
 func _render_flat(categories: Dictionary, category_order: Array, category_colors: Dictionary, current_state: Dictionary) -> void:
-	# Create a single-column vertical stack for icons on left edge
-	var icon_stack = VBoxContainer.new()
-	icon_stack.add_theme_constant_override("separation", 1)  # #594: tighter vertical packing for 11+ icons
-	icon_stack.alignment = BoxContainer.ALIGNMENT_BEGIN  # P2/#768: pack to the top, no vertical float
+	# WRAPPING icon grid (playtest 2026-08-05 / #1043 item 1). The old single VBox column put
+	# ~15 70px tiles (~1,065px) inside a ~550px scroll viewport, with the scrollbar at the FAR
+	# RIGHT of the panel, ~470px away from the 70px-wide tile column it scrolls -- an invisible
+	# affordance, so 2 of 2 external players never found Fundraising (tile 10, below the fold).
+	# An HFlowContainer wraps tiles across the panel's full width (~8 per row at 1080p): the
+	# whole turn-1 hand sits above the fold and the dead width beside the column is reclaimed.
+	# Keyboard badges keep index order (reading order: left-to-right, top-to-bottom).
+	var icon_stack = HFlowContainer.new()
+	icon_stack.add_theme_constant_override("h_separation", 2)
+	icon_stack.add_theme_constant_override("v_separation", 2)
 	host.actions_list.add_child(icon_stack)
 
 	# Create icon buttons - single column layout

@@ -680,17 +680,17 @@ static func dialog_key_advances(dialog: Control, keycode: int) -> bool:
 
 func _trigger_action_by_index(index: int):
 	"""Trigger action button by its index (for keyboard shortcuts)"""
-	# Find the VBoxContainer (icon_stack) first
-	var icon_stack: VBoxContainer = null
+	# Find the icon_stack first (HFlowContainer since the wrap fix; was a VBox column)
+	var icon_stack: Container = null
 	for child in actions_list.get_children():
-		if child is VBoxContainer:
+		if child is Container:
 			icon_stack = child
 			break
 
 	if not icon_stack:
 		return
 
-	# Get buttons directly from stack (single column layout)
+	# Get buttons directly from stack (index = reading order in the wrapped grid)
 	var buttons = icon_stack.get_children()
 	if index < buttons.size():
 		var button = buttons[index] as Button
@@ -1524,11 +1524,13 @@ func _populate_upgrades():
 
 		# Create button
 		var button = ThemeManager.create_button(upgrade_name)
-		# Blockier tiles (#594): hug content instead of stretching across the wide right
-		# panel, and ~20% taller (32 -> 38) so they read as tighter, blockier tiles.
-		# Playtest-3: right-align the column to free up central screen space (was
-		# SIZE_SHRINK_BEGIN, hugging the left edge instead).
-		button.size_flags_horizontal = Control.SIZE_SHRINK_END
+		# Uniform full-width LIST rows (playtest 2026-08-05: "fix the upgrade button layout").
+		# The previous SIZE_SHRINK_END sized each button to its own text (200..283px measured)
+		# and right-aligned the stack, so the column floated mid-screen with ragged left edges.
+		# Full-width rows give one aligned column, bigger hit targets, and put the scrollbar
+		# directly beside the content it scrolls. Left-aligned text reads as a list.
+		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		button.alignment = HORIZONTAL_ALIGNMENT_LEFT
 		button.custom_minimum_size = Vector2(200, 38)
 
 		# If purchased, show differently
