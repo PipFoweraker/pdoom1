@@ -266,6 +266,54 @@ there is no render proof at all.
 here": *"Player-side download and launch on machines that are not the
 Commissioner's."* This sheet just names the platforms.
 
+### Windows: unsigned, so SmartScreen warns about an untrusted publisher
+
+Read from `godot/export_presets.cfg` preset 0: `codesign/enable=false`,
+`codesign/description=""`. Nothing signs the Windows executable, and no
+code-signing certificate has been bought.
+
+The consequence, reported by Pip on 2026-08-05 after a friend downloaded the
+build: **"The game came up with an untrusted publisher warning."** Windows
+Defender SmartScreen shows a blue "Windows protected your PC" panel naming an
+unrecognised app / unknown publisher, and the Run button is hidden behind a
+**More info** link. A player who does not know the link is there simply cannot
+start the game -- the dialog offers only "Don't run".
+
+The click path, which every player-facing surface must state in these words:
+**"More info" -> "Run anyway"**.
+
+Two things make this worse than macOS Gatekeeper rather than better. First, the
+button is HIDDEN, not merely scary. Second, SmartScreen is partly reputation-
+based, so it can warn on some machines and not others for the same file, which
+makes second-hand troubleshooting ("it works for me") useless.
+
+Because Windows cannot vouch for the publisher, the honest substitute is
+provenance: the GitHub release page is the only trusted download, and
+`release_manifest.json` (PR #1110) carries a per-asset **sha256** so a player
+can verify their copy with `Get-FileHash -Algorithm SHA256 .\PDoom-Windows.zip`.
+Say that alongside the warning -- the warning is the moment a cautious player
+wants a way to check, and this is the only one we can give them.
+
+Where the text lives (keep these three in step; the wording is deliberately
+close to identical):
+
+| Surface | File | Seen when |
+|---|---|---|
+| Zip contents | `tools/release_notes/HOW-TO-RUN-windows.txt` -> ships as `HOW-TO-RUN.txt` (`_zip_native_build` in `scripts/build_all_platforms.py`, which FAILS the package if the template is missing) | after extracting, if they look |
+| GitHub release body | `tools/release_notes/RELEASE-BODY-security-notice.md`, appended by `.github/workflows/enhanced-release.yml` | before downloading |
+| Website download page | pdoom1.com (separate repo -- must be copied there by hand) | before downloading |
+
+Note the ordering problem: the zip note is the LAST of the three a player
+reaches, because SmartScreen fires at the moment they run the exe, which is
+after extraction but likely before they open a text file. The release body and
+the website are the surfaces that actually prevent the alarm; the zip note is
+the one that rescues someone already staring at the dialog.
+
+The real fix is a code-signing certificate (an OV certificate is roughly
+100-400 USD/year and still accrues SmartScreen reputation slowly; an EV
+certificate is more expensive and gets reputation immediately). Not a tonight
+problem, and deliberately not attempted here.
+
 ### macOS: unsigned and un-notarized, so Gatekeeper will block it
 
 Read from `godot/export_presets.cfg` preset 2: `codesign/apple_team_id=""`,

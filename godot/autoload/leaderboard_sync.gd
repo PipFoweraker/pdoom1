@@ -322,7 +322,10 @@ func _flush_outbox() -> void:
 		)
 
 ## Async board fetch. Invokes callback(ok: bool, entries: Array[ScoreEntry]).
-## On any failure -> callback(false, []) so callers fall back to local silently.
+## On any failure -> callback(false, []). The TRANSPORT is quiet (it never throws and
+## never blocks), but the CALLER must not be: ok=false is a reportable event and the UI
+## is required to show it. Falling back "silently" here is what made the global toggle
+## look like a dead button to the first external player (#1126).
 func fetch_board(seed: String, version: String, limit: int, callback: Callable) -> void:
 	if not can_fetch():
 		if callback.is_valid():
