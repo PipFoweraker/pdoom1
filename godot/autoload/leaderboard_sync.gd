@@ -114,6 +114,28 @@ static func consent_flow_state(asked: bool, opted_in: bool, has_identity: bool, 
 		return "remind" if not reminded else "silent"
 	return "ask"
 
+## Should the game-over screen offer the ONE-TIME "still the default name"
+## prompt before an upload? (Pip 2026-08-06: two friends' first scores landed
+## as identical "AI Safety Lab" rows nobody could recognise.) PURE; unit-tested
+## directly. Deliberately LAYERED ON TOP of consent_flow_state above and never
+## a change to it: consent decides WHETHER an upload may happen (privacy ruling
+## 2026-07-26, untouched); this decides only whether the imminent upload is
+## worth one "want to claim a name first?" ask.
+##   flow          -- the consent_flow_state result for this submission
+##   is_default    -- GameConfig.has_default_identity()
+##   prompt_shown  -- GameConfig.default_identity_prompt_shown (persisted at
+##                    SHOW time, so the prompt can never fire twice)
+## Returns "prompt" or "pass". Only "submit" and "ask" can prompt -- the only
+## states where an upload is imminent. "remind"/"silent" never prompt: an
+## anonymous or declined player is exercising a legitimate choice and is never
+## nagged about names (same remind-once ruling as the flow above).
+static func default_identity_prompt_state(flow: String, is_default: bool, prompt_shown: bool) -> String:
+	if prompt_shown or not is_default:
+		return "pass"
+	if flow == "submit" or flow == "ask":
+		return "prompt"
+	return "pass"
+
 # --------------------------------------------------------------------------
 # Pure helpers (no HTTP, no state) -- this is where the contract bugs hide,
 # so these are unit-tested directly.

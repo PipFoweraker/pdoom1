@@ -307,6 +307,24 @@ func _maybe_submit_remote(entry, game_seed: String) -> void:
 		_has_submittable_identity(),
 		GameConfig.leaderboard_reminder_shown
 	)
+	# ONE-TIME default-identity gate (Pip 2026-08-06), LAYERED BEFORE the consent
+	# flow resolves: when an upload is imminent ("submit"/"ask") and the player
+	# still carries the unedited install defaults, offer one chance to claim a
+	# name -- so the name is worth uploading BEFORE it is baked into a public row.
+	# Never fires twice (persisted flag, set at show time); never fires for
+	# "remind"/"silent" (anonymity and decline are legitimate, never nagged).
+	# Consent itself (consent_flow_state above) is deliberately untouched.
+	var identity_gate: String = LeaderboardSync.default_identity_prompt_state(
+		flow, GameConfig.has_default_identity(), GameConfig.default_identity_prompt_shown
+	)
+	if identity_gate == "prompt":
+		_show_default_identity_prompt(entry, game_seed, flow)
+		return
+	_continue_consent_flow(flow, entry, game_seed)
+
+func _continue_consent_flow(flow: String, entry, game_seed: String) -> void:
+	"""Resolve a consent_flow_state result. Split out of _maybe_submit_remote so
+	the default-identity prompt can continue the SAME flow after it closes."""
 	match flow:
 		"submit":
 			_do_remote_submit(entry, game_seed)
@@ -337,6 +355,104 @@ func _do_remote_submit(entry, game_seed: String) -> void:
 	# not attempted here): api.pdoom1.com's score API must key by ladder_version and
 	# alias the live v0.12.0 board to L1 -- see GameConfig.get_board_version() docs.
 	LeaderboardSync.submit_score(entry, game_seed, GameConfig.get_board_version())
+
+func _show_default_identity_prompt(entry, game_seed: String, flow: String) -> void:
+	"""ONE-TIME (persisted flag, set at SHOW time -- the remind-once shape): the
+	player is about to upload while still carrying the unedited install defaults
+	("Researcher" / "AI Safety Lab"). One dialog, answerable in one click either
+	way; the score is already saved locally (isolation contract rule 2), so
+	nothing here can lose it. Keeping the default is a legitimate choice and is
+	never asked about again. Either answer continues the consent flow unchanged."""
+	GameConfig.default_identity_prompt_shown = true
+	GameConfig.save_config()
+
+	var dialog := ConfirmationDialog.new()
+	dialog.title = "STILL THE DEFAULT NAME -- ONE-TIME ASK"
+	# Custom content instead of dialog_text: the dialog needs editable fields, and
+	# AcceptDialog lays out Control children in its content area only when its own
+	# text label is unused.
+	var vbox := VBoxContainer.new()
+	vbox.custom_minimum_size = Vector2(460, 0)
+	vbox.add_theme_constant_override("separation", 8)
+	var info := Label.new()
+	info.text = (
+		"This score is headed for the global board under the install defaults.\n"
+		+ "Every unedited copy of the game posts as exactly this name, so nobody\n"
+		+ "can tell your run from anyone else's. Claim yours here, once:"
+	)
+	vbox.add_child(info)
+
+	var name_row := HBoxContainer.new()
+	var name_label := Label.new()
+	name_label.text = "Operator:"  # nomenclature ruling (#957): the player is the Operator
+	name_label.custom_minimum_size = Vector2(80, 0)
+	var name_edit := LineEdit.new()
+	name_edit.text = GameConfig.player_name
+	name_edit.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	name_row.add_child(name_label)
+	name_row.add_child(name_edit)
+	vbox.add_child(name_row)
+
+	var lab_row := HBoxContainer.new()
+	var lab_label := Label.new()
+	lab_label.text = "Lab:"
+	lab_label.custom_minimum_size = Vector2(80, 0)
+	var lab_edit := LineEdit.new()
+	lab_edit.text = GameConfig.lab_name
+	lab_edit.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var reroll := Button.new()
+	reroll.text = "Reroll"
+	reroll.tooltip_text = "Roll a generated lab name until one fits"
+	# UI-side RNG only -- never the seeded run RNG (ADR-0006).
+	var reroll_rng := RandomNumberGenerator.new()
+	reroll_rng.randomize()
+	reroll.pressed.connect(func():
+		lab_edit.text = LabNameGenerator.generate(reroll_rng)
+	)
+	lab_row.add_child(lab_label)
+	lab_row.add_child(lab_edit)
+	lab_row.add_child(reroll)
+	vbox.add_child(lab_row)
+
+	dialog.add_child(vbox)
+	dialog.register_text_enter(name_edit)
+	dialog.register_text_enter(lab_edit)
+	dialog.ok_button_text = "[OK] Use this name"
+	dialog.cancel_button_text = "Keep the default"
+	dialog.confirmed.connect(func():
+		_apply_identity_from_prompt(name_edit.text, lab_edit.text, entry, game_seed)
+		_continue_consent_flow(flow, entry, game_seed)
+	)
+	# Cancel / ESC / close = keep the default, remembered; the flow continues so a
+	# consented player's upload still happens -- the prompt must never cost a score.
+	dialog.canceled.connect(func():
+		_continue_consent_flow(flow, entry, game_seed)
+	)
+	add_child(dialog)
+	dialog.popup_centered()
+
+func _apply_identity_from_prompt(name_text: String, lab_text: String, entry, game_seed: String) -> void:
+	"""Persist the claimed identity and retrofit it onto the CURRENT run's entry.
+	An emptied field keeps its previous value -- the prompt can never strip
+	identity below what the consent flow already deemed submittable."""
+	var new_name := name_text.strip_edges()
+	var new_lab := lab_text.strip_edges()
+	if new_name != "":
+		GameConfig.player_name = new_name
+	if new_lab != "":
+		GameConfig.lab_name = new_lab
+	GameConfig.save_config()
+	print("[GameOverScreen] Identity claimed at default-name prompt: %s -- %s"
+		% [GameConfig.player_name, GameConfig.lab_name])
+	if new_lab != "" and entry != null and "player_name" in entry:
+		# The ScoreEntry's display field carries the LAB name (leaderboard.gd).
+		entry.player_name = new_lab
+		# The LOCAL row was saved before the dialog (rule 2: durable first), under
+		# the old default -- rename it in place so the player can recognise their
+		# run on their own board too. Name-only; rank order untouched.
+		var board = Leaderboard.new(game_seed, GameConfig.get_board_version())
+		board.rename_entry(entry.entry_uuid, new_lab)
+		board.free()
 
 func _show_consent_prompt(entry, game_seed: String) -> void:
 	"""FIRST-TIME identity opt-in (privacy ruling 2026-07-26): the player must click

@@ -138,6 +138,25 @@ func add_score(entry: ScoreEntry) -> Dictionary:
 
 	return {"added": was_added, "rank": rank}
 
+func rename_entry(uuid: String, new_name: String) -> bool:
+	"""Rename one entry's displayed lab name in place (found by entry_uuid).
+
+	Exists for the game-over default-identity prompt (Pip 2026-08-06): the local
+	save runs FIRST (isolation contract rule 2 -- durable before any dialog), so
+	a player who claims a name at the prompt has already saved the score under
+	the old default. This retrofits the just-saved LOCAL row so the player can
+	recognise their run on their own board too. Name-only: score, rank order,
+	uuid and every other field are untouched, so this can never move a row."""
+	var name := new_name.strip_edges()
+	if uuid == "" or name == "":
+		return false
+	for entry in entries:
+		if entry.entry_uuid == uuid:
+			entry.player_name = name
+			_save_leaderboard()
+			return true
+	return false
+
 func get_top_scores(count: int = 10) -> Array[ScoreEntry]:
 	"""Get top N scores from leaderboard"""
 	var top_count = min(count, entries.size())

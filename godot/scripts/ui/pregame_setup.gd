@@ -25,26 +25,14 @@ var available_scenarios: Array[Dictionary] = []
 # Org-form choice control (built programmatically in _setup_org_type_choice)
 var org_type_option: OptionButton
 
-# Random lab name components (ported from pygame)
-var lab_prefixes = [
-	"Advanced", "Applied", "Center for", "Institute for",
-	"Laboratory of", "Division of", "Department of",
-	"Initiative for", "Research into", "Foundation for"
-]
-
-var lab_topics = [
-	"AI Safety", "Machine Learning", "Artificial Intelligence",
-	"Computational Intelligence", "Cognitive Systems",
-	"Neural Networks", "Autonomous Systems", "Intelligent Agents",
-	"Beneficial AI", "Aligned Intelligence"
-]
-
-var lab_suffixes = [
-	"Research", "Studies", "Analysis", "Exploration",
-	"Development", "Innovation", "Excellence"
-]
+# Lab-name generation lives in LabNameGenerator (scripts/core/lab_name_generator.gd)
+# -- unit-testable, shared with the game-over identity prompt's reroll. This screen
+# keeps its own randomize()d RNG: the [random] button is pre-game cosmetic flavour
+# and must never draw from the seeded run RNG (ADR-0006, replay is sacred).
+var _name_rng := RandomNumberGenerator.new()
 
 func _ready():
+	_name_rng.randomize()
 	print("[PreGameSetup] Initializing...")
 
 	# Load values from GameConfig
@@ -216,27 +204,12 @@ func _on_org_type_selected(index: int):
 
 func _on_random_lab_name_pressed():
 	"""Generate a random lab name"""
-	var random_name = _generate_random_lab_name()
+	var random_name = LabNameGenerator.generate(_name_rng)
 	lab_name_input.text = random_name
 	GameConfig.lab_name = random_name
 	_update_launch_button()
 
 	print("[PreGameSetup] Generated random lab name: ", random_name)
-
-func _generate_random_lab_name() -> String:
-	"""Generate a random lab name from components"""
-	var prefix = lab_prefixes[randi() % lab_prefixes.size()]
-	var topic = lab_topics[randi() % lab_topics.size()]
-	var suffix = lab_suffixes[randi() % lab_suffixes.size()]
-
-	# Randomly choose format
-	var formats = [
-		"%s %s %s" % [prefix, topic, suffix],
-		"%s %s" % [topic, suffix],
-		"%s %s" % [prefix, topic]
-	]
-
-	return formats[randi() % formats.size()]
 
 func _on_weekly_seed_pressed():
 	"""Clear seed to use weekly challenge seed"""
