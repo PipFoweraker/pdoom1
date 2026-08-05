@@ -55,7 +55,7 @@ Declared with a `Layer:` line in a tool's module docstring; `--` = undeclared.
 | pre_version_bump.py | -- | Pre-Version Bump Quality Checks for P(Doom) | human (docstring usage) |
 | project_health.py | -- | P(Doom) Project Health Dashboard - BLITZ MODE IMPLEMENTATION | make; ci:enhanced-cicd-pipeline.yml; ci:quality-checks.yml |
 | repo-status.py | -- | P(Doom) Ecosystem Repository Status Dashboard | NONE FOUND |
-| run_godot_tests.py | PROVE | Run Godot GUT (Godot Unit Test) tests from command line. | make; ci:godot-tests.yml; test:test_generate_tools_index.py |
+| run_godot_tests.py | PROVE | Run Godot GUT (Godot Unit Test) tests from command line. | make; ci:godot-tests.yml; test:test_find_dead_code.py; test:test_generate_tools_index.py |
 | setup-token.py | -- | GitHub Token Setup Helper for VS Code Users | NONE FOUND |
 | sync_website_docs.py | -- | Sync documentation from pdoom1 repo to website export format. | ci:docs-sync.yml |
 | test_before_push.py | -- | Test Before Push - Local Development Workflow | human (docstring usage) |
@@ -69,13 +69,14 @@ Declared with a `Layer:` line in a tool's module docstring; `--` = undeclared.
 | Tool | Layer | Purpose | Invoked by |
 |---|---|---|---|
 | archive_masters.py | -- | Sync the local art-masters cache to off-site object storage (DreamObjects). | tool:slim_repo.py |
-| build_release.py | PROVE | build_release.py -- export a P(Doom) build FROM A VERIFIED-CLEAN STATE. | ci:enhanced-release.yml; test:test_build_all_platforms.py; test:test_build_release_paths.py; tool:build_all_platforms.py |
-| capture_cinematic.py | -- | Cinematic capture harness for P(Doom)1 -- deterministic scene footage -> mp4/gif. | human (docstring usage) |
+| build_release.py | PROVE | build_release.py -- export a P(Doom) build FROM A VERIFIED-CLEAN STATE. | ci:enhanced-release.yml; test:test_build_all_platforms.py; test:test_build_release_paths.py; tool:build_all_platforms.py; tool:find_dead_code.py |
+| capture_cinematic.py | -- | Cinematic capture harness for P(Doom)1 -- deterministic scene footage -> mp4/gif. | test:test_find_dead_code.py; tool:find_dead_code.py |
 | check_ladder_bump.py | OBSERVE | Heuristic guard: did this diff need a ladder_version bump (or get one it didn't need)? | ci:quality-checks.yml; tool:sync_version.py |
 | check_scene_nav.py | PROVE | check_scene_nav.py -- enforce the single-scene-navigation-chokepoint invariant. | pre-commit; ci:quality-checks.yml; tool:enforce_standards.py |
 | cleanup-duplicate-issues.py | -- | Cleanup script for duplicate GitHub issues created by sync tool failure. | NONE FOUND |
 | collect_ui_evolution.py | -- | UI evolution capture collector for P(Doom). | human (docstring usage) |
-| commit.py | -- | Commit wrapper that absorbs the "hook reformatted a file then aborted" dance. | make |
+| commit.py | -- | Commit wrapper that absorbs the "hook reformatted a file then aborted" dance. | make; test:test_find_dead_code.py; tool:find_dead_code.py |
+| find_dead_code.py | -- | find_dead_code.py -- report-only dead-path scanner for P(Doom)1. | test:test_find_dead_code.py; tool:generate_tools_index.py |
 | generate_cat_placeholders.py | -- | Generate placeholder cat images for different doom levels. | NONE FOUND |
 | ingest_recordings.py | -- | Pull fresh OBS recordings into the repo's working area. | human (docstring usage) |
 | phase2_setup.py | -- | Phase 2: Events System Setup | human (docstring usage) |
@@ -99,7 +100,7 @@ Declared with a `Layer:` line in a tool's module docstring; `--` = undeclared.
 | analyze_verdicts.py | -- | Analyze art triage exports (verdict JSONs) for BOTH art libraries. | human (docstring usage) |
 | apply_review.py | SWEEP | apply_review.py -- wire art-review verdicts into the P(Doom)1 asset pipeline. | test:test_art_promotion_pipeline.py; tool:build_full_gallery.py |
 | author_anchor_sockets.py | -- | Author godot/data/office/anchor_sockets.json -- Anchor Sockets V2 (#894 #900 #913). | tool:build_cat_sweep_sheet.py |
-| build.py | -- | Build the P(Doom)1 style-review tool: a self-contained, single-file HTML page | tool:select_assets.py |
+| build.py | -- | Build the P(Doom)1 style-review tool: a self-contained, single-file HTML page | test:test_find_dead_code.py; tool:select_assets.py |
 | build_cat_angle_ab_sheet.py | -- | Build art_generated/cat_angle_ab.html -- the 2026-07-26 cat angle A/B sheet. | human (docstring usage) |
 | build_cat_b2_sheet.py | -- | Build art_generated/cat_b2_sheet.html -- the 2026-07-26 cat experiment B sheet. | human (docstring usage) |
 | build_cat_refinement_sheet.py | -- | Build art_generated/cat_refinement_sheet.html -- the cat refinement batch. | human (docstring usage) |
@@ -107,7 +108,7 @@ Declared with a `Layer:` line in a tool's module docstring; `--` = undeclared.
 | build_cat_west_walk_picks.py | -- | build_cat_west_walk_picks -- 2026-07-27 cat_sweep_black_side_heft WEST walk pick sheet. | human (docstring usage) |
 | build_doom_strip_sheet.py | -- | Generate art_generated/doom_strip_sheet.html -- ADR-0015 doom-strip triage | human (docstring usage) |
 | build_endgame_review.py | -- | Build a verdict-capturing review page for the endgame concept batch. | human (docstring usage) |
-| build_full_gallery.py | OBSERVE | build_full_gallery.py -- ONE stateful drive-by gallery over ALL art on disk. | human (declared) |
+| build_full_gallery.py | OBSERVE | build_full_gallery.py -- ONE stateful drive-by gallery over ALL art on disk. | tool:apply_review.py |
 | build_generation_compare.py | -- | Side-by-side comparison of two generations of the same concept batch. | human (docstring usage) |
 | build_morning_index.py | -- | One index page over every generated art batch on disk. | human (docstring usage) |
 | build_prop_rebase_sheet.py | -- | build_prop_rebase_sheet -- prop re-base bulk batch + facing pilot (2026-07-27). | human (docstring usage) |
@@ -180,6 +181,8 @@ DISCUSSING CI); the rest are the hollow-runner shape -- read them.
 - `tools/art_review/apply_review.py` -- docstring mentions pre-commit; no pre-commit hook calls it
 - `tools/capture_cinematic.py` -- docstring mentions CI; no workflow calls it
 - `tools/commit.py` -- docstring mentions pre-commit; no pre-commit hook calls it
+- `tools/find_dead_code.py` -- docstring mentions pre-commit; no pre-commit hook calls it
+- `tools/find_dead_code.py` -- docstring mentions CI; no workflow calls it
 - `tools/music/analyze_refs.py` -- docstring mentions CI; no workflow calls it
 - `tools/reset_player_state.py` -- docstring mentions CI; no workflow calls it
 - `tools/write_build_stamp.py` -- docstring mentions CI; no workflow calls it
@@ -197,4 +200,4 @@ DISCUSSING CI); the rest are the hollow-runner shape -- read them.
 
 23 `.html` tool(s) under `tools/` (browser-opened, no docstring to parse): `tools/art_review/doom_overlay_preview.html`, `tools/art_review/hero_gallery_template.html`, `tools/art_review/icon_pass_2026-07-21.html`, `tools/art_review/icon_pass_verdicts_2026-07-21.html`, `tools/art_review/palette.html`, `tools/art_review/palette_swatches.html`, `tools/art_review/scene_wave2_2026-07-21.html`, `tools/art_review/style_review.html`, `tools/assets/review_generated.html`, `tools/music/commission_sheets.html`, `tools/music/jukebox.html`, `tools/music/listening_room.html`, `tools/music/stem_board.html`, `tools/runsheet/CEREMONY-ALL-GATES-2026-07-31.html`, `tools/runsheet/fri-2026-07-31-EVENING-1620.html`, `tools/runsheet/fri-2026-07-31-GATES-1700.html`, `tools/runsheet/fri-2026-07-31-TO-MIDNIGHT-1733.html`, `tools/runsheet/fri-2026-07-31-league-day.html`, `tools/runsheet/playtest_card.html`, `tools/runsheet/wed-thu-2026-07-29.html`, `tools/social_composer.html`, `tools/ui_comparison.html`, `tools/ui_mockup/wireframe.html`.
 
-Total: 103 active tools (6 GENERATE, 6 OBSERVE, 5 PROVE, 1 SWEEP, 85 undeclared); 11 in UNKNOWN; 6 archived.
+Total: 104 active tools (6 GENERATE, 6 OBSERVE, 5 PROVE, 1 SWEEP, 86 undeclared); 11 in UNKNOWN; 6 archived.
