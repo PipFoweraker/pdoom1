@@ -2,6 +2,8 @@
 """
 Generate release metadata for website integration.
 
+Layer: GENERATE
+
 This script creates JSON and RSS feeds for game releases that can be
 consumed by the pdoom.net website. It extracts version information,
 changelog entries, and download links to make releases easily discoverable.

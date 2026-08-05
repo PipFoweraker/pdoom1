@@ -1,5 +1,7 @@
 """Generate docs/game-design/DQ_INDEX.md from WORKSHOP_2_BACKLOG.md.
 
+Layer: GENERATE
+
 The backlog file is the single source of truth for design questions (DQs);
 this script derives a compact status table from it so the index can never
 rot the way a hand-maintained one would (see the stale decisions/README.md

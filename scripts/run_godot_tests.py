@@ -2,6 +2,8 @@
 """
 Run Godot GUT (Godot Unit Test) tests from command line.
 
+Layer: PROVE
+
 This runner is the real CI gate (issues #629 / #590). It does three things the
 old runner did NOT, each of which is why CI was green while running zero tests:
 

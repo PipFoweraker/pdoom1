@@ -2,6 +2,8 @@
 """
 build_release.py -- export a P(Doom) build FROM A VERIFIED-CLEAN STATE.
 
+Layer: PROVE -- proves a unique freshness marker is in the .pck before emitting
+
 WHY THIS EXISTS (the hard-won lesson behind v0.11.0-alpha):
     Godot's `godot/.godot/exported/` cache can silently pack a STALE converted scene.
     Running `--import` does NOT clear it. The result: an export command reports SUCCESS

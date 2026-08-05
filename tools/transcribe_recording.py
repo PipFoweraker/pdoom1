@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """Turn a recording into a transcript.
 
+Layer: OBSERVE
+Invoked by: human
+
 Written 2026-07-29 for a 34-minute conversation that was recorded as an mp4 with
 a blank 4K video track -- 218 MB of file for about 12 MB of speech.
 

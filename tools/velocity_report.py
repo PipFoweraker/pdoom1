@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """Reconstruct how much TIME a git history actually cost -- six ways, side by side.
 
+Layer: OBSERVE
+Invoked by: human
+
 WHY THIS EXISTS. Pip, 2026-08-01: the roadmap projections are "not actually based on
 anything right now other than a momentum I built by kinda sacrificing time and attention
 at my CEO job, which I can't sustainably do." A roadmap needs a velocity; a velocity
