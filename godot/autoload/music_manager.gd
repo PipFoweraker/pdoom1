@@ -71,6 +71,23 @@ var _adaptive_build_attempted: bool = false
 var _adaptive_active: bool = false
 var _current_music_tier: int = 0
 
+## ---- Audition override (ALPHA TOOLS music player, 2026-08-05) ----
+## -1 == automatic (doom drives the tier). >= 0 == a human is holding the tier open so a
+## track can be heard against the actual game state it plays under -- Pip's ask now that a
+## musician is interested in the game.
+##
+## NOT an Alpha Tool, deliberately: this writes NOTHING toward game state, RNG or scoring
+## (music is already a pure view-layer side-effect, ADR-0006), so it does not set the
+## sticky unranked flag. Playing a different track is not "add $50k".
+## RUN BOUNDARY: cleared by play_context(), which fires on every start-run /
+## return-to-menu / game-over transition -- so an override can never silently ride into a
+## scored run.
+var _tier_override: int = -1
+## The tier automatic selection WOULD be on right now. Kept up to date even while
+## overridden, so the overlay can say "you are hearing 4, the game is at 1" and so
+## releasing the override snaps back to the truth instead of to a stale value.
+var _auto_music_tier: int = 0
+
 # Music tracks organized by context
 var music_library = {
 	MusicContext.MENU: [
@@ -184,6 +201,12 @@ func play_context(context: MusicContext, shuffle: bool = true):
 	print("[MusicManager] Switching to context: ", MusicContext.keys()[context])
 
 	current_context = context
+
+	# Run boundary for the audition override: every caller of play_context() is a
+	# start-run / return-to-menu / game-over transition, so this is exactly where a
+	# hand-held tier must be let go of. Cleared silently (no re-switch) because the
+	# context change is about to choose a stream anyway.
+	_tier_override = -1
 
 	# GAMEPLAY prefers the doom-adaptive stream; anything else (or a failed
 	# adaptive build) falls back to the legacy per-context playlist.
@@ -389,6 +412,9 @@ func music_tier_for_doom(doom_percent: float) -> int:
 ## Never writes anything back toward game state.
 func set_doom_level(doom_percent: float):
 	var tier: int = music_tier_for_doom(doom_percent)
+	_auto_music_tier = tier
+	if _tier_override >= 0:
+		return  # a human is holding the tier; remember where automatic would be
 	if tier == _current_music_tier:
 		return
 	print("[MusicManager] Doom %.1f%% -> music tier %d (%s)" % [
@@ -396,11 +422,95 @@ func set_doom_level(doom_percent: float):
 	_current_music_tier = tier
 	_switch_adaptive_tier(tier)
 
-## Debug hook: force a music tier directly (dev overlay / manual testing).
+
+## ---- Audition API (ALPHA TOOLS music player) ----
+
+## Hold `tier` open regardless of doom, so it can be heard against the live game state.
+func set_tier_override(tier: int) -> void:
+	_tier_override = clampi(tier, 0, MUSIC_TIER_NAMES.size() - 1)
+	_current_music_tier = _tier_override
+	print("[MusicManager] Tier OVERRIDE -> %d (%s); automatic would be %d (%s)" % [
+		_tier_override, MUSIC_TIER_NAMES[_tier_override],
+		_auto_music_tier, MUSIC_TIER_NAMES[_auto_music_tier]])
+	_switch_adaptive_tier(_tier_override)
+
+
+## Give the tier back to doom. Snaps straight to wherever automatic is NOW, so releasing
+## never leaves the player hearing a tier the game left behind ten turns ago.
+func clear_tier_override() -> void:
+	if _tier_override < 0:
+		return
+	_tier_override = -1
+	print("[MusicManager] Tier override released -> automatic tier %d (%s)" % [
+		_auto_music_tier, MUSIC_TIER_NAMES[_auto_music_tier]])
+	if _auto_music_tier != _current_music_tier:
+		_current_music_tier = _auto_music_tier
+		_switch_adaptive_tier(_auto_music_tier)
+
+
+func is_tier_overridden() -> bool:
+	return _tier_override >= 0
+
+
+## True while the doom-adaptive interactive stream is the thing being heard (as opposed
+## to a standalone bed, e.g. after auditioning the victory track).
+func is_adaptive_active() -> bool:
+	return _adaptive_active
+
+
+func get_current_music_tier() -> int:
+	return _current_music_tier
+
+
+func get_auto_music_tier() -> int:
+	return _auto_music_tier
+
+
+## Legacy debug hook, kept for callers/tests: same thing as set_tier_override().
 func debug_force_tier(tier: int):
-	tier = clampi(tier, 0, MUSIC_TIER_NAMES.size() - 1)
-	_current_music_tier = tier
-	_switch_adaptive_tier(tier)
+	set_tier_override(tier)
+
+
+## Flat catalogue of every bed the game can play, for the overlay's one dropdown.
+## Entries: {"label": String, "kind": "tier"|"track", "tier": int, "path": String}.
+## Tiers come first (they are the adaptive score); the standalone context beds follow,
+## deduplicated against the tier stems -- checkpoint_saved.ogg is BOTH the MENU bed and
+## tier 0, and listing it twice would read as two different tracks.
+func audition_catalogue() -> Array:
+	var out: Array = []
+	var seen: Dictionary = {}
+	for tier in range(MUSIC_TIER_NAMES.size()):
+		var path := ""
+		if tier < MUSIC_TIER_STEMS.size() and not MUSIC_TIER_STEMS[tier].is_empty():
+			path = String(MUSIC_TIER_STEMS[tier][0]["path"])
+			seen[path] = true
+		out.append({
+			"label": "M%d %s  (%s)" % [tier, MUSIC_TIER_NAMES[tier], path.get_file().get_basename()],
+			"kind": "tier", "tier": tier, "path": path,
+		})
+	for context in [MusicContext.MENU, MusicContext.VICTORY, MusicContext.DEFEAT]:
+		for track in music_library[context]:
+			var p := String(track)
+			if seen.has(p):
+				continue
+			seen[p] = true
+			out.append({
+				"label": "%s  (%s)" % [MusicContext.keys()[context], p.get_file().get_basename()],
+				"kind": "track", "tier": -1, "path": p,
+			})
+	return out
+
+
+## One line for the overlay: what is playing, and WHY. Pure string build, unit-tested.
+func audition_status_line() -> String:
+	if not _adaptive_active:
+		return "Playing: %s  [standalone bed -- adaptive score is not running]" % get_current_track_name()
+	var tier := clampi(_current_music_tier, 0, MUSIC_TIER_NAMES.size() - 1)
+	var auto := clampi(_auto_music_tier, 0, MUSIC_TIER_NAMES.size() - 1)
+	if _tier_override >= 0:
+		return "Playing: M%d %s  [OVERRIDE -- doom says M%d %s]" % [
+			tier, MUSIC_TIER_NAMES[tier], auto, MUSIC_TIER_NAMES[auto]]
+	return "Playing: M%d %s  [AUTO -- following doom]" % [tier, MUSIC_TIER_NAMES[tier]]
 
 ## Start the adaptive gameplay stream. Returns false if it cannot be built
 ## (missing module or missing audio) so the caller can fall back.
