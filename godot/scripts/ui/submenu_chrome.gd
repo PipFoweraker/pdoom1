@@ -13,7 +13,7 @@ static func find_action_button(actions_list: Control, action_id: String) -> Butt
 	if actions_list == null:
 		return null
 	for child in actions_list.get_children():
-		if child is VBoxContainer:
+		if child is Container:  # HFlowContainer since the wrap fix (was a VBox column)
 			for b in child.get_children():
 				if b is Button and b.get_meta("action_id", "") == action_id:
 					return b

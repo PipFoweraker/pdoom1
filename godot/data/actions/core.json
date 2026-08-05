@@ -56,7 +56,7 @@
 			"name": "Fundraising",
 			"description": "Choose funding strategy - different risk/reward options",
 			"costs": {},
-			"category": "management",
+			"category": "funding",
 			"is_submenu": true
 		},
 		{
