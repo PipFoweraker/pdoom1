@@ -81,7 +81,9 @@ var keybinds: Dictionary = {
 	"action_9": {"key": KEY_9, "category": Category.GAMEPLAY, "description": "Trigger Action 9"},
 
 	# Additional Gameplay shortcuts
-	"commit_plan": {"key": KEY_ENTER, "category": Category.GAMEPLAY, "description": "Commit Plan"},
+	# Description wording is #1116's (the "AP" -> "Attention" copy pass); the bind itself
+	# is what #602 needed -- ENTER read through KeybindManager instead of a raw keycode.
+	"commit_plan": {"key": KEY_ENTER, "category": Category.GAMEPLAY, "description": "Commit Plan & Reserve Attention"},
 	# View toggle (PLAN <-> WATCH). Was a hardcoded KEY_V in main_ui._input and therefore
 	# invisible to the rebind screen -- #602 principle P4 cuts both ways: an advertised key
 	# must work, and a working key must be advertised.

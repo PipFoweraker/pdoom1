@@ -1,6 +1,8 @@
 # !/usr/bin/env python3
 """Generate release_manifest.json -- the machine-readable release descriptor.
 
+Layer: GENERATE
+
 WHY THIS SCRIPT EXISTS (issue context: self-updater workstream; see
 docs/design/UPDATER_DESIGN.md):
 

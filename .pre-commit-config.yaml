@@ -96,6 +96,16 @@ repos:
         files: 'docs/game-design/decisions/.*\.md'
         pass_filenames: false
 
+      # Dev-tools index is GENERATED (same anti-rot pattern as the DQ/ADR indexes).
+      # Fires when any tool, any caller-scan source, or the index itself changes,
+      # because the index derives from ALL of those.
+      - id: tools-index-check
+        name: dev tools index up to date
+        entry: python scripts/generate_tools_index.py --check
+        language: system
+        files: '^(scripts/.*\.py|tools/.*\.py|tests/test_.*\.py|docs/TOOLS\.md|\.pre-commit-config\.yaml|Makefile|\.github/workflows/.*\.ya?ml)$'
+        pass_filenames: false
+
       - id: scene-nav-check
         name: Scene navigation routes through SceneTransition
         entry: python tools/check_scene_nav.py

@@ -2,6 +2,8 @@
 """
 Generate mechanics documentation from game code.
 
+Layer: GENERATE
+
 Extracts game values, constants, and mechanics from GDScript files and generates
 up-to-date markdown documentation for the website.
 
@@ -354,7 +356,7 @@ class MechanicsDocGenerator:
                 elif cached["constants"][const_name]["value"] != const.value:
                     old_val = cached["constants"][const_name]["value"]
                     out_of_sync.append(
-                        f"{name}.{const_name}: Value changed ({old_val} → {const.value})"
+                        f"{name}.{const_name}: Value changed ({old_val} -> {const.value})"
                     )
 
         if out_of_sync:

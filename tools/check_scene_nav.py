@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """check_scene_nav.py -- enforce the single-scene-navigation-chokepoint invariant.
 
+Layer: PROVE
+
 WHY (v0.11.0 release-blocker, docs/LEADERBOARD_CRASH_DIAGNOSIS.md):
     Calling get_tree().change_scene_to_file() synchronously from inside an _input()/
     _gui_input() handler segfaulted the RELEASE build (0xc0000005, before the new scene's

@@ -30,9 +30,9 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -550.0
-offset_top = -330.0
+offset_top = -430.0
 offset_right = 550.0
-offset_bottom = 330.0
+offset_bottom = 430.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -47,7 +47,7 @@ offset_right = -30.0
 offset_bottom = -30.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 20
+theme_override_constants/separation = 14
 
 [node name="Title" type="Label" parent="Panel/VBox"]
 layout_mode = 2
@@ -60,7 +60,7 @@ horizontal_alignment = 1
 layout_mode = 2
 theme_override_colors/font_color = Color(0.7, 0.78, 0.86, 1)
 theme_override_font_sizes/font_size = 16
-text = "How to Navigate P(Doom): Bureaucracy Strategy"
+text = "One turn is one month. Plan it, watch it, survive the next one."
 horizontal_alignment = 1
 
 [node name="HSeparator" type="HSeparator" parent="Panel/VBox"]
@@ -74,40 +74,42 @@ size_flags_vertical = 3
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_constants/separation = 20
+theme_override_constants/separation = 14
 
 [node name="ObjectiveSection" type="VBoxContainer" parent="Panel/VBox/ContentScroll/ContentVBox"]
 layout_mode = 2
-theme_override_constants/separation = 10
+theme_override_constants/separation = 6
 
 [node name="Title" type="Label" parent="Panel/VBox/ContentScroll/ContentVBox/ObjectiveSection"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.91, 0.64, 0.24, 1)
 theme_override_font_sizes/font_size = 24
-text = "GAME OBJECTIVE"
+text = "THE OBJECTIVE"
 
 [node name="Text" type="RichTextLabel" parent="Panel/VBox/ContentScroll/ContentVBox/ObjectiveSection"]
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(0, 96)
 layout_mode = 2
 theme_override_colors/default_color = Color(0.9, 0.9, 0.9, 1)
 theme_override_font_sizes/normal_font_size = 16
 bbcode_enabled = true
-text = "Your goal is to [color=#3f8a5c][b]reduce P(Doom) to 0%[/b][/color] before running out of money or turns.
+text = "[b]You cannot win. You can only buy time.[/b] There is no victory screen and no finish line.
 
-P(Doom) represents the probability of AI causing human extinction. Balance [color=#e24a3b]AI capabilities[/color] research with [color=#3f8a5c]safety research[/color] to prevent catastrophe while advancing the field."
+Your score is [color=#f6a800][b]turns survived[/b][/color] -- the number of months your lab kept going. The run ends when P(Doom) reaches 100%, or when your reputation collapses to zero. Runs that survive the same number of months are separated by how much doom they held off along the way.
+
+P(Doom) is the probability of AI catastrophe. Nothing you can do drives it to zero. A good month is one where the curve bends, not one where the number gets small."
 
 [node name="HSeparator1" type="HSeparator" parent="Panel/VBox/ContentScroll/ContentVBox"]
 layout_mode = 2
 
 [node name="ControlsSection" type="VBoxContainer" parent="Panel/VBox/ContentScroll/ContentVBox"]
 layout_mode = 2
-theme_override_constants/separation = 10
+theme_override_constants/separation = 6
 
 [node name="Title" type="Label" parent="Panel/VBox/ContentScroll/ContentVBox/ControlsSection"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.91, 0.64, 0.24, 1)
 theme_override_font_sizes/font_size = 24
-text = "CONTROLS"
+text = "THE MONTH: PLAN, THEN WATCH"
 
 [node name="Text" type="RichTextLabel" parent="Panel/VBox/ContentScroll/ContentVBox/ControlsSection"]
 custom_minimum_size = Vector2(0, 150)
@@ -115,54 +117,54 @@ layout_mode = 2
 theme_override_colors/default_color = Color(0.9, 0.9, 0.9, 1)
 theme_override_font_sizes/normal_font_size = 16
 bbcode_enabled = true
-text = "[b]Mouse:[/b] Click buttons and UI elements
-[b]Keyboard Numbers (1-9):[/b] Quick-select actions
-[b]Space/Enter:[/b] End turn and execute queued actions
-[b]Escape:[/b] Cancel/Back
+text = "Every turn is one calendar month, played in two halves. The banner at the top of the screen always says which half you are in and what the next verb is.
 
-[b]In-Game:[/b]
-• Select actions from the left panel
-• Actions cost Action Points (AP) and resources
-• End your turn to execute all queued actions
-• Watch resource changes in the top panel"
+[color=#ffb833][b]## PLAN[/b][/color] -- lay out the month. Click action tiles to queue them. Hover a tile for its name, its cost, and why it is greyed out.
+[color=#5cec78][b]## WATCH[/b][/color] -- the month plays out in the feed. Respond to windows as they arrive. Then a month review, and you plan the next month.
+
+[b]Mouse:[/b] click tiles and buttons; hover anything you do not recognise
+[b]1-9:[/b] queue the numbered action    [b]Z:[/b] undo last    [b]C:[/b] clear the queue
+[b]SPACE / COMMIT THE MONTH >:[/b] end planning, with warnings if the plan looks dangerous
+[b]ENTER:[/b] commit straight away with no warnings -- this also reserves all your leftover Attention
+[b]ESC:[/b] pause menu    [b]N:[/b] report a bug"
 
 [node name="HSeparator2" type="HSeparator" parent="Panel/VBox/ContentScroll/ContentVBox"]
 layout_mode = 2
 
 [node name="ResourcesSection" type="VBoxContainer" parent="Panel/VBox/ContentScroll/ContentVBox"]
 layout_mode = 2
-theme_override_constants/separation = 10
+theme_override_constants/separation = 6
 
 [node name="Title" type="Label" parent="Panel/VBox/ContentScroll/ContentVBox/ResourcesSection"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.91, 0.64, 0.24, 1)
 theme_override_font_sizes/font_size = 24
-text = "KEY RESOURCES"
+text = "ATTENTION AND RESOURCES"
 
 [node name="Text" type="RichTextLabel" parent="Panel/VBox/ContentScroll/ContentVBox/ResourcesSection"]
-custom_minimum_size = Vector2(0, 200)
+custom_minimum_size = Vector2(0, 190)
 layout_mode = 2
 theme_override_colors/default_color = Color(0.9, 0.9, 0.9, 1)
 theme_override_font_sizes/normal_font_size = 16
 bbcode_enabled = true
-text = "[color=#f6a800][b]Money ($):[/b][/color] Hire staff, buy compute, fund research
-[color=#1ec3b3][b]Compute:[/b][/color] Required for running AI experiments
-[color=#b380e6][b]Research:[/b][/color] Accumulated knowledge points
-[color=#e9752e][b]Papers:[/b][/color] Published research (increases reputation)
-[color=#5c7ac3][b]Reputation:[/b][/color] Affects fundraising and hiring
+text = "[color=#f6a800][b]Attention[/b][/color] is the founder's month. You get a fresh grant every month and whatever you do not spend evaporates -- there is no banking.
 
-[color=#3f8a5c][b]Safety Researchers:[/b][/color] Green dots (●) - Reduce P(Doom)
-[color=#e24a3b][b]Capability Researchers:[/b][/color] Red dots (●) - Increase capabilities
-[color=#5c7ac3][b]Compute Engineers:[/b][/color] Blue dots (●) - Boost compute efficiency
+Attention splits two ways. [b]Planning hours[/b] queue strategic work; [b]operating hours[/b] pay for response windows, hiring and travel. A crisis can eat your planning hours, and planning can never buy back presence. That is why a tile can be dead while the top bar still shows Attention left: hover the tile, and hover the Attention readout, to see which hours are gone.
 
-[color=#e24a3b][b]P(Doom):[/b][/color] The probability of AI catastrophe - REDUCE TO ZERO TO WIN!"
+[color=#f6a800][b]Money ($):[/b][/color] hire staff, buy compute, fund research
+[color=#1ec3b3][b]Compute:[/b][/color] required to run experiments
+[color=#b380e6][b]Research:[/b][/color] accumulated knowledge; enough of it publishes a paper on its own
+[color=#e9752e][b]Papers:[/b][/color] published work -- raises reputation
+[color=#5c7ac3][b]Reputation:[/b][/color] drives fundraising and hiring; at zero, the run ends
+
+Staff glyphs beside Attention: [color=#3f8a5c][b]green *[/b][/color] safety researchers, [color=#e24a3b][b]red *[/b][/color] capability researchers, [color=#5c7ac3][b]blue *[/b][/color] compute engineers."
 
 [node name="HSeparator3" type="HSeparator" parent="Panel/VBox/ContentScroll/ContentVBox"]
 layout_mode = 2
 
 [node name="StrategySection" type="VBoxContainer" parent="Panel/VBox/ContentScroll/ContentVBox"]
 layout_mode = 2
-theme_override_constants/separation = 10
+theme_override_constants/separation = 6
 
 [node name="Title" type="Label" parent="Panel/VBox/ContentScroll/ContentVBox/StrategySection"]
 layout_mode = 2
@@ -171,22 +173,20 @@ theme_override_font_sizes/font_size = 24
 text = "STRATEGY TIPS"
 
 [node name="Text" type="RichTextLabel" parent="Panel/VBox/ContentScroll/ContentVBox/StrategySection"]
-custom_minimum_size = Vector2(0, 180)
+custom_minimum_size = Vector2(0, 140)
 layout_mode = 2
 theme_override_colors/default_color = Color(0.9, 0.9, 0.9, 1)
 theme_override_font_sizes/normal_font_size = 16
 bbcode_enabled = true
-text = "1. [b]Early Game:[/b] Hire safety researchers and fundraise for sustainability
-2. [b]Balance:[/b] Don't ignore capabilities - you need research progress
-3. [b]Reputation:[/b] Publish papers to boost reputation for better fundraising
-4. [b]Compute:[/b] Buy compute upgrades to accelerate research
-5. [b]Watch P(Doom):[/b] If it rises too fast, pivot to safety research
-6. [b]Action Points:[/b] Use all your AP each turn - wasted AP = wasted time
-7. [b]Events:[/b] Random events can help or harm - read them carefully!"
+text = "1. [b]Runway first.[/b] Fundraising is the first tile for a reason. Most early runs die of bookkeeping, not of doom.
+2. [b]Spend the month.[/b] Unspent Attention evaporates at month end, so an under-planned month is a wasted one.
+3. [b]Both kinds of research cost you something.[/b] Capability work buys leverage and adds doom; safety work buys the reverse.
+4. [b]Reputation is life support,[/b] not a vanity stat -- it ends runs.
+5. [b]Read the feed during WATCH.[/b] Rival labs, the literature and your own results all land there.
+6. [b]Read events carefully.[/b] Response windows cost operating hours, and a rejected choice tells you why."
 
 [node name="Spacer" type="Control" parent="Panel/VBox"]
 layout_mode = 2
-size_flags_vertical = 3
 
 [node name="ButtonRow" type="HBoxContainer" parent="Panel/VBox"]
 layout_mode = 2

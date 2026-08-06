@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """Print a Markdown or HTML doc to paper with PREDICTABLE, LEGIBLE typography.
 
+Layer: OBSERVE
+Invoked by: human
+
 WHY THIS EXISTS (Pip's ask, 2026-07-31). `Out-Printer` gives no font control -- it
 renders whatever the shell hands it at whatever size Windows picks, which is how you
 end up with a 9pt wall of text you cannot read while walking. The standard he asked

@@ -190,7 +190,8 @@ func _build_candidate_card(cand, key_index: int, keyed_buttons: Array) -> PanelC
 	stats.add_theme_font_size_override("font_size", 9)
 	stats.add_theme_color_override("font_color", Color(0.75, 0.75, 0.75))
 	var skill_txt = str(c["skill_level"])
-	var comp_txt = ("$%d/yr" % int(c["salary_expectation"])) if (c["salary_expectation"] is float or c["salary_expectation"] is int) else str(c["salary_expectation"])
+	# #1087: "$%d/yr" printed an ungrouped "$140000". Money is money everywhere.
+	var comp_txt = ("%s/yr" % GameConfig.format_money(float(c["salary_expectation"]))) if (c["salary_expectation"] is float or c["salary_expectation"] is int) else str(c["salary_expectation"])
 	stats.text = "Seniority: %s   Skill: %s   Comp: %s   (reveal %d/%d)" % [c["seniority_band"], skill_txt, comp_txt, reveal, Researcher.MAX_REVEAL]
 	vb.add_child(stats)
 

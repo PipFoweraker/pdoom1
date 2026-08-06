@@ -1,9 +1,28 @@
 # UI Polish & Components Guide
 
+> # [!] THE THREE "NEW COMPONENTS" BELOW WERE NEVER ADOPTED AND ARE NOW DELETED.
+>
+> **Audited and marked 2026-08-04.** `enhanced_message_log.gd`, `resource_bar.gd`
+> and `resource_display.gd` were written, documented here, and then never used:
+> zero `res://` loads, zero `.tscn` attachments, zero `class_name` uses, zero
+> test references. All three were deleted on 2026-08-04.
+>
+> They could not have worked as written in any case -- each declared
+> `@onready var x = $SomeNode/Path` for scene nodes that exist in no `.tscn`, so
+> instantiating one would have hit a null. `EnhancedMessageLog.new()` in the
+> snippet below never even had a `class_name` to resolve.
+>
+> The live equivalents are the real UI in `godot/scripts/ui/` (`main_ui.gd` and
+> friends). The theme and notification sections of this guide describe autoloads
+> that DO exist (`ThemeManager`, `NotificationManager`).
+>
+> Kept as a record of an abandoned direction. Do not implement from the component
+> sections.
+
 ## Overview
 Comprehensive UI improvements with theme integration, notifications, and reusable components.
 
-## New Components
+## New Components (RETIRED -- deleted 2026-08-04, see box above)
 
 ### 1. Enhanced Message Log (`enhanced_message_log.gd`)
 Rich text message log with styled, categorized messages.

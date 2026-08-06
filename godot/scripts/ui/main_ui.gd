@@ -724,17 +724,17 @@ static func dialog_key_advances(dialog: Control, keycode: int) -> bool:
 
 func _trigger_action_by_index(index: int):
 	"""Trigger action button by its index (for keyboard shortcuts)"""
-	# Find the VBoxContainer (icon_stack) first
-	var icon_stack: VBoxContainer = null
+	# Find the icon_stack first (HFlowContainer since the wrap fix; was a VBox column)
+	var icon_stack: Container = null
 	for child in actions_list.get_children():
-		if child is VBoxContainer:
+		if child is Container:
 			icon_stack = child
 			break
 
 	if not icon_stack:
 		return
 
-	# Get buttons directly from stack (single column layout)
+	# Get buttons directly from stack (index = reading order in the wrapped grid)
 	var buttons = icon_stack.get_children()
 	if index < buttons.size():
 		var button = buttons[index] as Button
@@ -1135,11 +1135,17 @@ func _on_game_state_updated(state: Dictionary):
 	# label and the now-redundant TurnCountLabel is hidden. VIEW-only (ADR-0006).
 	turn_label.text = _format_turn_datetime(state)
 	turn_count_label.visible = false
-	money_label.text = "%s" % GameConfig.format_money(state.get("money", 0))
-	compute_label.text = "%.1f" % state.get("compute", 0)
-	research_label.text = "%.1f" % state.get("research", 0)
-	papers_label.text = "%d" % state.get("papers", 0)
-	reputation_label.text = "* %.0f" % state.get("reputation", 0)
+	# #1087 number-format policy (docs/NUMBER_FORMATS.md): whole dollars, whole scalars,
+	# and the resource's NAME on its face. The bar previously read "$197,207.69 | 82.0 |
+	# 34.0 | 0 | * 70" -- four formats and two unlabelled numbers, one of them behind a
+	# star sigil that reads as a footnote marker. The scene file's own placeholder text
+	# ("Compute: 0", "Rep: 0") already declared this format; the runtime path had drifted
+	# off it. Labels only -- no control moved.
+	money_label.text = GameConfig.format_money(state.get("money", 0))
+	compute_label.text = "Compute: %s" % GameConfig.format_scalar(state.get("compute", 0))
+	research_label.text = "Research: %s" % GameConfig.format_scalar(state.get("research", 0))
+	papers_label.text = "Papers: %s" % GameConfig.format_scalar(state.get("papers", 0))
+	reputation_label.text = "Rep: %s" % GameConfig.format_scalar(state.get("reputation", 0))
 
 	# EE-7: refresh the per-resource "last turn" delta chips at turn boundaries
 	_update_delta_chips(state)
@@ -1259,7 +1265,7 @@ func _on_game_state_updated(state: Dictionary):
 	if state.get("game_over", false):
 		var victory = state.get("victory", false)
 		if victory:
-			log_message("[color=gold]VICTORY! You survived![/color]")
+			log_message("[color=gold]RUN ENDED. You bought time.[/color]")
 		else:
 			log_message("[color=red]GAME OVER! The AI destroyed humanity.[/color]")
 
@@ -1353,14 +1359,23 @@ func _render_delta_chip(key: String, d: float) -> void:
 	var chip: Label = _delta_labels.get(key)
 	if chip == null:
 		return
-	if absf(d) < 0.05:
+	# Suppress a change too small to SHOW: doom renders one decimal, everything else
+	# renders whole units, so a 0.3 compute drift would otherwise print "(+0)" -- a
+	# rounding artefact that reads as a bug. Threshold matches the display grain.
+	var visible_grain: float = 0.05 if key == "doom" else 0.5
+	if absf(d) < visible_grain:
 		chip.text = ""
 		return
+	# #1087: deltas carry an explicit sign and the SAME base format as the resource they
+	# sit beside -- "(-$238)" not "(-$238.46)", "(-1)" not "(-1.0)". doom is the deliberate
+	# exception: its fraction is load-bearing, so it keeps a decimal point.
 	var txt: String
 	if key == "money":
-		txt = ("+" if d > 0.0 else "-") + GameConfig.format_money(absf(d))
-	else:
+		txt = GameConfig.format_money_delta(d)
+	elif key == "doom":
 		txt = "%+.1f" % d
+	else:
+		txt = GameConfig.format_scalar_delta(d)
 	chip.text = "(%s)" % txt
 	# Doom rising is bad; every other resource rising is good.
 	var good: bool = (d < 0.0) if key == "doom" else (d > 0.0)
@@ -1553,11 +1568,13 @@ func _populate_upgrades():
 
 		# Create button
 		var button = ThemeManager.create_button(upgrade_name)
-		# Blockier tiles (#594): hug content instead of stretching across the wide right
-		# panel, and ~20% taller (32 -> 38) so they read as tighter, blockier tiles.
-		# Playtest-3: right-align the column to free up central screen space (was
-		# SIZE_SHRINK_BEGIN, hugging the left edge instead).
-		button.size_flags_horizontal = Control.SIZE_SHRINK_END
+		# Uniform full-width LIST rows (playtest 2026-08-05: "fix the upgrade button layout").
+		# The previous SIZE_SHRINK_END sized each button to its own text (200..283px measured)
+		# and right-aligned the stack, so the column floated mid-screen with ragged left edges.
+		# Full-width rows give one aligned column, bigger hit targets, and put the scrollbar
+		# directly beside the content it scrolls. Left-aligned text reads as a list.
+		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		button.alignment = HORIZONTAL_ALIGNMENT_LEFT
 		button.custom_minimum_size = Vector2(200, 38)
 
 		# If purchased, show differently
@@ -2120,9 +2137,10 @@ func _on_action_hover(action: Dictionary, can_afford: bool, missing_resources: A
 		if action_costs.has("papers"):
 			cost_parts.append("[color=white]%d Papers[/color]" % action_costs["papers"])
 		if action_costs.has("compute"):
-			cost_parts.append("[color=blue]%.1f Compute[/color]" % action_costs["compute"])
+			# #1087: an action costing "3.0 Compute" implied a fractional cost exists.
+			cost_parts.append("[color=blue]%s Compute[/color]" % GameConfig.format_scalar(action_costs["compute"]))
 		if action_costs.has("research"):
-			cost_parts.append("[color=purple]%.1f Research[/color]" % action_costs["research"])
+			cost_parts.append("[color=purple]%s Research[/color]" % GameConfig.format_scalar(action_costs["research"]))
 
 		info_text += " - ".join(cost_parts)
 	else:

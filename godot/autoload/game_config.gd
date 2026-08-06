@@ -3,8 +3,14 @@ extends Node
 ## Manages persistent settings and game state across scenes
 
 # Player/Game Configuration
-var player_name: String = "Researcher"
-var lab_name: String = "AI Safety Lab"
+# Install-default identity as NAMED consts: the game-over default-identity
+# prompt (Pip 2026-08-06, after two friends' scores landed as identical
+# "AI Safety Lab" rows) compares against these, so the field initialisers,
+# reset_game_config() and has_default_identity() must all read the same pair.
+const DEFAULT_PLAYER_NAME := "Researcher"
+const DEFAULT_LAB_NAME := "AI Safety Lab"
+var player_name: String = DEFAULT_PLAYER_NAME
+var lab_name: String = DEFAULT_LAB_NAME
 var game_seed: String = ""  # Empty = weekly challenge seed
 var difficulty: int = 1  # 0=Easy, 1=Standard, 2=Hard -- the player's stored PREFERENCE. What a run actually PLAYS at is effective_difficulty() below (league lock, #1058/#1084).
 var org_type: String = "nonprofit"  # Early-game org form: "nonprofit" | "for_profit" (DQ-19). Set at pregame; default flow forces nonprofit.
@@ -106,6 +112,17 @@ var leaderboard_consent_asked: bool = false
 # reminder that the global board exists; this flag persists so later
 # playthroughs stay silent. See LeaderboardSync.consent_flow_state.
 var leaderboard_reminder_shown: bool = false
+# One-time default-identity prompt (Pip 2026-08-06): a player about to UPLOAD a
+# score while still carrying the unedited install defaults gets exactly ONE
+# chance to claim a name first -- a public board of identical "Researcher --
+# AI Safety Lab" rows is one nobody can find themselves on. Keeping the default
+# is a legitimate answer; this flag persists either way (set at SHOW time, the
+# leaderboard_reminder_shown shape above), so the question is never asked twice.
+# See LeaderboardSync.default_identity_prompt_state -- deliberately LAYERED ON
+# TOP of the consent flow, never a change to it: consent still decides WHETHER
+# an upload can happen; this only decides whether the name is worth a one-time
+# ask first.
+var default_identity_prompt_shown: bool = false
 
 # Privacy: anonymous launch ping opt-out (#799). The ping is a single Plausible
 # event on boot carrying ONLY a random install UUID + version + OS + first_launch
@@ -263,6 +280,7 @@ func save_config() -> void:
 	config.set_value("leaderboard", "submit_scores_global", submit_scores_global)
 	config.set_value("leaderboard", "consent_asked", leaderboard_consent_asked)
 	config.set_value("leaderboard", "reminder_shown", leaderboard_reminder_shown)
+	config.set_value("leaderboard", "identity_prompt_shown", default_identity_prompt_shown)
 
 	# Privacy + updates section (#799)
 	config.set_value("privacy", "send_launch_ping", send_launch_ping)
@@ -327,6 +345,7 @@ func load_config() -> void:
 	submit_scores_global = config.get_value("leaderboard", "submit_scores_global", submit_scores_global)
 	leaderboard_consent_asked = config.get_value("leaderboard", "consent_asked", leaderboard_consent_asked)
 	leaderboard_reminder_shown = config.get_value("leaderboard", "reminder_shown", leaderboard_reminder_shown)
+	default_identity_prompt_shown = config.get_value("leaderboard", "identity_prompt_shown", default_identity_prompt_shown)
 
 	# Load privacy + updates settings (#799)
 	send_launch_ping = config.get_value("privacy", "send_launch_ping", send_launch_ping)
@@ -494,10 +513,18 @@ func get_game_config() -> Dictionary:
 		"scenario_id": scenario_id
 	}
 
+## True while EITHER identity field still holds the unedited install default.
+## Either alone keeps the board entry generic (the board renders the lab name;
+## consent shares both names), so either alone keeps the one-time prompt armed.
+## Exact match on purpose: "unedited default" means literally these strings --
+## a player who deliberately typed something else, however close, has chosen it.
+func has_default_identity() -> bool:
+	return player_name.strip_edges() == DEFAULT_PLAYER_NAME or lab_name.strip_edges() == DEFAULT_LAB_NAME
+
 ## Reset game configuration to defaults (keep settings)
 func reset_game_config() -> void:
-	player_name = "Researcher"
-	lab_name = "AI Safety Lab"
+	player_name = DEFAULT_PLAYER_NAME
+	lab_name = DEFAULT_LAB_NAME
 	game_seed = ""
 	difficulty = 1
 	scenario_id = ""
@@ -537,41 +564,127 @@ func get_display_seed() -> String:
 		return get_weekly_seed()
 	return game_seed
 
+# =============================================================================
+# NUMBER FORMAT POLICY (#1087) -- the ONE place player-facing numbers are made.
+# Ruling and rationale: docs/NUMBER_FORMATS.md. Short version:
+#   money      -> whole dollars, grouped, NO cents ("$197,208")
+#   scalars    -> whole units, grouped ("82", "3,400") -- compute/research/rep/papers
+#   percent    -> one decimal, because p(doom) fractions DO carry meaning ("14.2%")
+#   deltas     -> explicit sign, same base format ("+$1,200", "-3")
+# A raw float must never reach the player. Anything that prints a number to a
+# player MUST route through one of these; `str(value)` / "%s" on a Variant is
+# how `money: 3000.0` shipped into a tooltip.
+# =============================================================================
+
+## Group an integer magnitude with thousands separators. Rounds (never truncates:
+## truncation made $1,999.99 read as "$1,999", understating the balance).
+func format_grouped(value: float) -> String:
+	var n: int = int(round(abs(value)))
+	var s := str(n)
+	var out := ""
+	var count := 0
+	for i in range(s.length() - 1, -1, -1):
+		if count > 0 and count % 3 == 0:
+			out = "," + out
+		out = s[i] + out
+		count += 1
+	return out
+
 ## Format money with comma separators (e.g., $245,000)
 ## Issue #436 - Player feedback: add commas to all $ references
+## Issue #1087 - CENTS ARE NEVER SHOWN. A lab budget rendered to the cent
+## ("$197,207.69") implies cent-grain decisions exist; none do. Rounded, not
+## truncated, so the displayed figure is the nearest true dollar.
 ## Note: Not static because GameConfig is an autoload singleton
 func format_money(amount: float) -> String:
-	var is_negative = amount < 0
-	var abs_amount = abs(amount)
+	var sign_str := "-" if amount < 0 else ""
+	return "%s$%s" % [sign_str, format_grouped(amount)]
 
-	# Convert to string and split at decimal point
-	var int_part = int(abs_amount)
-	var decimal_part = abs_amount - int_part
+## A money CHANGE. Always signed, so "+$1,200" and "-$238" are unambiguous.
+func format_money_delta(amount: float) -> String:
+	var sign_str := "+" if amount >= 0.0 else "-"
+	return "%s$%s" % [sign_str, format_grouped(amount)]
 
-	# Format integer part with commas
-	var int_str = str(int_part)
-	var formatted = ""
-	var count = 0
+## A resource scalar (compute, research, reputation, papers, staff, attention).
+## Whole units: the engine carries floats, but no mechanic trades in 0.1 compute,
+## so "82.0" was precision the player could not act on.
+func format_scalar(value: float) -> String:
+	var sign_str := "-" if value < 0 else ""
+	return sign_str + format_grouped(value)
 
-	# Add commas from right to left
-	for i in range(int_str.length() - 1, -1, -1):
-		if count > 0 and count % 3 == 0:
-			formatted = "," + formatted
-		formatted = int_str[i] + formatted
-		count += 1
+## A resource-scalar CHANGE. Always signed.
+func format_scalar_delta(value: float) -> String:
+	var sign_str := "+" if value >= 0.0 else "-"
+	return sign_str + format_grouped(value)
 
-	# Add negative sign if needed
-	if is_negative:
-		formatted = "-$" + formatted
-	else:
-		formatted = "$" + formatted
+## A percentage. One decimal by default -- p(doom) is the one number whose
+## fraction is load-bearing (momentum is visible at sub-point grain).
+##
+## TIES ROUND AWAY FROM ZERO, EXPLICITLY, ON EVERY PLATFORM. The obvious
+## implementation -- `"%.1f" % value` alone -- delegates to the platform's printf,
+## and the two disagree on exact halves: MSVC rounds half away from zero, glibc
+## rounds half to even. So `format_percent(14.25)` printed "14.3" on Pip's Windows
+## machine and "14.2" on the Ubuntu CI runner, and the test asserting it passed
+## locally while main's Godot Tests job was red (2026-08-05).
+##
+## Two players reading different doom figures from the same state is a small
+## inconsistency and an unacceptable one for a game whose score is a leaderboard
+## claim, so this rounds BEFORE formatting and the tie direction is a stated
+## decision rather than an inherited accident. round() in Godot is half-away-from-
+## zero on all platforms; the multiply/divide keeps the value on the same side of
+## the boundary that printf then renders.
+func format_percent(value: float, decimals: int = 1) -> String:
+	var places: int = max(0, decimals)
+	var factor: float = pow(10.0, places)
+	var rounded: float = round(value * factor) / factor
+	return ("%." + str(places) + "f%%") % rounded
 
-	# Add decimal part if significant (for costs like $2,500.50)
-	if decimal_part > 0.01:
-		formatted += "%.2f" % decimal_part
-		formatted = formatted.replace("0.", ".")
+## Resources whose player-facing unit is a percentage.
+const _PERCENT_RESOURCES := ["doom", "p_doom", "pdoom"]
 
-	return formatted
+## Player-facing NAME for an internal resource key ("safety_absorption" ->
+## "Safety Absorption"). Kills dict-key leakage in cost/effect tooltips.
+func format_resource_name(key: String) -> String:
+	match key:
+		"money":
+			return "Money"
+		"attention":
+			return "Attention"
+		"doom":
+			return "p(Doom)"
+		"compute":
+			return "Compute"
+		"research":
+			return "Research"
+		"reputation":
+			return "Reputation"
+		"papers":
+			return "Papers"
+		_:
+			return key.replace("_", " ").capitalize()
+
+## Player-facing AMOUNT for an internal resource key. Never returns a raw float.
+func format_resource_amount(key: String, value) -> String:
+	var v := float(value)
+	if key == "money":
+		return format_money(v)
+	if key in _PERCENT_RESOURCES:
+		return format_percent(v)
+	return format_scalar(v)
+
+## "Money $3,000" / "Compute 12" -- the tooltip line form. Replaces
+## "  %s: %s" % [key, value], which is what printed `money: 3000.0` (#1087).
+func format_resource(key: String, value) -> String:
+	return "%s %s" % [format_resource_name(key), format_resource_amount(key, value)]
+
+## Signed line form for an EFFECT: "Reputation +5", "Money -$3,000".
+func format_resource_delta(key: String, value) -> String:
+	var v := float(value)
+	if key == "money":
+		return "%s %s" % [format_resource_name(key), format_money_delta(v)]
+	if key in _PERCENT_RESOURCES:
+		return "%s %s%s" % [format_resource_name(key), ("+" if v >= 0.0 else ""), format_percent(v)]
+	return "%s %s" % [format_resource_name(key), format_scalar_delta(v)]
 
 ## Check if there are unseen patch notes (new version since last seen)
 func has_unseen_patch_notes() -> bool:

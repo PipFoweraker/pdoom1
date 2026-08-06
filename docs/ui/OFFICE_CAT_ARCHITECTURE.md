@@ -1,5 +1,29 @@
 # Office Cat System Architecture
 
+> # [!] PARTLY STALE -- audited 2026-08-04.
+>
+> The office cat DOES ship. Its architecture is not what this document says.
+> Corrections, verified against the tree on 2026-08-04:
+>
+> - **"Creates ContributorManager instance" / "Loads from
+>   `res://data/contributors.json`" is FALSE.** `office_cat.gd` never referenced
+>   ContributorManager. It picks a random photo from `res://assets/cats/simple/`
+>   using a hardcoded `CAT_NAMES` dictionary. `contributor_manager.gd` and
+>   `godot/data/contributors.json` were DELETED 2026-08-04 (zero callers).
+> - **"5 doom variants" is FALSE.** `update_doom_level()` is an explicit no-op
+>   (`pass  # No doom variants yet`). The 5 SVG variants in
+>   `godot/assets/cats/default/` are orphaned -- kept under ADR-0019 asset
+>   grandfathering, wired to nothing.
+> - **The scene path is wrong.** The real node is at
+>   `TabManager/MainUI/ContentArea/InstrumentColumn/CoreZone/CatZone/OfficeCat`,
+>   not `.../MiddlePanel/OfficeCatSection`. Sizing is clamped by
+>   `layout_controller.gd` (P6), not by the structure drawn below.
+> - Line-number links into `main_ui.gd` below are from an older revision of a
+>   3k-line file; do not trust them.
+>
+> Source of truth is `godot/scripts/ui/office_cat.gd` (108 lines -- read it, it is
+> shorter than this document).
+
 ## Overview
 The Office Cat is a single-display morale/wellness indicator that replaces the doom meter when adopted. Cat appears ONLY in the middle panel - no top bar icon.
 

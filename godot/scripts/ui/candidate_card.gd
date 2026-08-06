@@ -7,6 +7,18 @@ class_name CandidateCard
 ## quirk) render as "??? (interview to reveal)" -- hire-as-scouting made visible (ADR-0004).
 ## The data model (Researcher) is the real deliverable; this is a deliberately thin view
 ## the Phase-B plan screen can replace or embed.
+##
+## [!] TEST-ONLY AS OF 2026-08-04 -- the game never instantiates this.
+## Phase B happened: the shipped hiring UI builds its cards inline in
+## `hiring_panel_controller.gd::_build_candidate_card()` (a different, unrelated
+## implementation with the same name), and `CandidateCard` has exactly one caller
+## left in the whole repo: `godot/tests/unit/test_hiring_data_model.gd:264`.
+## Zero non-test references; not attached to any `.tscn`.
+##
+## It was kept rather than deleted only because deleting it would delete a
+## passing test with it. If that test is ever rewritten against
+## `HiringPanelController`, delete this file in the same change -- do not let it
+## keep looking like the production candidate card.
 
 var _title: Label
 var _body: Label

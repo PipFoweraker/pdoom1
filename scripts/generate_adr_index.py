@@ -1,5 +1,7 @@
 """Generate docs/game-design/decisions/README.md from the ADR files themselves.
 
+Layer: GENERATE
+
 WHY THIS EXISTS. The hand-kept decisions/README.md is the exact failure mode the DQ
 index was built to kill -- generate_dq_index.py's own docstring cites it by name:
 "see the stale decisions/README.md for the failure mode this avoids". It then went

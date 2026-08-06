@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """Turn a recorded playtest into an evidenced bug list.
 
+Layer: OBSERVE
+Invoked by: human
+
 One command: recording in, review page out. It transcribes the dictation, finds
 every spoken BUG / NOTE marker, grabs the screen frame at that exact moment, and
 pairs each finding with what was actually on screen when it was said.

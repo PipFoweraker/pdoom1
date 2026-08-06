@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Stamp the canonical game version into every place that cannot self-read it.
 
+Layer: PROVE -- the --check mode gates pre-commit and CI against silent drift
+
 ``version.txt`` at the repo root is THE single source of truth for the game
 version (Pip's decision). Runtime GDScript reads it through
 ``GameConfig.CURRENT_VERSION``, but several build/config/scene files hold a

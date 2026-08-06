@@ -32,9 +32,29 @@ var _default_key: String = ""       # newest / current board, shown on open
 var _aggregate_loaded: bool = false # true once the full all-seeds scan has run this instance
 
 # Remote/global board (LeaderboardSync). Pure view: fetched async, never on a
-# deterministic path. Falls back to local silently on any failure.
+# deterministic path.
+#
+# FAILURE IS VISIBLE, NEVER SILENT (#1126). This used to fall back to local *silently*:
+# on any fetch failure the toggle reset its own pressed state and its own label, so
+# pressing "View: Global" produced NO observable change and the first external player
+# concluded -- correctly, from the evidence available to them -- that the button was
+# dead. A failed request and a broken button must never look the same. On failure the
+# toggle now STAYS PRESSED, an amber status line says the global board could not be
+# reached, and a Retry button appears. Amber (1.0, 0.75, 0.25) is the established
+# "off the record" register (GameConfig NOT RANKED notices, #1060) -- not a new colour.
 var showing_global: bool = false
 var global_toggle_button: Button = null
+var global_status_row: HBoxContainer = null
+# True while the global view is up but the rows on screen are the LOCAL fallback
+# (the fetch failed). Keeps the empty-state text honest -- see _display_current_page.
+var _global_fetch_failed: bool = false
+var global_status_label: Label = null
+var global_retry_button: Button = null
+
+# The one "off the record / not on the board" colour this project uses. Kept in sync
+# with the NOT RANKED notices in GameConfig by convention, not by import (this screen
+# must not depend on run state).
+const GLOBAL_STATUS_AMBER := Color(1.0, 0.75, 0.25)
 
 # UI References
 @onready var seed_dropdown = $MarginContainer/VBoxContainer/Filters/SeedDropdown
@@ -99,6 +119,65 @@ func _setup_global_toggle():
 	global_toggle_button.tooltip_text = "Toggle between your local scores and the global (online) board for this seed"
 	global_toggle_button.toggled.connect(_on_global_toggle)
 	container.add_child(global_toggle_button)
+	_setup_global_status_row()
+
+func _setup_global_status_row():
+	"""Build the (hidden) amber status line + Retry button that make a failed global
+	fetch VISIBLE (#1126).
+
+	Built in code rather than in the .tscn for the same reason the toggle is: it only
+	exists when remote sync is configured. It sits on its own row directly under the
+	Filters row -- the Filters HBox is already crowded (label, dropdown, Refresh, Clear,
+	toggle) and a wrapping message wedged in there would squeeze the dropdown."""
+	var main_vbox = $MarginContainer/VBoxContainer
+	var filters = $MarginContainer/VBoxContainer/Filters
+	if main_vbox == null or filters == null:
+		return
+	global_status_row = HBoxContainer.new()
+	global_status_row.alignment = BoxContainer.ALIGNMENT_CENTER
+	global_status_row.add_theme_constant_override("separation", 12)
+
+	global_status_label = Label.new()
+	global_status_label.add_theme_font_size_override("font_size", 15)
+	global_status_label.add_theme_color_override("font_color", GLOBAL_STATUS_AMBER)
+	global_status_row.add_child(global_status_label)
+
+	global_retry_button = Button.new()
+	global_retry_button.text = "Retry"
+	global_retry_button.tooltip_text = "Try fetching the global board again"
+	global_retry_button.add_theme_font_size_override("font_size", 14)
+	global_retry_button.pressed.connect(_on_global_retry_pressed)
+	global_status_row.add_child(global_retry_button)
+
+	global_status_row.visible = false
+	main_vbox.add_child(global_status_row)
+	main_vbox.move_child(global_status_row, filters.get_index() + 1)
+
+func _show_global_status(message: String, show_retry: bool) -> void:
+	"""Put a player-visible amber line on screen. The ONLY way the global view reports
+	trouble -- there is deliberately no silent path (#1126)."""
+	if not is_instance_valid(global_status_label):
+		return
+	global_status_label.text = message
+	if is_instance_valid(global_retry_button):
+		global_retry_button.visible = show_retry
+	if is_instance_valid(global_status_row):
+		global_status_row.visible = true
+
+func _clear_global_status() -> void:
+	if is_instance_valid(global_status_label):
+		global_status_label.text = ""
+	if is_instance_valid(global_status_row):
+		global_status_row.visible = false
+
+func _on_global_retry_pressed():
+	"""Retry affordance: re-run the fetch without making the player toggle twice."""
+	ErrorHandler.info(ErrorHandler.Category.VALIDATION, "Retrying global board fetch", {})
+	showing_global = true
+	if is_instance_valid(global_toggle_button):
+		global_toggle_button.set_pressed_no_signal(true)
+		global_toggle_button.text = "View: Global"
+	_fetch_and_show_global()
 
 func _on_global_toggle(pressed: bool):
 	showing_global = pressed
@@ -116,22 +195,44 @@ func _fetch_and_show_global():
 	players on different cosmetic builds share one board. BACKEND TASK (flagged, not
 	attempted here): api.pdoom1.com must key by ladder_version and alias the live
 	v0.12.0 board to L1 -- see GameConfig.get_board_version() docs."""
+	_global_fetch_failed = false  # a new attempt is not (yet) a failure
 	var board_seed = GameConfig.get_display_seed()
 	var version = GameConfig.get_board_version()
 	subtitle.text = "Global board: fetching %s ..." % board_seed
+	# In-flight is its own visible state: without this the screen looks identical for
+	# "asking the server" and "server never answered" for up to REQUEST_TIMEOUT_SEC (8s).
+	_show_global_status("Contacting the global board ...", false)
 	LeaderboardSync.fetch_board(board_seed, version, 100, _on_global_board_fetched)
 
 func _on_global_board_fetched(ok: bool, entries: Array):
-	"""Render the global board, or fall back to local silently on failure."""
+	"""Render the global board, or report a VISIBLE failure and show local underneath.
+
+	#1126: the failure branch must leave evidence. It keeps the toggle PRESSED (the
+	player's request stands; it is the network that did not deliver), states in amber
+	that the board could not be reached, and offers Retry. A player with no network can
+	now tell a failed request from a dead button -- which is the entire bar the issue
+	sets. The local board is still drawn underneath so the screen is never blank."""
 	if not showing_global:
 		return  # User toggled back to Local before the request resolved.
 	if not ok:
-		showing_global = false
+		_global_fetch_failed = true
+		# Deliberately do NOT clear showing_global and do NOT un-press the toggle: that
+		# self-undoing reset is the defect. Render local WITHOUT the local-view reset.
 		if is_instance_valid(global_toggle_button):
-			global_toggle_button.set_pressed_no_signal(false)
-			global_toggle_button.text = "View: Local"
-		_filter_and_display()  # Silent local fallback.
+			global_toggle_button.set_pressed_no_signal(true)
+			global_toggle_button.text = "View: Global"
+		_render_local_view()
+		_show_global_status(
+			"[!] Global board unavailable -- could not reach the server. Showing your LOCAL scores.",
+			true)
+		ErrorHandler.warning(
+			ErrorHandler.Category.VALIDATION,
+			"Global board fetch failed; showing local with a visible notice",
+			{"seed": GameConfig.get_display_seed(), "version": GameConfig.get_board_version()}
+		)
 		return
+	_global_fetch_failed = false
+	_clear_global_status()
 	filtered_entries = entries.duplicate()
 	current_page = 1
 	# Show BOTH: the epoch the board is scoped by, and the build the viewer runs --
@@ -337,13 +438,27 @@ func _select_default_view() -> void:
 	_filter_and_display()
 
 func _filter_and_display():
-	"""Filter entries based on current seed and display current page (LOCAL view)."""
+	"""Filter entries based on current seed and display current page (LOCAL view).
+
+	This is the path for DELIBERATE local actions (toggling to Local, changing the seed,
+	Refresh, Clear). It resets the global toggle because the player asked for local. The
+	failure path must NOT come through here -- see _render_local_view."""
 	# Any local filter action returns us to the local board.
 	showing_global = false
+	_global_fetch_failed = false
 	if is_instance_valid(global_toggle_button):
 		global_toggle_button.set_pressed_no_signal(false)
 		global_toggle_button.text = "View: Local"
+	_clear_global_status()
+	_render_local_view()
 
+func _render_local_view():
+	"""Draw the local board for the current seed WITHOUT touching the global toggle state.
+
+	Split out of _filter_and_display for #1126: the failed-fetch path needs to show local
+	entries while STAYING in the global view (pressed toggle + amber notice). Reusing
+	_filter_and_display there is exactly what made the failure invisible -- it silently
+	un-pressed the button the player had just pressed."""
 	# Filter by seed. The all-seeds view triggers the (cached) full parse; a single seed
 	# parses just that one file. Either way the population shown is complete and correctly
 	# sorted -- no data is dropped, only the parse is deferred until the view needs it.
@@ -404,7 +519,16 @@ func _display_current_page():
 
 	if filtered_entries.size() == 0:
 		var no_entries = Label.new()
-		no_entries.text = "No scores yet. Play a game to see your scores here!"
+		# Second silent conflation found while fixing #1126: an EMPTY GLOBAL board (a
+		# successful fetch that returned zero entries) used to render the LOCAL empty
+		# state, so "nobody has posted to this board yet" and "you have not played yet"
+		# read identically -- and both looked like the toggle had done nothing.
+		# _global_fetch_failed distinguishes "in the global view, showing a real global
+		# board" from "in the global view, but the rows underneath are the LOCAL fallback".
+		if showing_global and not _global_fetch_failed:
+			no_entries.text = "The global board for this seed is empty -- no scores posted yet."
+		else:
+			no_entries.text = "No scores yet. Play a game to see your scores here!"
 		no_entries.add_theme_font_size_override("font_size", 16)
 		no_entries.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		entries_container.add_child(no_entries)

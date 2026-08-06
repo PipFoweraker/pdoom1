@@ -1,8 +1,26 @@
 # Leaderboard Backend Architecture
 
+> # [!] STALE PREMISE -- audited 2026-08-04.
+>
+> This 2025-11-19 plan is written against the retired Python game. Two of the
+> files it names as the existing system are gone:
+>
+> - `src/scores/enhanced_leaderboard.py` -- `src/` was deleted with the Python
+>   game (an `archive/legacy-python-src/` copy remains).
+> - `scripts/export_leaderboards.py` -- DELETED 2026-08-04; it imported
+>   `scripts.lib.scores...`, and `scripts/lib/` does not exist, so it raised
+>   ImportError and had no caller anywhere.
+>
+> "Main blocker for launch" is also no longer true: a league ran on 2026-07-31
+> with a live board. The shipped leaderboard is GDScript -- the `LeaderboardSync`
+> autoload and `godot/scripts/ui/leaderboard_screen.gd` -- talking to the
+> pdoom1-website API.
+>
+> Read for the phasing rationale; do not treat the file inventory as current.
+
 **Date**: 2025-11-19
-**Status**: Planning
-**Priority**: HIGH - Main blocker for launch alongside Steam integration
+**Status**: STALE 2026-08-04 (was: Planning) -- premised on the deleted Python leaderboard
+**Priority**: was "HIGH - main blocker for launch"; a league shipped 2026-07-31 on the GDScript path
 
 ---
 
@@ -44,7 +62,7 @@ This document outlines the phased approach to evolving P(Doom)'s leaderboard sys
 |   Godot Game    | --------------------- ->  |   pdoom1-website |
 | (Local JSON)    |    or git commit       | (Static JSON)    |
 `-------------------`                        `--------------------`
-        v                                              v 
+        v                                              v
   user://leaderboards/              public/leaderboard/data/
   leaderboard_{seed}.json           seed_leaderboard_*.json
 ```
@@ -92,7 +110,7 @@ This document outlines the phased approach to evolving P(Doom)'s leaderboard sys
                                         |
                                   Export Script
                                         |
-                                         v 
+                                         v
 +---------------------------------------------------+
 |               GitHub Repository                  |
 |  (pdoom1-website/public/leaderboard/data/)      |
@@ -101,7 +119,7 @@ This document outlines the phased approach to evolving P(Doom)'s leaderboard sys
                     GitHub Actions
                     (on push)
                          |
-                          v 
+                          v
               +--------------------+
               |    Website       |
               | (Static Hosting) |
@@ -139,7 +157,7 @@ This document outlines the phased approach to evolving P(Doom)'s leaderboard sys
                                     PostgreSQL
                                     or JSON files
                                          |
-                                          v 
+                                          v
                                 +--------------------+
                                 |    Website       |
                                 | (Fetches API)    |
@@ -247,7 +265,7 @@ Score Submission Schema:
 `-------+-------`                     `-------------------`
        |
        | Steam ID + Auth Token
-        v 
+        v
 +-------------------+     Verify Token    +----------------+
 |  Backend API    |  <- ----------------- ->  |  Steam Web   |
 |                 |                     |  API         |

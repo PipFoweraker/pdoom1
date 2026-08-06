@@ -1,13 +1,42 @@
 P(Doom) -- Windows
 
+READ THIS FIRST: WINDOWS WILL WARN YOU. THAT IS EXPECTED.
+
+  Windows SmartScreen shows a blue box saying "Windows protected your PC"
+  and "Windows Defender SmartScreen prevented an unrecognised app from
+  starting", and it may name an "Unknown publisher" / "untrusted publisher".
+
+  To run the game:
+      1. Click "More info" (small link under the message text).
+      2. Click "Run anyway" (the button that then appears).
+
+  Why it happens: this build is UNSIGNED. Signing an executable means buying
+  a code-signing certificate from a certificate authority; P(Doom) is an
+  alpha made by one person and has not bought one yet. SmartScreen warns
+  about every unsigned program it has not seen many times before, so the
+  warning says "we cannot check who made this", NOT "this is malware".
+  Nothing about the warning changes once you click through -- it may appear
+  again after each new download.
+
+  MAKING SURE YOU HAVE THE REAL FILE. Since Windows cannot vouch for the
+  publisher, you should check the source instead:
+    - The ONLY trusted download is the GitHub release page:
+      https://github.com/PipFoweraker/pdoom1/releases
+      Do not run a PDoom.exe that reached you any other way.
+    - Every release publishes release_manifest.json, which lists the exact
+      size and sha256 of each zip. To check your download, run this in
+      PowerShell and compare the hash to the one in the manifest:
+          Get-FileHash -Algorithm SHA256 .\PDoom-Windows.zip
+      Matching hash = byte-for-byte the file that was published.
+
 HOW TO RUN
 1. EXTRACT this whole zip to a folder first (right-click -> Extract All).
    Do NOT run PDoom.exe from inside the zip viewer -- the game needs the
    other files sitting next to it, and the zip viewer hides them. This is
    the #1 thing that trips people up.
 2. Open the extracted folder and double-click PDoom.exe.
-3. If Windows SmartScreen says "Windows protected your PC":
-   click "More info" -> "Run anyway". The build is unsigned (alpha).
+3. Click through the SmartScreen warning as described at the top of this
+   file ("More info" -> "Run anyway").
 
 WHATS IN HERE
    PDoom.exe    the game

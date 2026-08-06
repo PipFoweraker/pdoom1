@@ -1,7 +1,28 @@
 # Leaderboard Website Integration
 
+> # [!] SUPERSEDED -- the CLI this document is built around no longer exists.
+>
+> **Audited 2026-08-04.** Every `python scripts/export_leaderboards.py ...`
+> command below is dead. That script was DELETED on 2026-08-04: it began
+> `from scripts.lib.scores.enhanced_leaderboard import leaderboard_manager` and
+> `scripts/lib/` was removed with the Python game, so the script raised
+> ImportError on the first line of real work. It had no caller in the Makefile,
+> pre-commit or any CI workflow.
+>
+> Also gone the same day: `tools/web_export/` (its `__init__.py` imported two
+> modules, `export_leaderboards` and `privacy_filter`, that were not in the
+> package -- so `import tools.web_export` always raised) and
+> `tools/integration_test_v0_10_0.py` (imported both).
+>
+> The LIVE leaderboard path is in-game GDScript: the `LeaderboardSync` autoload
+> plus `godot/scripts/ui/leaderboard_screen.gd`, publishing to the website's own
+> API. `src/scores/enhanced_leaderboard.py` referenced below is also gone (`src/`
+> was the retired Python game).
+>
+> Kept for the integration contract discussion, not as runnable instructions.
+
 **Date**: 2025-10-30
-**Status**: Export functionality implemented, ready for data generation
+**Status**: SUPERSEDED 2026-08-04 (was: "Export functionality implemented" -- the export CLI could not import)
 **Purpose**: Integrate P(Doom)1 game leaderboards with pdoom1-website
 
 ---

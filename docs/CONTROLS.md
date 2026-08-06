@@ -14,7 +14,7 @@ out at the bottom.
 | Key | Action | Description |
 |-----|--------|-------------|
 | **Space** | End Turn | Execute queued actions and advance |
-| **Enter** | Commit Plan | Commit the current plan. Deliberately does nothing while a dialog is open, so you cannot commit a turn by reflex while answering an event. |
+| **Enter** | Commit Plan & Reserve Attention | Commit the current plan and hold remaining Attention for reactive responses. Deliberately does nothing while a dialog is open, so you cannot commit a turn by reflex while answering an event. |
 | **1**-**9** | Action 1-9 | Trigger the corresponding action-bar slot, top to bottom |
 | **Z** | Undo | Undo the last queued action |
 | **C** | Clear Queue | Clear all queued actions |

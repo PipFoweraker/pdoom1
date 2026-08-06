@@ -4,8 +4,15 @@ class_name DevModeOverlay
 ##
 ## Press backslash (the `dev_mode` keybind) to toggle. Left column mirrors the verbose
 ## PowerShell logs on-screen (full live game state, refreshed each turn / state change);
-## right column gives dev "pokes" to set up test situations. Gated on BuildInfo.DEV_BUILD
-## so it never ships in a clean release cut.
+## right column gives dev "pokes" to set up test situations.
+##
+## GATE (2026-08-05): BuildInfo.are_alpha_tools_available(), NOT is_dev_build(). PR #1079
+## made the DEV BUILD badge conditional on OS.is_debug_build() -- correct for the badge,
+## but this overlay hung off the same call and so vanished from release exports, which is
+## how Pip lost backslash mid-playtest on a shipped build. The badge stays gated; the
+## tools come back, protected instead by Alpha Tools (PR #1104): every mutating control
+## below sets a sticky one-way UNRANKED flag on the run. See build_info.gd for the full
+## per-feature ruling (the two recorders and the perf log deliberately stayed build-gated).
 ##
 ## Built entirely in code (no .tscn) following dev_build_badge.gd, and added at runtime via
 ## `main_ui.gd`. The readout content comes from the pure, unit-tested DevModeReadout builder;
@@ -27,6 +34,8 @@ var main_ui: Node = null
 var _root: Control = null
 var _info_vbox: VBoxContainer = null
 var _event_dropdown: OptionButton = null
+var _music_dropdown: OptionButton = null
+var _music_status: Label = null
 var _built := false
 
 
@@ -44,8 +53,9 @@ func _live_gm() -> Node:
 
 func _ready() -> void:
 	layer = OVERLAY_LAYER
-	# Gate on dev build: in a release cut this overlay builds nothing and stays inert.
-	if not BuildInfo.is_dev_build():
+	# Gate on the ALPHA TOOLS era, not on the build type (see the header note). With
+	# ALPHA_TOOLS_ERA false this overlay builds nothing and stays inert.
+	if not BuildInfo.are_alpha_tools_available():
 		visible = false
 		return
 	_build_ui()
@@ -111,7 +121,9 @@ func _build_ui() -> void:
 	title.add_theme_color_override("font_color", Color(1.0, 0.75, 0.2))
 	header.add_child(title)
 	var stamp := Label.new()
-	stamp.text = "   " + BuildInfo.get_badge_text()
+	# Always version + stamp, both build types: this overlay now opens in release builds,
+	# and "which build is this?" is the most useful thing on it in someone else's lounge.
+	stamp.text = "   " + BuildInfo.get_tools_stamp_text()
 	stamp.add_theme_font_size_override("font_size", 11)
 	stamp.add_theme_color_override("font_color", Color(0.7, 0.7, 0.7))
 	stamp.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -124,7 +136,9 @@ func _build_ui() -> void:
 	header.add_child(close_btn)
 
 	var hint := Label.new()
-	hint.text = "Backslash toggles - dev build only - not shipped in release"
+	# Was "dev build only - not shipped in release". That is no longer true and must not
+	# keep saying so: the overlay ships, and the leaderboard flag is what protects the board.
+	hint.text = "Backslash toggles - alpha build tool - will not exist in the finished game"
 	hint.add_theme_font_size_override("font_size", 10)
 	hint.add_theme_color_override("font_color", Color(0.55, 0.55, 0.6))
 	outer.add_child(hint)
@@ -203,7 +217,100 @@ func _build_controls() -> Control:
 	ev_note.add_theme_color_override("font_color", Color(0.55, 0.55, 0.6))
 	col.add_child(ev_note)
 
+	col.add_child(HSeparator.new())
+	col.add_child(_build_music_section())
+
 	return col
+
+
+## MUSIC -- Pip 2026-08-05, now that a musician is interested in the game: the point is
+## not "listen to the soundtrack" (tools/music/jukebox.html already does that) but
+## AUDITION a track against the live game state it plays under -- the one thing a
+## collaborator cannot currently do.
+##
+## NOT an Alpha Tool: nothing here calls _mark_alpha_tool_use(). Playing a different
+## track writes nothing to GameState, the seeded RNG or scoring (music is a pure
+## view-layer side-effect, ADR-0006), so unranking a run for it would be a lie about
+## what happened. Contrast "+$10k Money", two sections up, which does mark.
+func _build_music_section() -> Control:
+	var box := VBoxContainer.new()
+	box.add_child(_section_label("MUSIC (audition -- stays ranked)"))
+
+	_music_status = Label.new()
+	_music_status.text = "-"
+	_music_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_music_status.custom_minimum_size = Vector2(240, 0)
+	_music_status.add_theme_font_size_override("font_size", 10)
+	_music_status.add_theme_color_override("font_color", Color(0.55, 0.85, 1.0))
+	box.add_child(_music_status)
+
+	_music_dropdown = OptionButton.new()
+	_music_dropdown.focus_mode = Control.FOCUS_NONE
+	_music_dropdown.custom_minimum_size = Vector2(240, 0)
+	_populate_music_dropdown()
+	box.add_child(_music_dropdown)
+
+	box.add_child(_action_button("Play selected", _play_selected_music))
+	box.add_child(_action_button("Release -> AUTO (follow doom)", _release_music_override))
+
+	var note := Label.new()
+	note.text = "Tiers hold against live doom. Override releases itself at every run boundary."
+	note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	note.custom_minimum_size = Vector2(240, 0)
+	note.add_theme_font_size_override("font_size", 9)
+	note.add_theme_color_override("font_color", Color(0.55, 0.55, 0.6))
+	box.add_child(note)
+	return box
+
+
+func _populate_music_dropdown() -> void:
+	if _music_dropdown == null or not is_instance_valid(MusicManager):
+		return
+	_music_dropdown.clear()
+	for entry in MusicManager.audition_catalogue():
+		_music_dropdown.add_item(str(entry["label"]))
+		_music_dropdown.set_item_metadata(_music_dropdown.item_count - 1, entry)
+
+
+func _selected_music_entry() -> Dictionary:
+	if _music_dropdown == null or _music_dropdown.item_count == 0:
+		return {}
+	var idx := _music_dropdown.selected
+	if idx < 0:
+		idx = 0
+	var meta = _music_dropdown.get_item_metadata(idx)
+	return meta if meta is Dictionary else {}
+
+
+## A tier entry HOLDS that tier open against live doom (the audition case). A standalone
+## bed (menu/victory/defeat) is played directly, which drops out of the adaptive stream --
+## "Release -> AUTO" restarts it.
+func _play_selected_music() -> void:
+	var entry := _selected_music_entry()
+	if entry.is_empty() or not is_instance_valid(MusicManager):
+		return
+	if str(entry.get("kind", "")) == "tier":
+		MusicManager.set_tier_override(int(entry.get("tier", 0)))
+	else:
+		MusicManager.play_track(str(entry.get("path", "")))
+	_refresh_music_status()
+
+
+func _release_music_override() -> void:
+	if not is_instance_valid(MusicManager):
+		return
+	MusicManager.clear_tier_override()
+	# A standalone bed replaced the adaptive stream entirely; re-entering the current
+	# context is what brings the doom-driven score back.
+	if not MusicManager.is_adaptive_active():
+		MusicManager.play_context(MusicManager.current_context)
+	_refresh_music_status()
+
+
+func _refresh_music_status() -> void:
+	if _music_status == null or not is_instance_valid(MusicManager):
+		return
+	_music_status.text = MusicManager.audition_status_line()
 
 
 func _section_label(text: String) -> Label:
@@ -253,6 +360,9 @@ func _populate_event_dropdown() -> void:
 # --- Rendering -------------------------------------------------------------
 
 func _render() -> void:
+	# Music status tracks doom, so refresh it on every state update -- and BEFORE the
+	# info-vbox guard, so it still updates in the unit tests that stub only the vbox.
+	_refresh_music_status()
 	if _info_vbox == null:
 		return
 	for c in _info_vbox.get_children():

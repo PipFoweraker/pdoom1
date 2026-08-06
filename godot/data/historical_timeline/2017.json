@@ -105,7 +105,7 @@
         },
         {
           "id": "organize_reading_group",
-          "text": "Organize safety reading group (costs 2 AP)",
+          "text": "Organize safety reading group",
           "costs": {"attention": 2, "money": 3000},
           "effects": {"research": 20, "safety_absorption": 20, "reputation": 5}
         },
@@ -145,7 +145,7 @@
         },
         {
           "id": "integrate_principles",
-          "text": "Integrate principles into lab policy (costs 2 AP, $10k)",
+          "text": "Integrate principles into lab policy",
           "costs": {"attention": 2, "money": 10000},
           "effects": {"reputation": 15, "safety_absorption": 20}
         },

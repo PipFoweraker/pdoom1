@@ -1,0 +1,50 @@
+P(DOOM)1 JAM -- PRINT SHEETS -- 2026-08-05
+Print 2 copies (one for the table, one spare).
+
+==================================================================
+SHEET 1 -- THE SCORE CHEAT SHEET
+==================================================================
+KEYS AND TEMPO (the line that matters):
+  M0-M2  ->  key of C        at 104 BPM
+  M3-M4  ->  key of D dorian at  96 BPM
+
+THE DOOM LADDER (play in this order):
+  M0  checkpoint_saved            calm / cosy      (the safe lab)
+  M1  distribution_shift          uneasy           (something is off)
+  M2  proxy_gaming                spooky           (being crept up on)
+  M3  mesa_optimizer              eldritch         (it is inside)
+  M4  treacherous_turn            terminal         (the end)
+  defeat:  out_of_distribution_trudge   (the dirge)
+  victory: the_off_switch_worked        (quiet dawn)
+
+Singer: your voice decays with the world -- warm and wordful at M0,
+wordless and wrong by M4. No wrong answers.
+DJ: beds are real composition, placeholder timbre. USB has WAVs
+(m0-m4) and the full .ogg set. Take them home.
+
+==================================================================
+SHEET 2 -- HEADLINES (read in persona: newsreader / corporate PR /
+lab answering machine. One take. Silly is correct.)
+==================================================================
+  1. Funding Crisis
+  2. Talent Opportunity
+  3. AI Breakthrough!
+  4. Unexpected Funding
+  5. Compute Partnership
+  6. Employee Burnout Crisis
+  7. Rival Lab Poaching
+  8. Media Scandal
+  9. New AI Regulation Proposed
+ 10. Critical System Failure
+ 11. A Stray Cat Appears!
+ 12. Interpersonal Conflict
+ 13. ______________________________________________
+ 14. ______________________________________________
+ 15. ______________________________________________
+
+==================================================================
+SHEET 3 -- THE PREMISE (all the lore anyone needs)
+==================================================================
+You run an AI safety lab. It is 2017. You cannot win.
+You can only buy time. The music gets worse as doom rises.
+Every run ends; only the duration varies.

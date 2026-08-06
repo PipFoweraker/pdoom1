@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Blocking no-emoji / ASCII enforcement for the Godot tree (issue #744).
 
+Layer: PROVE
+
 Two rules, deliberately split (see CLAUDE.md "ASCII-only"):
 
   * godot/**/*.gd (excluding vendored addons/) and godot/data/**/*.json MUST be

@@ -63,7 +63,7 @@ func present(event: Dictionary) -> void:
 		print("[EventDialog] Event added to queue, will show after current event resolves")
 
 static func format_cost_summary(costs: Dictionary) -> String:
-	"""Compact inline cost string for event option buttons, e.g. ' ($30,000, 2 AP)' (#510).
+	"""Compact inline cost string for event option buttons, e.g. ' ($30,000, 2 Attention)' (#510).
 	Cost-display sweep (2026-07-24): a costless option (the 'decline'/'ignore'/'acknowledge'
 	free-out) now explicitly says ' (Free)' instead of showing nothing -- a blank cost read
 	as ambiguous, not obviously safe-to-pick, next to options that DO cost something."""
@@ -74,10 +74,10 @@ static func format_cost_summary(costs: Dictionary) -> String:
 			continue  # a zero/negative-cost entry is not a real cost -- don't clutter the face
 		if resource == "money":
 			parts.append(GameConfig.format_money(amount))
-		elif resource == "attention":
-			parts.append("%d Attention" % int(amount))
 		else:
-			parts.append("%d %s" % [int(amount), str(resource).capitalize()])
+			parts.append("%s %s" % [
+				GameConfig.format_resource_amount(str(resource), amount),
+				GameConfig.format_resource_name(str(resource))])
 	if parts.is_empty():
 		return " (Free)"
 	return " (%s)" % ", ".join(parts)
@@ -299,25 +299,34 @@ func _show_next_event() -> void:
 
 			if available < cost:
 				can_afford = false
-				if resource == "attention":
-					missing_resources.append("Attention (need %s, have %s available)" % [cost, available])
+				# #1087: `cost`/`available` are Variants straight off the state dict --
+				# "%s" printed them as raw floats. Route through the format policy.
+				var res_key := str(resource)
+				if res_key == "attention":
+					missing_resources.append("Attention (need %s, have %s available)" % [
+						GameConfig.format_scalar(float(cost)), GameConfig.format_scalar(float(available))])
 				else:
-					missing_resources.append("%s (need %s, have %s)" % [resource, cost, available])
+					missing_resources.append("%s (need %s, have %s)" % [
+						GameConfig.format_resource_name(res_key),
+						GameConfig.format_resource_amount(res_key, cost),
+						GameConfig.format_resource_amount(res_key, available)])
 
 		# Add tooltip with costs/effects
+		# #1087: these two loops used to dump the raw cost/effect dicts
+		# ("  money: 3000.0"), leaking an internal key AND a float into a
+		# player-facing tooltip. Both now route through the GameConfig
+		# number-format policy (docs/NUMBER_FORMATS.md).
 		var tooltip = ""
 		if not costs.is_empty():
 			tooltip += "Costs:\n"
 			for resource in costs.keys():
-				tooltip += "  %s: %s\n" % [resource, costs[resource]]
+				tooltip += "  %s\n" % GameConfig.format_resource(str(resource), costs[resource])
 
 		var effects = option.get("effects", {})
 		if not effects.is_empty():
 			tooltip += "\nEffects:\n"
 			for resource in effects.keys():
-				var value = effects[resource]
-				var value_sign = "+" if value >= 0 else ""  # Renamed from 'sign' to avoid shadowing built-in function
-				tooltip += "  %s: %s%s\n" % [resource, value_sign, value]
+				tooltip += "  %s\n" % GameConfig.format_resource_delta(str(resource), effects[resource])
 
 		if not can_afford:
 			tooltip += "\n[CANNOT AFFORD]\n"

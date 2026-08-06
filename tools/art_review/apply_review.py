@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """apply_review.py -- wire art-review verdicts into the P(Doom)1 asset pipeline.
 
+Layer: SWEEP -- the report subcommand finds rot and never deletes; apply is opt-in
+
 The review app writes a verdict-state file (default
 ``tools/art_review/review_state.json``) keyed by asset_id:
 
@@ -10,6 +12,12 @@ The review app writes a verdict-state file (default
         <art-root>/art_source/<relpath>  (relpath may point at a single PNG, a
         rotation directory of PNGs, or -- the review app's usual form -- a PNG
         path WITHOUT its .png extension; the resolver tries all of these)
+    file:<relpath-from-art-root>         build_full_gallery.py's additive
+        scheme for files no other scheme expresses (webp scene art, PNGs with
+        off-grid size stems, loose files outside a v1/ dir). Single file,
+        extension included; category derives from the path (art_generated/
+        <category>/... -> GEN_DEST, art_source/<batch>/... -> px derivation);
+        the destination filename is kept VERBATIM.
 
 Each value is ``{verdict, note, tags, updated_at}`` with verdict in
 {keep, iterate, discard} (the review app's v2 tri-state). Legacy files still
@@ -87,6 +95,19 @@ class Hold:
         self.reason = reason
 
 
+# The 2026-08 endgame art-direction exploration series is ONE lineage
+# (endgame_concepts -> gen2 -> crispness/treatment sweeps -> subject/people/
+# ladder probes): 1536x1024 opaque direction STUDIES, ~1.4MB each, most over
+# the git cap. They are Library reference material, not game-ready
+# derivatives (ADR-0019); the eventual production endgame batch promotes,
+# the studies never do. One shared Hold so the report rolls them up together.
+_ENDGAME_STUDY_HOLD = Hold(
+    "endgame art-direction study series (1536x1024 concept sweeps/probes/"
+    "ladder controls, tools/assets/manifests/endgame_concepts*.json lineage): "
+    "Library reference per ADR-0019, not game-ready derivatives -- promote "
+    "the eventual production endgame batch, never the studies"
+)
+
 GEN_DEST = {
     "game_icons": "godot/assets/icons/generated",
     "ui_icons": "godot/assets/icons/generated",
@@ -103,11 +124,29 @@ GEN_DEST = {
     "round3_rerolls_banners": "godot/assets/images/heroes",
     "screen_backgrounds": "godot/assets/images/backgrounds",
     "env_scenes": "godot/assets/images/scenes",
-    "scene_art_wave2": "godot/assets/images/scenes",
+    # event_* webps must land where the game's shipped event art already
+    # lives (godot/assets/images/events holds event_crisis_v1.webp etc.);
+    # routing them to images/scenes would DUPLICATE those bytes in the pack.
+    "scene_art_wave2": [
+        ("event_", "godot/assets/images/events"),
+        ("", "godot/assets/images/scenes"),
+    ],
     "terminal_textures": "godot/assets/textures/generated",
     "env_textures": "godot/assets/textures/generated",
     "crt_frame_overlay": "godot/assets/textures/generated",
     "ui_frames": "godot/assets/ui/frames",
+    "endgame_concepts": _ENDGAME_STUDY_HOLD,
+    "endgame_concepts_gen2": _ENDGAME_STUDY_HOLD,
+    "crisp_sweep": _ENDGAME_STUDY_HOLD,
+    "treatment_sweep": _ENDGAME_STUDY_HOLD,
+    "new_subjects": _ENDGAME_STUDY_HOLD,
+    "wanasai_calls": _ENDGAME_STUDY_HOLD,
+    "doomfield_ladder": _ENDGAME_STUDY_HOLD,
+    "people_policy": _ENDGAME_STUDY_HOLD,
+    # session recordings (mp4/mp3/transcripts + extracted frames) that live
+    # under art_generated/ on Pip's machine; the full gallery walks them, so
+    # they need an explicit mapping outcome. Never art, never packed.
+    "audiodump": Hold("session recordings and extracted video frames, not art"),
 }
 PX_DEST = {
     "props": "godot/assets/office_floor/props",
@@ -118,19 +157,54 @@ PX_DEST = {
     "cats": "godot/assets/cats/generated",
     "icons": "godot/assets/icons/generated",
     "backgrounds": "godot/assets/images/backgrounds",
+    # doom-generation particle/animation overlay sprites (64x64 RGBA idle +
+    # loop frames; art_source/pixellab_2026-07-26_doom_overlays/MANIFEST.md).
+    # Game-scale derivatives for the in-engine sprite-overlay candidate of
+    # docs/art/DOOM_OVERLAY.md ("doom is a layer, not a repaint"); the whole
+    # kept set is ~0.3MB. If the renderer lane rules for the shader pass
+    # instead, flip this to a Hold -- one line.
+    "doom_overlays": "godot/assets/effects/doom_overlays",
+    # seed-vignette stand-in heroes (docs/game-design/SEED_VIGNETTE_SPECS.md),
+    # already downscaled under the git cap; masters are archived per
+    # ART_MASTERS_POLICY (art_source/vignettes_2026-07-28/MANIFEST.md).
+    "vignettes": "godot/assets/images/vignettes",
     "icon_hires": Hold(
         "hi-res icon source variants (issue #787 bloat class): the game references "
         "sized icons already in godot/assets/icons; re-importing ~318 files (~52MB) "
         "needs Pip's explicit ruling"
     ),
+    "px_masters": Hold(
+        "2x large_source provenance masters: the kept game art is the "
+        "LANCZOS-downscaled native/ file (prop_rebase MANIFEST.md); a master "
+        "crossing into godot/ unchanged is a defect per ADR-0019"
+    ),
+    "px_probes": Hold(
+        "experiment/evidence probe batches (grain vanguard dial + "
+        "manifest-scale controls, size probes): their verdicts were executed "
+        "by the 2026-07-27 prop re-base regeneration; Library evidence, "
+        "not game art"
+    ),
+    "legacy_dump": Hold(
+        "October 2025 website/prototype dump (css, shaders, 2400w web hero): "
+        "pre-Godot reference material, never pack fodder"
+    ),
 }
 # first-path-segment overrides: batch dirs whose names would fool the token
-# scan (e.g. iconset_2026-07-21's gen_cat_doom_* must NOT land in cats/).
+# scan (e.g. iconset_2026-07-21's gen_cat_doom_* must NOT land in cats/, and
+# vignettes_2026-07-28's 01_cat-in-the-alley must NOT land in cats/ either).
 PX_PREFIX_CATEGORY = {
     "icon_hires": "icon_hires",
     "iconset_2026-07-21": "icons",
     "settings_bg_2026-07-21": "backgrounds",
     "cats_incoming": "cats",
+    "pixellab_2026-07-26_doom_overlays": "doom_overlays",
+    "pixellab_2026-07-26_prop_grain_vanguard": "px_probes",
+    "pixellab_2026-07-26_size_probe": "px_probes",
+    "pixellab_2026-07-26_worker_rebase": "characters",
+    "pixellab_2026-07-27_t6_worker_diagonals": "characters",
+    "pixellab_2026-07-27_worker_round2": "characters",
+    "vignettes_2026-07-28": "vignettes",
+    "dump_october_31_2025": "legacy_dump",
 }
 # relpath segment -> category (any segment, first match in path order).
 PX_TOKEN_CATEGORY = {
@@ -146,9 +220,17 @@ PX_TOKEN_CATEGORY = {
     "tilesets": "tilesets",
     "cats": "cats",
     "icons": "icons",
+    # 2x generate-large-then-downscale provenance dirs (prop_rebase and any
+    # future batch following the same convention) -- held, never promoted.
+    "large_source": "px_masters",
 }
-# batch dirs whose ROOT-level loose files are character style probes.
-PX_BATCH_DEFAULT_CATEGORY = {"pixellab_2026-07-16": "characters"}
+# batch dirs whose ROOT-level loose files are character style probes, plus
+# batches whose file names carry no routable token at all (prop_rebase
+# native/ files are bare prop names: desk_decent_r1.png).
+PX_BATCH_DEFAULT_CATEGORY = {
+    "pixellab_2026-07-16": "characters",
+    "pixellab_2026-07-27_prop_rebase": "props",
+}
 
 # git art cap: pre-commit check-added-large-files runs with --maxkb=1000 and
 # docs/art/ART_MASTERS_POLICY.md forbids >1MB art in git. Anything bigger can
@@ -210,8 +292,11 @@ class Asset:
             self.kind = "px"
             self.pipeline = "pixellab"
             self._parse_px()
+        elif self.id.startswith("file:"):
+            self.kind = "file"
+            self._parse_file()
         else:
-            self.error = "unrecognised asset_id prefix (expected gen: or px:)"
+            self.error = "unrecognised asset_id prefix (expected gen:, px: or file:)"
 
     def _parse_gen(self):
         # gen:<category>:<base_id>:<variant>  -- base_id may itself contain no
@@ -264,7 +349,7 @@ class Asset:
                 return
         else:
             self.sources = [target]
-        self.category = _px_category(self.relpath)
+        self.category = _px_category(_strip_art_source(self.relpath))
         # promote copies every under-cap source PNG for px (rotation sets stay
         # together); promote_file holds the first for reporting convenience.
         self.best_file = self.sources[0]
@@ -272,14 +357,30 @@ class Asset:
         self.promote_file = fits[0] if fits else None
         self.size_capped = bool(fits) and len(fits) != len(self.sources)
 
+    def _parse_file(self):
+        # file:<relpath-from-art-root> -- build_full_gallery.py's ADDITIVE id
+        # scheme for files no other scheme can express (webp scene art, PNGs
+        # whose size stem is outside the gallery's KNOWN_SIZES, loose files
+        # outside a v1/ dir). Always a single file, never a rotation dir.
+        self.relpath = self.id[len("file:") :]
+        self.pipeline = _FILE_PIPELINE.get(Path(self.relpath).as_posix().split("/")[0])
+        self.category, self.base_id = _file_category(self.relpath)
+        target = self.art_root / self.relpath
+        if not target.is_file():
+            self.error = f"no file at {target}"
+            return
+        self.sources = [target]
+        self.best_file = target
+        fits = target.stat().st_size <= MAX_PROMOTE_BYTES
+        self.promote_file = target if fits else None
+        self.size_capped = False
+
     # -- destination mapping for a promote --
     def dest_rule(self):
-        """Raw mapping outcome: a destination str, a Hold, or None (unmapped)."""
-        if self.kind == "gen":
-            return _gen_dest_rel(self.category, self.base_id)
-        if self.kind == "px":
-            return PX_DEST.get(self.category) if self.category else None
-        return None
+        """Raw mapping outcome: a destination str, a Hold, or None (unmapped).
+        Delegates to dest_rule_for_id so the report gate, the gallery
+        preflight and the coverage tests share ONE mapping logic."""
+        return dest_rule_for_id(self.id)
 
     def dest_dir(self):
         rel = self.dest_rule()
@@ -287,8 +388,9 @@ class Asset:
 
     def promote_sources(self):
         """Source files promote would copy: all under-cap PNGs for px, the
-        largest under-cap size for gen. Empty if nothing fits the git cap."""
-        if self.kind == "gen":
+        largest under-cap size for gen, the single file for file:. Empty if
+        nothing fits the git cap."""
+        if self.kind in ("gen", "file"):
             return [self.promote_file] if self.promote_file else []
         return [s for s in self.sources if s.stat().st_size <= MAX_PROMOTE_BYTES]
 
@@ -306,7 +408,10 @@ class Asset:
             return ("blocked-unresolved", self.error)
         rule = self.dest_rule()
         if rule is None:
-            return ("blocked-unmapped", f"no destination for category {self.category!r}")
+            # Name the BATCH DIRECTORY that needs the mapping, not just the
+            # category -- the fix (one GEN_DEST/PX_DEST line) must be obvious
+            # from the report alone (#1093 recurrence, 2026-08-04).
+            return ("blocked-unmapped", _unmapped_hint(self))
         if isinstance(rule, Hold):
             return ("held", rule.reason)
         if not self.promote_sources():
@@ -336,6 +441,13 @@ class Asset:
         packed-but-unreferenced, exactly the class ADR-0019 exists to end; they
         stay until the demand manifest can rule on them (see #1109).
         """
+        # file: ids ship their filename VERBATIM -- variants like
+        # event_crisis_v1.webp / event_crisis_v4.webp are distinct kept assets
+        # with no in-game plain-name convention to preserve, and verbatim
+        # names cannot collide with each other. (A same-name collision across
+        # subdirs would still surface as contested -- loud, never silent.)
+        if self.kind == "file":
+            return src.name
         # generated: strip the _<variant> suffix for a clean game path
         # (matches promote_assets.py convention: art id vN -> base name).
         if self.kind == "gen":
@@ -365,7 +477,7 @@ class Asset:
         # existing per-set dirs under godot/assets/office_floor/.
         parts = [
             seg
-            for seg in Path(self.relpath).as_posix().split("/")[1:]
+            for seg in _strip_art_source(self.relpath).split("/")[1:]
             if PX_TOKEN_CATEGORY.get(seg) != self.category
         ]
         if not self._target_is_dir and parts:
@@ -430,6 +542,89 @@ def _gen_dest_rel(category, base_id):
         if (base_id or "").startswith(prefix):
             return dest
     return None
+
+
+def _strip_art_source(relpath):
+    """px relpaths come in two spellings: relative to art_source/ (natural)
+    and relative to the art root. Category derivation must see the batch dir
+    as the FIRST segment either way."""
+    rel = Path(relpath).as_posix()
+    return rel[len("art_source/") :] if rel.startswith("art_source/") else rel
+
+
+# top-level dir of a file:<relpath> id -> reroll pipeline.
+_FILE_PIPELINE = {"art_generated": "gpt", "art_source": "pixellab"}
+
+
+def _file_category(relpath):
+    """(category, base_stem) for a file:<relpath-from-art-root> id.
+    art_generated/<category>/... reuses the GEN_DEST category (base_stem
+    feeds prefix-list routing); art_source/... reuses the px derivation."""
+    parts = Path(relpath).as_posix().split("/")
+    stem = Path(parts[-1]).stem
+    if parts[0] == "art_generated" and len(parts) >= 3:
+        return parts[1], stem
+    if parts[0] == "art_source" and len(parts) >= 3:
+        return _px_category("/".join(parts[1:])), stem
+    return None, stem
+
+
+def dest_rule_for_id(asset_id):
+    """Mapping outcome for an asset id WITHOUT touching the disk: a
+    destination str, a Hold, or None (unmapped).
+
+    This is the ONE mapping-coverage predicate, shared by the report's
+    promotion gate (Asset.dest_rule), build_full_gallery.py's preflight
+    (refuse to index a batch whose ids cannot map), and
+    tests/test_art_promotion_pipeline.py's review_state.json sweep. Keeping
+    it disk-free is what lets CI enforce it on the tracked state file even
+    though art_generated/ only exists on Pip's machine."""
+    if asset_id.startswith("gen:"):
+        parts = asset_id.split(":")
+        if len(parts) < 4:
+            return None
+        return _gen_dest_rel(parts[1], ":".join(parts[2:-1]))
+    if asset_id.startswith("px:"):
+        cat = _px_category(_strip_art_source(asset_id[len("px:") :]))
+        return PX_DEST.get(cat) if cat else None
+    if asset_id.startswith("file:"):
+        rel = asset_id[len("file:") :]
+        cat, stem = _file_category(rel)
+        if cat is None:
+            return None
+        if Path(rel).as_posix().split("/")[0] == "art_generated":
+            return _gen_dest_rel(cat, stem)
+        return PX_DEST.get(cat)
+    return None
+
+
+def _unmapped_hint(asset):
+    """Actionable blocked-unmapped detail: the batch dir that needs a
+    mapping and the exact structure to touch in THIS file."""
+    if asset.kind == "gen":
+        return (
+            f"art_generated/{asset.category} -- add GEN_DEST[{asset.category!r}] "
+            "(a godot/assets/... destination or Hold(reason))"
+        )
+    if asset.kind in ("px", "file") and asset.relpath:
+        rel = Path(asset.relpath).as_posix()
+        if asset.kind == "file" and rel.split("/")[0] == "art_generated":
+            cat = rel.split("/")[1] if len(rel.split("/")) > 1 else "?"
+            return (
+                f"art_generated/{cat} -- add GEN_DEST[{cat!r}] "
+                "(a godot/assets/... destination or Hold(reason))"
+            )
+        batch = _strip_art_source(rel).split("/")[0]
+        if asset.category:
+            return (
+                f"art_source/{batch} -- category {asset.category!r} has no "
+                f"PX_DEST entry (add a godot/assets/... destination or Hold(reason))"
+            )
+        return (
+            f"art_source/{batch} -- no category resolves; add "
+            f"PX_PREFIX_CATEGORY[{batch!r}] plus a PX_DEST destination or Hold(reason)"
+        )
+    return f"no destination for category {asset.category!r}"
 
 
 def _fmt_rule(rule):
@@ -823,6 +1018,10 @@ def action_reroll(assets, prompt_index, art_root, dry_run):
             manifest["gpt"].append(entry)
         elif a.kind == "px":
             manifest["pixellab"].append(entry)
+        elif a.kind == "file" and a.pipeline in ("gpt", "pixellab"):
+            # file: ids carry their pipeline in the top-level dir
+            # (art_generated -> gpt, art_source -> pixellab).
+            manifest[a.pipeline].append(entry)
         else:
             entry["error"] = a.error or "unparseable id"
             manifest.setdefault("unknown", []).append(entry)
@@ -866,7 +1065,9 @@ def build_parser():
         "  gen:<category>:<base_id>:<variant>  -> art_generated/<category>/v1/"
         "<base_id>_<variant>_<size>.png\n"
         "  px:<relpath>                        -> art_source/<relpath> (file, "
-        "rotation dir, or extensionless PNG path)\n\n"
+        "rotation dir, or extensionless PNG path)\n"
+        "  file:<relpath-from-art-root>        -> single file, extension "
+        "included (the full gallery's additive scheme)\n\n"
         "exit codes: nonzero from report/promote when any KEEP asset is blocked\n"
         "(unmapped category / unresolvable source / nothing under the 1MB cap).\n"
         "Explicit Hold (not-for-promotion) entries are reported but do not fail.\n\n"

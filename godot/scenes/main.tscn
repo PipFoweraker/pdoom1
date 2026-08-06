@@ -93,7 +93,7 @@ modulate = Color(0.4, 0.4, 0.5, 1)
 
 [node name="TurnLabel" type="Label" parent="TabManager/MainUI/TopBar"]
 layout_mode = 2
-text = "Week 1 | Mon Jul 3, 2017 | Day 1/5"
+text = "Turn 1 - Wed 5 Jul 2017"
 theme_override_font_sizes/font_size = 18
 theme_override_colors/font_color = Color(1, 0.72, 0.2, 1)
 theme_override_styles/normal = SubResource("StyleBoxFlat_TurnCounter")
@@ -173,7 +173,7 @@ modulate = Color(0.4, 0.4, 0.5, 1)
 layout_mode = 2
 bbcode_enabled = true
 text = "--"
-tooltip_text = "Action Points. Limits actions per turn. Base 3 + 0.5 per staff."
+tooltip_text = "Attention -- the founder's month. Planning hours queue strategic work; operating hours pay response windows, hiring and travel. Staff work their own lanes and never add to this."
 fit_content = false
 custom_minimum_size = Vector2(300, 0)
 scroll_active = false
@@ -266,13 +266,13 @@ layout_mode = 2
 
 [node name="ExplanationLabel" type="Label" parent="TabManager/MainUI/ContentArea/InstrumentColumn/CoreZone/RightZones/DoomExplanation"]
 layout_mode = 2
-text = "Buy time · survival is the score | Lose: P(Doom) = 100%"
+text = "Buy time -- survival is the score | Lose: P(Doom) = 100%"
 horizontal_alignment = 1
 theme_override_font_sizes/font_size = 10
 theme_override_colors/font_color = Color(0.6, 0.7, 0.6, 0.8)
 tooltip_text = "P(Doom) = Probability of catastrophic AI outcome.
-Win by solving alignment (0%) or finishing below the league baseline.
-Lose if doom reaches 100% or you finish above baseline."
+There is no victory condition. Your score is the number of months you survive.
+The run ends when doom reaches 100%, or when your reputation collapses to zero."
 
 [node name="EmployeeRosterZone" type="VBoxContainer" parent="TabManager/MainUI/ContentArea/InstrumentColumn"]
 layout_mode = 2
@@ -371,7 +371,7 @@ theme_override_font_sizes/font_size = 12
 [node name="EndTurnButton" type="Button" parent="TabManager/MainUI/BottomBar/ControlButtons"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "END TURN (Space)"
+text = "COMMIT THE MONTH >"
 tooltip_text = "Commit the queued plan and advance the month. Warns if you have unspent Attention."
 disabled = true
 theme_override_font_sizes/font_size = 16
@@ -381,7 +381,7 @@ theme_override_colors/font_disabled_color = Color(0.4, 0.4, 0.4, 1)
 [node name="CommitPlanButton" type="Button" parent="TabManager/MainUI/BottomBar/ControlButtons"]
 layout_mode = 2
 text = "Plan (Enter)"
-tooltip_text = "Execute queued actions immediately without warnings. Use when you've planned your turn."
+tooltip_text = "Commit the month immediately, with no warnings, and RESERVE all your remaining Attention. Use only when the plan is finished."
 disabled = true
 theme_override_font_sizes/font_size = 12
 

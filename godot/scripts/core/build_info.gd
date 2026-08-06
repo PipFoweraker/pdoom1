@@ -19,6 +19,13 @@ class_name BuildInfo
 ## to force the indicators off even in a dev checkout.
 const DEV_BUILD := true
 
+## Alpha-tools era switch (#1079 fallout, ruled 2026-08-05). While this is true the ALPHA
+## TOOLS overlay (backslash) is reachable in an EXPORTED RELEASE build too -- see
+## are_alpha_tools_available() below for the full reasoning. Flip false at 1.0, when the
+## tools stop being a promise the name already makes ("alpha" says they do not survive to
+## the finished game).
+const ALPHA_TOOLS_ERA := true
+
 ## res:// text file written by tools/write_build_stamp.py. Not a Godot resource, so
 ## it produces no .import churn; read via FileAccess.
 const STAMP_PATH := "res://build_stamp.txt"
@@ -49,8 +56,22 @@ static func get_commit() -> String:
 static func get_build_date() -> String:
 	return String(_read_stamp().get("date", ""))
 
-## True while this run should show the DEV BUILD indicators (badge, dev overlay,
-## flight recorder, perf log -- everything that gates on this function).
+## Test hook: null => follow OS.is_debug_build(); true/false => forced. Exists so the
+## GATE SPLIT below can be asserted under simulated RELEASE conditions -- a headless GUT
+## run is always a debug run, so without this hook the release branch of every gate is
+## untestable and can only be discovered at a friend's house (2026-08-05).
+static var _debug_run_override = null
+
+
+## True when this process is a debug run (editor or debug-template export).
+static func is_debug_run() -> bool:
+	if _debug_run_override != null:
+		return bool(_debug_run_override)
+	return OS.is_debug_build()
+
+
+## True while this run should show the BUILD-GATED dev features: the DEV BUILD badge,
+## the flight recorder (F6), the UI evolution recorder (F7) and the perf log.
 ##
 ## Discriminator: OS.is_debug_build() (same signal as OS.has_feature("debug")) is
 ## true in the editor AND in a debug-template export, and false ONLY in a
@@ -59,8 +80,42 @@ static func get_build_date() -> String:
 ## debug build, which would misclassify tester debug exports as public releases.
 ## Before this gate existed the const above shipped as-is, so the public v0.13.2
 ## release showed the amber DEV BUILD banner on every screen (issue #1067).
+##
+## NOTE (2026-08-05): this is NO LONGER the gate for the ALPHA TOOLS overlay. See
+## are_alpha_tools_available().
 static func is_dev_build() -> bool:
-	return DEV_BUILD and OS.is_debug_build()
+	return DEV_BUILD and is_debug_run()
+
+
+## THE GATE SPLIT (2026-08-05). PR #1079 correctly stopped a public release wearing the
+## amber DEV BUILD banner -- but the overlay, both recorders and the perf log all hung off
+## the SAME is_dev_build(), so they silently switched off in release exports as a side
+## effect. Pip lost backslash mid-playtest on a shipped build ("I wasn't able to bump
+## doom"). That consequence was flagged when #1079 merged and never ruled on; this is the
+## ruling.
+##
+## Which side each feature landed on, and why:
+##   BADGE            -> is_dev_build().             A release must not look like a dev cut.
+##   ALPHA TOOLS      -> are_alpha_tools_available(). Reachable in release.
+##   FLIGHT RECORDER  -> is_dev_build().             Writes a SCREENSHOT + the full
+##                       GameState JSON to the player's disk. Explicit F6, yes, but the
+##                       artefact is a picture of someone's screen; nobody asked for it in
+##                       a shipped build. Privacy posture, not convenience.
+##   UI EVOLUTION REC -> is_dev_build().             Same, and it is a SILENT screenshot
+##                       (no popup, no confirmation). Strictly worse than F6 to ship.
+##   PERF LOG         -> is_dev_build().             Writes user://logs/perf.log
+##                       continuously, unprompted, rotating at 5MB. The textbook
+##                       "invisible recorder on a player's disk". Stays off.
+##
+## Why the overlay is safe to un-gate and the recorders are not: PR #1104's Alpha Tools
+## made every state-MUTATING dev power set a STICKY, ONE-WAY unranked flag on the run,
+## carried through the save envelope, warned at first use and again at game over
+## (docs/decision-cards/2026-08-01_dev-powers-nomenclature.html). That system exists
+## PRECISELY so dev powers can ship without polluting the board -- so build-gating the
+## overlay is now both redundant and in tension with that ruling. The recorders have no
+## such protection because their risk is not the leaderboard, it is the disk.
+static func are_alpha_tools_available() -> bool:
+	return DEV_BUILD and ALPHA_TOOLS_ERA
 
 # --- Live git identity (L1 follow-up: the stamp went stale and cost a playtest) --------
 #
@@ -149,3 +204,10 @@ static func get_dev_badge_text() -> String:
 ## build are you running?") without the scary label or the git plumbing.
 static func get_release_badge_text() -> String:
 	return "v%s" % GameConfig.CURRENT_VERSION
+
+## Build identity for the ALPHA TOOLS overlay header. Unlike get_badge_text() this does
+## NOT change shape by build type: the overlay now opens in release builds too, and
+## "which build is this?" is the single most useful thing on it when Pip is standing in
+## someone else's lounge room. Always version + stamp.
+static func get_tools_stamp_text() -> String:
+	return "v%s  -  %s" % [GameConfig.CURRENT_VERSION, get_stamp()]
