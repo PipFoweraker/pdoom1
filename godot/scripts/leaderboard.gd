@@ -113,6 +113,16 @@ func add_score(entry: ScoreEntry) -> Dictionary:
 	"""
 	print("Adding score: ", entry.score, " for ", entry.player_name)
 
+	# #700: dedupe by entry_uuid, mirroring the remote endpoint (score_api.php
+	# refuses a re-POST with duplicate:true). Without this a re-add appended a
+	# duplicate row, and at the cap a duplicate could evict a distinct
+	# legitimate entry. Return the existing entry's rank; do not double-count.
+	if entry.entry_uuid != "":
+		for i in range(entries.size()):
+			if entries[i].entry_uuid == entry.entry_uuid:
+				print("Duplicate entry_uuid -- not re-adding (rank ", i + 1, ")")
+				return {"added": false, "rank": i + 1, "duplicate": true}
+
 	# Add entry
 	entries.append(entry)
 

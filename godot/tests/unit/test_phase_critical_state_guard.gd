@@ -29,10 +29,10 @@ const MUTATORS := "append|clear|erase|remove_at|insert|assign|resize|push_back|p
 # player's ability to act. Value = list of files permitted to mutate it through a
 # `state`-rooted receiver (`state.X`, `gm.state.X`, `game_manager.state.X`).
 #
-# PENDING_REMOVAL_1143: the two scripts/debug entries exist only because PR #1143 (which
-# deletes both writers) had not merged when this guard landed. The allowlist is PERMISSIVE
-# -- an entry that no longer writes is fine -- so #1143 merges green, and the entries should
-# then be deleted from this list. Do not add to that pair.
+# The scripts/debug entries this list carried on landing were a merge-order concession to
+# PR #1143 (which deletes both writers) being unmerged at the time. #1143 has since merged
+# and the writers are gone, so the entries were removed as its author instructed -- the
+# allowlist is now closed to core, and no debug/dev-overlay file may touch this state.
 const ALLOWED := {
 	"pending_events": [
 		"res://scripts/core/baseline_simulator.gd",
@@ -41,8 +41,6 @@ const ALLOWED := {
 		"res://scripts/core/replay_simulator.gd",
 		"res://scripts/core/seed_schedule.gd",
 		"res://scripts/core/turn_manager.gd",
-		"res://scripts/debug/debug_overlay.gd",      # PENDING_REMOVAL_1143
-		"res://scripts/debug/dev_mode_overlay.gd",   # PENDING_REMOVAL_1143
 	],
 	"current_phase": [
 		"res://scripts/core/game_state.gd",
@@ -72,7 +70,6 @@ const ALLOWED := {
 # closed to the one file whose emit sites were each checked against a drain path.
 const EVENT_TRIGGERED_EMITTERS := [
 	"res://scripts/game_manager.gd",
-	"res://scripts/debug/debug_overlay.gd",  # PENDING_REMOVAL_1143
 ]
 
 var _sources: Dictionary = {}  # path -> comment-stripped source

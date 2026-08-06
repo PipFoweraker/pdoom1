@@ -10,12 +10,12 @@ extends GutTest
 ## its JSON filename never collides with a real leaderboard file, and we clear()
 ## it up front. Boards are Nodes -> autofree() so nothing leaks between cases.
 ##
-## IMPORTANT BEHAVIOURAL NOTE (read before trusting the P2 test name):
-## add_score() does NOT deduplicate by entry_uuid -- it unconditionally does
-## entries.append(entry). The only entry_uuid logic is the rank-lookup loop. So the
-## real, provable invariant is rank stability of the first occurrence on re-add;
-## the "board size does not grow" half of naive idempotency is FALSE in production
-## and is asserted here as characterization (documenting the no-dedup gap).
+## BEHAVIOURAL NOTE (updated for #700): add_score() now deduplicates by
+## entry_uuid, mirroring the remote PHP endpoint (a re-POST returns
+## duplicate:true and is not double-counted). Re-adding an entry returns the
+## first occurrence's unchanged rank AND leaves the board size unchanged --
+## full idempotency, asserted below. (Before #700 the "size does not grow"
+## half was FALSE and this suite characterized the gap; that gap is closed.)
 
 const CAP := 50  # Leaderboard.max_entries default; asserted in test_cap_matches_assumption.
 
@@ -117,9 +117,11 @@ func test_property_reentry_rank_stable():
 		var res: Dictionary = lb.add_score(target)  # re-add the SAME object (same entry_uuid)
 		assert_eq(res["rank"], rank_before,
 			"re-adding an existing entry must return its unchanged first-occurrence rank")
-		# characterization of ACTUAL production behaviour: NO dedup -> board grew by 1.
-		assert_eq(lb.entries.size(), size_before + 1,
-			"documenting no-dedup: re-add appends a duplicate (board grows by 1)")
+		# #700: dedup by entry_uuid -- a re-add is refused, the board does NOT grow.
+		assert_eq(lb.entries.size(), size_before,
+			"#700 dedup: re-adding the same entry_uuid must not grow the board")
+		assert_true(res.get("duplicate", false),
+			"#700 dedup: a refused re-add reports duplicate=true (mirrors remote PHP)")
 	assert_true(checks >= 200, "expected >=200 generated inputs, got %d" % checks)
 
 # ---------------------------------------------------------------------------

@@ -103,10 +103,29 @@ func _on_customize_pressed():
 	SceneTransition.go_to("res://scenes/pregame_setup.tscn")
 
 func _input(event: InputEvent):
-	"""Handle keyboard shortcuts"""
-	if event is InputEventKey and event.pressed and not event.echo:
+	"""Handle keyboard shortcuts.
+
+	#1032: the same physical ENTER press used to fire twice -- once here, and once
+	via the GUI focus path (launch_button holds focus and activates on ui_accept).
+	increment_games_played() therefore ran twice per keyboard launch, inflating
+	games_played ~2x for keyboard players. Marking the event handled BEFORE acting
+	stops the second delivery. KP_ENTER is included because ui_accept maps it too.
+	"""
+	if event is InputEventKey and not event.echo:
+		var is_enter: bool = event.keycode == KEY_ENTER or event.keycode == KEY_KP_ENTER
+		if not event.pressed:
+			# Swallow the ENTER key-RELEASE too: BaseButton's default action mode
+			# fires on release, so an unmarked release still activates the focused
+			# Launch button even when the press was handled above. Only while the
+			# launch shortcut is live -- when Launch is disabled, ENTER falls
+			# through to normal focus behaviour untouched.
+			if is_enter and not launch_button.disabled:
+				get_viewport().set_input_as_handled()
+			return
 		if event.keycode == KEY_ESCAPE:
+			get_viewport().set_input_as_handled()
 			_on_back_pressed()
-		elif event.keycode == KEY_ENTER:
+		elif is_enter:
 			if not launch_button.disabled:
+				get_viewport().set_input_as_handled()
 				_on_launch_pressed()
