@@ -8,6 +8,10 @@ extends Control
 @onready var sfx_volume_label = $Panel/VBox/SettingsContainer/AudioSettings/SFXVolumeRow/ValueLabel
 @onready var music_volume_slider = $Panel/VBox/SettingsContainer/AudioSettings/MusicVolumeRow/Slider
 @onready var music_volume_label = $Panel/VBox/SettingsContainer/AudioSettings/MusicVolumeRow/ValueLabel
+## Player-facing track picker (Pip 2026-08-06). Self-contained component -- the pause
+## menu only has to tell it when to re-read reality. Volume already lives one row up,
+## so nothing is duplicated here.
+@onready var music_controls: MusicControls = $Panel/VBox/SettingsContainer/MusicControls
 
 func _ready():
 	print("[PauseMenu] Initializing...")
@@ -111,6 +115,10 @@ func show_pause_menu():
 	"""Show the pause menu and pause the game"""
 	print("[PauseMenu] Pausing game...")
 	update_ui_from_game_config()
+	# Doom moved while the menu was shut, so the track readout must be re-derived on
+	# every open rather than trusted from last time.
+	if music_controls != null:
+		music_controls.refresh()
 	$Panel/VBox/ButtonContainer/SaveButton.text = "Save Game"  # reset any "Saved!" feedback
 	show()
 	get_tree().paused = true
