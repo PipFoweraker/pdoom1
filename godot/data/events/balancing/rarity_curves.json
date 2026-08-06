@@ -1,6 +1,7 @@
 {
   "_description": "Probability and timing curves for event rarity tiers",
   "_note": "Historical events use year-based triggering; rarity affects behavior",
+  "_retime_2026_08": "Retimed for the #1125 ruling (one turn = one month). The historical arc 2017-2025 now spans turns 1-108: legendaries land at (year-2017)*12+7, inside the observed run band (deaths turn 14-229, best board 153). The old 52 turns/year values parked everything dated 2022+ past turn 287, where no run ever went. See docs/design/EVENT_PROMOTION_PASS.md section 1 and issues #1125 / #1111.",
   "common": {
     "base_probability": 0.12,
     "min_turn": 10,
@@ -12,7 +13,7 @@
     "base_probability": 0.06,
     "min_turn": 20,
     "cooldown_turns": 15,
-    "eligibility_window_turns": 26,
+    "eligibility_window_turns": 6,
     "trigger_mode": "probabilistic_window",
     "description": "Notable events - become eligible around historical date, then roll probability each turn within window."
   },
@@ -24,12 +25,29 @@
     "description": "Major narrative moments - always fire at their historical date. Key story beats."
   },
   "default_rarity": "common",
+  "timescale": "month_per_turn",
+  "timescales": {
+    "_description": "The timing DIAL (#1111: 'change the timing of things so that we can give people week-by-week versions of the game if they want to be punished'). EventService._resolve_timescale applies the active variant named by 'timescale' onto year_trigger and the rare eligibility window at config load. Flip the one string to rescale every turns-denominated timing value together.",
+    "_warning_week_per_turn": "week_per_turn restores the old 52 turns/year fiction pacing. Under CURRENT survival pacing (deaths turn 14-229) that makes everything dated 2022+ unreachable again (turn 287+). Do not ship it as a playable mode until the F4/F5 timing-dial pass (deferred in #1125) also rescales survival pacing.",
+    "month_per_turn": {
+      "turns_per_year": 12,
+      "legendary_month_offset": 6,
+      "rare_spread_turns": 3,
+      "rare_eligibility_window_turns": 6
+    },
+    "week_per_turn": {
+      "turns_per_year": 52,
+      "legendary_month_offset": 26,
+      "rare_spread_turns": 13,
+      "rare_eligibility_window_turns": 26
+    }
+  },
   "year_trigger": {
-    "_description": "Settings for year-based event triggering",
-    "turns_per_year": 52,
+    "_description": "Settings for year-based event triggering. These flat values equal the ACTIVE timescale variant (month_per_turn) so behavior is identical with or without the dial resolver; change the 'timescale' key, not these, to switch pacing.",
+    "turns_per_year": 12,
     "base_year": 2017,
     "base_month": 7,
-    "legendary_month_offset": 26,
-    "rare_spread_turns": 13
+    "legendary_month_offset": 6,
+    "rare_spread_turns": 3
   }
 }
