@@ -133,10 +133,17 @@ func show_game_over(is_victory: bool, final_state: Dictionary):
 	print("[GameOverScreen] Game ended - Verification hash: %s..." % final_hash.substr(0, 16))
 
 	# Set title and colors based on outcome
+	# ADR-0002: THERE IS NO VICTORY CONDITION. `GameState.victory` is initialised false and
+	# is never assigned true anywhere in the engine (check_win_lose sets it false on both
+	# death routes; test_game_state.test_check_win_lose_doom_zero_no_victory pins doom<=0 as
+	# a non-ending). This branch is therefore unreachable, but it used to headline "VICTORY!
+	# / Humanity Survived the AI Revolution" -- the third surface disagreeing with the menu's
+	# "You can't win. You can only buy time." Copy is now consistent whichever way it goes;
+	# deleting the branch outright is a code change for issue #809 to make, not a copy fix.
 	if is_victory:
-		title_label.text = "VICTORY!"
+		title_label.text = "RUN ENDED"
 		title_label.add_theme_color_override("font_color", Color(0.2, 1.0, 0.2))  # Green
-		subtitle_label.text = "Humanity Survived the AI Revolution"
+		subtitle_label.text = "You bought humanity more time"
 		subtitle_label.add_theme_color_override("font_color", Color(0.6, 1.0, 0.6))
 	else:
 		title_label.text = "DEFEAT"
@@ -225,7 +232,7 @@ func show_game_over(is_victory: bool, final_state: Dictionary):
 	# Victory/defeat flavor text
 	stats_text += "\n[center][color=gray]-------------------[/color][/center]\n"
 	if is_victory:
-		stats_text += "\n[center][color=lime]Your leadership guided humanity safely through\nthe development of transformative AI.[/color][/center]"
+		stats_text += "\n[center][color=lime]Your lab held the line for %d months.\nThat is the whole game: time bought, not a war won.[/color][/center]" % final_turns
 	else:
 		var reason = _get_defeat_reason(final_state)
 		stats_text += "\n[center][color=red]%s[/color][/center]" % reason
