@@ -22,6 +22,28 @@ extends VBoxContainer
 ## audio panel unchanged -- the UI architecture pass (docs/design/UI_ARCHITECTURE_2026-08-06.md)
 ## wants components, not more lines in main_ui.gd.
 
+## TYPE SCALE -- must stay in step with pause_menu.tscn (Pip 2026-08-06: "things feel a
+## bit cramped ... the text could be larger and friendlier"). These four numbers are the
+## component's half of ONE scale that is authored across two files, so they are named
+## rather than buried in _build(), and test_music_player_controls.gd asserts the shared
+## floor and the header match instead of trusting this comment.
+##
+## NOT routed through ThemeManager.get_font_size() on purpose, and this is the reason:
+## that API returns the ACTIVE theme's sizes, and the "retro" theme sets body_size 18
+## where "default" sets 16 (theme_manager.gd:174-175). The pause menu's panel height is
+## HAND-AUTHORED in the .tscn and guarded against the content's measured minimum, so a
+## theme swap would silently move the content past a box no test run could have seen.
+## Sizes here are fixed; colours below are the pause menu's local palette (the same amber
+## as the Audio Settings header one row up, which ThemeManager's generic "warning" amber
+## is close to but not equal to -- routing them would split two adjacent headers).
+const SECTION_TITLE_FONT_SIZE := 22
+const PICKER_FONT_SIZE := 20
+const STATUS_FONT_SIZE := 16
+const HINT_FONT_SIZE := 14
+## Width the picker and the two wrapped labels ask for. The panel is wider than this and
+## these are EXPAND_FILL, so the real wrap width is the panel's -- this is only the floor.
+const CONTROL_MIN_WIDTH := 560
+
 const SECTION_TITLE := "Music track"
 const HINT_TEXT := ("The score normally follows how the run is going. Pick a track to keep "
 	+ "it playing instead -- you may miss what the music was telling you. Your pick lasts "
@@ -37,7 +59,7 @@ var _applying: bool = false
 
 
 func _ready() -> void:
-	add_theme_constant_override("separation", 6)
+	add_theme_constant_override("separation", 8)
 	_build()
 	refresh()
 
@@ -45,13 +67,14 @@ func _ready() -> void:
 func _build() -> void:
 	var title := Label.new()
 	title.text = SECTION_TITLE
-	title.add_theme_font_size_override("font_size", 14)
+	title.add_theme_font_size_override("font_size", SECTION_TITLE_FONT_SIZE)
 	title.add_theme_color_override("font_color", Color(0.91, 0.64, 0.24))
 	add_child(title)
 
 	_picker = OptionButton.new()
 	_picker.name = "Picker"
-	_picker.custom_minimum_size = Vector2(440, 0)
+	_picker.custom_minimum_size = Vector2(CONTROL_MIN_WIDTH, 0)
+	_picker.add_theme_font_size_override("font_size", PICKER_FONT_SIZE)
 	_picker.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_picker.item_selected.connect(_on_item_selected)
 	add_child(_picker)
@@ -59,16 +82,16 @@ func _build() -> void:
 	_status = Label.new()
 	_status.name = "Status"
 	_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_status.custom_minimum_size = Vector2(440, 0)
-	_status.add_theme_font_size_override("font_size", 12)
+	_status.custom_minimum_size = Vector2(CONTROL_MIN_WIDTH, 0)
+	_status.add_theme_font_size_override("font_size", STATUS_FONT_SIZE)
 	_status.add_theme_color_override("font_color", Color(0.55, 0.85, 1.0))
 	add_child(_status)
 
 	_hint = Label.new()
 	_hint.text = HINT_TEXT
 	_hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_hint.custom_minimum_size = Vector2(440, 0)
-	_hint.add_theme_font_size_override("font_size", 11)
+	_hint.custom_minimum_size = Vector2(CONTROL_MIN_WIDTH, 0)
+	_hint.add_theme_font_size_override("font_size", HINT_FONT_SIZE)
 	_hint.add_theme_color_override("font_color", Color(0.6, 0.6, 0.65))
 	add_child(_hint)
 

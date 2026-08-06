@@ -61,12 +61,12 @@ tier_4 = Color(0.702, 0.071, 0.090, 0.18)  # Deep red 18% (80-100%)
 
 #### Functional Colors
 ```gdscript
-# Doom tiers (from ThemeManager — the SINGLE source since L6/#617):
+# Doom tiers (from ThemeManager -- the SINGLE source since L6/#617):
 # DOOM_STOPS is the smooth colour ramp; DOOM_STATUS_BANDS the tier thresholds.
 # NOMINAL <15 | ELEVATED <37 | HIGH <52 | SEVERE <67 | EXTREME <80
 # | CATASTROPHIC <92 | TERMINAL <=100
 # Use ThemeManager.get_doom_color / get_doom_stroke_color for colours and
-# get_doom_band_index / get_doom_band / get_doom_status_label for tiers —
+# get_doom_band_index / get_doom_band / get_doom_status_label for tiers --
 # never hardcode doom thresholds in a screen.
 
 # UI feedback
@@ -102,6 +102,60 @@ caption = 12         # Tooltips, hints
 - **All-caps for labels**: +0.06em letter-spacing
 - **Title case for actions/buttons**
 - **Sentence case for descriptions**
+
+### The 16px floor, and why it is not 14
+
+Everything above is authored against a 1920x1080 base viewport, and
+`project.godot` stretches it with `stretch/mode="canvas_items"` /
+`aspect="expand"`. So on a 1280x720 laptop one authored pixel is **0.667
+physical pixels**: a 14px label is ~9 real pixels and an 11px hint is ~7.
+
+Consequence, and the rule: **no font a player reads while operating a control
+goes below 16** (which is also Godot's own `Label` default -- several screens
+were authoring BELOW the engine default). Secondary explanatory prose may sit
+at 14; nothing goes under 14.
+
+Corollary for panels with hand-authored sizes: growing the box does not fix
+cramping, growing the type does. If a panel ends up materially bigger than the
+size its contents need, the room belonged in the type scale.
+
+### Pause menu (ESC) type scale
+
+Enlarged 2026-08-06 after Pip in a preview build: *"Overall things feel a bit
+cramped. If we increase the size of the Escape screen by 30%, the text could be
+larger and friendlier."* Sizes live in `godot/scenes/pause_menu.tscn` and, for
+the music picker, as named constants at the top of
+`godot/scripts/ui/music_controls.gd`.
+
+| Element | Was | Now |
+|---|---|---|
+| Panel title ("GAME PAUSED") | 36 | 40 |
+| Section headers ("Audio Settings", "Music track") | 18 / 14 | 22 / 22 |
+| Control rows (volume labels, percentages) | 14 | 18 |
+| Buttons | 16 | 20 |
+| Music picker (OptionButton) | 16 (theme default) | 20 |
+| Music "now playing" readout | 12 | 16 |
+| Music hint prose | 11 | 14 |
+| Panel box | 640 x 600 | 800 x 792 |
+
+The two section headers were 18 and 14 before -- the same kind of thing at two
+sizes, one row apart. That reads as "cramped" and never as "a bug", which is
+why `test_music_player_controls.gd` now pins them equal.
+
+`test_music_player_controls.gd` also guards this table from BOTH sides: the
+authored panel must be big enough for its contents **and not more than 40px
+bigger**, so a future resize that adds padding instead of legibility fails.
+
+### Colours: local palettes are allowed, undocumented ones are not
+
+`MusicControls` uses the pause menu's own amber `Color(0.91, 0.64, 0.24)` --
+the panel border and the Audio Settings header, not `ThemeManager`'s generic
+`warning` amber `Color(0.9, 0.7, 0.2)`, which is close but not equal and would
+have split two adjacent headers. Sizes there are likewise NOT read from
+`ThemeManager.get_font_size()`, because that returns the ACTIVE theme's scale
+(`retro` sets `body_size` 18 where `default` sets 16) and the pause menu's
+panel height is hand-authored and test-guarded against its contents -- a theme
+swap would push the content past a box no test run could have seen.
 
 ---
 
