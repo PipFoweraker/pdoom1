@@ -108,7 +108,28 @@ _ENDGAME_STUDY_HOLD = Hold(
     "the eventual production endgame batch, never the studies"
 )
 
+# The 2026-08-07 art night (docs/design/ART_RUN_2026-08-07.md, queue
+# tools/assets/manifests/art_night_2026-08-07.json): 652 unattended
+# 1024/1536 direction studies across a swatch round, a subject x rendering
+# factorial, twelve coherent art directions, a palette cross and a model
+# probe. Library reference per ADR-0019 -- promotion needs a mechanically
+# verified demand entry, and none of these have one. One shared Hold so the
+# report rolls the whole night up together.
+_ART_NIGHT_0807_HOLD = Hold(
+    "2026-08-07 art night direction studies (swatch round, subject x "
+    "rendering factorial, 12 coherent art directions, palette cross, model "
+    "probe; tools/assets/manifests/art_night_2026-08-07.json lineage): "
+    "Library reference per ADR-0019, not game-ready derivatives -- L2/L3 "
+    "descendants of the winners are what could ever be promoted, never these"
+)
+
 GEN_DEST = {
+    "an0807_l0_sheets": _ART_NIGHT_0807_HOLD,
+    "an0807_l0_anchors": _ART_NIGHT_0807_HOLD,
+    "an0807_l1_grid": _ART_NIGHT_0807_HOLD,
+    "an0807_l1_family": _ART_NIGHT_0807_HOLD,
+    "an0807_l1_palette": _ART_NIGHT_0807_HOLD,
+    "an0807_l1_probe": _ART_NIGHT_0807_HOLD,
     "game_icons": "godot/assets/icons/generated",
     "ui_icons": "godot/assets/icons/generated",
     "action_icons_missing": "godot/assets/icons/generated",

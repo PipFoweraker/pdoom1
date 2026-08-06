@@ -625,6 +625,10 @@ class Ledger:
                 os.fsync(fh.fileno())
             if record.get("status") == "ok":
                 self.done[record["job_id"]] = record
+                # Keep the in-memory total live, not just the value loaded at
+                # construction -- the end-of-wave summary reads it, and without
+                # this it reported USD 0.00 after a successful 72-image wave.
+                self.spent += float(record.get("cost_usd", 0.0))
 
 
 class Budget:
