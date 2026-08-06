@@ -717,6 +717,16 @@ func mark_intro_seen() -> void:
 	save_config()
 	print("[GameConfig] Cold-open intro marked as seen for intro version %s" % INTRO_VERSION)
 
+## #1029: clear the seen-it flag so the cold-open intro plays again on the next
+## launch into a run. "" = never seen (the gate is an inequality against
+## INTRO_VERSION). Presentation state only -- no run/ladder impact. Note the
+## play_intros master gate still applies: if intros are toggled off, resetting
+## this does nothing until they are re-enabled.
+func reset_intro_seen() -> void:
+	last_seen_intro_version = ""
+	save_config()
+	print("[GameConfig] Cold-open intro reset -- will replay on next launch")
+
 ## Get the current game version
 func get_current_version() -> String:
 	return CURRENT_VERSION

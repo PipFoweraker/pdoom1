@@ -646,12 +646,11 @@ func _create_entry_row(entry, rank: int) -> HBoxContainer:
 		baseline_label.add_theme_color_override("font_color", Color(0.5, 0.5, 0.5))  # Gray
 	row.add_child(baseline_label)
 
-	# Duration
-	var duration_label = Label.new()
-	duration_label.custom_minimum_size = Vector2(120, 0)
-	duration_label.text = _format_duration(entry.duration_seconds)
-	duration_label.add_theme_font_size_override("font_size", 14)
-	row.add_child(duration_label)
+	# Duration column REMOVED (#1062): the score is turns survived (ADR-0002), so a
+	# wall-clock reading next to the ranking invited comparison on a number that says
+	# nothing about play quality (fast clicker beats careful player). Display-only
+	# change: entry.duration_seconds is still recorded and submitted -- the submission
+	# contract is frozen per website #191, so the FIELD stays until that freeze lifts.
 
 	# Date
 	var date_label = Label.new()
@@ -664,16 +663,6 @@ func _create_entry_row(entry, rank: int) -> HBoxContainer:
 	row.mouse_filter = Control.MOUSE_FILTER_PASS
 
 	return row
-
-func _format_duration(seconds: float) -> String:
-	"""Format duration in human-readable format"""
-	var minutes = int(seconds / 60)
-	var secs = int(seconds) % 60
-
-	if minutes > 0:
-		return "%dm %ds" % [minutes, secs]
-	else:
-		return "%ds" % secs
 
 func _format_date(date_string: String) -> String:
 	"""Format date string to be more readable"""

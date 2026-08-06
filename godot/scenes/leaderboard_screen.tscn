@@ -154,12 +154,6 @@ layout_mode = 2
 text = "vs Base"
 theme_override_font_sizes/font_size = 16
 
-[node name="Duration" type="Label" parent="MarginContainer/VBoxContainer/LeaderboardPanel/MarginContainer/VBoxContainer/Header"]
-custom_minimum_size = Vector2(120, 0)
-layout_mode = 2
-text = "Duration"
-theme_override_font_sizes/font_size = 16
-
 [node name="Date" type="Label" parent="MarginContainer/VBoxContainer/LeaderboardPanel/MarginContainer/VBoxContainer/Header"]
 layout_mode = 2
 size_flags_horizontal = 3
@@ -186,7 +180,7 @@ alignment = 1
 
 [node name="PrevButton" type="Button" parent="MarginContainer/VBoxContainer/Pagination"]
 layout_mode = 2
-text = "← Previous"
+text = "<- Previous"
 theme_override_font_sizes/font_size = 14
 
 [node name="PageLabel" type="Label" parent="MarginContainer/VBoxContainer/Pagination"]
@@ -196,7 +190,7 @@ theme_override_font_sizes/font_size = 16
 
 [node name="NextButton" type="Button" parent="MarginContainer/VBoxContainer/Pagination"]
 layout_mode = 2
-text = "Next →"
+text = "Next ->"
 theme_override_font_sizes/font_size = 14
 
 [node name="Stats" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
@@ -231,7 +225,8 @@ theme_override_font_sizes/font_size = 18
 
 [node name="PlayAgainButton" type="Button" parent="MarginContainer/VBoxContainer/Buttons"]
 layout_mode = 2
-text = "Play Again"
+text = "New Run"
+tooltip_text = "Start a fresh run from the pre-game setup screen."
 theme_override_font_sizes/font_size = 18
 
 [connection signal="item_selected" from="MarginContainer/VBoxContainer/Filters/SeedDropdown" to="." method="_on_seed_dropdown_item_selected"]

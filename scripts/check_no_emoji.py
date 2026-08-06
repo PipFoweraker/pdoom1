@@ -12,6 +12,10 @@ Two rules, deliberately split (see CLAUDE.md "ASCII-only"):
   * godot/**/*.tscn may contain engine-serialized unicode that must not be
     touched, so ONLY emoji (Unicode emoji blocks + variation selectors) are
     blocked there, not all non-ASCII.
+  * EXCEPT (issue #1035): AUTHORED string properties in .tscn
+    (text/tooltip_text/placeholder_text) are source, not engine serialization,
+    and they are player-facing. Those lines MUST be pure ASCII, same as .gd.
+    Real arrows / em-dashes / bullet glyphs accumulated in exactly this gap.
 
 This hook is BLOCKING (exit 1 on any violation). It replaces the old
 non-blocking, auto-fix-oriented Unicode handling in enforce_standards.py, which
@@ -21,6 +25,7 @@ Usage:
     python scripts/check_no_emoji.py          # scan the tree, exit 1 on violations
 """
 
+import re
 import sys
 from pathlib import Path
 
@@ -95,11 +100,63 @@ def scan_emoji(base: Path, suffix: str, exclude: set):
                     yield rel, ln, col, ord(ch)
 
 
+# Opening line of an authored .tscn string property we enforce ASCII on.
+# Deliberately narrow: only these three properties are human-authored UI copy;
+# everything else in a .tscn is treated as engine serialization and left alone.
+TSCN_AUTHORED_RE = re.compile(r'^\s*(?:text|tooltip_text|placeholder_text)\s*=\s*"')
+
+
+def _unescaped_quote_count(s: str) -> int:
+    """Count unescaped double-quotes, so multiline authored strings can be
+    tracked across lines (Godot serializes embedded quotes as \\")."""
+    n = 0
+    i = 0
+    while i < len(s):
+        if s[i] == "\\":
+            i += 2
+            continue
+        if s[i] == '"':
+            n += 1
+        i += 1
+    return n
+
+
+def scan_tscn_authored_ascii(base: Path, suffix: str, exclude: set):
+    """Yield (relpath, line, col, cp) for non-ASCII inside AUTHORED .tscn string
+    properties (text / tooltip_text / placeholder_text), issue #1035.
+
+    The emoji-only rule for .tscn exists to protect engine-serialized unicode;
+    authored UI strings are source and player-facing, so they get the full
+    ASCII rule. Multiline strings (odd quote count on the opening line) are
+    followed until the closing quote so wrapped prose is covered too.
+    """
+    for p in _iter(base, suffix):
+        rel = _rel(p)
+        if rel in exclude:
+            continue
+        try:
+            text = p.read_text(encoding="utf-8")
+        except (UnicodeDecodeError, OSError):
+            continue
+        in_string = False
+        for ln, line in enumerate(text.splitlines(), 1):
+            if not in_string:
+                if not TSCN_AUTHORED_RE.match(line):
+                    continue
+                in_string = _unescaped_quote_count(line) % 2 == 1
+            else:
+                in_string = _unescaped_quote_count(line) % 2 == 0
+            for col, ch in enumerate(line, 1):
+                if ord(ch) > 0x7F:
+                    yield rel, ln, col, ord(ch)
+
+
 def main() -> int:
     violations = []
     violations += list(scan_ascii(GODOT, ".gd", skip_addons=True))
     violations += list(scan_ascii(GODOT / "data", ".json", skip_addons=False))
     violations += list(scan_emoji(GODOT, ".tscn", TSCN_EXCLUDE))
+    violations += list(scan_tscn_authored_ascii(GODOT, ".tscn", TSCN_EXCLUDE))
 
     if not violations:
         print("[no-emoji] OK: godot .gd/.json are pure ASCII, .tscn are emoji-free")

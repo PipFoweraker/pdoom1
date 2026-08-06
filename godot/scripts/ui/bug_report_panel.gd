@@ -183,10 +183,17 @@ func _on_report_saved(filepath: String):
 	# truth (was implying an auto-filed GitHub issue) and surface the path + an email
 	# so tester feedback actually reaches us.
 	var global_path := ProjectSettings.globalize_path(filepath)
-	show_confirmation("Thanks! Saved locally to:\n%s\n\nThis build does not send reports automatically yet -- please email that file to team@pdoom1.com so it reaches us." % global_path)
+	var thanks_text := "Thanks! Saved locally to:\n%s\n\nThis build does not send reports automatically yet -- please email that file to team@pdoom1.com so it reaches us." % global_path
+	show_confirmation(thanks_text)
 
-	# Reset form after a longer delay so the path is readable.
-	await get_tree().create_timer(6.0).timeout
+	# #882: the panel used to auto-close after a silent wait -- the player half-waits,
+	# unsure it will close itself. Count down visibly so the behaviour is legible.
+	# Bail out if the panel was closed/reused meanwhile (ESC, or a new report opened).
+	for remaining in range(6, 0, -1):
+		if not visible or confirmation_label.modulate != Color.GREEN:
+			return
+		confirmation_label.text = "%s\n\nClosing in %d..." % [thanks_text, remaining]
+		await get_tree().create_timer(1.0).timeout
 	if visible:  # Only reset if still visible
 		hide_panel()
 

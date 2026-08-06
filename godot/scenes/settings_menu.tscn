@@ -353,6 +353,11 @@ text = "Play story intros"
 [node name="CheckBox" type="CheckButton" parent="Board/BoardVBox/Columns/Col2/IntrosRow"]
 layout_mode = 2
 
+[node name="ReplayIntroButton" type="Button" parent="Board/BoardVBox/Columns/Col2"]
+layout_mode = 2
+text = "Replay story intro"
+tooltip_text = "Clears the seen-it flag so the cold-open intro plays again next time you launch a run. Play story intros must be ON for it to show."
+
 [node name="HintsRow" type="HBoxContainer" parent="Board/BoardVBox/Columns/Col2"]
 layout_mode = 2
 

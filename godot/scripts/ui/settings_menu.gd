@@ -54,6 +54,7 @@ const SAVE_DEBOUNCE_SECONDS := 0.75
 @onready var board_music_label: Label = $Board/BoardVBox/Columns/Col1/MusicLabelRow/ValueLabel
 @onready var board_fullscreen_checkbox: CheckButton = $Board/BoardVBox/Columns/Col1/FullscreenRow/CheckBox
 @onready var board_intros_checkbox: CheckButton = $Board/BoardVBox/Columns/Col2/IntrosRow/CheckBox
+@onready var replay_intro_button: Button = $Board/BoardVBox/Columns/Col2/ReplayIntroButton
 @onready var board_hints_checkbox: CheckButton = $Board/BoardVBox/Columns/Col2/HintsRow/CheckBox
 @onready var board_rivals_checkbox: CheckButton = $Board/BoardVBox/Columns/Col2/RivalsRow/CheckBox
 @onready var difficulty_option: OptionButton = $Board/BoardVBox/Columns/Col2/DifficultyRow/OptionButton
@@ -112,6 +113,7 @@ func _connect_signals():
 	board_colorblind_checkbox.toggled.connect(_on_colorblind_toggled)
 
 	board_intros_checkbox.toggled.connect(_on_play_intros_toggled)
+	replay_intro_button.pressed.connect(_on_replay_intro_pressed)
 	board_rivals_checkbox.toggled.connect(_on_rivals_feed_toggled)
 	board_ui_layout_checkbox.toggled.connect(_on_ui_layout_toggled)
 	board_leaderboard_checkbox.toggled.connect(_on_global_leaderboard_toggled)
@@ -341,6 +343,17 @@ func _on_play_intros_toggled(pressed: bool):
 	GameConfig.set_setting("play_intros", pressed, false)
 	NotificationManager.info("Story intros " + ("enabled" if pressed else "disabled"))
 	_schedule_save()
+
+
+func _on_replay_intro_pressed():
+	"""#1029: clear the cold-open seen-it flag so the intro replays on the next
+	launch into a run. GameConfig.reset_intro_seen() saves immediately (it is a
+	one-shot action, not a debounced setting). The button relabels itself as the
+	confirmation so the click has visible effect."""
+	GameConfig.reset_intro_seen()
+	NotificationManager.info("Story intro will replay next launch")
+	replay_intro_button.text = "[OK] Intro queued for next launch"
+	replay_intro_button.disabled = true
 
 
 func _on_rivals_feed_toggled(pressed: bool):
