@@ -46,6 +46,31 @@ func select_random_cat() -> void:
 	var image_path = CAT_IMAGES_PATH + cat_file
 	set_cat_image(image_path)
 	contributor_label.text = current_cat_name
+	_apply_contributor_credit(cat_file)
+
+
+## The in-run "who is this cat" affordance -- a HOVER TOOLTIP, and deliberately
+## nothing more.
+##
+## The visible label keeps showing the CAT's name; the person's name arrives only
+## if the player asks for it by hovering. A click-to-open panel was the obvious
+## alternative and was rejected: a modal mid-run interrupts the plan phase for a
+## purely decorative reason, and there is no route back from a credits SCENE
+## without abandoning the run. The full surface lives at the welcome menu
+## (Credits); this is the pointer, not the destination.
+##
+## The credit string comes from the generated credits data, never from a second
+## hardcoded table -- CAT_NAMES owns the cat names, CREDITS.md owns the people.
+func _apply_contributor_credit(cat_file: String) -> void:
+	mouse_filter = Control.MOUSE_FILTER_STOP
+	var credit := CreditsData.credit_for_asset(cat_file)
+	# An unconfirmed credit form shows nothing at all rather than a placeholder.
+	if credit == "":
+		tooltip_text = "%s\n\nOffice cat. See Credits on the main menu." % current_cat_name
+	else:
+		tooltip_text = "%s\n\nPhoto by %s.\nAll eight cats are on the Credits screen." % [
+			current_cat_name, credit
+		]
 
 ## Update doom level (currently does nothing, kept for compatibility)
 ## @param doom_percentage: Current doom level (0.0 to 1.0)
@@ -105,4 +130,4 @@ func cycle_contributor() -> void:
 
 ## Get current cat info (for tooltips, etc.)
 func get_current_contributor_info() -> String:
-	return "%s\n\nOffice Cat - Keeping morale high!\n\nClick to see another cat!" % current_cat_name
+	return tooltip_text

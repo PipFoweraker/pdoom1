@@ -2,20 +2,59 @@
 
 P(Doom)1 -- a turn-based AI-safety strategy game.
 
-> This file is a repo document (it lives at the repo root, outside `godot/`, so
-> it is not bundled into the shipped build). Some fields are marked
-> **[Pip to fill]** -- placeholders for names/attributions only Pip can confirm.
-> An in-game credits screen, if wanted, is a separate follow-up.
+> **This file is the SOURCE OF TRUTH for the in-game credits screen.** It still
+> lives at the repo root, outside `godot/`, so it is not itself bundled -- instead
+> `scripts/generate_credits.py` derives `godot/data/credits.json` from it, and a
+> pre-commit `--check` blocks a stale copy (same anti-rot pattern as
+> `DQ_INDEX.md`). Edit THIS file; never hand-edit the JSON.
+>
+> Fields marked **[Pip to fill]** / **[Pip to confirm]** are placeholders only Pip
+> can resolve. The generator DROPS any entry still carrying a placeholder, so an
+> unresolved TODO can never reach a player's screen -- it just silently does not
+> appear. Resolving one is what makes it ship.
 
 ## Game
 
 - **Design, direction, and development:** Pip Foweraker  *(adjust name form as preferred)*
 - **Engine:** [Godot Engine](https://godotengine.org) 4.5.1 (MIT License)
 
+## Cats
+
+The office cat in your lab is a real cat. Eight were contributed by their people,
+with permission, and `office_cat.gd` picks one at random per run -- so every one
+of them reaches players.
+
+Table columns are load-bearing: `Cat` is the display name, `Photo by` is the
+credit line shown in game, `Asset` must match a key of `CAT_NAMES` in
+`godot/scripts/ui/office_cat.gd` (a GUT test fails if the two rosters drift). A
+`Photo by` cell still carrying a `[Pip to confirm ...]` marker renders the cat
+WITHOUT a credit line rather than printing the marker.
+
+| Cat | Photo by | Asset |
+|---|---|---|
+| Arwen | Matilda | web-arwen.jpg |
+| Arwen & Chuck | Matilda | web-arwen-chuck.jpg |
+| Chucky | Nicki T. | web-chucky.jpg |
+| Doom Cat | [Pip to confirm -- inventory records custodian "Office (default/mascot)", not a person] | web-doom-cat.jpg |
+| Luna | Nicki T. | web-luna.jpg |
+| Mando | Nicki T. | web-mando.jpg |
+| Missy | Spicy | web-missy.jpg |
+| Nigel | Nicki T. | web-nigel.jpg |
+
+Credit names are transcribed verbatim from
+`art_source/cats_incoming/INVENTORY.md` (the "Custodian" field), which is the
+only record this repo holds. Nobody has confirmed these are the forms the
+contributors want to be credited under -- see the Pip checklist below. Change the
+name HERE and the game picks it up on the next generate.
+
 ## Music
 
 **Original adaptive score** (the composed five-tier doom-band soundtrack + the
-victory, defeat, and menu cues that ship today):
+run-end and menu cues that ship today):
+
+Wording note, not shipped: this section is PLAYER-FACING now, so it obeys ADR-0002
+and must not name a "victory" cue -- `test_no_win_condition_copy.gd` scans
+`godot/data/credits.json` and fails if it does.
 
 - **Composition, direction, and taste authority:** Pip Foweraker -- the musician
   and director; every note judged by ear over the workshop sessions.
@@ -29,8 +68,8 @@ development, now retired but preserved in `archive/audio/`):
 
 - **Written and performed by:** **[Pip to fill -- friend's name / handle / "prefers anonymity"]**
   -- DJ-session ambient tracks, generously given to the project. Pip authored
-  the (AI-safety pun) track titles; project holds full usage rights.
-- With thanks for setting the sonic tone the composed score grew out of.
+  the (AI-safety pun) track titles; project holds full usage rights. With thanks
+  for setting the sonic tone the composed score grew out of.
 
 ## Playtesting
 
@@ -47,8 +86,9 @@ development, now retired but preserved in `archive/audio/`):
 
 The score learned from, but did not copy, a set of north-star artists (Master
 Musicians of Bukkake, Philip Glass, and others). They are inspirations only,
-with no affiliation or endorsement; the lineage is documented in
-`docs/audio/REFERENCE_TRACKS.md`.
+with no affiliation or endorsement.
+
+The full lineage is documented in `docs/audio/REFERENCE_TRACKS.md`.
 
 ---
 
@@ -63,4 +103,14 @@ with no affiliation or endorsement; the lineage is documented in
 - [ ] Decide how prominent the AI-collaboration credit should be -- the wording
       above is honest-and-plain; dial up or down to taste.
 - [ ] Fill the art-pipeline attributions (owned by the art lane, not this session).
-- [ ] Decide whether an in-game credits screen is wanted (separate feature).
+- [x] In-game credits screen: BUILT. Welcome menu -> `Credits`, generated from
+      this file. Cats get the top section.
+- [ ] **Cats: confirm each contributor's preferred credit form.** The eight names
+      above are transcribed from INVENTORY.md's "Custodian" field, which was
+      internal metadata, not a stated credit preference. Ask each contributor how
+      they want to appear (full name / first name / handle / "prefers
+      anonymity"), then edit the table. Until then the game ships the inventory
+      form.
+- [ ] **Doom Cat has no recorded contributor** -- inventory lists the custodian as
+      "Office (default/mascot)". If it came from a person, name them; if it is the
+      project's own image, say so and the placeholder can go.
