@@ -1221,7 +1221,7 @@ func _on_game_state_updated(state: Dictionary):
 	if state.get("game_over", false):
 		var victory = state.get("victory", false)
 		if victory:
-			log_message("[color=gold]VICTORY! You survived![/color]")
+			log_message("[color=gold]RUN ENDED. You bought time.[/color]")
 		else:
 			log_message("[color=red]GAME OVER! The AI destroyed humanity.[/color]")
 

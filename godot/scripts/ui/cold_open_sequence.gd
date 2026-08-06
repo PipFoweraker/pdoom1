@@ -22,7 +22,8 @@ extends Control
 
 # ============================================================================
 # TUNABLE COPY + TIMING -- Pip edits EVERYTHING player-facing here, in ONE place.
-# Copy is placeholder / Pip's to finalize (see COLD_OPEN_SEQUENCE.md beats).
+# Ship copy (see COLD_OPEN_SEQUENCE.md beats). Nothing here may describe itself as
+# placeholder: every new player reads these strings exactly once, at first impression.
 # ============================================================================
 
 # The narrative beats, played top-to-bottom. kind "text" = a fade-up line; the single
@@ -52,8 +53,8 @@ const BANK_SUBTITLE: String = "Operating account -- balance"
 const MESSAGES_TITLE: String = "MESSAGES"
 const STRANGER_NAME: String = "Mysterious Helpful Stranger"
 # HANDOFF (#811 item 1): the last thing the cold-open says hands the player an ACTIVE
-# SCOUTING CHOICE, not a closing narrative line. Copy still Pip's to finalize.
-const STRANGER_MESSAGE: String = "Hello past me! I am expository filler (for now). You know nothing yet -- go and find out. Read, show up somewhere, or be loud online. Scouting. -- MHS"
+# SCOUTING CHOICE, not a closing narrative line.
+const STRANGER_MESSAGE: String = "Hello past me! No, I can't tell you how it ends. You know nothing yet -- go and find out. Read something, show up somewhere, or be loud online. Scouting. -- MHS"
 # What the nudge points at when the cold-open ends. Content, not machinery: re-pointing
 # the handoff is this one string plus its hint line.
 const HANDOFF_ACTION_ID: String = "scouting"
