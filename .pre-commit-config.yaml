@@ -120,6 +120,17 @@ repos:
         files: '^(godot/data/actions/.*\.json|godot/scripts/ui/(action_bar_renderer|submenu_controller)\.gd|docs/ACTION_TAXONOMY\.md|scripts/generate_action_taxonomy\.py)$'
         pass_filenames: false
 
+      # godot/data/credits.json is GENERATED from CREDITS.md (same anti-rot pattern
+      # as the DQ/ADR/tools indexes). CREDITS.md is where a name gets fixed; this
+      # blocks the commit where someone edits it and forgets the game copy, which is
+      # exactly how a contributor ends up credited in the repo and not in the product.
+      - id: credits-json-check
+        name: in-game credits.json regenerated from CREDITS.md
+        entry: python scripts/generate_credits.py --check
+        language: system
+        files: '^(CREDITS\.md|godot/data/credits\.json|scripts/generate_credits\.py)$'
+        pass_filenames: false
+
       - id: scene-nav-check
         name: Scene navigation routes through SceneTransition
         entry: python tools/check_scene_nav.py

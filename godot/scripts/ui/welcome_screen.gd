@@ -13,6 +13,14 @@ extends Control
 @onready var leaderboard_button = $VBox/MenuContainer/LeaderboardButton
 @onready var whats_new_button = $VBox/MenuContainer/WhatsNewButton
 @onready var ai_safety_button = $VBox/MenuContainer/AISafetyButton
+# Credits takes the TENTH and last visible slot. Measured before adding it: nine
+# buttons render (Load Game is instantiated but hidden, see below), so this stays
+# inside Pip's cap-of-10 instinct from #1132 -- but it CONSUMES the spare. The
+# next meta surface should not be an eleventh button; it should force the
+# grouping decision (an "About" door holding Credits / AI Safety Info / What's
+# New), which belongs to the UI architecture effort in
+# docs/design/UI_ARCHITECTURE_2026-08-06.md, not to this change.
+@onready var credits_button = $VBox/MenuContainer/CreditsButton
 @onready var exit_button = $VBox/MenuContainer/ExitButton
 @onready var version_label = $Version
 
@@ -57,6 +65,7 @@ func _ready():
 		leaderboard_button,
 		whats_new_button,
 		ai_safety_button,
+		credits_button,
 		exit_button
 	]
 
@@ -70,6 +79,7 @@ func _ready():
 	leaderboard_button.pressed.connect(_on_leaderboard_pressed)
 	whats_new_button.pressed.connect(_on_whats_new_pressed)
 	ai_safety_button.pressed.connect(_on_ai_safety_pressed)
+	credits_button.pressed.connect(_on_credits_pressed)
 	exit_button.pressed.connect(_on_exit_pressed)
 
 	# DEPRECATED (v0.11.0): the single-slot quicksave "Load Game" is HIDDEN pending a proper
@@ -198,6 +208,10 @@ func _on_leaderboard_pressed():
 func _on_ai_safety_pressed():
 	print("[WelcomeScreen] Opening AI Safety Info...")
 	OS.shell_open("https://aisafety.info/")
+
+func _on_credits_pressed():
+	print("[WelcomeScreen] Opening credits...")
+	SceneTransition.go_to("res://scenes/credits_screen.tscn")
 
 func _on_exit_pressed():
 	print("[WelcomeScreen] Exiting game...")

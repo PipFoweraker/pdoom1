@@ -14,6 +14,16 @@
 > - There is no contributor sync. `godot/data/contributors.json` (an empty stub)
 >   was deleted 2026-08-04; the sync script that was meant to fill it never ran.
 >   See issue #1115.
+>
+> **UPDATE 2026-08-06 -- recognition now EXISTS, by a different route.** The
+> abandoned design (a synced `contributors.json` + a `ContributorManager`) is
+> still dead and should not be revived as written. What replaced it:
+> `CREDITS.md` at the repo root is the source of truth, `scripts/generate_credits.py`
+> derives `godot/data/credits.json`, and `godot/scenes/credits_screen.tscn`
+> (welcome menu -> Credits) renders every cat with its contributor. The in-run
+> cat gained a hover tooltip naming the same person. `office_cat.gd` still owns
+> `CAT_NAMES`; a GUT test (`tests/unit/test_credits_data.gd`) fails if that
+> roster and the CREDITS.md table ever disagree. Doom variants remain unbuilt.
 
 This directory contains office cat images for the contributor recognition system.
 
