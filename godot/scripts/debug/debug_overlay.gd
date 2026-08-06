@@ -8,9 +8,15 @@ extends CanvasLayer
 @onready var rate_slider = $Panel/MarginContainer/VBoxContainer/RefreshRate/RateSlider
 @onready var rate_label = $Panel/MarginContainer/VBoxContainer/RefreshRate/RateLabel
 
-# Event trigger UI (dynamically created)
-var event_dropdown: OptionButton
-var event_trigger_container: VBoxContainer
+## RETIRED 2026-08-06 (#1134): the "Trigger Random Event" button and its popup lived
+## here. Its handler appended an event dict straight onto state.pending_events with no
+## phase guard, so injecting from a phase that never drains the queue permalocked the
+## run (TurnManager gates can_select_actions on pending_events being empty). Pip
+## reproduced it repeatably in a release build and ruled the feature out rather than
+## made phase-safe: "triggering random events doesn't seem so useful for debugging at
+## this point, just creating bugs lol." The read-only tabs below are the useful part.
+## Re-adding any write into pending_events from here fails
+## tests/unit/test_no_debug_event_injection.gd.
 
 var is_visible: bool = false
 var update_timer: float = 0.0
@@ -378,81 +384,6 @@ func _on_add_ap_button_pressed():
 			gm.state.month_plan.grant_hours(5, MonthPlan.HOUR_OPERATING)
 		gm.game_state_updated.emit(gm.state.to_dict())
 		ErrorHandler.info(ErrorHandler.Category.VALIDATION, "Debug: Added 5 AP", {})
-
-func _on_trigger_event_button_pressed():
-	var gm = _live_gm()
-	if gm and gm.state:
-		# Show event selection popup
-		_show_event_selection_popup()
-
-func _show_event_selection_popup():
-	"""Show a popup with all available events to trigger"""
-	# Create popup dialog if it doesn't exist
-	var popup = AcceptDialog.new()
-	popup.title = "Trigger Event"
-	popup.size = Vector2(400, 500)
-
-	var vbox = VBoxContainer.new()
-	vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-
-	# Label
-	var label = Label.new()
-	label.text = "Select an event to trigger:"
-	vbox.add_child(label)
-
-	# Scrollable list of events
-	var scroll = ScrollContainer.new()
-	scroll.custom_minimum_size = Vector2(380, 400)
-	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
-
-	var event_list = VBoxContainer.new()
-	event_list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-
-	# Get all events
-	var all_events = GameEvents.get_all_events()
-	for event in all_events:
-		var btn = Button.new()
-		btn.text = "%s (%s)" % [event.get("name", "Unknown"), event.get("id", "")]
-		btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		btn.pressed.connect(_trigger_specific_event.bind(event, popup))
-		event_list.add_child(btn)
-
-	scroll.add_child(event_list)
-	vbox.add_child(scroll)
-	popup.add_child(vbox)
-
-	# Add to scene and show
-	add_child(popup)
-	popup.popup_centered()
-
-	# Clean up when closed
-	popup.confirmed.connect(func(): popup.queue_free())
-	popup.canceled.connect(func(): popup.queue_free())
-
-func _trigger_specific_event(event: Dictionary, popup: AcceptDialog):
-	"""Trigger a specific event"""
-	var gm = _live_gm()
-	if not gm or not gm.state:
-		return
-
-	var event_name = event.get("name", "Unknown Event")
-	var event_id = event.get("id", "")
-
-	_mark_alpha_tool_use()  # event injection mutates the run -- alpha tool
-	ErrorHandler.info(ErrorHandler.Category.EVENTS, "Debug: Triggering event '%s'" % event_name, {"event_id": event_id})
-
-	# Add to pending events so it will be shown to player
-	gm.state.pending_events.append(event)
-
-	# Emit signal if main UI is listening
-	if gm.has_signal("event_triggered"):
-		gm.emit_signal("event_triggered", event)
-
-	# Close popup
-	popup.queue_free()
-
-	# Log to debug overlay
-	ErrorHandler.info(ErrorHandler.Category.EVENTS, "Event '%s' added to pending events" % event_name, {})
 
 func _on_commit_plan_button_pressed():
 	var gm = _live_gm()
