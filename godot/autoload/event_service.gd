@@ -308,10 +308,12 @@ func _transform_event(raw: Dictionary) -> Dictionary:
 	var rarity_settings = _get_rarity_settings(rarity)
 	var trigger_mode = rarity_settings.get("trigger_mode", "random_after_eligible")
 
-	# Calculate trigger turn based on year (52 turns per year)
+	# Calculate trigger turn based on year. turns_per_year is the timing DIAL
+	# (#1125: one turn = one month, so the shipped default is 12) -- resolved from
+	# the active timescale variant by _resolve_timescale at config load.
 	var year_config = _rarity_curves.get("year_trigger", {})
 	var base_year = year_config.get("base_year", 2017)
-	var turns_per_year = year_config.get("turns_per_year", 52)
+	var turns_per_year = year_config.get("turns_per_year", 12)
 
 	# Years before game start get clamped to turn 1
 	var years_from_start = year - base_year
@@ -839,7 +841,40 @@ func _load_rarity_curves() -> void:
 		return
 
 	_rarity_curves = data
-	print("[EventService] Loaded rarity curves")
+	_resolve_timescale()
+	print("[EventService] Loaded rarity curves (timescale: %s)" % str(_rarity_curves.get("timescale", "flat")))
+
+
+func _resolve_timescale() -> void:
+	"""Apply the active timescale variant (the timing DIAL, #1125 / #1111) onto
+	year_trigger and the rare eligibility window.
+
+	rarity_curves.json ships its flat year_trigger values equal to the active
+	variant, so this is a no-op until someone flips the `timescale` key -- at
+	which point every turns-denominated timing value (turns_per_year, legendary
+	offset, rare spread, rare eligibility window) rescales together. That is
+	what makes the pacing a dial instead of four constants that must be edited
+	in lockstep.
+
+	Runs only at config load / reload_config -- never on the seeded RNG path
+	(ADR-0006). Changing the dial changes which turns roll probabilities, so it
+	forks replay compatibility exactly like any balance-data change: ship dial
+	flips on a release boundary with a version bump (board key forks by design)."""
+	var scales = _rarity_curves.get("timescales", {})
+	var active := str(_rarity_curves.get("timescale", ""))
+	if active.is_empty() or not scales is Dictionary or not scales.has(active):
+		return
+	var scale = scales[active]
+	if not scale is Dictionary:
+		push_warning("[EventService] Timescale '%s' is not a dictionary; keeping flat year_trigger values" % active)
+		return
+	var year_trigger = _rarity_curves.get("year_trigger", {})
+	for key in ["turns_per_year", "legendary_month_offset", "rare_spread_turns"]:
+		if scale.has(key):
+			year_trigger[key] = scale[key]
+	_rarity_curves["year_trigger"] = year_trigger
+	if scale.has("rare_eligibility_window_turns") and _rarity_curves.get("rare") is Dictionary:
+		_rarity_curves["rare"]["eligibility_window_turns"] = scale["rare_eligibility_window_turns"]
 
 
 func _set_default_rarity_curves() -> void:

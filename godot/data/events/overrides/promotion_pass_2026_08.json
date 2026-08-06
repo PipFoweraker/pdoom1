@@ -1,0 +1,214 @@
+{
+  "_description": "Event promotion pass 2026-08: promote historical records to window-tier decisions, retimed for one-turn-one-month (#1125). Rulings in #1111; mechanics in docs/design/EVENT_PROMOTION_PASS.md.",
+  "_note": "Keyed by ORIGINAL record id. An 'id' key inside an entry renames the event (required to promote arxiv_* records past the flavour gate). category picks the option template; rarity picks the trigger mode (legendary = deterministic turn, rare = 6 pct/turn after eligibility, common = 12 pct/turn); significance (1-10) scales option magnitudes. NEVER add doom/pdoom_impact keys (ADR-0015).",
+  "_firing_turns": "Under the month_per_turn dial (12 turns/year): base_turn(year) = (year-2017)*12+1; legendary fires base+6. 2017:t7 2018:t19 2019:t31 2020:t43 2021:t55 2022:t67 2023:t79 2024:t91 2025:t103. Rare/common become eligible at ~base_turn and roll from there. Guarded by tests/unit/test_event_retime.gd.",
+  "_dead_key_guard": "Every key here is asserted to exist in historical_events.json by test_event_retime.gd (example.json shipped 2 dead keys for months; that failure mode is now a red test).",
+
+  "ftx_future_fund_collapse_2022": {
+    "_reason": "A1. Escalate the best-authored funding shock to a deterministic story beat at t67. Keeps funding_catastrophe template; impacts stated here in full (same values as example.json) so whichever override file loads last, the entry is identical.",
+    "rarity": "legendary",
+    "impacts": [
+      {"variable": "money", "change": -80}
+    ]
+  },
+
+  "microsoft_tay_2016": {
+    "_reason": "A2. Re-year + re-categorize. 2016 records cannot fire (start-year filter); year 2017 is a documented timeline echo. Fires t7: the teaching window's first low-stakes incident (respond/review/note).",
+    "year": 2017,
+    "category": "incident",
+    "rarity": "legendary",
+    "significance": 4
+  },
+
+  "arxiv_f48be4c3fb9d9ad0": {
+    "_reason": "A3. Full arxiv promotion: new id escapes the arxiv flavour gate, policy_event picks the support/critique/neutral template. Fires t31 -- the empty middle's publication-norms fight.",
+    "id": "gpt2_staged_release_2019",
+    "category": "policy_event",
+    "rarity": "legendary",
+    "significance": 6,
+    "title": "GPT-2 and the Staged Release Debate",
+    "description": "OpenAI withholds its full language model, citing misuse potential, and releases it in stages. The field splits: responsible precedent, or reputational theater that broke publication norms? Everyone wants to know where your lab stands.",
+    "safety_researcher_reaction": "Finally someone treats release itself as a safety decision",
+    "media_reaction": "AI lab says its text generator is too dangerous to release"
+  },
+
+  "openai_board_crisis_2023": {
+    "_reason": "A4. Strongest governance story in the corpus, previously blank-template AND unreachable (t339 under 52/yr). Fires t79.",
+    "category": "incident",
+    "rarity": "legendary",
+    "significance": 8
+  },
+
+  "anthropic_exodus_2021": {
+    "_reason": "A5. The only viable record for the organization template (collaborate/compete/observe). Fires t55, mid-run where the reputation-for-velocity trade is live.",
+    "category": "organization",
+    "rarity": "legendary",
+    "significance": 6
+  },
+
+  "google_project_maven_2018": {
+    "_reason": "B1. Employee-revolt ethics story; incident template. Eligible ~t13, 6 pct/turn.",
+    "category": "incident",
+    "rarity": "rare",
+    "significance": 5
+  },
+
+  "arxiv_eaef206260f37f45": {
+    "_reason": "B2. The mid-run security incident. Eligible ~t37.",
+    "id": "training_data_extraction_2020",
+    "category": "incident",
+    "rarity": "rare",
+    "significance": 5,
+    "title": "Extracting Training Data from Language Models",
+    "description": "Researchers demonstrate that verbatim training examples -- names, contact details, private text -- can be pulled back out of a deployed language model by querying it. Every lab training on scraped data now has a security problem with a paper attached.",
+    "safety_researcher_reaction": "Memorization is not hypothetical anymore -- audit your training pipeline",
+    "media_reaction": "AI models can leak the private data they were trained on"
+  },
+
+  "arxiv_ac6144846c25f722": {
+    "_reason": "B3 (strong yes, #1111). The first real invest-in-a-result decision; research template costs money+hours. Eligible from the opening turns.",
+    "id": "rlhf_origin_2017",
+    "category": "alignment_research",
+    "rarity": "rare",
+    "significance": 5,
+    "title": "Deep RL from Human Preferences",
+    "description": "A joint OpenAI-DeepMind team trains agents from human comparisons of behavior instead of hand-coded reward functions. Learning what people want by asking them becomes a practical alignment technique -- and every lab must decide how much to invest in it.",
+    "safety_researcher_reaction": "Reward learning turns alignment from philosophy into an engineering agenda",
+    "media_reaction": "AI learns backflips from human thumbs-ups"
+  },
+
+  "arxiv_19f1abcbac7010a1": {
+    "_reason": "B4 (strong yes, #1111). Research-agenda beat for the early game. Eligible ~t13, 12 pct/turn.",
+    "id": "reward_modeling_agenda_2018",
+    "category": "alignment_research",
+    "rarity": "common",
+    "significance": 4,
+    "title": "Scalable Agent Alignment via Reward Modeling",
+    "description": "DeepMind publishes a research agenda for aligning agents by learning reward models from human feedback, recursively amplified. It is a roadmap rather than a result -- and a public bet on where alignment work should go next.",
+    "safety_researcher_reaction": "Finally an agenda you can put engineers on"
+  },
+
+  "arxiv_eb20cd0d24a7d685": {
+    "_reason": "B5. Capability-shock texture for the empty middle. Eligible ~t25.",
+    "id": "emergent_tool_use_2019",
+    "category": "capability_advance",
+    "rarity": "rare",
+    "significance": 5,
+    "title": "Emergent Tool Use From Multi-Agent Play",
+    "description": "OpenAI's hide-and-seek agents invent tool use, barricades, and physics exploits nobody programmed. Simple objectives at scale are producing strategies their designers did not anticipate -- delightful, and a little alarming.",
+    "media_reaction": "AI agents invent tools and break the game physics to win at hide-and-seek"
+  },
+
+  "distill_ed5ab808068ad61f": {
+    "_reason": "B6 (Pip: yes, #1111). The interpretability milestone; safety-analysis option shines. Distill id passes the arxiv gate, so category override suffices. Fires t43.",
+    "category": "alignment_research",
+    "rarity": "legendary",
+    "significance": 5,
+    "description": "Distill publishes Zoom In: a research agenda arguing neural networks can be understood neuron by neuron, circuit by circuit. Interpretability moves from wishful thinking toward a discipline with methods and results.",
+    "safety_researcher_reaction": "For the first time it feels like we might actually read what a network is doing"
+  },
+
+  "cais_ftx_clawback_2023": {
+    "_reason": "B7. The delayed second bill from the FTX collapse -- arrives after you thought the crisis was over. Keeps funding_catastrophe template and its impacts. Eligible ~t73.",
+    "rarity": "rare",
+    "significance": 6
+  },
+
+  "anthropic_alignment_faking_2024": {
+    "_reason": "B8. THE scheming story beat -- the deterministic one; its three siblings below are rare variety so a run sees a different subset. Fires t91.",
+    "category": "incident",
+    "rarity": "legendary",
+    "significance": 8
+  },
+
+  "tesla_autopilot_incidents_2016_2024": {
+    "_reason": "C-tier promoted to B (#1111: promote all C up). Early-game incident texture. Eligible ~t13.",
+    "category": "incident",
+    "rarity": "common",
+    "significance": 5
+  },
+
+  "arxiv_7c7c5101e999d894": {
+    "_reason": "C2 promoted (#1111). Models start acting in environments. Eligible ~t49.",
+    "id": "webgpt_browsing_2021",
+    "category": "capability_advance",
+    "rarity": "common",
+    "significance": 4,
+    "title": "WebGPT: Language Models That Browse",
+    "description": "OpenAI wires a language model to a web browser and trains it to research answers with citations. Models are beginning to take actions in environments instead of just predicting text.",
+    "media_reaction": "The chatbot can Google things now"
+  },
+
+  "arxiv_c356f4bb1fc1101d": {
+    "_reason": "C3 promoted (#1111). Scaling is not buying truthfulness, with a number attached. Eligible ~t49.",
+    "id": "truthfulqa_benchmark_2021",
+    "category": "alignment_research",
+    "rarity": "common",
+    "significance": 4,
+    "title": "TruthfulQA: Do Models Imitate Our Falsehoods?",
+    "description": "A new benchmark shows larger models are often MORE likely to repeat common human misconceptions. Scaling alone is not buying truthfulness, and now there is a score to cite.",
+    "safety_researcher_reaction": "Bigger is not truer -- we finally measured it"
+  },
+
+  "arxiv_5b9b42f6b9b6a092": {
+    "_reason": "C4 promoted (#1111). Adversarial evaluation starts to scale. Eligible ~t61.",
+    "id": "red_teaming_lms_2022",
+    "category": "alignment_research",
+    "rarity": "common",
+    "significance": 4,
+    "title": "Red Teaming Language Models with Language Models",
+    "description": "DeepMind uses one language model to automatically generate test cases that make another misbehave. Adversarial evaluation stops being a manual craft and starts to scale.",
+    "safety_researcher_reaction": "Automated red teaming means the attack surface finally gets mapped faster than it grows"
+  },
+
+  "international_coordination_breakdown_2025": {
+    "_reason": "C5 promoted (#1111). The one institutional_decay record worth a window; policy template. Endgame sighting, eligible ~t97.",
+    "category": "policy_event",
+    "rarity": "rare",
+    "significance": 7
+  },
+
+  "claude_4_opus_blackmail_2025": {
+    "_reason": "C6 promoted (#1111). Final-act jolt for long runs. Fires t103.",
+    "category": "incident",
+    "rarity": "legendary",
+    "significance": 9
+  },
+
+  "distill_eb5c12bc89464f38": {
+    "_reason": "C7 promoted (#1111). Alignment needs social science; light research beat. Base rarity was legendary -- demoted to common so it is variety, not a mandatory beat. Eligible ~t25.",
+    "category": "alignment_research",
+    "rarity": "common",
+    "significance": 3,
+    "description": "Distill argues that aligning AI to human values needs experimental social science, not just mathematics -- because knowing what humans actually want is itself a research problem.",
+    "safety_researcher_reaction": "The hard part of alignment might be the humans"
+  },
+
+  "openai_safety_team_departures_2024": {
+    "_reason": "C8 promoted (#1111). Staffing THEME only -- the template cannot remove a researcher (event_service F3); copy stays honest. Eligible ~t85.",
+    "category": "incident",
+    "rarity": "rare",
+    "significance": 6
+  },
+
+  "ai_sandbagging_research_2024": {
+    "_reason": "Promoted against the pack's advice by explicit ruling (#1111): in-game hooks for decomposing situational awareness. Rare (not legendary) so the four scheming siblings scatter across seeds instead of firing as the same window four times; alignment faking stays the one deterministic beat. Eligible ~t85.",
+    "category": "incident",
+    "rarity": "rare",
+    "significance": 6
+  },
+
+  "apollo_scheming_evals_2024": {
+    "_reason": "Promoted by explicit ruling (#1111), same situational-awareness rationale as sandbagging. Eligible ~t85.",
+    "category": "incident",
+    "rarity": "rare",
+    "significance": 7
+  },
+
+  "metr_deceptive_ai_evaluation_2024": {
+    "_reason": "Promoted by explicit ruling (#1111, 'METER' in the transcript = METR), same situational-awareness rationale. Eligible ~t85.",
+    "category": "incident",
+    "rarity": "rare",
+    "significance": 6
+  }
+}

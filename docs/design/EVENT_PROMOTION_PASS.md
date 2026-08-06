@@ -1,10 +1,25 @@
 # EVENT PROMOTION PASS -- ranked shortlist, ready to execute
 
 - **Date:** 2026-08-04
+- **EXECUTED 2026-08-06, with a retime correction -- read this first.** Pip's
+  rulings (#1111, GO order #1125) approved the pass but corrected the premise:
+  **one turn = one month**, so the recommended 26 turns/year in section 1/6a is
+  SUPERSEDED by **12 turns/year** (calendar-true under the month ruling; the
+  2017-2025 arc lands at turns 7-103, inside the observed run band). Timing is
+  now a DIAL: `rarity_curves.json` carries `timescales` variants
+  (`month_per_turn` active, `week_per_turn` = the old 52/yr as the "punished"
+  variant) resolved by `EventService._resolve_timescale`. Promotions applied:
+  A1-A5, B1-B8, all C promoted to B, PLUS sandbagging / Apollo / METR
+  (ruled in #1111 against section 5's advice). Shipped as
+  `godot/data/events/overrides/promotion_pass_2026_08.json`; firing turns
+  guarded by `godot/tests/unit/test_event_retime.gd`. Sections below are kept
+  as the mechanical reference (F1-F8 findings remain accurate); their turn
+  numbers assume 26/yr and are stale.
 - **Ask (Pip):** "a little half hour of promoting some events from different
   timelines will let us work on mechanics a bit and give players a touch more
   variety."
-- **Status:** PROPOSAL. No data or code changed. Every mechanical claim below
+- **Status:** PROPOSAL (executed with changes -- see above). No data or code changed
+  by this document itself. Every mechanical claim below
   was verified against the tree on 2026-08-04; file:line refs are to that tree.
   Assumes the 2026-08-02 audit
   (`docs/decision-cards/2026-08-02_pdoom-data-contract.md`) -- its measured
