@@ -99,7 +99,8 @@ Declared with a `Layer:` line in a tool's module docstring; `--` = undeclared.
 | Tool | Layer | Purpose | Invoked by |
 |---|---|---|---|
 | analyze_verdicts.py | -- | Analyze art triage exports (verdict JSONs) for BOTH art libraries. | human (docstring usage) |
-| apply_review.py | SWEEP | apply_review.py -- wire art-review verdicts into the P(Doom)1 asset pipeline. | test:test_art_promotion_pipeline.py; tool:build_full_gallery.py |
+| apply_review.py | SWEEP | apply_review.py -- wire art-review verdicts into the P(Doom)1 asset pipeline. | test:test_art_promotion_pipeline.py; tool:build_full_gallery.py; tool:slot_model.py |
+| apply_slot_picks.py | -- | apply_slot_picks.py -- fold a slot_picker.html export into the TRACKED | test:test_slot_picker.py; tool:build_slot_picker.py |
 | author_anchor_sockets.py | -- | Author godot/data/office/anchor_sockets.json -- Anchor Sockets V2 (#894 #900 #913). | tool:build_cat_sweep_sheet.py |
 | build.py | -- | Build the P(Doom)1 style-review tool: a self-contained, single-file HTML page | test:test_find_dead_code.py; tool:select_assets.py |
 | build_cat_angle_ab_sheet.py | -- | Build art_generated/cat_angle_ab.html -- the 2026-07-26 cat angle A/B sheet. | human (docstring usage) |
@@ -113,6 +114,7 @@ Declared with a `Layer:` line in a tool's module docstring; `--` = undeclared.
 | build_generation_compare.py | -- | Side-by-side comparison of two generations of the same concept batch. | human (docstring usage) |
 | build_morning_index.py | -- | One index page over every generated art batch on disk. | human (docstring usage) |
 | build_prop_rebase_sheet.py | -- | build_prop_rebase_sheet -- prop re-base bulk batch + facing pilot (2026-07-27). | human (docstring usage) |
+| build_slot_picker.py | -- | build_slot_picker.py -- the SLOT PICKER page. | human (docstring usage) |
 | build_t6_diagonals_and_cats_sheet.py | -- | build_t6_diagonals_and_cats_sheet -- lane T6 review sheet, 2026-07-27. | human (docstring usage) |
 | build_worker_rebase_sheet.py | -- | build_worker_rebase_sheet -- worker re-base at the 64px standard (2026-07-26). | human (docstring usage) |
 | build_worker_round2_sheet.py | -- | build_worker_round2_sheet -- 2026-07-27 worker reroll + fresh worker (A+B). | human (docstring usage) |
@@ -127,9 +129,10 @@ Declared with a `Layer:` line in a tool's module docstring; `--` = undeclared.
 | gen_size_probe_sheet.py | -- | gen_size_probe_sheet -- character size vanguard probe sheet (2026-07-26). | human (docstring usage) |
 | merge_gallery_export.py | -- | merge_gallery_export.py -- fold a full_gallery.html export back into | tool:build_full_gallery.py |
 | qc_sprite_frames.py | -- | qc_sprite_frames -- PIL QC gate for pixellab character batches. | tool:build_worker_rebase_sheet.py |
-| review_style.py | -- | review_style -- ONE house style for all internal review/dev HTML tools. | tool:analyze_verdicts.py; tool:build_cat_angle_ab_sheet.py; tool:build_cat_refinement_sheet.py; tool:build_cat_sweep_sheet.py; tool:build_cat_west_walk_picks.py; tool:build_doom_strip_sheet.py; tool:build_prop_rebase_sheet.py; tool:build_t6_diagonals_and_cats_sheet.py; tool:build_worker_rebase_sheet.py; tool:build_worker_round2_sheet.py; tool:gen_contact_sheet.py; tool:gen_hero_gallery.py; tool:gen_prop_grain_sheet.py; tool:gen_quirk_icon_sheet.py; tool:gen_size_probe_sheet.py |
+| review_style.py | -- | review_style -- ONE house style for all internal review/dev HTML tools. | tool:analyze_verdicts.py; tool:build_cat_angle_ab_sheet.py; tool:build_cat_refinement_sheet.py; tool:build_cat_sweep_sheet.py; tool:build_cat_west_walk_picks.py; tool:build_doom_strip_sheet.py; tool:build_prop_rebase_sheet.py; tool:build_slot_picker.py; tool:build_t6_diagonals_and_cats_sheet.py; tool:build_worker_rebase_sheet.py; tool:build_worker_round2_sheet.py; tool:gen_contact_sheet.py; tool:gen_hero_gallery.py; tool:gen_prop_grain_sheet.py; tool:gen_quirk_icon_sheet.py; tool:gen_size_probe_sheet.py |
 | scan_white_flash.py | -- | Scan walk-clip frames for the "white flash under the cat" artifact. | tool:build_cat_refinement_sheet.py |
-| serve_review.py | -- | Local art-review app for P(Doom)1 -- ONE place to review ALL the art. | human (docstring usage) |
+| serve_review.py | -- | Local art-review app for P(Doom)1 -- ONE place to review ALL the art. | tool:build_slot_picker.py |
+| slot_model.py | -- | slot_model.py -- the ONE definition of "slot cluster" and "frame role". | test:test_slot_picker.py; tool:apply_slot_picks.py; tool:build_slot_picker.py |
 
 ## `tools/assets/`
 
@@ -201,4 +204,4 @@ DISCUSSING CI); the rest are the hollow-runner shape -- read them.
 
 23 `.html` tool(s) under `tools/` (browser-opened, no docstring to parse): `tools/art_review/doom_overlay_preview.html`, `tools/art_review/hero_gallery_template.html`, `tools/art_review/icon_pass_2026-07-21.html`, `tools/art_review/icon_pass_verdicts_2026-07-21.html`, `tools/art_review/palette.html`, `tools/art_review/palette_swatches.html`, `tools/art_review/scene_wave2_2026-07-21.html`, `tools/art_review/style_review.html`, `tools/assets/review_generated.html`, `tools/music/commission_sheets.html`, `tools/music/jukebox.html`, `tools/music/listening_room.html`, `tools/music/stem_board.html`, `tools/runsheet/CEREMONY-ALL-GATES-2026-07-31.html`, `tools/runsheet/fri-2026-07-31-EVENING-1620.html`, `tools/runsheet/fri-2026-07-31-GATES-1700.html`, `tools/runsheet/fri-2026-07-31-TO-MIDNIGHT-1733.html`, `tools/runsheet/fri-2026-07-31-league-day.html`, `tools/runsheet/playtest_card.html`, `tools/runsheet/wed-thu-2026-07-29.html`, `tools/social_composer.html`, `tools/ui_comparison.html`, `tools/ui_mockup/wireframe.html`.
 
-Total: 105 active tools (7 GENERATE, 6 OBSERVE, 5 PROVE, 1 SWEEP, 86 undeclared); 11 in UNKNOWN; 6 archived.
+Total: 108 active tools (7 GENERATE, 6 OBSERVE, 5 PROVE, 1 SWEEP, 89 undeclared); 11 in UNKNOWN; 6 archived.
