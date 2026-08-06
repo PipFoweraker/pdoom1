@@ -50,8 +50,12 @@
   "base_clauses": {
     "poster_base": "wide cinematic POSTER ART illustration for a video game, full-bleed edge-to-edge opaque composition that completely fills the frame with no transparency and no cut-outs and no border, lived-in physical props and real architecture rather than abstract shapes, every object in frame must be immediately identifiable as a specific real thing -- a filing cabinet, a pallet, a transformer, a mug -- and never a generic boxy shape, because an unrecognisable object is visual noise rather than a prop, no text, no lettering, no signage, no numerals, no logo, no watermark, no UI overlay, high production value",
     "poster_lighting": "DISCIPLINED AND UNDERSTATED LIGHTING, roughly 75 percent more subtle than a typical dramatic game illustration: mood must NEVER come from the main light source, so the ordinary room lights, street lights and work lights in the scene are plain neutral white or plain warm tungsten exactly as they would really be, never tinted red or green or purple for atmosphere; coloured light is permitted ONLY where a real fixture in the world would genuinely emit that colour, for example a screen, an indicator lamp, an emergency beacon, a corona arc or the impossible thing itself; at most one ambient source plus one glowing source, most of the frame kept dark with separated pockets of light, restraint over drama",
-    "poster_people": "NO PEOPLE BY DEFAULT -- the player is a bureaucrat and the art is about everyone else, so incidental figures are removed rather than restyled; where a figure is unavoidable it must be an androgynous silhouette with no readable gender cues, no distinguishing jewellery, no distinctive hairstyle and no face detail, its identity destroyed by blocking, backlighting and occlusion rather than merely turned away",
-    "poster_props": "props must be era-correct for 2017 to 2032 and consistent with the game's own set dressing: a banker's desk lamp is ALWAYS the green glass shade on a brass stem, office chairs, rubber date stamps, manila folders, ring binders, CRT and early-flatscreen monitors, chain-link fencing that hangs correctly on its posts with a real top rail, real tension wire and believable sag; ABSOLUTELY NO BARBED WIRE and no razor wire anywhere; uncrewed machines are directly manufactured and therefore have NO COCKPIT, NO CANOPY and no windows for a pilot",
+    "poster_people": "NO PEOPLE BY DEFAULT -- the player is a bureaucrat and the art is about everyone else, so incidental figures are removed rather than restyled. Where a figure is genuinely unavoidable it must be IMPOSSIBLE TO IDENTIFY and must NOT read as male: shoot it from behind, or use a full silhouette, a hood, a hat, a mask, a cloak, heavy protective gear, or a figure deliberately ambiguous between human and machine; no face detail, no readable gender cues, no distinctive hairstyle, no distinguishing jewellery; identity destroyed by blocking, backlighting and occlusion rather than merely turned away",
+    "poster_props": "props must be era-correct for 2017 to 2032 and physically believable. DELIBERATELY VARY THE OBJECT VOCABULARY between images rather than reaching for the same few signature props: draw broadly from institutional office and industrial life -- ring binders, manila folders, box files, rubber date stamps and their inkpads, franking machines, guillotine paper cutters, laminators, wall clocks, LTO tape cartridges, patch panels, cable trays, KVM switches, rack rails, blanking plates, power distribution units, fire extinguishers, first-aid cabinets, wire shelving, pallet trucks, flight cases, folding tables, stacking chairs, whiteboards and their tray of dying markers, corkboards, pigeonholes, drinking fountains, vending machines, ceiling tiles, venetian and vertical blinds, fluorescent troffers, anglepoise lamps, desk fans, CRT and early-flatscreen monitors, keyboards with worn legends, coiled cables, mugs, and chain-link fencing that hangs correctly on its posts with a real top rail, real tension wire and believable sag. ABSOLUTELY NO BARBED WIRE and no razor wire anywhere; uncrewed machines are directly manufactured and therefore have NO COCKPIT, NO CANOPY and no windows for a pilot",
+    "poster_contrast": "STRONG VALUE STRUCTURE, and treat this as the single most important rendering instruction: the image must carry a wide luminance range with genuinely black blacks and genuinely bright brights both present somewhere in frame, clear separation between the light masses and the dark masses, nothing left sitting in an undifferentiated mid-grey; the picture should read as a set of distinct value shapes before it reads as a set of objects",
+    "poster_detail": "DETAILED RATHER THAN MINIMAL: rendered depth, material texture, surface grain, accumulated grime, wear and small incidental objects, so every large area carries some texture instead of being an empty flat. NOTHING IN FRAME IS OUT OF FOCUS, nothing is soft-focus and nothing is blurred; where a rendering calls for atmosphere it comes from aerial perspective and tonal separation, NEVER from defocus",
+    "poster_symbol": "AVOID THE FIRST OBVIOUS SYMBOL: no nuclear trefoil, no radiation trefoil, no padlock, no chessboard, no ticking bomb, no glowing red eye, no brain in a jar, no cascading binary, no hooded reaper. Where an abstract idea needs a stand-in, use an unexpected but immediately legible ordinary object instead -- a lanyard, a desk bell, a filling gauge, a queue ticket, a rubber stamp, a fire door, a keyed cabinet",
+    "poster_separation": "COLOUR SEPARATION: the main subject and its most important sub-element must be distinguishable from each other and from the background by HUE as well as by value, so the parts of the picture are told apart at a glance instead of merging into one mass; this is separation, not saturation, and it is not a licence to make the image more colourful overall",
     "poster_safety": "strictly no blood and no gore anywhere in the image, damage to machines shown as mechanical breakage with glowing green or blue coolant and hydraulic fluid only, no wounded people, no real-world brands or insignia or logos, no identifiable real people, nothing sexualised, all human figures fully and modestly clothed in ordinary institutional workwear",
     "poster_tone": "a bureaucratic world with weirdness leaking in at the edges; ordinary institutional competence rendered straight while something impossible happens deadpan in the same frame; commit to only one flavour of strangeness per image out of eldritch intrusion, technology run amok, or environmental collapse; restrained and elegant, never garish, never lurid"
   },
@@ -77,7 +81,24 @@
     {"id": "p05", "name": "sodium night", "house": false, "clause": "PALETTE: cold blue-grey grounds #1e2733 and #141b24; exactly one saturated accent, sodium-vapour street orange #ff9a3c; the classic municipal night-time colour split of cold shadow against warm lamp"},
     {"id": "p06", "name": "paper and ink", "house": false, "clause": "PALETTE: INVERTED VALUE STRUCTURE -- a bright warm off-white paper ground #e8e0cf carrying most of the frame, drawn and shaded in ink black #171412 and warm grey, with exactly one accent of red-oxide stamp ink #a83c2b; a daylight bureaucratic register, mostly light rather than mostly dark"},
     {"id": "p07", "name": "blueprint", "house": false, "clause": "PALETTE: a saturated prussian-blue ground #123a5c across the whole frame, all forms described in chalk-white and pale-cyan line #d8e6f2, with exactly one accent of warm amber #e8a33d where a real light source sits"},
-    {"id": "p08", "name": "ash and rust", "house": false, "clause": "PALETTE: desaturated concrete and ash greys #3a3a38, #2a2a28 and #55534d across the whole frame, one accent of oxidised rust orange #8a4a2b that is a MATERIAL and not a light; NO GLOWING SOURCE ANYWHERE in this image, all light is plain ambient daylight or plain overhead fluorescent"}
+    {"id": "p08", "name": "ash and rust", "house": false, "clause": "PALETTE: desaturated concrete and ash greys #3a3a38, #2a2a28 and #55534d across the whole frame, one accent of oxidised rust orange #8a4a2b that is a MATERIAL and not a light; NO GLOWING SOURCE ANYWHERE in this image, all light is plain ambient daylight or plain overhead fluorescent"},
+    {"id": "p09", "name": "institutional green", "house": false, "clause": "PALETTE: the colour of a government building's corridor -- pale institutional green walls #7d9b7a and #5c7a5e over a cream #ded6c2 ceiling and skirting, everything drawn in ink black line, with exactly one accent of signal red #b23a2e; green is the DOMINANT hue of the whole frame"}
+  ],
+  "_palette_note": "p09 exists specifically to settle the hue question the taste profile flagged. Three green-ish hue buckets came up as mild aversions at p=0.005 to p=0.041 across twelve tests, and Bonferroni puts the best of them at p=0.06 -- not established. Designing around an uncorrected result would quietly narrow the palette on evidence that does not hold, so this run puts a green-dominant palette in front of him deliberately instead.",
+
+  "families": [
+    {"id": "f01", "name": "Municipal Record", "rendering": "r08", "palette": "p06", "register": "COHERENT DIRECTION -- MUNICIPAL RECORD: the whole set looks like pages torn from a public works archive. Everything is drawn as though it were being catalogued rather than dramatised, flat frontal or near-orthographic views, objects laid out for inspection, high-contrast black line on warm paper, the light of a photocopier rather than of a scene"},
+    {"id": "f02", "name": "Night Shift", "rendering": "r09", "palette": "p05", "register": "COHERENT DIRECTION -- NIGHT SHIFT: every image is a photograph taken outdoors or at a window after midnight on available light only, long exposure, cold shadow against warm municipal lamp, wet ground where there can be wet ground, nothing lit that would not really be lit"},
+    {"id": "f03", "name": "Terminal Native", "rendering": "r05", "palette": "p04", "register": "COHERENT DIRECTION -- TERMINAL NATIVE: the whole world is only ever seen through the game's own display, so every scene is a raster image on a monochrome monitor being looked at in a dark room; the fiction is that this is surveillance or telemetry, never a camera in the room"},
+    {"id": "f04", "name": "Ink Ledger", "rendering": "r04", "palette": "p07", "register": "COHERENT DIRECTION -- INK LEDGER: the set reads as an engineer's site notebook, pen and wash over a blue drafting ground, measured and annotated in spirit though never in text, construction lines left visible under the wash, the confidence of somebody recording a fact rather than composing a picture"},
+    {"id": "f05", "name": "Warm Grime", "rendering": "r01", "palette": "p01", "register": "COHERENT DIRECTION -- WARM GRIME (CONTROL ARM, the incumbent house style): painterly, amber, lived-in, the look this project has been making for a month; included unchanged so the new directions have something honest to beat"},
+    {"id": "f06", "name": "Hard Evidence", "rendering": "r02", "palette": "p08", "register": "COHERENT DIRECTION -- HARD EVIDENCE: every image is a forensic record of an object and its immediate surroundings, flat even light with no glow anywhere at all, obsessive material description, the register of an insurance photograph or an incident exhibit"},
+    {"id": "f07", "name": "Public Information", "rendering": "r03", "palette": "p09", "register": "COHERENT DIRECTION -- PUBLIC INFORMATION: mid-century government information poster, flat institutional green and cream, bold simplified shapes with one signal-red element carrying the warning, the calm authority of a notice pinned in a corridor telling you what to do in an emergency"},
+    {"id": "f08", "name": "Cold Audit", "rendering": "r02", "palette": "p02", "register": "COHERENT DIRECTION -- COLD AUDIT: overhead fluorescent and screen light only, clinical and even, every surface described sharply, the emotional temperature of an inspection carried out at 4pm on a Tuesday by somebody who does not work here"},
+    {"id": "f09", "name": "Duplicator", "rendering": "r06", "palette": "p06", "register": "COHERENT DIRECTION -- DUPLICATOR: the entire set was run off on the office risograph on the cheapest paper in the building, two inks, visible misregistration, the aesthetics of an internal memo nobody was proud of"},
+    {"id": "f10", "name": "Matte Dread", "rendering": "r07", "palette": "p03", "register": "COHERENT DIRECTION -- MATTE DREAD: hand-painted matte in big simple value masses, violet dominant, the one direction permitted to be openly ominous; the strangeness is structural and quiet rather than lurid, and it is present in every image of the set rather than saved for the scary ones"},
+    {"id": "f11", "name": "Carved", "rendering": "r10", "palette": "p08", "register": "COHERENT DIRECTION -- CARVED: relief print, no half tones anywhere, everything reduced to positive and negative shape; the discipline of the set is that if a form cannot survive being carved out of a block it does not appear"},
+    {"id": "f12", "name": "Field Report", "rendering": "r09", "palette": "p02", "register": "COHERENT DIRECTION -- FIELD REPORT: handheld on-camera flash documentation, harsh direct key from the camera position, hard black shadows thrown onto the wall behind, the register of somebody photographing a room quickly because they have to file it, not because they want it to look good"}
   ],
 
   "renderings": [
@@ -122,7 +143,7 @@
   ],
 
   "swatch_anchors": ["s01", "s04", "s07"],
-  "palette_block_subjects": ["s01", "s05", "s09", "s13", "s18", "s21"],
+  "palette_block_subjects": ["s01", "s05", "s08", "s09", "s11", "s13", "s16", "s18", "s20", "s21"],
 
   "levels": {
     "L0": {
@@ -136,16 +157,16 @@
           "kind": "swatch_sheet",
           "cross": {"palette": "*"},
           "variants": 2,
-          "note": "One pure swatch sheet per palette, two rolls each. 8 palettes x 2 = 16."
+          "note": "One pure swatch sheet per palette, two rolls each. 9 palettes x 2 = 18."
         },
         {
           "id": "l0_anchors",
           "kind": "scene",
           "cross": {"subject": "@swatch_anchors", "palette": "*"},
           "rendering": "r01",
-          "composition": "c_default",
+          "composition": "@rotate",
           "variants": 2,
-          "note": "Verbatim-identical anchor scene under every palette, so PALETTE is the only variable. 3 x 8 x 2 = 48."
+          "note": "Verbatim-identical anchor scene under every palette, so PALETTE is the only variable. 3 x 9 x 2 = 54. The two rolls differ in composition, which the taste profile measured as a clean null (52.9%, p=0.55) and therefore worth sampling rather than holding."
         }
       ]
     },
@@ -161,28 +182,26 @@
           "kind": "scene",
           "cross": {"subject": "*", "rendering": "*"},
           "palette": "@house_default",
-          "composition": "c_default",
+          "composition": "@rotate",
           "variants": 1,
-          "note": "Full factorial: every subject in every rendering, exactly once. 22 x 10 = 220. This is the measurement grid -- a complete cross lets subject preference and rendering preference be read independently."
+          "note": "Full factorial: every subject in every rendering, exactly once. 22 x 10 = 220. This is the single-axis measurement grid -- a complete cross lets subject preference and rendering preference be read independently. Composition rotates deterministically because it is a measured null."
         },
         {
-          "id": "l1_depth",
-          "kind": "scene",
-          "cross": {"subject": "*", "rendering": "@depth_renderings"},
-          "palette": "@house_default",
-          "composition": "c_default",
-          "variants": 3,
-          "variant_offset": 1,
-          "note": "Depth on the renderings the taste profile favours (overridable by RENDERING_FAVOURED in the artbrief). 22 x 4 x 3 = 264. variant_offset 1 means these are rolls v2/v3/v4 -- l1_grid already produced v1 of the same cell, so a favoured cell ends up with four independent rolls rather than one wasted duplicate."
+          "id": "l1_family",
+          "kind": "family",
+          "cross": {"subject": "*", "family": "*"},
+          "composition": "@rotate",
+          "variants": 1,
+          "note": "REPLACES the old l1_depth block. 22 subjects x 12 coherent art directions = 264 images at the identical cost, with ZERO repeated prompts. The old block spent $13.20 on rolls v2/v3/v4 of prompts already rendered once; the taste profile measures that as worthless (119 slots, highest-vN chosen 40 times against a random expectation of 47.3, p=0.34; per-variant hit rates 33/43/25/32% against a 34% base). Each family here is a BUNDLE -- rendering plus palette plus register -- applied uniformly across all 22 subjects, so Pip can accept or reject a DIRECTION in one gesture rather than adjudicating 264 individual images. That is the response to his own note: 'individually good ... but need coherence in direction'."
         },
         {
           "id": "l1_palette",
           "kind": "scene",
-          "cross": {"subject": "@palette_block_subjects", "palette": "@palette_block_palettes"},
+          "cross": {"subject": "@palette_block_subjects", "palette": "*"},
           "rendering": "r01",
-          "composition": "c_default",
-          "variants": 3,
-          "note": "Palette crossed against six subjects at full size. 6 x 5 x 3 = 90. Redundant with L0 by design: L0 asks which palette Pip LIKES, this asks which palette SURVIVES a real scene at poster size."
+          "composition": "@rotate",
+          "variants": 1,
+          "note": "Palette crossed against ten subjects at full size, all nine palettes, one roll each. 10 x 9 = 90 -- same count and cost as the old 6 x 5 x 3, with zero repeated prompts. Redundant with L0 by design: L0 asks which palette Pip LIKES, this asks which palette SURVIVES a real scene at poster size."
         },
         {
           "id": "l1_probe",
@@ -190,7 +209,7 @@
           "model": "gpt-image-2",
           "cross": {"subject": ["s01", "s04", "s21"], "rendering": ["r01", "r02"]},
           "palette": "@house_default",
-          "composition": "c_default",
+          "composition": "@rotate",
           "variants": 1,
           "note": "Six-image probe of the newer model on prompts that already have a gpt-image-1.5 twin in l1_grid. Expected to possibly fail on request shape; failures are logged and do not abort the run. Max exposure about $0.30."
         }

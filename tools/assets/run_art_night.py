@@ -220,6 +220,8 @@ def _resolve_axis(spec, brief, axis, value):
             return [p["id"] for p in spec["palettes"]]
         if axis == "rendering":
             return [r["id"] for r in spec["renderings"]]
+        if axis == "family":
+            return [f["id"] for f in spec["families"]]
         raise SystemExit(f"[ABORT] '*' is not defined for axis '{axis}'.")
     if isinstance(value, str) and value.startswith("@"):
         alias = value[1:]
@@ -255,6 +257,21 @@ def _by_id(items, key):
     return {item["id"]: item for item in items}
 
 
+def resolve_composition(spec, composition, cell_key):
+    """'@rotate' picks a composition deterministically from the cell key.
+
+    Composition is the cleanest NULL in the taste profile (off-centre distance
+    52.9%, p=0.55, permutation p=0.80), so it is worth sampling rather than
+    holding constant -- and nothing is wasted by varying it. Deterministic on
+    the cell key so a resumed run reproduces the same choice.
+    """
+    if composition != "@rotate":
+        return composition or "c_default"
+    keys = [k for k in spec["composition_clauses"] if k != "c_portrait"]
+    idx = int(sha256_text(cell_key)[:8], 16) % len(keys)
+    return keys[idx]
+
+
 def assemble_scene_prompt(spec, brief, subject_id, rendering_id, palette_id, composition_id, extra):
     subjects = _by_id(spec["subjects"], "id")
     renderings = _by_id(spec["renderings"], "id")
@@ -262,9 +279,16 @@ def assemble_scene_prompt(spec, brief, subject_id, rendering_id, palette_id, com
     base = spec["base_clauses"]
     comp = spec["composition_clauses"]
 
+    # Order matters: the two MEASURED holds from docs/design/TASTE_PROFILE_2026-08-06.md
+    # (contrast n=136 74.3% p<0.0001, detail n=136 71.3% p<0.0001) go early, where a
+    # long prompt is least likely to drop them.
     parts = [
         base["poster_base"],
+        base["poster_contrast"],
+        base["poster_detail"],
         base["poster_lighting"],
+        base["poster_separation"],
+        base["poster_symbol"],
         base["poster_people"],
         base["poster_props"],
         base["poster_safety"],
@@ -343,6 +367,11 @@ def expand_level_l0_l1(spec, brief, level_key):
             else [None]
         )
 
+        fam_ids = (
+            _resolve_axis(spec, brief, "family", cross["family"]) if "family" in cross else [None]
+        )
+        families = _by_id(spec.get("families", []), "id")
+
         if pal_ids == [None]:
             fixed = block.get("palette")
             pal_ids = [house_palette if fixed == "@house_default" else fixed]
@@ -350,27 +379,51 @@ def expand_level_l0_l1(spec, brief, level_key):
             rend_ids = [block.get("rendering")]
 
         variants = int(block.get("variants", 1))
-        # variant_offset lets a depth block continue the numbering of the grid
-        # block instead of re-rolling identical prompts under a colliding name.
-        # l1_depth starts at v2 so l1_grid's v1 IS the first roll of that cell.
+        # variant_offset lets a block continue another block's variant numbering.
+        # Unused since the depth block was replaced by the family block -- the
+        # taste profile measures repeat rolls of one prompt as worth nothing
+        # (119 slots, p=0.34), so nothing in L1 re-rolls a prompt any more.
         offset = int(block.get("variant_offset", 0))
         composition = block.get("composition", "c_default")
 
         for s in subj_ids:
-            for r in rend_ids:
-                for p in pal_ids:
-                    for v in range(1 + offset, variants + 1 + offset):
-                        if block["kind"] == "swatch_sheet":
-                            prompt = assemble_swatch_prompt(spec, brief, p)
-                            cell = f"{p}"
-                        else:
-                            prompt = assemble_scene_prompt(spec, brief, s, r, p, composition, None)
-                            cell = "_".join(x for x in (s, r, p) if x)
-                        jobs.append(
-                            make_job(
-                                spec, level_key, block["id"], cell, prompt, size, quality, model, v
+            for f in fam_ids:
+                for r in rend_ids:
+                    for p in pal_ids:
+                        for v in range(1 + offset, variants + 1 + offset):
+                            if block["kind"] == "swatch_sheet":
+                                cell = f"{p}"
+                                prompt = assemble_swatch_prompt(spec, brief, p)
+                            elif block["kind"] == "family":
+                                fam = families[f]
+                                cell = f"{s}_{f}"
+                                comp_id = resolve_composition(spec, composition, f"{cell}_v{v}")
+                                prompt = assemble_scene_prompt(
+                                    spec,
+                                    brief,
+                                    s,
+                                    fam["rendering"],
+                                    fam["palette"],
+                                    comp_id,
+                                    [fam["register"]],
+                                )
+                            else:
+                                cell = "_".join(x for x in (s, r, p) if x)
+                                comp_id = resolve_composition(spec, composition, f"{cell}_v{v}")
+                                prompt = assemble_scene_prompt(spec, brief, s, r, p, comp_id, None)
+                            jobs.append(
+                                make_job(
+                                    spec,
+                                    level_key,
+                                    block["id"],
+                                    cell,
+                                    prompt,
+                                    size,
+                                    quality,
+                                    model,
+                                    v,
+                                )
                             )
-                        )
     return jobs
 
 
@@ -476,6 +529,7 @@ def expand_topup(spec, brief, picks, budget_usd):
 
 FAVOURABLE_TAGS = {"love", "like", "promote", "favour", "favor", "hero", "yes", "keep"}
 CELL_RE = re.compile(r"^(s\d{2})_(r\d{2})_(p\d{2})")
+FAMILY_CELL_RE = re.compile(r"^(s\d{2})_(f\d{2})")
 
 
 def load_picks(path, spec, limit=None):
@@ -500,14 +554,24 @@ def load_picks(path, spec, limit=None):
     rend_ok = {r["id"] for r in spec["renderings"]}
     pal_ok = {p["id"] for p in spec["palettes"]}
 
+    families = _by_id(spec.get("families", []), "id")
+
     picks, unparsed, seen = [], [], set()
     for cand in candidates:
         tail = cand.split(":")[-2] if cand.startswith("gen:") else Path(cand).name
         m = CELL_RE.match(tail)
-        if not m:
-            unparsed.append(cand)
-            continue
-        s, r, p = m.groups()
+        if m:
+            s, r, p = m.groups()
+        else:
+            # A family cell (s07_f03) carries its rendering and palette in the
+            # family definition rather than in the filename.
+            fm = FAMILY_CELL_RE.match(tail)
+            if not fm or fm.group(2) not in families:
+                unparsed.append(cand)
+                continue
+            s = fm.group(1)
+            fam = families[fm.group(2)]
+            r, p = fam["rendering"], fam["palette"]
         if s not in subj_ok or r not in rend_ok or p not in pal_ok:
             unparsed.append(cand)
             continue
@@ -784,7 +848,15 @@ def print_projection(jobs, brief, fx, title):
     print(
         f"taste brief: {brief['source']}"
         + (f"  sha256={brief['sha256'][:12]}" if brief["sha256"] else "")
+        + f"  injected HOLD chars={len(brief['hold'])}"
     )
+    if brief["present"] and not brief["hold"]:
+        print(
+            "    (no HOLD text extracted -- the profile carries no artbrief fenced block.\n"
+            "     The measured holds are encoded directly in the spec's base_clauses as\n"
+            "     auditable prompt text rather than injected as prose full of p-values.\n"
+            "     The profile sha256 is still recorded in every provenance sidecar.)"
+        )
     if not brief["present"]:
         print(
             "[!] WARNING: the taste profile was NOT found. Prompts fall back to the\n"
