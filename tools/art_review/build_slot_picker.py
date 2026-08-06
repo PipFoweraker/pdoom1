@@ -106,6 +106,7 @@ def build_data(clusters, frame_roles, stats):
             {
                 "id": f.role_id,
                 "kb": round(f.bytes / 1024),
+                "crop": list(f.crop),
                 "cands": [cand_payload(c) for c in f.candidates],
             }
             for f in frame_roles
@@ -116,6 +117,7 @@ def build_data(clusters, frame_roles, stats):
                 "dest": cl.dest,
                 "stem": cl.stem,
                 "draw": cl.draw_px,
+                "square": cl.draw_square,
                 "why": cl.draw_why,
                 "kb": round(cl.bytes / 1024),
                 "default": cl.default_pick(),
@@ -167,16 +169,56 @@ button.on { background:var(--green); border-color:var(--green); color:#0f1a0c; }
          color:var(--dim); }
 .badge.draw { border-color:var(--amber); color:var(--amber2); }
 .cards { display:flex; gap:10px; flex-wrap:wrap; padding:0 10px 9px; }
+/* overflow:hidden is a BACKSTOP, not the fix. The fix is that every card is
+   sized to its own game-size render (cardHtml sets an inline width). Without
+   both, a 408px hero render inside a 186px card spilled ~111px out of each
+   side of a centring flexbox -- three of them overlapping read as a "hover
+   overlay" covering the header and running off the left edge of the page.
+   Reported by Pip 2026-08-06; the bug had nothing to do with hover. */
 .card { border:1px solid var(--line); border-radius:4px; background:var(--bg); padding:6px;
-        width:186px; cursor:pointer; }
+        width:186px; cursor:pointer; overflow:hidden; }
 .card:hover { border-color:var(--amber); }
 .card.win { border-color:var(--green); box-shadow:0 0 0 1px var(--green) inset; }
 /* The gamebox is a FLAT DARK tile on purpose -- it stands in for the ground the
    action bar actually draws these on. No checkerboard here; checkerboard is for
    judging alpha, which is the full-size preview's job. */
 .gamebox { background:#0b0a09; border:1px dashed var(--line); display:flex; align-items:center;
-        justify-content:center; padding:8px; margin-bottom:5px; min-height:86px; }
-.gamebox img { display:block; image-rendering:auto; }
+        justify-content:center; padding:8px; margin-bottom:5px; min-height:86px;
+        overflow:hidden; }
+.gamebox img { display:block; image-rendering:auto; max-width:100%; }
+.boxcap { color:var(--dim); font-size:10px; text-align:center; margin:-3px 0 5px; }
+/* Frame roles: the decision is about a 12px corner bracket, so show the CORNER,
+   cropped and magnified, not the 512px picture it sits in. */
+.crop { background-repeat:no-repeat; background-color:#0b0a09;
+        border:1px dashed var(--line); }
+.cropmini { background-repeat:no-repeat; background-color:#0b0a09;
+        border:1px solid var(--line); }
+.croprow { display:flex; gap:8px; align-items:flex-end; margin-bottom:4px; }
+/* Two-step frame decision. Step 2 is ABSENT, not disabled, when step 1 makes
+   it meaningless -- see frameHtml. */
+.step { padding:7px 10px 3px; font-size:12px; color:var(--fg); }
+.stepn { font-family:Consolas,monospace; font-size:10.5px; color:var(--bg);
+         background:var(--amber); border-radius:3px; padding:1px 6px; margin-right:7px; }
+.ok { color:var(--green); }
+.need { color:var(--amber2); }
+.treats { display:flex; gap:8px; flex-wrap:wrap; padding:0 10px 4px; }
+.tbtn { text-align:left; padding:5px 9px; max-width:260px; }
+.gloss { display:block; color:var(--dim); font-size:10.5px; font-weight:400; margin-top:2px; }
+button.on .gloss { color:#12200e; }
+.noscnd { padding:2px 10px 9px; color:var(--dim); font-size:11.5px; }
+.cards.dimmed { opacity:.35; filter:saturate(.4); }
+.cards.dimmed .card { cursor:default; }
+.link { background:none; border:none; color:var(--amber); text-decoration:underline;
+        padding:0 2px; cursor:pointer; font-size:11.5px; }
+.explain { background:var(--bg2); border:1px solid var(--line); border-radius:4px;
+        margin:6px 16px 10px; padding:9px 12px; font-size:12px; color:var(--fg); }
+.explain h3 { font-size:12px; margin:0 0 5px; color:var(--amber); }
+.explain pre { font-family:Consolas,monospace; font-size:11px; color:var(--dim);
+        margin:6px 0; line-height:1.25; }
+.explain dt { color:var(--amber2); font-weight:600; margin-top:6px; }
+.explain dd { margin:1px 0 0 0; color:var(--dim); }
+.qline { margin:0 16px 8px; padding:6px 10px; border-left:3px solid var(--amber);
+        background:var(--bg2); font-size:12.5px; }
 .full { display:block; width:100%; background:__CHECKER__; border:1px solid var(--line); }
 .cmeta { font-family:Consolas,monospace; font-size:10.5px; color:var(--dim); margin-top:4px;
          word-break:break-all; }
@@ -204,20 +246,18 @@ kbd { background:var(--bg3); border:1px solid var(--line); border-radius:3px; pa
     <button id="f-done">Decided</button>
     <button id="f-all">All</button>
     <span class="sub">|</span>
+    <span class="sub">| filters (SECTION 2 only):</span>
     <select id="dest"></select>
     <select id="ncand"></select>
     <input type="text" id="q" placeholder="filter by name..." size="18">
-    <span class="sub">|</span>
-    <span class="sub">game-size zoom</span>
+    <span class="sub">| zoom (section 2, measured sizes only):</span>
     <button id="z1">1x</button><button id="z2">2x</button><button id="z4">4x</button>
-    <span class="sub">|</span>
-    <span class="sub">batch:</span>
+    <span class="sub">| batch-pin the clusters currently visible:</span>
     <button class="bapply" data-v="1">all v1</button>
     <button class="bapply" data-v="2">all v2</button>
     <button class="bapply" data-v="3">all v3</button>
     <button class="bapply" data-v="4">all v4</button>
     <button class="bapply" data-v="hi">all highest</button>
-    <span class="sub">(applies to the VISIBLE undecided clusters only)</span>
     <span class="sub">|</span>
     <button id="exp">E &mdash; export</button>
   </div>
@@ -232,33 +272,68 @@ kbd { background:var(--bg3); border:1px solid var(--line); border-radius:3px; pa
   <span id="lastexp"></span>
 </div>
 
-<h2>1 &mdash; FRAME ROLES <span class="sub">(UI source material: keep the painted
-  texture, or replace it with geometry?)</span></h2>
-<div class="sub" style="margin:0 16px 6px">
-  512px pictures of a 12px corner. Per role: <b>StyleBoxFlat</b> (geometric, zero texture bytes,
-  resolution-independent) / <b>9-slice</b> (the painted texture is the point &mdash; crop
-  corner+edge regions into one small atlas) / <b>ship whole</b> (it really is a full-screen
-  image) / <b>drop</b>. Click a variant to nominate WHICH master the 9-slice or whole ship uses.
+<h2>1 &mdash; FRAME ROLES (15)</h2>
+<div class="qline"><b>The question here:</b> HOW should this thing be drawn at all &mdash;
+  in code, or from a piece of this painted art? <span class="sub">Nothing is being compared
+  for beauty. These 15 roles are UI source material: 512x512 pictures of a bracket that ends
+  up about 12px on screen. All four answers are legitimate.</span></div>
+
+<div class="explain">
+  <h3>What the four answers actually mean</h3>
+  <p style="margin:0 0 4px">You already have a feel for StyleBoxFlat, so the others are
+  described against it.</p>
+  <dl style="margin:0">
+    <dt>draw it in code (StyleBoxFlat) &mdash; ships 0 bytes</dt>
+    <dd>The theme says "1px amber border, 3px corner radius" and the engine draws it at any
+      size, on any screen, forever. It CANNOT have grain, brush texture, ornament or a painted
+      gradient. Right answer for a plain panel or a plain button.</dd>
+    <dt>crop the corners out (9-slice) &mdash; ships kilobytes, keeps the painted look</dt>
+    <dd>We cut NINE regions out of the master &mdash; 4 corners, 4 edges, 1 middle &mdash; into
+      one small shared atlas. The engine then draws the corners at fixed size and STRETCHES the
+      edge strips to whatever length the box needs, so one small image frames a box of any
+      shape. That is why only the corner and a sliver of edge are worth keeping: the middle of
+      the master is never drawn.
+      <pre>+-----+---------+-----+
+|  1  |    2    |  3  |   1 3 7 9  corners, drawn at fixed size, never stretched
++-----+---------+-----+   2 8      top/bottom edge, STRETCHED horizontally
+|  4  |    5    |  6  |   4 6      left/right edge, STRETCHED vertically
++-----+---------+-----+   5        middle -- usually transparent or a flat fill
+|  7  |    8    |  9  |
++-----+---------+-----+   all 15 roles together: well under 0.3 MB</pre>
+      Concretely: <b>frame_panel_ornate</b> has painted ornament in its corners &mdash; that is
+      exactly what 9-slice preserves and StyleBoxFlat cannot. <b>frame_panel_plain</b> probably
+      has nothing a border colour could not reproduce, so 9-slice would be paying bytes for
+      nothing.</dd>
+    <dt>ship the whole image &mdash; ships the full 512px picture</dt>
+    <dd>Only right when the whole picture IS the thing on screen. The three CRT bezels are
+      genuine full-screen overlays, so they qualify. For a corner bracket this means shipping
+      ~250 KB to draw 12 px.</dd>
+    <dt>don't use it &mdash; ships nothing, changes nothing on disk</dt>
+    <dd>The role goes away. The masters stay in Library; no manifest entry names them. Nothing
+      is deleted.</dd>
+  </dl>
 </div>
 <div id="frames"></div>
 
-<h2>2 &mdash; CONTESTED SLOTS <span class="sub">(one winner per slot; the losers stay
-  Library assets no manifest entry names &mdash; nothing is done TO them)</span></h2>
+<h2>2 &mdash; CONTESTED SLOTS (136)</h2>
+<div class="qline"><b>The question here:</b> WHICH of these variants ships in this slot?
+  <span class="sub">Different question from section 1. Every candidate is already approved
+  art; the game just has one slot and several of them. Pick one. The losers stay Library
+  assets that no manifest entry names &mdash; nothing is done TO them, no file moves, and
+  you can change your mind (<kbd>u</kbd>) at any time.</span></div>
 <div id="clusters"></div>
 
 <div id="modal"><img id="modalimg" src=""></div>
 <div id="toast"></div>
-<div id="help">
-  <kbd>j</kbd>/<kbd>k</kbd> next/prev &nbsp; <kbd>1</kbd>..<kbd>9</kbd> pick that candidate &nbsp;
-  <kbd>n</kbd> note &nbsp; <kbd>x</kbd> defer (decide later) &nbsp; <kbd>u</kbd> reopen (clear
-  pick) &nbsp; <kbd>s</kbd>/<kbd>9</kbd>/<kbd>w</kbd> frame treatment &nbsp;
-  <kbd>f</kbd> full size &nbsp; <kbd>E</kbd> export &nbsp;
-  <span class="sub">reopening is expected &mdash; taste sessions are not one-shot.</span>
-</div>
+<div id="help"><span id="helptxt"></span></div>
 
 <script>
 var DATA = __DATA__;
-var LS = "pdoom1_slot_picks_v1", LSE = "pdoom1_slot_picks_exported";
+// v2: the key was bumped on 2026-08-06 so the first session's picks (made
+// against a page whose frame section was misleading) are discarded rather than
+// silently carried forward. Pip's ruling: "none of that work meant anything
+// because I was clicking wrong. Full discard, rebuild tool."
+var LS = "pdoom1_slot_picks_v2", LSE = "pdoom1_slot_picks_exported";
 // Storage shim. Some browsers refuse localStorage on file:// (opaque origin)
 // and THROW rather than return null. Unguarded, that kills the page on load
 // and the failure looks like "the tool is broken". Degrade to in-memory --
@@ -271,7 +346,7 @@ function sset(k, v) { try { localStorage.setItem(k, v); }
                       catch (e) { STORE_OK = false; MEM[k] = v; } }
 var picks = {};
 try { picks = JSON.parse(sget(LS) || "{}") || {}; } catch (e) { picks = {}; }
-var filter = "open", zoom = 1, focus = 0, order = [];
+var filter = "open", zoom = 1, focus = 0, order = [], showMasters = {};
 
 function save() { sset(LS, JSON.stringify(picks)); }
 function now() { return new Date().toISOString(); }
@@ -282,18 +357,77 @@ function toast(m) { var t = document.getElementById("toast"); t.textContent = m;
   t.style.display = "none"; }, 1400); }
 
 // ---- render helpers -------------------------------------------------------
-function gameImg(c, draw) {
-  // draw==0 means "the game draws this at native size" -- there is nothing to
-  // shrink, so cap the preview for layout instead of inventing a game size.
-  var w = draw ? draw * zoom : 0;
-  if (w) return '<img loading="lazy" src="' + c.href + '" style="width:' + w +
-                'px;height:' + w + 'px">';
-  return '<img loading="lazy" src="' + c.href + '" style="max-width:160px;max-height:110px">';
+var CARD_MIN = 186, RENDER_MAX = 760;   // never let a card outgrow the page
+
+function renderWidth(cl) {
+  // The width the game-size preview will actually occupy. Everything that
+  // sizes a card derives from THIS, so a card can never be narrower than its
+  // own contents. draw==0 means "drawn at native size" -- there is nothing to
+  // shrink, so cap for layout instead of inventing a game size.
+  if (!cl || !cl.draw) return 160;
+  return Math.min(cl.draw * zoom, RENDER_MAX);
 }
-function cardHtml(c, i, chosen, draw) {
-  return '<div class="card' + (chosen ? ' win' : '') + '" data-rel="' + esc(c.rel) + '">' +
-    '<div class="gamebox">' + gameImg(c, draw) + '</div>' +
+function gameImg(c, cl) {
+  var w = renderWidth(cl);
+  if (!cl || !cl.draw) {
+    return '<img loading="lazy" src="' + c.href + '" style="max-width:160px;max-height:110px">';
+  }
+  // square: the consumer pins BOTH dimensions (a 70x70 tile).
+  // otherwise: it pins WIDTH and lets height run proportional, so forcing a
+  // square here would squash 768x512 hero art and lie about what ships.
+  var st = cl.square ? 'width:' + w + 'px;height:' + w + 'px'
+                     : 'width:' + w + 'px;height:auto';
+  return '<img loading="lazy" src="' + c.href + '" style="' + st + '">';
+}
+function cardWidth(cl) {
+  return Math.max(CARD_MIN, renderWidth(cl) + 16);
+}
+function cardHtml(c, i, chosen, cl) {
+  var w = cardWidth(cl);
+  return '<div class="card' + (chosen ? ' win' : '') + '" data-rel="' + esc(c.rel) +
+    '" style="width:' + w + 'px">' +
+    '<div class="gamebox">' + gameImg(c, cl) + '</div>' +
+    (cl && cl.draw ? '<div class="boxcap">as the game draws it (' + cl.draw + 'px' +
+       (zoom > 1 ? ' at ' + zoom + 'x' : '') + ')</div>' : '') +
     '<img class="full" loading="lazy" src="' + c.href + '">' +
+    '<div class="cmeta"><span class="pickno">' + (i + 1) + '</span>' +
+    '<span class="cvar">' + esc(c.variant) + '</span> &middot; ' + c.kb + ' KB' +
+    (c.px ? ' &middot; ' + c.px[0] + 'x' + c.px[1] : '') + '<br>' + esc(c.name) + '</div>' +
+    (c.note ? '<div class="cnote">review note: ' + esc(c.note) + '</div>' : '') +
+    '</div>';
+}
+
+// ---- frame cards: show the REGION being decided, not the picture around it --
+function cropStyle(c, crop, boxW, boxH) {
+  // CSS background crop. background-size scales the master so the crop fills
+  // the box; background-position's percentage is relative to (image - box),
+  // hence x/(1-w).
+  var x = crop[0], y = crop[1], w = crop[2], h = crop[3];
+  var px = w >= 1 ? 0 : (x / (1 - w)) * 100;
+  var py = h >= 1 ? 0 : (y / (1 - h)) * 100;
+  return "background-image:url('" + c.href + "');" +
+    "background-size:" + (100 / w) + "% " + (100 / h) + "%;" +
+    "background-position:" + px.toFixed(2) + "% " + py.toFixed(2) + "%;" +
+    "width:" + Math.round(boxW) + "px;height:" + Math.round(boxH) + "px;";
+}
+function frameCardHtml(c, i, chosen, crop, inert) {
+  var w = crop[2], h = crop[3];
+  var big = 168, bw = w >= h ? big : big * (w / h), bh = h >= w ? big : big * (h / w);
+  var mini = 16, mw = w >= h ? mini : mini * (w / h), mh = h >= w ? mini : mini * (h / w);
+  var whole = (w >= 1 && h >= 1);
+  return '<div class="card' + (chosen ? ' win' : '') + (inert ? ' inert' : '') +
+    '" data-rel="' + esc(c.rel) + '"' + (inert ? ' data-inert="1"' : '') +
+    ' style="width:' + Math.max(CARD_MIN, bw + 16) + 'px">' +
+    '<div class="croprow">' +
+      '<div><div class="crop" style="' + cropStyle(c, crop, bw, bh) + '"></div>' +
+      '<div class="boxcap">' + (whole ? 'whole overlay' : 'the region in question, magnified') +
+      '</div></div>' +
+      (whole ? '' :
+        '<div><div class="cropmini" style="' + cropStyle(c, crop, mw, mh) + '"></div>' +
+        '<div class="boxcap">~16px</div></div>') +
+    '</div>' +
+    '<img class="full" loading="lazy" src="' + c.href + '">' +
+    '<div class="boxcap">the whole master (mostly not the subject)</div>' +
     '<div class="cmeta"><span class="pickno">' + (i + 1) + '</span>' +
     '<span class="cvar">' + esc(c.variant) + '</span> &middot; ' + c.kb + ' KB' +
     (c.px ? ' &middot; ' + c.px[0] + 'x' + c.px[1] : '') + '<br>' + esc(c.name) + '</div>' +
@@ -322,13 +456,23 @@ function clusterHtml(cl, idx) {
     (st ? '<span class="badge">' + st.toUpperCase() + '</span>' : '') + '</div>';
   h += '<div class="cards">';
   for (var i = 0; i < cl.cands.length; i++)
-    h += cardHtml(cl.cands[i], i, p.src === cl.cands[i].rel, cl.draw);
+    h += cardHtml(cl.cands[i], i, p.src === cl.cands[i].rel, cl);
   h += '</div>' + noteBox("slot:" + cl.id) + '</div>';
   return h;
 }
 
-var TREAT = [["styleboxflat", "S: StyleBoxFlat"], ["nineslice", "9: 9-slice atlas"],
-             ["whole", "W: ship whole"], ["drop", "D: drop"]];
+// Plain language at the point of decision. Pip clicked 11 of these before the
+// paragraph above the section told him what they meant -- so the paragraph is
+// not where the explanation belongs.
+// Keys are LETTERS, not digits: the old "9 = 9-slice" collided with 1..9
+// source selection on the very same row, which is the two-controls-one-key
+// version of the bug this section was rebuilt to remove.
+var TREAT = [
+  ["styleboxflat", "[S] draw it in code", "StyleBoxFlat border. Ships 0 bytes. No texture."],
+  ["nineslice", "[C] crop the corners out", "9-slice atlas. Keeps the paint. Ships KB, not MB."],
+  ["whole", "[W] ship the whole image", "the full 512px picture. Only for full-screen art."],
+  ["drop", "[D] don't use it", "nothing ships; masters stay in Library, untouched."]];
+var TREAT_KEY = { s: "styleboxflat", c: "nineslice", w: "whole", d: "drop" };
 function frameHtml(fr, idx) {
   var id = "frame:" + fr.id, p = picks[id] || {}, st = p.status || "";
   var cls = "row frow" + (st === "chosen" ? " done" : st === "deferred" ? " defer" : "") +
@@ -336,15 +480,55 @@ function frameHtml(fr, idx) {
   var h = '<div class="' + cls + '" id="row_' + esc(id) + '" data-id="' + esc(id) +
     '" data-idx="' + idx + '">';
   h += '<div class="rhead"><span class="rid">' + esc(fr.id) + '</span>' +
-    '<span class="badge">' + fr.cands.length + ' files, ' + fr.kb + ' KB</span>';
+    '<span class="badge">' + fr.cands.length + ' files, ' + fr.kb + ' KB</span>' +
+    (st ? '<span class="badge">' + st.toUpperCase() + '</span>' : '') + '</div>';
+
+  // STEP 1 -- always live. One question, four answers.
+  h += '<div class="step"><span class="stepn">STEP 1</span> how should this be drawn?</div>';
+  h += '<div class="treats">';
   for (var t = 0; t < TREAT.length; t++)
     h += '<button class="tbtn' + (p.treatment === TREAT[t][0] ? ' on' : '') +
       '" data-treat="' + TREAT[t][0] + '" data-fid="' + esc(id) + '">' +
-      TREAT[t][1] + '</button>';
-  h += '</div><div class="cards">';
-  for (var i = 0; i < fr.cands.length; i++)
-    h += cardHtml(fr.cands[i], i, p.src === fr.cands[i].rel, 0);
-  h += '</div>' + noteBox(id) + '</div>';
+      '<b>' + TREAT[t][1] + '</b><span class="gloss">' + TREAT[t][2] + '</span></button>';
+  h += '</div>';
+
+  // STEP 2 -- EXISTS ONLY when the answer to step 1 makes a source matter.
+  // Not greyed, not disabled: absent. A control that accepts a click and
+  // discards it is the silent-wrongness pattern wearing a UI (Pip, 2026-08-06:
+  // "I don't understand how you want me to combine those s 9 w d things with
+  // clicking on the pictures?").
+  var needsSrc = (p.treatment === "nineslice" || p.treatment === "whole");
+  if (needsSrc) {
+    h += '<div class="step"><span class="stepn">STEP 2</span> ' +
+      (p.treatment === "nineslice" ? 'which master do we crop the atlas from?'
+                                   : 'which master ships?') +
+      (p.src ? ' <span class="ok">[OK] chosen</span>'
+             : ' <span class="need">[!] needed -- click one</span>') + '</div>';
+    h += '<div class="cards">';
+    for (var i = 0; i < fr.cands.length; i++)
+      h += frameCardHtml(fr.cands[i], i, p.src === fr.cands[i].rel, fr.crop);
+    h += '</div>';
+  } else if (p.treatment) {
+    h += '<div class="noscnd">' + (p.treatment === "styleboxflat"
+      ? 'No source image is used -- the border is authored in the theme as a StyleBoxFlat, ' +
+        'so there is nothing to pick and these masters ship no bytes.'
+      : 'Nothing ships for this role. The masters stay in Library; no manifest entry names them.'
+      ) + ' <button class="link" data-show="' + esc(id) + '">show the masters anyway</button>' +
+      '</div>';
+    if (showMasters[id]) {
+      h += '<div class="cards dimmed">';
+      for (var j = 0; j < fr.cands.length; j++)
+        h += frameCardHtml(fr.cands[j], j, false, fr.crop, true);
+      h += '</div>';
+    }
+  } else {
+    h += '<div class="noscnd">Answer step 1 and the rest of the question appears.</div>';
+    h += '<div class="cards dimmed">';
+    for (var k = 0; k < fr.cands.length; k++)
+      h += frameCardHtml(fr.cands[k], k, false, fr.crop, true);
+    h += '</div>';
+  }
+  h += noteBox(id) + '</div>';
   return h;
 }
 
@@ -392,11 +576,65 @@ function render() {
     DATA.frames.length + " decided &middot; showing " + order.length +
     " &middot; source: " + DATA.stats.state_entries + " verdicts (READ-ONLY), " +
     DATA.stats.promotable_files + " promotable files &middot; built " + DATA.built;
+  syncConditionalControls();
+  syncHelp();
 }
 
 function scrollFocus() {
   var el = document.getElementById("row_" + order[focus]);
   if (el) el.scrollIntoView({ block: "center" });
+}
+
+// ---- conditional controls, made visible -----------------------------------
+// Same test the frame section had to pass, applied to the toolbar: no control
+// may accept a click and quietly do nothing. Each batch button carries its own
+// live hit count and disables itself at zero, so "all v4" cannot look
+// available while matching no visible cluster.
+function batchTargets(v) {
+  return visibleClusters()
+    .filter(function (c) { return stateOf("slot:" + c.id) !== "chosen"; })
+    .map(function (c) {
+      var pick = null;
+      if (v === "hi") pick = c.cands[c.cands.length - 1];
+      else c.cands.forEach(function (x) {
+        if (x.variant.replace("*", "") === "v" + v) pick = x; });
+      return pick ? [c, pick] : null;
+    })
+    .filter(Boolean);
+}
+function syncConditionalControls() {
+  Array.prototype.forEach.call(document.querySelectorAll(".bapply"), function (b) {
+    var n = batchTargets(b.dataset.v).length;
+    b.textContent = (b.dataset.v === "hi" ? "all highest" : "all v" + b.dataset.v) + " (" + n + ")";
+    b.disabled = (n === 0);
+    b.style.opacity = n ? "1" : ".35";
+    b.title = n ? ("pins " + n + " of the " + visibleClusters().length + " visible cluster(s)")
+                : "no visible undecided cluster has that variant";
+  });
+  // Zoom only moves anything for clusters with a MEASURED draw size; native-size
+  // art ignores it. Say so rather than letting the buttons look inert.
+  var anyDraw = visibleClusters().some(function (c) { return !!c.draw; });
+  ["z1", "z2", "z4"].forEach(function (x) {
+    var e = document.getElementById(x);
+    e.style.opacity = anyDraw ? "1" : ".35";
+    e.title = anyDraw ? "scale the game-size preview"
+                      : "nothing visible has a measured draw size -- zoom does nothing here";
+  });
+}
+function syncHelp() {
+  var id = order[focus] || "", frame = id.indexOf("frame:") === 0;
+  document.getElementById("helptxt").innerHTML =
+    (frame
+      ? '<b>frame role focused:</b> <kbd>s</kbd> draw in code &nbsp; <kbd>c</kbd> crop ' +
+        'corners (9-slice) &nbsp; <kbd>w</kbd> ship whole &nbsp; <kbd>d</kbd> don\'t use ' +
+        '&nbsp; <span class="sub">(then, and only then, <kbd>1</kbd>..<kbd>9</kbd> ' +
+        'picks the source master &mdash; s and d need none)</span>'
+      : '<b>slot focused:</b> <kbd>1</kbd>..<kbd>9</kbd> pin that candidate &nbsp; ' +
+        '<span class="sub">(s/9/w/d do nothing here -- they are frame-role answers)</span>') +
+    ' &nbsp;|&nbsp; <kbd>j</kbd>/<kbd>k</kbd> next/prev &nbsp; <kbd>n</kbd> note &nbsp; ' +
+    '<kbd>x</kbd> defer &nbsp; <kbd>u</kbd> reopen &nbsp; <kbd>f</kbd> full size &nbsp; ' +
+    '<kbd>E</kbd> export &nbsp; <span class="sub">shift-click any image to enlarge; ' +
+    'reopening is expected.</span>';
 }
 
 // ---- mutations ------------------------------------------------------------
@@ -411,7 +649,14 @@ function setPick(id, rel) {
 }
 function setTreat(id, t) {
   var p = picks[id] || {};
-  p.treatment = t; p.status = "chosen"; p.updated_at = now();
+  p.treatment = t; p.updated_at = now();
+  // "chosen" means the whole question is answered. 9-slice and ship-whole are
+  // only half-answered until step 2 names a source, and a source picked under
+  // a PREVIOUS treatment must not survive a switch to one that ignores it --
+  // otherwise the record carries a source nobody chose for the treatment that
+  // shipped. Clearing it is the honest move.
+  if (t === "styleboxflat" || t === "drop") { delete p.src; p.status = "chosen"; }
+  else { p.status = p.src ? "chosen" : ""; }
   picks[id] = p; save();
 }
 function defer(id) {
@@ -426,6 +671,8 @@ function reopen(id) {
 document.addEventListener("click", function (ev) {
   var b = ev.target.closest("button[data-treat]");
   if (b) { setTreat(b.dataset.fid, b.dataset.treat); render(); return; }
+  var sh = ev.target.closest("button[data-show]");
+  if (sh) { showMasters[sh.dataset.show] = !showMasters[sh.dataset.show]; render(); return; }
   var c = ev.target.closest(".card");
   if (c) {
     var row = c.closest(".row");
@@ -433,6 +680,10 @@ document.addEventListener("click", function (ev) {
       document.getElementById("modalimg").src = c.querySelector("img.full").src;
       document.getElementById("modal").style.display = "flex"; return;
     }
+    // A card rendered as reference-only cannot be picked. It is shown dimmed
+    // and it says why; accepting the click and dropping it would be exactly
+    // the failure this restructure exists to remove.
+    if (c.dataset.inert) { toast("this treatment uses no source image"); return; }
     focus = parseInt(row.dataset.idx, 10);
     setPick(row.dataset.id, c.dataset.rel); render(); return;
   }
@@ -460,10 +711,23 @@ document.addEventListener("keydown", function (ev) {
     var cl = DATA.clusters.filter(function (c) { return "slot:" + c.id === id; })[0];
     var i = parseInt(k, 10) - 1;
     if (cl && cl.cands[i]) { setPick(id, cl.cands[i].rel); render(); }
-  } else if (id && id.indexOf("frame:") === 0 &&
-             (k === "s" || k === "9" || k === "w" || k === "d")) {
-    setTreat(id, { s: "styleboxflat", "9": "nineslice", w: "whole", d: "drop" }[k]);
+  } else if (k >= "1" && k <= "9" && id && id.indexOf("frame:") === 0) {
+    // Digits select a SOURCE, and only exist as an answer once step 1 has made
+    // a source relevant. Otherwise say so instead of silently ignoring it.
+    var p = picks[id] || {};
+    if (p.treatment !== "nineslice" && p.treatment !== "whole") {
+      toast(p.treatment ? "this treatment uses no source image"
+                        : "answer step 1 first (s / c / w / d)");
+    } else {
+      var fr = DATA.frames.filter(function (f) { return "frame:" + f.id === id; })[0];
+      var j = parseInt(k, 10) - 1;
+      if (fr && fr.cands[j]) { setPick(id, fr.cands[j].rel); render(); }
+    }
+  } else if (id && id.indexOf("frame:") === 0 && TREAT_KEY[k]) {
+    setTreat(id, TREAT_KEY[k]);
     render();
+  } else if (id && id.indexOf("slot:") === 0 && TREAT_KEY[k]) {
+    toast("s / c / w / d are frame-role answers -- this is a slot; use 1..9");
   } else if (k === "n") {
     ev.preventDefault();
     var el = document.querySelector('#row_' + CSS.escape(id) + ' .note-in');

@@ -72,6 +72,23 @@ class TestRoleStem(unittest.TestCase):
             slot_model.variant_rank("x_v12_512.png"), slot_model.variant_rank("x_v2_512.png")
         )
 
+    def test_every_frame_role_has_a_crop(self):
+        # A missing entry silently falls back to the whole 512px picture -- which
+        # is exactly the "you showed me the glowing arrow, not the corner" bug.
+        for stem in slot_model.FRAME_ROLE_STEMS:
+            self.assertIn(stem, slot_model.FRAME_CROPS, stem)
+
+    def test_crops_are_inside_the_image(self):
+        for stem, (x, y, w, h) in slot_model.FRAME_CROPS.items():
+            self.assertGreater(w, 0, stem)
+            self.assertGreater(h, 0, stem)
+            self.assertLessEqual(x + w, 1.0001, stem)
+            self.assertLessEqual(y + h, 1.0001, stem)
+
+    def test_only_the_bezels_claim_the_whole_image(self):
+        whole = {s for s, c in slot_model.FRAME_CROPS.items() if c[2] >= 1 and c[3] >= 1}
+        self.assertEqual(whole, {s for s in slot_model.FRAME_ROLE_STEMS if s.startswith("crt_")})
+
     def test_implicit_v1_label(self):
         # v1 files carry no _v1_ marker at all in this naming convention; the
         # batch shortcut has to know that or "all v1" silently matches nothing.
@@ -107,6 +124,15 @@ class TestModel(unittest.TestCase):
     def test_draw_size_is_cited_not_guessed(self):
         for cl in self.clusters:
             self.assertTrue(cl.draw_why, cl.slot_id)
+
+    def test_square_only_where_the_consumer_pins_both_dimensions(self):
+        # Getting this wrong squashes 768x512 hero art into a square preview,
+        # which makes the preview lie about what the game draws.
+        for cl in self.clusters:
+            if cl.dest == "godot/assets/icons/generated":
+                self.assertTrue(cl.draw_square, cl.slot_id)
+            else:
+                self.assertFalse(cl.draw_square, cl.slot_id)
 
     def test_nothing_shrinks_below_native_claim(self):
         # draw_px 0 means "already at or below the drawn size"; any positive

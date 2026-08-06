@@ -67,6 +67,40 @@ FRAME_ROLE_STEMS = (
 
 FRAME_TREATMENTS = ("styleboxflat", "nineslice", "whole", "drop")
 
+# Which REGION of a frame master the decision is actually about. A 512x512
+# picture of a corner bracket is 91% irrelevant pixels; showing the whole image
+# shows the glowing arrow in the middle, not the 12px bracket being judged.
+# (x, y, w, h) as fractions of the master. (0, 0, 1, 1) = the whole image
+# genuinely is the subject.
+FRAME_CROPS = {
+    "ui_frame_corner_tl": (0.00, 0.00, 0.30, 0.30),
+    "ui_frame_corner_tr": (0.70, 0.00, 0.30, 0.30),
+    "ui_frame_corner_bl": (0.00, 0.70, 0.30, 0.30),
+    "ui_frame_corner_br": (0.70, 0.70, 0.30, 0.30),
+    "ui_frame_top": (0.20, 0.00, 0.60, 0.20),
+    "ui_frame_bottom": (0.20, 0.80, 0.60, 0.20),
+    "ui_frame_left": (0.00, 0.20, 0.20, 0.60),
+    "ui_frame_right": (0.80, 0.20, 0.20, 0.60),
+    "doom_meter_frame": (0.00, 0.00, 0.40, 0.40),
+    "frame_button": (0.00, 0.00, 0.40, 0.40),
+    "frame_panel_plain": (0.00, 0.00, 0.40, 0.40),
+    "frame_panel_ornate": (0.00, 0.00, 0.40, 0.40),
+    # The CRT bezels are the only members that plausibly ship whole -- they ARE
+    # full-screen overlays, so the whole image is the subject.
+    "crt_frame_bezel_heavy": (0.00, 0.00, 1.00, 1.00),
+    "crt_frame_curved_glass": (0.00, 0.00, 1.00, 1.00),
+    "crt_frame_vignette_light": (0.00, 0.00, 1.00, 1.00),
+}
+
+# Destinations whose consumer pins BOTH dimensions (a square tile) vs those
+# that pin WIDTH only and let height run proportional. Getting this wrong
+# squashes non-square art in the preview and, worse, makes the preview lie
+# about what the game draws.
+#   action_bar_renderer.gd:227  custom_minimum_size = Vector2(70, 70)  -> square
+#   fanfare_popup.gd:105-107    EXPAND_FIT_WIDTH_PROPORTIONAL, Vector2(408, 0)
+#                                                                     -> width only
+SQUARE_TILE_DESTS = ("godot/assets/icons/generated",)
+
 # --- draw sizes, measured from consumer code, not guessed -------------------
 # Every entry cites the line that sets it. "which of these looks best at 512"
 # is the wrong question when the game draws 70 logical px; the page renders at
@@ -170,6 +204,7 @@ class Cluster:
         self.stem = stem
         self.candidates = sorted(candidates, key=lambda c: variant_rank(c.name))
         self.draw_px, self.draw_why = draw_rule(dest)
+        self.draw_square = dest in SQUARE_TILE_DESTS
 
     @property
     def slot_id(self):
@@ -190,6 +225,7 @@ class FrameRole:
     def __init__(self, stem, candidates):
         self.stem = stem
         self.candidates = sorted(candidates, key=lambda c: variant_rank(c.name))
+        self.crop = FRAME_CROPS.get(stem, (0.0, 0.0, 1.0, 1.0))
 
     @property
     def role_id(self):

@@ -51,6 +51,11 @@ tests.
 invents a verdict value, and never moves, copies or deletes an art file. It
 records decisions; the transform/pull lane (ADR-0019) applies them later.
 
+The two sections ask genuinely different questions and each says so on the page:
+section 1 (frame roles) asks **HOW should this be drawn at all** -- in code, or
+from a cropped piece of this painted art; section 2 (contested slots) asks
+**WHICH of these already-approved variants ships in this slot**.
+
 Design notes worth knowing before using it:
 
   * candidates render **at the size the game actually draws them** (70px for
@@ -59,11 +64,33 @@ Design notes worth knowing before using it:
     512" is the wrong question for a 512px master behind a 70px tile. A 1x/2x/4x
     control exists because `window/stretch/mode="canvas_items"` means a 4K
     canvas draws that 70-logical-px tile at ~140 physical px.
+    **Each card is sized from its own render** -- an unsized card let a 408px
+    hero preview spill out of a 186px box and overlap its neighbours and the
+    header, which read as a phantom "hover overlay" (Pip, 2026-08-06).
+  * **frame roles are a TWO-STEP question, and step 2 does not exist until it
+    matters.** Step 1 picks the treatment (`s` draw in code / `c` crop the
+    corners out / `w` ship whole / `d` don't use it). Only `c` and `w` consume a
+    source image, so only they reveal the source picker; under `s` and `d` the
+    masters render dimmed and refuse the click. A control that accepts input and
+    discards it is the silent-wrongness pattern wearing a UI. Switching to `s`
+    or `d` also CLEARS a source picked under a previous treatment.
+  * frame previews show the **region under decision, cropped and magnified**
+    (plus a ~16px as-drawn reference), not the 512px picture around it --
+    `slot_model.FRAME_CROPS`. The page also carries a short in-page explanation
+    of what 9-slice actually does, with the consequence in bytes.
+  * the same test is applied to the toolbar: batch buttons carry a live hit
+    count and disable at zero; the zoom control says when nothing visible has a
+    measured draw size; the keyboard legend rewrites itself for the focused row
+    (`s/c/w/d` on a frame, `1..9` on a slot).
   * decided rows LEAVE the working set (default filter is Undecided), and
     `u` reopens one -- taste sessions are not one-shot.
   * batch apply ("all v3", "all highest") is scoped to the VISIBLE UNDECIDED
     set and confirms the count first, for the near-identical clusters where
     one-at-a-time is toil rather than taste.
+  * the localStorage key is versioned (`pdoom1_slot_picks_v2`). Bump it when a
+    change makes earlier picks untrustworthy rather than carrying them forward
+    silently -- v1 -> v2 discarded the first session, which was made against a
+    frame section that showed the wrong part of the art.
   * notes typed in the page travel with the pick into `slot_picks.json`.
   * POOL destinations (office_floor, cats, doom_overlays, portraits) never
     appear: their consumers read directories as variety pools, so there is no

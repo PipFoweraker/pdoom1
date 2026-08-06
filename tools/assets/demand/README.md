@@ -56,6 +56,14 @@ TRANSFORM, not a copy: the pull step needs the size, and the citation is what
 stops the size from drifting into folklore. `draw_px: 0` means the source is
 already at or below the drawn size -- nothing to shrink.
 
+A frame role's answer has TWO parts and the record reflects that: `treatment`
+(always) and `source_file` (only under `nineslice` / `whole`). Under
+`styleboxflat` and `drop` no source image is used at all, so the picker does
+not offer one and clears any source carried over from a previous treatment --
+the record can never name a source nobody chose for the treatment that shipped.
+`status` stays `""` while a role is half-answered, so a 9-slice role with no
+source never reads as decided.
+
 `status: "deferred"` is a real answer ("not yet") and keeps the slot in the
 working set. Clearing a pick in the page and re-exporting REMOVES the entry
 here -- reopening a decision is expected; taste sessions are not one-shot.
