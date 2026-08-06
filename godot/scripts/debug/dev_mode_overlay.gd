@@ -33,7 +33,6 @@ var main_ui: Node = null
 
 var _root: Control = null
 var _info_vbox: VBoxContainer = null
-var _event_dropdown: OptionButton = null
 var _music_dropdown: OptionButton = null
 var _music_status: Label = null
 var _built := false
@@ -203,19 +202,10 @@ func _build_controls() -> Control:
 	# L1: the single day-step is DEV-ONLY now -- the game's End Turn plays a whole month
 	# (game_manager.end_month). This button remains the debugging escape hatch.
 	col.add_child(_action_button(">> Day step (dev -- old path)", _advance_turn))
-	_event_dropdown = OptionButton.new()
-	_event_dropdown.focus_mode = Control.FOCUS_NONE
-	_populate_event_dropdown()
-	col.add_child(_event_dropdown)
-	col.add_child(_action_button("Queue selected event", _queue_selected_event))
-	col.add_child(_action_button("Trigger random event", _trigger_random_event))
-	var ev_note := Label.new()
-	ev_note.text = "Queued events surface on turn processing."
-	ev_note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	ev_note.custom_minimum_size = Vector2(240, 0)
-	ev_note.add_theme_font_size_override("font_size", 9)
-	ev_note.add_theme_color_override("font_color", Color(0.55, 0.55, 0.6))
-	col.add_child(ev_note)
+	# RETIRED 2026-08-06 (#1134): the event dropdown, "Queue selected event" and "Trigger
+	# random event" stood here. Same unguarded shape as the F3 button that permalocked
+	# Pip's release-build run -- an append onto state.pending_events with no phase guard.
+	# Retired together, per his ruling that random event injection is not worth its bugs.
 
 	col.add_child(HSeparator.new())
 	col.add_child(_build_music_section())
@@ -349,14 +339,6 @@ func _nudge_row(label: String, field: String, step: float) -> HBoxContainer:
 	return row
 
 
-func _populate_event_dropdown() -> void:
-	_event_dropdown.clear()
-	for e in GameEvents.get_all_events():
-		var label := str(e.get("name", e.get("id", "?")))
-		_event_dropdown.add_item(label)
-		_event_dropdown.set_item_metadata(_event_dropdown.item_count - 1, str(e.get("id", "")))
-
-
 # --- Rendering -------------------------------------------------------------
 
 func _render() -> void:
@@ -387,7 +369,7 @@ func _render() -> void:
 # --- Control handlers ------------------------------------------------------
 
 ## ALPHA TOOL boundary (decision card 2026-08-01): every state-MUTATING control below
-## (nudges, day-step, event injection) calls this at the moment of actual mutation.
+## (nudges, day-step) calls this at the moment of actual mutation.
 ## First use flips the run's sticky one-way UNRANKED flag and warns mid-run. The JUMP
 ## buttons and the readout are navigation/observation, NOT alpha tools.
 func _mark_alpha_tool_use() -> void:
@@ -474,37 +456,3 @@ func _advance_turn() -> void:
 	if not gm.state.game_over:
 		gm.start_next_turn()
 	_render()
-
-
-func _queue_event(event_id: String) -> void:
-	var gm := _live_gm()
-	if not is_instance_valid(gm) or gm.state == null or event_id == "":
-		return
-	_mark_alpha_tool_use()  # event injection mutates the run -- alpha tool
-	# Inject into the pending queue exactly like SeedSchedule's inject_event cause does.
-	gm.state.pending_events.append({"id": event_id, "scheduled": true})
-	if is_instance_valid(NotificationManager) and NotificationManager.has_method("info"):
-		NotificationManager.info("Dev: queued event '%s' (fires on turn processing)" % event_id)
-	_render()
-
-
-func _queue_selected_event() -> void:
-	if _event_dropdown == null or _event_dropdown.item_count == 0:
-		return
-	var idx := _event_dropdown.selected
-	if idx < 0:
-		idx = 0
-	_queue_event(str(_event_dropdown.get_item_metadata(idx)))
-
-
-func _trigger_random_event() -> void:
-	var all := GameEvents.get_all_events()
-	if all.is_empty():
-		return
-	var gm := _live_gm()
-	var idx := 0
-	if is_instance_valid(gm) and gm.state != null and gm.state.rng != null:
-		idx = gm.state.rng.randi() % all.size()
-	else:
-		idx = randi() % all.size()
-	_queue_event(str(all[idx].get("id", "")))

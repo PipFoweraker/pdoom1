@@ -100,7 +100,8 @@ func apply_doom_change(change: float):
 
 - **Add $50k Money**: Instant cash injection for testing
 - **Add 5 Action Points**: Extra AP to test action queuing
-- **Trigger Random Event**: Force event spawn
+- ~~Trigger Random Event~~: RETIRED 2026-08-06 (#1134) -- injected into
+  `state.pending_events` with no phase guard and permalocked runs.
 - **Advance Turn**: Fast-forward gameplay
 - **Reset Game**: Quick restart
 

@@ -179,7 +179,7 @@ Vertices: 3,456
 **Controls Tab**:
 - [Add $50k Money] - Instant cash injection
 - [Add 5 Action Points] - Extra AP for testing
-- [Trigger Random Event] - Force event spawn
+- [Trigger Random Event] - RETIRED 2026-08-06 (#1134), see the quick reference
 - [Advance Turn] - Fast-forward gameplay
 - [Reset Game] - Quick restart
 
