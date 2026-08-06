@@ -39,7 +39,8 @@ Declared with a `Layer:` line in a tool's module docstring; `--` = undeclared.
 | devblog_automation.py | -- | Dev Blog Automation System with Metadata | tool:content_publisher.py |
 | enforce_standards.py | -- | P(Doom) Development Standards Enforcement Script | pre-commit; ci:enhanced-cicd-pipeline.yml; ci:quality-checks.yml; tool:intelligent_ascii_converter.py; tool:pre_version_bump.py |
 | find_duplicates.py | -- | Duplicate File Detector | human (docstring usage) |
-| generate_adr_index.py | GENERATE | Generate docs/game-design/decisions/README.md from the ADR files themselves. | pre-commit; tool:generate_tools_index.py |
+| generate_action_taxonomy.py | GENERATE | Generate docs/ACTION_TAXONOMY.md and check the action taxonomy for rot. | pre-commit; test:test_generate_action_taxonomy.py |
+| generate_adr_index.py | GENERATE | Generate docs/game-design/decisions/README.md from the ADR files themselves. | pre-commit; tool:generate_action_taxonomy.py; tool:generate_tools_index.py |
 | generate_dq_index.py | GENERATE | Generate docs/game-design/DQ_INDEX.md from WORKSHOP_2_BACKLOG.md. | pre-commit; tool:enforce_standards.py; tool:generate_release_metadata.py; tool:intelligent_ascii_converter.py |
 | generate_mechanics_docs.py | GENERATE | Generate mechanics documentation from game code. | ci:docs-sync.yml |
 | generate_release_manifest.py | GENERATE | Generate release_manifest.json -- the machine-readable release descriptor. | ci:enhanced-release.yml; test:test_generate_release_manifest.py |
@@ -200,4 +201,4 @@ DISCUSSING CI); the rest are the hollow-runner shape -- read them.
 
 23 `.html` tool(s) under `tools/` (browser-opened, no docstring to parse): `tools/art_review/doom_overlay_preview.html`, `tools/art_review/hero_gallery_template.html`, `tools/art_review/icon_pass_2026-07-21.html`, `tools/art_review/icon_pass_verdicts_2026-07-21.html`, `tools/art_review/palette.html`, `tools/art_review/palette_swatches.html`, `tools/art_review/scene_wave2_2026-07-21.html`, `tools/art_review/style_review.html`, `tools/assets/review_generated.html`, `tools/music/commission_sheets.html`, `tools/music/jukebox.html`, `tools/music/listening_room.html`, `tools/music/stem_board.html`, `tools/runsheet/CEREMONY-ALL-GATES-2026-07-31.html`, `tools/runsheet/fri-2026-07-31-EVENING-1620.html`, `tools/runsheet/fri-2026-07-31-GATES-1700.html`, `tools/runsheet/fri-2026-07-31-TO-MIDNIGHT-1733.html`, `tools/runsheet/fri-2026-07-31-league-day.html`, `tools/runsheet/playtest_card.html`, `tools/runsheet/wed-thu-2026-07-29.html`, `tools/social_composer.html`, `tools/ui_comparison.html`, `tools/ui_mockup/wireframe.html`.
 
-Total: 104 active tools (6 GENERATE, 6 OBSERVE, 5 PROVE, 1 SWEEP, 86 undeclared); 11 in UNKNOWN; 6 archived.
+Total: 105 active tools (7 GENERATE, 6 OBSERVE, 5 PROVE, 1 SWEEP, 86 undeclared); 11 in UNKNOWN; 6 archived.
