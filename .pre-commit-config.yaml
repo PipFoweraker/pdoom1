@@ -106,6 +106,20 @@ repos:
         files: '^(scripts/.*\.py|tools/.*\.py|tests/test_.*\.py|docs/TOOLS\.md|\.pre-commit-config\.yaml|Makefile|\.github/workflows/.*\.ya?ml)$'
         pass_filenames: false
 
+      # Action taxonomy index is GENERATED (same anti-rot pattern again). NOTE THE
+      # FLAG: --check-stale gates the INDEX only. The full --check also fails on
+      # taxonomy VIOLATIONS, and is deliberately NOT wired while `take_loan` is
+      # defined in two files -- a gate that is red on arrival gets disabled inside a
+      # week (#1117: a Python lane here already ran as `|| echo` over zero
+      # assertions). Flip this entry to `--check` when the error list is empty; a
+      # test in tests/test_generate_action_taxonomy.py fails when that day comes.
+      - id: action-taxonomy-index-check
+        name: action taxonomy index up to date
+        entry: python scripts/generate_action_taxonomy.py --check-stale
+        language: system
+        files: '^(godot/data/actions/.*\.json|godot/scripts/ui/(action_bar_renderer|submenu_controller)\.gd|docs/ACTION_TAXONOMY\.md|scripts/generate_action_taxonomy\.py)$'
+        pass_filenames: false
+
       - id: scene-nav-check
         name: Scene navigation routes through SceneTransition
         entry: python tools/check_scene_nav.py
