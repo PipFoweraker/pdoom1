@@ -79,7 +79,7 @@ tier 2 is available everywhere tier 1 is not.
 | Evidence tier | Files | % | What it establishes |
 |---|---:|---:|---|
 | A. Content hash -> `art_source/` batch WITH a `MANIFEST.md` | 124 | 24.3% | Tool, mode, size, settings, and per-character pixellab UUIDs |
-| B. Content hash -> `art_source/` without a manifest | 8 | 1.6% | The 8 contributor cat PHOTOS; custodians named in `INVENTORY.md` |
+| B. Content hash -> `art_source/` without a manifest | 8 | 1.6% | The 8 contributor cat PHOTOS, staged with `art_source/cats_incoming/INVENTORY.md` |
 | C. Git commit message names the generator | 198 | 38.8% | Origin class + tool, batch granularity |
 | D. Content hash -> `art_generated/` only (GITIGNORED) | 161 | 31.6% | Origin class from batch dir + run logs -- **local-only** |
 | E. Resolved by hand inspection | 13 | 2.5% | 8 music `.ogg` + 5 cat `.svg` (see below) |
@@ -263,7 +263,7 @@ cannot express them will force a lie at backfill time:
 | `generated_model` | pixellab characters, gpt-image icons | 483 |
 | `authored_code` | 5 cat `.svg`, hand-written markup | 5 |
 | `procedural_render` | 8 music `.ogg`, WebAudio patch captures | 8 |
-| `photo` | 8 contributor cats, custodians named | 8 |
+| `photo` | 8 contributor cats, `godot/assets/cats/simple/` | 8 |
 | `unknown` | the 6 pre-2026 images | 6 |
 
 Alongside `origin`, carry `origin_detail` (tool + model + batch id),
@@ -272,12 +272,30 @@ field is what makes the record auditable rather than merely asserted -- and it i
 what lets a later pass upgrade a `git-commit-message` entry to a `manifest` entry
 without re-litigating the whole file.
 
-**`photo` deserves a separate flag.** The 8 contributor cats are photographs of
-real people's pets, with custodian names recorded in
-`art_source/cats_incoming/INVENTORY.md` ("Custodian: Matilda", "Custodian:
-Nicki T.") and `Contributor ID: TBD`. That is a consent-and-attribution
-obligation, not a disclosure one, and it is a different question from the
-Manifund commitment. Flagged here rather than answered.
+**On the `photo` bucket.** The 8 contributor cat photographs were contributed
+with their owners' explicit permission (confirmed by Pip, 2026-08-06). Their
+origin value is `photo`. There is no outstanding question here.
+
+Two mechanical notes for whoever writes the backfill, because both are easy to
+get wrong by sweeping on directory name:
+
+- The `photo` bucket is exactly **8 shipped files**, all in
+  `godot/assets/cats/simple/` (`web-arwen`, `web-arwen-chuck`, `web-chucky`,
+  `web-doom-cat`, `web-luna`, `web-mando`, `web-missy`, `web-nigel`), and all 8
+  are live -- `office_cat.gd:40-48` picks one at random, so every one reaches
+  players. The `art_source/cats_incoming/` copies are byte-identical staging
+  duplicates outside `godot/` and are NOT packed; a writer keying on both
+  directories would double-count these 8.
+- `godot/assets/cats/default/*.svg` (5 files) are `authored_code`, NOT `photo`.
+  They sit under a `cats/` path and will be swept into the cat bucket by any
+  rule that keys on the directory.
+
+Separately, and independent of provenance: **the game has no in-game credits
+surface.** `CREDITS.md` sits at the repo root and its own header states it "is
+not bundled into the shipped build", and `office_cat.tscn`'s `ContributorLabel`
+displays the CAT's name, not a person's (`office_cat.gd:48`). There is currently
+nowhere in the product to credit anyone. Recorded as an observation; no fix
+designed here.
 
 ## 5. What pdoom1 can and cannot promise the website by 2026-08-13
 
@@ -305,8 +323,9 @@ Manifund commitment. Flagged here rather than answered.
    string was X".
 3. **Any answer for `pdoom-data`.** Unverified by this seat, as `#32` already
    flagged.
-4. **A position on the photo/consent question.** Out of scope for a disclosure
-   obligation; needs Pip.
+4. **An in-game credits surface.** None exists (see section 4). Nothing in the
+   Manifund obligation requires one, but if the website's wording implies the
+   game credits contributors, it does not.
 
 **The dependency the website should know about:** the 96.3% figure is contingent
 on a gitignored directory on one machine. Until a backfill commits the record to
