@@ -290,44 +290,154 @@ func test_pause_menu_wires_up_the_picker() -> void:
 	assert_gt(menu.music_controls._picker.item_count, 1, "populated on open")
 
 
-func test_pause_menu_still_fits_on_screen_with_the_picker_in_it() -> void:
+## The slack the authored panel is allowed to carry over what the contents actually need.
+## This number is the ENTIRE point of the two-sided assertion below -- see the comment in
+## test_pause_menu_is_sized_to_its_text. 40px is roughly two body lines; a panel grown for
+## its own sake overshoots it by ~150.
+const PANEL_SLACK_BUDGET := 40.0
+## Two floors, because "small" is not one thing here.
+##
+## The arithmetic both come from: project.godot stretches canvas_items from a 1920x1080
+## base, so on a 1280x720 laptop one authored pixel is 0.667 physical pixels. An 11px
+## hint is SEVEN real pixels there. That is the cramping Pip reported on 2026-08-06
+## ("things feel a bit cramped ... the text could be larger and friendlier"), and it is
+## why the fix had to be the type scale and not just a bigger box.
+##
+## ROW floor -- anything a player reads while OPERATING a control (the volume row labels,
+## the percentages, the buttons, the picker and its header). 16 is Godot's own Label
+## default; before this change the pause menu authored its rows at 14, i.e. BELOW the
+## engine default, in a panel it also had no room in.
+const MIN_ROW_FONT_SIZE := 16
+## ABSOLUTE floor -- secondary explanatory prose (the picker's hint) is allowed to be
+## smaller than a control label, but not by much. 14 is ~9 physical pixels at 720p.
+const MIN_ANY_FONT_SIZE := 14
+
+
+func test_pause_menu_is_sized_to_its_text() -> void:
 	# The picker adds ~4 rows to a panel whose height is hand-set in the .tscn, so the
 	# obvious way to ship this broken is a menu whose Quit button is off the bottom.
 	# Precedent for owning geometry in a test: test_action_visibility.gd (#1130).
+	#
+	# THREE ASSERTIONS TRIED AND THROWN AWAY, recorded so nobody re-adds them:
+	#   child.size.y <= panel.size.y  -- PanelContainer CLAMPS its child to its own
+	#     rect, so this is true by construction (#1146).
+	#   needed.y <= panel.size.y      -- a Control never renders smaller than its
+	#     combined minimum, so the panel silently GROWS past its authored offsets and
+	#     this is true by construction too (#1146).
+	#   needed.y <= authored ALONE    -- a real guard against content overflowing the
+	#     authored box, but ONE-SIDED: it gets easier every time the panel grows, so
+	#     the +30% resize this test now guards would have made it near-vacuous. That is
+	#     the failure mode this file's whole history is about.
+	# The version that ships is TWO-SIDED. Pip's brief for the resize was "increase the
+	# size of the Escape screen by 30%, the text could be larger and friendlier" -- the
+	# room is for TEXT, not padding. So the authored box must be big enough for the
+	# contents AND not much bigger: a future 30% growth with the type scale left alone
+	# fails the second half, which is exactly the mistake worth catching.
+	# Host the menu in an explicit 1920x1080 box, because the menu's root is anchored
+	# full-rect and its width -- therefore where the two wrapped labels break -- is
+	# whatever its PARENT is.
+	#
+	# A DISAGREEMENT WORTH KNOWING ABOUT, measured 2026-08-06 and not resolved:
+	# a real windowed launch (`--resolution 1920x1080`, throwaway SceneTree harness)
+	# reports the hint label 560px wide wrapping to THREE lines and the panel needing
+	# ~23px MORE than this test does. Same scene, same strings, same font -- the labels
+	# simply have not taken the panel's full width at the moment the windowed harness
+	# samples them. The larger number is the safe one, so the authored panel is sized to
+	# cover in-tree + 23, NOT to the bare number this test sees. If that were reversed,
+	# the guard would be sizing the panel to the more flattering of two measurements --
+	# which is how the earlier tautologies in this file got written.
+	#
+	# REBASE NOTE (landing this PR, 2026-08-06): #1120 landed a sixth button in this
+	# panel ("Settings & Keybindings (F10)") AFTER this test's numbers were measured,
+	# so the contents grew 707 -> 769 and the authored box 740 -> 792. #1120 authored
+	# that button at font 16 / 320x40, the lone survivor of the old cramped scale; it
+	# is now 20 / 320x50 like its five siblings, which is the whole point of this PR.
+	var host := Control.new()
+	add_child_autofree(host)
+	host.size = Vector2(1920, 1080)
 	var menu = load(PAUSE_MENU_SCENE).instantiate()
-	add_child_autofree(menu)
+	host.add_child(menu)
+	# Measure the WORST case, not the resting one. The status label wraps, and the
+	# longest string it can hold is the pick-held-while-adaptive-wants-to-move line
+	# (two wrapped rows, not one). #1146 measured the short line and therefore had
+	# ~20px of headroom it could not see.
+	MusicManager._adaptive_active = true
+	MusicManager.set_doom_level(0.0)
+	MusicManager.set_tier_override(4)
+	MusicManager.set_doom_level(30.0)
 	menu.show_pause_menu()
+	assert_string_contains(menu.music_controls._status.text, "it will not",
+		"this measurement is only worst-case if the long status line is the one loaded")
+	await get_tree().process_frame
 	await get_tree().process_frame
 	await get_tree().process_frame
 	var panel: Control = menu.get_node("Panel")
 	var needed: Vector2 = panel.get_combined_minimum_size()
 	menu._on_resume_pressed()
 
-	# TWO ASSERTIONS I TRIED FIRST AND THREW AWAY, recorded so nobody re-adds them:
-	#   child.size.y <= panel.size.y  -- PanelContainer CLAMPS its child to its own
-	#     rect, so this is true by construction.
-	#   needed.y <= panel.size.y      -- a Control never renders smaller than its
-	#     combined minimum, so the panel silently GROWS past its authored offsets and
-	#     this is true by construction too.
-	# Both passed when I shrank the panel back to its pre-change 500px height, which is
-	# how I found out they were tautologies rather than guards. The real (and only)
-	# failure mode is the grown panel outgrowing the screen, so that is what is asserted.
-	# Measured 2026-08-06: the menu needs 551px with the picker in it; the .tscn asks
-	# for 600 so the authored box is not a lie about what the panel actually occupies.
+	# (a) It fits the design viewport. This is the resolution check, and it covers ALL of
+	# them: project.godot uses stretch/mode="canvas_items" with aspect="expand", so the
+	# scale factor is min(w/1920, h/1080) and the viewport in these units is therefore
+	# NEVER smaller than 1920x1080 on either axis -- a narrower window buys extra units,
+	# it never takes any away. Measured 2026-08-06 by running the scene at 1920x1080,
+	# 1600x900, 1366x768, 1280x720, 1280x800, 1024x768 and 2560x1080: the panel rect was
+	# 800x740 in viewport units in every one, fully inside the visible rect in every one.
+	# (The box is 800x792 after the #1120 rebase; 792 is still far inside 1080.)
 	assert_lte(needed.y, 1080.0,
 		"the pause menu needs %dpx of height -- more than the 1080p design viewport, so "
 		% int(needed.y) + "it will run off the top and bottom of the screen")
 	assert_lte(needed.x, 1920.0, "and it must fit horizontally too")
-	# The one sensitive check: the AUTHORED height, which has to be read out of the
-	# .tscn text because Godot rewrites a grown control's offsets in memory. Not a
-	# rendering bug when it drifts -- but the numbers in the scene file stop describing
-	# the thing on screen, and the next person sizing this menu is then reading fiction.
-	# Verified red: at the pre-change 500px this fails with 551 > 500.
+
+	# (b) The authored box is honest -- read out of the .tscn text, because Godot rewrites
+	# a grown control's offsets in memory and the authored intent is unreachable from the
+	# live node. Verified red at the pre-#1146 500px (551 > 500).
 	var authored: float = _authored_panel_height()
 	assert_lte(needed.y, authored,
 		"pause_menu.tscn asks for a %dpx panel and the contents need %dpx -- Godot will "
 		% [int(authored), int(needed.y)]
 		+ "grow it silently. Update the Panel offset_top/offset_bottom to match.")
+
+	# (c) ...and the box is not mostly air. Measured 2026-08-06: this test sees 769px of
+	# contents in a 792px box (23px slack); the windowed harness reads ~23px higher, so it
+	# sees ~0. The budget has to clear the looser of the two, so 40 -- which still fails
+	# red on the mistake it exists to catch. Verified red by authoring 780 against the
+	# pre-#1120 contents, the flat +30% of the old 600px panel: "asks for a 780px panel
+	# but the contents only need 707px, so it carries 73px of slack". Reverting the type
+	# scale as well would read ~190px.
+	assert_lte(authored - needed.y, PANEL_SLACK_BUDGET,
+		"pause_menu.tscn asks for a %dpx panel but the contents only need %dpx, so it "
+		% [int(authored), int(needed.y)]
+		+ "carries %dpx of slack. The panel was grown for LEGIBILITY -- if it is bigger "
+		% int(authored - needed.y)
+		+ "than its text, put the room into the type scale or shrink the box.")
+
+
+func test_no_player_facing_text_in_the_pause_menu_is_below_the_legibility_floor() -> void:
+	# The other half of (c): (c) stops the panel outgrowing its text, this stops the text
+	# shrinking inside the panel. Reads the .tscn rather than the live tree because the
+	# sizes ARE authored numbers and a live read would just echo whatever was authored.
+	# Verified red 2026-08-06 by reverting one volume row to its pre-change 14px:
+	# "pause_menu.tscn authors a 14px control-row font ... ~9 physical pixels at 1280x720".
+	# The pre-change hint (11) and status (12) fail the absolute floor the same way.
+	for size in _authored_font_sizes():
+		assert_gte(size, MIN_ROW_FONT_SIZE,
+			"pause_menu.tscn authors a %dpx control-row font. Below %dpx this is ~%d "
+			% [size, MIN_ROW_FONT_SIZE, int(size * 720.0 / 1080.0)]
+			+ "physical pixels at 1280x720 -- the cramping Pip reported on 2026-08-06.")
+	for size in [MusicControls.SECTION_TITLE_FONT_SIZE, MusicControls.PICKER_FONT_SIZE,
+			MusicControls.STATUS_FONT_SIZE]:
+		assert_gte(size, MIN_ROW_FONT_SIZE,
+			"MusicControls authors a %dpx control font, below the %dpx row floor"
+			% [size, MIN_ROW_FONT_SIZE])
+	assert_gte(MusicControls.HINT_FONT_SIZE, MIN_ANY_FONT_SIZE,
+		"the picker hint is prose, not a control label, so it may sit under the row floor "
+		+ "-- but %dpx is under the absolute floor of %dpx too"
+		% [MusicControls.HINT_FONT_SIZE, MIN_ANY_FONT_SIZE])
+	# The picker's section header and the Audio Settings header sit one row apart and are
+	# the same KIND of thing, so they must be the same size. They were 14 and 18 in #1146,
+	# which is the sort of drift that only reads as "cramped" and never as "a bug".
+	assert_eq(MusicControls.SECTION_TITLE_FONT_SIZE, _authored_font_size_of("AudioLabel"),
+		"the two section headers in this panel must be one size, not two")
 
 
 ## Panel height as WRITTEN in the scene file. Godot adjusts a centred control's offsets
@@ -350,6 +460,33 @@ func _authored_panel_height() -> float:
 			bottom = float(line.split("=")[1])
 	assert_ne(bottom - top, 0.0, "could not read the Panel offsets out of pause_menu.tscn")
 	return bottom - top
+
+
+## Every font size authored in the scene file, EXCLUDING the title -- a 40px heading is
+## not the legibility problem and pinning it here would only make the floor unfalsifiable.
+func _authored_font_sizes() -> Array:
+	var sizes: Array = []
+	var node_name := ""
+	for raw in FileAccess.get_file_as_string(PAUSE_MENU_SCENE).split("\n"):
+		var line := String(raw).strip_edges()
+		if line.begins_with("[node "):
+			node_name = line.split("name=\"")[1].split("\"")[0]
+		elif line.begins_with("theme_override_font_sizes/font_size =") and node_name != "Title":
+			sizes.append(int(float(line.split("=")[1])))
+	assert_gt(sizes.size(), 5, "could not read the font sizes out of pause_menu.tscn")
+	return sizes
+
+
+func _authored_font_size_of(wanted: String) -> int:
+	var node_name := ""
+	for raw in FileAccess.get_file_as_string(PAUSE_MENU_SCENE).split("\n"):
+		var line := String(raw).strip_edges()
+		if line.begins_with("[node "):
+			node_name = line.split("name=\"")[1].split("\"")[0]
+		elif line.begins_with("theme_override_font_sizes/font_size =") and node_name == wanted:
+			return int(float(line.split("=")[1]))
+	assert_true(false, "no authored font size for node '%s' in pause_menu.tscn" % wanted)
+	return -1
 
 
 func test_pause_menu_refreshes_the_readout_on_every_open() -> void:

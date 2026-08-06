@@ -43,22 +43,22 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -320.0
-offset_top = -300.0
-offset_right = 320.0
-offset_bottom = 300.0
+offset_left = -400.0
+offset_top = -396.0
+offset_right = 400.0
+offset_bottom = 396.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_bg")
 
 [node name="VBox" type="VBoxContainer" parent="Panel"]
 layout_mode = 2
-theme_override_constants/separation = 15
+theme_override_constants/separation = 18
 
 [node name="Title" type="Label" parent="Panel/VBox"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.914, 0.949, 0.949, 1)
-theme_override_font_sizes/font_size = 36
+theme_override_font_sizes/font_size = 40
 text = "GAME PAUSED"
 horizontal_alignment = 1
 
@@ -67,16 +67,16 @@ layout_mode = 2
 
 [node name="SettingsContainer" type="VBoxContainer" parent="Panel/VBox"]
 layout_mode = 2
-theme_override_constants/separation = 10
+theme_override_constants/separation = 12
 
 [node name="AudioSettings" type="VBoxContainer" parent="Panel/VBox/SettingsContainer"]
 layout_mode = 2
-theme_override_constants/separation = 8
+theme_override_constants/separation = 10
 
 [node name="AudioLabel" type="Label" parent="Panel/VBox/SettingsContainer/AudioSettings"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.91, 0.64, 0.24, 1)
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 22
 text = "Audio Settings"
 
 [node name="MasterVolumeRow" type="HBoxContainer" parent="Panel/VBox/SettingsContainer/AudioSettings"]
@@ -84,22 +84,22 @@ layout_mode = 2
 theme_override_constants/separation = 10
 
 [node name="Label" type="Label" parent="Panel/VBox/SettingsContainer/AudioSettings/MasterVolumeRow"]
-custom_minimum_size = Vector2(150, 0)
+custom_minimum_size = Vector2(190, 0)
 layout_mode = 2
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 18
 text = "Master Volume:"
 
 [node name="Slider" type="HSlider" parent="Panel/VBox/SettingsContainer/AudioSettings/MasterVolumeRow"]
-custom_minimum_size = Vector2(250, 0)
+custom_minimum_size = Vector2(340, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 max_value = 100.0
 value = 80.0
 
 [node name="ValueLabel" type="Label" parent="Panel/VBox/SettingsContainer/AudioSettings/MasterVolumeRow"]
-custom_minimum_size = Vector2(50, 0)
+custom_minimum_size = Vector2(64, 0)
 layout_mode = 2
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 18
 text = "80%"
 
 [node name="SFXVolumeRow" type="HBoxContainer" parent="Panel/VBox/SettingsContainer/AudioSettings"]
@@ -107,22 +107,22 @@ layout_mode = 2
 theme_override_constants/separation = 10
 
 [node name="Label" type="Label" parent="Panel/VBox/SettingsContainer/AudioSettings/SFXVolumeRow"]
-custom_minimum_size = Vector2(150, 0)
+custom_minimum_size = Vector2(190, 0)
 layout_mode = 2
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 18
 text = "SFX Volume:"
 
 [node name="Slider" type="HSlider" parent="Panel/VBox/SettingsContainer/AudioSettings/SFXVolumeRow"]
-custom_minimum_size = Vector2(250, 0)
+custom_minimum_size = Vector2(340, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 max_value = 100.0
 value = 80.0
 
 [node name="ValueLabel" type="Label" parent="Panel/VBox/SettingsContainer/AudioSettings/SFXVolumeRow"]
-custom_minimum_size = Vector2(50, 0)
+custom_minimum_size = Vector2(64, 0)
 layout_mode = 2
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 18
 text = "80%"
 
 [node name="MusicVolumeRow" type="HBoxContainer" parent="Panel/VBox/SettingsContainer/AudioSettings"]
@@ -130,22 +130,22 @@ layout_mode = 2
 theme_override_constants/separation = 10
 
 [node name="Label" type="Label" parent="Panel/VBox/SettingsContainer/AudioSettings/MusicVolumeRow"]
-custom_minimum_size = Vector2(150, 0)
+custom_minimum_size = Vector2(190, 0)
 layout_mode = 2
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 18
 text = "Music Volume:"
 
 [node name="Slider" type="HSlider" parent="Panel/VBox/SettingsContainer/AudioSettings/MusicVolumeRow"]
-custom_minimum_size = Vector2(250, 0)
+custom_minimum_size = Vector2(340, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 max_value = 100.0
 value = 80.0
 
 [node name="ValueLabel" type="Label" parent="Panel/VBox/SettingsContainer/AudioSettings/MusicVolumeRow"]
-custom_minimum_size = Vector2(50, 0)
+custom_minimum_size = Vector2(64, 0)
 layout_mode = 2
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 18
 text = "80%"
 
 [node name="MusicControls" type="VBoxContainer" parent="Panel/VBox/SettingsContainer"]
@@ -157,52 +157,52 @@ layout_mode = 2
 
 [node name="ButtonContainer" type="VBoxContainer" parent="Panel/VBox"]
 layout_mode = 2
-theme_override_constants/separation = 10
+theme_override_constants/separation = 12
 alignment = 1
 
 [node name="ResumeButton" type="Button" parent="Panel/VBox/ButtonContainer"]
-custom_minimum_size = Vector2(250, 40)
+custom_minimum_size = Vector2(320, 50)
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 20
 text = "Resume Game (ESC)"
 
 [node name="ResignButton" type="Button" parent="Panel/VBox/ButtonContainer"]
-custom_minimum_size = Vector2(250, 40)
+custom_minimum_size = Vector2(320, 50)
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 20
 theme_override_colors/font_color = Color(0.85, 0.45, 0.35, 1)
 text = "Accept Your Fate (end run)"
 tooltip_text = "End this run now and go to the score screen and leaderboard. Your run still counts -- the turns you survived are your score. There is no way to win P(Doom); you are only ever buying time."
 
 [node name="SaveButton" type="Button" parent="Panel/VBox/ButtonContainer"]
-custom_minimum_size = Vector2(250, 40)
+custom_minimum_size = Vector2(320, 50)
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 20
 text = "Save Game"
 
 [node name="SettingsButton" type="Button" parent="Panel/VBox/ButtonContainer"]
-custom_minimum_size = Vector2(250, 40)
+custom_minimum_size = Vector2(320, 50)
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 20
 text = "Settings & Keybindings (F10)"
 tooltip_text = "Open the full settings screen, including the keybind editor. Your run is kept -- Back returns you to the game where you left it."
 
 [node name="MainMenuButton" type="Button" parent="Panel/VBox/ButtonContainer"]
-custom_minimum_size = Vector2(250, 40)
+custom_minimum_size = Vector2(320, 50)
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 20
 text = "Main Menu"
 
 [node name="QuitButton" type="Button" parent="Panel/VBox/ButtonContainer"]
-custom_minimum_size = Vector2(250, 40)
+custom_minimum_size = Vector2(320, 50)
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 20
 text = "Quit to Desktop"
 
 [connection signal="value_changed" from="Panel/VBox/SettingsContainer/AudioSettings/MasterVolumeRow/Slider" to="." method="_on_master_volume_changed"]
