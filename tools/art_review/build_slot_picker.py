@@ -231,9 +231,31 @@ button.on .gloss { color:#12200e; }
         border-top:1px solid var(--line); font-size:11.5px; color:var(--dim); z-index:50; }
 kbd { background:var(--bg3); border:1px solid var(--line); border-radius:3px; padding:0 4px;
       font-family:Consolas,monospace; color:var(--fg); }
-#modal { position:fixed; inset:0; background:#000d; z-index:90; display:none;
-         align-items:center; justify-content:center; }
-#modal img { max-width:96vw; max-height:92vh; background:__CHECKER__; }
+/* ---- lightbox: the MAGNIFIER surface ----------------------------------
+   Deliberately a different surface from the inline "as-drawn size" control.
+   Inline zoom answers "what does this look like at the size the game draws
+   it" -- growing it past that would answer a different question AND re-break
+   the card-overflow bug. Magnification for judging lives here, where a fixed
+   full-screen overlay cannot overlap anything. */
+#lb { position:fixed; inset:0; background:#000e; z-index:90; display:none;
+      flex-direction:column; }
+#lbbar { display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+         padding:8px 12px; background:var(--bg); border-bottom:1px solid var(--line);
+         font-size:12px; }
+#lbstage { flex:1; overflow:auto; background:__CHECKER__; position:relative;
+           cursor:grab; }
+#lbstage.drag { cursor:grabbing; }
+#lbwrap { min-width:100%; min-height:100%; display:flex; align-items:center;
+          justify-content:center; }
+#lbimg { display:block; image-rendering:auto; }
+#lbimg.fit { max-width:98%; max-height:98%; }
+.lbname { font-family:Consolas,monospace; color:var(--fg); }
+.lbdim { color:var(--dim); }
+#lb .on { background:var(--green); border-color:var(--green); color:#0f1a0c; }
+.zbtn { position:absolute; top:4px; right:4px; z-index:5; padding:1px 6px;
+        font-size:11px; opacity:.55; }
+.zbtn:hover { opacity:1; }
+.gwrap { position:relative; }
 #toast { position:fixed; top:8px; right:12px; background:var(--green); color:#0f1a0c;
          padding:6px 12px; border-radius:3px; z-index:99; display:none; }
 </style>
@@ -250,7 +272,7 @@ kbd { background:var(--bg3); border:1px solid var(--line); border-radius:3px; pa
     <select id="dest"></select>
     <select id="ncand"></select>
     <input type="text" id="q" placeholder="filter by name..." size="18">
-    <span class="sub">| zoom (section 2, measured sizes only):</span>
+    <span class="sub">| as-drawn size (section 2; not a magnifier):</span>
     <button id="z1">1x</button><button id="z2">2x</button><button id="z4">4x</button>
     <span class="sub">| batch-pin the clusters currently visible:</span>
     <button class="bapply" data-v="1">all v1</button>
@@ -323,7 +345,25 @@ kbd { background:var(--bg3); border:1px solid var(--line); border-radius:3px; pa
   you can change your mind (<kbd>u</kbd>) at any time.</span></div>
 <div id="clusters"></div>
 
-<div id="modal"><img id="modalimg" src=""></div>
+<div id="lb">
+  <div id="lbbar">
+    <button id="lbclose">[ESC] close</button>
+    <button id="lbprev">&lt; prev</button>
+    <span class="lbname" id="lblabel"></span>
+    <button id="lbnext">next &gt;</button>
+    <span class="sub">|</span>
+    <button class="lbz" data-s="fit">fit</button>
+    <button class="lbz" data-s="1">100%</button>
+    <button class="lbz" data-s="2">200%</button>
+    <button class="lbz" data-s="4">400%</button>
+    <span class="lbdim" id="lbdims"></span>
+    <span class="sub">|</span>
+    <button id="lbpin">[ENTER] pin this one</button>
+    <span class="lbdim">wheel = zoom &middot; drag = pan &middot;
+      <kbd>[</kbd>/<kbd>]</kbd> step candidates</span>
+  </div>
+  <div id="lbstage"><div id="lbwrap"><img id="lbimg" class="fit" src=""></div></div>
+</div>
 <div id="toast"></div>
 <div id="help"><span id="helptxt"></span></div>
 
@@ -384,11 +424,17 @@ function cardWidth(cl) {
 }
 function cardHtml(c, i, chosen, cl) {
   var w = cardWidth(cl);
+  var capped = cl && cl.draw && (cl.draw * zoom > RENDER_MAX);
   return '<div class="card' + (chosen ? ' win' : '') + '" data-rel="' + esc(c.rel) +
     '" style="width:' + w + 'px">' +
-    '<div class="gamebox">' + gameImg(c, cl) + '</div>' +
-    (cl && cl.draw ? '<div class="boxcap">as the game draws it (' + cl.draw + 'px' +
-       (zoom > 1 ? ' at ' + zoom + 'x' : '') + ')</div>' : '') +
+    '<div class="gwrap"><div class="gamebox">' + gameImg(c, cl) + '</div>' +
+    '<button class="zbtn" data-zoom="' + esc(c.rel) + '" title="magnify this candidate ' +
+    '(full screen, pan and zoom)">[+] zoom</button></div>' +
+    (cl && cl.draw
+      ? '<div class="boxcap">as the game draws it (' + cl.draw + 'px' +
+        (zoom > 1 ? ' at ' + zoom + 'x' : '') + ')' +
+        (capped ? ' &mdash; capped; use [+] zoom' : '') + '</div>'
+      : '<div class="boxcap">drawn at native size &mdash; use [+] zoom to judge it</div>') +
     '<img class="full" loading="lazy" src="' + c.href + '">' +
     '<div class="cmeta"><span class="pickno">' + (i + 1) + '</span>' +
     '<span class="cvar">' + esc(c.variant) + '</span> &middot; ' + c.kb + ' KB' +
@@ -419,7 +465,9 @@ function frameCardHtml(c, i, chosen, crop, inert) {
     '" data-rel="' + esc(c.rel) + '"' + (inert ? ' data-inert="1"' : '') +
     ' style="width:' + Math.max(CARD_MIN, bw + 16) + 'px">' +
     '<div class="croprow">' +
-      '<div><div class="crop" style="' + cropStyle(c, crop, bw, bh) + '"></div>' +
+      '<div class="gwrap"><div class="crop" style="' + cropStyle(c, crop, bw, bh) + '"></div>' +
+      '<button class="zbtn" data-zoom="' + esc(c.rel) + '" title="magnify the whole master">' +
+      '[+] zoom</button>' +
       '<div class="boxcap">' + (whole ? 'whole overlay' : 'the region in question, magnified') +
       '</div></div>' +
       (whole ? '' :
@@ -582,7 +630,112 @@ function render() {
 
 function scrollFocus() {
   var el = document.getElementById("row_" + order[focus]);
-  if (el) el.scrollIntoView({ block: "center" });
+  if (el && el.scrollIntoView) el.scrollIntoView({ block: "center" });
+}
+
+// ---- the magnifier ---------------------------------------------------------
+// Measured 2026-08-06, before this existed: inline zoom took a hero from 408px
+// to 760px and then stopped (2x and 4x identical, because of the anti-overlap
+// clamp), and for the 16 NATIVE-SIZE clusters -- 1024px texture masters,
+// 1536px event art -- it did nothing at all at any level, because those have
+// no measured draw size to multiply. So "cannot zoom the big ones" was only
+// partly the clamp; mostly it was that the biggest art was pinned at a 160px
+// preview by design. Magnification is now its own surface.
+var lb = { list: [], i: 0, scale: "fit", rowId: "", open: false };
+
+function lbCandsFor(rowId) {
+  if (rowId.indexOf("slot:") === 0) {
+    var cl = DATA.clusters.filter(function (c) { return "slot:" + c.id === rowId; })[0];
+    return cl ? cl.cands : [];
+  }
+  var fr = DATA.frames.filter(function (f) { return "frame:" + f.id === rowId; })[0];
+  return fr ? fr.cands : [];
+}
+function lbOpen(rowId, rel) {
+  var list = lbCandsFor(rowId);
+  if (!list.length) return;
+  var i = 0;
+  for (var n = 0; n < list.length; n++) if (list[n].rel === rel) i = n;
+  lb = { list: list, i: i, scale: "fit", rowId: rowId, open: true };
+  document.getElementById("lb").style.display = "flex";
+  lbPaint();
+}
+function lbClose() {
+  lb.open = false;
+  document.getElementById("lb").style.display = "none";
+}
+function lbPaint() {
+  var c = lb.list[lb.i];
+  if (!c) return;
+  var img = document.getElementById("lbimg");
+  img.src = c.href;
+  if (lb.scale === "fit") { img.className = "fit"; img.style.width = ""; }
+  else {
+    img.className = "";
+    // Scale relative to the master's own pixels, so 100% means one image pixel
+    // per screen pixel and 400% is a real magnification of a 512px icon.
+    img.style.width = c.px ? (c.px[0] * lb.scale) + "px" : (512 * lb.scale) + "px";
+  }
+  var picked = (picks[lb.rowId] || {}).src === c.rel;
+  document.getElementById("lblabel").innerHTML =
+    esc(c.variant) + " &mdash; " + esc(c.name) + "  (" + (lb.i + 1) + "/" + lb.list.length + ")" +
+    (picked ? ' <span class="ok">[OK] pinned</span>' : "");
+  document.getElementById("lbdims").textContent =
+    (c.px ? c.px[0] + "x" + c.px[1] + " master" : "") + " " + c.kb + " KB";
+  Array.prototype.forEach.call(document.querySelectorAll(".lbz"), function (b) {
+    b.classList.toggle("on", String(lb.scale) === b.dataset.s);
+  });
+  // A frame role under a treatment that consumes no source has nothing to pin,
+  // so the button says so instead of silently doing nothing.
+  var p = picks[lb.rowId] || {}, isFrame = lb.rowId.indexOf("frame:") === 0;
+  var canPin = !isFrame || p.treatment === "nineslice" || p.treatment === "whole";
+  var pin = document.getElementById("lbpin");
+  pin.disabled = !canPin;
+  pin.style.opacity = canPin ? "1" : ".35";
+  pin.title = canPin ? "" : "this frame treatment uses no source image";
+}
+function lbStep(d) {
+  if (!lb.open || !lb.list.length) return;
+  lb.i = (lb.i + d + lb.list.length) % lb.list.length;
+  lbPaint();
+}
+function lbSetScale(s) {
+  lb.scale = (s === "fit") ? "fit" : parseFloat(s);
+  lbPaint();
+}
+function lbWire() {
+  var stage = document.getElementById("lbstage");
+  stage.addEventListener("wheel", function (ev) {
+    if (!lb.open) return;
+    ev.preventDefault();
+    var cur = (lb.scale === "fit") ? 1 : lb.scale;
+    lbSetScale(ev.deltaY < 0 ? Math.min(8, cur * 1.25) : Math.max(0.25, cur / 1.25));
+  }, { passive: false });
+  var down = false, sx = 0, sy = 0, ol = 0, ot = 0;
+  stage.addEventListener("mousedown", function (ev) {
+    down = true; sx = ev.clientX; sy = ev.clientY;
+    ol = stage.scrollLeft; ot = stage.scrollTop;
+    stage.classList.add("drag"); ev.preventDefault();
+  });
+  document.addEventListener("mousemove", function (ev) {
+    if (!down) return;
+    stage.scrollLeft = ol - (ev.clientX - sx);
+    stage.scrollTop = ot - (ev.clientY - sy);
+  });
+  document.addEventListener("mouseup", function () {
+    down = false; stage.classList.remove("drag");
+  });
+}
+function lbPin() {
+  var c = lb.list[lb.i];
+  if (!c) return;
+  var p = picks[lb.rowId] || {}, isFrame = lb.rowId.indexOf("frame:") === 0;
+  if (isFrame && p.treatment !== "nineslice" && p.treatment !== "whole") {
+    toast("this frame treatment uses no source image"); return;
+  }
+  setPick(lb.rowId, c.rel);
+  lbPaint(); render();
+  toast("pinned " + c.variant);
 }
 
 // ---- conditional controls, made visible -----------------------------------
@@ -611,14 +764,23 @@ function syncConditionalControls() {
     b.title = n ? ("pins " + n + " of the " + visibleClusters().length + " visible cluster(s)")
                 : "no visible undecided cluster has that variant";
   });
-  // Zoom only moves anything for clusters with a MEASURED draw size; native-size
-  // art ignores it. Say so rather than letting the buttons look inert.
-  var anyDraw = visibleClusters().some(function (c) { return !!c.draw; });
-  ["z1", "z2", "z4"].forEach(function (x) {
-    var e = document.getElementById(x);
+  // The as-drawn control is NOT a magnifier and must not pretend to be one.
+  // It only moves for clusters with a measured draw size, and it stops at
+  // RENDER_MAX (the anti-overlap clamp). Both limits are stated on the control
+  // itself, and both point at the magnifier instead of leaving a dead button.
+  var vis = visibleClusters();
+  var anyDraw = vis.some(function (c) { return !!c.draw; });
+  [["z1", 1], ["z2", 2], ["z4", 4]].forEach(function (pair) {
+    var e = document.getElementById(pair[0]);
+    var capped = anyDraw && vis.every(function (c) {
+      return !c.draw || c.draw * pair[1] > RENDER_MAX; });
     e.style.opacity = anyDraw ? "1" : ".35";
-    e.title = anyDraw ? "scale the game-size preview"
-                      : "nothing visible has a measured draw size -- zoom does nothing here";
+    e.textContent = pair[1] + "x" + (capped ? "*" : "");
+    e.title = !anyDraw
+      ? "nothing visible has a measured draw size -- use [+] zoom on a card to magnify"
+      : capped
+        ? "capped at " + RENDER_MAX + "px so cards cannot overlap -- use [+] zoom to magnify"
+        : "show the art at the size the game draws it";
   });
 }
 function syncHelp() {
@@ -632,9 +794,11 @@ function syncHelp() {
       : '<b>slot focused:</b> <kbd>1</kbd>..<kbd>9</kbd> pin that candidate &nbsp; ' +
         '<span class="sub">(s/9/w/d do nothing here -- they are frame-role answers)</span>') +
     ' &nbsp;|&nbsp; <kbd>j</kbd>/<kbd>k</kbd> next/prev &nbsp; <kbd>n</kbd> note &nbsp; ' +
-    '<kbd>x</kbd> defer &nbsp; <kbd>u</kbd> reopen &nbsp; <kbd>f</kbd> full size &nbsp; ' +
-    '<kbd>E</kbd> export &nbsp; <span class="sub">shift-click any image to enlarge; ' +
-    'reopening is expected.</span>';
+    '<kbd>x</kbd> defer &nbsp; <kbd>u</kbd> reopen &nbsp; <kbd>E</kbd> export' +
+    ' &nbsp;|&nbsp; <b>MAGNIFY:</b> <kbd>f</kbd> or the <b>[+] zoom</b> button on any card ' +
+    '&nbsp; <span class="sub">(then <kbd>[</kbd>/<kbd>]</kbd> to A/B the candidates full ' +
+    'screen, wheel to zoom, drag to pan, <kbd>Enter</kbd> to pin the one you are looking ' +
+    'at). The 1x/2x/4x control is as-drawn size, not a magnifier.</span>';
 }
 
 // ---- mutations ------------------------------------------------------------
@@ -673,13 +837,12 @@ document.addEventListener("click", function (ev) {
   if (b) { setTreat(b.dataset.fid, b.dataset.treat); render(); return; }
   var sh = ev.target.closest("button[data-show]");
   if (sh) { showMasters[sh.dataset.show] = !showMasters[sh.dataset.show]; render(); return; }
+  var z = ev.target.closest("button[data-zoom]");
+  if (z) { lbOpen(z.closest(".row").dataset.id, z.dataset.zoom); return; }
   var c = ev.target.closest(".card");
   if (c) {
     var row = c.closest(".row");
-    if (ev.shiftKey) {  // shift-click = inspect at natural size
-      document.getElementById("modalimg").src = c.querySelector("img.full").src;
-      document.getElementById("modal").style.display = "flex"; return;
-    }
+    if (ev.shiftKey) { lbOpen(row.dataset.id, c.dataset.rel); return; }
     // A card rendered as reference-only cannot be picked. It is shown dimmed
     // and it says why; accepting the click and dropping it would be exactly
     // the failure this restructure exists to remove.
@@ -687,9 +850,14 @@ document.addEventListener("click", function (ev) {
     focus = parseInt(row.dataset.idx, 10);
     setPick(row.dataset.id, c.dataset.rel); render(); return;
   }
-  if (ev.target.id === "modal" || ev.target.id === "modalimg") {
-    document.getElementById("modal").style.display = "none";
+  if (ev.target.id === "lbclose" || ev.target.id === "lbstage" || ev.target.id === "lbwrap") {
+    lbClose(); return;
   }
+  if (ev.target.id === "lbprev") { lbStep(-1); return; }
+  if (ev.target.id === "lbnext") { lbStep(1); return; }
+  if (ev.target.id === "lbpin") { lbPin(); return; }
+  var lz = ev.target.closest(".lbz");
+  if (lz) { lbSetScale(lz.dataset.s); return; }
 });
 document.addEventListener("input", function (ev) {
   var n = ev.target.dataset && ev.target.dataset.note;
@@ -705,6 +873,25 @@ document.addEventListener("keydown", function (ev) {
     return;
   }
   var id = order[focus], k = ev.key;
+  // The lightbox owns the keyboard while it is open. Letting the page's keys
+  // fire underneath it would mean pressing "3" magnifies one candidate and
+  // silently pins a different one.
+  if (lb.open) {
+    ev.preventDefault();
+    if (k === "Escape" || k === "f") lbClose();
+    else if (k === "[" || k === "ArrowLeft") lbStep(-1);
+    else if (k === "]" || k === "ArrowRight") lbStep(1);
+    else if (k === "0") lbSetScale("fit");
+    else if (k === "+" || k === "=") lbSetScale(lb.scale === "fit" ? 1 :
+                                                Math.min(8, lb.scale * 2));
+    else if (k === "-") lbSetScale(lb.scale === "fit" ? 1 : Math.max(0.25, lb.scale / 2));
+    else if (k === "Enter") lbPin();
+    else if (k >= "1" && k <= "9") {
+      var n = parseInt(k, 10) - 1;
+      if (lb.list[n]) { lb.i = n; lbPaint(); }
+    }
+    return;
+  }
   if (k === "j") { focus = Math.min(order.length - 1, focus + 1); render(); scrollFocus(); }
   else if (k === "k") { focus = Math.max(0, focus - 1); render(); scrollFocus(); }
   else if (k >= "1" && k <= "9" && id && id.indexOf("slot:") === 0) {
@@ -735,11 +922,11 @@ document.addEventListener("keydown", function (ev) {
   } else if (k === "x") { defer(id); render(); }
   else if (k === "u") { reopen(id); render(); }
   else if (k === "f") {
-    var im = document.querySelector('#row_' + CSS.escape(id) + ' img.full');
-    if (im) { document.getElementById("modalimg").src = im.src;
-              document.getElementById("modal").style.display = "flex"; }
+    // Open the candidate being judged -- the pinned one if there is one, else
+    // the first. The old version always grabbed the row's FIRST full image, so
+    // there was no way to full-size candidate 2, 3 or 4 from the keyboard.
+    if (id) lbOpen(id, (picks[id] || {}).src || "");
   } else if (k === "E" || (k === "e" && !ev.ctrlKey)) { doExport(); }
-  else if (k === "Escape") { document.getElementById("modal").style.display = "none"; }
 });
 
 // ---- batch apply ----------------------------------------------------------
@@ -833,6 +1020,7 @@ function showLastExport() {
   Array.prototype.forEach.call(document.querySelectorAll(".bapply"), function (b) {
     b.addEventListener("click", function () { batchApply(b.dataset.v); }); });
   document.getElementById("exp").addEventListener("click", doExport);
+  lbWire();
   showLastExport();
   render();
 })();

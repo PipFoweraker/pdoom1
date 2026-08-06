@@ -67,6 +67,19 @@ Design notes worth knowing before using it:
     **Each card is sized from its own render** -- an unsized card let a 408px
     hero preview spill out of a 186px box and overlap its neighbours and the
     header, which read as a phantom "hover overlay" (Pip, 2026-08-06).
+  * **the as-drawn control is not a magnifier, and says so.** It stops at
+    `RENDER_MAX` (760px, the anti-overlap clamp) and it cannot move at all for
+    the 16 native-size clusters, which have no measured draw size to multiply.
+    Both limits are now stated ON the control -- a capped level renders as
+    `2x*` with a tooltip pointing at the magnifier, and a native-size view says
+    zoom does nothing here. Magnification is a SEPARATE surface.
+  * **`[+] zoom` on any card opens the lightbox** (also `f`, also shift-click):
+    full screen, fit / 100% / 200% / 400%, wheel to zoom, drag to pan,
+    `[`/`]` to A/B the candidates of that cluster without leaving it, `Enter`
+    to pin the one on screen. `f` opens the PINNED candidate, not always the
+    first -- the old version could not full-size candidate 2, 3 or 4 at all.
+    The lightbox owns the keyboard while open, so `3` steps the magnified view
+    instead of silently pinning row candidate 3.
   * **frame roles are a TWO-STEP question, and step 2 does not exist until it
     matters.** Step 1 picks the treatment (`s` draw in code / `c` crop the
     corners out / `w` ship whole / `d` don't use it). Only `c` and `w` consume a
