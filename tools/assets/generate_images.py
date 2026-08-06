@@ -47,19 +47,34 @@ DEFAULT_GEMINI_MODEL = "gemini-3-pro-image"
 
 DEFAULT_BACKEND = "openai"
 
-# Rough per-image cost (USD) for the dry-run/confirmation estimate only.
-# gpt-image-1 at 1024x1024 was $0.08; gpt-image-1.5 is ~20% cheaper and larger
-# canvases cost more. These are estimates -- confirm vs live pricing pages.
-COST_PER_IMAGE_USD = 0.08  # kept for backwards compat / default fallback
+# Per-image cost (USD). PUBLISHED TARIFF, not billed truth -- read off OpenAI's
+# first-party gpt-image-1.5 model page on 2026-08-06. Whatever this function
+# returns is what gets written into the run log, so do not read those logs back
+# and call the number MEASURED: it is this constant, echoed.
+# (docs/art/SEED_ART_COST_MODEL.md did exactly that; see
+#  docs/design/ART_RUN_2026-08-07.md section 1.)
+COST_PER_IMAGE_USD = 0.133  # fallback: 1024x1024 high
+
+GPT_IMAGE_TARIFF_USD = {
+    "1024x1024": {"low": 0.009, "medium": 0.034, "high": 0.133},
+    "1536x1024": {"low": 0.013, "medium": 0.050, "high": 0.200},
+    "1024x1536": {"low": 0.013, "medium": 0.050, "high": 0.200},
+}
 
 
-def estimate_cost_per_image(size_str, backend=DEFAULT_BACKEND):
-    """Best-effort per-image cost estimate for dry-run reporting only."""
+def estimate_cost_per_image(size_str, backend=DEFAULT_BACKEND, quality=None):
+    """Published-tariff per-image cost, for dry-run and confirmation reporting.
+
+    quality=None means the manifest did not choose one, so the API applies its
+    own default ('auto'), which is free to bill at the HIGH tier -- 4x medium at
+    1536x1024. Price the unknown case as high rather than optimistically.
+    """
     if backend == "gemini":
         return 0.13  # Nano Banana Pro approx; confirm vs Gemini pricing
-    # OpenAI gpt-image-1.5 (medium quality), rough per-size estimates.
-    table = {"1024x1024": 0.06, "1536x1024": 0.09, "1024x1536": 0.09}
-    return table.get(str(size_str).lower(), COST_PER_IMAGE_USD)
+    by_size = GPT_IMAGE_TARIFF_USD.get(str(size_str).lower())
+    if by_size is None:
+        return COST_PER_IMAGE_USD
+    return by_size.get(quality or "high", COST_PER_IMAGE_USD)
 
 
 # Initialize client lazily to avoid errors in dry-run mode
@@ -144,7 +159,7 @@ def _aspect_ratio(width, height):
     return f"{width // g}:{height // g}"
 
 
-def _openai_generate_bytes(model, prompt, size_str, background="transparent"):
+def _openai_generate_bytes(model, prompt, size_str, background="transparent", quality=None):
     """Call the OpenAI Images API and return raw image bytes.
 
     gpt-image-1.5 keeps gpt-image-1's request shape (model/prompt/size, and
@@ -160,9 +175,10 @@ def _openai_generate_bytes(model, prompt, size_str, background="transparent"):
     'auto'. PNG (the gpt-image default) is alpha-capable, so no output_format
     override is needed.
     """
-    result = get_client().images.generate(
-        model=model, prompt=prompt, size=size_str, background=background
-    )
+    kwargs = {"model": model, "prompt": prompt, "size": size_str, "background": background}
+    if quality:
+        kwargs["quality"] = quality
+    result = get_client().images.generate(**kwargs)
     return base64.b64decode(result.data[0].b64_json)
 
 
@@ -272,6 +288,7 @@ def generate_image(
     variant_num=None,
     reference_images=None,
     background="transparent",
+    quality=None,
 ):
     """
     Generate an image (via the chosen backend) and downscaled versions.
@@ -299,11 +316,11 @@ def generate_image(
 
     # Skip if exists unless force
     if master_path.exists() and not force:
-        log(f"  ⏭️  Skipping {base_name} (already exists, use --force to regenerate)")
+        log(f"  [SKIP]  Skipping {base_name} (already exists, use --force to regenerate)")
         log(f"SKIP: {base_name} - file exists", "debug")
         return False, 0.0, str(master_path)
 
-    log(f"  🎨 Generating {base_name} ({size_str}, {backend})...")
+    log(f"  [GEN] Generating {base_name} ({size_str}, {backend})...")
     log(f"GENERATE: {base_name}", "debug")
     log(f"PROMPT: {full_prompt}", "debug")
 
@@ -311,9 +328,9 @@ def generate_image(
         if backend == "gemini":
             img_bytes = _gemini_generate_bytes(model, full_prompt, size_str, reference_images)
         else:
-            img_bytes = _openai_generate_bytes(model, full_prompt, size_str, background)
+            img_bytes = _openai_generate_bytes(model, full_prompt, size_str, background, quality)
     except Exception as e:
-        log(f"  ❌ ERROR generating {base_name}: {e}", "error")
+        log(f"  [ERR] ERROR generating {base_name}: {e}", "error")
         log(f"ERROR: {base_name} - {str(e)}", "error")
         return False, 0.0, None
 
@@ -330,7 +347,7 @@ def generate_image(
         resized.save(output_dir / f"{base_name}_{width}.png")
 
     downscaled = len([w for w in sizes if w < master_w])
-    log(f"  ✅ Saved: {master_path.name} (+ {downscaled} downscaled versions)")
+    log(f"  [OK] Saved: {master_path.name} (+ {downscaled} downscaled versions)")
     log(f"SUCCESS: {base_name} -> {master_path}", "debug")
 
     return True, unit_cost, str(master_path)
@@ -425,6 +442,15 @@ Examples:
         "gemini-3-pro-image (gemini).",
     )
     parser.add_argument(
+        "--quality",
+        choices=["low", "medium", "high"],
+        default=None,
+        help="Image quality tier. Overrides the manifest's 'quality' key. If "
+        "neither is set the API's own default applies, which can bill at the "
+        "HIGH tier (4x medium at 1536x1024) -- so leaving this unset is a cost "
+        "decision, not a neutral one.",
+    )
+    parser.add_argument(
         "--reference-images",
         nargs="+",
         help="Reference image paths for style/subject consistency "
@@ -444,7 +470,7 @@ Examples:
     # Load YAML
     yaml_path = Path(args.file)
     if not yaml_path.exists():
-        print(f"❌ File not found: {yaml_path}")
+        print(f"[ERR] File not found: {yaml_path}")
         return 1
 
     data = load_prompts(yaml_path)
@@ -453,7 +479,12 @@ Examples:
     asset_type = data.get("asset_type", "unknown")
     output_sizes = data.get("output_sizes", [1024, 512, 256, 128, 64])
     size_str = str(data.get("default_size", "1024x1024"))
-    unit_cost = estimate_cost_per_image(size_str, args.backend)
+    # quality: manifest key, overridable on the CLI. If neither sets it the API
+    # applies its own default ('auto'), which is free to bill at the HIGH tier
+    # -- 4x medium at 1536x1024. Every batch before 2026-08-06 ran that way
+    # without choosing, which is why the repo's cost history is unreliable.
+    quality = args.quality or data.get("quality")
+    unit_cost = estimate_cost_per_image(size_str, args.backend, quality)
     # Alpha control for the OpenAI backend: 'transparent' (default, icons),
     # 'opaque' (full-bleed hero banners / backgrounds), or 'auto'.
     background = str(data.get("background", "transparent"))
@@ -480,18 +511,26 @@ Examples:
         filtered = filtered[: args.limit]
 
     if not filtered:
-        print("ℹ️  No assets match the specified filters.")
+        print("[i]  No assets match the specified filters.")
         return 0
 
     # Summary
     print(f"\n{'='*60}")
-    print(f"📋 Asset Type: {asset_type}")
-    print(f"📁 Output Dir: {output_dir}")
-    print(f"🧩 Backend: {args.backend}")
-    print(f"🤖 Model: {model}")
-    print(f"📐 Size: {size_str}")
-    print(f"🖼️  Background: {background} (openai backend)")
-    print(f"🎯 Assets to generate: {len(filtered)}")
+    print(f"[*] Asset Type: {asset_type}")
+    print(f"[*] Output Dir: {output_dir}")
+    print(f"[*] Backend: {args.backend}")
+    print(f"[*] Model: {model}")
+    print(f"[*] Size: {size_str}")
+    print(f"[*]  Background: {background} (openai backend)")
+    if quality:
+        print(f"[*] Quality: {quality}  (priced at ${unit_cost:.3f}/image, published tariff)")
+    else:
+        print(
+            "[!] Quality: NOT SET -- the API default applies and may bill at the "
+            f"HIGH tier. Priced defensively at ${unit_cost:.3f}/image. Set "
+            "'quality' in the manifest or pass --quality."
+        )
+    print(f"[*] Assets to generate: {len(filtered)}")
     if args.category:
         print(f"   Category filter: {args.category}")
     if args.status:
@@ -501,7 +540,7 @@ Examples:
     print(f"{'='*60}\n")
 
     if args.dry_run:
-        print("🔍 DRY RUN MODE - showing prompts without generating:\n")
+        print("[*] DRY RUN MODE - showing prompts without generating:\n")
         for asset in filtered:
             asset_id = asset.get("id", "unknown")
             full_prompt = build_full_prompt(data, asset)
@@ -517,13 +556,13 @@ Examples:
             estimated_cost = len(filtered) * unit_cost
             total_images = len(filtered)
             print(
-                f"\n💰 Estimated cost: ${estimated_cost:.2f} ({total_images} images: 1 new variant per asset @ ~${unit_cost:.2f} each, est.)"
+                f"\n[$] Estimated cost: ${estimated_cost:.2f} ({total_images} images: 1 new variant per asset @ ~${unit_cost:.2f} each, est.)"
             )
         else:
             estimated_cost = len(filtered) * args.variants * unit_cost
             total_images = len(filtered) * args.variants
             print(
-                f"\n💰 Estimated cost: ${estimated_cost:.2f} ({total_images} images: {len(filtered)} assets × {args.variants} variants @ ~${unit_cost:.2f} each, est.)"
+                f"\n[$] Estimated cost: ${estimated_cost:.2f} ({total_images} images: {len(filtered)} assets x {args.variants} variants @ ~${unit_cost:.2f} each, est.)"
             )
         return 0
 
@@ -532,18 +571,18 @@ Examples:
         estimated_cost = len(filtered) * unit_cost
         total_images = len(filtered)
         print(
-            f"💰 Estimated cost: ${estimated_cost:.2f} ({total_images} images: 1 new variant per asset)\n"
+            f"[$] Estimated cost: ${estimated_cost:.2f} ({total_images} images: 1 new variant per asset)\n"
         )
     elif args.variants > 1:
         estimated_cost = len(filtered) * args.variants * unit_cost
         total_images = len(filtered) * args.variants
         print(
-            f"💰 Estimated cost: ${estimated_cost:.2f} ({total_images} images: {len(filtered)} assets × {args.variants} variants)\n"
+            f"[$] Estimated cost: ${estimated_cost:.2f} ({total_images} images: {len(filtered)} assets x {args.variants} variants)\n"
         )
     else:
         estimated_cost = len(filtered) * unit_cost
         total_images = len(filtered)
-        print(f"💰 Estimated cost: ${estimated_cost:.2f} ({total_images} images)\n")
+        print(f"[$] Estimated cost: ${estimated_cost:.2f} ({total_images} images)\n")
 
     if not args.yes:
         response = input("Proceed with generation? [y/N]: ")
@@ -552,7 +591,7 @@ Examples:
             return 0
 
     # Generate images
-    log("\n🚀 Starting generation...\n")
+    log("\n[>>] Starting generation...\n")
     log(f"Starting batch: {len(filtered)} assets, {args.variants} variants each", "debug")
 
     total_cost = 0.0
@@ -607,6 +646,7 @@ Examples:
                 variant_num=v_num,
                 reference_images=reference_images,
                 background=background,
+                quality=quality,
             )
 
             if success:
@@ -647,12 +687,12 @@ Examples:
     # Save updated YAML
     if args.update_yaml and success_count > 0:
         save_prompts(yaml_path, data)
-        log(f"💾 Updated {yaml_path} with generation metadata\n")
+        log(f"[*] Updated {yaml_path} with generation metadata\n")
 
     # Summary
     failed_count = len(filtered) - success_count - skip_count
     log(f"\n{'='*60}")
-    log("✨ Generation Complete!")
+    log("[OK] Generation Complete!")
     log(f"   Success: {success_count}")
     log(f"   Skipped: {skip_count}")
     log(f"   Failed: {failed_count}")
