@@ -142,6 +142,10 @@ asset_gallery.html
 # Its .bak-* siblings ARE regenerable churn and stay ignored.
 tools/art_review/review_state.json.bak-*
 gallery_verdicts_*.json
+# Same deal for the slot picker (tools/art_review/build_slot_picker.py): the
+# browser download is a TRANSPORT, not a home. Its home is
+# tools/assets/demand/slot_picks.json, which IS tracked.
+slot_picks_export_*.json
 # Art-review pipeline v2 regenerable artifacts (tools/art_review/). The verdicts
 # JSONs (pixellab_verdicts.json, hero_verdicts.json) and the generator/analyzer
 # tools ARE tracked -- only these derived outputs are ignored. hero_gallery.html

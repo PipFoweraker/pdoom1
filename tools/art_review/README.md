@@ -19,6 +19,64 @@ the browser (tag + bulk-select), you "export JSON" to a tracked verdicts file,
 then the analyzer reads the verdicts against the on-disk inventory.
 
 
+## The slot picker -- selection, NOT taste (build_slot_picker.py)
+
+```
+python tools/art_review/build_slot_picker.py --open
+    -> art_generated/slot_picker.html
+       (measured 2026-08-06: 136 contested slot clusters, 15 frame roles)
+    pick in the browser; E downloads slot_picks_export_<stamp>.json
+python tools/art_review/apply_slot_picks.py <download>
+    -> tools/assets/demand/slot_picks.json   (TRACKED IN GIT -- the diff IS
+       the manifest diff)
+python tools/art_review/apply_slot_picks.py --check
+    -> re-validates every recorded pick against a fresh model; loud on drift
+```
+
+This is a SIBLING of the full gallery, not an extension of it, because it
+answers a different question. The gallery answers **"is this good?"** -- a
+verdict, per ASSET, written once by taste. The picker answers **"is this THE
+one this slot uses?"** -- a selection, per (asset, SLOT) PAIRING, revisable
+every patch without the asset changing at all. Forking the gallery would have
+put a selection UI on top of a 2,713-verdict store, and the obvious next move
+would be to write the pick as a verdict -- which
+`docs/design/ASSET_PAYLOAD_ANALYSIS_2026-08-06.md` explicitly rejects (its
+options (a) and (b); option (b) is the shape that silently stranded 75% of the
+verdicts once). Instead the picker imports `apply_review`'s own resolution via
+`slot_model.py`, so there is exactly ONE definition of "promotable asset" and
+ONE definition of "cluster", shared by the page builder, the merger and the
+tests.
+
+**review_state.json is read-only input.** The picker never writes it, never
+invents a verdict value, and never moves, copies or deletes an art file. It
+records decisions; the transform/pull lane (ADR-0019) applies them later.
+
+Design notes worth knowing before using it:
+
+  * candidates render **at the size the game actually draws them** (70px for
+    action-bar icons, 408 for hero art) plus a full-size preview, with the
+    consumer line that sets the size shown as a badge. "Which looks best at
+    512" is the wrong question for a 512px master behind a 70px tile. A 1x/2x/4x
+    control exists because `window/stretch/mode="canvas_items"` means a 4K
+    canvas draws that 70-logical-px tile at ~140 physical px.
+  * decided rows LEAVE the working set (default filter is Undecided), and
+    `u` reopens one -- taste sessions are not one-shot.
+  * batch apply ("all v3", "all highest") is scoped to the VISIBLE UNDECIDED
+    set and confirms the count first, for the near-identical clusters where
+    one-at-a-time is toil rather than taste.
+  * notes typed in the page travel with the pick into `slot_picks.json`.
+  * POOL destinations (office_floor, cats, doom_overlays, portraits) never
+    appear: their consumers read directories as variety pools, so there is no
+    single winner to pick (ADR-0019 pt 3).
+  * the clustering heuristic (filename stem, `_vN` and size tokens stripped)
+    is a +/-15% estimate by the analysis's own admission. A cluster means
+    "these definitely compete", never "nothing else competes".
+
+Style: adopts `review_style.PALETTE` + `CHECKER`, deliberately NOT the verdict
+machinery (which exports `{rel: [tags]}` into the verdict store). Same
+position `serve_review.py` holds in the migration table below.
+
+
 ## Shared house style -- review_style.py (CONVENTION)
 
 ALL new internal review/dev HTML tools build on `review_style.py` instead of
@@ -129,6 +187,7 @@ Sheets on the shared style:
 | gen_contact_sheet.py | PARTIAL | imports VERDICTS/VERDICT_COLORS + COMPLETENESS_JS/CSS + completeness_controls() from review_style; page CSS still inline -- it IS the style source. Has its own hand-rolled bulk-select (the port source for review_style's version); NOT migrated to the shared bulk-select in this pass -- see follow-up rule below |
 | gen_hero_gallery.py + hero_gallery_template.html | PARTIAL | template keeps its own style/verdict colours, but the completeness engine is injected from review_style (`__RS_COMPLETENESS_JS__` / `__RS_COMPLETENESS_CSS__` placeholders) -- full style migration still a follow-up |
 | serve_review.py | NO (follow-up) | different verdict model (keep/iterate/discard, server-persisted); adopt BASE_CSS only |
+| build_slot_picker.py | PARTIAL (by design) | takes PALETTE + CHECKER; does NOT take the verdict machinery -- it records SELECTIONS (slot pins), not verdicts, and its export must never reach the verdict store |
 
 Follow-up rule: migrate a legacy tool only when its output can be verified
 against a pre-migration render (the gen_contact_sheet.py byte-diff pattern).
