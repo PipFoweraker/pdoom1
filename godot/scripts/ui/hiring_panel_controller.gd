@@ -114,6 +114,12 @@ func _show_hiring_submenu():
 	body.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	scroll.add_child(body)
 
+	# #575: the hiring panel used to register ZERO choice buttons, so the shortcut that
+	# OPENED it left every key inside it dead -- the player pressed 1/2/3 at a list of
+	# candidates and nothing happened. One keyed button per candidate card, collected in
+	# render order, handed to the router at the bottom of this function.
+	var keyed_buttons: Array = []
+
 	var pool_hdr := Label.new()
 	pool_hdr.text = "CANDIDATE POOL (%d/%d)" % [st.candidate_pool.size(), st.MAX_CANDIDATES]
 	pool_hdr.add_theme_font_size_override("font_size", 12)
@@ -128,7 +134,7 @@ func _show_hiring_submenu():
 		body.add_child(empty)
 	else:
 		for cand in st.candidate_pool:
-			body.add_child(_build_candidate_card(cand))
+			body.add_child(_build_candidate_card(cand, keyed_buttons.size(), keyed_buttons))
 
 	var onboarding := []
 	for r in st.researchers:
@@ -145,15 +151,21 @@ func _show_hiring_submenu():
 
 	host._add_submenu_close_affordance(dialog)
 	host.active_dialog = dialog
-	host.active_dialog_buttons = []
+	host.active_dialog_buttons = keyed_buttons
 	host._present_modal_dialog(dialog)
 	dialog.visible = true
 	dialog.z_index = 1000
 	dialog.z_as_relative = false
 
-func _build_candidate_card(cand) -> PanelContainer:
+func _build_candidate_card(cand, key_index: int, keyed_buttons: Array) -> PanelContainer:
 	"""One pool candidate: reveal-gated card fields (get_card_data -> hidden fields render as
-	the ??? placeholder) + Interview / Make Offer actions wired to the hiring_* delegates."""
+	the ??? placeholder) + Interview / Make Offer actions wired to the hiring_* delegates.
+
+	#575: exactly ONE button per card carries a key -- the card's PRIMARY action (Interview
+	while there is anything left to learn, otherwise Make Offer). It is appended to
+	`keyed_buttons` at `key_index` whether or not it is disabled, so the key-to-card
+	alignment does not shift when a candidate becomes unactionable; MainUI refuses to fire
+	a disabled button, so a dead key is silent rather than wrong."""
 	var c: Dictionary = cand.get_card_data()
 	var panel := PanelContainer.new()
 	var hb := HBoxContainer.new()
@@ -243,6 +255,14 @@ func _build_candidate_card(cand) -> PanelContainer:
 		offer.tooltip_text = "Offer already out."
 	offer.pressed.connect(_show_offer_dialog.bind(cid))
 	actions.add_child(offer)
+
+	# #575: key the card's primary action and ADVERTISE the key on that exact button, so the
+	# label the player reads and the button the key fires are the same object.
+	var primary: Button = iv if not iv.disabled else offer
+	var prefix := DialogKeys.prefix_for(key_index)
+	if prefix != "":
+		primary.text = prefix + primary.text
+	keyed_buttons.append(primary)
 
 	return panel
 

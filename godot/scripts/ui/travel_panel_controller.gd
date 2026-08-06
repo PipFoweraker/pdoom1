@@ -89,7 +89,11 @@ func _show_travel_submenu():
 	var travel_options = GameActions.get_travel_options()
 	var button_index = 0
 	var buttons = []
-	var dialog_key_labels = ["1", "2", "3"]
+	# #567: travel was the one panel advertising NUMBERS while every sibling advertised
+	# LETTERS -- and 1-9 already mean "action bar slot" everywhere outside a dialog, so the
+	# same key meant two things one keypress apart. Letters now, from the shared table.
+	# Numbers still WORK (DialogKeys keeps them as an unadvertised alias), so the old habit
+	# is not punished.
 
 	var actions_grid = GridContainer.new()
 	actions_grid.columns = 3
@@ -122,8 +126,7 @@ func _show_travel_submenu():
 			btn.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
 		# Add keyboard hint
-		var key_label = dialog_key_labels[button_index] if button_index < dialog_key_labels.size() else ""
-		btn.text = key_label
+		btn.text = DialogKeys.label_for(button_index)
 		btn.add_theme_font_size_override("font_size", 10)
 		btn.add_theme_color_override("font_color", Color(1, 1, 1, 0.6))
 

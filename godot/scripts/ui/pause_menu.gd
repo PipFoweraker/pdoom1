@@ -79,6 +79,21 @@ func _on_resign_pressed():
 	GameManager.resign()
 
 
+func _on_settings_pressed():
+	"""#602 P1: the Settings screen -- and with it the KEYBIND EDITOR -- had NO entrance
+	once a run was live. Its only doors were the welcome screen and the dev overlay, so a
+	player who wanted to rebind a key mid-run had to abandon the run to reach the screen
+	that rebinds keys. The pause menu is where "I want to change something" already goes.
+
+	Safe for a live run: settings_menu._on_back_pressed() detects one and returns via
+	GameManager.pending_resume rather than booting a fresh main.tscn (the scene-reentry
+	run-killer family, sibling of #979). Unpause first -- SceneTransition defers the swap,
+	and a paused tree would stall the new scene's own _ready work."""
+	print("[PauseMenu] Opening settings...")
+	GameConfig.save_config()
+	get_tree().paused = false
+	SceneTransition.go_to("res://scenes/settings_menu.tscn")
+
 func _on_main_menu_pressed():
 	"""Return to main menu"""
 	print("[PauseMenu] Returning to main menu...")

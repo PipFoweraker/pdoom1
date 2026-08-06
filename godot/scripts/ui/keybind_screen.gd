@@ -150,10 +150,27 @@ func _on_clear_pressed(action: String):
 	_build_keybind_list()
 
 func _input(event: InputEvent):
-	if waiting_for_key == "" or not event is InputEventKey:
+	if not event is InputEventKey:
 		return
 
 	if not event.pressed or event.echo:
+		return
+
+	# #602 P5: ESC goes back one level, ALWAYS. Two defects fixed here:
+	#   * while waiting for a key, ESC used to be CAPTURED as the new binding, so a player
+	#     could bind ESC to an action and lose the universal back key -- exactly what
+	#     KeybindManager.RESERVED_KEYS says must never happen. ESC now CANCELS the rebind.
+	#   * with nothing pending, this handler returned early, so ESC did nothing at all on
+	#     a full screen whose only exit was a Back button. ESC now goes Back.
+	if event.keycode == KEY_ESCAPE:
+		if waiting_for_key != "":
+			_cancel_pending_rebind()
+		else:
+			_on_back_pressed()
+		get_viewport().set_input_as_handled()
+		return
+
+	if waiting_for_key == "":
 		return
 
 	# Capture the key
@@ -183,6 +200,14 @@ func _input(event: InputEvent):
 
 	# Mark input as handled
 	get_viewport().set_input_as_handled()
+
+func _cancel_pending_rebind() -> void:
+	"""Abandon a rebind in progress and restore the row to the bind it already had."""
+	if waiting_button and is_instance_valid(waiting_button):
+		waiting_button.text = KeybindManager.get_key_name(waiting_for_key)
+		waiting_button.remove_theme_color_override("font_color")
+	waiting_for_key = ""
+	waiting_button = null
 
 func _find_key_conflict(key: int, shift: bool, ctrl: bool, alt: bool) -> String:
 	for action in KeybindManager.keybinds.keys():

@@ -39,11 +39,18 @@ var keybinds: Dictionary = {
 	"end_turn": {"key": KEY_SPACE, "category": Category.GAMEPLAY, "description": "End Turn"},
 	"undo_action": {"key": KEY_Z, "category": Category.GAMEPLAY, "description": "Undo Last Action"},
 	"clear_queue": {"key": KEY_C, "category": Category.GAMEPLAY, "description": "Clear Action Queue"},
-	"cancel": {"key": KEY_ESCAPE, "category": Category.GAMEPLAY, "description": "Cancel/Back"},
+	# "cancel" (was KEY_ESCAPE) DELETED 2026-08-04 (#602 navigation audit). Nothing read
+	# this bind: ESC is matched as a raw KEY_ESCAPE in ~10 handlers and funnelled through
+	# ModalStack.handle_escape(). Listing it in the rebind screen promised a rebind that
+	# could never take. ESC is a RESERVED key by design -- see RESERVED_KEYS below.
 
 	# UI Navigation
-	"next_tab": {"key": KEY_TAB, "category": Category.UI, "description": "Next Tab"},
-	"prev_tab": {"key": KEY_TAB, "shift": true, "category": Category.UI, "description": "Previous Tab"},
+	# "next_tab"/"prev_tab" (were TAB / Shift+TAB) DELETED 2026-08-04 (#602 navigation
+	# audit). Nothing has ever handled them -- there is no tab bar; TabManager holds two
+	# views (main + Employee) reached by a visible button and left by ESC. They must NOT
+	# be wired up now either: TAB is Godot's GUI focus-traversal key, and a global handler
+	# that swallowed it would stop the player moving between the bug-report form's fields
+	# -- the same class of defect as #575. TAB is RESERVED; see RESERVED_KEYS below.
 	# Moved off backslash to N (N already opened the bug reporter) -- backslash is now DEV MODE.
 	"bug_reporter": {"key": KEY_N, "category": Category.UI, "description": "Open Bug Reporter"},
 	# "employee_tab": {"key": KEY_E, "category": Category.UI, "description": "Employee Screen"},  # DISABLED: moving to main UI
@@ -53,7 +60,12 @@ var keybinds: Dictionary = {
 	# Quick Menu Access (configurable shortcuts for common menus)
 	"menu_hire": {"key": KEY_H, "category": Category.GAMEPLAY, "description": "Open Hiring Menu"},
 	"menu_fundraise": {"key": KEY_F, "category": Category.GAMEPLAY, "description": "Open Fundraising Menu"},
-	"menu_research": {"key": KEY_R, "category": Category.GAMEPLAY, "description": "Open Research Actions"},
+	# "menu_research" (was KEY_R) DELETED 2026-08-04 (#602 navigation audit). There is no
+	# research SUBMENU -- safety_research / capability_research / publish_paper are direct
+	# action-bar items -- so nothing ever handled this bind. It still appeared in the
+	# keybind screen, which meant the game ADVERTISED a key that did nothing (audit
+	# principle P4: no advertised key is inert). Worse, R is also dialog choice 4, so the
+	# rebind screen implied R was spoken for when it was not.
 	"menu_publicity": {"key": KEY_P, "category": Category.GAMEPLAY, "description": "Open Publicity Menu"},
 	"menu_travel": {"key": KEY_T, "category": Category.GAMEPLAY, "description": "Open Travel Menu"},
 
@@ -69,7 +81,30 @@ var keybinds: Dictionary = {
 	"action_9": {"key": KEY_9, "category": Category.GAMEPLAY, "description": "Trigger Action 9"},
 
 	# Additional Gameplay shortcuts
+	# Description wording is #1116's (the "AP" -> "Attention" copy pass); the bind itself
+	# is what #602 needed -- ENTER read through KeybindManager instead of a raw keycode.
 	"commit_plan": {"key": KEY_ENTER, "category": Category.GAMEPLAY, "description": "Commit Plan & Reserve Attention"},
+	# View toggle (PLAN <-> WATCH). Was a hardcoded KEY_V in main_ui._input and therefore
+	# invisible to the rebind screen -- #602 principle P4 cuts both ways: an advertised key
+	# must work, and a working key must be advertised.
+	"toggle_view": {"key": KEY_V, "category": Category.UI, "description": "Toggle PLAN / WATCH View"},
+}
+
+## Keys the game answers to that are deliberately NOT rebindable, with the reason. This
+## is the honest half of #602 principle P4 ("no advertised key is inert, no working key
+## is unadvertised"): a key belongs in `keybinds` above OR here, never in neither and
+## never in both. Documented rather than silently absent, so the next audit can see the
+## ruling instead of rediscovering the gap.
+const RESERVED_KEYS := {
+	"escape": "ESC is the universal back/close key (audit principle P5). It routes through "
+		+ "ModalStack.handle_escape() and every screen's own back handler; allowing a rebind "
+		+ "would let a player strand themselves in a modal with no way out.",
+	"tab": "TAB / Shift+TAB belong to Godot's GUI focus traversal. Claiming them globally "
+		+ "would break moving between fields in the bug-report form (#575's defect class), "
+		+ "so no game action may bind them.",
+	"choice_keys": "Q/W/E/R/A/S/D/F/Z (and 1-9 as an alias) select modal choices. They are "
+		+ "positional labels rendered onto the buttons themselves (DialogKeys), not "
+		+ "standalone actions, so there is nothing stable to rebind.",
 }
 
 # Active profile
@@ -78,7 +113,7 @@ var profiles: Dictionary = {}  # profile_name -> keybind dict
 
 # Config file
 const CONFIG_PATH = "user://keybinds.cfg"
-const KEYBINDS_CONFIG_VERSION = 5  # bump when default binds change; stale saved configs refresh to defaults
+const KEYBINDS_CONFIG_VERSION = 6  # bump when default binds change; stale saved configs refresh to defaults
 var config = ConfigFile.new()
 
 # Signals
