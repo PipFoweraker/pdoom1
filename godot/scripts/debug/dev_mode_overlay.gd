@@ -289,21 +289,18 @@ func _play_selected_music() -> void:
 	var entry := _selected_music_entry()
 	if entry.is_empty() or not is_instance_valid(MusicManager):
 		return
-	if str(entry.get("kind", "")) == "tier":
-		MusicManager.set_tier_override(int(entry.get("tier", 0)))
-	else:
-		MusicManager.play_track(str(entry.get("path", "")))
+	# One code path with the player-facing pause-menu picker (MusicControls, 2026-08-06),
+	# so "what a pick does" cannot drift between the dev surface and the shipped one.
+	MusicManager.apply_catalogue_entry(entry)
 	_refresh_music_status()
 
 
 func _release_music_override() -> void:
 	if not is_instance_valid(MusicManager):
 		return
-	MusicManager.clear_tier_override()
-	# A standalone bed replaced the adaptive stream entirely; re-entering the current
-	# context is what brings the doom-driven score back.
-	if not MusicManager.is_adaptive_active():
-		MusicManager.play_context(MusicManager.current_context)
+	# Releases a held tier and, if a standalone bed replaced the adaptive stream
+	# entirely, restarts the current context to bring the doom-driven score back.
+	MusicManager.return_to_automatic()
 	_refresh_music_status()
 
 

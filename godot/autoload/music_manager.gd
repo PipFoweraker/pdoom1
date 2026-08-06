@@ -65,6 +65,27 @@ const MUSIC_TIER_STEMS := [
 const ADAPTIVE_BPM := 120.0
 const ADAPTIVE_FADE_BEATS := 8.0
 
+## Human titles for the beds, keyed by resource path. The dev overlay is happy with
+## "M3 eldritch (mesa_optimizer)"; a player is not. These are the names the tracks were
+## COMPOSED under (tools/music/jukebox.html track list), so the credits, the jukebox and
+## the in-game picker all say the same words. Anything missing falls back to a
+## prettified filename rather than going blank.
+const TRACK_TITLES := {
+	"res://assets/audio/music/checkpoint_saved.ogg": "Checkpoint saved",
+	"res://assets/audio/music/distribution_shift.ogg": "Distribution shift",
+	"res://assets/audio/music/proxy_gaming.ogg": "Proxy gaming",
+	"res://assets/audio/music/mesa_optimizer.ogg": "Mesa optimizer",
+	"res://assets/audio/music/treacherous_turn.ogg": "Treacherous turn",
+	"res://assets/audio/music/the_off_switch_worked.ogg": "The off switch worked",
+	"res://assets/audio/music/out_of_distribution_trudge.ogg": "Out of distribution",
+	"res://assets/audio/music/unit_tests_passing.ogg": "Unit tests passing",
+}
+
+## Plain-language name for each music tier, for the player-facing picker and status line.
+## MUSIC_TIER_NAMES are the internal spec words (cosy..terminal); these say what the tier
+## MEANS to someone who has never read docs/audio/MUSIC_DESIGN.md.
+const MUSIC_TIER_MOODS := ["Calm", "Uneasy", "Tense", "Dire", "Terminal"]
+
 var adaptive_enabled: bool = true
 var _adaptive_stream: AudioStreamInteractive = null
 var _adaptive_build_attempted: bool = false
@@ -87,6 +108,10 @@ var _tier_override: int = -1
 ## overridden, so the overlay can say "you are hearing 4, the game is at 1" and so
 ## releasing the override snaps back to the truth instead of to a stale value.
 var _auto_music_tier: int = 0
+## Path of a standalone bed a HUMAN chose (as opposed to one the game chose for a
+## context, or the legacy playlist running because the adaptive build failed). Only
+## used to word the status line honestly; nothing reads it for behaviour.
+var _manual_pick_path: String = ""
 
 # Music tracks organized by context
 var music_library = {
@@ -134,6 +159,15 @@ var _crossfade_tween: Tween = null
 
 func _ready():
 	print("[MusicManager] Initializing music system...")
+
+	# Keep processing while the tree is paused. The pause menu sets
+	# get_tree().paused = true, and a Tween created by create_tween() is bound to the
+	# node that made it -- so with the default (inherited, PAUSABLE) process mode a
+	# crossfade started from the pause menu's music picker would freeze half-done:
+	# both players audible, `is_crossfading` stuck true, and every later switch
+	# ignored ("Already crossfading"). Music is a view-layer side-effect (ADR-0006)
+	# with no game state to freeze, so ALWAYS is also the honest process mode for it.
+	process_mode = Node.PROCESS_MODE_ALWAYS
 
 	# Create two audio stream players for crossfading
 	player_a = AudioStreamPlayer.new()
@@ -207,6 +241,7 @@ func play_context(context: MusicContext, shuffle: bool = true):
 	# hand-held tier must be let go of. Cleared silently (no re-switch) because the
 	# context change is about to choose a stream anyway.
 	_tier_override = -1
+	_manual_pick_path = ""
 
 	# GAMEPLAY prefers the doom-adaptive stream; anything else (or a failed
 	# adaptive build) falls back to the legacy per-context playlist.
@@ -486,6 +521,7 @@ func audition_catalogue() -> Array:
 			seen[path] = true
 		out.append({
 			"label": "M%d %s  (%s)" % [tier, MUSIC_TIER_NAMES[tier], path.get_file().get_basename()],
+			"title": track_title(path),
 			"kind": "tier", "tier": tier, "path": path,
 		})
 	for context in [MusicContext.MENU, MusicContext.VICTORY, MusicContext.DEFEAT]:
@@ -496,9 +532,134 @@ func audition_catalogue() -> Array:
 			seen[p] = true
 			out.append({
 				"label": "%s  (%s)" % [MusicContext.keys()[context], p.get_file().get_basename()],
+				"title": track_title(p),
 				"kind": "track", "tier": -1, "path": p,
 			})
 	return out
+
+
+## Human title for a bed. Unknown paths degrade to a prettified filename rather than an
+## empty string, so a newly added track is ugly in the picker but never invisible.
+func track_title(path: String) -> String:
+	if path == "":
+		return "Unknown track"
+	if TRACK_TITLES.has(path):
+		return String(TRACK_TITLES[path])
+	return path.get_file().get_basename().replace("_", " ").capitalize()
+
+
+## ---- PLAYER-FACING music picker (pause menu, 2026-08-06) ----------------------------
+##
+## Same machinery as the dev audition tool, different words. Pip's ruling that promoted
+## it: "if people want to listen to their favourite tracks, they can do so and if they
+## miss out on doom indicators etc, so be it, that's their choice." That is only safe
+## because a pick writes NOTHING toward GameState, the seeded RNG or scoring -- see the
+## _tier_override comment above and test_music_player_controls.gd, which snapshots the
+## whole state dict across a full picker session and asserts it is byte-identical.
+
+## The picker's list: "Automatic" first (the default and the designed experience),
+## then every bed by human title. Entries carry the same kind/tier/path contract as
+## audition_catalogue(), plus kind "auto".
+func player_catalogue() -> Array:
+	var out: Array = [{
+		"label": "Automatic -- follows the situation",
+		"title": "Automatic", "kind": "auto", "tier": -1, "path": "",
+	}]
+	for entry in audition_catalogue():
+		var e: Dictionary = entry.duplicate()
+		if String(e.get("kind", "")) == "tier":
+			var tier: int = int(e.get("tier", 0))
+			e["label"] = "%s -- %s" % [
+				String(e.get("title", "")), MUSIC_TIER_MOODS[clampi(tier, 0, MUSIC_TIER_MOODS.size() - 1)]]
+		else:
+			e["label"] = String(e.get("title", ""))
+		out.append(e)
+	return out
+
+
+## Apply a catalogue entry. ONE code path for the pause menu and the dev overlay, so
+## "what a pick does" cannot drift between the two surfaces. Returns nothing and
+## touches nothing outside this node.
+func apply_catalogue_entry(entry: Dictionary) -> void:
+	if entry.is_empty():
+		return
+	match String(entry.get("kind", "")):
+		"auto":
+			return_to_automatic()
+		"tier":
+			_manual_pick_path = ""
+			set_tier_override(int(entry.get("tier", 0)))
+		_:
+			_manual_pick_path = String(entry.get("path", ""))
+			play_track(_manual_pick_path)
+
+
+## Hand the music back to the game. Releases a held tier AND, if a standalone bed
+## replaced the adaptive stream entirely, restarts the current context so the
+## doom-following score comes back rather than the player being left on a dead bed.
+func return_to_automatic() -> void:
+	clear_tier_override()
+	if not is_adaptive_active():
+		play_context(current_context)
+
+
+## Index into player_catalogue() of the entry currently being heard, so the picker can
+## open showing the truth instead of resetting to item 0. -1 means "not in the list".
+func player_catalogue_index() -> int:
+	var cat := player_catalogue()
+	if not is_tier_overridden() and _adaptive_active:
+		return 0  # Automatic
+	if is_tier_overridden():
+		for i in range(cat.size()):
+			if String(cat[i].get("kind", "")) == "tier" and int(cat[i].get("tier", -1)) == _current_music_tier:
+				return i
+		return 0
+	# A standalone bed is playing (or nothing is): match on what the player is hearing.
+	var playing_path := ""
+	if active_player != null and active_player.stream != null:
+		playing_path = active_player.stream.resource_path
+	for i in range(cat.size()):
+		if String(cat[i].get("path", "")) == playing_path and playing_path != "":
+			return i
+	return 0
+
+
+## The player-facing counterpart of audition_status_line(). Plainer words, and it answers
+## the question the dev line answers in jargon: what am I hearing, and what does the game
+## want to play instead? Pure string build, unit-tested.
+func player_status_line() -> String:
+	if not _adaptive_active:
+		# Two very different situations look the same from here: the player picked a
+		# standalone bed, or the adaptive stream could not be built (missing audio, and
+		# the legacy playlist took over). Only the first is "your pick" -- blaming the
+		# player for the second would be the silent-wrongness failure mode in words.
+		if _manual_pick_path != "":
+			return ("Now playing: %s -- your pick. The music that follows the situation "
+				+ "is paused until you choose Automatic.") % get_current_track_name_pretty()
+		return "Now playing: %s." % get_current_track_name_pretty()
+	var tier := clampi(_current_music_tier, 0, MUSIC_TIER_MOODS.size() - 1)
+	var auto := clampi(_auto_music_tier, 0, MUSIC_TIER_MOODS.size() - 1)
+	var heard := "%s (%s)" % [track_title(_tier_path(tier)), MUSIC_TIER_MOODS[tier]]
+	if _tier_override < 0:
+		return "Now playing: %s -- following the situation." % heard
+	if tier == auto:
+		return "Now playing: %s -- your pick. It is what the game would play anyway." % heard
+	return ("Now playing: %s -- your pick. The game would switch to %s (%s); it will not "
+		+ "while your pick is held.") % [heard, track_title(_tier_path(auto)), MUSIC_TIER_MOODS[auto]]
+
+
+func _tier_path(tier: int) -> String:
+	if tier < 0 or tier >= MUSIC_TIER_STEMS.size() or MUSIC_TIER_STEMS[tier].is_empty():
+		return ""
+	return String(MUSIC_TIER_STEMS[tier][0]["path"])
+
+
+## Title-cased current track, for player-facing text (get_current_track_name() returns
+## the raw basename, which is fine for the dev line and wrong in front of a player).
+func get_current_track_name_pretty() -> String:
+	if active_player != null and active_player.stream != null:
+		return track_title(active_player.stream.resource_path)
+	return "Nothing"
 
 
 ## One line for the overlay: what is playing, and WHY. Pure string build, unit-tested.
