@@ -16,6 +16,7 @@ What these lock down:
 
 import hashlib
 import json
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -55,6 +56,58 @@ class TestReadLadderVersion(unittest.TestCase):
             (Path(tmp) / "ladder_version.txt").write_text("L3\n", encoding="ascii")
             with self.assertRaises(SystemExit):
                 grm.read_ladder_version(Path(tmp))
+
+
+class TestReadFeaturedSeed(unittest.TestCase):
+    """The featured league seed must reach the manifest FROM the game's SSOT.
+
+    WHY THIS EXISTS: a website-derived featured seed stranded 23 submissions in
+    July (coordination#40). The website must never compute the seed -- it must
+    read one the release published. And the release must not hand-type it: a
+    second literal is exactly the drift that forks a board key.
+    """
+
+    GAME_CONFIG = Path("godot") / "autoload" / "game_config.gd"
+
+    def _fake_repo(self, tmp: str, const_line: str) -> Path:
+        root = Path(tmp)
+        config = root / self.GAME_CONFIG
+        config.parent.mkdir(parents=True)
+        config.write_text(
+            'extends Node\n%s\nfunc get_weekly_seed() -> String:\n\treturn "x"\n' % const_line,
+            encoding="ascii",
+        )
+        return root
+
+    def test_reads_the_real_repo_seed(self):
+        # Doubles as a repo-state check: the shipped seed must be pinned.
+        seed = grm.read_featured_seed(REPO_ROOT)
+        self.assertTrue(seed, "FEATURED_SEED_OVERRIDE must be pinned when cutting a release")
+        self.assertRegex(seed, r"^[A-Za-z0-9._-]+$")
+
+    def test_reads_the_const_verbatim(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = self._fake_repo(tmp, 'const FEATURED_SEED_OVERRIDE: String = "weekly-2099-w01"')
+            self.assertEqual(grm.read_featured_seed(root), "weekly-2099-w01")
+
+    def test_empty_override_fails_loudly(self):
+        # An unpinned seed means the seed is wall-clock derived at RUN time, so
+        # no stable value exists to publish. Fail the release, do not guess.
+        with tempfile.TemporaryDirectory() as tmp:
+            root = self._fake_repo(tmp, 'const FEATURED_SEED_OVERRIDE: String = ""')
+            with self.assertRaises(SystemExit):
+                grm.read_featured_seed(root)
+
+    def test_missing_const_fails_loudly(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = self._fake_repo(tmp, 'const SOMETHING_ELSE: String = "nope"')
+            with self.assertRaises(SystemExit):
+                grm.read_featured_seed(root)
+
+    def test_missing_file_fails_loudly(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            with self.assertRaises(SystemExit):
+                grm.read_featured_seed(Path(tmp))
 
 
 class TestCollectAssets(unittest.TestCase):
@@ -121,6 +174,7 @@ class TestBuildManifest(unittest.TestCase):
             version="v0.13.3",
             commit="abcdef0123456789",
             ladder_version="3",
+            league_seed="weekly-2099-w01",
             highlights="### Fixed\n- a bug",
             assets=[{"name": "PDoom-Windows.zip", "size": 1, "sha256": "aa"}],
             repository="PipFoweraker/pdoom1",
@@ -159,6 +213,7 @@ class TestBuildManifest(unittest.TestCase):
         m = self._manifest()
         self.assertEqual(m["version"], "v0.13.3")
         self.assertEqual(m["ladder_version"], "3")
+        self.assertEqual(m["league_seed"], "weekly-2099-w01")
         self.assertEqual(m["highlights"], "### Fixed\n- a bug")
         self.assertEqual(
             m["download_page"],
@@ -175,6 +230,40 @@ class TestBuildManifest(unittest.TestCase):
     def test_manifest_serializes_to_ascii_json(self):
         body = json.dumps(self._manifest(), indent=2)
         body.encode("ascii")
+
+
+class TestGeneratedManifestCarriesTheSeed(unittest.TestCase):
+    """End-to-end: run the generator for real and inspect what it wrote.
+
+    build_manifest() is pure assembly, so a passing unit test there proves
+    nothing about WIRING -- main() could still forget to pass the seed. This
+    runs the actual script against the actual repo, which is the only version
+    of the check that would have caught the gap it was written for.
+    """
+
+    def test_written_manifest_matches_the_shipped_seed(self):
+        expected = grm.read_featured_seed(REPO_ROOT)
+        with tempfile.TemporaryDirectory() as tmp:
+            output = Path(tmp) / "release_manifest.json"
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    str(REPO_ROOT / "scripts" / "generate_release_manifest.py"),
+                    "--version",
+                    "v9.9.9",
+                    "--commit",
+                    "0" * 40,
+                    "--output",
+                    str(output),
+                ],
+                capture_output=True,
+                text=True,
+            )
+            self.assertEqual(result.returncode, 0, result.stderr)
+            manifest = json.loads(output.read_text(encoding="ascii"))
+        self.assertIn("league_seed", manifest, "the website reads this field; it must exist")
+        self.assertTrue(manifest["league_seed"], "league_seed must never ship empty")
+        self.assertEqual(manifest["league_seed"], expected)
 
 
 if __name__ == "__main__":
