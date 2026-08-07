@@ -1,6 +1,37 @@
 {
   "versions": [
     {
+      "version": "0.14.1",
+      "date": "2026-08-08",
+      "title": "You Can See Your Own Board Again",
+      "highlights": [
+        "Same board as v0.14.0 -- ladder L4, seed weekly-2026-w32. Your scores are still there and still count",
+        "The game-over screen no longer scrolls, and the Leaderboard is a button instead of a line you had to scroll to find",
+        "The leaderboard opens on the GLOBAL board instead of showing you only your own four scores",
+        "If your score did not go to the global board, the game now tells you why, every run",
+        "A successful submission is legible: bigger text, above the buttons instead of the last line on the screen",
+        "A failed upload names the actual fault instead of always saying 'offline'",
+        "In-game patch notes are back, and cover 0.12.0 onwards"
+      ],
+      "sections": {
+        "added": [
+          "Patch notes for 0.12.0 through 0.14.0 -- three releases where this screen had nothing to say",
+          "The release manifest publishes the league seed, so the website reads the board key instead of guessing it"
+        ],
+        "changed": [
+          "The leaderboard screen opens on the global board. Builds with no leaderboard configured are unchanged and stay local-only",
+          "The global fetch and the local view now read one board key from the board on screen, instead of two sources that could disagree"
+        ],
+        "fixed": [
+          "The game-over screen scrolled, and the only route to the leaderboard was the last line inside the scroll. It is a button now, the screen is shorter, and the body text is bigger",
+          "Two colours on the game-over screen failed accessible-contrast thresholds against the panel behind them",
+          "A player who never opted in, and a player who declined, both saw nothing at game over -- both are now told where the score went and where to change it. It is a readout, not a prompt, and it does not opt anybody in",
+          "The submit confirmation was small and below the buttons, so a successful upload looked like nothing happening",
+          "A rotated token, a moved endpoint and a server fault all reported 'offline'. The real status reaches you now, and offline means the request never reached a server. Either way your score is kept locally"
+        ]
+      }
+    },
+    {
       "version": "0.14.0",
       "date": "2026-08-07",
       "title": "Ladder L4 -- The Comparability Fork",
