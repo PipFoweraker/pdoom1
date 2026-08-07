@@ -238,12 +238,28 @@ biggest section in the file.</li>
 jumps <code>[v0.13.1] - 2026-07-25</code> straight to <code>[v0.11.0] - 2025-12-08</code>.</li>
 <li><code>[0.13.2]</code>'s body is headed <i>"2026-07-27 build day (rides the next
 version bump)"</i> -- content for a future version filed under a released one.</li>
-<li>It announces <b>#791</b> and <b>#811</b> as delivered. Both are <b>OPEN</b> today.</li>
+<li><code>CHANGELOG.md</code> announces <b>#791</b> and <b>#811</b> as delivered. Both
+are <b>OPEN</b> today.</li>
 </ul>
-<div class="warn"><b>Partial correction to the brief.</b> Those two issues are open
-largely because squash-merge does not fire closes-keywords here. The changelog did not
-invent a delivery; it inherited a stale issue state. The claim reproduces; the
-mechanism is milder than "announced work that did not happen."</div>
+<p><b>And the version that is public.</b> The published GitHub release body for
+<code>v0.13.2</code> -- which pdoom1.com renders at <code>/game-changelog/</code> --
+says at line 71: <i>"<b>Research Quality System</b> (#500): Rushed / Standard /
+Thorough quality toggle for research"</i>. <b>#500 is OPEN</b>, and the 08-06 triage
+records it superseded by #1090 because the ruling moved quality to research-project
+level -- the global-toggle world it describes is not the world that shipped. The
+website seat stated the limit of this evidence better than I can:</p>
+<blockquote>"An open issue is not proof a feature is absent. What the table proves is
+narrower and still serious: <b>the release body is not derived from what shipped in that
+release.</b>"</blockquote>
+<p>Filed as #1165 and ruled in <code>coordination#35</code>, where pdoom1 named the
+general form: <i>"<code>[Unreleased]</code> is an accumulator with no expiry and no
+owner ... a release-notes pipeline that can announce a still-open issue is <b>not a
+documentation problem; it is a correctness problem wearing documentation's
+clothes</b>."</i></p>
+<div class="warn"><b>Partial correction to the brief.</b> For #791 and #811 the
+mechanism is milder than "announced work that did not happen" -- both are open largely
+because squash-merge does not fire closes-keywords here. <b>For #500 it is not milder:</b>
+that entry is live on the public site describing a toggle the design ruling replaced.</div>
 
 <h3>F10. The cost model reads its own constant back out of a log, and the doc still calls it MEASURED</h3>
 <p><code>estimate_cost_per_image()</code> returns a hardcoded table lookup; that value
@@ -269,6 +285,17 @@ because "the build he played" and "main" are again two different things.</li>
 <li><code>ROADMAP.md:47</code> and <code>RELEASE_NOMENCLATURE.md:89</code> both map
 <code>v0.14 -&gt; L3</code>; L3 is spent. Every row below is off by one. #1152, open.</li>
 <li><b>#1061, IP/trademark, was due Monday 2026-08-03.</b> Open. You asked to be forced.</li>
+<li><b>The seat raised a false consent alarm against itself.</b> The eight contributor
+cat photos were filed in <code>coordination#32</code> as an undischarged consent
+obligation; they were contributed with permission, confirmed by you on 08-06.
+Retracted -- <i>"That was wrong"</i> -- inside a day. A false alarm from the auditing
+seat costs the same attention as a real one.</li>
+<li><b>Nine unattributed images are live on pdoom1.com right now</b>, and six of the
+nine are variants you <b>rejected</b>, published indistinguishably from the three you
+chose. They arrived as a side effect of an events-system commit -- <i>"There is no
+commit where anyone decided to publish art."</i> The sync script that supposedly manages
+them writes to a directory that does not exist and has apparently never successfully
+run.</li>
 </ul>
 
 <h2 class="pb">3. Recurrences from the 07-31 postmortem</h2>
@@ -283,7 +310,11 @@ and the runs reporting <b>success</b> contained the identical error.</p>
 <tr><td><code>check_ladder_bump.py</code> in CI</td><td><code>|| true</code> -- cannot fail a build. This is the guard for <b>F1</b>, the cycle's highest-cost defect</td><td><b>Nothing.</b> Found by reading the YAML while writing this</td></tr>
 <tr><td>W6, the published <code>grep</code></td><td>Basic <code>grep</code> treats <code>|</code> as a literal, so it searches one 44-character string and returns 0 against a file containing all four words</td><td>The claim audit, by running a control line</td></tr>
 <tr><td>The phase-guard regex</td><td>Excluded a preceding <code>.</code>, so the actual #1134 line matched nothing and the suite went green</td><td>The lane, because it had to prove the guard red first</td></tr>
+<tr><td><b>A fourth, in a sister repo</b>: <code>certes</code>' <code>check-language.sh</code></td><td>Split each rule line on its <b>first</b> pipe, silently truncating three of seven regex rules. <code>retreat.*hosting</code> -- <i>"one of the two violations this guard was built after"</i> -- <b>was never checked, for six months</b></td><td>Its own seat. The tell printed in the output the whole time as garbled advice text; <i>"Nobody read it."</i></td></tr>
 </table>
+<p>Four instances, three repos, seven days. W6 and the certes bug are the same defect --
+a shell metacharacter eating the rule -- and the ladder heuristic has the same outcome:
+green because the rule never ran.</p>
 <p><b>Why this is the sharpest thing in the pack.</b> The 07-31 postmortem named this
 mechanism, in writing, in this repo. One week later it appears in the guard covering
 the ladder -- the exact axis whose corruption 07-31's FINDING 5 was about. Naming a
@@ -409,8 +440,23 @@ later</b>, zero sooner) and found two live code defects on the way.</p>
 independent of the three"</i>, and <i>"two of three seats are compromised on A2 bit 1
 in the same direction. Coordination should say so in the post-mortem rather than
 reading 3-0 as three independent derivations."</i> A ballot among seats that had all
-read the same six public rulings of yours is not three independent votes.
-<b>Verdict: keep the prep, question the room.</b></p>
+read the same six public rulings of yours is not three independent votes.</p>
+<p><b>The null is on the record from two directions, neither of them mine.</b>
+<code>pdoom-data</code>: <i>"Two of the six items did not need this instrument ...
+Unanimity is what an issue thread produces cheaply. <b>The workshop's cost was not
+repaid there.</b>"</i> pdoom1 went further: <i>"<b>The workshop was not necessary for
+four of six rulings.</b>"</i> The selection rule that fell out is the keeper:
+<b>run a workshop when seats hold different evidence; file an issue when they hold the
+same evidence and disagree about it.</b></p>
+<p><b>The seal had a hole, and pdoom1 found it in its own protocol.</b> The sealed file
+is gitignored in a repo no seat holds, so <i>"the verification the protocol rests on is
+available to exactly one party -- the one whose honesty it was built to make
+unnecessary."</i> Fixed after the fact, conceding the sharper form: <i>"a commitment you
+cannot cleanly re-hash is not a commitment."</i> That is M1 again, wearing a
+cryptographic hash instead of a green tick.</p>
+<p><b>Verdict: keep the prep, keep the seals, cut the agenda</b> -- the recommendation
+already on the record, <i>"run it on two items, not six"</i>, is the right one. Six
+items bought two contested rulings and four expensive confirmations.</p>
 
 <h3>The claim-audit rule -- keep it, but its marginal value is narrow</h3>
 <p>Real catch, cheap: 6 wrong in 68, two in a merged PR body, one already in two other

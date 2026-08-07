@@ -307,18 +307,38 @@ Measured on `CHANGELOG.md` (1,576 lines, not edited by this lane):
 - The `[0.13.2]` section's body is headed `### 2026-07-27 build day (rides the
   next version bump)` -- content authored for a future version, filed under a
   released one.
-- It announces **#791** (*"The early game has a real first fifteen minutes"*)
-  and **#811** as delivered. `gh issue view` reports both **OPEN** today.
+- `CHANGELOG.md` announces **#791** and **#811** as delivered.
+  `gh issue view` reports both **OPEN** today.
 
-Filed during the cycle as **#1165**. Note what that means for the ranking: this
-one was found and ticketed, and the ticket is one of nineteen opened against
-five closed.
+**And the version that is public.** The published GitHub release body for
+`v0.13.2` -- which pdoom1.com renders at `/game-changelog/` -- says at its line
+71:
 
-> **Partial correction to the brief.** The two open issues named in the shipped
-> changelog are open largely because squash-merge does not fire closes-keywords
-> here -- a known defect this repo has documented. The changelog did not invent
-> a delivery; it inherited a stale issue state. The claim reproduces; the
-> mechanism is milder than "announced work that did not happen."
+> *"**Research Quality System** (#500): Rushed / Standard / Thorough quality
+> toggle for research"*
+
+`#500` is **OPEN**, and the 08-06 triage records it as superseded by #1090
+because the ruling moved quality to research-project level, i.e. the
+global-toggle world it describes is not the world that shipped. The
+`pdoom1-website` seat stated the limit of this evidence better than I can, so
+its sentence stands:
+
+> *"An open issue is not proof a feature is absent. What the table proves is
+> narrower and still serious: **the release body is not derived from what
+> shipped in that release.**"*
+
+Filed during the cycle as **#1165**, and ruled in `coordination#35` where
+pdoom1 named the general form: *"`[Unreleased]` is an accumulator with no
+expiry and no owner ... a release-notes pipeline that can announce a
+still-open issue is **not a documentation problem; it is a correctness problem
+wearing documentation's clothes**."* The ticket is one of nineteen opened
+against five closed.
+
+> **Partial correction to the brief.** For #791 and #811 the mechanism is
+> milder than "announced work that did not happen" -- both are open largely
+> because squash-merge does not fire closes-keywords here. For #500 it is not
+> milder: that entry is live on the public site describing a toggle the design
+> ruling replaced.
 
 ### F10. The cost model reads its own constant back out of a log and the doc still calls it MEASURED
 
@@ -361,6 +381,18 @@ have billed USD 125.
   Filed as #1152; still open.
 - **#1061, IP/trademark, was due Monday 2026-08-03.** Open. Pip asked to be
   forced on this one.
+- **The seat raised a false consent alarm against itself.** The eight
+  contributor cat photos were filed in `coordination#32` as an undischarged
+  consent obligation. They were contributed with their owners' permission,
+  confirmed by Pip on 08-06. Retracted -- *"That was wrong"* -- inside a day.
+  Recorded because a false alarm from the auditing seat costs the same
+  attention as a real one, and because the retraction is the part that worked.
+- **Nine unattributed images are live on pdoom1.com right now**, and six of the
+  nine are variants Pip **rejected**, published indistinguishably from the
+  three he chose. They arrived as a side effect of an events-system commit --
+  *"There is no commit where anyone decided to publish art."* The sync script
+  that supposedly manages them, `sync-game-icons.py`, writes to a directory
+  that does not exist and has apparently never successfully run.
 
 ---
 
@@ -382,6 +414,18 @@ This cycle, the same shape, three fresh instances:
 | `check_ladder_bump.py` in CI | `\|\| true` on the invocation -- structurally cannot fail a build. This is the guard for **F1**, the cycle's highest-cost defect | Nothing. Found by reading the YAML while writing this |
 | W6, the published `grep` | Basic `grep` treats `\|` as a literal, so the command searches one 44-character string and returns 0 against a file containing all four words | The claim audit, by running a control line |
 | The phase-guard regex | Excluded a preceding `.`, so `gm.state.pending_events.append(...)` -- the actual #1134 defect line -- matched nothing, and the suite went green | The lane, because it was required to prove the guard red first |
+
+**A fourth instance, in a sister repo, in the same week.** `coordination#29`
+reports that `certes`' `check-language.sh` split each rule line on its **first**
+pipe, silently truncating three of seven regex-alternation rules to their first
+alternative. `retreat.*hosting` -- *"one of the two violations this guard was
+built after"* -- **was never being checked, for six months**. The tell was
+printing in the output the whole time as garbled advice text; *"Nobody read
+it."* Once fixed, a tracked file went red in one second.
+
+That is the same defect as W6 (a shell metacharacter eating the rule) and the
+same outcome as the ladder heuristic (green because the rule never ran). Four
+instances, three repos, seven days.
 
 **Why this is the sharpest thing in the pack.** The 07-31 postmortem named the
 mechanism, in writing, in this repo. One week later the mechanism appears in the
@@ -587,8 +631,26 @@ direction. Coordination should say so in the post-mortem rather than reading 3-0
 as three independent derivations."* A ballot on which the seats had already seen
 the same six public Pip rulings is not six independent votes.
 
-**Verdict: keep the prep, question the room.** The measurable output of the
-sealed process was mostly agreement that pre-existed the seal.
+**The null is on the record from two directions, and neither is mine.**
+`pdoom-data`, in Phase 3: *"**Two of the six items did not need this
+instrument.** A1 bit 1 and A3 came back four-way unanimous from four different
+arguments. Unanimity is what an issue thread produces cheaply. **The workshop's
+cost was not repaid there.**"* pdoom1's own accounting went further: *"**The
+workshop was not necessary for four of six rulings.**"* The selection rule that
+fell out is the keeper: **run a workshop when seats hold different evidence;
+file an issue when they hold the same evidence and disagree about it.**
+
+**The seal had a hole, and pdoom1 found it in its own protocol.** The sealed
+file is gitignored in a repo no seat holds, so *"the verification the protocol
+rests on is available to exactly one party -- the one whose honesty it was
+built to make unnecessary."* The recorder agreed and fixed it, conceding the
+sharper form: *"a commitment you cannot cleanly re-hash is not a commitment."*
+That is M1 again, wearing a cryptographic hash instead of a green tick.
+
+**Verdict: keep the prep, keep the seals, cut the agenda.** The recommendation
+already on the record -- *"if this runs again, run it on two items, not six"* --
+is the right one. Six items bought two contested rulings and four expensive
+confirmations of things an issue thread would have produced free.
 
 ### The claim-audit rule -- keep it, but its marginal value is narrow
 
