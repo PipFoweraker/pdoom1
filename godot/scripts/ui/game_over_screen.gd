@@ -340,7 +340,27 @@ func _continue_consent_flow(flow: String, entry, game_seed: String) -> void:
 		"remind":
 			_show_identity_reminder()
 		_:
-			pass  # "silent": remembered decline, or anonymous + already nudged
+			# "silent" covers TWO different players and they need different screens
+			# (Pip's v0.14.0 playtest, 2026-08-07: three ranked runs in a row showed
+			# nothing at all, and read as a broken leaderboard).
+			#   - REMEMBERED DECLINE: say where the score went and how to change it.
+			#     The decline moment itself already renders this line; every run
+			#     after it rendered a bare `pass`, so the one setting that explains
+			#     the missing board became invisible from the only screen that
+			#     depends on it. Shown, never silent (#1027).
+			#   - ANONYMOUS + ALREADY NUDGED: genuinely stay quiet. The remind-once
+			#     ruling is that one nudge is the whole budget.
+			if GameConfig.leaderboard_consent_asked and not GameConfig.submit_scores_global:
+				_show_local_only_notice()
+
+func _show_local_only_notice() -> void:
+	"""Standing (every-run) restatement of a remembered decline. Same wording as the
+	decline moment in _show_consent_prompt, same grey -- this is a state, not a
+	warning, so it does not borrow the amber that means 'off the record'."""
+	_ensure_sync_status_label()
+	sync_status_label.visible = true
+	sync_status_label.text = "Global leaderboard: OFF -- score saved locally only (turn on in Settings)"
+	sync_status_label.add_theme_color_override("font_color", Color(0.75, 0.75, 0.75))
 
 func _has_submittable_identity() -> bool:
 	"""A submission would be meaningful only with a non-empty player + lab name
