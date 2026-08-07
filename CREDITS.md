@@ -35,7 +35,7 @@ WITHOUT a credit line rather than printing the marker.
 | Arwen | Matilda | web-arwen.jpg |
 | Arwen & Chuck | Matilda | web-arwen-chuck.jpg |
 | Chucky | Nicki T. | web-chucky.jpg |
-| Doom Cat | [Pip to confirm -- inventory records custodian "Office (default/mascot)", not a person] | web-doom-cat.jpg |
+| Doom Cat | Pip | web-doom-cat.jpg |
 | Luna | Nicki T. | web-luna.jpg |
 | Mando | Nicki T. | web-mando.jpg |
 | Missy | Spicy | web-missy.jpg |
@@ -111,6 +111,6 @@ The full lineage is documented in `docs/audio/REFERENCE_TRACKS.md`.
       they want to appear (full name / first name / handle / "prefers
       anonymity"), then edit the table. Until then the game ships the inventory
       form.
-- [ ] **Doom Cat has no recorded contributor** -- inventory lists the custodian as
-      "Office (default/mascot)". If it came from a person, name them; if it is the
-      project's own image, say so and the placeholder can go.
+- [x] **Doom Cat: RESOLVED 2026-08-07.** Contributed by Pip. The inventory's
+      "Office (default/mascot)" custodian field was internal metadata, not an
+      absence of a contributor.
