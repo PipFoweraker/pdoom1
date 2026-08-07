@@ -31,7 +31,9 @@ The second thing this sheet fixes: the seed the client POSTS to is a
 pinned const, `GameConfig.FEATURED_SEED_OVERRIDE`. Blessing a seed without
 editing it makes the blessed and posted boards diverge -- silently, and in
 a way that looks completely fine from both ends. That was open at midnight
-2026-07-30 (const read `weekly-2026-w30`; it now reads `weekly-2026-w31`).
+2026-07-30 (const read `weekly-2026-w30`; it was corrected to `weekly-2026-w31`
+before that cut, and rolled again to `weekly-2026-w32` for v0.14.0 -- read the
+const, never this sentence).
 **Changing it is a code change, not a ceremony action** -- so it must be
 done, merged and re-cut BEFORE this gate, not during it.
 

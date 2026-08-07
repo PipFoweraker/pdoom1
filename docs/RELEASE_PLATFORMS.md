@@ -19,9 +19,13 @@ blessed as v0.13.2. There was no `v0.13.2` git tag and no GitHub Release object.
 `https://github.com/PipFoweraker/pdoom1/releases/latest/download/PDoom-Windows.zip`,
 so `latest` still resolved to **v0.13.1** -- which ships ladder **L2** and
 featured seed **weekly-2026-w30**, while the blessed league board was
-**(weekly-2026-w31, L3)**. `ladder_version.txt` now reads `3`;
-`godot/autoload/game_config.gd:462` now reads
+**(weekly-2026-w31, L3)**. Both were corrected for that cut:
+`ladder_version.txt` read `3` and `godot/autoload/game_config.gd` read
 `const FEATURED_SEED_OVERRIDE: String = "weekly-2026-w31"`.
+
+(Those two values are the LIVE state of the repo, not of this page: v0.14.0 cut
+epoch **L4** on seed **weekly-2026-w32**. Read `ladder_version.txt` and the const
+itself -- a dated sheet quoting them will always be a release behind.)
 
 Had the league opened, every downloader would have posted to a different board
 on **both** axes, the blessed board would have sat empty all night, and nothing
