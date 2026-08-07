@@ -1,0 +1,111 @@
+{
+  "glob": [
+    "art_generated/an0807_l3_hero_land/v1/*_1536.png",
+    "art_generated/an0807_l3_hero_port/v1/*_1024.png"
+  ],
+  "n_images": 24,
+  "any_hit_count": 0,
+  "any_hit_rate": 0.0,
+  "strong_hit_count": 0,
+  "strong_hit_rate": 0.0,
+  "strong_rule": "conf >= 0.65 and >= 3 letters",
+  "caveat": "OCR proxy. Hallucinates on texture (false positives, mostly low-confidence) and misses small/warped/stylised text (false negatives). Treat the rate as a floor, not a ceiling.",
+  "assets": {
+    "art_generated/an0807_l3_hero_land/v1/s04_r01_p01_v1_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s04_r01_p01_v2_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s04_r01_p01_v3_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s04_r01_p01_v4_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s08_r01_p03_v1_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s08_r01_p03_v2_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s08_r01_p03_v3_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s08_r01_p03_v4_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s10_r07_p03_v1_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s10_r07_p03_v2_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s10_r07_p03_v3_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s10_r07_p03_v4_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s13_r01_p09_v1_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s13_r01_p09_v2_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s13_r01_p09_v3_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s13_r01_p09_v4_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s20_r01_p03_v1_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s20_r01_p03_v2_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s20_r01_p03_v3_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s20_r01_p03_v4_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_port/v1/s08_r01_p03_v1_1024.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_port/v1/s10_r07_p03_v1_1024.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_port/v1/s13_r01_p09_v1_1024.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_port/v1/s20_r01_p03_v1_1024.png": {
+      "hits": [],
+      "strong_hits": 0
+    }
+  }
+}

@@ -138,7 +138,36 @@ _ART_NIGHT_0807_L2_HOLD = Hold(
     "ADR-0019 -- these are the measuring instrument, not the shipped art"
 )
 
+# L3 of the same night: 140 hero renders at the top quality tier (1536x1024 and
+# 1024x1536, quality=high), 5 per pick across 28 picks. Two things about the
+# lineage are worth stating because the L2 note above guesses wrong about both:
+#
+#   * The picks are the 28 best of Pip's 143 an0807 "keep" verdicts, NOT L2
+#     winners. Pip never reviewed L2, so L2 has no winners to descend from. A
+#     "keep" means "this image is good", which is the L3 signal; "iterate"
+#     means "vary this", which is what L2 consumed.
+#   * The 4 landscape renders per pick are NOT re-rolls. Each walks a different
+#     title-space composition (free / top / left / right), because generation
+#     lineage is a measured null and composition is a measured null, so four
+#     identical rolls would have bought nothing at the most expensive tier.
+#
+# Still a Hold, and this is the one that stings: these are the images actually
+# intended to be looked at, and pdoom-website wants them. ADR-0019 wants a
+# mechanically verified demand entry before promotion anyway, and a website
+# banner is not yet one. Flip this to a destination the moment a demand entry
+# names them -- it is one line.
+_ART_NIGHT_0807_L3_HOLD = Hold(
+    "2026-08-07 art night L3 hero renders (quality=high, 1536x1024 and "
+    "1024x1536; picks are the 28 top-ranked of the 143 'keep' verdicts, "
+    "text-leak-prone subjects excluded; lineage in "
+    "tools/assets/manifests/art_night_2026-08-07.json): Library reference per "
+    "ADR-0019 -- these are the intended hero/publication set, but no demand "
+    "entry names them yet, and ADR-0019 promotes on demand, not on intent"
+)
+
 GEN_DEST = {
+    "an0807_l3_hero_land": _ART_NIGHT_0807_L3_HOLD,
+    "an0807_l3_hero_port": _ART_NIGHT_0807_L3_HOLD,
     "an0807_l2_a_yaw": _ART_NIGHT_0807_L2_HOLD,
     "an0807_l2_a_pitch": _ART_NIGHT_0807_L2_HOLD,
     "an0807_l2_a_distance": _ART_NIGHT_0807_L2_HOLD,
