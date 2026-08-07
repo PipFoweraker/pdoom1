@@ -131,6 +131,12 @@ theme_override_colors/font_pressed_color = Color(0.059, 0.647, 0.627, 1)
 theme_override_font_sizes/font_size = 24
 text = "AI Safety Info"
 
+[node name="CreditsButton" type="Button" parent="VBox/MenuContainer"]
+custom_minimum_size = Vector2(400, 50)
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Credits"
+
 [node name="ExitButton" type="Button" parent="VBox/MenuContainer"]
 custom_minimum_size = Vector2(400, 50)
 layout_mode = 2

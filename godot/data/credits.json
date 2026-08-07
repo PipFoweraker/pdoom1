@@ -1,0 +1,107 @@
+{
+  "_generated": "GENERATED from CREDITS.md by scripts/generate_credits.py -- do not hand-edit. Run the script; a pre-commit --check blocks staleness.",
+  "cats": [
+    {
+      "name": "Arwen",
+      "credited_to": "Matilda",
+      "asset": "web-arwen.jpg"
+    },
+    {
+      "name": "Arwen & Chuck",
+      "credited_to": "Matilda",
+      "asset": "web-arwen-chuck.jpg"
+    },
+    {
+      "name": "Chucky",
+      "credited_to": "Nicki T.",
+      "asset": "web-chucky.jpg"
+    },
+    {
+      "name": "Doom Cat",
+      "credited_to": "",
+      "asset": "web-doom-cat.jpg"
+    },
+    {
+      "name": "Luna",
+      "credited_to": "Nicki T.",
+      "asset": "web-luna.jpg"
+    },
+    {
+      "name": "Mando",
+      "credited_to": "Nicki T.",
+      "asset": "web-mando.jpg"
+    },
+    {
+      "name": "Missy",
+      "credited_to": "Spicy",
+      "asset": "web-missy.jpg"
+    },
+    {
+      "name": "Nigel",
+      "credited_to": "Nicki T.",
+      "asset": "web-nigel.jpg"
+    }
+  ],
+  "sections": [
+    {
+      "title": "Game",
+      "entries": [
+        {
+          "kind": "item",
+          "text": "Design, direction, and development: Pip Foweraker (adjust name form as preferred)"
+        },
+        {
+          "kind": "item",
+          "text": "Engine: Godot Engine 4.5.1 (MIT License)"
+        }
+      ]
+    },
+    {
+      "title": "Music",
+      "entries": [
+        {
+          "kind": "note",
+          "text": "Original adaptive score (the composed five-tier doom-band soundtrack + the run-end and menu cues that ship today):"
+        },
+        {
+          "kind": "item",
+          "text": "Composition, direction, and taste authority: Pip Foweraker -- the musician and director; every note judged by ear over the workshop sessions."
+        },
+        {
+          "kind": "item",
+          "text": "Composed with: Claude (Anthropic's Claude Code, \"Fable\"), as the live-coding instrument and studio hand, under Pip's direction. The score was workshopped in Strudel patches and rendered to the game's audio beds."
+        },
+        {
+          "kind": "item",
+          "text": "Authoring tool: Strudel (live-codeable music in the browser)."
+        }
+      ]
+    },
+    {
+      "title": "Tools and third-party components",
+      "entries": [
+        {
+          "kind": "item",
+          "text": "Godot Engine -- game engine (MIT)"
+        },
+        {
+          "kind": "item",
+          "text": "GUT -- Godot unit test framework (dev/CI, MIT)"
+        },
+        {
+          "kind": "item",
+          "text": "Strudel -- music authoring (composition sessions)"
+        }
+      ]
+    },
+    {
+      "title": "Aesthetic gratitude",
+      "entries": [
+        {
+          "kind": "note",
+          "text": "The score learned from, but did not copy, a set of north-star artists (Master Musicians of Bukkake, Philip Glass, and others). They are inspirations only, with no affiliation or endorsement."
+        }
+      ]
+    }
+  ]
+}
