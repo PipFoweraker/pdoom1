@@ -322,7 +322,8 @@
       "quality": "high",
       "attended": true,
       "requires_picks": true,
-      "picks_target": 24,
+      "picks_target": 28,
+      "picks_target_note": "Raised from 24 to 28 on 2026-08-07 when L3 was fired. 28 is the largest pick count the hard ceiling admits: at 5 images per pick and USD 0.200 each a pick costs exactly USD 1.00, and 46.75 already spent + 28.00 = 74.75 against the 75.50 ceiling, where 29 picks would land at 75.75 and abort. 24 would have finished the run at 70.75 -- inside the ceiling and above the 68.00 underspend floor, but leaving USD 4.75 unspent for no reason, and underspending is the stated failure mode for this run. The picks are the an0807 'keep' verdicts, NOT L2 winners as the note below assumes: Pip never reviewed L2, so L2 has no verdicts to win. A 'keep' means 'this image is good', which is the L3 signal.",
       "landscape_per_pick": 4,
       "portrait_per_pick": 1,
       "note": "From L2 winners only. High quality is 4x the medium price, which is only justified once a composition has already won twice. Masters are copied to masters_staging because they exceed the 1MB git policy -- although art_generated/ is gitignored in full, so nothing here can reach git by accident anyway."

@@ -135,11 +135,13 @@ Declared with a `Layer:` line in a tool's module docstring; `--` = undeclared.
 | merge_gallery_export.py | -- | merge_gallery_export.py -- fold a full_gallery.html export back into | tool:build_full_gallery.py; tool:notes_brief.py |
 | notes_brief.py | -- | notes_brief.py -- turn the reviewer's notes into the brief for the next round. | tool:build_full_gallery.py |
 | qc_sprite_frames.py | -- | qc_sprite_frames -- PIL QC gate for pixellab character batches. | tool:build_worker_rebase_sheet.py |
+| rank_l3_picks.py | -- | rank_l3_picks.py -- choose which 'keep' verdicts get hero money. | NONE FOUND |
 | review_style.py | -- | review_style -- ONE house style for all internal review/dev HTML tools. | tool:analyze_verdicts.py; tool:build_cat_angle_ab_sheet.py; tool:build_cat_refinement_sheet.py; tool:build_cat_sweep_sheet.py; tool:build_cat_west_walk_picks.py; tool:build_doom_strip_sheet.py; tool:build_prop_rebase_sheet.py; tool:build_slot_picker.py; tool:build_t6_diagonals_and_cats_sheet.py; tool:build_worker_rebase_sheet.py; tool:build_worker_round2_sheet.py; tool:gen_contact_sheet.py; tool:gen_hero_gallery.py; tool:gen_prop_grain_sheet.py; tool:gen_quirk_icon_sheet.py; tool:gen_size_probe_sheet.py |
 | scan_text_leak.py | -- | Measure text leakage in a generated art batch, with OCR, and record the result. | tool:build_share_set.py |
 | scan_white_flash.py | -- | Scan walk-clip frames for the "white flash under the cat" artifact. | tool:build_cat_refinement_sheet.py |
 | serve_review.py | -- | Local art-review app for P(Doom)1 -- ONE place to review ALL the art. | tool:build_slot_picker.py |
 | slot_model.py | -- | slot_model.py -- the ONE definition of "slot cluster" and "frame role". | test:test_slot_picker.py; tool:apply_slot_picks.py; tool:build_slot_picker.py; tool:measure_taste.py |
+| text_leak_scan.py | -- | text_leak_scan.py -- measure how often generated art leaks legible text. | human (docstring usage) |
 
 ## `tools/assets/`
 
@@ -168,7 +170,7 @@ Declared with a `Layer:` line in a tool's module docstring; `--` = undeclared.
 
 ## UNKNOWN -- no declaration, no usage hint, no discoverable caller
 
-11 tool(s) that nothing declares, documents, or calls. Each one is either
+12 tool(s) that nothing declares, documents, or calls. Each one is either
 a rot candidate or an undocumented dependency -- find out which (`tools/find_dead_code.py` lane).
 
 - `scripts/ascii_compliance_fixer.py`
@@ -178,6 +180,7 @@ a rot candidate or an undocumented dependency -- find out which (`tools/find_dea
 - `scripts/setup-token.py`
 - `scripts/token-setup-guide.py`
 - `tools/art_review/gen_prop_grain_sheet.py`
+- `tools/art_review/rank_l3_picks.py`
 - `tools/assets/promote_assets.py`
 - `tools/assets/render_latex_pdoom.py`
 - `tools/cleanup-duplicate-issues.py`
@@ -216,4 +219,4 @@ DISCUSSING CI); the rest are the hollow-runner shape -- read them.
 
 26 `.html` tool(s) under `tools/` (browser-opened, no docstring to parse): `tools/art_review/doom_overlay_preview.html`, `tools/art_review/hero_gallery_template.html`, `tools/art_review/icon_pass_2026-07-21.html`, `tools/art_review/icon_pass_verdicts_2026-07-21.html`, `tools/art_review/palette.html`, `tools/art_review/palette_swatches.html`, `tools/art_review/scene_wave2_2026-07-21.html`, `tools/art_review/style_review.html`, `tools/assets/review_generated.html`, `tools/music/commission_sheets.html`, `tools/music/jukebox.html`, `tools/music/listening_room.html`, `tools/music/stem_board.html`, `tools/runsheet/CEREMONY-ALL-GATES-2026-07-31.html`, `tools/runsheet/SUNDAY-postmortem-2026-08-07.html`, `tools/runsheet/chronicle-2026-08-06_07.html`, `tools/runsheet/copy-review-2026-08-09.html`, `tools/runsheet/fri-2026-07-31-EVENING-1620.html`, `tools/runsheet/fri-2026-07-31-GATES-1700.html`, `tools/runsheet/fri-2026-07-31-TO-MIDNIGHT-1733.html`, `tools/runsheet/fri-2026-07-31-league-day.html`, `tools/runsheet/playtest_card.html`, `tools/runsheet/wed-thu-2026-07-29.html`, `tools/social_composer.html`, `tools/ui_comparison.html`, `tools/ui_mockup/wireframe.html`.
 
-Total: 117 active tools (9 GENERATE, 5 OBSERVE, 6 PROVE, 1 SWEEP, 96 undeclared); 11 in UNKNOWN; 6 archived.
+Total: 119 active tools (9 GENERATE, 5 OBSERVE, 6 PROVE, 1 SWEEP, 98 undeclared); 12 in UNKNOWN; 6 archived.
