@@ -225,7 +225,11 @@ func submit_score(entry, seed: String, version: String) -> void:
 		submit_completed.emit(false, false, 0, "")
 		return
 
-	var body := build_post_body(entry.to_dict(), seed, version)
+	# to_WIRE_dict, not to_dict: the wire shape is exactly the frozen server
+	# contract with the lab name pre-fitted to the board's measured byte budget,
+	# so the server's silent substr never fires. to_dict() is the richer LOCAL
+	# shape and carries the operator name, which the server cannot yet take.
+	var body := build_post_body(entry.to_wire_dict(), seed, version)
 	_outbox_add(body)  # persist FIRST -- survives a crash between here and the server ack
 
 	_dispatch_post(body, func(ok: bool, added: bool, rank: int, result: int, code: int):
