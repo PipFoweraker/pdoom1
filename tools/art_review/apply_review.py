@@ -123,7 +123,29 @@ _ART_NIGHT_0807_HOLD = Hold(
     "descendants of the winners are what could ever be promoted, never these"
 )
 
+# L2 of the same night: 306 controlled single-axis variations on the 51 cells
+# Pip marked "iterate". Each pick is stepped along exactly ONE axis (camera yaw,
+# camera height, shot size, title negative space, and three wording tweens) with
+# every other clause held verbatim, so a pair measures the axis rather than
+# measuring noise. Still a Hold: ADR-0019 wants a mechanically verified demand
+# entry before anything is promoted, and an L2 step sheet has none. The L3 hero
+# renders descended from the L2 winners are the first thing that could.
+_ART_NIGHT_0807_L2_HOLD = Hold(
+    "2026-08-07 art night L2 tweened/twinned variations (one controlled axis "
+    "per pick, everything else held verbatim; picks are the 51 'iterate' "
+    "verdicts from the L1 review; lineage in "
+    "tools/assets/manifests/art_night_2026-08-07.json): Library reference per "
+    "ADR-0019 -- these are the measuring instrument, not the shipped art"
+)
+
 GEN_DEST = {
+    "an0807_l2_a_yaw": _ART_NIGHT_0807_L2_HOLD,
+    "an0807_l2_a_pitch": _ART_NIGHT_0807_L2_HOLD,
+    "an0807_l2_a_distance": _ART_NIGHT_0807_L2_HOLD,
+    "an0807_l2_a_title_space": _ART_NIGHT_0807_L2_HOLD,
+    "an0807_l2_a_decay": _ART_NIGHT_0807_L2_HOLD,
+    "an0807_l2_a_quiet": _ART_NIGHT_0807_L2_HOLD,
+    "an0807_l2_a_style_tween": _ART_NIGHT_0807_L2_HOLD,
     "an0807_l0_sheets": _ART_NIGHT_0807_HOLD,
     "an0807_l0_anchors": _ART_NIGHT_0807_HOLD,
     "an0807_l1_grid": _ART_NIGHT_0807_HOLD,
