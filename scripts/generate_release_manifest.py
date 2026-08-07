@@ -29,6 +29,12 @@ Field contract (superset of the old heredoc -- old consumers keep working):
                     client compares this to its own LADDER_VERSION and warns
                     the player when an update forks the board
                     (docs/game-design/BUILD_VS_LADDER_VERSION_SPLIT.md).
+  league_seed       NEW -- the featured league seed this build ships with,
+                    read from GameConfig.FEATURED_SEED_OVERRIDE (the SSOT the
+                    game itself uses). The website MUST read this rather than
+                    derive it: a website-derived seed stranded 23 submissions
+                    in July (coordination#40). Sourced, never hand-typed -- a
+                    second literal is exactly the drift that forks a board key.
   highlights        NEW -- ASCII-safe CHANGELOG excerpt for this version,
                     truncated; the in-game notice tooltip shows it.
   download_page     NEW -- the release tag page URL (human download surface).
@@ -61,6 +67,13 @@ from generate_release_metadata import ReleaseMetadataGenerator, _ascii_safe  # n
 
 _VERSION_RE = re.compile(r"^v?\d+\.\d+\.\d+([.-][0-9A-Za-z.-]+)?$")
 
+# Matches the featured-league seed const in godot/autoload/game_config.gd. Kept
+# anchored to line start so a mention inside a comment or a doc string cannot be
+# mistaken for the declaration.
+_SEED_CONST_RE = re.compile(
+    r'^const\s+FEATURED_SEED_OVERRIDE\s*:\s*String\s*=\s*"([^"]*)"', re.MULTILINE
+)
+
 # Cap the changelog excerpt embedded in the manifest. The client shows this in
 # a tooltip; the release page carries the full notes.
 HIGHLIGHTS_MAX_CHARS = 1200
@@ -90,6 +103,38 @@ def read_ladder_version(repo_root: Path) -> str:
             "[manifest] FATAL: ladder_version.txt content %r is not a bare integer" % value
         )
     return value
+
+
+def read_featured_seed(repo_root: Path) -> str:
+    """Featured league seed from GameConfig -- the SAME const the game reads.
+
+    `GameConfig.get_weekly_seed()` returns FEATURED_SEED_OVERRIDE whenever it is
+    non-empty, which is the pinned-league mode the project runs in. Parsing that
+    const is the only way to publish the seed WITHOUT introducing a second copy
+    of it, and a second copy is the failure this field exists to end.
+
+    Fails loudly rather than falling back to the calendar-week branch of
+    get_weekly_seed(): that branch derives from wall-clock time at RUN time, so
+    there is no stable value a build could honestly publish. If the override is
+    empty at release time, the release should stop and ask for a pin.
+    """
+    path = repo_root / "godot" / "autoload" / "game_config.gd"
+    if not path.exists():
+        raise SystemExit("[manifest] FATAL: game_config.gd missing at %s" % path)
+    match = _SEED_CONST_RE.search(path.read_text(encoding="utf-8"))
+    if match is None:
+        raise SystemExit(
+            '[manifest] FATAL: no `const FEATURED_SEED_OVERRIDE: String = "..."` in %s '
+            "-- the seed SSOT moved or was renamed; fix this parser, do NOT hand-type a seed" % path
+        )
+    seed = match.group(1).strip()
+    if not seed:
+        raise SystemExit(
+            "[manifest] FATAL: FEATURED_SEED_OVERRIDE is empty, so the featured seed would be "
+            "derived from wall-clock time at run time and no stable value can be published. "
+            "Pin the seed in game_config.gd before cutting a release."
+        )
+    return seed
 
 
 def sha256_file(path: Path) -> str:
@@ -134,6 +179,7 @@ def build_manifest(
     version: str,
     commit: str,
     ladder_version: str,
+    league_seed: str,
     highlights: str,
     assets: list,
     repository: str,
@@ -154,6 +200,7 @@ def build_manifest(
         "commit_hash": commit,
         "commit_short": commit[:8],
         "ladder_version": ladder_version,
+        "league_seed": league_seed,
         "highlights": highlights,
         "download_page": "https://github.com/%s/releases/tag/%s" % (repository, version),
         "assets": assets,
@@ -200,6 +247,7 @@ def main() -> int:
 
     version = validate_version(args.version)
     ladder = read_ladder_version(args.repo_root)
+    league_seed = read_featured_seed(args.repo_root)
     highlights = extract_highlights(args.repo_root, version)
     assets = collect_assets(args.assets_dir)
 
@@ -207,6 +255,7 @@ def main() -> int:
         version=version,
         commit=args.commit,
         ladder_version=ladder,
+        league_seed=league_seed,
         highlights=highlights,
         assets=assets,
         repository=args.repository,
@@ -223,7 +272,10 @@ def main() -> int:
     args.output.write_text(body + "\n", encoding="ascii")
 
     print("[manifest] wrote %s" % args.output)
-    print("[manifest] version=%s ladder=L%s assets=%d" % (version, ladder, len(assets)))
+    print(
+        "[manifest] version=%s ladder=L%s seed=%s assets=%d"
+        % (version, ladder, league_seed, len(assets))
+    )
     for entry in assets:
         print(
             "[manifest]   %s  %d bytes  sha256=%s" % (entry["name"], entry["size"], entry["sha256"])

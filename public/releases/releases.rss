@@ -5,8 +5,40 @@
     <link>https://pdoom.net</link>
     <description>Latest releases of P(Doom) - AI Safety Strategy Game</description>
     <language>en-us</language>
-    <lastBuildDate>Wed, 29 Jul 2026 10:53:34 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 07 Aug 2026 13:58:33 +0000</lastBuildDate>
     <atom:link href="https://pdoom.net/releases/releases.rss" rel="self" type="application/rss+xml"/>
+    <item>
+      <title>P(Doom) v0.14.0</title>
+      <link>https://github.com/PipFoweraker/pdoom1/releases/tag/v0.14.0</link>
+      <description>Ladder epoch **L3 -&gt; L4** -- this is a FORKING release. The historical event deck
+was retimed to one-turn-one-month and the ruled promotions were applied (#1137),
+which changes which events fire on a given seed, so scores are not comparable
+with L3 boards. L3 entries stay valid and visible under L3; new runs land on L4.
+Featured league seed rolls to `weekly-2026-w32`.
+
+Every entry below is tied to a commit merged between `v0.13.2` and this release.
+
+### Added
+- **Pick the music from the pause me...</description>
+      <pubDate>Fri, 07 Aug 2026 22:44:37 +1000</pubDate>
+      <guid isPermaLink="false">pdoom-release-v0.14.0</guid>
+    </item>
+    <item>
+      <title>P(Doom) v0.13.2</title>
+      <link>https://github.com/PipFoweraker/pdoom1/releases/tag/v0.13.2</link>
+      <description>League build. Ladder epoch **L3** -- this is a forking release: the effort
+economy was rebuilt, so scores are not comparable with L2 boards.
+
+### 2026-07-27 build day (rides the next version bump)
+
+#### Added
+- **The early game has a real first fifteen minutes** (#791, #811, #982): you
+  start in a free bedroom/basement (2-hire cap), then choose one of three
+  first offices -- a cheap-in/cheap-out co-working corner, a balanced
+  second-floor walk-up, or a bigger university annex sublet -- each w...</description>
+      <pubDate>Fri, 31 Jul 2026 16:18:24 +1000</pubDate>
+      <guid isPermaLink="false">pdoom-release-v0.13.2</guid>
+    </item>
     <item>
       <title>P(Doom) v0.13.1</title>
       <link>https://github.com/PipFoweraker/pdoom1/releases/tag/v0.13.1</link>
@@ -78,24 +110,6 @@ See CHANGELOG.md for details.</description>
 See CHANGELOG.md for details.</description>
       <pubDate>Mon, 17 Nov 2025 09:40:48 +1100</pubDate>
       <guid isPermaLink="false">pdoom-release-v0.10.3</guid>
-    </item>
-    <item>
-      <title>P(Doom) v0.10.2</title>
-      <link>https://github.com/PipFoweraker/pdoom1/releases/tag/v0.10.2</link>
-      <description>Release v0.10.2
-
-See CHANGELOG.md for details.</description>
-      <pubDate>Sat, 08 Nov 2025 15:03:01 +1100</pubDate>
-      <guid isPermaLink="false">pdoom-release-v0.10.2</guid>
-    </item>
-    <item>
-      <title>P(Doom) v0.10.1</title>
-      <link>https://github.com/PipFoweraker/pdoom1/releases/tag/v0.10.1</link>
-      <description>Release v0.10.1
-
-See CHANGELOG.md for details.</description>
-      <pubDate>Thu, 06 Nov 2025 18:02:28 +1100</pubDate>
-      <guid isPermaLink="false">pdoom-release-v0.10.1</guid>
     </item>
   </channel>
 </rss>
