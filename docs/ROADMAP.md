@@ -43,12 +43,18 @@ Friday; see RELEASE_NOMENCLATURE.md). Theme names beyond v0.13 are PROVISIONAL.
 
 | Version | Ships | Ladder | Theme | Headline |
 |---|---|---|---|---|
-| v0.13 | Jul 24 | L2 | Launch epoch (shipped) | hiring pipeline, onboarding cold-open, office visuals, league live, legibility + stability, v0.13.1 honesty pass |
-| v0.14 | Aug 7 | L3 | Per-tick & People (prov.) | per-tick resolution + people & money cohesion (roles / salary / manager / payroll) |
-| v0.15 | Sep 4 | L4 | (unnamed) | onboarding-as-mechanic + public-alpha hardening (leaderboard, install ping, bug reporter, test builds) |
-| v0.16 | Oct 2 | L5 | Sightings (prov.) | rivals begin -- Developments / procedural presence; wider event pool from pdoom-data |
-| v0.17 | Nov 6 | L6 | The World Shoots Back (prov.) | News feedline + rival midgame pressure (poaching, litigation, funding attacks); DQ-22 aggro built |
-| v0.18 | Dec 4 | L7 | (unnamed) | rival direct confrontation + News v1 + voice re-skin of event content |
+| v0.13 | Jul 24 | L2-L3 | Launch epoch (shipped) | hiring pipeline, onboarding cold-open, office visuals, league live, legibility + stability, v0.13.1 honesty pass |
+| v0.14 | Aug 7 | L4 (shipped) | Per-tick & People (prov.) | per-tick resolution + people & money cohesion (roles / salary / manager / payroll) |
+| v0.15 | Sep 4 | L5 | (unnamed) | onboarding-as-mechanic + public-alpha hardening (leaderboard, install ping, bug reporter, test builds) |
+| v0.16 | Oct 2 | L6 | Sightings (prov.) | rivals begin -- Developments / procedural presence; wider event pool from pdoom-data |
+| v0.17 | Nov 6 | L7 | The World Shoots Back (prov.) | News feedline + rival midgame pressure (poaching, litigation, funding attacks); DQ-22 aggro built |
+| v0.18 | Dec 4 | L8 | (unnamed) | rival direct confrontation + News v1 + voice re-skin of event content |
+
+The "one Theme = one Epoch" rule is the intent, not a measured invariant: v0.13
+actually spanned TWO epochs (it shipped on L2 and the v0.13.2 league build cut
+L3), which is why its Ladder cell reads `L2-L3`. Future Ladder cells are a
+forecast; the SSOT is `ladder_version.txt`, and a mid-Theme gameplay change is
+allowed to fork the ladder again.
 
 Further out (unscheduled, folded from the retired quarterly pins): player-facing
 Liability Ledger UI (#528); content-pool ladder v1 (DQ-33) + monthly world-diff
