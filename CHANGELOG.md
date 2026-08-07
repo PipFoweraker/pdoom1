@@ -6,6 +6,66 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.14.1] - 2026-08-08
+
+**The board key does NOT move.** Ladder stays **L4**, featured seed stays
+`weekly-2026-w32`, board key stays `(weekly-2026-w32, L4)`. Your v0.14.0 scores
+are still valid and still on the same board. Nothing here touches scoring, run
+outcomes, or replay determinism -- these are UI, diagnosis and tooling fixes.
+
+Players on v0.14.0 could not see their own leaderboard. Six separate defects
+made it invisible; this makes it visible. Every entry below is tied to a commit
+merged between `v0.14.0` and this release.
+
+Test provenance: the fast gate was measured locally on the tagged tree. The
+simulation tier was verified **in CI** on the same tree, not locally -- the local
+runner's hardcoded 900s cap is not meetable on the machine this was cut from.
+No local simulation pass is claimed.
+
+### Fixed
+- **The game-over screen scrolled, and the way out was inside the scroll**
+  (#1179). `> Press ENTER for Leaderboard` was line 32 of 32, 436px below the
+  bottom of its own box -- the only advertised route to the board, on the one
+  screen where you go looking for it. It is a **Leaderboard [ENTER]** button in
+  the button row now. The screen was cut from 32 lines to 16 rather than merely
+  enlarged, body text went 16pt -> 20pt, and two colours that failed WCAG AA on
+  the panel ground (Compute at 2.23:1, Research at 3.61:1) were replaced. No
+  scrollbar at any tested resolution from 1024x768 to 2560x1080.
+- **The leaderboard screen opened on LOCAL** and only fetched the global board if
+  you pressed a toggle (#1173). "Here are your four scores" reads as "there is no
+  global board", which is what it was read as. It opens on global now.
+- **Two different sources for one board key** (#1173). The global fetch keyed on
+  `GameConfig.get_display_seed()` while the local view keyed on the board file
+  being shown, and those two do diverge -- the seed dropdown changed one without
+  the other. There is one source now, `_global_board_identity()`: the board on
+  screen.
+- **A player who never opted in, and a player who declined, both saw nothing at
+  game over** (#1172, #1173). Both now get a standing readout saying where the
+  score went and where to change it. It is a readout, not a prompt: no dialog,
+  no re-nudge, and it does not opt anybody in.
+- **A successful submission looked like nothing happening** (#1173). The
+  confirmation was 12pt and appended below the button row, last line in the
+  panel. It is 16pt and sits above the buttons.
+- **Every remote failure claimed you were offline** (#1173). A rotated token
+  (403), a moved endpoint (404) and a server fault (500) all rendered the same
+  sentence, because the HTTP status was discarded. The status reaches the player
+  now, and "offline" is reserved for a request that never got to a server. Every
+  failure still says the score was kept locally.
+
+### Added
+- **In-game patch notes cover 0.12.0 onwards** (#1175), ending three releases
+  where the What's New screen said nothing about what changed.
+- **The release manifest publishes `league_seed`** from the version SSOT
+  (#1175), so the website can read the board key instead of inferring it.
+
+### Dev / tooling (no player-visible change)
+- **Headless test runs were writing into live player data** (#1173). Godot
+  derives `user://` from `config/name`, not the checkout path, so every worktree
+  shared one profile and `run_godot_tests.py` passed no `env=`; a test run took a
+  real 50-entry league board to 0. All four `subprocess.run` sites now pass an
+  isolated `APPDATA` keyed by a hash of the checkout path. The property tests
+  also stopped leaving ~1,300 board files behind per run.
+
 ## [0.14.0] - 2026-08-07
 
 Ladder epoch **L3 -> L4** -- this is a FORKING release. The historical event deck
@@ -149,43 +209,6 @@ economy was rebuilt, so scores are not comparable with L2 boards.
 
 ---
 
-### Added
-- **Research Quality System** (#500): Rushed / Standard / Thorough quality toggle for research
-  - **Rushed**: faster research, but accumulates technical debt and raises risk
-  - **Standard**: baseline speed, neutral
-  - **Thorough**: slower research, reduces doom/risk (safety-focused builds)
-  - Feeds the hidden Risk Pool system (research integrity, capability overhang, financial exposure)
-  - New `research_quality_selector.gd` UI; defaults to Standard and remembers last selection
-  - Unit tests: `test_research_quality.gd`, `test_risk_system.gd`
-- **Game-design documentation** (#500): `godot/docs/design/` -- `TWO_ACT_STRUCTURE.md`, `INTRO_CINEMATIC.md`, `TONE_AND_ART.md`
-- **Scenario/Mod Hook System** (#483): Custom scenarios without code changes
-  - Drop JSON files into `godot/data/scenarios/` to add new scenarios
-  - Scenario selection dropdown in Custom Game setup screen
-  - Support for overriding starting resources (money, compute, research, reputation, doom, etc.)
-  - Support for custom events with trigger conditions and player choices
-  - Support for custom start dates (year, month, day)
-  - Three sample scenarios included:
-    - **Bootstrap Mode**: Extra resources for learning ($500k, 200 compute)
-    - **Crisis Mode**: Challenging start (2020, $150k, 65 doom)
-    - **Sandbox Mode**: Unlimited resources for experimentation ($10M)
-  - User scenarios supported in `user://scenarios/` directory
-  - Complete documentation in `docs/SCENARIOS.md`
-
-### Fixed
-- **CI/CD pipeline restored** (#527, #530, #535): the daily Enhanced CI/CD pipeline had been failing for 10+ days and two workflows (`data-validation`, `dev-blog-automation`) failed at startup for months
-  - Repaired PEP 701 nested-quote f-strings that broke on the Python 3.11 runner (valid only on 3.12+)
-  - Added missing `pyyaml` dependency to the sync/cleanup stages
-  - Fixed invalid workflow YAML (column-0 lines terminating `run:` block scalars -> 0s startup failures)
-  - Fixed schema-validation check failing under AJV strict mode on `format: "uri"` (added `ajv-formats`)
-
-### Technical
-- **Python 3.11 baseline** (#527): authoritative `pyproject.toml` + CI syntax gate so modern-only syntax can't silently break CI; standardized workflow Python pins
-- **Repo cleanup**: archived ~35 pygame-era debris files to `archive/legacy-pygame/`; removed duplicates; pruned 9 stale remote branches and 6 orphaned worktrees
-- New files: `scenario_loader.gd`, `docs/SCENARIOS.md`, `godot/data/scenarios/*.json`
-- Modified: `game_config.gd`, `game_manager.gd`, `pregame_setup.gd`, `pregame_setup.tscn`, `events.gd`
-
----
-
 ## [v0.13.1] - 2026-07-25 - 'Soft-Lock Hotfixes'
 
 ### Fixed
@@ -195,6 +218,30 @@ economy was rebuilt, so scores are not comparable with L2 boards.
   leave the input blocker alive, deadening the mouse for the rest of the session
 
 Both bugs could strand a session; no other gameplay changes in this release.
+
+---
+
+## [0.12.0] - 2026-07-22 - 'Attention, the Ledger, and the Doom Engine'
+
+This section was reconstructed on 2026-08-08. Two entries below were previously
+filed under `[0.13.2]`; they merged in `v0.11.0..v0.12.0` (commits `30f3c6d5`
+and `6eb20174`) and are relocated here by commit, not by memory. Wording is taken
+verbatim from `godot/data/patch_notes.json` 0.12.0, which is the authoritative
+player-facing record for this release and lists the rest of what it contained.
+
+### Added
+- Research quality: a Rushed / Standard / Thorough toggle that trades speed
+  against risk, feeding the hidden risk pool (#500). Wired into the plan screen
+  via `main_ui.gd`, with `research_quality_selector.gd` as the control. **#500 is
+  still OPEN** -- this describes what the shipped code does, not a finished
+  feature.
+- Scenario and mod hooks: drop a JSON file into the scenarios folder to add a
+  scenario, with three samples included (#483). `scenario_loader.gd`,
+  `godot/data/scenarios/*.json`, documented in `docs/SCENARIOS.md`.
+
+For the full 0.12.0 record -- the Attention economy, the Liability Ledger, the
+nine doom streams, visible rivals, and the leaderboard going live -- see
+`godot/data/patch_notes.json`.
 
 ---
 
