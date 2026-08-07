@@ -7,6 +7,18 @@ on:
     tags:
       - 'v*.*.*'
 
+# PERMISSIONS ARE REQUIRED AND WERE ABSENT UNTIL 2026-08-08.
+# Without `issues: write` the checklist step 403s with
+# "Resource not accessible by integration", the job goes RED, and the red is
+# unrelated to the release it appears to gate. On v0.14.0 the release itself was
+# clean -- all three platform zips at first pass, board taking live scores within
+# the half hour -- and the run list still showed a failed check on the tag.
+# A gate that reds on something it does not gate trains the reader to discount
+# reds, which is how a real one gets waved through.
+permissions:
+  contents: read
+  issues: write
+
 jobs:
   release-checklist:
     runs-on: ubuntu-latest
