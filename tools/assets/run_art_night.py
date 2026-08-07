@@ -587,7 +587,15 @@ def load_picks(path, spec, limit=None):
             print(f"      {u}")
         if len(unparsed) > 10:
             print(f"      ... and {len(unparsed) - 10} more")
-    if limit:
+    if limit and len(picks) > limit:
+        # Say so. This truncation used to be silent, and a silently dropped
+        # pick is the same class of wrongness as a silently dropped tag --
+        # the wave still looks like it ran correctly.
+        print(
+            f"[!] {len(picks)} picks parsed but picks_target is {limit}; "
+            f"DROPPING the last {len(picks) - limit}. Raise picks_target in the "
+            "spec if that is not what you meant."
+        )
         picks = picks[:limit]
     return picks
 
