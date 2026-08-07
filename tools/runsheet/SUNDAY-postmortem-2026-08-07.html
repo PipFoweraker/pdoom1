@@ -1,0 +1,538 @@
+<title>SUNDAY -- postmortem capture 2026-08-06/07</title>
+<style>
+  @page { size: A4 portrait; margin: 22mm 13mm 14mm; }
+  html { font-size: 12.5pt; }
+  body { font-family: "Segoe UI", Calibri, Arial, sans-serif; line-height: 1.42;
+         color: #000; background: #fff; max-width: 190mm; margin: 0 auto; }
+
+  /* Chromium repeats position:fixed elements on EVERY printed page. That is the
+     whole point of this band: Pip is filtering the printer by the SUNDAY tag and
+     must be able to skip this pack at a glance, from any sheet in the stack. */
+  .sundaybar { position: fixed; top: -18mm; left: 0; right: 0; height: 13mm;
+               border-bottom: 2.4pt solid #000; }
+  .sundaybar .tag { font-size: 26pt; font-weight: 800; letter-spacing: 2.2mm;
+                    line-height: 1; }
+  .sundaybar .sub { font-size: 10.5pt; letter-spacing: 0.2mm; color: #222;
+                    margin-top: 0.8mm; }
+
+  h1 { font-size: 17pt; margin: 0 0 1.5mm; line-height: 1.15; }
+  .meta { font-size: 11.5pt; color: #222; border-bottom: 1.2pt solid #000;
+          padding-bottom: 2mm; margin-bottom: 4mm; }
+  h2 { font-size: 13.5pt; margin: 6mm 0 2mm; text-transform: uppercase;
+       letter-spacing: 0.4mm; border-bottom: 1pt solid #666; padding-bottom: 1mm;
+       page-break-after: avoid; }
+  h3 { font-size: 12.8pt; margin: 4.5mm 0 1.5mm; page-break-after: avoid; }
+  p { margin: 0 0 2.5mm; }
+  p, li, td, th { font-size: 12.5pt; }
+  li { margin-bottom: 1.4mm; }
+  ul { margin: 1.5mm 0 3mm; padding-left: 7mm; }
+  .core { border: 2.2pt solid #000; padding: 3mm 3.5mm; margin: 0 0 3.5mm; }
+  .warn { border-left: 3.5pt solid #000; background: #f0f0f0; padding: 2.2mm 3mm;
+          margin: 2.5mm 0 3.5mm; font-size: 12pt; }
+  table { border-collapse: collapse; width: 100%; margin: 2.5mm 0 4mm; }
+  th, td { border: 1px solid #444; padding: 2mm 2.4mm; font-size: 12pt;
+           text-align: left; vertical-align: top; }
+  th { background: #e8e8e8; font-weight: 700; }
+  td.n, th.n { text-align: right; width: 22mm; }
+  code { font-family: Consolas, "Courier New", monospace; font-size: 11.3pt;
+         background: #eee; padding: 0.3mm 1mm; }
+  pre { font-family: Consolas, "Courier New", monospace; font-size: 11.2pt;
+        background: #f2f2f2; border: 1px solid #ccc; padding: 2.2mm 3mm;
+        white-space: pre-wrap; word-wrap: break-word; margin: 2mm 0 3mm; }
+  blockquote { border-left: 4pt solid #000; margin: 2.5mm 0 3mm;
+               padding: 1mm 0 1mm 4mm; font-size: 12pt; }
+  .small { font-size: 11.5pt; color: #222; }
+  .pb { page-break-before: always; }
+  /* Chromium drops the fixed band on the FINAL printed page. Static backstop so
+     every sheet in the stack carries the tag. */
+  .endtag { border-top: 2.4pt solid #000; margin-top: 5mm; padding-top: 2mm;
+            font-size: 22pt; font-weight: 800; letter-spacing: 2mm; }
+  .keep { page-break-inside: avoid; }
+  @media (prefers-color-scheme: dark) { html, body { background:#fff; color:#000; } }
+</style>
+
+<div class="sundaybar">
+  <div class="tag">SUNDAY</div>
+  <div class="sub">Postmortem capture 2026-08-06/07 -- not needed before Sunday 2026-08-09</div>
+</div>
+
+<h1>SUNDAY -- postmortem capture, 2026-08-06/07</h1>
+<div class="meta"><b>Printed Fri 2026-08-07 evening</b> | pdoom1 seat |
+companion to <code>docs/POSTMORTEM_2026-07-31_LEAGUE_DAY.md</code>, whose shape this
+matches and whose findings section 3 checks for recurrence.<br>
+Full text: <code>G:\Documents\Organising_Life\Code\pdoom1\docs\POSTMORTEM_2026-08-07_CAPTURE.md</code></div>
+
+<div class="core">
+<b>Forty-eight pull requests merged in seven days and nothing shipped to a player.</b>
+Version frozen at <code>0.13.2</code> since 07-29, ladder frozen at L3 since 07-27,
+zero changelog entries across all 48, and the open-issue count moved
+<b>201 -&gt; 208</b> while the week's two triage lanes closed nothing they identified.
+</div>
+
+<p class="small"><b>Method.</b> Every number here is the output of a command run
+against <code>origin/main</code> at <code>abd6c7d0</code> on 2026-08-07, or a
+quotation from a tracked file or merged commit. Three claims in the commissioning
+brief did not reproduce as worded; the corrections are in place, not footnoted.</p>
+
+<h2>1. What changed this cycle</h2>
+
+<table>
+<tr><th>Measurement</th><th>How</th><th class="n">Value</th></tr>
+<tr><td>Commits on main, 08-05..08-07</td><td><code>git log --since=2026-08-05</code></td><td class="n">24</td></tr>
+<tr><td>Commits since tag <code>v0.13.2</code></td><td><code>git rev-list --count</code></td><td class="n">68</td></tr>
+<tr><td>PRs merged since 07-31</td><td><code>gh pr list</code></td><td class="n">48</td></tr>
+<tr><td>Open PRs now</td><td>#1164, #1166</td><td class="n">2</td></tr>
+<tr><td>Open issues now (was 201 on 08-06)</td><td><code>gh issue list -q length</code></td><td class="n">208</td></tr>
+<tr><td>Issues opened / closed since 08-05</td><td>same</td><td class="n">19 / 5</td></tr>
+<tr><td>Latest Godot Tests on main (at <code>553f0b7c</code>)</td><td>1212 tests, 0 failures, 119 files</td><td class="n">green</td></tr>
+<tr><td><code>version.txt</code> / <code>ladder_version.txt</code></td><td>bumped 07-29 / 07-27</td><td class="n">0.13.2 / 3</td></tr>
+<tr><td>Art night, 2 waves</td><td>958 images, 0 failures</td><td class="n">USD 46.75</td></tr>
+</table>
+
+<p>Three commits landed as <b>direct pushes to main</b>, not through a PR:
+<code>abd6c7d0</code>, <code>c743710b</code>, <code>15902301</code>. One of those
+matters -- see F6.</p>
+
+<p>By volume the cycle produced nine documentation and audit commits, eleven
+touching game code, seven touching the art pipeline, ten new guard test files.
+The largest single output of the two days was <b>written analysis</b>. Section 5
+asks what that bought.</p>
+
+<h2 class="pb">2. Failures, ranked by cost</h2>
+<p class="small">Ranked by cost if undetected, not by embarrassment.</p>
+
+<h3>F1. Main carries a ladder-forking change on an unbumped ladder, and every automated guard passes</h3>
+<p><code>8791ba47</code> (#1137, merged 08-06 09:53) retimed the historical deck and
+changed event probabilities. <code>BUILD_VS_LADDER_VERSION_SPLIT.md</code> section 3.1
+names as explicit bump triggers <i>"anything that changes which events fire on a given
+seed"</i> and <i>"event probabilities"</i>. None of the 68 post-tag commits touched
+<code>ladder_version.txt</code>. A run from current main is not comparable to the six
+scores on the L3 board, and would be submitted under L3 anyway.</p>
+
+<p><b>Why every guard passed -- three instruments in the path, none able to object:</b></p>
+<ul>
+<li>Pre-commit checks <code>version.txt</code>/<code>ladder_version.txt</code> are
+<b>synced to their derived copies</b>. Internal consistency, not whether a bump was owed.</li>
+<li>CI's step is literally named <code>Ladder Bump Heuristic (advisory)</code> and ends
+<code>|| true</code>. Structurally incapable of failing a build.</li>
+<li><code>check_ladder_bump.py:42-45</code> scopes to
+<code>("godot/scripts/core/", "godot/data/")</code>. #1137's central change is in
+<code>godot/autoload/event_service.gd</code>. Even blocking, it would have missed this.</li>
+</ul>
+
+<p><b>Introduced</b> 08-06 09:53. <b>Discovered</b> 08-07 ~16:45, by a person sitting
+down to write a decision card. ~31 hours, no instrument reporting.</p>
+
+<div class="warn"><b>Correction to the brief.</b> The brief says a <code>.pck</code>
+<i>shipped</i> on a ladder that should have been bumped. Measured: a <code>.pck</code>
+was <b>built and handed over for playtest</b>
+(<code>builds\playtest-2026-08-07\PDoom.pck</code>, 16:20) and is labelled
+"explicitly not shippable"; no tag or release exists past <code>v0.13.2</code>.
+"Shipped" is stronger than the evidence supports.</div>
+
+<h3>F2. The gallery's entire script block failed to parse for three days, and the page looked fine</h3>
+<p><code>build_full_gallery.py</code> held its page in a <b>non-raw</b> Python
+triple-quoted template. A <code>\n\n</code> in a JavaScript <code>confirm()</code>
+string was compiled by Python into two real newlines, inside the JS string:</p>
+<pre>  if (!confirm("Set " + label + " on " + targets.length +
+               " UNREVIEWED asset(s) in this batch?
+
+" +
+               "Already-judged assets are left alone.")) return;</pre>
+<p>Chromium threw <code>SyntaxError</code> at parse time, so the whole
+<code>&lt;script&gt;</code> never ran. From the fix commit <code>51ca568c</code>:</p>
+<blockquote>"Not one key, not one click handler, not one verdict badge.
+<code>typeof cards === "undefined"</code>. ... Nothing looked wrong. The file was 4 MB,
+all 11,524 images resolved, every section rendered."</blockquote>
+<p><b>Introduced</b> <code>f239af06</code>, 08-04 11:59. <b>Fixed</b> 08-07 14:48.
+<b>3.1 days.</b> Discovered because you opened it and said the keyboard did not work.
+No test, no gate, no lane. <code>CLAUDE.md</code> already records this exact
+escape-mangling class for heredocs -- the rule was written, and the bug walked in
+through a template string instead.</p>
+
+<h3>F3. <code>--picks</code> read 5,794 verdicts as non-favourable and said nothing</h3>
+<p><code>run_art_night.py:559-562</code> iterates each record dict expecting a tag list,
+so it sees the field names <code>verdict</code>/<code>tags</code>/<code>note</code>/<code>updated_at</code>
+-- disjoint from <code>FAVOURABLE_TAGS</code> for all 5,794 entries (4,644 keep / 809
+discard / 130 maybe / 126 iterate / 84 reroll). No exception. The only output is
+<code>[ABORT] L2 needs picks and none parsed</code>, which would read identically
+against an empty file. The repo's own words in <code>export_picks.py</code>:
+<i>"not a crash, a shrug."</i> Second, independent mismatch behind it:
+<code>iterate</code> -- the verdict L2 exists to consume -- was never in
+<code>FAVOURABLE_TAGS</code> at all.</p>
+
+<h3>F4. <code>picks_target</code> would have discarded 15 of your verdicts silently, and underspent the brief doing it</h3>
+<p><code>picks = picks[:limit]</code>, printing nothing. Spec said 36; the review
+produced <b>51</b> parseable <code>iterate</code> cells. The money coupling is the
+part that matters: at 36 picks the run lands at <b>USD 66.25, below its own 68.00
+underspend floor</b> -- and underspending was your stated failure condition for the
+night. A silent data loss would have produced a silent brief failure.</p>
+
+<h3>F5. Six of 68 headline claims the seat published in one day were wrong</h3>
+<p>49 CONFIRMED / <b>6 WRONG</b> / 7 UNCHECKABLE / 6 STALE. The blast radius, not the
+9 per cent rate, is the finding.</p>
+<table>
+<tr><th>Row</th><th>Wrong claim</th><th>Where it travelled</th></tr>
+<tr><td>W1</td><td>"2,197 pages"</td><td>Two coordination issues, a sister repo, open PR #1156. The figure the sentence actually asserts is <b>2,196</b> and nobody has stated it</td></tr>
+<tr><td>W2-W4</td><td>Panel box 800x740, "+23%", seven measured resolution rows</td><td><b>Merged</b> PR #1155's body. Shipped height is 792 -- 12px taller than the flat +30% the PR argues against</td></tr>
+<tr><td>W5</td><td><code>event_service.gd:404-410</code>, declared re-measured</td><td>Handed to <code>pdoom-data</code> as its unblocking artefact. It is 406-412 on that tree</td></tr>
+<tr><td>W6</td><td>A published <code>grep</code> returning 0</td><td>A command that <b>cannot</b> return anything else</td></tr>
+</table>
+<blockquote>"The rule was adopted at 10:55Z and violated above its own adoption in the
+same comment. That is the honest headline of this audit."</blockquote>
+<p>Two of the seven UNCHECKABLE claims sit in bolded sentences about fifty lines above
+the rule forbidding them. A third -- <i>"75 per cent of their feedback"</i>, from two
+playtesters, one hour, no recording -- is the seat's most-travelled sentence of the
+week and is now in a Manifund draft.</p>
+
+<h3>F6. A guarded data file changed on main and its guard did not run</h3>
+<p>Measured tonight, not previously recorded. <code>abd6c7d0</code> (<b>a direct push
+to main</b>) edited <code>godot/data/credits.json</code>.
+<code>test_credits_data.gd</code> asserts against exactly that file.
+<code>godot-tests.yml</code> filters pushes to <code>godot/**/*.gd</code>,
+<code>*.tscn</code>, <code>project.godot</code>, the workflow and the runner --
+<b><code>godot/data/**</code> is not in that list</b>. The <code>pull_request</code>
+trigger has no filter and would have caught it, but this bypassed PRs entirely.</p>
+<p>Cost this time: zero, it was a one-line credit. The cost is the precedent: a
+data-driven game whose data directory sits outside the push test filter. And it means
+the honest sentence is <b>"main's Godot suite is green as of <code>553f0b7c</code>"</b>,
+not "main is green" -- five commits have landed since.</p>
+
+<h3>F7. The phase guard was hollow on its first run</h3>
+<p>The shipped guard file keeps the confession as a comment: an earlier draft's regex
+excluded a preceding <code>.</code>, so <code>gm.state.pending_events.append(...)</code>
+-- <i>the actual #1134 defect line</i> -- matched nothing and the suite went green.
+It is in the failures list because the near-miss is the finding: it would have shipped
+green, counted as coverage, and been cited later as evidence the class was handled.
+Caught only because the lane was required to prove the guard red first.</p>
+<p>The same audit states its own boundary rather than claiming coverage:
+<i>"The scanner is green on a live bug"</i> -- D1, a whole-array replace of
+<code>state.pending_events</code> that destroys scenario-authored injections. Still
+unfixed, deliberately, because fixing it forks replays.</p>
+
+<h3>F8. The seat destroyed in-flight work in the main checkout twice in 24 hours</h3>
+<table>
+<tr><th>When</th><th>Reflog</th><th>Discarded</th><th>Recovery</th></tr>
+<tr><td>08-06 16:17</td><td><code>reset: moving to HEAD~1</code></td><td><code>98cc8068</code> -- the slot picker, 1,592 lines including <code>slot_picks.json</code>, 15 minutes old</td><td>Re-landed as <code>624433cb</code> (#1154)</td></tr>
+<tr><td>08-06 22:22</td><td><code>reset: moving to origin/main</code></td><td><code>df6f5f53</code> -- <code>SEAT_VOICE.md</code>, the voice grant, 2 minutes old</td><td>Branch <code>recover-seat-voice</code>, cherry-pick 08-07 09:20</td></tr>
+</table>
+<div class="warn"><b>Correction to the brief.</b> Git's reflog records
+<code>reset: moving to &lt;target&gt;</code> and <b>does not record the mode</b>.
+Nothing in this repo distinguishes <code>--hard</code> from <code>--mixed</code>.
+What is provable: two resets in the main checkout discarded commits that had to be
+recovered, one carrying the slot-pick file. The <code>--hard</code> flag is asserted,
+not measured.</div>
+<p>Adjacent, same class, from the 08-06 handover: <i>"<code>git checkout -- godot/</code>
+has now discarded an agent's tracked edits TWICE."</i> Four destructive events in the
+shared checkout inside the cycle, all recovered, none caught by anything but a person
+noticing the file was gone.</p>
+
+<h3>F9. <code>[Unreleased]</code> has accumulated across five releases, and the changelog announces open issues as shipped</h3>
+<ul>
+<li><b>Six <code>## [Unreleased]</code> headings</b> at lines 7, 468, 546, 807, 1174,
+1344. Five stranded mid-file behind released versions; the largest is 141 lines, the
+biggest section in the file.</li>
+<li>The live one is <b>empty</b>. <code>CHANGELOG.md</code> untouched since 07-29:
+<b>0 of 48 merged PRs produced an entry.</b></li>
+<li><b><code>0.12.0</code> and <code>0.13.0</code> have no section at all.</b> The file
+jumps <code>[v0.13.1] - 2026-07-25</code> straight to <code>[v0.11.0] - 2025-12-08</code>.</li>
+<li><code>[0.13.2]</code>'s body is headed <i>"2026-07-27 build day (rides the next
+version bump)"</i> -- content for a future version filed under a released one.</li>
+<li>It announces <b>#791</b> and <b>#811</b> as delivered. Both are <b>OPEN</b> today.</li>
+</ul>
+<div class="warn"><b>Partial correction to the brief.</b> Those two issues are open
+largely because squash-merge does not fire closes-keywords here. The changelog did not
+invent a delivery; it inherited a stale issue state. The claim reproduces; the
+mechanism is milder than "announced work that did not happen."</div>
+
+<h3>F10. The cost model reads its own constant back out of a log, and the doc still calls it MEASURED</h3>
+<p><code>estimate_cost_per_image()</code> returns a hardcoded table lookup; that value
+becomes <code>unit_cost</code>, is returned verbatim, accumulated, and written into the
+log's <code>SUMMARY: ... cost=$...</code> line. <code>SEED_ART_COST_MODEL.md</code>
+reads those logs and tags the numbers <b>MEASURED</b> at lines 31, 33, 52 and 53.
+Proof: the 07-29 run logged <code>cost=$1.08</code> for 12 images; <code>$0.09</code>
+is the literal table entry for 1536x1024; 12 x 0.09 = 1.08 exactly.</p>
+<p><b>Status: documented, not fixed. The MEASURED tags are live in the tree tonight.</b>
+A warning comment was added above the constant; the wrong document was not touched.</p>
+<p>The more expensive adjacent finding: <code>quality</code> was never passed to the
+Images API, so <code>auto</code> applied and was free to bill the high tier --
+<b>USD 0.20 against medium's 0.05 at 1536x1024, a silent 4x</b>. Without the one line
+that fixed it, a projected USD 31 wave could have billed USD 125.</p>
+
+<h3>F11. Smaller, recorded so they are not rediscovered</h3>
+<ul>
+<li><code>FEATURED_SEED_OVERRIDE</code> reads <code>weekly-2026-w31</code>; today is ISO
+2026-W32. Unresolved since Monday.</li>
+<li>The playtest build was cut from <code>merge/1158-main</code>, not main (measured by
+grepping the <code>.pck</code>). Correctly stamped, correctly labelled -- recorded
+because "the build he played" and "main" are again two different things.</li>
+<li><code>ROADMAP.md:47</code> and <code>RELEASE_NOMENCLATURE.md:89</code> both map
+<code>v0.14 -&gt; L3</code>; L3 is spent. Every row below is off by one. #1152, open.</li>
+<li><b>#1061, IP/trademark, was due Monday 2026-08-03.</b> Open. You asked to be forced.</li>
+</ul>
+
+<h2 class="pb">3. Recurrences from the 07-31 postmortem</h2>
+<p class="small">This is the section that should be uncomfortable. Seven days elapsed.</p>
+
+<h3>R1 (worst). "A check that cannot fail" recurred three times -- once inside the guard for the thing that went wrong</h3>
+<p>07-31 FINDING 9 established the shape precisely: every sync step was
+<code>continue-on-error: true</code>, so <i>"the job could not reach a failed state"</i>,
+and the runs reporting <b>success</b> contained the identical error.</p>
+<table>
+<tr><th>Instance</th><th>Mechanism</th><th>Caught by</th></tr>
+<tr><td><code>check_ladder_bump.py</code> in CI</td><td><code>|| true</code> -- cannot fail a build. This is the guard for <b>F1</b>, the cycle's highest-cost defect</td><td><b>Nothing.</b> Found by reading the YAML while writing this</td></tr>
+<tr><td>W6, the published <code>grep</code></td><td>Basic <code>grep</code> treats <code>|</code> as a literal, so it searches one 44-character string and returns 0 against a file containing all four words</td><td>The claim audit, by running a control line</td></tr>
+<tr><td>The phase-guard regex</td><td>Excluded a preceding <code>.</code>, so the actual #1134 line matched nothing and the suite went green</td><td>The lane, because it had to prove the guard red first</td></tr>
+</table>
+<p><b>Why this is the sharpest thing in the pack.</b> The 07-31 postmortem named this
+mechanism, in writing, in this repo. One week later it appears in the guard covering
+the ladder -- the exact axis whose corruption 07-31's FINDING 5 was about. Naming a
+failure mode in a document demonstrably did not stop it recurring. The two instances
+that <i>were</i> caught were caught by a <b>practice</b>, not by the document.</p>
+
+<h3>R2. "The provenance display is the thing least able to be trusted about provenance" (07-31 F11) recurred, on money</h3>
+<p>07-31: the shipped build stamp read a three-week-stale commit on a dead branch --
+<i>"it does not fail; it confidently reports a plausible commit on a plausible date."</i>
+This cycle: the cost model reports a constant as MEASURED (F10), and the provenance
+scoping lane reaches the same conclusion from a third direction --
+<i>"Provenance is not missing information. It is discarded information"</i> -- with PIL
+confirming nothing a generator wrote survives into a shipped PNG.</p>
+<p><b>Counter-case, and it is real:</b> the build stamp itself is fixed. Tonight's
+<code>.pck</code> carries <code>commit=357173f3 / date=2026-08-07</code>. One of
+07-31's eleven findings is closed and stayed closed.</p>
+
+<h3>R3. Instance-versus-class -- adopted at the audit layer, not at the fix layer</h3>
+<p>The practice <b>was</b> operated: the phase-guard audit exists to hunt the class
+behind #1134, enumerated 10 variables and 34 mutation sites, and reported a near-null.
+But the fix that shipped (#1143) was the instance, and the class fix -- a single
+guarded entry point for <code>pending_events</code> -- is <b>#1148, open</b>. The class
+is now enumerated before the fix lands, and still not closed by it. Half a recurrence.</p>
+
+<h3>R4. Four new rows for 07-31's proxy-versus-truth table</h3>
+<table>
+<tr><th>Proxy that was checked</th><th>The thing that mattered</th></tr>
+<tr><td>the review page rendered</td><td>the review page's script parsed</td></tr>
+<tr><td><code>sync_version.py --check</code> reports no drift</td><td>the ladder should have moved</td></tr>
+<tr><td>CI is green</td><td>CI ran on <b>this</b> commit</td></tr>
+<tr><td>the cost is in the run log</td><td>the cost was billed</td></tr>
+</table>
+<p>07-31's table had six rows and its summary was <i>"nothing was watching the join."</i>
+Nothing has been built to watch a join since.</p>
+
+<h3>R5. Confidence-shaped output recurred as the claim audit's own headline</h3>
+<p>07-31 F6: a decision matrix with tradeoffs and a recommendation, resting on a premise
+that collapsed on one question. This cycle: the seat adopted a rule requiring every
+headline claim to reduce to a runnable command, and published two unfalsifiable bolded
+numbers fifty lines above it in the same comment. Same sentence, different week.</p>
+
+<h3>R6. 07-31's own open-items list</h3>
+<p>Of the five items marked "needs an issue", three now have numbers and landed
+(#1071, #1114, #1099). Genuine improvement on the 07-20 teardown, whose items
+evaporated. Against it: <b>#1061 is four days overdue</b>, and the 08-06 mining lane
+independently rediscovered the rule -- <i>"Documenting debt is not scheduling debt"</i>
+-- without noticing it was describing the pack it was written in.</p>
+
+<h2 class="pb">4. Mechanisms -- the through-line, tested</h2>
+
+<div class="core">The brief proposed one mechanism: <i>"a plausible output from a
+process that did not do the work."</i> Tested against the eleven failures,
+<b>it does not hold as a mechanism.</b> It holds as a description of the
+<i>outcome</i> -- nothing complained. Naming the outcome is not naming the generator,
+and the difference is operational: <b>there are four generators, with four different
+remedies, and no single remedy catches more than one of them.</b> Plus a fifth item
+that is not a defect mechanism at all.</div>
+
+<h3>M1 -- The vacuous check</h3>
+<p><i>An instrument exists, is wired in, and the bad answer is unreachable.</i>
+Instances: <code>|| true</code> on the ladder heuristic; the <code>grep</code> whose
+<code>|</code> is a literal; the phase-guard regex; historically
+<code>continue-on-error</code> on every sync step and the CI gate that ran zero tests
+(#640).</p>
+<p><b>Distinguishing property:</b> removing the instrument entirely would leave the
+world no worse and the reader better informed. A bare claim invites scepticism; a claim
+with a green check attached buys credibility the check has not earned.
+<b>Remedy:</b> show it returning the other answer -- one control line, one red run.</p>
+
+<h3>M2 -- The absorbing empty state</h3>
+<p><i>A consumer reads a producer in the wrong shape, and the wrong shape maps cleanly
+onto a legitimate "nothing matched".</i> Instances: <code>--picks</code> over 5,794
+records; <code>picks_target</code> truncating 15; <code>apply_review.py</code>'s 807
+confident keeps of which 75 per cent could not move; the website's
+<code>sync_icons()</code> reporting success for about eight months while doing nothing.</p>
+<p><b>Distinguishing property:</b> no instrument is involved. There is nothing to
+harden -- the data path itself has a state indistinguishable from success.
+<b>Remedy:</b> zero is an error until proven; exit non-zero naming the store and the
+count read.</p>
+
+<h3>M3 -- The self-referential measurement</h3>
+<p><i>A number derived from a record of itself, then labelled as independently
+observed.</i> Instances: cost constant to log to "MEASURED"; line numbers declared
+re-measured against a tree they were not re-measured against; "2,197" repeated from a
+sister repo without running a one-second command on a clone sitting on the same disk.</p>
+<p><b>Distinguishing property:</b> the number is real and traceable -- only its
+provenance claim is false, which is why it survives inspection.
+<b>Remedy:</b> derive from a committed generator, or carry an explicit provenance flag
+(<code>cost_is_billed_truth: false</code>).</p>
+
+<h3>M4 -- Escape mangling in a generated artefact</h3>
+<p><i>Invisible in the source, invisible in the output's appearance. Only a parser sees
+it.</i> Instances: the gallery's <code>\n\n</code>; the <code>\b</code> that made a PII
+check report clean over ten records still carrying email addresses; the <code>|</code>
+eaten by basic <code>grep</code> (which is M1 and M4 at once).</p>
+<p><b>Distinguishing property:</b> looking harder does not help -- the 4 MB page
+rendered and every section drew. <b>Remedy:</b> parse the emitted artefact before
+writing it. Installed for the gallery; not yet for <code>build_slot_picker.py</code>.</p>
+
+<h3>M5 -- Destructive operation in a shared checkout</h3>
+<p><b>Not a plausible-output failure at all.</b> Nothing looked fine; the work was
+simply gone and a person noticed. Listed because it cost real time, and because its
+existence is the cleanest disproof of the single-mechanism reading.</p>
+
+<h3>What the four share, and what they do not</h3>
+<p>They share an outcome and a discovery channel: every defect was found by a human or
+an agent going and looking, and none by an automated report. That is 07-31's
+one-sentence version, unchanged, which is itself a result.</p>
+<p>They do not share a fix. M1 wants a control line, M2 a non-zero exit, M3 a
+generator, M4 a parser, M5 a worktree. <b>A single remedy would have caught at most one
+of the eleven failures -- and a postmortem proposing one would be committing M1 in
+prose.</b></p>
+
+<h2 class="pb">5. What the instruments actually bought</h2>
+
+<h3>The tri-repo workshop -- close to a null in the room, real value in the prep</h3>
+<p>The <b>prep</b> is not in doubt: it demolished three of the agenda's four premises
+with measurements (the 1,072-event cost figure does not reproduce; nearest measured is
+1,073, and the direction is inverted -- 975 unchanged, 101 arriving <b>nine turns
+later</b>, zero sooner) and found two live code defects on the way.</p>
+<p>The <b>room</b> is much less clear, and the seat said so in advance:
+<i>"pdoom1 is the repo Pip works in every day. Its seat is structurally the least
+independent of the three"</i>, and <i>"two of three seats are compromised on A2 bit 1
+in the same direction. Coordination should say so in the post-mortem rather than
+reading 3-0 as three independent derivations."</i> A ballot among seats that had all
+read the same six public rulings of yours is not three independent votes.
+<b>Verdict: keep the prep, question the room.</b></p>
+
+<h3>The claim-audit rule -- keep it, but its marginal value is narrow</h3>
+<p>Real catch, cheap: 6 wrong in 68, two in a merged PR body, one already in two other
+repos, one handed to another repo as an unblocking artefact. Against it, from its own
+section 5: the two artifacts that scored <i>structurally</i> -- a committed generator
+and a published reproduction formula -- <b>both predate the rule</b>. The honest
+reading is not "the rule fixed something" but "the repo already had the good pattern
+twice." Its marginal value is confined to places not already generated. And it produced
+M1 in its own body. <b>Verdict: keep, with the two amendments -- re-run at merge, and
+show the command can return the other answer.</b></p>
+
+<h3>The phase-guard audit -- earned its cost on the hollow-guard catch alone</h3>
+<p>A near-null by design (0 confirmed reachable permalocks). It earned itself twice
+anyway: caught its own hollow regex before shipping, and found a live silent
+content-loss bug. It also declined to install a runtime check that false-fired in normal
+play -- <i>"a guard that false-fires in normal play trains people to ignore it, which is
+worse than no guard."</i> <b>Verdict: the best-designed instrument of the cycle.</b></p>
+
+<h3>The taste profile -- the only instrument with a same-day cash payoff</h3>
+<p>Its signals are modest and it says so (<i>"35 of 136 slots went the other way. This
+is a tendency, not a law"</i>; median 1.7 seconds between decisions, so it may be a
+profile of what survives a fast glance). Its <b>nulls</b> are what paid: iterating a
+prompt bought nothing measurable (highest-vN chosen 40 times against an expectation of
+47.3, p=0.34). That reshaped the art run the same day -- 264 images and USD 13.20 of
+re-rolls became 12 coherent directions at identical cost -- and killed the 08-03
+"highest variant wins" convention. It also flagged its own money risk: the hue result
+does not survive Bonferroni correction. <b>Verdict: the clearest earn in the pack.</b></p>
+
+<h3>Issue triage and mining -- the pair earned it; the triage alone would have done harm</h3>
+<p>The triage asserted six issues were absorbed by the UI architecture doc. The mining
+lane checked and found the doc contains <b>zero</b> occurrences of #622, #577, #936,
+#828, #830, #954, "monolith", "decompose" or "LET-DIE". Two would have closed silently
+and stayed closed, one carrying your standing ruling that decomposition is deferred
+until release. The mining lane's calibration number is the one to keep:
+<b>32 of 50 issues yielded nothing</b> -- it reports the nothing.</p>
+<p><b>Verdict on the pair: earned. Verdict on the outcome: nothing happened.</b> Zero of
+the ~50 closeable issues were closed; the count went 201 to 208. An instrument whose
+output nobody actions is a cost with a report attached.</p>
+
+<h3>The guard-first practice -- cheapest instrument, highest hit rate</h3>
+<p><i>"Four lanes did this today; two of them found real bugs while doing it."</i> Two
+of the three R1 instances were caught this way. <b>Keep, and make it the default rather
+than a lane-level habit.</b></p>
+
+<h3>What is ceremony</h3>
+<ul>
+<li><b>Printing documents nobody acts on.</b> The 08-06 handover's own heading:
+<i>"The three documents produced today, all printed, none acted on."</i> This pack is a
+fourth. Its falsifier is below.</li>
+<li><b>Bucketing issues without closing them.</b></li>
+<li><b>A sealed convergence process among seats that share a source of truth.</b>
+Convergence after the seal is evidence only if independence was real, and two of three
+seats declared it was not.</li>
+<li><b><code>[Unreleased]</code> as a section.</b> Six headings, five stranded, nothing
+written into the live one across 48 PRs. A section nobody writes to is not a process.</li>
+</ul>
+
+<h2 class="pb">6. Proposals for next week -- each with a falsifier and a date</h2>
+<table>
+<tr><th>#</th><th>Proposal</th><th>Falsifier</th><th>By</th></tr>
+<tr><td>P1</td><td>Remove <code>|| true</code> from the ladder-bump check; add <code>godot/autoload/</code> to <code>GAMEPLAY_PREFIXES</code></td><td>If it has fired zero times <b>and</b> no ladder-owed change merged unbumped, it is dead weight -- delete it rather than keep a green ornament</td><td>08-21</td></tr>
+<tr><td>P2</td><td>Add <code>godot/data/**</code> and <code>godot/**/*.json</code> to the Godot Tests push path filter</td><td>If no push-triggered run touches only those paths by then, the change bought nothing -- revert rather than leave coverage theatre</td><td>08-21</td></tr>
+<tr><td>P3</td><td>Every published measurement command ships a control line proving it can return the other answer</td><td>Re-run the claim audit on the week of 08-13. A WRONG rate at or above today's 9 per cent means the rule did not take and should be replaced with the generator requirement, not patched again</td><td>08-20</td></tr>
+<tr><td>P4</td><td>Zero-result reads are errors -- exit non-zero naming the store and the count read</td><td>More than two false alarms by then means it is mis-tuned; narrow it to the art tooling</td><td>08-21</td></tr>
+<tr><td>P5</td><td>Generated HTML/JS is parsed before it is written; extend the gallery gate to <code>build_slot_picker.py</code></td><td>If the gate rejects nothing, the raw-string fix was sufficient alone and the gate is cost without benefit</td><td>09-01</td></tr>
+<tr><td>P6</td><td>No agent operates in the main checkout; lanes get worktrees</td><td>Read <code>git reflog</code> in the main checkout. Any agent-attributable <code>reset</code> or <code>checkout --</code> means the rule was written and not operated -- the same failure as 07-31's unrecorded freeze exemption</td><td>08-21</td></tr>
+<tr><td>P7</td><td>A ten-minute close-what-merged sweep, weekly</td><td>Open issue count. Still at or above 208 means the sweep did not happen -- do not re-run the triage lane until it does</td><td>08-14</td></tr>
+<tr><td>P8</td><td>Correct the four MEASURED tags in <code>SEED_ART_COST_MODEL.md</code>, or delete the doc</td><td><code>grep -n MEASURED</code>. Any survivor beside a log-derived cost means the finding was documented and not fixed -- F10 repeating one week on</td><td>08-14</td></tr>
+</table>
+
+<div class="core"><b>This pack's own falsifier.</b> If on 2026-08-14 none of P1-P8 has
+been started and no issue references this document, then it is the fourth printed
+document nobody acted on -- and the correct response is to stop producing them, not to
+produce a better one.</div>
+
+<h2>7. Open questions for you</h2>
+<ol>
+<li><b>The ladder.</b> L3 -&gt; L4 or hold? Six entries from five players is thin enough
+that forking costs little. On your card already; repeated because it is the
+highest-cost open item.</li>
+<li><b>The seed name.</b> <code>weekly-2026-w31</code> while the ISO week is W32. Weekly
+reading: overdue. Monthly reading: the name is misleading. Unresolved since Monday.</li>
+<li><b>The art payload.</b> 200.4 MB promotable against the 58 MB you agreed to. It has
+grown three times, each time because a fix revealed cost a bug was hiding. Re-rule
+rather than assume the old answer holds.</li>
+<li><b>Is the workshop room worth repeating?</b> The prep clearly paid. The room is the
+part in question.</li>
+<li><b>#1061, IP/trademark.</b> Four days past due. You asked to be forced.</li>
+<li><b><code>SEED_ART_COST_MODEL.md</code>.</b> Correct the MEASURED tags, or delete it?
+It is a tracked file asserting a measurement that was never taken; deletion may be the
+cheapest honest option.</li>
+<li><b>Does anything actually close issues?</b> Two lanes spent a day identifying ~50
+closeable issues and closed none. Either someone owns the sweep, or the count is not a
+signal and we should stop treating it as one.</li>
+</ol>
+
+<h2>What went right</h2>
+<p class="small">After the failures, and without inflation.</p>
+<ul>
+<li><b>The guard-first practice caught two real bugs</b>, including the phase guard's
+own hollow regex, before either shipped.</li>
+<li><b>The build stamp is genuinely fixed.</b> 07-31's FINDING 11 is closed: tonight's
+<code>.pck</code> carries <code>commit=357173f3 / date=2026-08-07</code>.</li>
+<li><b>A measured null changed spend the same day</b> -- USD 13.20 of re-rolls
+redirected into breadth before a single image fired.</li>
+<li><b>The mining lane's 11 DO-NOT-CLOSE corrections</b> stopped two issues closing
+wrongly, one carrying a standing ruling of yours.</li>
+<li><b>The gallery fix installed a gate, not just a patch</b> -- the build now proves
+its own script parses before writing the page, and the defect was demonstrated rejected
+by both gates.</li>
+<li><b>The art night stayed inside its ceiling</b> -- USD 46.75 of 75.50, 958 images,
+zero failures, hard module-constant ceiling that <code>--ceiling-usd</code> can only
+lower.</li>
+<li><b>Two friends found in one hour what every internal playtest missed</b> --
+<i>"because everyone internal has a working network, a populated board, and knows where
+fundraising is."</i> The cheapest instrument available, and it is not on any schedule.</li>
+</ul>
+
+<p class="small">Written 2026-08-07 for reading Sunday 2026-08-09. Every command was run
+against <code>origin/main</code> at <code>abd6c7d0</code>, not recalled. Three claims in
+the commissioning brief did not reproduce as worded; the corrections are in place, not
+appended. Nothing found here was fixed -- fixing widens the blast radius and this is a
+capture.</p>
+
+<div class="endtag">SUNDAY -- end of pack</div>
