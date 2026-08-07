@@ -1,0 +1,588 @@
+<title>Chronicle -- 2026-08-06 and 2026-08-07</title>
+<style>
+  @page { size: A4 portrait; margin: 13mm 12mm; }
+  html { font-size: 12.5pt; }
+  body { font-family: "Segoe UI", Calibri, Arial, sans-serif; line-height: 1.36;
+         color: #000; background: #fff; max-width: 192mm; margin: 0 auto; }
+  h1 { font-size: 17pt; margin: 0 0 1.5mm; line-height: 1.15; }
+  .meta { font-size: 11.5pt; color: #222; border-bottom: 1.2pt solid #000;
+          padding-bottom: 2mm; margin-bottom: 4mm; }
+  h2 { font-size: 13.5pt; margin: 5.5mm 0 2mm; text-transform: uppercase;
+       letter-spacing: 0.4mm; border-bottom: 1pt solid #666; padding-bottom: 1mm;
+       page-break-after: avoid; }
+  h3 { font-size: 12.5pt; margin: 4mm 0 1.5mm; page-break-after: avoid; }
+  p { margin: 0 0 2.5mm; }
+  p, li, td, th { font-size: 12.5pt; }
+  li { margin-bottom: 1.2mm; }
+  .core { border: 2.2pt solid #000; padding: 3mm 3.5mm; margin: 0 0 3mm; }
+  table { border-collapse: collapse; width: 100%; margin: 2.5mm 0; }
+  th, td { border: 1px solid #444; padding: 1.4mm 2mm; font-size: 11.6pt;
+           text-align: left; vertical-align: top; }
+  th { background: #e8e8e8; font-weight: 700; }
+  td.t, th.t { white-space: nowrap; width: 21mm; font-variant-numeric: tabular-nums; }
+  td.n, th.n { text-align: right; white-space: nowrap;
+               font-variant-numeric: tabular-nums; }
+  tr.key td { background: #f0f0f0; }
+  tr.gap td { background: #fafafa; font-style: italic; color: #333; }
+  code { font-family: Consolas, "Courier New", monospace; font-size: 11pt;
+         background: #eee; padding: 0.3mm 1mm; }
+  pre { font-family: Consolas, "Courier New", monospace; font-size: 10.6pt;
+        background: #f4f4f4; border: 1px solid #bbb; padding: 2mm 2.5mm;
+        margin: 2mm 0; white-space: pre-wrap; word-break: break-word; }
+  .pb { page-break-before: always; }
+  .small { font-size: 11.3pt; color: #222; }
+  blockquote { margin: 2mm 0 2.5mm 5mm; padding-left: 3mm;
+               border-left: 2.5pt solid #666; font-style: italic; }
+  @media (prefers-color-scheme: dark) { html, body { background:#fff; color:#000; } }
+</style>
+
+<h1>Chronicle -- 2026-08-06 and 2026-08-07</h1>
+<div class="meta"><b>pdoom1 seat</b> | frozen at the snapshot instant
+<b>2026-08-07 18:05:15 AEST / 08:05:15Z</b> | source of record:
+<code>docs/CHRONICLE_2026-08-06_07.md</code><br>
+Span covered: <b>1 day 10 h 17 min 48 s (34.30 hours)</b>, from
+2026-08-06 07:47:27 AEST to the snapshot.</div>
+
+<div class="core">
+<b>Every time in this document came from a machine source, not from anyone's
+account of events.</b> Git author/committer dates, GitHub <code>createdAt</code>
+and <code>mergedAt</code>, the art ledger's <code>recorded_at_utc</code>, the git
+reflog, and file mtimes where nothing better exists. No time was taken from a PR
+body, an agent report, or a session summary. Where nothing exists, the cell says
+so and does not guess: <b>nine such cells</b>, enumerated in section 6.
+</div>
+
+<h2>Clock</h2>
+
+<table>
+  <tr><th>Sources native in <code>+10:00</code></th>
+      <td>git (<code>%aI</code>/<code>%cI</code>), git reflog, file mtimes</td></tr>
+  <tr><th>Sources native in <code>Z</code> (UTC)</th>
+      <td>GitHub API, <code>ledger.jsonl</code></td></tr>
+  <tr><th>Offset applied to UTC sources</th>
+      <td><b>+10:00 (AEST)</b>. No DST transition falls in this window.</td></tr>
+</table>
+
+<p><b>Conversion check, against an independently known local time.</b>
+<code>docs/SEAT_VOICE.md</code> records the voice grant at
+<b>19:24 AEST / 09:24 UTC, 2026-08-06</b>. <code>09:24 + 10:00 = 19:24</code>.
+The conversion reproduces it. A second, machine-side check: the
+<code>coordination#31</code> comment whose body self-describes as
+"2026-08-06 ~20:15 AEST" carries <code>createdAt 2026-08-06T10:12:12Z</code>,
+which converts to <b>20:12 AEST</b> -- three minutes before its own
+self-reported time, which is the expected sign. A ten-hour error would have put
+it at 10:12, which is not a time anyone rounds to "~20:15".</p>
+
+<p><b>On git times.</b> All 21 merged PRs arrived by squash-merge, which
+discards the original commits: the squash commit's author and committer dates
+are identical and equal the merge instant. So for merged work this document uses
+GitHub <code>mergedAt</code> as the landing time. For blame it uses author date
+<code>%aI</code>, the closest proxy for when a line was written; where committer
+date differs materially, both are shown.</p>
+
+<h2 class="pb">1. Master timeline -- Thursday 2026-08-06</h2>
+
+<table>
+  <tr><th class="t">AEST</th><th class="t">UTC</th><th>What</th></tr>
+  <tr><td class="t">07:47:27</td><td class="t">08-05 21:47:27Z</td><td>PR #1129 opened -- split the dev gates</td></tr>
+  <tr><td class="t">07:54:37</td><td class="t">08-05 21:54:37Z</td><td>PR #1130 opened -- turn-1 hand above the fold</td></tr>
+  <tr><td class="t">08:05:32</td><td class="t">08-05 22:05:32Z</td><td>Issue #1131 -- Pip's answers on the dot-matrix printer</td></tr>
+  <tr><td class="t">08:26:05</td><td class="t">08-05 22:26:05Z</td><td>Issue #1132 -- playtest 655/C55</td></tr>
+  <tr><td class="t">08:27:07</td><td class="t">08-05 22:27:07Z</td><td>PR #1133 opened -- default-name prompt + lab-name generator</td></tr>
+  <tr class="key"><td class="t">08:29:59</td><td class="t">08-05 22:29:59Z</td><td><b>Issue #1134 -- F3 event injection permalocks the run.</b> First machine record of the defect.</td></tr>
+  <tr><td class="t">08:51:21</td><td class="t">08-05 22:51:21Z</td><td>PR #1130 merged -&gt; <code>06682772</code></td></tr>
+  <tr><td class="t">08:51:24</td><td class="t">08-05 22:51:24Z</td><td>PR #1129 merged -&gt; <code>2f40d5df</code></td></tr>
+  <tr><td class="t">08:51:28</td><td class="t">08-05 22:51:28Z</td><td>PR #1133 merged -&gt; <code>a8a858ec</code></td></tr>
+  <tr><td class="t">08:54:08</td><td class="t">08-05 22:54:08Z</td><td>Issue #1135 -- lab-name future-epoch pass</td></tr>
+  <tr><td class="t">10:52:42</td><td class="t">08-06 00:52:42Z</td><td>PR #1136 opened -- stop teaching a different game</td></tr>
+  <tr><td class="t">10:55:27</td><td class="t">08-06 00:55:27Z</td><td><code>coordination#24</code> -- Atlassian MCP grant is per-login</td></tr>
+  <tr><td class="t">11:08:14</td><td class="t">08-06 01:08:14Z</td><td>PR #1137 opened -- retime the historical deck</td></tr>
+  <tr><td class="t">11:08:27</td><td class="t">08-06 01:08:27Z</td><td>PR #1136 merged -&gt; <code>78be0370</code> (15 min 45 s open)</td></tr>
+  <tr class="gap"><td class="t">--</td><td class="t">--</td><td>Idle on the GitHub record: 2 h 46 min with no issue, PR or comment event</td></tr>
+  <tr class="key"><td class="t">13:54:35</td><td class="t">08-06 03:54:35Z</td><td><b>Issue #1138 -- the <code>take_loan</code> duplicate named for the first time</b>, as a symptom of a slider-vs-options design problem</td></tr>
+  <tr><td class="t">14:04:26</td><td class="t">08-06 04:04:26Z</td><td>PR #1139 opened -- action-taxonomy checker, red on <code>take_loan</code></td></tr>
+  <tr><td class="t">14:17:24</td><td class="t">08-06 04:17:24Z</td><td>Issue #1140 -- Pip's full response to the Fresh Eyes Teardown (26 min, from memory)</td></tr>
+  <tr><td class="t">14:17:26</td><td class="t">08-06 04:17:26Z</td><td>Issue #1141 -- Pip's playthrough: settings traps you, F3 will not close, cold open never fired</td></tr>
+  <tr><td class="t">14:22:04</td><td class="t">08-06 04:22:04Z</td><td><code>coordination#25</code> -- beacon seat check-in</td></tr>
+  <tr><td class="t">14:28:17</td><td class="t">08-06 04:28:17Z</td><td><code>coordination#26</code> -- PHONE_SPLIT correction</td></tr>
+  <tr><td class="t">14:30:58</td><td class="t">08-06 04:30:58Z</td><td>Issue #1142 -- Chinese localisation goal</td></tr>
+  <tr><td class="t">14:33:17</td><td class="t">08-06 04:33:17Z</td><td>PR #1143 opened -- retire the debug event-trigger</td></tr>
+  <tr><td class="t">14:38:10</td><td class="t">08-06 04:38:10Z</td><td>PR #1144 opened -- 201 issues bucketed</td></tr>
+  <tr><td class="t">15:03:37</td><td class="t">08-06 05:03:37Z</td><td><code>coordination#27</code> -- coordination's own inbox</td></tr>
+  <tr><td class="t">15:43:43</td><td class="t">08-06 05:43:43Z</td><td><code>coordination#28</code> -- <b>pdoom1 seat check-in (first ever)</b></td></tr>
+  <tr><td class="t">15:51:49</td><td class="t">(local)</td><td>Commit <code>1a6797ff</code> authored -- phase-critical state audit</td></tr>
+  <tr><td class="t">15:53:03</td><td class="t">08-06 05:53:03Z</td><td>PR #1145 opened -- the CLASS behind #1134</td></tr>
+  <tr><td class="t">16:07:26</td><td class="t">08-06 06:07:26Z</td><td><code>coordination#29</code> -- certes seat check-in</td></tr>
+  <tr class="key"><td class="t">16:17:01</td><td class="t">(local)</td><td><b><code>git reset</code> in the MAIN checkout, moving to <code>HEAD~1</code>.</b> Mode not recorded by the reflog -- see section 6.4.</td></tr>
+  <tr><td class="t">16:31:07-:18</td><td class="t">08-06 06:31:07-:18Z</td><td><code>coordination#18</code>, <code>#22</code>, <code>#24</code> closed in an 11-second sweep</td></tr>
+  <tr><td class="t">16:33:56</td><td class="t">08-06 06:33:56Z</td><td><code>coordination#15</code> closed</td></tr>
+  <tr><td class="t">16:59:39</td><td class="t">08-06 06:59:39Z</td><td>PR #1146 opened -- track picker in the pause menu</td></tr>
+  <tr><td class="t">17:11:20-:29</td><td class="t">08-06 07:11:20-:29Z</td><td>Issues #1147 -- #1152 filed: six issues in nine seconds, output of the closeable-issue mining pass</td></tr>
+  <tr><td class="t">17:13:44</td><td class="t">08-06 07:13:44Z</td><td>PR #1153 opened -- mine the ~50 closeable issues (32 yielded nothing)</td></tr>
+  <tr><td class="t">17:15:18</td><td class="t">08-06 07:15:18Z</td><td>PR #1154 opened -- the slot picker</td></tr>
+  <tr class="key"><td class="t">17:28:02</td><td class="t">08-06 07:28:02Z</td><td><b><code>coordination#30</code> -- AGENDA, tri-repo content workshop</b></td></tr>
+  <tr><td class="t">17:51:32</td><td class="t">08-06 07:51:32Z</td><td><code>pdoom1-website</code> posts contact + initial positions</td></tr>
+  <tr class="key"><td class="t">18:27:17</td><td class="t">08-06 08:27:17Z</td><td><b><code>coordination#31</code> -- WORKSHOP PROTOCOL.</b> Three repo votes; Pip casts 0-2 and can be outvoted.</td></tr>
+  <tr class="key"><td class="t">18:32:19</td><td class="t">08-06 08:32:19Z</td><td><b>PHASE 2 SEALED under a published hash</b></td></tr>
+  <tr><td class="t">18:32:35</td><td class="t">08-06 08:32:35Z</td><td>PR #1155 opened -- ESC menu geometry</td></tr>
+  <tr><td class="t">18:32:40</td><td class="t">08-06 08:32:40Z</td><td>Website addendum: the rarity suggest-link is one of five, two worse</td></tr>
+  <tr><td class="t">18:49:58 / 18:50:06</td><td class="t">08-06 08:49:58Z / 08:50:06Z</td><td><code>coordination#25</code> and <code>#28</code> closed</td></tr>
+  <tr class="key"><td class="t">19:21:49</td><td class="t">08-06 09:21:49Z</td><td><b>Phase 1 position -- <code>pdoom-data</code></b> (first ballot-bearing seat to post)</td></tr>
+  <tr class="key"><td class="t">19:23:15</td><td class="t">08-06 09:23:15Z</td><td><b>Phase 1 positions -- <code>pdoom1-website</code></b></td></tr>
+  <tr class="key"><td class="t">19:24</td><td class="t">08-06 09:24Z</td><td><b>Pip devolves voice and self-expression to the pdoom1 seat.</b> Recorded to the minute at his request. <i>Prose source only (<code>docs/SEAT_VOICE.md</code>); no API or git record exists for the utterance itself.</i></td></tr>
+  <tr><td class="t">19:51:45 -- 19:53:46</td><td class="t">08-06 09:51:45-09:53:46Z</td><td><b>Seven PRs merged in 2 min 01 s</b>: #1143, #1145, #1139, #1153, #1120, #1146, #1137</td></tr>
+  <tr><td class="t">19:53:02</td><td class="t">08-06 09:53:02Z</td><td>PR #1156 opened -- workshop prep as chair</td></tr>
+  <tr class="key"><td class="t">19:53:18</td><td class="t">08-06 09:53:18Z</td><td><b>Phase 1 positions -- <code>pdoom1</code> (chair)</b>, last of the three</td></tr>
+  <tr><td class="t">19:53:20</td><td class="t">08-06 09:53:20Z</td><td>Chair evidence comment on <code>#30</code>, four agenda corrections</td></tr>
+  <tr class="key"><td class="t">20:02:49</td><td class="t">08-06 10:02:49Z</td><td><b>PHASE 2 -- THE SEAL IS OPEN</b></td></tr>
+  <tr><td class="t">20:04:16</td><td class="t">08-06 10:04:16Z</td><td><code>pdoom-data</code> addendum, self-declared "still Phase 1 ... before the seal opens" -- posted <b>88 s after</b> the seal opened. Contested; section 6.2.</td></tr>
+  <tr class="key"><td class="t">20:06:08</td><td class="t">08-06 10:06:08Z</td><td><b>PHASE 3 opens -- respond, then vote</b></td></tr>
+  <tr><td class="t">20:07:53</td><td class="t">08-06 10:07:53Z</td><td>Website corrects its own Phase 1 number; the finding changes A1's cost sheet</td></tr>
+  <tr><td class="t">20:12:12</td><td class="t">08-06 10:12:12Z</td><td>Chair: three procedural notes, none need Pip (the conversion anchor)</td></tr>
+  <tr><td class="t">20:12:14</td><td class="t">08-06 10:12:14Z</td><td><code>coordination#32</code> -- asset provenance is UNMET, not at-risk</td></tr>
+  <tr class="key"><td class="t">20:14:22</td><td class="t">08-06 10:14:22Z</td><td><b>Phase 3 amended by Pip</b> -- two things, the second matters more</td></tr>
+  <tr><td class="t">20:23:13</td><td class="t">08-06 10:23:13Z</td><td>PR #1155 merged -&gt; <code>9358c120</code></td></tr>
+  <tr class="key"><td class="t">20:24:42</td><td class="t">08-06 10:24:42Z</td><td><b>BALLOT -- <code>pdoom-data</code></b> (self-correction first)</td></tr>
+  <tr><td class="t">20:55:12</td><td class="t">08-06 10:55:12Z</td><td><code>pdoom-data</code> meta report -- and where the process was not worth it</td></tr>
+  <tr class="key"><td class="t">20:55:41</td><td class="t">08-06 10:55:41Z</td><td><b>BALLOT -- <code>pdoom1</code>.</b> The comment that adopts the headline rule this document is written under.</td></tr>
+  <tr class="key"><td class="t">20:56:24</td><td class="t">08-06 10:56:24Z</td><td><b>BALLOT -- <code>pdoom1-website</code></b> (last). All three inside 31 min 42 s.</td></tr>
+  <tr><td class="t">21:33:21</td><td class="t">08-06 11:33:21Z</td><td>The hash hole is closed, and pdoom1 was right to name it</td></tr>
+  <tr><td class="t">21:37:21</td><td class="t">08-06 11:37:21Z</td><td>PR #1144 merged -&gt; <code>658963d7</code> (6 h 59 min open)</td></tr>
+  <tr><td class="t">21:40:35</td><td class="t">08-06 11:40:35Z</td><td><code>coordination#33</code> -- open offer: pdoom1 runs a funded art batch tomorrow</td></tr>
+  <tr><td class="t">21:53:28</td><td class="t">08-06 11:53:28Z</td><td><code>pdoom-data</code> DECLINES the art offer</td></tr>
+  <tr><td class="t">21:56:53</td><td class="t">08-06 11:56:53Z</td><td>Website supplies the Manifund source text -- obligation narrower, deadline different</td></tr>
+  <tr><td class="t">21:57:07</td><td class="t">08-06 11:57:07Z</td><td><code>pdoom1-website</code> accepts the art offer with a condition</td></tr>
+  <tr><td class="t">21:57:52</td><td class="t">08-06 11:57:52Z</td><td>PR #1157 opened -- provenance scoping</td></tr>
+  <tr><td class="t">21:57:55</td><td class="t">08-06 11:57:55Z</td><td><code>coordination#34</code> -- measurement must be built before the question</td></tr>
+  <tr><td class="t">21:58:43</td><td class="t">08-06 11:58:43Z</td><td>pdoom1 posts the scoping pass, 7 days ahead of the return date</td></tr>
+  <tr><td class="t">22:07:35</td><td class="t">08-06 12:07:35Z</td><td>PR #1154 merged -&gt; <code>624433cb</code> -- the slot picker exists</td></tr>
+  <tr><td class="t">22:12:08</td><td class="t">08-06 12:12:08Z</td><td>Correction on the 8 photo assets -- the earlier flag was wrong</td></tr>
+  <tr><td class="t">22:14:25</td><td class="t">(local)</td><td>Commit <code>8a7baa57</code> -- the art-night queue: four levels, hard USD ceiling</td></tr>
+  <tr><td class="t">22:15:41</td><td class="t">08-06 12:15:41Z</td><td>PR #1158 opened -- the art run</td></tr>
+  <tr><td class="t">22:20:14</td><td class="t">08-06 12:20:14Z</td><td>PR #1159 opened -- what 151 slot picks reveal</td></tr>
+  <tr><td class="t">22:20:42</td><td class="t">(local)</td><td>Commit <code>c743710b</code> <b>author</b> date -- seat-voice doc. Committer date is 08-07 09:20:00; section 6.1.</td></tr>
+  <tr><td class="t">22:22:34</td><td class="t">08-06 12:22:34Z</td><td>PR #1157 merged -&gt; <code>4bce47d8</code></td></tr>
+  <tr class="key"><td class="t">22:22:40</td><td class="t">(local)</td><td><b><code>git reset</code> in the MAIN checkout, moving to <code>origin/main</code></b>, 6 s after that PR merged</td></tr>
+  <tr><td class="t">22:23:15</td><td class="t">08-06 12:23:15Z</td><td>PR #1159 merged -&gt; <code>e39a6013</code> (3 min 01 s open -- the shortest of the two days)</td></tr>
+  <tr><td class="t">22:23:50</td><td class="t">08-06 12:23:50Z</td><td>PR #1160 opened -- the claim audit</td></tr>
+  <tr class="key"><td class="t">22:24:49</td><td class="t">08-06 12:24:49Z</td><td><b>The headline rule applied backwards to the day it was adopted</b> -- 68 headline claims examined: 49 confirmed, <b>6 wrong</b>, 7 uncheckable, 6 stale</td></tr>
+  <tr class="key"><td class="t">22:26:32</td><td class="t">(local)</td><td><b><code>git reset</code> in the MAIN checkout, moving to <code>8a7baa57</code></b> -- backwards off <code>origin/main</code> onto the art-night queue commit</td></tr>
+  <tr class="key"><td class="t">22:31:56</td><td class="t">08-06 12:31:56Z</td><td><b>THE MINUTE -- tri-repo content workshop.</b> Closes 5 h 04 min after <code>#30</code> was filed.</td></tr>
+  <tr class="key"><td class="t">22:42:30.654</td><td class="t">08-06 12:42:30.654Z</td><td><b>L0 -- first image. The money starts.</b></td></tr>
+  <tr><td class="t">22:48:11</td><td class="t">08-06 12:48:11Z</td><td><code>pdoom-data</code> REVERSES its decline -- "the reasoning was wrong, and here is where"</td></tr>
+  <tr><td class="t">22:48:18.847</td><td class="t">08-06 12:48:18.847Z</td><td>L0 -- last image (72 images, USD 2.448, 5.8 min)</td></tr>
+  <tr><td class="t">22:49:43.384</td><td class="t">08-06 12:49:43.384Z</td><td>L1 -- first image</td></tr>
+  <tr class="key"><td class="t">23:30:19.769</td><td class="t">08-06 13:30:19.769Z</td><td><b>L1 -- last image.</b> L0+L1 = 652 images, USD 31.448, 47 min 49 s end-to-end.</td></tr>
+  <tr><td class="t">23:30</td><td class="t">(mtime)</td><td><code>art_generated/art_night_2026-08-07/l1_run.log</code> written</td></tr>
+</table>
+
+<h2 class="pb">Master timeline -- Friday 2026-08-07</h2>
+
+<table>
+  <tr><th class="t">AEST</th><th class="t">UTC</th><th>What</th></tr>
+  <tr class="gap"><td class="t">--</td><td class="t">--</td><td>Quiet: 8 h 00 min between the last L1 image and the next recorded event</td></tr>
+  <tr><td class="t">07:30:10</td><td class="t">08-06 21:30:10Z</td><td>PR #1161 opened -- a credits screen the cat people can reach</td></tr>
+  <tr><td class="t">08:20:07</td><td class="t">08-06 22:20:07Z</td><td>pdoom1 posts new evidence on <code>coordination#32</code></td></tr>
+  <tr><td class="t">08:20:08</td><td class="t">08-06 22:20:08Z</td><td>pdoom1 <b>withdraws part of its own art advice</b> on <code>#33</code>, one second later</td></tr>
+  <tr class="key"><td class="t">08:50:39</td><td class="t">08-06 22:50:39Z</td><td><b>Website: the obligation is not prospective -- nine unattributed images are live on pdoom1.com right now</b></td></tr>
+  <tr><td class="t">08:50:53</td><td class="t">08-06 22:50:53Z</td><td>Website declines the art run</td></tr>
+  <tr><td class="t">08:55:37/:41/:44</td><td class="t">08-06 22:55:37-:44Z</td><td>PRs #1160, #1161, #1156 merged in 7 s. #1156 had been open <b>13 h 02 min</b>.</td></tr>
+  <tr><td class="t">08:55:41</td><td class="t">08-06 22:55:41Z</td><td><code>pdoom-data</code>: the 96.3% has a durability hole, 161 files wide</td></tr>
+  <tr><td class="t">08:58:56</td><td class="t">08-06 22:58:56Z</td><td><code>pdoom-data</code> puts one question to pdoom1 before <code>#33</code> closes</td></tr>
+  <tr><td class="t">09:20:00</td><td class="t">(local)</td><td>Commit <code>c743710b</code> <b>committer</b> date -- 10 h 59 min 18 s after its author date</td></tr>
+  <tr class="key"><td class="t">09:22:39</td><td class="t">(local)</td><td><b><code>git reset</code> in the MAIN checkout, moving to <code>origin/main</code>.</b> <code>docs/SEAT_VOICE.md</code> and <code>docs/CLAIM_AUDIT_2026-08-06.md</code> both carry mtime 09:22:38 -- the reset rewrote them.</td></tr>
+  <tr><td class="t">11:45:46</td><td class="t">08-07 01:45:46Z</td><td><code>coordination</code> seat (G, <code>Bort</code>) answers pdoom-data's question <b>by measurement</b>, because it holds the file</td></tr>
+  <tr><td class="t">11:50:34</td><td class="t">08-07 01:50:34Z</td><td>Website: the nine live files are the <b>rejected</b> variants</td></tr>
+  <tr><td class="t">13:34:15</td><td class="t">08-07 03:34:15Z</td><td><code>coordination</code> seat corrects a time it had repeated without checking it</td></tr>
+  <tr class="key"><td class="t">13:36:20</td><td class="t">08-07 03:36:20Z</td><td><b>PR #1162 opened -- the gallery keyboard has been dead.</b> First machine record of the defect.</td></tr>
+  <tr><td class="t">14:09:41</td><td class="t">--</td><td>Pip's art-lane rulings <b>captured by voice</b> (capture id <code>2026-08-07_140941__3e7f0886</code>). <i>Local capture; the id encodes the time, the file is not in this repo.</i></td></tr>
+  <tr><td class="t">14:45:24</td><td class="t">08-07 04:45:24Z</td><td><code>coordination#35</code> -- Pip is out this evening through Rektango; last synchronous window</td></tr>
+  <tr><td class="t">14:48:44</td><td class="t">08-07 04:48:44Z</td><td>PR #1162 merged -&gt; <code>51ca568c</code> (1 h 12 min open)</td></tr>
+  <tr><td class="t">14:50:56</td><td class="t">08-07 04:50:56Z</td><td><code>coordination#36</code> -- STANDING beacon-internal open questions</td></tr>
+  <tr><td class="t">14:55:08</td><td class="t">08-07 04:55:08Z</td><td><code>coordination#37</code> -- pipfoweraker-dashboard has no seat; its cadence meter measures commits, not publication</td></tr>
+  <tr class="key"><td class="t">15:02:56</td><td class="t">08-07 05:02:56Z</td><td><b>Pip's rulings on the art lane posted</b>, 53 min 15 s after the voice capture</td></tr>
+  <tr><td class="t">15:09:33</td><td class="t">08-07 05:09:33Z</td><td><code>coordination#38</code> -- pdoom-data checks in on tonight's runsheet</td></tr>
+  <tr class="key"><td class="t">16:17:00</td><td class="t">08-07 06:17:00Z</td><td><b>PR #1158 merged -&gt; <code>1795cd12</code>.</b> Open <b>18 h 01 min 19 s</b> -- the longest of the two days.</td></tr>
+  <tr><td class="t">16:18:33</td><td class="t">(mtime)</td><td><code>tools/runsheet/fri-2026-08-07-evening.html</code> written</td></tr>
+  <tr><td class="t">16:38:16</td><td class="t">08-07 06:38:16Z</td><td><code>coordination#38</code> closed (1 h 28 min 43 s)</td></tr>
+  <tr><td class="t">16:44:32</td><td class="t">(mtime)</td><td><code>tools/runsheet/fri-2026-08-07-1645-ladder-decision.html</code> written -- 28 s before the time in its own filename</td></tr>
+  <tr class="key"><td class="t">16:46:34.584</td><td class="t">08-07 06:46:34.584Z</td><td><b>L2 -- first image</b>, 29 min 34 s after the runner merged</td></tr>
+  <tr><td class="t">17:01:42</td><td class="t">(local)</td><td>Commit <code>abd6c7d0</code> -- Doom Cat is contributed by Pip</td></tr>
+  <tr><td class="t">17:01:49</td><td class="t">08-07 07:01:49Z</td><td>Issue #1163 -- two mojibake titles in <code>historical_events.json</code></td></tr>
+  <tr><td class="t">17:11:35.445</td><td class="t">08-07 07:11:35.445Z</td><td>L2 -- last image (306 images, USD 15.30, 25.0 min)</td></tr>
+  <tr><td class="t">17:16:51</td><td class="t">(local)</td><td>Commit <code>5de718a4</code> -- <code>export_picks.py</code>, the picks bridge</td></tr>
+  <tr><td class="t">17:18:05</td><td class="t">08-07 07:18:05Z</td><td>PR #1164 opened -- L2 wave, 306 images</td></tr>
+  <tr class="key"><td class="t">17:24:30</td><td class="t">08-07 07:24:30Z</td><td><b>Issue #1165 -- CHANGELOG.md can announce open issues as shipped; six <code>[Unreleased]</code> headings</b></td></tr>
+  <tr><td class="t">17:36:24</td><td class="t">08-07 07:36:24Z</td><td>PR #1166 opened -- the share set (126 candidates, 6.3% text leak)</td></tr>
+  <tr><td class="t">17:37:24</td><td class="t">08-07 07:37:24Z</td><td>pdoom1 discharges the blocker it raised against itself on <code>#33</code></td></tr>
+  <tr><td class="t">18:02:16.584</td><td class="t">08-07 08:02:16.584Z</td><td>L3 -- first image</td></tr>
+  <tr class="key"><td class="t">18:05:15</td><td class="t">08-07 08:05:15Z</td><td><b>SNAPSHOT.</b> L3 still running: 16 rows, USD 3.20, last at 18:05:13.345. This document is frozen mid-wave; its L3 figures are a floor, not a total.</td></tr>
+</table>
+
+<h2 class="pb">2. Merges and releases</h2>
+
+<p><b>Twenty-one PRs merged inside the window, all by squash-merge</b>, so in all
+twenty-one cases the original commit times are gone. That is not an inference:
+<code>%aI == %cI</code> on every one of these merge commits, which never happens
+on hand-authored work.</p>
+
+<table>
+  <tr><th>PR</th><th class="t">Opened (AEST)</th><th class="t">Merged (AEST)</th><th class="n">Open for</th><th>Commit</th></tr>
+  <tr><td>#1120</td><td class="t">08-04 22:20:51</td><td class="t">08-06 19:52:26</td><td class="n">1 d 21 h 31 m</td><td><code>bc817497</code></td></tr>
+  <tr><td>#1129</td><td class="t">08-06 07:47:27</td><td class="t">08-06 08:51:24</td><td class="n">1 h 03 m</td><td><code>2f40d5df</code></td></tr>
+  <tr><td>#1130</td><td class="t">08-06 07:54:37</td><td class="t">08-06 08:51:21</td><td class="n">0 h 56 m</td><td><code>06682772</code></td></tr>
+  <tr><td>#1133</td><td class="t">08-06 08:27:07</td><td class="t">08-06 08:51:28</td><td class="n">0 h 24 m</td><td><code>a8a858ec</code></td></tr>
+  <tr><td>#1136</td><td class="t">08-06 10:52:42</td><td class="t">08-06 11:08:27</td><td class="n">0 h 15 m</td><td><code>78be0370</code></td></tr>
+  <tr><td>#1137</td><td class="t">08-06 11:08:14</td><td class="t">08-06 19:53:46</td><td class="n">8 h 45 m</td><td><code>8791ba47</code></td></tr>
+  <tr><td>#1139</td><td class="t">08-06 14:04:26</td><td class="t">08-06 19:51:53</td><td class="n">5 h 47 m</td><td><code>cc171002</code></td></tr>
+  <tr><td>#1143</td><td class="t">08-06 14:33:17</td><td class="t">08-06 19:51:46</td><td class="n">5 h 18 m</td><td><code>b53c597e</code></td></tr>
+  <tr><td>#1144</td><td class="t">08-06 14:38:10</td><td class="t">08-06 21:37:21</td><td class="n">6 h 59 m</td><td><code>658963d7</code></td></tr>
+  <tr><td>#1145</td><td class="t">08-06 15:53:03</td><td class="t">08-06 19:51:49</td><td class="n">3 h 58 m</td><td><code>f320077f</code></td></tr>
+  <tr><td>#1146</td><td class="t">08-06 16:59:39</td><td class="t">08-06 19:52:32</td><td class="n">2 h 52 m</td><td><code>5731dd2e</code></td></tr>
+  <tr><td>#1153</td><td class="t">08-06 17:13:44</td><td class="t">08-06 19:51:56</td><td class="n">2 h 38 m</td><td><code>7b49524a</code></td></tr>
+  <tr><td>#1154</td><td class="t">08-06 17:15:18</td><td class="t">08-06 22:07:35</td><td class="n">4 h 52 m</td><td><code>624433cb</code></td></tr>
+  <tr><td>#1155</td><td class="t">08-06 18:32:35</td><td class="t">08-06 20:23:13</td><td class="n">1 h 50 m</td><td><code>9358c120</code></td></tr>
+  <tr><td>#1156</td><td class="t">08-06 19:53:02</td><td class="t">08-07 08:55:44</td><td class="n">13 h 02 m</td><td><code>bf724e10</code></td></tr>
+  <tr><td>#1157</td><td class="t">08-06 21:57:52</td><td class="t">08-06 22:22:34</td><td class="n">0 h 24 m</td><td><code>4bce47d8</code></td></tr>
+  <tr><td>#1159</td><td class="t">08-06 22:20:14</td><td class="t">08-06 22:23:15</td><td class="n"><b>0 h 03 m</b></td><td><code>e39a6013</code></td></tr>
+  <tr><td>#1160</td><td class="t">08-06 22:23:50</td><td class="t">08-07 08:55:37</td><td class="n">10 h 31 m</td><td><code>703ee39b</code></td></tr>
+  <tr><td>#1161</td><td class="t">08-07 07:30:10</td><td class="t">08-07 08:55:41</td><td class="n">1 h 25 m</td><td><code>553f0b7c</code></td></tr>
+  <tr><td>#1158</td><td class="t">08-06 22:15:41</td><td class="t">08-07 16:17:00</td><td class="n"><b>18 h 01 m</b></td><td><code>1795cd12</code></td></tr>
+  <tr><td>#1162</td><td class="t">08-07 13:36:20</td><td class="t">08-07 14:48:44</td><td class="n">1 h 12 m</td><td><code>51ca568c</code></td></tr>
+</table>
+
+<p><b>Two commits reached main without a PR:</b> <code>c743710b</code> (author
+08-06 22:20:42, committer 08-07 09:20:00 -- the seat-voice doc) and
+<code>abd6c7d0</code> (08-07 17:01:42, Doom Cat contributed by Pip).</p>
+
+<p><b>Releases: none.</b> <code>version.txt</code> reads <code>0.13.2</code>,
+<code>ladder_version.txt</code> reads <code>3</code>, and the newest tag is
+<code>v0.13.2</code> dated <b>2026-07-31 17:48:44 AEST</b> -- seven days before
+this window opens. No tag was created on either day. A v0.14.0 lane was cutting
+concurrently with this chronicle; at the snapshot instant it had produced no tag
+and no version bump on <code>origin/main</code>.</p>
+
+<h2>3. The workshop</h2>
+
+<table>
+  <tr><th class="t">AEST</th><th class="t">UTC</th><th>Phase</th><th>Event</th></tr>
+  <tr><td class="t">17:28:02</td><td class="t">07:28:02Z</td><td>--</td><td><code>#30</code> AGENDA: six items, three need Pip, A1 has deferred three times</td></tr>
+  <tr><td class="t">17:51:32</td><td class="t">07:51:32Z</td><td>pre</td><td><code>pdoom1-website</code> posts contact + initial positions</td></tr>
+  <tr><td class="t">18:27:17</td><td class="t">08:27:17Z</td><td>--</td><td><code>#31</code> PROTOCOL: three repo votes, Pip casts 0-2 and can be outvoted</td></tr>
+  <tr class="key"><td class="t">18:32:19</td><td class="t">08:32:19Z</td><td><b>seal</b></td><td><b>Phase 2 sealed under a published hash</b></td></tr>
+  <tr><td class="t">18:32:40</td><td class="t">08:32:40Z</td><td>pre</td><td>Website addendum: the rarity suggest-link is one of five, two worse</td></tr>
+  <tr><td class="t">19:21:49</td><td class="t">09:21:49Z</td><td><b>1</b></td><td><code>pdoom-data</code> -- explicitly "independent; not coordinated"</td></tr>
+  <tr><td class="t">19:23:15</td><td class="t">09:23:15Z</td><td><b>1</b></td><td><code>pdoom1-website</code></td></tr>
+  <tr><td class="t">19:53:18</td><td class="t">09:53:18Z</td><td><b>1</b></td><td><code>pdoom1</code> (chair) -- last in, 31 min 29 s after the first</td></tr>
+  <tr><td class="t">19:53:20</td><td class="t">09:53:20Z</td><td>1</td><td>Chair evidence comment on <code>#30</code>, four agenda corrections</td></tr>
+  <tr class="key"><td class="t">20:02:49</td><td class="t">10:02:49Z</td><td><b>2</b></td><td><b>THE SEAL IS OPEN.</b> 1 h 30 min 30 s after sealing.</td></tr>
+  <tr><td class="t">20:04:16</td><td class="t">10:04:16Z</td><td>1?</td><td><code>pdoom-data</code> addendum claiming to be pre-seal -- <b>88 s after</b> the seal opened. Section 6.2.</td></tr>
+  <tr class="key"><td class="t">20:06:08</td><td class="t">10:06:08Z</td><td><b>3</b></td><td><b>Phase 3 opens: respond, then vote</b></td></tr>
+  <tr><td class="t">20:07:53</td><td class="t">10:07:53Z</td><td>3</td><td>Website corrects its own Phase 1 number; the finding changes A1's cost sheet</td></tr>
+  <tr><td class="t">20:12:12</td><td class="t">10:12:12Z</td><td>3</td><td>Chair: three procedural notes, none need Pip</td></tr>
+  <tr class="key"><td class="t">20:14:22</td><td class="t">10:14:22Z</td><td>3</td><td><b>Pip amends Phase 3</b> -- two things, the second matters more</td></tr>
+  <tr class="key"><td class="t">20:24:42</td><td class="t">10:24:42Z</td><td><b>ballot</b></td><td><code>pdoom-data</code> votes (self-correction first)</td></tr>
+  <tr><td class="t">20:55:12</td><td class="t">10:55:12Z</td><td>3</td><td><code>pdoom-data</code> meta report -- and where the process was not worth it</td></tr>
+  <tr class="key"><td class="t">20:55:41</td><td class="t">10:55:41Z</td><td><b>ballot</b></td><td><code>pdoom1</code> votes; <b>the headline rule is adopted here</b></td></tr>
+  <tr class="key"><td class="t">20:56:24</td><td class="t">10:56:24Z</td><td><b>ballot</b></td><td><code>pdoom1-website</code> votes</td></tr>
+  <tr><td class="t">21:33:21</td><td class="t">11:33:21Z</td><td>post</td><td>The hash hole is closed; pdoom1 was right to name it</td></tr>
+  <tr><td class="t">22:24:49</td><td class="t">12:24:49Z</td><td>post</td><td>The headline rule applied backwards to its own day of adoption</td></tr>
+  <tr class="key"><td class="t">22:31:56</td><td class="t">12:31:56Z</td><td><b>minute</b></td><td><b>The recorder's minute</b></td></tr>
+</table>
+
+<p><b>Durations.</b> Seal-to-open <b>1 h 30 min 30 s</b>. First Phase-1 post to
+last <b>31 min 29 s</b>. First ballot to last <b>31 min 42 s</b>. Agenda filed to
+minute <b>5 h 03 min 54 s</b>.</p>
+
+<h2 class="pb">4. Money</h2>
+
+<p>Source: <code>art_generated/art_night_2026-08-07/ledger.jsonl</code>, one JSON
+line per image, field <code>recorded_at_utc</code>, snapshotted at 18:05:15 AEST
+because the L3 wave was still appending. <b>974 rows at the snapshot, all
+<code>status: "ok"</code>, all <code>attempt: 1</code></b> -- zero retries, zero
+failures across the whole run.</p>
+
+<p>Costs are <b>tariff</b> dollars (published price x count), not billed truth.
+The run log says so itself: "Tariff dollars are the PUBLISHED price, not billed
+truth. Reconcile against the OpenAI billing dashboard before quoting a spend."
+No reconciliation has been done, so every USD figure here is a model of the
+spend, not the spend.</p>
+
+<table>
+  <tr><th>Wave</th><th class="n">Images</th><th class="n">USD</th><th class="t">First (AEST)</th><th class="t">Last (AEST)</th><th class="n">Wall clock</th><th class="n">Rate</th></tr>
+  <tr><td>L0</td><td class="n">72</td><td class="n">2.448</td><td class="t">08-06 22:42:30.654</td><td class="t">08-06 22:48:18.847</td><td class="n">5 min 48 s</td><td class="n">12.4/min</td></tr>
+  <tr><td>L1</td><td class="n">580</td><td class="n">29.000</td><td class="t">08-06 22:49:43.384</td><td class="t">08-06 23:30:19.769</td><td class="n">40 min 36 s</td><td class="n">14.3/min</td></tr>
+  <tr><td>L2</td><td class="n">306</td><td class="n">15.300</td><td class="t">08-07 16:46:34.584</td><td class="t">08-07 17:11:35.445</td><td class="n">25 min 01 s</td><td class="n">12.2/min</td></tr>
+  <tr><td>L3 <i>(open)</i></td><td class="n">16</td><td class="n">3.200</td><td class="t">08-07 18:02:16.584</td><td class="t"><i>18:05:13.345 (not final)</i></td><td class="n">2 min 57 s so far</td><td class="n">5.4/min</td></tr>
+  <tr class="key"><td><b>Total</b></td><td class="n"><b>974</b></td><td class="n"><b>49.948</b></td><td class="t">08-06 22:42:30.654</td><td class="t">--</td><td class="n">--</td><td class="n">--</td></tr>
+</table>
+
+<p><b>L0 + L1 = 652 images, USD 31.448.</b> That is the figure PR #1158's title
+rounds to "USD 31.45"; the ledger supports the title.</p>
+
+<table>
+  <tr><th>Block</th><th class="n">Images</th><th class="n">USD</th><th class="t">First (AEST)</th><th class="t">Last (AEST)</th><th class="n">Wall clock</th></tr>
+  <tr><td><code>l0_sheets</code></td><td class="n">18</td><td class="n">0.612</td><td class="t">22:42:30.654</td><td class="t">22:43:41.683</td><td class="n">1 min 11 s</td></tr>
+  <tr><td><code>l0_anchors</code></td><td class="n">54</td><td class="n">1.836</td><td class="t">22:43:49.156</td><td class="t">22:48:18.847</td><td class="n">4 min 30 s</td></tr>
+  <tr><td><code>l1_grid</code></td><td class="n">220</td><td class="n">11.000</td><td class="t">22:49:43.384</td><td class="t">23:04:49.460</td><td class="n">15 min 06 s</td></tr>
+  <tr><td><code>l1_family</code></td><td class="n">264</td><td class="n">13.200</td><td class="t">23:04:52.878</td><td class="t">23:23:21.297</td><td class="n">18 min 28 s</td></tr>
+  <tr><td><code>l1_palette</code></td><td class="n">90</td><td class="n">4.500</td><td class="t">23:23:20.215</td><td class="t">23:29:35.999</td><td class="n">6 min 16 s</td></tr>
+  <tr><td><code>l1_probe</code></td><td class="n">6</td><td class="n">0.300</td><td class="t">23:30:09.733</td><td class="t">23:30:19.769</td><td class="n"><b>10 s</b></td></tr>
+</table>
+
+<p><code>l1_palette</code> starts 1.08 s <b>before</b> <code>l1_family</code>
+finishes -- the runner is concurrent, so block windows overlap and block
+durations are not meant to sum to wave duration.</p>
+
+<p><b>Idle between waves.</b> L1 ends 08-06 23:30:19.769; L2 begins 08-07
+16:46:34.584. <b>17 h 16 min 14.8 s</b> with no image generated -- the overnight
+gap plus the working day. What L2 waited on was picks, not capacity: PR #1158's
+title says "L2/L3 waiting on picks", and the picks bridge
+<code>export_picks.py</code> was not committed until 17:16:51, thirty minutes
+after L2 fired (section 6.3).</p>
+
+<p><b>Model and parameter split.</b> 968 rows <code>gpt-image-1.5</code>, 6 rows
+<code>gpt-image-2</code> (the entire <code>l1_probe</code> block). 886 rows at
+<code>1536x1024</code>, 72 at <code>1024x1024</code>, 16 at the L3 sizes. Every
+row records <code>quality: "medium"</code> -- which matters, because "quality was
+never passed" is one of the defects in section 5, and this is the first run in
+the repo's history where the field in the record is a field that was actually
+sent.</p>
+
+<h2 class="pb">5. Findings -- introduced versus discovered</h2>
+
+<p>The gap between the commit that introduced a defect and the first machine
+record that names it. <b>"Discovered" is a ceiling, not the observation</b>: a
+human noticing something and typing it up are minutes to hours apart, and only
+the typing leaves a record. "Introduced" uses git author date, the closest proxy
+for when a line was written.</p>
+
+<table>
+  <tr><th>Defect</th><th class="t">Introduced</th><th>Introducing commit</th><th class="t">Discovered</th><th>Record</th><th class="n">Gap</th></tr>
+  <tr class="key">
+    <td><b>Six <code>[Unreleased]</code> CHANGELOG headings</b></td>
+    <td class="t">2025-08-02 22:06:56</td>
+    <td><code>f70c2990</code> "comprehensive versioning and changelog system" (line 1174)</td>
+    <td class="t">2026-08-07 17:24:30</td><td>issue #1165</td>
+    <td class="n"><b>369 d 19 h 17 m</b></td></tr>
+  <tr>
+    <td><b><code>quality</code> never passed to the Images API</b></td>
+    <td class="t">2025-11-18 20:50:24</td>
+    <td><code>41bc8306</code> -- <code>generate_images.py</code> created with <code>images.generate(model=, prompt=, size=)</code> and nothing else</td>
+    <td class="t">2026-07-18 08:22:08</td>
+    <td><code>86eb8a86</code> writes the <code>quality_note</code> into <code>icons_v1.json</code>: "passes only model/prompt/size"</td>
+    <td class="n"><b>241 d 12 h 32 m</b></td></tr>
+  <tr>
+    <td><b>F3 event injection permalocks the run</b></td>
+    <td class="t">2025-12-24 15:49:05</td>
+    <td><code>0143fa10</code> "dev tools enhancements (#401)" -- adds <code>GameManager.state.pending_events.append(event)</code> with no phase guard</td>
+    <td class="t">2026-08-06 08:29:59</td><td>issue #1134</td>
+    <td class="n">224 d 17 h 41 m</td></tr>
+  <tr>
+    <td><b><code>take_loan</code> defined twice</b></td>
+    <td class="t">2026-07-13 09:24:12</td>
+    <td><code>8459f6e0</code> -- writes <code>"id": "take_loan"</code> into <b>both</b> <code>actions/financing.json</code> and <code>actions/fundraising.json</code> in one commit</td>
+    <td class="t">2026-08-06 13:54:35</td>
+    <td>issue #1138 (PR #1139's checker went red 10 min later)</td>
+    <td class="n">24 d 04 h 30 m</td></tr>
+  <tr>
+    <td><b>Gallery keyboard dead</b></td>
+    <td class="t">2026-08-04 11:59:24<br><span class="small">(committer 12:28:09)</span></td>
+    <td><code>f239af06</code> -- a literal newline inside a JS string in the batch-confirm text, a <code>SyntaxError</code> that kills the whole page script</td>
+    <td class="t">2026-08-07 13:36:20</td><td>PR #1162</td>
+    <td class="n">3 d 01 h 36 m</td></tr>
+  <tr>
+    <td><b><code>--picks</code> shape mismatch</b></td>
+    <td class="t">2026-08-07 16:16:59<br><span class="small">(squash time; true authoring time destroyed)</span></td>
+    <td><code>1795cd12</code> -- <code>load_picks</code> expects <code>{id: [tag,...]}</code>; <code>review_state.json</code> stores <code>{id: {"verdict":..., "tags":[], ...}}</code>, so iteration yields field names and every entry is silently non-favourable</td>
+    <td class="t">2026-08-07 17:16:51<br><span class="small">(the abort itself has no timestamp)</span></td>
+    <td><code>5de718a4</code> <code>export_picks.py</code> docstring</td>
+    <td class="n">&lt;= 0 h 59 m</td></tr>
+</table>
+
+<p><b>The longest gap is 369 d 19 h 17 m</b>, for the <code>[Unreleased]</code>
+headings, and it needs a caveat that keeps it honest: an <code>[Unreleased]</code>
+heading is not wrong when it is written. It becomes wrong at the next release cut
+that fails to rename it. <b>I did not date that moment</b> -- doing so needs a
+per-heading determination of which release should have absorbed it, which the
+issue itself does not make. So 369 d is the age of the oldest offending line, not
+the age of the defect. With that caveat applied, the longest <i>unambiguous</i>
+introduction-to-discovery gap is <b>the <code>quality</code> parameter at
+241 d 12 h 32 m</b>: that call was wrong the instant it was written.</p>
+
+<p><b>Two of these fail the same way.</b> The <code>--picks</code> mismatch and
+the <code>quality</code> omission both fail by shrugging rather than crashing --
+<code>load_picks</code> returns an empty favourable set,
+<code>images.generate</code> accepts the call and returns a default-quality
+image. Neither raised anything. The gallery newline is the opposite shape: a hard
+<code>SyntaxError</code> that killed every key binding on the page, and it still
+survived three days, because nobody opened the page and no test could have caught
+it -- the tool ships a scripted DOM harness, which by construction cannot detect
+"the keyboard does not work".</p>
+
+<p><b>Not in the table, but one subtraction away.</b> The <code>quality</code>
+defect was fixed at 2026-08-07 16:16:59 (<code>1795cd12</code>, which adds
+<code>if quality: kwargs["quality"] = quality</code>): introduction-to-repair
+<b>627 d 19 h 26 m</b>, discovery-to-repair <b>385 d 07 h 55 m</b>. It was
+written down in a manifest note in July 2026 and stayed unfixed for a further
+year. That is arguably the more damning number.</p>
+
+<h2 class="pb">6. Where sources disagree, and what is unknown</h2>
+
+<h3>6.1 <code>c743710b</code> -- author and committer dates differ by 11 hours</h3>
+<table>
+  <tr><th><code>git log --format=%aI c743710b</code></th><td>2026-08-06 22:20:42 +1000</td></tr>
+  <tr><th><code>git log --format=%cI c743710b</code></th><td>2026-08-07 09:20:00 +1000</td></tr>
+</table>
+<p><b>Trusted: the committer date, 08-07 09:20:00</b>, for "when this reached
+main". The reflog independently shows <code>reset: moving to origin/main</code>
+landing on <code>c743710b</code> at <b>08-07 09:22:39</b>, 2 min 39 s later, and
+<code>docs/SEAT_VOICE.md</code> carries mtime <b>08-07 09:22:38</b>. Three
+sources agree the file existed on disk in its final form on the morning of the
+7th. The author date is trusted for "when the text was written" -- 08-06 22:20:42
+sits between PR #1158 opening (22:15:41) and PR #1159 opening (22:20:14), exactly
+the window in which the seat was writing docs.</p>
+
+<h3>6.2 <code>pdoom-data</code>'s "still Phase 1" addendum</h3>
+<table>
+  <tr><th>The comment's own text</th><td>"Posted after reading the two sister positions and <b>before</b> the seal opens"</td></tr>
+  <tr><th>The comment's <code>createdAt</code></th><td>2026-08-06T10:04:16Z -- <b>88 seconds after</b> the seal-open comment at 10:02:49Z</td></tr>
+</table>
+<p><b>Trusted: <code>createdAt</code>.</b> Prose about one's own timing is exactly
+the class of claim the headline rule exists to distrust. The charitable
+mechanical reading is that the comment was composed before the seal opened and
+posted after, which the hash it cites (<code>2d0bc4e0...</code>) would support if
+the hash were checked -- <b>it was not checked here</b>, so the discrepancy stands
+recorded and unresolved rather than explained away.</p>
+
+<h3>6.3 The <code>--picks</code> fix predates nothing it can predate</h3>
+<p>The L2 wave's first image is at <b>16:46:34</b>. <code>export_picks.py</code>,
+whose docstring documents the <code>--picks</code> abort, is committed at
+<b>17:16:51</b> -- thirty minutes <i>after</i> the wave it unblocked had already
+started. Both are firm timestamps. The resolution is that the script existed
+uncommitted on disk while the wave ran; the commit records when it was saved to
+git, not when it was written. <b>The abort itself has no timestamp anywhere</b>,
+so the gap in section 5 is an upper bound.</p>
+
+<h3>6.4 The <code>git reset</code> claim</h3>
+<p>The brief for this chronicle states that <code>git reset --hard</code>
+destroyed in-flight work twice in 24 hours. <b>That is not reducible to a command
+I can run.</b> What the reflog does show, in the main checkout, is <b>four
+<code>git reset</code> operations</b> inside the window:</p>
+<table>
+  <tr><th class="t">AEST</th><th>Moving to</th><th>Landed on</th></tr>
+  <tr><td class="t">08-06 16:17:01</td><td><code>HEAD~1</code></td><td><code>1a6797ff</code></td></tr>
+  <tr><td class="t">08-06 22:22:40</td><td><code>origin/main</code></td><td><code>4bce47d8</code></td></tr>
+  <tr><td class="t">08-06 22:26:32</td><td><code>8a7baa57</code></td><td><code>8a7baa57</code></td></tr>
+  <tr><td class="t">08-07 09:22:39</td><td><code>origin/main</code></td><td><code>c743710b</code></td></tr>
+</table>
+<p><b>The reflog does not record the reset mode.</b> <code>--hard</code>,
+<code>--mixed</code> and <code>--soft</code> all write the same line. So: four
+resets happened, at those four times; whether any was <code>--hard</code> and
+whether any destroyed work is <b>unknown from machine evidence</b>, and this
+document does not assert it. The mtime evidence at 09:22:38 shows that reset did
+rewrite tracked files in the working tree, which is consistent with
+<code>--hard</code> but does not prove it -- a checkout would do the same.</p>
+
+<h3>6.5 Cells marked unknown</h3>
+<p><b>Nine.</b> Enumerated so the count is checkable:</p>
+<ol>
+  <li>The exact instant Pip spoke the voice grant (19:24 AEST is minute-precision, prose-sourced, no machine record).</li>
+  <li>The exact instant the F3 permalock was <i>observed</i> -- issue #1134's <code>createdAt</code> is a ceiling.</li>
+  <li>The same, for every other defect in section 5: the discovery column is uniformly a ceiling, not the observation.</li>
+  <li>The instant <code>run_art_night.py --picks</code> aborted.</li>
+  <li>The true authoring time of every line inside all 21 squash-merged PRs.</li>
+  <li>The mode of all four <code>git reset</code> operations.</li>
+  <li>Whether any of those resets destroyed uncommitted work, and how much.</li>
+  <li>The L3 wave's final image count, duration and cost (the wave was open at snapshot).</li>
+  <li>The release cut at which each <code>[Unreleased]</code> heading became wrong.</li>
+</ol>
+<p>Additionally, every USD figure in section 4 is <b>tariff, not billed</b> -- a
+known approximation, flagged in the run log itself, not reconciled.</p>
+
+<h3>6.6 The seat's own error rate, for the record</h3>
+<p><code>docs/CLAIM_AUDIT_2026-08-06.md</code> examined 68 headline claims this
+seat published on 2026-08-06 and found <b>49 confirmed, 6 wrong, 7 uncheckable,
+6 stale</b>. Six wrong out of 68 is <b>8.8%</b>. That is the base rate a reader
+should apply to this document, which was written by the same seat under the same
+rule, and which has not itself been audited.</p>
+
+<h2 class="pb">7. Method</h2>
+
+<p>Every table above was produced by these commands, run from the repo root in a
+clean worktree at <code>origin/main</code> <code>abd6c7d0</code>. Anything not
+listed here is not in the document.</p>
+
+<pre># commits and tags
+git fetch origin main
+git log origin/main --since=2026-08-05T14:00:00Z --format='%H|%aI|%cI|%s'
+git for-each-ref --sort=-creatordate \
+    --format='%(refname:short)|%(creatordate:iso-strict)' refs/tags
+
+# merges -- real merge times, not commit times
+GIT_TERMINAL_PROMPT=0 gh pr list --repo PipFoweraker/pdoom1 --state all --limit 30 \
+  --json number,title,createdAt,mergedAt,mergeCommit,state
+
+# issues and every comment, both repos
+GIT_TERMINAL_PROMPT=0 gh issue list --repo PipFoweraker/pdoom1 --state all \
+  --limit 200 --json number,title,createdAt,closedAt,state
+GIT_TERMINAL_PROMPT=0 gh issue list --repo PipFoweraker/coordination --state all \
+  --limit 60 --json number,title,createdAt,closedAt,state
+GIT_TERMINAL_PROMPT=0 gh issue view 31 --repo PipFoweraker/coordination \
+  --json comments --jq '.comments[] | [.createdAt, .author.login] | @tsv'
+#   (repeated for #30, #32, #33)
+
+# money -- snapshot FIRST, the L3 wave was still appending
+cp art_generated/art_night_2026-08-07/ledger.jsonl &lt;scratch&gt;/ledger_snapshot.jsonl</pre>
+
+<pre>import json, collections, datetime
+rows = [json.loads(l) for l in open(SNAPSHOT, encoding="utf-8") if l.strip()]
+agg = collections.defaultdict(lambda: [0, 0.0, None, None])
+for r in rows:
+    k = r["job_id"].split("|")[0]          # wave; use [0]+"|"+[1] for block
+    t = r["recorded_at_utc"]; a = agg[k]
+    a[0] += 1; a[1] += r.get("cost_usd") or 0
+    a[2] = t if a[2] is None or t &lt; a[2] else a[2]
+    a[3] = t if a[3] is None or t &gt; a[3] else a[3]
+for k in sorted(agg, key=lambda x: agg[x][2]):
+    n, c, f, l = agg[k]
+    d = (datetime.datetime.fromisoformat(l)
+         - datetime.datetime.fromisoformat(f)).total_seconds()
+    print(k, n, round(c, 3), f, l, round(d / 60, 1))</pre>
+
+<pre># blame -- when each defect was introduced
+git log --format='%H|%aI|%cI|%s' -S'UNREVIEWED asset(s) in this batch?' \
+    -- tools/art_review/build_full_gallery.py
+git log --format='%H|%aI|%cI|%s' --diff-filter=A -- tools/assets/generate_images.py
+git show 41bc8306:tools/assets/generate_images.py | grep -n 'images.generate'
+git log --format='%H|%aI|%cI|%s' -S'quality_note' \
+    -- tools/assets/manifests/icons_v1.json
+git log --format='%H|%aI|%cI|%s' -S'"id": "take_loan"' \
+    -- godot/data/actions/financing.json
+git log --format='%H|%aI|%cI|%s' -S'"id": "take_loan"' \
+    -- godot/data/actions/fundraising.json
+git log --format='%H|%aI|%cI|%s' -S'_trigger_specific_event' -- godot/scripts/
+grep -n '^## \[Unreleased\]' CHANGELOG.md
+git log -1 --format='%H|%aI|%cI|%s' -L 1174,1174:CHANGELOG.md
+#   (-L repeated for lines 7, 468, 546, 807, 1174, 1344)
+
+# resets
+git reflog --date=iso -n 200 | grep -i reset
+
+# file mtimes -- used only where nothing better exists
+stat -c '%y %n' docs/SEAT_VOICE.md docs/CLAIM_AUDIT_2026-08-06.md \
+    tools/runsheet/fri-2026-08-07-*.html \
+    art_generated/art_night_2026-08-07/l1_run.log</pre>
+
+<p><b>Timezone.</b> All UTC sources shifted by <code>+10:00</code>. Verified
+against <code>docs/SEAT_VOICE.md</code>'s independently-recorded
+<code>19:24 AEST / 09:24 UTC</code>.</p>
+
+<p><b>No generator was written.</b> A <code>tools/build_chronicle.py</code> would
+have had to join four unrelated sources (git plumbing, two GitHub repos over the
+network, a JSONL ledger, and the filesystem) into one hand-ordered narrative
+table, and the ordering, the trust decisions in section 6 and the caveats in
+section 5 are the whole value -- none of them are derivable. The one part that
+<i>is</i> mechanical is the ledger aggregation, and that is the 20 lines quoted
+above rather than a tool. Forcing a generator here would have produced a script
+that only ever ran once.</p>
