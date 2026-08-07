@@ -348,18 +348,45 @@ func _continue_consent_flow(flow: String, entry, game_seed: String) -> void:
 			#     after it rendered a bare `pass`, so the one setting that explains
 			#     the missing board became invisible from the only screen that
 			#     depends on it. Shown, never silent (#1027).
-			#   - ANONYMOUS + ALREADY NUDGED: genuinely stay quiet. The remind-once
-			#     ruling is that one nudge is the whole budget.
-			if GameConfig.leaderboard_consent_asked and not GameConfig.submit_scores_global:
-				_show_local_only_notice()
+			#   - ANONYMOUS + ALREADY NUDGED: also gets a standing line. See DEFECT 1
+			#     below -- this branch used to be silent, and anonymous is the DEFAULT
+			#     state of a fresh install.
+			_show_local_only_notice()
 
 func _show_local_only_notice() -> void:
-	"""Standing (every-run) restatement of a remembered decline. Same wording as the
-	decline moment in _show_consent_prompt, same grey -- this is a state, not a
-	warning, so it does not borrow the amber that means 'off the record'."""
+	"""Standing (every-run) readout of why this score is not on the global board.
+
+	DEFECT 1 (Pip's v0.14.0 playtest, 2026-08-07). game_config.gd:108-109 ships every
+	fresh install with submit_scores_global=false and leaderboard_consent_asked=false,
+	so the DEFAULT player is anonymous. consent_flow_state returns "remind" for them
+	exactly ONCE and "silent" for the entire rest of the install's life. One easily
+	missed line, then permanent absence from the board with no further signal -- and a
+	legitimate not-yet-decided state rendered identically to a decided one.
+
+	NOT A REVISION OF THE PRIVACY RULING (2026-07-26). Nobody is defaulted to opted-in,
+	nothing is uploaded, and no flag is written here. This only says out loud what the
+	current configuration already is.
+
+	WHY A STANDING LINE RATHER THAN ANOTHER NUDGE, given a once-only nudge is what
+	failed: this is a STATE READOUT, not a prompt. It is present on every game-over the
+	way a mute icon is present whenever sound is off -- it never interrupts, never opens
+	a dialog, never escalates its wording, and never asks for anything, so it cannot
+	become a nag however many runs are played. Rejected: re-prompting every N runs (the
+	nagging the remind-once ruling forbids); staying silent (the defect); a
+	Settings-only indicator (invisible from the one screen where the player is asking
+	"where did my score go?").
+
+	Grey, not the amber that means NOT RANKED (#1060): the run IS ranked and the score
+	IS on the local board. Only the upload is off. Borrowing amber here would overstate
+	it."""
 	_ensure_sync_status_label()
 	sync_status_label.visible = true
-	sync_status_label.text = "Global leaderboard: OFF -- score saved locally only (turn on in Settings)"
+	if GameConfig.leaderboard_consent_asked:
+		# Remembered decline: the player made this choice; name where to unmake it.
+		sync_status_label.text = "Global leaderboard: OFF -- score saved locally only (turn on in Settings)"
+	else:
+		# Never decided: anonymous by default. Say what is missing, not that they erred.
+		sync_status_label.text = "Global leaderboard: OFF -- playing anonymously, score saved locally only (set a name and opt in via Settings)"
 	sync_status_label.add_theme_color_override("font_color", Color(0.75, 0.75, 0.75))
 
 func _has_submittable_identity() -> bool:
@@ -543,13 +570,38 @@ func _on_sync_submit_completed(success: bool, _added: bool, _rank: int, message:
 	sync_status_label.add_theme_color_override("font_color", col)
 
 func _ensure_sync_status_label() -> void:
+	"""Build the leaderboard status line WHERE A HUMAN WILL SEE IT.
+
+	DEFECT 3 (Pip's v0.14.0 playtest, 2026-08-07). This label was 12pt and appended to
+	the END of the panel VBox -- i.e. below the three 50px buttons, the last line in the
+	panel. Measured on the failing build:
+	    text="Global leaderboard: submitted (rank 1)" rect=(600,1217) 720x17
+	A SUCCESSFUL submission was visually indistinguishable from nothing happening, which
+	is how a working leaderboard reads as a broken one. The submitting was never the
+	problem; the reporting was.
+
+	Two changes, both about noticeability rather than wording: 16pt instead of 12, and
+	inserted directly ABOVE the button row (below the stats scroll) instead of after it,
+	so it sits inside the block the player is already reading rather than trailing off
+	the bottom. Kept in the same VBox so no layout/anchoring assumptions change.
+
+	NOT PROVEN BY ANY TEST: that it is legible against the panel art at this size. That
+	needs Pip on a real build -- the tests only pin that the size and position which
+	demonstrably failed are gone."""
 	if is_instance_valid(sync_status_label):
 		return
 	sync_status_label = Label.new()
 	sync_status_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	sync_status_label.add_theme_font_size_override("font_size", 12)
+	sync_status_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	sync_status_label.add_theme_font_size_override("font_size", 16)
 	var parent: Node = stats_label.get_parent() if stats_label else self
 	parent.add_child(sync_status_label)
+	# Move it above the button row. Falls back to append (the old behaviour) if the
+	# scene tree ever loses ButtonsHBox, so a rename cannot crash the defeat screen.
+	for i in range(parent.get_child_count()):
+		if parent.get_child(i).name == "ButtonsHBox":
+			parent.move_child(sync_status_label, i)
+			return
 
 func _get_doom_display_color(doom: float) -> String:
 	"""BBCode colour for the final-doom stat -- ThemeManager's doom ramp, stroke variant

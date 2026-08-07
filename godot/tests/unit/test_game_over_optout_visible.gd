@@ -79,9 +79,18 @@ func test_remembered_decline_still_tells_the_player_where_the_score_went():
 	assert_string_contains(label.text.to_lower(), "settings",
 		"the notice must point at the setting that turns submission back on")
 
-func test_anonymous_already_nudged_stays_quiet():
-	# The OTHER "silent" case must not become a nag: an anonymous player who has
-	# already had their one gracious nudge is exercising a legitimate choice.
+func test_anonymous_already_nudged_is_never_re_prompted():
+	# SUPERSEDED IN PART, 2026-08-07. This case used to assert NO label at all for an
+	# already-nudged anonymous player. That reading of the remind-once ruling turned out
+	# to be the OTHER half of the same playtest failure (defect 1): anonymous is the
+	# DEFAULT state of a fresh install, so "one nudge then nothing" left the default
+	# player permanently absent from the board with no signal.
+	#
+	# The ruling that stands is "never NAG", and a dialog is what nags. A standing status
+	# line is a readout, not a prompt. What this case now pins is the half that did not
+	# change -- no re-prompting, ever. The standing-notice half lives in
+	# test_game_over_leaderboard_visibility.gd so the two halves cannot drift apart
+	# without one of them going red.
 	GameConfig.leaderboard_consent_asked = false
 	GameConfig.submit_scores_global = false
 	GameConfig.leaderboard_reminder_shown = true
@@ -90,5 +99,8 @@ func test_anonymous_already_nudged_stays_quiet():
 
 	var screen := _run_to_game_over()
 
-	assert_false(is_instance_valid(screen.sync_status_label),
-		"remind-once ruling: an already-nudged anonymous player is never nagged again")
+	for child in screen.get_children():
+		assert_false(child is AcceptDialog,
+			"remind-once ruling: an already-nudged anonymous player is never re-prompted")
+	assert_false(GameConfig.submit_scores_global,
+		"and is certainly never opted in on their behalf (privacy ruling 2026-07-26)")

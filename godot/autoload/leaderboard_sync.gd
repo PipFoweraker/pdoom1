@@ -228,24 +228,66 @@ func submit_score(entry, seed: String, version: String) -> void:
 	var body := build_post_body(entry.to_dict(), seed, version)
 	_outbox_add(body)  # persist FIRST -- survives a crash between here and the server ack
 
-	_dispatch_post(body, func(ok: bool, added: bool, rank: int):
+	_dispatch_post(body, func(ok: bool, added: bool, rank: int, result: int, code: int):
 		if ok:
 			_outbox_remove(str(body.get("entry_uuid", "")))  # landed -> drop from retry queue
-		var msg := ""
-		if ok:
-			msg = "submitted (rank %d)" % rank if rank > 0 else "submitted"
-		else:
-			msg = "offline -- saved locally"
-		submit_completed.emit(ok, added, rank, msg)
+		submit_completed.emit(ok, added, rank, submit_status_message(ok, rank, result, code))
 	)
 
-## Shared POST dispatcher. on_done is called EXACTLY once with (ok, added, rank) whether the
-## request succeeds, errors, or times out -- so callers never hang and never crash. Reused by
-## submit_score and by the outbox flush.
+## Player-facing one-liner for a resolved submission. PURE; unit-tested directly.
+##   ok     -- reached the server AND it accepted the entry (transport OK, HTTP 200, ok=true)
+##   rank   -- 1-based rank when the server reported one
+##   result -- HTTPRequest.Result; RESULT_SUCCESS means the TRANSPORT worked
+##   code   -- HTTP status code, or 0 when the request never reached a server
+##
+## DEFECT 4 (2026-08-07): this used to return "offline -- saved locally" for EVERY
+## non-success -- HTTP 403 (rotated token), 404 (endpoint moved), 500 (server fault) and
+## a genuine timeout alike. A diagnosability defect, and the expensive kind: if the token
+## rotates, every player and every bug report says "offline" while the network is fine,
+## and the true cause is unreachable from the field.
+##
+## Two rules the wording holds to:
+##   1. "offline" is reserved for the case where the request never reached a server. A
+##      server that ANSWERED is not an outage on the player's end and must not be
+##      described as one.
+##   2. Every failure still states the score was kept. Whatever broke remotely, the local
+##      save already happened and the outbox retries at next launch, so a failure must
+##      never read as "my run was lost".
+## The numeric code is included verbatim so a screenshot in a bug report carries the
+## cause -- that is the whole point of the change.
+static func submit_status_message(ok: bool, rank: int, result: int, code: int) -> String:
+	if ok:
+		return "submitted (rank %d)" % rank if rank > 0 else "submitted"
+	if result != HTTPRequest.RESULT_SUCCESS or code == 0:
+		# The request never got an answer: no DNS, no route, refused, or timed out.
+		# This is the ONLY genuinely offline case.
+		return "offline -- score saved locally, will retry next launch"
+	# The server answered and said no. Name what it said.
+	match code:
+		401, 403:
+			return "server rejected this build (HTTP %d) -- score saved locally, please report" % code
+		404:
+			return "leaderboard endpoint not found (HTTP 404) -- score saved locally, please report"
+		429:
+			return "leaderboard busy (HTTP 429) -- score saved locally, will retry next launch"
+		_:
+			if code >= 500:
+				return "leaderboard server error (HTTP %d) -- score saved locally, will retry next launch" % code
+			return "leaderboard refused the score (HTTP %d) -- saved locally, please report" % code
+
+## Shared POST dispatcher. on_done is called EXACTLY once with
+## (ok, added, rank, result, code) whether the request succeeds, errors, or times out --
+## so callers never hang and never crash. Reused by submit_score and by the outbox flush.
+##
+## `result` and `code` are passed through DELIBERATELY (2026-08-07). This used to collapse
+## every non-200 into a single bool, so HTTP 403 (rotated token), 404 (endpoint moved) and
+## 500 (server fault) all reached the player as "offline -- saved locally". If the token
+## ever rotates, every player and every bug report would say "offline" while the network
+## was fine -- an entire class of outage rendered undiagnosable from the field.
 func _dispatch_post(body: Dictionary, on_done: Callable) -> void:
 	if base_url.strip_edges() == "":
 		if on_done.is_valid():
-			on_done.call(false, false, 0)
+			on_done.call(false, false, 0, HTTPRequest.RESULT_CANT_CONNECT, 0)
 		return
 	var url := build_endpoint(base_url)
 	var headers := [
@@ -266,14 +308,14 @@ func _dispatch_post(body: Dictionary, on_done: Callable) -> void:
 				added = parsed["added"]
 				rank = parsed["rank"]
 			if on_done.is_valid():
-				on_done.call(ok, added, rank)
+				on_done.call(ok, added, rank, result, code)
 			http.queue_free()
 	)
 	var err := http.request(url, headers, HTTPClient.METHOD_POST, payload)
 	if err != OK:
 		http.queue_free()
 		if on_done.is_valid():
-			on_done.call(false, false, 0)
+			on_done.call(false, false, 0, HTTPRequest.RESULT_CANT_CONNECT, 0)
 
 # --------------------------------------------------------------------------
 # Durable outbox (user://pending_scores.json). All IO is fully guarded: a missing /
@@ -338,7 +380,7 @@ func _flush_outbox() -> void:
 			continue
 		var body: Dictionary = e
 		var uuid := str(body.get("entry_uuid", ""))
-		_dispatch_post(body, func(ok: bool, _added: bool, _rank: int):
+		_dispatch_post(body, func(ok: bool, _added: bool, _rank: int, _result: int, _code: int):
 			if ok:
 				_outbox_remove(uuid)
 		)
