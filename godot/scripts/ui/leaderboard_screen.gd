@@ -77,12 +77,70 @@ func _ready():
 	_populate_seed_dropdown()
 	_setup_global_toggle()
 	_select_default_view()
+	_open_on_global_if_available()
 	# Scene-reentry run-killer family (sibling of #979): reached mid-run (dev-overlay jump,
 	# or any future nav) with the run still live and unfinished in the GameManager autoload.
 	# Relabel Back so it reads honestly -- it resumes the run instead of going to welcome,
 	# where Launch Lab / Load Game would silently clobber it.
 	if back_button != null and _live_run_active():
 		back_button.text = "[BACK TO GAME]"
+
+
+func _open_on_global_if_available() -> void:
+	"""DEFAULT TO THE GLOBAL BOARD when remote sync is configured (Pip's v0.14.0
+	playtest, 2026-08-07).
+
+	The defect: this screen opened on LOCAL and fetched global only if the player found
+	and pressed the toggle. A player opens the board, sees their own handful of scores,
+	and concludes -- correctly, from the evidence in front of them -- that there is no
+	global board. That is what Pip concluded, and it is the single most likely of the
+	set to hit a real person, because it needs no unusual state at all.
+
+	Deliberately NOT a new code path: it presses the toggle the same way a human would
+	and reuses _fetch_and_show_global, so the #1126/#1127 failure machinery (toggle
+	STAYS pressed, amber notice, Retry button, local rows underneath) applies unchanged.
+	An offline player now meets that failure path on open, which is the correct trade:
+	"could not reach the global board, here are your local scores" is a true statement,
+	where silently showing local was a misleading one.
+
+	_select_default_view() has already drawn the local board, so there is never a blank
+	screen while the fetch is in flight."""
+	if not LeaderboardSync.can_fetch():
+		return  # unconfigured build / fork: stays local-only, exactly as before
+	if not is_instance_valid(global_toggle_button):
+		return
+	showing_global = true
+	global_toggle_button.set_pressed_no_signal(true)
+	global_toggle_button.text = "View: Global"
+	_fetch_and_show_global()
+
+
+func _global_board_identity() -> Dictionary:
+	"""The (seed, version) the global fetch must ask for: THE BOARD ON SCREEN.
+
+	DEFECT 6, found while fixing the default-view defect. The global fetch keyed on
+	GameConfig.get_display_seed() while the LOCAL view keys on the board file being
+	viewed -- two different sources for one board key. They CAN diverge, and a
+	divergence shows a player a different board from the one they scored on:
+	  - GameConfig.game_seed is mutated OUTSIDE any run (welcome_screen.gd:175 clears it
+	    on Launch Lab; pregame_setup.gd:160/217 sets and clears it), so leaving a custom
+	    seed run, touching the menu, then opening the board moves the key underneath you.
+	  - the seed dropdown changes the local view and GameConfig never hears about it, so
+	    picking seed A and pressing Global fetched seed B.
+	One source now: whatever board the player is actually looking at. GameConfig remains
+	the fallback for the All Seeds view, which has no single board to name.
+
+	VERSION: global boards exist only for ladder epochs. A legacy (pre-ladder,
+	build-keyed) board has no global counterpart, so those fall back to the current
+	epoch rather than asking the server for a board that cannot exist."""
+	var board_seed: String = GameConfig.get_display_seed()
+	var version: String = GameConfig.get_board_version()
+	if current_seed != "all" and _board_files.has(current_seed):
+		var identity = _board_files[current_seed]
+		board_seed = str(identity["seed"])
+		if not _is_legacy_board_version(str(identity["version"])):
+			version = str(identity["version"])
+	return {"seed": board_seed, "version": version}
 
 
 func _live_run_active() -> bool:
@@ -196,8 +254,10 @@ func _fetch_and_show_global():
 	attempted here): api.pdoom1.com must key by ladder_version and alias the live
 	v0.12.0 board to L1 -- see GameConfig.get_board_version() docs."""
 	_global_fetch_failed = false  # a new attempt is not (yet) a failure
-	var board_seed = GameConfig.get_display_seed()
-	var version = GameConfig.get_board_version()
+	# ONE source for the board key -- the board on screen (see _global_board_identity).
+	var identity := _global_board_identity()
+	var board_seed: String = identity["seed"]
+	var version: String = identity["version"]
 	subtitle.text = "Global board: fetching %s ..." % board_seed
 	# In-flight is its own visible state: without this the screen looks identical for
 	# "asking the server" and "server never answered" for up to REQUEST_TIMEOUT_SEC (8s).
@@ -228,7 +288,7 @@ func _on_global_board_fetched(ok: bool, entries: Array):
 		ErrorHandler.warning(
 			ErrorHandler.Category.VALIDATION,
 			"Global board fetch failed; showing local with a visible notice",
-			{"seed": GameConfig.get_display_seed(), "version": GameConfig.get_board_version()}
+			_global_board_identity()
 		)
 		return
 	_global_fetch_failed = false
@@ -237,8 +297,9 @@ func _on_global_board_fetched(ok: bool, entries: Array):
 	current_page = 1
 	# Show BOTH: the epoch the board is scoped by, and the build the viewer runs --
 	# so a player on a cosmetic patch sees they are correctly on the same board.
+	var shown := _global_board_identity()
 	subtitle.text = "Global board: %s (epoch %s, build v%s)" % [
-		GameConfig.get_display_seed(), GameConfig.get_board_version(), GameConfig.CURRENT_VERSION]
+		shown["seed"], shown["version"], GameConfig.CURRENT_VERSION]
 	_display_current_page()
 	_update_pagination_ui()
 	_update_stats()
