@@ -242,8 +242,14 @@ func show_game_over(is_victory: bool, final_state: Dictionary):
 
 	# AI Safety resources call to action (condensed to reduce vertical overflow)
 	stats_text += "\n[center][color=gray]-------------------[/color][/center]\n"
-	stats_text += "[center][color=cyan]Learn about real AI safety: [url=https://aisafety.info][color=dodger_blue]aisafety.info[/color][/url][/color][/center]\n"
-	stats_text += "[center][color=gold][b]> Press ENTER for Leaderboard[/b][/color][/center]"
+	stats_text += "[center][color=cyan]Learn about real AI safety: [url=https://aisafety.info][color=dodger_blue]aisafety.info[/color][/url][/color][/center]"
+	# The route to the board used to be advertised HERE, as the last line of this
+	# block. Measured on v0.14.0 at 1920x1080: this scroll renders 30 lines into a
+	# 300 px window that shows 14 of them and starts at scroll 0 -- so the only
+	# advertised way to reach the leaderboard sat 390 px below the fold, and Pip
+	# finished a 147-turn ranked run reporting "no opportunity to submit, no
+	# reminder". The route now lives on LeaderboardButton in the button row, which
+	# is on screen unconditionally. ENTER still works and the button says so.
 
 	stats_label.text = stats_text
 
@@ -513,23 +519,43 @@ func _show_identity_reminder() -> void:
 	sync_status_label.add_theme_color_override("font_color", Color(0.7, 0.75, 0.8))
 
 func _on_sync_submit_completed(success: bool, _added: bool, _rank: int, message: String) -> void:
-	"""Resolve the status blip. Failure is silent-ish: score is already saved locally."""
+	"""Resolve the status blip.
+
+	SUCCESS AND FAILURE MUST NOT READ THE SAME. Both outcomes used to render as
+	"Global leaderboard: <message>" in identical 12 px text, so a landed score and
+	a dead endpoint were visually indistinguishable -- the player learned nothing
+	either way. Marked outcomes now, and the failure line says the score is queued
+	rather than shrugging: LeaderboardSync's durable outbox really does retry at
+	the next launch, so telling the player that is accurate, not soothing."""
 	if not is_instance_valid(sync_status_label):
 		return
 	if message == "":
 		message = "saved locally"
-	sync_status_label.text = "Global leaderboard: %s" % message
-	var col := Color(0.6, 1.0, 0.6) if success else Color(0.85, 0.8, 0.55)
-	sync_status_label.add_theme_color_override("font_color", col)
+	if success:
+		sync_status_label.text = "[OK] Global leaderboard: %s" % message
+		sync_status_label.add_theme_color_override("font_color", Color(0.6, 1.0, 0.6))
+	else:
+		sync_status_label.text = "[!] Global leaderboard: %s -- score saved, queued to retry next launch" % message
+		sync_status_label.add_theme_color_override("font_color", Color(1.0, 0.75, 0.25))
 
 func _ensure_sync_status_label() -> void:
 	if is_instance_valid(sync_status_label):
 		return
 	sync_status_label = Label.new()
 	sync_status_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	sync_status_label.add_theme_font_size_override("font_size", 12)
+	sync_status_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	# 12 px put the one sentence that says where the score went below the threshold
+	# anyone reads. 16 px is still a blip, not a headline.
+	sync_status_label.add_theme_font_size_override("font_size", 16)
 	var parent: Node = stats_label.get_parent() if stats_label else self
 	parent.add_child(sync_status_label)
+	# add_child appends, which parked this UNDERNEATH the button row -- the last
+	# thing in the panel, below where the eye stops. Sit it directly beneath the
+	# stats scroll instead, inside the reading flow. _render_death_attribution
+	# inserts above stats_label afterwards, which shifts this down with it and
+	# keeps the relative order intact.
+	if stats_label and stats_label.get_parent() == parent:
+		parent.move_child(sync_status_label, stats_label.get_index() + 1)
 
 func _get_doom_display_color(doom: float) -> String:
 	"""BBCode colour for the final-doom stat -- ThemeManager's doom ramp, stroke variant
