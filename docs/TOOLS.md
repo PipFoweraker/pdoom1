@@ -100,7 +100,7 @@ Declared with a `Layer:` line in a tool's module docstring; `--` = undeclared.
 | Tool | Layer | Purpose | Invoked by |
 |---|---|---|---|
 | analyze_verdicts.py | -- | Analyze art triage exports (verdict JSONs) for BOTH art libraries. | human (docstring usage) |
-| apply_review.py | SWEEP | apply_review.py -- wire art-review verdicts into the P(Doom)1 asset pipeline. | test:test_art_promotion_pipeline.py; tool:build_full_gallery.py; tool:slot_model.py |
+| apply_review.py | SWEEP | apply_review.py -- wire art-review verdicts into the P(Doom)1 asset pipeline. | test:test_art_promotion_pipeline.py; tool:build_full_gallery.py; tool:measure_taste.py; tool:slot_model.py |
 | apply_slot_picks.py | -- | apply_slot_picks.py -- fold a slot_picker.html export into the TRACKED | test:test_slot_picker.py; tool:build_slot_picker.py |
 | author_anchor_sockets.py | -- | Author godot/data/office/anchor_sockets.json -- Anchor Sockets V2 (#894 #900 #913). | tool:build_cat_sweep_sheet.py |
 | build.py | -- | Build the P(Doom)1 style-review tool: a self-contained, single-file HTML page | test:test_find_dead_code.py; tool:select_assets.py |
@@ -111,11 +111,11 @@ Declared with a `Layer:` line in a tool's module docstring; `--` = undeclared.
 | build_cat_west_walk_picks.py | -- | build_cat_west_walk_picks -- 2026-07-27 cat_sweep_black_side_heft WEST walk pick sheet. | human (docstring usage) |
 | build_doom_strip_sheet.py | -- | Generate art_generated/doom_strip_sheet.html -- ADR-0015 doom-strip triage | human (docstring usage) |
 | build_endgame_review.py | -- | Build a verdict-capturing review page for the endgame concept batch. | human (docstring usage) |
-| build_full_gallery.py | OBSERVE | build_full_gallery.py -- ONE stateful drive-by gallery over ALL art on disk. | tool:apply_review.py |
+| build_full_gallery.py | OBSERVE | build_full_gallery.py -- ONE stateful gallery over ALL art on disk, in three | tool:apply_review.py |
 | build_generation_compare.py | -- | Side-by-side comparison of two generations of the same concept batch. | human (docstring usage) |
 | build_morning_index.py | -- | One index page over every generated art batch on disk. | human (docstring usage) |
 | build_prop_rebase_sheet.py | -- | build_prop_rebase_sheet -- prop re-base bulk batch + facing pilot (2026-07-27). | human (docstring usage) |
-| build_slot_picker.py | -- | build_slot_picker.py -- the SLOT PICKER page. | human (docstring usage) |
+| build_slot_picker.py | -- | build_slot_picker.py -- the SLOT PICKER page. | tool:build_full_gallery.py |
 | build_t6_diagonals_and_cats_sheet.py | -- | build_t6_diagonals_and_cats_sheet -- lane T6 review sheet, 2026-07-27. | human (docstring usage) |
 | build_worker_rebase_sheet.py | -- | build_worker_rebase_sheet -- worker re-base at the 64px standard (2026-07-26). | human (docstring usage) |
 | build_worker_round2_sheet.py | -- | build_worker_round2_sheet -- 2026-07-27 worker reroll + fresh worker (A+B). | human (docstring usage) |
@@ -128,12 +128,14 @@ Declared with a `Layer:` line in a tool's module docstring; `--` = undeclared.
 | gen_quirk_icon_sheet.py | -- | Generate art_generated/quirk_icons_sheet.html -- quirk icon review sheet (issue #903). | human (docstring usage) |
 | gen_settings_grounds.py | -- | Warm-register settings-screen background candidates for P(Doom)1 (no API). | human (docstring usage) |
 | gen_size_probe_sheet.py | -- | gen_size_probe_sheet -- character size vanguard probe sheet (2026-07-26). | human (docstring usage) |
-| merge_gallery_export.py | -- | merge_gallery_export.py -- fold a full_gallery.html export back into | tool:build_full_gallery.py |
+| measure_taste.py | -- | measure_taste.py -- what the slot picks say about taste, measured. | human (docstring usage) |
+| merge_gallery_export.py | -- | merge_gallery_export.py -- fold a full_gallery.html export back into | tool:build_full_gallery.py; tool:notes_brief.py |
+| notes_brief.py | -- | notes_brief.py -- turn the reviewer's notes into the brief for the next round. | tool:build_full_gallery.py |
 | qc_sprite_frames.py | -- | qc_sprite_frames -- PIL QC gate for pixellab character batches. | tool:build_worker_rebase_sheet.py |
 | review_style.py | -- | review_style -- ONE house style for all internal review/dev HTML tools. | tool:analyze_verdicts.py; tool:build_cat_angle_ab_sheet.py; tool:build_cat_refinement_sheet.py; tool:build_cat_sweep_sheet.py; tool:build_cat_west_walk_picks.py; tool:build_doom_strip_sheet.py; tool:build_prop_rebase_sheet.py; tool:build_slot_picker.py; tool:build_t6_diagonals_and_cats_sheet.py; tool:build_worker_rebase_sheet.py; tool:build_worker_round2_sheet.py; tool:gen_contact_sheet.py; tool:gen_hero_gallery.py; tool:gen_prop_grain_sheet.py; tool:gen_quirk_icon_sheet.py; tool:gen_size_probe_sheet.py |
 | scan_white_flash.py | -- | Scan walk-clip frames for the "white flash under the cat" artifact. | tool:build_cat_refinement_sheet.py |
 | serve_review.py | -- | Local art-review app for P(Doom)1 -- ONE place to review ALL the art. | tool:build_slot_picker.py |
-| slot_model.py | -- | slot_model.py -- the ONE definition of "slot cluster" and "frame role". | test:test_slot_picker.py; tool:apply_slot_picks.py; tool:build_slot_picker.py |
+| slot_model.py | -- | slot_model.py -- the ONE definition of "slot cluster" and "frame role". | test:test_slot_picker.py; tool:apply_slot_picks.py; tool:build_slot_picker.py; tool:measure_taste.py |
 
 ## `tools/assets/`
 
@@ -184,6 +186,7 @@ DISCUSSING CI); the rest are the hollow-runner shape -- read them.
 - `scripts/health_automation.py` -- docstring mentions CI; no workflow calls it
 - `scripts/logging_system.py` -- docstring mentions CI; no workflow calls it
 - `tools/art_review/apply_review.py` -- docstring mentions pre-commit; no pre-commit hook calls it
+- `tools/art_review/notes_brief.py` -- docstring mentions pre-commit; no pre-commit hook calls it
 - `tools/capture_cinematic.py` -- docstring mentions CI; no workflow calls it
 - `tools/commit.py` -- docstring mentions pre-commit; no pre-commit hook calls it
 - `tools/find_dead_code.py` -- docstring mentions pre-commit; no pre-commit hook calls it
@@ -205,4 +208,4 @@ DISCUSSING CI); the rest are the hollow-runner shape -- read them.
 
 23 `.html` tool(s) under `tools/` (browser-opened, no docstring to parse): `tools/art_review/doom_overlay_preview.html`, `tools/art_review/hero_gallery_template.html`, `tools/art_review/icon_pass_2026-07-21.html`, `tools/art_review/icon_pass_verdicts_2026-07-21.html`, `tools/art_review/palette.html`, `tools/art_review/palette_swatches.html`, `tools/art_review/scene_wave2_2026-07-21.html`, `tools/art_review/style_review.html`, `tools/assets/review_generated.html`, `tools/music/commission_sheets.html`, `tools/music/jukebox.html`, `tools/music/listening_room.html`, `tools/music/stem_board.html`, `tools/runsheet/CEREMONY-ALL-GATES-2026-07-31.html`, `tools/runsheet/fri-2026-07-31-EVENING-1620.html`, `tools/runsheet/fri-2026-07-31-GATES-1700.html`, `tools/runsheet/fri-2026-07-31-TO-MIDNIGHT-1733.html`, `tools/runsheet/fri-2026-07-31-league-day.html`, `tools/runsheet/playtest_card.html`, `tools/runsheet/wed-thu-2026-07-29.html`, `tools/social_composer.html`, `tools/ui_comparison.html`, `tools/ui_mockup/wireframe.html`.
 
-Total: 109 active tools (8 GENERATE, 6 OBSERVE, 5 PROVE, 1 SWEEP, 89 undeclared); 11 in UNKNOWN; 6 archived.
+Total: 111 active tools (8 GENERATE, 6 OBSERVE, 5 PROVE, 1 SWEEP, 91 undeclared); 11 in UNKNOWN; 6 archived.
