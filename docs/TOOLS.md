@@ -133,6 +133,7 @@ Declared with a `Layer:` line in a tool's module docstring; `--` = undeclared.
 | notes_brief.py | -- | notes_brief.py -- turn the reviewer's notes into the brief for the next round. | tool:build_full_gallery.py |
 | qc_sprite_frames.py | -- | qc_sprite_frames -- PIL QC gate for pixellab character batches. | tool:build_worker_rebase_sheet.py |
 | review_style.py | -- | review_style -- ONE house style for all internal review/dev HTML tools. | tool:analyze_verdicts.py; tool:build_cat_angle_ab_sheet.py; tool:build_cat_refinement_sheet.py; tool:build_cat_sweep_sheet.py; tool:build_cat_west_walk_picks.py; tool:build_doom_strip_sheet.py; tool:build_prop_rebase_sheet.py; tool:build_slot_picker.py; tool:build_t6_diagonals_and_cats_sheet.py; tool:build_worker_rebase_sheet.py; tool:build_worker_round2_sheet.py; tool:gen_contact_sheet.py; tool:gen_hero_gallery.py; tool:gen_prop_grain_sheet.py; tool:gen_quirk_icon_sheet.py; tool:gen_size_probe_sheet.py |
+| scan_text_leak.py | -- | Measure text leakage in a generated art batch, with OCR, and record the result. | tool:build_share_set.py |
 | scan_white_flash.py | -- | Scan walk-clip frames for the "white flash under the cat" artifact. | tool:build_cat_refinement_sheet.py |
 | serve_review.py | -- | Local art-review app for P(Doom)1 -- ONE place to review ALL the art. | tool:build_slot_picker.py |
 | slot_model.py | -- | slot_model.py -- the ONE definition of "slot cluster" and "frame role". | test:test_slot_picker.py; tool:apply_slot_picks.py; tool:build_slot_picker.py; tool:measure_taste.py |
@@ -143,6 +144,7 @@ Declared with a `Layer:` line in a tool's module docstring; `--` = undeclared.
 |---|---|---|---|
 | audit_icons.py | -- | Icon Asset Audit Tool | human (docstring usage) |
 | build_review_gallery.py | -- | Rebuild tools/assets/review_generated.html from whatever PNGs are on disk under | human (docstring usage) |
+| build_share_set.py | -- | Derive the ART SHARE SET from verdicts already applied -- no new review pass. | human (docstring usage) |
 | extract_palette.py | -- | Extract a brand palette from an image (default: the P(Doom)1 hero background). | human (docstring usage) |
 | generate_images.py | -- | Generalized batch image generator for pdoom1 art assets. | tool:promote_assets.py |
 | promote_assets.py | -- | Asset promotion tool for pdoom1. | NONE FOUND |
@@ -188,6 +190,8 @@ DISCUSSING CI); the rest are the hollow-runner shape -- read them.
 - `scripts/logging_system.py` -- docstring mentions CI; no workflow calls it
 - `tools/art_review/apply_review.py` -- docstring mentions pre-commit; no pre-commit hook calls it
 - `tools/art_review/notes_brief.py` -- docstring mentions pre-commit; no pre-commit hook calls it
+- `tools/art_review/scan_text_leak.py` -- docstring mentions CI; no workflow calls it
+- `tools/assets/build_share_set.py` -- docstring mentions CI; no workflow calls it
 - `tools/capture_cinematic.py` -- docstring mentions CI; no workflow calls it
 - `tools/commit.py` -- docstring mentions pre-commit; no pre-commit hook calls it
 - `tools/find_dead_code.py` -- docstring mentions pre-commit; no pre-commit hook calls it
@@ -209,4 +213,4 @@ DISCUSSING CI); the rest are the hollow-runner shape -- read them.
 
 23 `.html` tool(s) under `tools/` (browser-opened, no docstring to parse): `tools/art_review/doom_overlay_preview.html`, `tools/art_review/hero_gallery_template.html`, `tools/art_review/icon_pass_2026-07-21.html`, `tools/art_review/icon_pass_verdicts_2026-07-21.html`, `tools/art_review/palette.html`, `tools/art_review/palette_swatches.html`, `tools/art_review/scene_wave2_2026-07-21.html`, `tools/art_review/style_review.html`, `tools/assets/review_generated.html`, `tools/music/commission_sheets.html`, `tools/music/jukebox.html`, `tools/music/listening_room.html`, `tools/music/stem_board.html`, `tools/runsheet/CEREMONY-ALL-GATES-2026-07-31.html`, `tools/runsheet/fri-2026-07-31-EVENING-1620.html`, `tools/runsheet/fri-2026-07-31-GATES-1700.html`, `tools/runsheet/fri-2026-07-31-TO-MIDNIGHT-1733.html`, `tools/runsheet/fri-2026-07-31-league-day.html`, `tools/runsheet/playtest_card.html`, `tools/runsheet/wed-thu-2026-07-29.html`, `tools/social_composer.html`, `tools/ui_comparison.html`, `tools/ui_mockup/wireframe.html`.
 
-Total: 112 active tools (9 GENERATE, 6 OBSERVE, 5 PROVE, 1 SWEEP, 91 undeclared); 11 in UNKNOWN; 6 archived.
+Total: 114 active tools (9 GENERATE, 6 OBSERVE, 5 PROVE, 1 SWEEP, 93 undeclared); 11 in UNKNOWN; 6 archived.
