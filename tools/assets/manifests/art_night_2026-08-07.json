@@ -1,0 +1,336 @@
+{
+  "_meta": {
+    "note": "QUEUE SPEC for the funded art night of 2026-08-07. Consumed by tools/assets/run_art_night.py, NOT by generate_images.py (different expansion model: levels and crossed axes rather than a flat asset list). Nothing here is a prompt on its own -- prompts are assembled at run time from base_clauses + rendering + palette + subject + composition + the taste brief.",
+    "plan": "docs/design/ART_RUN_2026-08-07.md",
+    "cost_source": "OpenAI first-party model page for gpt-image-1.5, read 2026-08-06. Per-image output price by size and quality. The repo's older per-image figures (docs/art/SEED_ART_COST_MODEL.md) are the pipeline's own estimate constants echoed back through its logs, not billed truth -- see the plan.",
+    "size_cap": "gpt-image-1.5 emits 1024x1024, 1536x1024, 1024x1536 and nothing larger. There is no upscale path in this repo. A 1536px long edge is about 5.1 inches at 300dpi, so 'hero print' here means a print-ready SOURCE, not a poster-sized file.",
+    "rules_source": "docs/art/ENDGAME_CONCEPT_REVIEW_2026-07-29.md (A1-A10, PROVISIONAL), docs/art/PROMPT_RECIPES_2026-07-29.md, docs/art/PALETTE_AND_DOOM_INTENSITY.md",
+    "promotion": "ADR-0019: nothing here is promoted. All output is Generated / Library under art_generated/ (gitignored)."
+  },
+
+  "schema_version": "1.0",
+  "run_id": "art_night_2026-08-07",
+  "output_root": "art_generated/art_night_2026-08-07",
+  "masters_staging": "G:/tmp/pdoom1-art-masters/2026-08-07",
+
+  "backend": "openai",
+  "model": "gpt-image-1.5",
+  "background": "opaque",
+
+  "budget": {
+    "hard_ceiling_usd": 75.5,
+    "planned_usd": 71.98,
+    "fx_aud_per_usd": 1.4164,
+    "fx_source": "USD/AUD spot 2026-08-05, 1.4164 (exchange-rates.org). Ceiling in AUD at that rate: 106.94. The ceiling only breaches AUD 110 if USD/AUD rises above 1.4570.",
+    "underspend_floor_usd": 68.0,
+    "underspend_note": "If the ledger total after L3 is below underspend_floor_usd, run --wave topup. Underspending is the stated failure mode for this run."
+  },
+
+  "tariff_usd": {
+    "gpt-image-1.5": {
+      "1024x1024": {"low": 0.009, "medium": 0.034, "high": 0.133},
+      "1536x1024": {"low": 0.013, "medium": 0.05, "high": 0.2},
+      "1024x1536": {"low": 0.013, "medium": 0.05, "high": 0.2}
+    },
+    "gpt-image-2": {
+      "1024x1024": {"low": 0.009, "medium": 0.034, "high": 0.133},
+      "1536x1024": {"low": 0.013, "medium": 0.05, "high": 0.2},
+      "1024x1536": {"low": 0.013, "medium": 0.05, "high": 0.2}
+    },
+    "_tariff_note": "gpt-image-2 prices are ASSUMED EQUAL to gpt-image-1.5 because this seat has not read a first-party gpt-image-2 price table. Only the 6-image probe block uses it, so the maximum exposure from that assumption being wrong is a few cents. Do not widen gpt-image-2 usage until the tariff is confirmed."
+  },
+
+  "taste_profile": {
+    "path": "docs/design/TASTE_PROFILE_2026-08-06.md",
+    "required": false,
+    "contract": "Preferred: a fenced block tagged 'artbrief' containing KEY: value lines (HOLD, AVOID, PALETTE, RENDERING_FAVOURED, SUBJECT_BOOST, NOTE). Fallback: the body under the last heading matching /brief/i is appended verbatim as a style clause, truncated to taste_clause_max_chars. Absent: the run proceeds on the in-repo house clauses below and prints a loud warning.",
+    "taste_clause_max_chars": 1400
+  },
+
+  "base_clauses": {
+    "poster_base": "wide cinematic POSTER ART illustration for a video game, full-bleed edge-to-edge opaque composition that completely fills the frame with no transparency and no cut-outs and no border, lived-in physical props and real architecture rather than abstract shapes, every object in frame must be immediately identifiable as a specific real thing -- a filing cabinet, a pallet, a transformer, a mug -- and never a generic boxy shape, because an unrecognisable object is visual noise rather than a prop, no text, no lettering, no signage, no numerals, no logo, no watermark, no UI overlay, high production value",
+    "poster_lighting": "DISCIPLINED AND UNDERSTATED LIGHTING, roughly 75 percent more subtle than a typical dramatic game illustration: mood must NEVER come from the main light source, so the ordinary room lights, street lights and work lights in the scene are plain neutral white or plain warm tungsten exactly as they would really be, never tinted red or green or purple for atmosphere; coloured light is permitted ONLY where a real fixture in the world would genuinely emit that colour, for example a screen, an indicator lamp, an emergency beacon, a corona arc or the impossible thing itself; at most one ambient source plus one glowing source, most of the frame kept dark with separated pockets of light, restraint over drama",
+    "poster_people": "NO PEOPLE BY DEFAULT -- the player is a bureaucrat and the art is about everyone else, so incidental figures are removed rather than restyled. Where a figure is genuinely unavoidable it must be IMPOSSIBLE TO IDENTIFY and must NOT read as male: shoot it from behind, or use a full silhouette, a hood, a hat, a mask, a cloak, heavy protective gear, or a figure deliberately ambiguous between human and machine; no face detail, no readable gender cues, no distinctive hairstyle, no distinguishing jewellery; identity destroyed by blocking, backlighting and occlusion rather than merely turned away",
+    "poster_props": "props must be era-correct for 2017 to 2032 and physically believable. DELIBERATELY VARY THE OBJECT VOCABULARY between images rather than reaching for the same few signature props: draw broadly from institutional office and industrial life -- ring binders, manila folders, box files, rubber date stamps and their inkpads, franking machines, guillotine paper cutters, laminators, wall clocks, LTO tape cartridges, patch panels, cable trays, KVM switches, rack rails, blanking plates, power distribution units, fire extinguishers, first-aid cabinets, wire shelving, pallet trucks, flight cases, folding tables, stacking chairs, whiteboards and their tray of dying markers, corkboards, pigeonholes, drinking fountains, vending machines, ceiling tiles, venetian and vertical blinds, fluorescent troffers, anglepoise lamps, desk fans, CRT and early-flatscreen monitors, keyboards with worn legends, coiled cables, mugs, and chain-link fencing that hangs correctly on its posts with a real top rail, real tension wire and believable sag. ABSOLUTELY NO BARBED WIRE and no razor wire anywhere; uncrewed machines are directly manufactured and therefore have NO COCKPIT, NO CANOPY and no windows for a pilot",
+    "poster_contrast": "STRONG VALUE STRUCTURE, and treat this as the single most important rendering instruction: the image must carry a wide luminance range with genuinely black blacks and genuinely bright brights both present somewhere in frame, clear separation between the light masses and the dark masses, nothing left sitting in an undifferentiated mid-grey; the picture should read as a set of distinct value shapes before it reads as a set of objects",
+    "poster_detail": "DETAILED RATHER THAN MINIMAL: rendered depth, material texture, surface grain, accumulated grime, wear and small incidental objects, so every large area carries some texture instead of being an empty flat. NOTHING IN FRAME IS OUT OF FOCUS, nothing is soft-focus and nothing is blurred; where a rendering calls for atmosphere it comes from aerial perspective and tonal separation, NEVER from defocus",
+    "poster_symbol": "AVOID THE FIRST OBVIOUS SYMBOL: no nuclear trefoil, no radiation trefoil, no padlock, no chessboard, no ticking bomb, no glowing red eye, no brain in a jar, no cascading binary, no hooded reaper. Where an abstract idea needs a stand-in, use an unexpected but immediately legible ordinary object instead -- a lanyard, a desk bell, a filling gauge, a queue ticket, a rubber stamp, a fire door, a keyed cabinet",
+    "poster_separation": "COLOUR SEPARATION: the main subject and its most important sub-element must be distinguishable from each other and from the background by HUE as well as by value, so the parts of the picture are told apart at a glance instead of merging into one mass; this is separation, not saturation, and it is not a licence to make the image more colourful overall",
+    "poster_safety": "strictly no blood and no gore anywhere in the image, damage to machines shown as mechanical breakage with glowing green or blue coolant and hydraulic fluid only, no wounded people, no real-world brands or insignia or logos, no identifiable real people, nothing sexualised, all human figures fully and modestly clothed in ordinary institutional workwear",
+    "poster_tone": "a bureaucratic world with weirdness leaking in at the edges; ordinary institutional competence rendered straight while something impossible happens deadpan in the same frame; commit to only one flavour of strangeness per image out of eldritch intrusion, technology run amok, or environmental collapse; restrained and elegant, never garish, never lurid"
+  },
+
+  "swatch_clauses": {
+    "sheet_base": "a flat design-reference COLOUR SWATCH SHEET, an evenly spaced grid of large solid rectangular colour patches on a neutral dark card, patches butted close together so adjacent colours can be judged against each other, absolutely no text, no numerals, no hex codes, no labels, no captions, no illustration, no objects, no gradients inside a patch, no shading, no perspective, flat-on orthographic view of the card, subtle paper or card texture only",
+    "sheet_structure": "the grid reads as a considered palette rather than a random assortment: the largest patches are the grounds, a middle band holds the mid values, and exactly one or two small patches hold the single saturated accent, so the sheet shows the VALUE STRUCTURE of the palette as well as its hues"
+  },
+
+  "composition_clauses": {
+    "c_default": "landscape orientation, generous dark negative space reserved somewhere in frame for a game title to be added later",
+    "c_title_top": "landscape orientation, a dark uncluttered band held across the top third for a title",
+    "c_title_left": "landscape orientation, a large calm dark slab held on the left third for a title, subject sitting right of centre",
+    "c_title_right": "landscape orientation, a large calm dark slab held on the right third for a title, subject sitting left of centre",
+    "c_portrait": "portrait orientation, vertical composition, generous calm space held in the lower third for a title block"
+  },
+
+  "palettes": [
+    {"id": "p01", "name": "house amber", "house": true, "clause": "PALETTE: grounds in void #0e0614, deep aubergine #170a1c, ink brown #14040c and deep indigo #181b3b; exactly one saturated accent, warm CRT amber #e8a33d shading to #f6a800; never stack a second saturated glow"},
+    {"id": "p02", "name": "house cold", "house": true, "clause": "PALETTE: grounds in void #0e0614, deep indigo #181b3b and #2e2547; exactly one saturated accent, cold electric-blue screen-glow #5c7ac3; never stack a second saturated glow"},
+    {"id": "p03", "name": "house violet", "house": true, "clause": "PALETTE: grounds in ink brown #14040c and deep aubergine #170a1c; exactly one saturated accent, eldritch violet #7a3b8f; never stack a second saturated glow; reserve this palette for the highest-strangeness reading of the scene"},
+    {"id": "p04", "name": "phosphor green", "house": false, "clause": "PALETTE: near-black grounds #0a020e and #0d0413 with almost no colour in them at all; exactly one saturated accent, phosphor terminal green #33ff66 falling off fast to nothing; the image should feel lit only by a monochrome display"},
+    {"id": "p05", "name": "sodium night", "house": false, "clause": "PALETTE: cold blue-grey grounds #1e2733 and #141b24; exactly one saturated accent, sodium-vapour street orange #ff9a3c; the classic municipal night-time colour split of cold shadow against warm lamp"},
+    {"id": "p06", "name": "paper and ink", "house": false, "clause": "PALETTE: INVERTED VALUE STRUCTURE -- a bright warm off-white paper ground #e8e0cf carrying most of the frame, drawn and shaded in ink black #171412 and warm grey, with exactly one accent of red-oxide stamp ink #a83c2b; a daylight bureaucratic register, mostly light rather than mostly dark"},
+    {"id": "p07", "name": "blueprint", "house": false, "clause": "PALETTE: a saturated prussian-blue ground #123a5c across the whole frame, all forms described in chalk-white and pale-cyan line #d8e6f2, with exactly one accent of warm amber #e8a33d where a real light source sits"},
+    {"id": "p08", "name": "ash and rust", "house": false, "clause": "PALETTE: desaturated concrete and ash greys #3a3a38, #2a2a28 and #55534d across the whole frame, one accent of oxidised rust orange #8a4a2b that is a MATERIAL and not a light; NO GLOWING SOURCE ANYWHERE in this image, all light is plain ambient daylight or plain overhead fluorescent"},
+    {"id": "p09", "name": "institutional green", "house": false, "clause": "PALETTE: the colour of a government building's corridor -- pale institutional green walls #7d9b7a and #5c7a5e over a cream #ded6c2 ceiling and skirting, everything drawn in ink black line, with exactly one accent of signal red #b23a2e; green is the DOMINANT hue of the whole frame"}
+  ],
+  "_palette_note": "p09 exists specifically to settle the hue question the taste profile flagged. Three green-ish hue buckets came up as mild aversions at p=0.005 to p=0.041 across twelve tests, and Bonferroni puts the best of them at p=0.06 -- not established. Designing around an uncorrected result would quietly narrow the palette on evidence that does not hold, so this run puts a green-dominant palette in front of him deliberately instead.",
+
+  "families": [
+    {"id": "f01", "name": "Municipal Record", "rendering": "r08", "palette": "p06", "register": "COHERENT DIRECTION -- MUNICIPAL RECORD: the whole set looks like pages torn from a public works archive. Everything is drawn as though it were being catalogued rather than dramatised, flat frontal or near-orthographic views, objects laid out for inspection, high-contrast black line on warm paper, the light of a photocopier rather than of a scene"},
+    {"id": "f02", "name": "Night Shift", "rendering": "r09", "palette": "p05", "register": "COHERENT DIRECTION -- NIGHT SHIFT: every image is a photograph taken outdoors or at a window after midnight on available light only, long exposure, cold shadow against warm municipal lamp, wet ground where there can be wet ground, nothing lit that would not really be lit"},
+    {"id": "f03", "name": "Terminal Native", "rendering": "r05", "palette": "p04", "register": "COHERENT DIRECTION -- TERMINAL NATIVE: the whole world is only ever seen through the game's own display, so every scene is a raster image on a monochrome monitor being looked at in a dark room; the fiction is that this is surveillance or telemetry, never a camera in the room"},
+    {"id": "f04", "name": "Ink Ledger", "rendering": "r04", "palette": "p07", "register": "COHERENT DIRECTION -- INK LEDGER: the set reads as an engineer's site notebook, pen and wash over a blue drafting ground, measured and annotated in spirit though never in text, construction lines left visible under the wash, the confidence of somebody recording a fact rather than composing a picture"},
+    {"id": "f05", "name": "Warm Grime", "rendering": "r01", "palette": "p01", "register": "COHERENT DIRECTION -- WARM GRIME (CONTROL ARM, the incumbent house style): painterly, amber, lived-in, the look this project has been making for a month; included unchanged so the new directions have something honest to beat"},
+    {"id": "f06", "name": "Hard Evidence", "rendering": "r02", "palette": "p08", "register": "COHERENT DIRECTION -- HARD EVIDENCE: every image is a forensic record of an object and its immediate surroundings, flat even light with no glow anywhere at all, obsessive material description, the register of an insurance photograph or an incident exhibit"},
+    {"id": "f07", "name": "Public Information", "rendering": "r03", "palette": "p09", "register": "COHERENT DIRECTION -- PUBLIC INFORMATION: mid-century government information poster, flat institutional green and cream, bold simplified shapes with one signal-red element carrying the warning, the calm authority of a notice pinned in a corridor telling you what to do in an emergency"},
+    {"id": "f08", "name": "Cold Audit", "rendering": "r02", "palette": "p02", "register": "COHERENT DIRECTION -- COLD AUDIT: overhead fluorescent and screen light only, clinical and even, every surface described sharply, the emotional temperature of an inspection carried out at 4pm on a Tuesday by somebody who does not work here"},
+    {"id": "f09", "name": "Duplicator", "rendering": "r06", "palette": "p06", "register": "COHERENT DIRECTION -- DUPLICATOR: the entire set was run off on the office risograph on the cheapest paper in the building, two inks, visible misregistration, the aesthetics of an internal memo nobody was proud of"},
+    {"id": "f10", "name": "Matte Dread", "rendering": "r07", "palette": "p03", "register": "COHERENT DIRECTION -- MATTE DREAD: hand-painted matte in big simple value masses, violet dominant, the one direction permitted to be openly ominous; the strangeness is structural and quiet rather than lurid, and it is present in every image of the set rather than saved for the scary ones"},
+    {"id": "f11", "name": "Carved", "rendering": "r10", "palette": "p08", "register": "COHERENT DIRECTION -- CARVED: relief print, no half tones anywhere, everything reduced to positive and negative shape; the discipline of the set is that if a form cannot survive being carved out of a block it does not appear"},
+    {"id": "f12", "name": "Field Report", "rendering": "r09", "palette": "p02", "register": "COHERENT DIRECTION -- FIELD REPORT: handheld on-camera flash documentation, harsh direct key from the camera position, hard black shadows thrown onto the wall behind, the register of somebody photographing a room quickly because they have to file it, not because they want it to look good"}
+  ],
+
+  "renderings": [
+    {"id": "r01", "name": "painterly warm-grime", "clause": "RENDERING: painterly warm-grime texture with heavy dark outlines and deep shadow, visible brush and palette-knife work, materials suggested with loose confident strokes rather than described, atmospheric haze separating the planes, diffuse falloff around every light; the picture reads as mood first and detail second"},
+    {"id": "r02", "name": "crisp micro-detail", "clause": "RENDERING: sharp focus from the nearest foreground to the far background with NO depth-of-field blur, NO atmospheric haze, NO fog, NO bloom and NO glow spill; high micro-detail in every material -- aggregate and form-tie marks in concrete, individual wires in mesh, tool marks, weld beads, paint chips and grime lines in metal, dust and fine scratches on glass, legible paper fibre; hard clean silhouette edges; specular highlights tight and hard-edged rather than soft glows; the picture reads as detail first and mood second"},
+    {"id": "r03", "name": "graphic screenprint", "clause": "RENDERING: limited-ink graphic screenprint poster, four flat ink layers and no more, hard-edged flat colour areas with no blending and no gradients, forms simplified to bold readable shapes, halftone dot texture used for the single mid tone, deliberate ink-on-paper flatness; the picture reads as a printed object rather than a painting"},
+    {"id": "r04", "name": "ink line and wash", "clause": "RENDERING: architectural pen-and-ink line drawing with loose watercolour wash, confident varied-weight ink contours describing every edge, cross-hatching for shadow, translucent wash pooling and drying with visible edges inside the lines and occasionally running outside them, white of the paper left showing in the lights"},
+    {"id": "r05", "name": "CRT phosphor", "clause": "RENDERING: the whole scene rendered as if it were a raster image displayed on a curved cathode-ray-tube monitor being photographed in a dark room -- visible horizontal scanline structure, slight barrel curvature at the frame edges, phosphor bloom smearing the brightest areas, faint chromatic fringing, a soft vignette from the tube glass, low bit-depth banding in the flat areas"},
+    {"id": "r06", "name": "risograph", "clause": "RENDERING: two-colour risograph duplicator print on coarse recycled paper, exactly two ink passes with visible MISREGISTRATION so the two layers sit a couple of millimetres apart, grainy uneven ink coverage, roller streaks, the paper stock texture and its off-white colour showing through everywhere, blown-out flat highlights"},
+    {"id": "r07", "name": "gouache matte", "clause": "RENDERING: hand-painted gouache matte painting in the pre-digital film tradition, opaque flat-drying matte pigment, soft edges where planes recede, big simple value masses established before any detail, a restrained number of colours mixed from a small palette, faint canvas or board tooth visible in the paint"},
+    {"id": "r08", "name": "technical drafting", "clause": "RENDERING: a measured technical drafting sheet, orthographic or near-orthographic projection with no dramatic perspective, every form described by uniform-weight construction lines, hidden edges dashed, section hatching in the cut areas, leader lines pointing at nothing since no annotation is permitted, the precision of an engineering drawing rather than an illustration"},
+    {"id": "r09", "name": "photographic still", "clause": "RENDERING: a photographic film still from a slow patient feature film, 35mm anamorphic lens with its slight horizontal flare and oval bokeh, natural film grain, natural available-light exposure with clipped highlights and crushed blacks left alone, a real lens's falloff and vignetting, no illustration and no painterly marks anywhere"},
+    {"id": "r10", "name": "relief print", "clause": "RENDERING: a hand-carved linocut relief print, everything reduced to carved positive and negative shapes with no half tones, visible gouge marks and chatter in the carved areas, uneven hand-burnished ink coverage, the block's edge impression showing at the border of the image"}
+  ],
+
+  "depth_renderings_default": ["r01", "r02", "r05", "r09"],
+  "palette_block_palettes_default": ["p01", "p02", "p04", "p06", "p08"],
+
+  "subjects": [
+    {"id": "s01", "name": "Office at dusk", "known_good": true, "clause": "a wide establishing shot of a small scrappy AI-safety-lab open-plan office at dusk: a couple of rows of cluttered desks, a server rack against the far wall, a big window showing an overcast stormy dusk sky, one overhead pendant lamp over the central desks and one monitor glow deep in the background, everything else falling into shadow; lived-in, faintly ominous"},
+    {"id": "s02", "name": "The cat and the terminal", "known_good": true, "clause": "a fat contented office cat asleep across the warm top of a beige CRT terminal on a paper-strewn desk at night, the terminal still on and casting the only light in the room, a cold mug of tea and a scattering of pens beside it; the cat is the emotional centre and everything else is the lab it lives in"},
+    {"id": "s03", "name": "Whiteboard war room", "known_good": true, "clause": "a cramped meeting room whose long whiteboard is covered edge to edge in diagrams, arrows, boxes and half-erased working, chairs pushed back at angles, cold coffee cups and a dead projector on the table; the whiteboard is the subject and the room is only its container; no legible writing, only the texture and rhythm of dense handwritten working"},
+    {"id": "s04", "name": "Server doom altar", "known_good": true, "clause": "a single server rack treated with unearned reverence, standing alone in a cleared floor space like an altar, cables descending from above in a deliberate curtain, one status lamp burning steadily, offerings of paperwork and mugs left on the floor in front of it; nobody present, the ritual already over"},
+    {"id": "s05", "name": "The compute lease", "clause": "a rented cage of borrowed compute inside somebody else's datacentre: a chain-link partition on a raised floor separating your three racks from a hundred identical racks running away into the dark, a paper label cable-tied to your cage door, cold aisle containment plastic hanging in strips; the scale of what you do not own is the point"},
+    {"id": "s06", "name": "Morning after the all-hands", "clause": "the meeting room the morning after a long all-hands: the whiteboard half wiped so the working survives only in ghosted smears with one boxed and double-boxed region still fully legible as shape, coffee rings on the table, one chair still pushed back where somebody left early, cold flat morning light through vertical blinds"},
+    {"id": "s07", "name": "Grant application desk", "clause": "the desk where the funding gets asked for: stacked application forms in labelled trays, a heavy mechanical franking machine, a wall clock, a date stamp and its inkpad, a green-shaded banker's lamp lighting exactly one form and nothing else, everything else in the room dim and administrative; the quiet violence of a deadline"},
+    {"id": "s08", "name": "The interpretability wall", "clause": "an office wall covered in a rigid grid of pinned printouts of feature visualisations and activation maps, held on bulldog clips from a taut wire, arranged in a strict rectangular array rather than a conspiratorial sprawl, a stepladder left in front of it, a desk lamp aimed at one column; NO STRING, no yarn, no connecting threads of any kind"},
+    {"id": "s09", "name": "The empty chair at three in the morning", "clause": "one workstation among many, cleared: monitor dark, desk wiped, a mug and an access badge left dead centre on the empty surface, the neighbouring desks still cluttered and alive; the overhead lights off in this bay and on in the next; a departure rendered as an absence of clutter"},
+    {"id": "s10", "name": "The regulator's waiting room", "clause": "an institutional waiting area outside a hearing room: bolted-down padded chairs in a row, hard-wearing patterned carpet, a tired potted plant, a numbered ticket display that is switched off, a closed heavy door with a brass plate bearing no readable text, magazines squared on a low table; the boredom of consequence"},
+    {"id": "s11", "name": "Cooling plant at night", "clause": "the mechanical plant deck on a roof at night: large lagged pipes and their supports, a chiller unit with condensate dripping and pooling, valve wheels and gauges, one indicator lamp glowing on a control panel, city sodium light spilling from below onto the underside of the ductwork; the physical cost of thinking, made plumbing"},
+    {"id": "s12", "name": "The paper that was wrong", "clause": "a printed preprint lying open on a desk under a lamp, its pages fanned and dog-eared, one paragraph struck through hard with a red pen and the pen still lying across it, a second copy face down beside it, a cold cup at the edge of the light; no legible text, only the rhythm of columns and equations and one violent red mark"},
+    {"id": "s13", "name": "Server room, after the sprinklers", "clause": "a small server room the morning after a discharge: standing water across the raised floor tiles, ceiling tiles sagging and one dropped out entirely, a torch left on and lying on its side casting a low beam across the water, racks dark, cable trays dripping; nobody has come back yet"},
+    {"id": "s14", "name": "Conference booth, packed down", "clause": "an exhibition hall at eleven at night with the show over: a half-dismantled booth, banner stands collapsed into their cases, a table with a cloth pulled crooked, flight cases open on the carpet, a forklift parked in the aisle, the hall lights dropped to a single working circuit; ambition folded back into boxes"},
+    {"id": "s15", "name": "Rooftop, two mugs", "clause": "a flat gravel rooftop above a low office building at the edge of a city, a parapet with two abandoned mugs and an ashtray on it, a bent aerial and a satellite dish, the skyline beyond at the blue hour with a few lit windows; a conversation that just ended and no one in frame"},
+    {"id": "s16", "name": "The lab fridge", "clause": "a shared office kitchen fridge photographed straight on, its door a dense collage of curling notes, a rota, a maintenance schedule, magnets and one whiteboard marker jammed in the door tray, a bin beside it with a pizza box lid sticking out; institutional life in one appliance; no legible writing on any note, only handwriting texture"},
+    {"id": "s17", "name": "The tape archive", "clause": "the inside of a fireproof media safe standing open in a small windowless room: rows of LTO tape cartridges in their cases on steel shelves, one slot conspicuously empty, a handheld barcode scanner on a lanyard hanging from the door, a desiccant pack and a temperature gauge; the coldest possible storage of the most dangerous possible thing"},
+    {"id": "s18", "name": "Substation at the fence line", "clause": "the electrical substation feeding the compute, seen from outside its chain-link boundary at night: transformers and their cooling fins, insulator stacks, a lightning arrester, warning plates with no readable text, moths circling the single security floodlight, the fence hanging properly on its posts with a real top rail and visible sag; a low hum you can see"},
+    {"id": "s19", "name": "The abandoned open-plan", "clause": "the same open-plan office as the dusk scene, years later and emptied: chairs upended on desks, a layer of dust dulling every surface, cables left coiled on the floor, one monitor inexplicably still awake and glowing in the far corner, daylight through unwashed windows; the only warm thing in the room is a mistake"},
+    {"id": "s20", "name": "Board room after the vote", "clause": "a long veneered board table after a decision: water glasses at uneven levels, a carafe, papers squared in front of every place except one where they are scattered, one high-backed chair pushed right back and turned away, the projector still on and throwing a blank white rectangle onto the wall; the room has not been tidied and nobody is coming back today"},
+    {"id": "s21", "name": "Sunrise through the server room blinds", "clause": "the one hopeful frame: low horizontal sunrise light coming through venetian blinds into a small server room, striping the racks and the floor in warm bands, dust moving in the light, a jacket left over the back of a chair, the machines quietly running; nothing wrong is happening in this picture"},
+    {"id": "s22", "name": "The analogue incident wall", "clause": "a monitoring wall built the wrong way on purpose: instead of screens, a panel of large round analogue gauges, mechanical annunciator flags, brass-bezelled dials and a bank of toggle switches with a single amber indicator lit, mounted in a varnished hardwood frame in an otherwise modern office; anachronism played completely straight"}
+  ],
+
+  "swatch_anchors": ["s01", "s04", "s07"],
+  "palette_block_subjects": ["s01", "s05", "s08", "s09", "s11", "s13", "s16", "s18", "s20", "s21"],
+
+  "levels": {
+    "L0": {
+      "title": "Swatch round -- palette conglomerate, fast yes/no",
+      "size": "1024x1024",
+      "quality": "medium",
+      "attended": false,
+      "blocks": [
+        {
+          "id": "l0_sheets",
+          "kind": "swatch_sheet",
+          "cross": {"palette": "*"},
+          "variants": 2,
+          "note": "One pure swatch sheet per palette, two rolls each. 9 palettes x 2 = 18."
+        },
+        {
+          "id": "l0_anchors",
+          "kind": "scene",
+          "cross": {"subject": "@swatch_anchors", "palette": "*"},
+          "rendering": "r01",
+          "composition": "@rotate",
+          "variants": 2,
+          "note": "Verbatim-identical anchor scene under every palette, so PALETTE is the only variable. 3 x 9 x 2 = 54. The two rolls differ in composition, which the taste profile measured as a clean null (52.9%, p=0.55) and therefore worth sampling rather than holding."
+        }
+      ]
+    },
+
+    "L1": {
+      "title": "Wide net -- the exploration",
+      "size": "1536x1024",
+      "quality": "medium",
+      "attended": false,
+      "blocks": [
+        {
+          "id": "l1_grid",
+          "kind": "scene",
+          "cross": {"subject": "*", "rendering": "*"},
+          "palette": "@house_default",
+          "composition": "@rotate",
+          "variants": 1,
+          "note": "Full factorial: every subject in every rendering, exactly once. 22 x 10 = 220. This is the single-axis measurement grid -- a complete cross lets subject preference and rendering preference be read independently. Composition rotates deterministically because it is a measured null."
+        },
+        {
+          "id": "l1_family",
+          "kind": "family",
+          "cross": {"subject": "*", "family": "*"},
+          "composition": "@rotate",
+          "variants": 1,
+          "note": "REPLACES the old l1_depth block. 22 subjects x 12 coherent art directions = 264 images at the identical cost, with ZERO repeated prompts. The old block spent $13.20 on rolls v2/v3/v4 of prompts already rendered once; the taste profile measures that as worthless (119 slots, highest-vN chosen 40 times against a random expectation of 47.3, p=0.34; per-variant hit rates 33/43/25/32% against a 34% base). Each family here is a BUNDLE -- rendering plus palette plus register -- applied uniformly across all 22 subjects, so Pip can accept or reject a DIRECTION in one gesture rather than adjudicating 264 individual images. That is the response to his own note: 'individually good ... but need coherence in direction'."
+        },
+        {
+          "id": "l1_palette",
+          "kind": "scene",
+          "cross": {"subject": "@palette_block_subjects", "palette": "*"},
+          "rendering": "r01",
+          "composition": "@rotate",
+          "variants": 1,
+          "note": "Palette crossed against ten subjects at full size, all nine palettes, one roll each. 10 x 9 = 90 -- same count and cost as the old 6 x 5 x 3, with zero repeated prompts. Redundant with L0 by design: L0 asks which palette Pip LIKES, this asks which palette SURVIVES a real scene at poster size."
+        },
+        {
+          "id": "l1_probe",
+          "kind": "scene",
+          "model": "gpt-image-2",
+          "cross": {"subject": ["s01", "s04", "s21"], "rendering": ["r01", "r02"]},
+          "palette": "@house_default",
+          "composition": "@rotate",
+          "variants": 1,
+          "note": "Six-image probe of the newer model on prompts that already have a gpt-image-1.5 twin in l1_grid. Expected to possibly fail on request shape; failures are logged and do not abort the run. Max exposure about $0.30."
+        }
+      ]
+    },
+
+    "L2": {
+      "title": "Tweened and twinned -- controlled single-step variation on L1 winners",
+      "size": "1536x1024",
+      "quality": "medium",
+      "attended": true,
+      "requires_picks": true,
+      "picks_target": 36,
+      "steps_per_pick": 6,
+      "note": "Each pick is regenerated along ONE axis in ordered steps, everything else held verbatim. A pair that differs in one controlled way measures taste; a scatter only satisfies it.",
+      "axes": [
+        {
+          "id": "a_yaw",
+          "name": "camera yaw",
+          "steps": [
+            "CAMERA: straight on, the subject square to the lens",
+            "CAMERA: rotated fifteen degrees to the left of straight on",
+            "CAMERA: rotated thirty degrees to the left of straight on",
+            "CAMERA: rotated fifteen degrees to the right of straight on",
+            "CAMERA: rotated thirty degrees to the right of straight on",
+            "CAMERA: a near-profile view from the side, roughly seventy degrees off straight on"
+          ]
+        },
+        {
+          "id": "a_pitch",
+          "name": "camera height",
+          "steps": [
+            "CAMERA: at standing eye level",
+            "CAMERA: at seated eye level",
+            "CAMERA: low, at desk height, looking slightly up",
+            "CAMERA: very low, at floor level, looking up",
+            "CAMERA: high, from head height looking down at about twenty degrees",
+            "CAMERA: from ceiling height looking steeply down"
+          ]
+        },
+        {
+          "id": "a_distance",
+          "name": "shot size",
+          "steps": [
+            "FRAMING: a very wide establishing shot with the whole space in frame",
+            "FRAMING: a wide shot",
+            "FRAMING: a medium shot with the subject filling about half the frame",
+            "FRAMING: a close shot on the subject with the room implied at the edges",
+            "FRAMING: a tight detail shot of one prop with the rest out of frame",
+            "FRAMING: an extreme detail, a few centimetres across, texture and material only"
+          ]
+        },
+        {
+          "id": "a_title_space",
+          "name": "title negative space",
+          "steps": [
+            "@composition:c_default",
+            "@composition:c_title_top",
+            "@composition:c_title_left",
+            "@composition:c_title_right",
+            "COMPOSITION: landscape, subject pushed to the extreme lower right, the upper-left two thirds calm and dark",
+            "COMPOSITION: landscape, a strong empty horizontal band through the vertical centre of the frame with incident above and below it"
+          ]
+        },
+        {
+          "id": "a_decay",
+          "name": "wording tween, lived-in to derelict",
+          "note": "The subject clause is held verbatim and ONE adjectival clause is stepped. This measures how prompt language maps onto image, which is the thing nobody has measured here.",
+          "steps": [
+            "CONDITION: brand new, unpacked this week, nothing worn yet",
+            "CONDITION: in daily use and well kept",
+            "CONDITION: lived-in, comfortably untidy, small repairs visible",
+            "CONDITION: worn, tired, things beginning to be left unfixed",
+            "CONDITION: neglected, dust settled, several things visibly broken",
+            "CONDITION: derelict, abandoned long enough for the building itself to be failing"
+          ]
+        },
+        {
+          "id": "a_quiet",
+          "name": "wording tween, populated to still",
+          "steps": [
+            "ATMOSPHERE: the room has just been full and the traces are fresh and warm",
+            "ATMOSPHERE: somebody stepped out a minute ago",
+            "ATMOSPHERE: quiet, the working day over",
+            "ATMOSPHERE: still, nothing has moved in hours",
+            "ATMOSPHERE: silent, nothing has moved in weeks",
+            "ATMOSPHERE: the stillness of a place no living thing has entered for a very long time"
+          ]
+        },
+        {
+          "id": "a_style_tween",
+          "name": "style tween, painterly to crisp",
+          "steps": [
+            "RENDERING: fully painterly and atmospheric, mood first, detail dissolving into tone",
+            "RENDERING: mostly painterly, with the nearest foreground prop resolved sharply and everything else loose",
+            "RENDERING: balanced, brushwork visible but every prop legible as a specific object",
+            "RENDERING: mostly crisp, with only the far background allowed to soften",
+            "RENDERING: crisp throughout, high micro-detail, no haze and no bloom anywhere",
+            "RENDERING: clinically crisp, every material's grain and tool marks described, hard specular highlights, no atmosphere at all"
+          ]
+        }
+      ]
+    },
+
+    "L3": {
+      "title": "Hero prints and posters -- few, large, best quality",
+      "size": "1536x1024",
+      "portrait_size": "1024x1536",
+      "quality": "high",
+      "attended": true,
+      "requires_picks": true,
+      "picks_target": 24,
+      "landscape_per_pick": 4,
+      "portrait_per_pick": 1,
+      "note": "From L2 winners only. High quality is 4x the medium price, which is only justified once a composition has already won twice. Masters are copied to masters_staging because they exceed the 1MB git policy -- although art_generated/ is gitignored in full, so nothing here can reach git by accident anyway."
+    }
+  },
+
+  "late_requests": {
+    "note": "coordination#33 invited sister repos to request art by midday 2026-08-07 AEST. Late requests are appended to this file as additional blocks under a level, or supplied as a separate spec passed with --extra-spec. The reserve line in the plan exists for exactly this.",
+    "reserve_usd": 6.0,
+    "blocks": []
+  }
+}

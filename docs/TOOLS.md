@@ -111,7 +111,7 @@ Declared with a `Layer:` line in a tool's module docstring; `--` = undeclared.
 | build_cat_west_walk_picks.py | -- | build_cat_west_walk_picks -- 2026-07-27 cat_sweep_black_side_heft WEST walk pick sheet. | human (docstring usage) |
 | build_doom_strip_sheet.py | -- | Generate art_generated/doom_strip_sheet.html -- ADR-0015 doom-strip triage | human (docstring usage) |
 | build_endgame_review.py | -- | Build a verdict-capturing review page for the endgame concept batch. | human (docstring usage) |
-| build_full_gallery.py | OBSERVE | build_full_gallery.py -- ONE stateful gallery over ALL art on disk, in three | tool:apply_review.py |
+| build_full_gallery.py | OBSERVE | build_full_gallery.py -- ONE stateful gallery over ALL art on disk, in three | tool:apply_review.py; tool:run_art_night.py |
 | build_generation_compare.py | -- | Side-by-side comparison of two generations of the same concept batch. | human (docstring usage) |
 | build_morning_index.py | -- | One index page over every generated art batch on disk. | human (docstring usage) |
 | build_prop_rebase_sheet.py | -- | build_prop_rebase_sheet -- prop re-base bulk batch + facing pilot (2026-07-27). | human (docstring usage) |
@@ -147,6 +147,7 @@ Declared with a `Layer:` line in a tool's module docstring; `--` = undeclared.
 | generate_images.py | -- | Generalized batch image generator for pdoom1 art assets. | tool:promote_assets.py |
 | promote_assets.py | -- | Asset promotion tool for pdoom1. | NONE FOUND |
 | render_latex_pdoom.py | -- | Local LaTeX-style typeset renders of the P(doom) logo studies. | NONE FOUND |
+| run_art_night.py | GENERATE | run_art_night.py -- level-structured, budget-capped, resumable art run. | human (Pip), once per wave (declared) |
 | select_assets.py | -- | Interactive asset selection tool for pdoom1. | tool:promote_assets.py |
 
 ## `tools/music/`
@@ -208,4 +209,4 @@ DISCUSSING CI); the rest are the hollow-runner shape -- read them.
 
 23 `.html` tool(s) under `tools/` (browser-opened, no docstring to parse): `tools/art_review/doom_overlay_preview.html`, `tools/art_review/hero_gallery_template.html`, `tools/art_review/icon_pass_2026-07-21.html`, `tools/art_review/icon_pass_verdicts_2026-07-21.html`, `tools/art_review/palette.html`, `tools/art_review/palette_swatches.html`, `tools/art_review/scene_wave2_2026-07-21.html`, `tools/art_review/style_review.html`, `tools/assets/review_generated.html`, `tools/music/commission_sheets.html`, `tools/music/jukebox.html`, `tools/music/listening_room.html`, `tools/music/stem_board.html`, `tools/runsheet/CEREMONY-ALL-GATES-2026-07-31.html`, `tools/runsheet/fri-2026-07-31-EVENING-1620.html`, `tools/runsheet/fri-2026-07-31-GATES-1700.html`, `tools/runsheet/fri-2026-07-31-TO-MIDNIGHT-1733.html`, `tools/runsheet/fri-2026-07-31-league-day.html`, `tools/runsheet/playtest_card.html`, `tools/runsheet/wed-thu-2026-07-29.html`, `tools/social_composer.html`, `tools/ui_comparison.html`, `tools/ui_mockup/wireframe.html`.
 
-Total: 111 active tools (8 GENERATE, 6 OBSERVE, 5 PROVE, 1 SWEEP, 91 undeclared); 11 in UNKNOWN; 6 archived.
+Total: 112 active tools (9 GENERATE, 6 OBSERVE, 5 PROVE, 1 SWEEP, 91 undeclared); 11 in UNKNOWN; 6 archived.
