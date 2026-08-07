@@ -674,7 +674,7 @@ func _create_entry_row(entry, rank: int) -> HBoxContainer:
 	# Player Name
 	var player_label = Label.new()
 	player_label.custom_minimum_size = Vector2(250, 0)
-	player_label.text = entry.player_name
+	player_label.text = entry.lab_name
 	player_label.add_theme_font_size_override("font_size", 14)
 	player_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	row.add_child(player_label)

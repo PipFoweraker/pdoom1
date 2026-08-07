@@ -145,7 +145,7 @@ python scripts/export_leaderboards.py --verbose
 | Field | Type | Description |
 |-------|------|-------------|
 | `score` | int | Turns survived (primary ranking metric) |
-| `player_name` | string | Lab name displayed on leaderboard |
+| `player_name` | string | **Misnamed: this carries the LAB name, not the player's name.** Max 40 BYTES -- the server cuts the rest with a byte-wise `substr` and says nothing. See "Name budget" below. |
 | `date` | ISO datetime | When score was achieved |
 | `level_reached` | int | Final turn number (same as score) |
 | `game_mode` | string | Economic model version |
@@ -158,6 +158,38 @@ python scripts/export_leaderboards.py --verbose
 | `final_compute` | int | Compute resources |
 | `research_papers_published` | int | Papers published during game |
 | `technical_debt_accumulated` | int | Technical debt accrued |
+
+### Name budget: 40 bytes, measured
+
+The limit was **measured, not assumed**. On 2026-08-08 the live
+`(weekly-2026-w32, L4)` board held this row:
+
+```
+"GRIM (Global Risk Intervention Mechanism"    <- 40 bytes, as stored
+"GRIM (Global Risk Intervention Mechanism)"   <- 41 bytes, as submitted
+```
+
+The server ate exactly one byte and gave no signal. The cut is byte-wise, so a
+non-ASCII name can also be split mid-codepoint and stored as invalid UTF-8.
+
+`score_api.php` is deployed server-side and is **not in `pdoom1-website` or any
+repo here**, so the client cannot change the limit. Instead
+`Leaderboard.fit_board_name()` (`godot/scripts/leaderboard.gd`) fits the value
+before submission -- word-boundary cut plus a visible `...` mark -- so the
+server's `substr` never fires.
+
+### Two identity values, one wire field (open)
+
+Pip ruled on 2026-08-08 that the board should carry **both** an Operator (the
+human) and a Lab (the org), because generated lab names collide and one player
+may run several labs over time. The client now models both
+(`ScoreEntry.lab_name` / `ScoreEntry.operator_name`) and persists both locally.
+
+**The wire still carries only the lab.** Adding a second field is a server
+change (schema + API + public rendering) and is routed through coordination, not
+decided in this repo. `ScoreEntry.to_wire_dict()` deliberately omits
+`operator_name` rather than sending an unknown key blind at the risk of a
+rejected POST losing a score.
 
 ---
 
