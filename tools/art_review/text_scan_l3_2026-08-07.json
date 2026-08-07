@@ -3,14 +3,115 @@
     "art_generated/an0807_l3_hero_land/v1/*_1536.png",
     "art_generated/an0807_l3_hero_port/v1/*_1024.png"
   ],
-  "n_images": 24,
-  "any_hit_count": 0,
-  "any_hit_rate": 0.0,
+  "n_images": 140,
+  "any_hit_count": 7,
+  "any_hit_rate": 0.05,
   "strong_hit_count": 0,
   "strong_hit_rate": 0.0,
   "strong_rule": "conf >= 0.65 and >= 3 letters",
   "caveat": "OCR proxy. Hallucinates on texture (false positives, mostly low-confidence) and misses small/warped/stylised text (false negatives). Treat the rate as a floor, not a ceiling.",
   "assets": {
+    "art_generated/an0807_l3_hero_land/v1/s01_r03_p09_v1_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s01_r03_p09_v2_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s01_r03_p09_v3_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s01_r03_p09_v4_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s02_r03_p09_v1_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s02_r03_p09_v2_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s02_r03_p09_v3_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s02_r03_p09_v4_1536.png": {
+      "hits": [
+        {
+          "conf": 0.5951,
+          "text": "0"
+        }
+      ],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s02_r05_p04_v1_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s02_r05_p04_v2_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s02_r05_p04_v3_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s02_r05_p04_v4_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s03_r01_p01_v1_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s03_r01_p01_v2_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s03_r01_p01_v3_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s03_r01_p01_v4_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s03_r02_p02_v1_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s03_r02_p02_v2_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s03_r02_p02_v3_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s03_r02_p02_v4_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s03_r04_p07_v1_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s03_r04_p07_v2_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s03_r04_p07_v3_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s03_r04_p07_v4_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
     "art_generated/an0807_l3_hero_land/v1/s04_r01_p01_v1_1536.png": {
       "hits": [],
       "strong_hits": 0
@@ -24,6 +125,75 @@
       "strong_hits": 0
     },
     "art_generated/an0807_l3_hero_land/v1/s04_r01_p01_v4_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s04_r10_p08_v1_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s04_r10_p08_v2_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s04_r10_p08_v3_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s04_r10_p08_v4_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s05_r06_p06_v1_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s05_r06_p06_v2_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s05_r06_p06_v3_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s05_r06_p06_v4_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s06_r01_p01_v1_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s06_r01_p01_v2_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s06_r01_p01_v3_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s06_r01_p01_v4_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s06_r06_p06_v1_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s06_r06_p06_v2_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s06_r06_p06_v3_1536.png": {
+      "hits": [
+        {
+          "conf": 0.7127,
+          "text": "18"
+        }
+      ],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s06_r06_p06_v4_1536.png": {
       "hits": [],
       "strong_hits": 0
     },
@@ -43,6 +213,75 @@
       "hits": [],
       "strong_hits": 0
     },
+    "art_generated/an0807_l3_hero_land/v1/s08_r04_p07_v1_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s08_r04_p07_v2_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s08_r04_p07_v3_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s08_r04_p07_v4_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s08_r05_p04_v1_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s08_r05_p04_v2_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s08_r05_p04_v3_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s08_r05_p04_v4_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s09_r06_p06_v1_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s09_r06_p06_v2_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s09_r06_p06_v3_1536.png": {
+      "hits": [
+        {
+          "conf": 0.8025,
+          "text": "30"
+        }
+      ],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s09_r06_p06_v4_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s10_r06_p06_v1_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s10_r06_p06_v2_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s10_r06_p06_v3_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s10_r06_p06_v4_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
     "art_generated/an0807_l3_hero_land/v1/s10_r07_p03_v1_1536.png": {
       "hits": [],
       "strong_hits": 0
@@ -56,6 +295,104 @@
       "strong_hits": 0
     },
     "art_generated/an0807_l3_hero_land/v1/s10_r07_p03_v4_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s11_r04_p07_v1_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s11_r04_p07_v2_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s11_r04_p07_v3_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s11_r04_p07_v4_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s11_r06_p06_v1_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s11_r06_p06_v2_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s11_r06_p06_v3_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s11_r06_p06_v4_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s12_r03_p09_v1_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s12_r03_p09_v2_1536.png": {
+      "hits": [
+        {
+          "conf": 0.683,
+          "text": "="
+        }
+      ],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s12_r03_p09_v3_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s12_r03_p09_v4_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s12_r04_p07_v1_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s12_r04_p07_v2_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s12_r04_p07_v3_1536.png": {
+      "hits": [
+        {
+          "conf": 0.4566,
+          "text": "47"
+        },
+        {
+          "conf": 0.3597,
+          "text": "2"
+        },
+        {
+          "conf": 0.487,
+          "text": "23"
+        }
+      ],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s12_r04_p07_v4_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s12_r07_p03_v1_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s12_r07_p03_v2_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s12_r07_p03_v3_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s12_r07_p03_v4_1536.png": {
       "hits": [],
       "strong_hits": 0
     },
@@ -75,6 +412,22 @@
       "hits": [],
       "strong_hits": 0
     },
+    "art_generated/an0807_l3_hero_land/v1/s20_r01_p02_v1_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s20_r01_p02_v2_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s20_r01_p02_v3_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s20_r01_p02_v4_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
     "art_generated/an0807_l3_hero_land/v1/s20_r01_p03_v1_1536.png": {
       "hits": [],
       "strong_hits": 0
@@ -91,7 +444,120 @@
       "hits": [],
       "strong_hits": 0
     },
+    "art_generated/an0807_l3_hero_land/v1/s20_r01_p08_v1_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s20_r01_p08_v2_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s20_r01_p08_v3_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s20_r01_p08_v4_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s21_r01_p02_v1_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s21_r01_p02_v2_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s21_r01_p02_v3_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s21_r01_p02_v4_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s21_r01_p05_v1_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s21_r01_p05_v2_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s21_r01_p05_v3_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_land/v1/s21_r01_p05_v4_1536.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_port/v1/s01_r03_p09_v1_1024.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_port/v1/s02_r03_p09_v1_1024.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_port/v1/s02_r05_p04_v1_1024.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_port/v1/s03_r01_p01_v1_1024.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_port/v1/s03_r02_p02_v1_1024.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_port/v1/s03_r04_p07_v1_1024.png": {
+      "hits": [
+        {
+          "conf": 0.4742,
+          "text": "15"
+        }
+      ],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_port/v1/s04_r01_p01_v1_1024.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_port/v1/s04_r10_p08_v1_1024.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_port/v1/s05_r06_p06_v1_1024.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_port/v1/s06_r01_p01_v1_1024.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_port/v1/s06_r06_p06_v1_1024.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
     "art_generated/an0807_l3_hero_port/v1/s08_r01_p03_v1_1024.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_port/v1/s08_r04_p07_v1_1024.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_port/v1/s08_r05_p04_v1_1024.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_port/v1/s09_r06_p06_v1_1024.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_port/v1/s10_r06_p06_v1_1024.png": {
       "hits": [],
       "strong_hits": 0
     },
@@ -99,11 +565,60 @@
       "hits": [],
       "strong_hits": 0
     },
+    "art_generated/an0807_l3_hero_port/v1/s11_r04_p07_v1_1024.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_port/v1/s11_r06_p06_v1_1024.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_port/v1/s12_r03_p09_v1_1024.png": {
+      "hits": [
+        {
+          "conf": 0.594,
+          "text": "=="
+        },
+        {
+          "conf": 0.3752,
+          "text": "227"
+        },
+        {
+          "conf": 0.9351,
+          "text": "J"
+        }
+      ],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_port/v1/s12_r04_p07_v1_1024.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_port/v1/s12_r07_p03_v1_1024.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
     "art_generated/an0807_l3_hero_port/v1/s13_r01_p09_v1_1024.png": {
       "hits": [],
       "strong_hits": 0
     },
+    "art_generated/an0807_l3_hero_port/v1/s20_r01_p02_v1_1024.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
     "art_generated/an0807_l3_hero_port/v1/s20_r01_p03_v1_1024.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_port/v1/s20_r01_p08_v1_1024.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_port/v1/s21_r01_p02_v1_1024.png": {
+      "hits": [],
+      "strong_hits": 0
+    },
+    "art_generated/an0807_l3_hero_port/v1/s21_r01_p05_v1_1024.png": {
       "hits": [],
       "strong_hits": 0
     }
