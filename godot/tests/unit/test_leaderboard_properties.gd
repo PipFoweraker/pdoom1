@@ -24,12 +24,26 @@ const CAP := 50  # Leaderboard.max_entries default; asserted in test_cap_matches
 # ---------------------------------------------------------------------------
 
 var _board_counter := 0
+var _board_paths: Array[String] = []
+
+func after_each():
+	# DELETE THE FILES. Each _fresh_board() writes a real JSON file into user://
+	# leaderboards, and this suite makes hundreds per run -- 1,302 of them were counted
+	# on 2026-08-07, in a five-second burst, none ever removed. Combined with the runner
+	# inheriting the developer's APPDATA (fixed in scripts/run_godot_tests.py), that
+	# litter was landing in Pip's live player profile alongside his real league board.
+	# A unique filename made this suite non-CLOBBERING, which is not the same as
+	# non-LITTERING; test_userdata_isolation.gd now fails if any of these survive.
+	for path in _board_paths:
+		DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
+	_board_paths.clear()
 
 func _fresh_board() -> Leaderboard:
 	# Unique seed per board => unique user:// filename => no clobbering real files.
 	_board_counter += 1
 	var lb: Leaderboard = Leaderboard.new("test_prop_%d_%d" % [_board_counter, Time.get_ticks_usec()], "test")
 	lb.clear()  # start empty and hermetic
+	_board_paths.append(lb.file_path)  # removed in after_each -- see the note above
 	autofree(lb)
 	return lb
 
