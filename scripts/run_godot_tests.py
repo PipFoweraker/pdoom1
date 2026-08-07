@@ -40,16 +40,56 @@ Usage:
 """
 
 import argparse
+import hashlib
 import os
 import re
 import subprocess
 import sys
+import tempfile
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
 # Project root
 PROJECT_ROOT = Path(__file__).parent.parent
 GODOT_PROJECT = PROJECT_ROOT / "godot"
+
+
+def _isolated_env():
+    """Environment for every Godot invocation, with `user://` pointed AWAY from the
+    developer's real profile.
+
+    MEASURED DAMAGE, not a precaution. Godot derives the user data dir from
+    `config/name` in project.godot ("P(Doom)"), NOT from the checkout path, so every
+    worktree on a machine shares ONE profile:
+    `%APPDATA%/Godot/app_userdata/P(Doom)/`. These subprocesses previously inherited
+    the developer's APPDATA, so a headless test run wrote into live player data --
+    on 2026-08-07 a test run took Pip's 2026-07-31 league board from 50 entries to 0,
+    and rewrote his config.cfg / keybinds.cfg / theme.cfg. `test_leaderboard_sync.gd`
+    writes the outbox, `test_default_identity_prompt.gd` calls GameConfig.save_config(),
+    and `test_leaderboard_properties.gd` creates a board file per property iteration.
+
+    Only APPDATA works on Windows. XDG_DATA_HOME was tried and has NO effect there
+    (proven by execution, 2026-08-07); on Linux/macOS the XDG/HOME vars are what bite,
+    so all three are redirected.
+
+    REJECTED: setting `use_custom_user_dir` in project.godot. That ships to players and
+    would relocate every real player's saves.
+
+    The sandbox is keyed by a hash of the checkout path so concurrent worktrees do not
+    collide with each other either.
+    """
+    key = hashlib.sha1(str(PROJECT_ROOT.resolve()).encode("utf-8")).hexdigest()[:12]
+    sandbox = Path(tempfile.gettempdir()) / "pdoom1-godot-userdata" / key
+    sandbox.mkdir(parents=True, exist_ok=True)
+    env = dict(os.environ)
+    env["APPDATA"] = str(sandbox)  # Windows: the only var that moves user://
+    env["XDG_DATA_HOME"] = str(sandbox)  # Linux (CI)
+    env["HOME"] = str(sandbox)  # macOS / Linux fallback
+    env["PDOOM1_USERDATA_SANDBOX"] = str(sandbox)  # read by the in-engine guard test
+    return env
+
+
+ISOLATED_ENV = _isolated_env()
 
 # Godot executable paths (try to find Godot)
 GODOT_PATHS = [
@@ -74,7 +114,9 @@ def find_godot():
     """Find Godot executable on system."""
     for path in GODOT_PATHS:
         try:
-            result = subprocess.run([path, "--version"], capture_output=True, text=True, timeout=15)
+            result = subprocess.run(
+                [path, "--version"], capture_output=True, text=True, timeout=15, env=ISOLATED_ENV
+            )
             if result.returncode == 0:
                 print(f"[INFO] Found Godot: {path}")
                 print(f"[INFO] Version: {result.stdout.strip()}")
@@ -97,7 +139,7 @@ def run_import(godot_path):
     print("\n[IMPORT] Running headless import pass (populates class cache)...")
     cmd = [godot_path, "--headless", "--path", str(GODOT_PROJECT), "--import"]
     try:
-        result = subprocess.run(cmd, capture_output=True, text=True, timeout=600)
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=600, env=ISOLATED_ENV)
         # --import can exit non-zero on benign asset warnings; only treat a hard
         # failure (no cache produced) as fatal. The cache file confirms success.
         cache = GODOT_PROJECT / ".godot" / "global_script_class_cache.cfg"
@@ -178,7 +220,7 @@ def check_syntax(godot_path):
     ]
 
     try:
-        result = subprocess.run(cmd, capture_output=True, text=True, timeout=300)
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=300, env=ISOLATED_ENV)
     except subprocess.TimeoutExpired:
         print("[ERROR] Syntax walker timed out after 300s.")
         return False
@@ -326,7 +368,12 @@ def run_gut_tests(godot_path, mode, test_dir, log_level, min_tests):
     exit_code = None
     try:
         result = subprocess.run(
-            cmd, cwd=GODOT_PROJECT, capture_output=False, text=True, timeout=900
+            cmd,
+            cwd=GODOT_PROJECT,
+            capture_output=False,
+            text=True,
+            timeout=900,
+            env=ISOLATED_ENV,
         )
         exit_code = result.returncode
     except subprocess.TimeoutExpired:
