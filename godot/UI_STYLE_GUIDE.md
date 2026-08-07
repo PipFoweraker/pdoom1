@@ -146,6 +146,78 @@ why `test_music_player_controls.gd` now pins them equal.
 authored panel must be big enough for its contents **and not more than 40px
 bigger**, so a future resize that adds padding instead of legibility fails.
 
+### Game-over screen type scale
+
+Enlarged 2026-08-07 after Pip on v0.14.0: *"the game-over screen is really hard
+to read and still involves scrolling and old colour schemes. can you make it
+bigger so I don't have to scroll?"*
+
+Measured on the build he played, at 1920x1080: the stats box was 720x300 holding
+**736px** of content across **32 lines, 14 of them visible** -- and line 32 was
+`> Press ENTER for Leaderboard`, the only advertised route to the board.
+
+| Element | Was | Now |
+|---|---|---|
+| Stats body (RichTextLabel) | 16 (Godot default) | 20 |
+| Buttons | 16 | 20 |
+| Button box | 150 x 50 | 160 x 56 (Leaderboard 190) |
+| Stats box min height | 300 | 470 |
+| Panel box | 780 x 460 | 920 x 800 |
+| Lines of content (worst case) | 32 | 16 |
+| Overflow | +436px, scrollbar shown | -40px, no scrollbar |
+
+**Content was cut before the box grew.** The ledger rows collapsed from one line
+per field to one line per category (resources: 7 lines -> 1; team: 4 -> 1), the
+redundant "FINAL STATISTICS" header went, and the achievements block -- the one
+unbounded region, which printed a title *and* a flavor line per unlock -- is
+capped at three plus "(+N more)". Growing the box alone would have needed ~780px
+of stats to show 32 lines at a legible size, which does not fit a 1080-unit
+viewport alongside a title, a cause of death and a button row.
+
+**Navigation does not live inside a scrolling region.** `> Press ENTER for
+Leaderboard` is now `LeaderboardButton` in the button row. ENTER still works.
+
+`test_game_over_is_readable.gd` guards the box from both sides (fit, and no more
+than **80px** of slack -- wider than the pause menu's 40 because the death-cause
+prose varies in wrapped height per run) and additionally asserts **zero scroll**:
+content fits, no scrollbar is visible, and every rendered line is a visible line.
+
+### Named web colours are not a palette
+
+The game-over screen was written in Godot's built-in colour names -- `cyan`,
+`gold`, `yellow`, `purple`, `blue`, `lime`, `dodger_blue`. Those are X11/CSS
+defaults belonging to no theme this game ships, and this palette contains no
+fully saturated primary. Two of them also failed WCAG AA on that panel's
+`#170a1c` ground (contrast measured, not estimated):
+
+| | contrast on the game-over panel | |
+|---|---|---|
+| `[color=blue]` #0000FF | **2.23:1** | fails AA, used for "Compute" |
+| `[color=purple]` #A020F0 | **3.61:1** | fails AA, used for "Research" |
+| `[color=red]` #FF0000 | 4.79:1 | passes, barely -- the cause-of-death line |
+| after | 9.09 / 8.44 / 6.76:1 | |
+
+The other nine were legible and merely garish (cyan 15.3:1, yellow 17.8:1). Both
+problems are real; they are not the same problem.
+
+Resource and staff readout colours now live in `ThemeManager.RESOURCE_COLORS` /
+`STAFF_COLORS` as **`const`**, not in `ThemeData.colors`, so a theme swap cannot
+move a contrast ratio a test has pinned -- the same reasoning that keeps the
+pause menu's font sizes off `get_font_size()`, applied to a different property.
+Hues are unchanged (money reads gold, compute blue, research purple) so this does
+not diverge from the same mapping in `main_ui.gd`'s action tooltips; only the
+luminance moved.
+
+**Known duplication, deliberately not fixed here:** `main_ui.gd` carries that
+same five-way mapping as raw BBCode names and still renders the dark ones. Its 65
+colour literals are a separate change to a 3k-line monolith; the const exists so
+that change has somewhere to land.
+
+When computing contrast, linearise sRGB. `Color.get_luminance()` is the weighted
+sRGB sum and does **not** linearise; using it overstates every dark colour, and an
+earlier draft of this section quoted ratios that were wrong by roughly 2x on
+`[color=blue]` for exactly that reason.
+
 ### Colours: local palettes are allowed, undocumented ones are not
 
 `MusicControls` uses the pause menu's own amber `Color(0.91, 0.64, 0.24)` --
