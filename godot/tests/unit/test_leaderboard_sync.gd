@@ -103,7 +103,7 @@ func test_parse_board_entries_ok():
 	assert_eq(entries.size(), 2, "both entries parsed")
 	# ScoreEntry-shaped: property access is what leaderboard_screen relies on.
 	assert_eq(entries[0].score, 99)
-	assert_eq(entries[0].player_name, "Alpha")
+	assert_eq(entries[0].lab_name, "Alpha")
 	assert_eq(entries[0].baseline_score, 40)
 	assert_eq(entries[0].entry_uuid, "u1")
 	assert_eq(entries[1].score, 88)
