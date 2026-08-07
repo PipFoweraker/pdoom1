@@ -2,6 +2,32 @@ extends Control
 class_name GameOverScreen
 ## Game Over screen showing final stats and offering replay options
 
+## PALETTE (Pip, v0.14.0 playtest: "old colour schemes"). This screen was written in
+## Godot's named web primaries -- pure #00FFFF cyan, #FFFF00 yellow, #0000FF blue,
+## #00FF00 lime -- which predate the command-center palette in UI_STYLE_GUIDE.md and
+## belong to no theme the game currently ships. Three were also unreadable on this
+## panel's Color(0.09, 0.04, 0.11) ground; the contrast ratios are in theme_manager.gd
+## beside RESOURCE_COLORS and are pinned by test_game_over_is_readable.gd.
+##
+## Resource/staff hues live in ThemeManager (shared, const). The four below are local
+## because they are this screen's own register and nothing else uses them.
+const _C_LABEL := Color(0.42, 0.85, 0.82)      # section labels; was [color=cyan] #00FFFF
+const _C_SCORE_LABEL := Color(0.95, 0.80, 0.35)  # "* FINAL SCORE *"; was [color=gold]
+const _C_SCORE := Color(1.00, 0.93, 0.55)      # the number itself; was [color=yellow] #FFFF00
+const _C_DIM := Color(0.62, 0.66, 0.72)        # parentheticals + rules; was [color=gray]
+const _C_VICTORY := Color(0.50, 0.90, 0.55)    # was [color=lime] #00FF00
+const _C_DEFEAT := Color(0.95, 0.45, 0.40)     # cause of death; was [color=red] #FF0000
+const _C_LINK := Color(0.45, 0.72, 1.00)       # was [color=dodger_blue]
+
+## Achievements printed in full before "(+N more)". See the achievements block below:
+## this is the only cap standing between a good run and an unbounded panel.
+const ACHIEVEMENT_LINE_CAP := 3
+
+static func _hex(c: Color) -> String:
+	"""BBCode needs an rrggbb string, and Color.to_html(false) is the only conversion
+	used on this screen so a colour can never be spelled two ways."""
+	return c.to_html(false)
+
 @onready var panel_container = $CenterContainer/PanelContainer
 @onready var title_label = $CenterContainer/PanelContainer/MarginContainer/VBox/TitleLabel
 @onready var subtitle_label = $CenterContainer/PanelContainer/MarginContainer/VBox/SubtitleLabel
@@ -157,48 +183,65 @@ func show_game_over(is_victory: bool, final_state: Dictionary):
 		# the stats scroll. Names the killer lab when the doom death was overhang-driven.
 		_render_death_attribution()
 
-	# Build statistics display
-	var stats_text = "[center][b]FINAL STATISTICS[/b][/center]\n\n"
+	# Build statistics display.
+	#
+	# A DEATH SCREEN IS A MOMENT, NOT A DOCUMENT (Pip's v0.14.0 playtest, 2026-08-07:
+	# "really hard to read and still involves scrolling"). Measured on the failing
+	# build at 1920x1080: 31 lines / 713px of content inside a 720x300 box, i.e. 14
+	# lines visible and 413px unreachable without scrolling -- and the LAST line was
+	# "> Press ENTER for Leaderboard", which is why he never found the board.
+	#
+	# So the ledger rows collapsed into single lines rather than one line per field.
+	# The information is all still here; it just stopped costing a line each. The
+	# navigation left the document entirely and became a real button (LeaderboardButton
+	# in ButtonsHBox) -- a way OUT of a scrolling region must never live INSIDE it.
+	#
+	# "FINAL STATISTICS" is gone as a header: the panel already says GAME OVER in 48pt
+	# with the cause of death under it, so the header was a label for a thing the
+	# player is already looking at.
+	var stats_text = ""
 
 	# Final Score (prominent display)
-	stats_text += "[center][color=gold]* FINAL SCORE *[/color][/center]\n"
-	stats_text += "[center][b][color=yellow]%s[/color][/b][/center]\n" % GameState.format_score(final_turns, final_doom_integral)
+	stats_text += "[center][color=%s]* FINAL SCORE *[/color][/center]\n" % _hex(_C_SCORE_LABEL)
+	stats_text += "[center][b][color=%s]%s[/color][/b][/center]\n" % [_hex(_C_SCORE), GameState.format_score(final_turns, final_doom_integral)]
 
 	# Baseline comparison (Issue #372)
 	if baseline_turns > 0:
 		var comparison = BaselineSimulator.get_comparison_text(final_turns, final_doom_integral, baseline_turns, baseline_doom_integral)
 		var comparison_color = comparison["color"].to_html(false)
 		stats_text += "[center][color=%s]%s[/color][/center]\n" % [comparison_color, comparison["text"]]
-		stats_text += "[center][color=gray](Baseline: %s with no actions)[/color][/center]\n\n" % GameState.format_score(baseline_turns, baseline_doom_integral)
-	else:
-		stats_text += "\n"
-
-	# Game duration
-	var turn = final_state.get("turn", 0)
-	stats_text += "[color=cyan]* Turns Survived:[/color] [b]%d[/b]\n\n" % turn
-
-	# Doom level
-	var doom = final_state.get("doom", 0)
-	var doom_color = _get_doom_display_color(doom)
-	stats_text += "[color=cyan]* Final Doom:[/color] [color=%s][b]%.1f%%[/b][/color]\n" % [doom_color, doom]
-
-	# Doom momentum
-	var doom_momentum = final_state.get("doom_momentum", 0.0)
-	if abs(doom_momentum) > 0.1:
-		var momentum_text = "^ %.1f (Spiral)" % doom_momentum if doom_momentum > 0 else "v %.1f (Flywheel)" % abs(doom_momentum)
-		var momentum_color = "red" if doom_momentum > 0 else "green"
-		stats_text += "[color=cyan]  `- Momentum:[/color] [color=%s]%s[/color]\n" % [momentum_color, momentum_text]
-
+		# Was its own line ("(Baseline: X with no actions)"). Folded into the comparison
+		# it qualifies -- a parenthetical does not need a line of its own on a screen
+		# that had 413px of unreachable content.
+		stats_text += "[center][color=%s](vs %s doing nothing)[/color][/center]\n" % [
+			_hex(_C_DIM), GameState.format_score(baseline_turns, baseline_doom_integral)]
 	stats_text += "\n"
 
-	# Resources accumulated
-	stats_text += "[color=cyan]* Resources:[/color]\n"
-	# #1087: the run summary carried its own formats ("$197208", "82.0"). One policy.
-	stats_text += "  [color=gold]Money:[/color] %s\n" % GameConfig.format_money(final_state.get("money", 0))
-	stats_text += "  [color=blue]Compute:[/color] %s\n" % GameConfig.format_scalar(final_state.get("compute", 0))
-	stats_text += "  [color=purple]Research:[/color] %s\n" % GameConfig.format_scalar(final_state.get("research", 0))
-	stats_text += "  [color=white]Papers:[/color] %s\n" % GameConfig.format_scalar(final_state.get("papers", 0))
-	stats_text += "  [color=orange]Reputation:[/color] %s\n\n" % GameConfig.format_scalar(final_state.get("reputation", 0))
+	# Survival + doom on ONE row each, and momentum folded into the doom row rather
+	# than hanging under it as a `- continuation.
+	var turn = final_state.get("turn", 0)
+	var doom = final_state.get("doom", 0)
+	var doom_color = _get_doom_display_color(doom)
+	stats_text += "[color=%s]* Survived:[/color] [b]%d months[/b]\n" % [_hex(_C_LABEL), turn]
+	var doom_row := "[color=%s]* Final Doom:[/color] [color=%s][b]%.1f%%[/b][/color]" % [
+		_hex(_C_LABEL), doom_color, doom]
+	var doom_momentum = final_state.get("doom_momentum", 0.0)
+	if abs(doom_momentum) > 0.1:
+		var momentum_text = "^ %.1f Spiral" % doom_momentum if doom_momentum > 0 else "v %.1f Flywheel" % abs(doom_momentum)
+		var momentum_color = _hex(ThemeManager.STAFF_COLORS["capability"]) if doom_momentum > 0 else _hex(ThemeManager.STAFF_COLORS["safety"])
+		doom_row += "   [color=%s]%s[/color]" % [momentum_color, momentum_text]
+	stats_text += doom_row + "\n\n"
+
+	# Resources: was a header plus five indented rows plus a blank -- seven lines to
+	# carry five numbers. Now one labelled row, pipe-separated. #1087's formatting
+	# policy (GameConfig.format_money / format_scalar) is unchanged.
+	var rc: Dictionary = ThemeManager.RESOURCE_COLORS
+	stats_text += "[color=%s]* Resources:[/color] " % _hex(_C_LABEL)
+	stats_text += "[color=%s]%s[/color] | " % [_hex(rc["money"]), GameConfig.format_money(final_state.get("money", 0))]
+	stats_text += "[color=%s]%s compute[/color] | " % [_hex(rc["compute"]), GameConfig.format_scalar(final_state.get("compute", 0))]
+	stats_text += "[color=%s]%s research[/color] | " % [_hex(rc["research"]), GameConfig.format_scalar(final_state.get("research", 0))]
+	stats_text += "[color=%s]%s papers[/color] | " % [_hex(rc["papers"]), GameConfig.format_scalar(final_state.get("papers", 0))]
+	stats_text += "[color=%s]%s rep[/color]\n" % [_hex(rc["reputation"]), GameConfig.format_scalar(final_state.get("reputation", 0))]
 
 	# Team composition -- count via GameState.get_total_staff() (L0 #620: the legacy
 	# field sum below missed the researchers[] roster, showing 0 employees mid-era).
@@ -209,41 +252,62 @@ func show_game_over(is_victory: bool, final_state: Dictionary):
 	if GameManager.is_initialized and GameManager.state:
 		total_staff = GameManager.state.get_total_staff()
 
-	stats_text += "[color=cyan]* Team:[/color] [b]%d employees[/b]\n" % total_staff
+	# Team: was a header plus three indented rows. Now one row, same three numbers,
+	# still safety/capability colour-coded because that split is the game's argument.
+	var sc: Dictionary = ThemeManager.STAFF_COLORS
+	stats_text += "[color=%s]* Team:[/color] [b]%d[/b]" % [_hex(_C_LABEL), total_staff]
 	if total_staff > 0:
-		stats_text += "  [color=green]Safety Researchers:[/color] %d\n" % safety
-		stats_text += "  [color=red]Capability Researchers:[/color] %d\n" % capability
-		stats_text += "  [color=blue]Compute Engineers:[/color] %d\n" % compute_eng
+		stats_text += " -- [color=%s]%d safety[/color] | [color=%s]%d capability[/color] | [color=%s]%d compute eng[/color]" % [
+			_hex(sc["safety"]), safety, _hex(sc["capability"]), capability,
+			_hex(sc["compute_eng"]), compute_eng]
+	stats_text += "\n"
 
-	# Upgrades purchased
+	# Upgrades purchased -- promoted onto the team row's block rather than its own
+	# paragraph, since it is a single number.
 	var upgrades = final_state.get("purchased_upgrades", [])
 	if upgrades.size() > 0:
-		stats_text += "\n[color=cyan]* Upgrades:[/color] [b]%d purchased[/b]\n" % upgrades.size()
+		stats_text += "[color=%s]* Upgrades:[/color] [b]%d purchased[/b]\n" % [_hex(_C_LABEL), upgrades.size()]
 
 	# L8 achievements (#619): recognition only, never score (ADR-0002 anti-sink).
+	#
+	# CAPPED AT THREE. This block was the one unbounded region on the screen -- a good
+	# run could unlock a dozen and each one printed a title AND a flavor line, so the
+	# panel's height depended on how well the player did. A box that a test measured
+	# against a 3-achievement fixture could still overflow for the player who earned
+	# eight. Flavor text dropped: it is charm, and charm is what a moment sheds first.
 	var achievements_node = get_node_or_null("/root/Achievements")
 	if achievements_node and not achievements_node.unlocked_this_run.is_empty():
-		stats_text += "\n[color=cyan]* Achievements this run:[/color]\n"
+		var titles: Array = []
 		for ach_id in achievements_node.unlocked_this_run:
 			var ach_def = achievements_node.get_definition(ach_id)
 			if not ach_def.is_empty():
-				stats_text += "  [color=gold]* %s[/color] [color=gray]-- %s[/color]\n" % [ach_def["title"], ach_def["flavor"]]
+				titles.append(str(ach_def["title"]))
+		if not titles.is_empty():
+			var shown: Array = titles.slice(0, ACHIEVEMENT_LINE_CAP)
+			var line := ", ".join(shown)
+			if titles.size() > ACHIEVEMENT_LINE_CAP:
+				line += " (+%d more)" % (titles.size() - ACHIEVEMENT_LINE_CAP)
+			stats_text += "[color=%s]* Achievements:[/color] [color=%s]%s[/color]\n" % [
+				_hex(_C_LABEL), _hex(_C_SCORE_LABEL), line]
 
-	# Victory/defeat flavor text
-	stats_text += "\n[center][color=gray]-------------------[/color][/center]\n"
+	# Victory/defeat flavor text. One separator, not two -- the second rule was
+	# separating the flavor line from the link line, which nobody was confusing.
+	stats_text += "\n[center][color=%s]-------------------[/color][/center]\n" % _hex(_C_DIM)
 	if is_victory:
-		stats_text += "\n[center][color=lime]Your lab held the line for %d months.\nThat is the whole game: time bought, not a war won.[/color][/center]" % final_turns
+		stats_text += "[center][color=%s]Your lab held the line for %d months. That is the whole game: time bought, not a war won.[/color][/center]\n" % [_hex(_C_VICTORY), final_turns]
 	else:
 		var reason = _get_defeat_reason(final_state)
-		stats_text += "\n[center][color=red]%s[/color][/center]" % reason
+		stats_text += "[center][color=%s]%s[/color][/center]\n" % [_hex(_C_DEFEAT), reason]
 		var attribution = _get_ledger_attribution_text(final_state)
 		if attribution != "":
-			stats_text += "\n[center][color=orange]%s[/color][/center]" % attribution
+			stats_text += "[center][color=%s]%s[/color][/center]\n" % [_hex(rc["reputation"]), attribution]
 
-	# AI Safety resources call to action (condensed to reduce vertical overflow)
-	stats_text += "\n[center][color=gray]-------------------[/color][/center]\n"
-	stats_text += "[center][color=cyan]Learn about real AI safety: [url=https://aisafety.info][color=dodger_blue]aisafety.info[/color][/url][/color][/center]\n"
-	stats_text += "[center][color=gold][b]> Press ENTER for Leaderboard[/b][/color][/center]"
+	# AI Safety call to action. The "> Press ENTER for Leaderboard" line that used to
+	# end this block is GONE -- it is LeaderboardButton in the button row now. ENTER
+	# still works (see _input); it is simply no longer the ONLY advertised route, and
+	# the advertisement is no longer buried at the bottom of a scroll.
+	stats_text += "[center][color=%s]Learn about real AI safety: [url=https://aisafety.info][color=%s]aisafety.info[/color][/url][/color][/center]" % [
+		_hex(_C_LABEL), _hex(_C_LINK)]
 
 	stats_label.text = stats_text
 
@@ -713,9 +777,10 @@ static func build_attribution_bbcode(chain: Array, killer_line: String) -> Strin
 		return ""
 	var out := "[center][b]CAUSE OF DEATH[/b][/center]\n"
 	if killer_line != "":
-		out += "[center][color=orange]%s[/color][/center]\n" % killer_line
+		out += "[center][color=%s]%s[/color][/center]\n" % [
+			_hex(ThemeManager.RESOURCE_COLORS["reputation"]), killer_line]
 	if has_chain:
-		out += "[color=gray]"
+		out += "[color=%s]" % _hex(_C_DIM)
 		for line in chain:
 			out += "  " + str(line) + "\n"
 		out += "[/color]"
@@ -751,6 +816,19 @@ func _on_copy_result_pressed() -> void:
 	print("[GameOverScreen] Copied result to clipboard: %s" % line)
 	if is_instance_valid(copy_result_button):
 		copy_result_button.text = "Copied to clipboard"
+
+func _on_leaderboard_pressed() -> void:
+	"""The board, reachable by clicking a thing that says 'Leaderboard'.
+
+	Until now the ONLY advertised route was the string "> Press ENTER for Leaderboard",
+	which was the 31st and last line of a RichTextLabel showing 14 lines -- so on a
+	1920x1080 screen the instruction was 413px below the bottom of its own box. Pip
+	played v0.14.0 and never found the leaderboard. The keyboard shortcut worked the
+	whole time; nothing told him about it.
+
+	ENTER/SPACE still work (_input). This is the same call, given a surface."""
+	print("[GameOverScreen] Leaderboard button pressed")
+	_continue_to_leaderboard()
 
 func _on_play_again_pressed():
 	"""Restart the game.

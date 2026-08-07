@@ -36,6 +36,51 @@ const DOOM_STATUS_BANDS := [
 const DOOM_STROKE_FLOOR := 0.22
 const DOOM_STROKE_BRIGHT := Color(0.90, 0.40, 0.85)
 
+# Resource + staff readout colours, on dark panels.
+#
+# WHY THESE ARE `const` AND NOT IN ThemeData.colors: get_color() returns the ACTIVE
+# theme's value, and these are used inside BBCode that a test measures for legibility.
+# A theme swap must not be able to move a contrast ratio a test has pinned. Same
+# reasoning #1155 used to keep the pause-menu FONT SIZES off get_font_size(); the
+# hazard is identical, only the property differs.
+#
+# WHAT THEY REPLACE. The game-over screen was written in Godot's named web primaries,
+# which predate the palette in UI_STYLE_GUIDE.md. WCAG contrast, MEASURED against that
+# panel's rendered ground #170a1c (AA wants 4.5:1 for body text):
+#   [color=blue]   #0000FF  2.23:1  FAILS  <- "Compute"
+#   [color=purple] #A020F0  3.61:1  FAILS  <- "Research"
+#   [color=red]    #FF0000  4.79:1  passes, barely  <- the CAUSE OF DEATH line
+#   -> now                   9.09 / 8.44 / 6.76:1
+# Only two of the twelve actually failed AA; the rest (cyan 15.3, yellow 17.8, lime
+# 14.0) were legible and merely garish -- fully saturated primaries in a game whose
+# palette contains no primary. Both problems are real, they are just not the same
+# problem, and an earlier draft of this comment overstated the first by quoting
+# ratios computed WITHOUT linearising sRGB. Use the harness, not mental arithmetic.
+#
+# The HUES are kept (money reads gold, compute reads blue, research reads purple) so
+# this does not diverge from the same mapping in main_ui.gd's action tooltips
+# (main_ui.gd:2134-2143). Only the luminance moved.
+#
+# KNOWN DUPLICATION, deliberately not fixed here: main_ui.gd carries the same five-way
+# mapping as raw BBCode names and still renders the dark ones. Routing that file's 65
+# colour literals is a separate change to a 3k-line monolith; this const exists so that
+# change has somewhere to land.
+const RESOURCE_COLORS := {
+	"money": Color(0.95, 0.80, 0.35),       # gold
+	"compute": Color(0.55, 0.70, 1.00),     # blue, lifted off #0000FF
+	"research": Color(0.78, 0.60, 0.95),    # purple, lifted off #A020F0
+	"papers": Color(0.92, 0.94, 0.96),      # off-white
+	"reputation": Color(0.95, 0.65, 0.35),  # orange
+}
+
+# Safety vs capability is a MEANING in this game, so the two stay green/red-coded --
+# but at luminances that survive the dark panel, unlike Color.GREEN / Color.RED.
+const STAFF_COLORS := {
+	"safety": Color(0.45, 0.85, 0.50),
+	"capability": Color(0.95, 0.45, 0.40),
+	"compute_eng": Color(0.55, 0.70, 1.00),
+}
+
 # Theme data structure
 class ThemeData:
 	var name: String
