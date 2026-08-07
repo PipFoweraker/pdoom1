@@ -1,6 +1,187 @@
 {
   "versions": [
     {
+      "version": "0.14.0",
+      "date": "2026-08-07",
+      "title": "Ladder L4 -- The Comparability Fork",
+      "highlights": [
+        "New ladder epoch L4 -- scores from this version are NOT comparable with the L3 board",
+        "Your L3 entries are still valid and still visible; they live on the L3 board",
+        "Featured league seed rolls to weekly-2026-w32",
+        "Pick the music from the pause menu, mid-run",
+        "A credits screen you can actually reach"
+      ],
+      "sections": {
+        "added": [
+          "Music track selection in the pause menu -- change the track while you play, not only in Settings",
+          "A credits screen, reachable from the main menu",
+          "Month review now shows what CHANGED since last month, and SPACE opens it",
+          "Settings rebuilt as a front card plus an operations board, so the common dials are on the first screen",
+          "A one-time 'claim a name' prompt before your first leaderboard upload, plus a lab-name generator",
+          "The update check now reads the release manifest and tells you when an update forks your board"
+        ],
+        "changed": [
+          "WHY THE BOARD FORKED: the historical event deck was retimed to one turn = one month, and the ruled event promotions were applied. Different events now fire on the same seed, so an L4 run is not comparable to an L3 run. That is the whole reason for the new epoch",
+          "Difficulty is now locked where the value is USED, not just on one screen, and using Alpha Tools sets a sticky unranked flag on the run",
+          "Keyboard navigation unified -- one table of choice keys, and one way out of every panel",
+          "The last player-facing 'AP' is gone, and numbers are formatted the same way everywhere",
+          "The player guide, the win condition and the cold open were rewritten to describe the game that actually exists",
+          "The turn-1 action hand fits above the fold, and Fundraising is the first tile",
+          "The debug event-trigger was deleted outright rather than hidden behind a guard",
+          "Contact addresses were redacted from the bundled historical events",
+          "The pause menu now grows to fit its text instead of growing its padding"
+        ],
+        "fixed": [
+          "The achievement toast rendered as a giant purple rectangle in 0.13.2",
+          "The office cat was a magenta checkerboard in every shipped build",
+          "The server rack painted over the event feed, and staff sprites were oversized",
+          "The public build wore a stale, clipped 'DEV BUILD' banner",
+          "A failed global leaderboard fetch is now VISIBLE instead of silent, and the SmartScreen warning is explained",
+          "Music was too loud and started on the wrong track; Graphics Settings was an empty header",
+          "Percent rounding ties are pinned, so doom reads the same number on every platform",
+          "The backslash dev key works again in release builds"
+        ]
+      }
+    },
+    {
+      "version": "0.13.2",
+      "date": "2026-07-31",
+      "title": "League Build -- Ladder L3",
+      "highlights": [
+        "New ladder epoch L3 -- the effort economy was rebuilt, so scores are not comparable with L2 boards",
+        "A real first fifteen minutes: start in a bedroom, then choose your first office",
+        "Conference trips are a real commitment, not a menu skip",
+        "'Accept Your Fate' -- end a run on purpose and still reach the leaderboard"
+      ],
+      "sections": {
+        "added": [
+          "Early game: you start in a free bedroom or basement with a 2-hire cap, then pick one of three first offices -- a cheap-in cheap-out co-working corner, a balanced second-floor walk-up, or a bigger university annex sublet. Each has its own deposit, monthly rent, desk count, lease term and break fee, and the pick is locked in for now",
+          "Scouting actions for finding your next hire, including a deliberately loud strategic-shitposting option",
+          "Conference travel: the Travel submenu can send you to one of three conferences. Going costs real travel cash and drains your remaining Attention for the trip. The world keeps running while you are away, and you come home to a single 'while you were away' digest instead of a stack of missed-turn popups",
+          "'Accept Your Fate' lets you end a run deliberately and still post a score",
+          "Founder Attention replaces the per-turn AP pool, with four-way founder hours: doors, approvals, audits and reserve",
+          "Researcher quirks, with appetites that can be satisfied and a doom channel of their own",
+          "Four more office workers with idle, working and stressed mood art, and full walk cycles",
+          "A launch-time update check, so you find out a new build exists"
+        ],
+        "changed": [
+          "Difficulty is locked to Standard for league runs -- one comparable ladder while the player base is small",
+          "Scenario runs are UNRANKED, and you are told so before you pick one",
+          "The leaderboard screen now explains what a board IS, on the screen where people look at boards",
+          "Player-facing 'AP' retired from the UI"
+        ],
+        "fixed": [
+          "Hire candidates could silently vanish: if your cash dropped between queuing a hire and it executing later the same turn, the candidate left the pool but was never hired, with no message. Stranded hires now return to the pool, and existing saves self-heal",
+          "Publishing papers and safety research were wired to zero doom effect since the doom-engine migration -- they read as working but did nothing. They are priced now and actually fire, along with safety audits and the lobbying, rival and open-source doom streams",
+          "Six upgrades that did nothing were either wired up or removed",
+          "Dialogs now stack properly, so an event opening over another dialog can no longer strand it",
+          "Several ways to kill a run on re-entry -- starting a new game over a running one, returning from the dev overlay, and Play Again",
+          "Four presentation bugs found in the league-build playtest"
+        ]
+      }
+    },
+    {
+      "version": "0.13.1",
+      "date": "2026-07-25",
+      "title": "Soft-Lock Hotfixes",
+      "highlights": [
+        "Two bugs that could strand a session are fixed",
+        "No other gameplay changes -- this is a hotfix on the L2 board, not a new epoch"
+      ],
+      "sections": {
+        "added": [],
+        "changed": [
+          "Three hiring and travel buttons that promised more than they delivered were right-sized"
+        ],
+        "fixed": [
+          "An event opening over the ledger orphaned the ledger dialog, leaving it un-closeable and the session stuck",
+          "Closing a staff card with ESC could leave an input blocker alive, deadening the mouse for the rest of the session"
+        ]
+      }
+    },
+    {
+      "version": "0.13.0",
+      "date": "2026-07-24",
+      "title": "Ladder L2 -- Epoch Cut",
+      "highlights": [
+        "New ladder epoch L2 -- scores are not comparable with L1 boards",
+        "A diegetic cold open: a phone, a passcode, and a hold-to-skip",
+        "Choose non-profit or for-profit in the early game",
+        "Costs are on the button face, not hidden behind a hover"
+      ],
+      "sections": {
+        "added": [
+          "Onboarding cold open -- a phone-and-passcode intro you can hold a key to skip, with a setting to turn intros off",
+          "A non-profit versus for-profit choice in the early game, with its own funding seeds",
+          "A rotating featured league seed",
+          "Staged dossier portraits on candidate and employee cards"
+        ],
+        "changed": [
+          "Action costs are shown on the button face instead of hover-only",
+          "The ledger shows debt due-dates as calendar dates, not turn counts",
+          "The settings menu scrolls when its content overflows the screen",
+          "Music starts quieter"
+        ],
+        "fixed": [
+          "The event dialog stays OPEN when you pick a choice you cannot afford, instead of closing on you",
+          "An unaffordable event window now lapses cleanly instead of orphaning the dialog and locking the session",
+          "A window option resolved against the wrong event when several were queued",
+          "Overbooking your turn no longer leaves phantom tiles in the queue, and can no longer soft-lock the turn",
+          "The leaderboard crash on opening the board from a key press"
+        ]
+      }
+    },
+    {
+      "version": "0.12.0",
+      "date": "2026-07-22",
+      "title": "Attention, the Ledger, and the Doom Engine",
+      "highlights": [
+        "Attention replaces per-turn AP -- a monthly founder budget you spend where it matters",
+        "The Liability Ledger: the debts and exposures you accumulate are now a screen you can read",
+        "Doom is nine accumulating streams with a colour-coded blow-by-blow, not a mystery number",
+        "Rival labs act visibly, and the defeat screen tells you who killed you",
+        "Global leaderboards are live"
+      ],
+      "sections": {
+        "added": [
+          "Attention economy: a monthly founder budget replaces the per-turn AP pool",
+          "The Liability Ledger -- a player-facing screen for the obligations and exposures you take on, with a compact summary and a keybind to open it",
+          "Cost-of-debt pricing and financing instruments, so borrowing has a real price",
+          "Doom as nine accumulating streams, with a colour-coded per-source breakdown you can read turn by turn",
+          "Rival labs act in the feed (filterable), appear in the month review, and are revealed as you discover them",
+          "Death attribution: the defeat screen reports the real cause, including which rival contributed",
+          "A hiring pipeline -- source, interview, offer, onboard -- with candidate cards carrying hidden appetites and quirks that reveal as you learn about them",
+          "Research quality: a Rushed / Standard / Thorough toggle that trades speed against risk, feeding the hidden risk pool",
+          "Scenario and mod hooks: drop a JSON file into the scenarios folder to add a scenario, with three samples included",
+          "Save and load with a full-state round trip",
+          "An office floor you can watch -- walkers mirror your staff count, with directional walk cycles",
+          "An adaptive score that follows the doom band",
+          "A first-launch welcome overlay, with a hints toggle",
+          "Global leaderboards went live, with a remote score-sync client",
+          "Runs are deterministic from a seed and can be replayed from a canonical input string, which is what makes a shared board mean anything"
+        ],
+        "changed": [
+          "Turns-survived is the primary score, compared lexicographically",
+          "The doom <= 0 instant victory was removed -- there is no winning by driving the number to zero",
+          "Difficulty is selectable in the UI and its modifiers are actually applied",
+          "Salary cadence made sustainable, with a bankruptcy warning before it bites",
+          "Committing a turn always advances, and there is a share line for your result",
+          "Global keybinds now yield to focused text fields and dialogs"
+        ],
+        "fixed": [
+          "Compute is actually consumed by research and actions",
+          "Hiring works for all researcher specializations, not just some",
+          "Rival labs contribute scaling doom pressure instead of sitting inert",
+          "No event fires before your first turn, and the number of events per turn is capped",
+          "The ledger no longer dead-ends, and ESC and back behave consistently across screens",
+          "Event outcomes that read as mechanical but did nothing were audited and fixed or removed",
+          "The paper-decision flood was throttled and event dialog text wraps",
+          "Game over no longer quits to the desktop",
+          "Opening the leaderboard is faster and no longer loads the whole population into memory"
+        ]
+      }
+    },
+    {
       "version": "0.11.0",
       "date": "2025-12-08",
       "title": "Travel & Conferences System",
