@@ -469,17 +469,32 @@ def expand_level_l3(spec, brief, picks):
     land, port = level["size"], level["portrait_size"]
     n_land = int(level["landscape_per_pick"])
     n_port = int(level["portrait_per_pick"])
+    # The landscape variants walk the landscape composition clauses instead of
+    # re-rolling one prompt N times. Two measured reasons, both from
+    # docs/design/TASTE_PROFILE_2026-08-06.md:
+    #   * generation lineage is a NULL (119 slots, p=0.34) -- the 2nd..nth roll
+    #     of an identical prompt is no likelier to be liked than the 1st, which
+    #     is why L1 stopped re-rolling. L3 was still doing it, so 3 of every 4
+    #     landscape heroes were buying nothing at the most expensive tier.
+    #   * composition is the cleanest null (52.9%, p=0.55, perm p=0.80), so
+    #     varying it costs no expected quality and is explicitly worth sampling.
+    # It also buys something concrete: a hero set with title space held top,
+    # left, right and free, rather than four images that all reserve it in the
+    # same place. If there are more variants than clauses the list wraps, which
+    # does re-roll -- acceptable, and visible here rather than implicit.
+    land_comps = [k for k in spec["composition_clauses"] if k != "c_portrait"]
     jobs = []
     for pick in picks:
         cell = f"{pick['subject']}_{pick['rendering']}_{pick['palette']}"
         for v in range(1, n_land + 1):
+            comp_id = land_comps[(v - 1) % len(land_comps)]
             prompt = assemble_scene_prompt(
                 spec,
                 brief,
                 pick["subject"],
                 pick["rendering"],
                 pick["palette"],
-                pick.get("composition", "c_default"),
+                comp_id,
                 None,
             )
             jobs.append(make_job(spec, "L3", "l3_hero_land", cell, prompt, land, quality, model, v))
@@ -587,7 +602,15 @@ def load_picks(path, spec, limit=None):
             print(f"      {u}")
         if len(unparsed) > 10:
             print(f"      ... and {len(unparsed) - 10} more")
-    if limit:
+    if limit and len(picks) > limit:
+        # Say so. This truncation used to be silent, and a silently dropped
+        # pick is the same class of wrongness as a silently dropped tag --
+        # the wave still looks like it ran correctly.
+        print(
+            f"[!] {len(picks)} picks parsed but picks_target is {limit}; "
+            f"DROPPING the last {len(picks) - limit}. Raise picks_target in the "
+            "spec if that is not what you meant."
+        )
         picks = picks[:limit]
     return picks
 
