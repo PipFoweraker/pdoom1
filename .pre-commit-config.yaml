@@ -149,6 +149,18 @@ repos:
       # pattern as the DQ index. Scoped to the feed itself, so it only fires when someone
       # touches those files -- a full-tree gate would block every commit after a tag until
       # the index was regenerated.
+      # Cheapest third of the #1165 guard: structural corruption only (duplicate
+      # [Unreleased] headings), offline, no gh call, no network. The checks that
+      # actually matter -- open-issue citations and commit ties -- run at RELEASE
+      # time in enhanced-release.yml, because the false claim reaches players
+      # through the release body, not through this file.
+      - id: changelog-structure-check
+        name: CHANGELOG.md has exactly one [Unreleased] heading
+        entry: python scripts/check_release_notes.py --changelog-structure --offline
+        language: system
+        files: '^CHANGELOG\.md$'
+        pass_filenames: false
+
       - id: release-index-check
         name: release feed index matches the git tags
         entry: python scripts/generate_release_metadata.py --check

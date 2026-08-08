@@ -353,6 +353,25 @@ jobs:
           echo "- **Manifest Hash:** \`${{ needs.create-release-manifest.outputs.manifest_hash }}\`" >> release_notes.txt
           echo "- **Engine:** Godot 4.5.1" >> release_notes.txt
 
+      # The release BODY is what reaches players -- pdoom1.com's /game-changelog/
+      # renders release bodies live from the releases API, with no human in
+      # between. v0.13.2 shipped a body announcing the Research Quality System as
+      # delivered while #500 was open. A pre-commit hook on CHANGELOG.md would not
+      # have caught it: the body is assembled HERE, at release time, by the sed
+      # above, and the sed's start pattern is not even anchored to a heading.
+      # So the gate checks release_notes.txt itself -- the exact bytes about to be
+      # published -- and it must sit between assembly and publication. Blocking:
+      # a false delivery claim fails the release rather than reaching readers.
+      # Issue #1165.
+      - name: Guard the release body against false delivery claims
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_TAG: ${{ github.event.inputs.version || github.ref_name }}
+        run: |
+          python scripts/check_release_notes.py \
+            --body release_notes.txt \
+            --tag "$RELEASE_TAG"
+
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:

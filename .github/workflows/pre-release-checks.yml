@@ -13,6 +13,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v7
+        with:
+          # Full history + tags: the #1165 guard ties each cited issue to a
+          # commit in <previous tag>..<this tag>, which a shallow clone cannot see.
+          fetch-depth: 0
 
       # Note: unit tests run on PRs via godot-tests.yml (GUT). Pre-release focuses
       # on release-readiness (changelog, version, clean tree). The former pygame-era
@@ -30,6 +34,26 @@ jobs:
             echo "Please update CHANGELOG.md before releasing!"
             exit 1
           fi
+        shell: bash
+
+      # Early, cheap half of the #1165 guard: structural corruption in
+      # CHANGELOG.md, plus the citations in this version's section. Fails here
+      # rather than 20 minutes later in enhanced-release.yml, after the builds.
+      # The authoritative gate is still the release-body check in
+      # enhanced-release.yml -- this one runs against the FILE, that one runs
+      # against the bytes that get published.
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.11'
+
+      - name: Release notes guard (structure + citations)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG_VERSION="${GITHUB_REF#refs/tags/v}"
+          python scripts/check_release_notes.py --changelog-structure
+          python scripts/check_release_notes.py --version "$TAG_VERSION"
         shell: bash
 
       - name: Check version in project.godot
