@@ -96,6 +96,18 @@ repos:
         files: 'docs/game-design/decisions/.*\.md'
         pass_filenames: false
 
+      # CHANGELOG.md is published to pdoom1-website as release notes by
+      # sync-game-version.yml, so a false "shipped" line reaches players with no
+      # human in between (#1165: v0.13.2 announced #500 while #500 was open).
+      # Verifies against a COMMITTED manifest of real issue state, so it needs no
+      # network; refresh the manifest with --refresh when adding new citations.
+      - id: changelog-claims-check
+        name: CHANGELOG claims match real issue state
+        entry: python scripts/check_changelog_claims.py
+        language: system
+        files: '^(CHANGELOG\.md|scripts/changelog_issue_state\.json|scripts/check_changelog_claims\.py)$'
+        pass_filenames: false
+
       # Dev-tools index is GENERATED (same anti-rot pattern as the DQ/ADR indexes).
       # Fires when any tool, any caller-scan source, or the index itself changes,
       # because the index derives from ALL of those.

@@ -47,6 +47,24 @@ jobs:
         echo "Running comprehensive standards enforcement..."
         python scripts/enforce_standards.py --check-all || echo "WARNING  Standards check warnings (non-blocking during Godot migration)"
 
+    - name: CHANGELOG claims vs real issue state
+      run: |
+        echo "Enforcing: a released CHANGELOG section must not announce an open issue."
+        echo "(sync-game-version.yml publishes these sections to pdoom1-website as"
+        echo " release notes, so a false line reaches players. See issue #1165.)"
+        python scripts/check_changelog_claims.py
+        echo ""
+        echo "That used the COMMITTED manifest. Now re-fetch live state and check"
+        echo "again, so a claim that went false after the manifest was written is"
+        echo "caught here rather than on the website. This fails only on a real"
+        echo "claim violation, not on manifest whitespace -- a gate that goes red"
+        echo "for cosmetic reasons gets disabled within a week (see #1117)."
+        python scripts/check_changelog_claims.py --refresh >/dev/null
+        python scripts/check_changelog_claims.py
+        git checkout -- scripts/changelog_issue_state.json
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
     - name: Scene Navigation Chokepoint Check
       run: |
         echo "Enforcing: all scene navigation routes through SceneTransition (deferred swap)."

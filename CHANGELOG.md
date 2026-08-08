@@ -4,6 +4,36 @@ All notable changes to P(Doom): Bureaucracy Strategy Game will be documented in 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Conventions (machine-checked)
+
+This file is not only read by people. `sync-game-version.yml` slices a version
+section out of it and publishes that text to pdoom1-website as release notes,
+so a wrong line here reaches players with no human in between. Two rules are
+enforced by `scripts/check_changelog_claims.py` (pre-commit + CI):
+
+- **Exactly one `## [Unreleased]` heading, and it is the first section.** Six of
+  them existed until 2026-08-09; any tool taking "the newest section" could
+  splice years of unrelated text together (#1165).
+- **A released section must not cite an open issue** without saying so. If a
+  release genuinely advanced an issue that is still open, write the number as
+  `#1234 [open]`. The marker is checked in both directions -- once #1234 closes,
+  the stale marker fails the build, so the annotation cannot rot into decoration.
+  A number cited as provenance for an editorial change rather than as a shipping
+  claim is written `#1234 [ref]` and is not state-checked.
+
+Ground truth is cached in `scripts/changelog_issue_state.json`, regenerated with
+`python scripts/check_changelog_claims.py --refresh` (needs `gh`); every other
+mode reads the cache and works offline.
+
+**Correction, 2026-08-09 (#1165 [ref]):** 19 citations in the `[0.14.0]`, `[0.13.2]`,
+`[0.12.0]` and `[v0.11.0]` sections named issues that were still open on the day
+this file said they had shipped. Each has a real merged commit behind it -- what
+was wrong was the implied "and therefore this issue is done". They now carry
+`[open]`. Nothing was deleted; the entries are corrected in place. Squash-merge
+in this repo does not fire closes-keywords, which is a large part of how the drift
+accumulated: the work merged, the issue stayed open, and the changelog claimed
+the issue.
+
 ## [Unreleased]
 
 ## [0.14.1] - 2026-08-08
@@ -77,20 +107,20 @@ Featured league seed rolls to `weekly-2026-w32`.
 Every entry below is tied to a commit merged between `v0.13.2` and this release.
 
 ### Added
-- **Pick the music from the pause menu** (#802, #1146) -- track selection while
+- **Pick the music from the pause menu** (#802 [open], #1146) -- track selection while
   you play, not only in Settings.
 - **A credits screen you can actually reach** (#1161).
 - **Month review shows what CHANGED**, and SPACE opens it (#1100).
 - **Settings rebuilt as a front card plus an operations board** (#1096, #1103).
 - **One-time "claim a name" prompt before your first upload**, plus a lab-name
-  generator (#957, #1063, #1133) -- a public board of identical
+  generator (#957 [open], #1063 [open], #1133) -- a public board of identical
   "Researcher -- AI Safety Lab" rows is one nobody can find themselves on.
 - **Epoch-aware update check** reads `release_manifest.json`; the manifest now
   carries the ladder epoch and sha256 anchors (#1110).
 
 ### Changed
 - **Historical event deck retimed to one turn = one month**, with a timing dial
-  and the ruled promotions applied (#1111, #1125, #1137). *This is the change
+  and the ruled promotions applied (#1111 [open], #1125 [open], #1137). *This is the change
   that forks the ladder.*
 - **Difficulty lock enforced where the value is CONSUMED**, not on one screen,
   and Alpha Tools now set a sticky unranked flag (#1058, #1060, #1084, #1104).
@@ -112,28 +142,28 @@ Every entry below is tied to a commit merged between `v0.13.2` and this release.
   (#1083).
 - **The office cat was a magenta checkerboard in every shipped build** -- not one
   flaky JPG (#796, #1080).
-- **The server rack painted over the feed and the staff were oversized** (#793,
+- **The server rack painted over the feed and the staff were oversized** (#793 [open],
   #1081).
-- **The public build wore a stale, clipped "DEV BUILD" banner** (#1067, #1079).
+- **The public build wore a stale, clipped "DEV BUILD" banner** (#1067 [open], #1079).
 - **A failed global leaderboard fetch is now VISIBLE**, and players are warned
-  about SmartScreen (#1126, #1127).
+  about SmartScreen (#1126 [open], #1127).
 - **Music was too loud and the wrong track; Graphics Settings was an empty
   header** (#1095).
 - **Percent tie direction pinned**, so doom reads the same on every platform.
 - **Release export filename derives from the preset**, and the Linux alias is
-  published (#1068, #1072, #1099).
+  published (#1068 [open], #1072 [open], #1099).
 - **The backslash dev key returns in release builds** (dev gates split) (#1129).
 
 ### Dev / tooling (no player-visible change)
 - CI exports now route through `build_release.py`'s freshness proof (#1069,
   #1114); the GDScript syntax gate COMPILES every `.gd` rather than only what
   boot reaches (#1082, #1119).
-- New instruments: `find_dead_code.py` (#1117, #1124), an action-taxonomy checker
-  (#798, #1139), a generated `docs/TOOLS.md` (#1123), a generated
+- New instruments: `find_dead_code.py` (#1117 [open], #1124), an action-taxonomy checker
+  (#798 [open], #1139), a generated `docs/TOOLS.md` (#1123), a generated
   `decisions/README.md` (#1108).
-- Dead paths retired; what remains is LOUD (#1115, #1118).
+- Dead paths retired; what remains is LOUD (#1115 [open], #1118).
 - Art pipeline: promotion map unblocks 605 then all 327 remaining approved assets
-  (#1093, #1107, #1122); 2,713 human verdicts made durable; the 2026-08-07 art
+  (#1093 [open], #1107, #1122); 2,713 human verdicts made durable; the 2026-08-07 art
   night fired 652 images (#1158); art-review gallery keyboard repaired (#1162).
 - Issue triage across all 201 open issues plus a 7-fix drive-by batch (#1144),
   and a pre-close mining pass (#1153).
@@ -148,7 +178,7 @@ economy was rebuilt, so scores are not comparable with L2 boards.
 ### 2026-07-27 build day (rides the next version bump)
 
 #### Added
-- **The early game has a real first fifteen minutes** (#791, #811, #982): you
+- **The early game has a real first fifteen minutes** (#791 [open], #811 [open], #982): you
   start in a free bedroom/basement (2-hire cap), then choose one of three
   first offices -- a cheap-in/cheap-out co-working corner, a balanced
   second-floor walk-up, or a bigger university annex sublet -- each with its
@@ -231,10 +261,9 @@ player-facing record for this release and lists the rest of what it contained.
 
 ### Added
 - Research quality: a Rushed / Standard / Thorough toggle that trades speed
-  against risk, feeding the hidden risk pool (#500). Wired into the plan screen
-  via `main_ui.gd`, with `research_quality_selector.gd` as the control. **#500 is
-  still OPEN** -- this describes what the shipped code does, not a finished
-  feature.
+  against risk, feeding the hidden risk pool (#500 [open]). Wired into the plan
+  screen via `main_ui.gd`, with `research_quality_selector.gd` as the control.
+  This describes what the shipped code does, not a finished feature.
 - Scenario and mod hooks: drop a JSON file into the scenarios folder to add a
   scenario, with three samples included (#483). `scenario_loader.gd`,
   `godot/data/scenarios/*.json`, documented in `docs/SCENARIOS.md`.
@@ -273,7 +302,7 @@ nine doom streams, visible rivals, and the leaderboard going live -- see
   - First Class: 2 turns low severity (-10% productivity)
   - Automatic recovery: 1 severity level per turn
 
-- **Public Opinion & Media System** (#186 Phase 1): New reputation mechanics
+- **Public Opinion & Media System** (#186 [open], Phase 1): New reputation mechanics
   - Media coverage tracking and sentiment analysis
   - Public opinion meter affecting fundraising and events
 
@@ -586,7 +615,11 @@ nine doom streams, visible rivals, and the leaderboard going live -- see
 - **README**: Modernized with alpha testing features and screenshots
 - **Dependencies**: numpy>=2.3.3 now required for audio functionality
 
-## [Unreleased] - 'Input System Architecture Overhaul'
+## [Unversioned] - 'Input System Architecture Overhaul'
+
+*Relabelled 2026-08-09 (#1165 [ref]): this section was headed `[Unreleased]`. The text
+is unchanged -- it describes pygame-era work that was never cut as its own
+version. The heading was a collision, not a claim.*
 
 ### Added - Phase 2 Architecture
 - **[TARGET] InputEventManager System** - Extracted complete keyboard event processing from main.py monolith (500+ lines)
@@ -664,7 +697,9 @@ nine doom streams, visible rivals, and the leaderboard going live -- see
 - **Settings Flow** - Stable initialization sequence for consistent game startup
 - **Core Game Loop** - Validated deterministic behavior across all major systems
 
-## [Unreleased] - 2025-09-17 - 'RNG Architecture Discovery Release'
+## [Unversioned] - 2025-09-17 - 'RNG Architecture Discovery Release'
+
+*Relabelled 2026-08-09 (#1165 [ref]): was `[Unreleased]`. Text unchanged.*
 
 ### Major Discovery: RNG System Already Complete
 #### Analysis
@@ -925,7 +960,9 @@ nine doom streams, visible rivals, and the leaderboard going live -- see
   - Reusable components reduce code duplication across menu systems
   - Clear separation of concerns: layout, rendering, state management
 
-## [Unreleased] - 2025-09-19 - 'Bug Sweep Session: Critical Stability Fixes'
+## [Unversioned] - 2025-09-19 - 'Bug Sweep Session: Critical Stability Fixes'
+
+*Relabelled 2026-08-09 (#1165 [ref]): was `[Unreleased]`. Text unchanged.*
 ### Fixed
 - **CRITICAL DEBUG CONSOLE CRASH**: Fixed fatal access violation in debug console rendering
   - **Root Cause**: Font objects were not initialized before being used in draw methods
@@ -1292,7 +1329,10 @@ nine doom streams, visible rivals, and the leaderboard going live -- see
 - **Event Handling Priority**: Resolved conflicts between tutorial overlays and core game controls
 - **Modal Dialog Behavior**: Improved popup and dialog interaction handling
 
-## [Unreleased]
+## [Unversioned] - 'Achievements & Failure Cascades'
+
+*Relabelled 2026-08-09 (#1165 [ref]): was `[Unreleased]`. Text unchanged.*
+
 ### Added
 - **[ACHIEVE] Achievements & Enhanced Endgame System (Issue #195)**: Comprehensive achievement tracking and victory conditions beyond binary win/lose
   - 24 achievements across 8 categories: Survival, Workforce, Research, Financial, Safety, Reputation, Competitive, Rare
@@ -1462,7 +1502,10 @@ nine doom streams, visible rivals, and the leaderboard going live -- see
 - **Spacing & Layout**: Consistent margins and alignment across all resource displays
 - **Screenshot Functionality**: Alt+Tab and screen capture tools now work properly
 
-## [Unreleased]
+## [Unversioned] - 'Enhanced Settings System'
+
+*Relabelled 2026-08-09 (#1165 [ref]): was `[Unreleased]`. Text unchanged.*
+
 ### Added
 - **[SETTINGS] Enhanced Settings System**: Comprehensive settings and configuration architecture
   - **Custom Seed Management**: Fixed critical 'Launch with Custom Seed' crash, added seed validation and normalization
