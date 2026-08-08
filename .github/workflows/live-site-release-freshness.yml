@@ -55,6 +55,11 @@ on:
         required: false
         default: '480'
         type: string
+      force_alarm:
+        description: 'DRILL: compare against a synthetic release tag so the alarm fires. Files a clearly-marked drill issue. Leaves a RED run.'
+        required: false
+        default: false
+        type: boolean
 
 # EXPLICIT, and issues:write is load-bearing. The alert job below opens or
 # comments on an issue; without this block the default token would be read-only
@@ -80,6 +85,7 @@ jobs:
       live_version: ${{ steps.check.outputs.live_version }}
       expected_version: ${{ steps.check.outputs.expected_version }}
       age_minutes: ${{ steps.check.outputs.age_minutes }}
+      drill: ${{ steps.mode.outputs.drill }}
     steps:
       - uses: actions/checkout@v4
 
@@ -111,6 +117,49 @@ jobs:
           echo "published_at=$PUB" >> "$GITHUB_OUTPUT"
           echo "skip=false" >> "$GITHUB_OUTPUT"
 
+      # THE DRILL. `force_alarm` does NOT branch around the comparison, and that
+      # is the entire point of it. It substitutes ONE input -- the tag the site
+      # is expected to be serving -- for a string no release will ever carry,
+      # and drops tolerance to zero. Everything downstream is the production
+      # path: the same live GET against pdoom1.com with a cache-buster, the same
+      # comparison, the same exit 1, the same `if: failure()` gate, the same
+      # issue search, the same create-or-comment.
+      #
+      # WHY IT IS BUILT THIS WAY. A drill that runs a mock alert step proves the
+      # mock works. This workflow's alarm branch had never executed once between
+      # merging (#1182, 1ddb033d) and this change -- the comparison was proven
+      # red before shipping, the ISSUE-FILING was not. A guard whose loud half
+      # has never run is not a guard yet, it is an intention.
+      #
+      # A drill deliberately leaves a RED run in the Actions list. That is not a
+      # defect to paper over: the red is how the alarm reaches anyone, so a
+      # drill that stayed green would be exercising a different path.
+      #
+      # If pdoom1.com is unreachable during a drill the script returns 2
+      # (UNKNOWN) and the run stays GREEN with no issue filed. That is correct
+      # -- the drill inherits the real path's refusal to guess -- but it means a
+      # green force_alarm run is a FAILED drill, not a passed one. Read the step
+      # summary.
+      - name: Resolve what to compare against (real, or drill)
+        id: mode
+        if: steps.release.outputs.skip != 'true'
+        env:
+          FORCE_ALARM: ${{ inputs.force_alarm }}
+          REAL_EXPECTED: ${{ steps.release.outputs.tag }}
+          REAL_TOLERANCE: ${{ inputs.tolerance_minutes || '480' }}
+        run: |
+          set -euo pipefail
+          if [ "$FORCE_ALARM" = "true" ]; then
+            echo "::warning::DRILL -- force_alarm is on. This run compares pdoom1.com against a synthetic tag so the alarm path executes. A red run and a [DRILL] issue are the EXPECTED result."
+            echo "drill=true" >> "$GITHUB_OUTPUT"
+            echo "expected=v0.0.0-FORCE-ALARM-DRILL" >> "$GITHUB_OUTPUT"
+            echo "tolerance=0" >> "$GITHUB_OUTPUT"
+          else
+            echo "drill=false" >> "$GITHUB_OUTPUT"
+            echo "expected=$REAL_EXPECTED" >> "$GITHUB_OUTPUT"
+            echo "tolerance=$REAL_TOLERANCE" >> "$GITHUB_OUTPUT"
+          fi
+
       # Exit codes are the pdoom1-website board-liveness.yml convention, adopted
       # here on purpose so the two repos' guards read the same way:
       #   0 in sync, or lagging within tolerance -> green
@@ -124,9 +173,10 @@ jobs:
         id: check
         if: steps.release.outputs.skip != 'true'
         env:
-          EXPECTED: ${{ steps.release.outputs.tag }}
+          EXPECTED: ${{ steps.mode.outputs.expected }}
           PUBLISHED_AT: ${{ steps.release.outputs.published_at }}
-          TOLERANCE: ${{ inputs.tolerance_minutes || '480' }}
+          TOLERANCE: ${{ steps.mode.outputs.tolerance }}
+          DRILL: ${{ steps.mode.outputs.drill }}
         run: |
           set +e
           python scripts/check_site_release_freshness.py \
@@ -140,8 +190,21 @@ jobs:
 
           # Loud every run, in the place a human actually looks.
           {
-            echo "## Live site release freshness"
-            echo ""
+            if [ "$DRILL" = "true" ]; then
+              echo "## DRILL -- live site release freshness alarm path"
+              echo ""
+              echo "\`force_alarm\` was set. The site was read for real; the tag it"
+              echo "was compared against (\`$EXPECTED\`) is synthetic, so the"
+              echo "mismatch is manufactured and the alarm path executes."
+              echo ""
+              echo "**Expected result: this run is RED and a \`[DRILL]\` issue exists.**"
+              echo "A green drill run means the site was unreachable and the drill"
+              echo "did NOT exercise anything."
+              echo ""
+            else
+              echo "## Live site release freshness"
+              echo ""
+            fi
             echo '```'
             cat freshness.log
             echo '```'
@@ -152,7 +215,11 @@ jobs:
               echo "::warning::pdoom1.com could not be read. UNKNOWN, not a mismatch -- this run proves nothing either way."
               exit 0 ;;
             1)
-              echo "::error::pdoom1.com is advertising a version other than the latest release, and has been for longer than $TOLERANCE minutes. The website's 6-hourly backstop should already have closed this."
+              if [ "$DRILL" = "true" ]; then
+                echo "::error::DRILL -- alarm fired against a synthetic tag. This red is intentional."
+              else
+                echo "::error::pdoom1.com is advertising a version other than the latest release, and has been for longer than $TOLERANCE minutes. The website's 6-hourly backstop should already have closed this."
+              fi
               exit 1 ;;
             *)
               exit 0 ;;
@@ -212,16 +279,84 @@ jobs:
           LIVE: ${{ needs.check.outputs.live_version }}
           EXPECTED: ${{ needs.check.outputs.expected_version }}
           AGE: ${{ needs.check.outputs.age_minutes }}
+          DRILL: ${{ needs.check.outputs.drill }}
         with:
           script: |
-            const title = 'pdoom1.com is serving a stale release';
+            // ---------------------------------------------------------------
+            // DE-DUPLICATION AND THE DRILL. This is the part most likely to be
+            // got wrong, so it is spelled out.
+            //
+            // De-dup here is: list open issues carrying the `release` label,
+            // then match on an EXACT title. A drill that filed under the real
+            // title would be a live landmine -- the next GENUINE outage would
+            // find that open issue and take the comment branch, appending a
+            // real alarm to a thread whose title says [DRILL] and whose body
+            // says "nothing is wrong". Nobody triages a new comment on a drill
+            // ticket at 3am. The drill would have DISARMED the alarm it exists
+            // to prove.
+            //
+            // So the title is the discriminator, and it is the ONLY thing that
+            // varies: drill and real use two titles that can never collide, and
+            // both run this same search, same exact-title match, same
+            // create-or-comment. Consequences, stated so they can be checked:
+            //   - A drill issue open  -> a real alarm does not match it, and
+            //     files a fresh real issue. Not suppressed.
+            //   - A real issue open   -> a drill does not match it, does not
+            //     comment on it, and does not close it. Not disturbed.
+            //   - Two drills in a row -> the second matches the first and
+            //     comments. That is the de-dup branch executing, which is the
+            //     half of this code a real outage would otherwise reach first.
+            // The `release` label is kept on drill issues deliberately: it
+            // keeps the drill inside the same search result set the real path
+            // reads, so the exact-title discrimination is genuinely tested
+            // rather than trivially avoided by filtering the drill out.
+            // ---------------------------------------------------------------
+            const drill = process.env.DRILL === 'true';
+            const REAL_TITLE = 'pdoom1.com is serving a stale release';
+            const DRILL_TITLE = '[DRILL] alarm-path exercise -- live site release freshness (not an outage)';
+            const title = drill ? DRILL_TITLE : REAL_TITLE;
             const label = 'release';
             const live = process.env.LIVE || 'unknown';
             const expected = process.env.EXPECTED || 'unknown';
             const age = process.env.AGE || '?';
             const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
 
-            const body = [
+            const drillBody = [
+              '## THIS IS A DRILL. NOTHING IS WRONG WITH THE SITE.',
+              '',
+              `Dispatched by **@${context.actor}** with \`force_alarm: true\` on the`,
+              '`Live site release freshness` workflow. No action is required. Close it.',
+              '',
+              'The workflow read `https://pdoom1.com/data/version.json` for real and',
+              `got \`${live}\`, then compared it against the synthetic tag`,
+              `\`${expected}\`, which no release will ever carry, with tolerance 0.`,
+              'The mismatch is manufactured; the site is fine.',
+              '',
+              '### What this proves, and what it does not',
+              '',
+              'Proves: the alarm branch reaches GitHub with `issues: write`, finds or',
+              'fails to find an existing issue, and files or comments. Before the first',
+              'drill this code had shipped and never once executed -- the comparison was',
+              'proven red pre-merge (#1182), the issue-filing was not.',
+              '',
+              'Does not prove: that the comparison is right. That is separately',
+              'evidenced, and a drill deliberately bypasses it by feeding a fake tag.',
+              '',
+              '### De-duplication under drill',
+              '',
+              `This issue is titled \`${DRILL_TITLE}\`. A real alarm searches for`,
+              `\`${REAL_TITLE}\` and will NOT match this one, so leaving this open`,
+              'cannot suppress a genuine alert. Running the drill again while this is',
+              'open takes the comment branch instead of filing a second issue -- if you',
+              'see a second comment below, de-duplication works.',
+              '',
+              `Run: ${runUrl}`,
+              '',
+              '_Not closed automatically. The resolve job only closes the real title,',
+              'and auto-closing a drill would delete the evidence before anyone read it._',
+            ].join('\n');
+
+            const realBody = [
               '`https://pdoom1.com/data/version.json` (read live, with a cache-buster)',
               `advertises **${live}**. The latest published release is **${expected}**,`,
               `published **${age} minutes ago**.`,
@@ -255,22 +390,34 @@ jobs:
               'automatically by the same workflow when the site catches up._',
             ].join('\n');
 
+            const body = drill ? drillBody : realBody;
+            // A drill must not page the website triage queue, so it drops
+            // `pdoom-website` and `priority:high`. It KEEPS `release`, because
+            // that is the label the search filters on -- see the note above.
+            const labels = drill ? [label, 'testing'] : [label, 'pdoom-website', 'priority:high'];
+
             const existing = await github.rest.issues.listForRepo({
               owner: context.repo.owner, repo: context.repo.repo,
               state: 'open', labels: label, per_page: 100,
             });
+            core.info(`Open issues labelled '${label}': ${existing.data.length}. Matching on exact title: ${JSON.stringify(title)}`);
             const found = existing.data.find(i => i.title === title);
             if (found) {
+              const prefix = drill
+                ? `**DRILL, repeat run.** De-duplication matched this issue instead of filing a new one -- which is the branch being exercised. `
+                : '';
               await github.rest.issues.createComment({
                 owner: context.repo.owner, repo: context.repo.repo,
                 issue_number: found.number,
-                body: `Still true as of ${new Date().toUTCString()}: site says \`${live}\`, release is \`${expected}\` (${age} min old).\n\nRun: ${runUrl}`,
+                body: `${prefix}Still true as of ${new Date().toUTCString()}: site says \`${live}\`, release is \`${expected}\` (${age} min old).\n\nRun: ${runUrl}`,
               });
+              core.info(`Commented on existing #${found.number} (de-dup branch).`);
             } else {
-              await github.rest.issues.create({
+              const created = await github.rest.issues.create({
                 owner: context.repo.owner, repo: context.repo.repo,
-                title, body, labels: [label, 'pdoom-website', 'priority:high'],
+                title, body, labels,
               });
+              core.info(`Filed #${created.data.number}: ${created.data.html_url}`);
             }
 
   # An alert with no close path is the documented failure mode next door:
@@ -278,6 +425,11 @@ jobs:
   # had already resolved, because something opened them and nothing ever closed
   # them. An open issue here should always describe a live condition. If the
   # condition recurs, a FRESH issue is filed rather than this one reopened.
+  #
+  # This job matches the REAL title only, so it never touches a drill issue --
+  # in either direction. It will not close one (a drill closed by the next
+  # scheduled run two hours later would be gone before the operator read it),
+  # and a drill issue sitting open will not stop it closing a real one.
   resolve:
     name: Close the rolling issue when the site catches up
     needs: check
