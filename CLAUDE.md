@@ -186,6 +186,12 @@ genuine one-off exception `# scene-nav-allow`. Full story: `docs/LEADERBOARD_CRA
   `python tools/sync_version.py` (stamps `game_config.gd` / `project.godot` /
   `export_presets.cfg` / `welcome.tscn`). `sync_version.py --check` gates pre-commit + CI
   (a silent drift forks the leaderboard board-key -- fatal).
+- `ladder_version.txt` (root) is the LADDER epoch SSOT and the leaderboard board
+  key. **`tools/check_ladder_bump.py` now FAILS the build** (armed in #1178,
+  advisory before that): touching anything under `godot/` outside
+  UI/scenes/assets/theme/tests/docs requires either a ladder bump or a line
+  `Ladder-Impact: none -- <reason>` in a commit message or the PR body. It is
+  proven against real history on every CI run via `--self-test`.
 - Cut Windows builds with `python tools/build_release.py` -- it nukes `godot/.godot`
   (defeats the stale-export-cache trap), auto-stamps the build via `write_build_stamp.py`
   (no more "unstamped"), exports, and PROVES a unique freshness marker is in the `.pck`

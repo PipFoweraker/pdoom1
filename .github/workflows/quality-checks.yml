@@ -12,6 +12,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v7
+      with:
+        # Full history: check_ladder_bump.py looks back to the PREVIOUS ladder
+        # epoch (an epoch cut carries no gameplay change of its own), and its
+        # --self-test replays real commits from July/August. A shallow clone
+        # would make both unprovable.
+        fetch-depth: 0
 
     - name: Set up Python
       uses: actions/setup-python@v7
@@ -66,17 +72,30 @@ jobs:
         echo " A silent drift forks the leaderboard board-key, so this gate is FATAL.)"
         python tools/sync_version.py --check
 
-    - name: Ladder Bump Heuristic (advisory)
+    - name: Ladder Bump Gate -- self-test (prove it can still fail)
+      run: |
+        echo "Replaying the historical acceptance cases from issue #1178: the gate must go"
+        echo "RED on the #1137 retime it missed for 31 hours and on an autoload-only"
+        echo "gameplay change, and GREEN on the v0.14.0 epoch cut and the v0.14.1 patch."
+        echo "This runs on every build so the gate is never merely ASSUMED to work (#640)."
+        python tools/check_ladder_bump.py --self-test
+
+    - name: Ladder Bump Gate
       if: github.event_name == 'pull_request'
       env:
-        # SECURITY: branch name is user-influenced -- pass via env, not inline
+        # SECURITY: both are user-influenced -- pass via env, never inline in the
+        # shell. The PR body is read by the script from LADDER_DECLARATION_TEXT.
         BASE_REF: ${{ github.base_ref }}
+        LADDER_DECLARATION_TEXT: ${{ github.event.pull_request.body }}
       run: |
-        echo "Build-vs-ladder split: warn when gameplay-surface files changed without a"
-        echo "ladder_version.txt bump (or vice versa). Advisory smell detector, never blocks;"
-        echo "reviewer acks against the spec Section 3.3 checklist."
-        git fetch origin "$BASE_REF" --depth=1
-        python tools/check_ladder_bump.py --base "origin/$BASE_REF" || true
+        echo "Build-vs-ladder split: gameplay-surface files changed without a"
+        echo "ladder_version.txt bump (or a ladder bump with no gameplay change since the"
+        echo "previous epoch) FAILS this job. Was advisory until #1178, where its record"
+        echo "in both directions turned out to be worthless while nobody could see it."
+        echo "To pass a deliberate no-bump, put a line in the PR body or a commit message:"
+        echo "  Ladder-Impact: none -- <one line of reasoning>"
+        git fetch origin "$BASE_REF"
+        python tools/check_ladder_bump.py --base "origin/$BASE_REF"
 
     - name: Web Export System Check
       run: |
