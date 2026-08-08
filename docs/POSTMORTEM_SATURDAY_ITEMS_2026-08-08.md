@@ -156,3 +156,52 @@ correct diagnosis and real data loss on a release night.
 **The Saturday question is not "how do we find these" -- we found it. It is what
 makes a filed, correctly-diagnosed defect get acted on before it costs something.**
 Any answer that ends in "file an issue" has missed the point.
+
+---
+
+## ITEM 4 -- The estate DID have a guard for this. It was pointed at a decoy.
+
+**Found 2026-08-08 by the release-sync lane, after two wrong answers about the
+same file -- including one of mine.**
+
+`data/current-game-version.json` lives at the root of `pdoom1-website`, is written
+by **pdoom1's** `sync-game-version.yml`, and sits **outside the rsync source**, so
+it cannot change what a visitor sees.
+
+The story about it changed three times, and the sequence is the finding:
+
+1. **"Producer and consumer share no filename."** Partly wrong -- the site's real
+   `version.json` IS written by the website's own script to `public/data/`.
+2. **"Zero consumers."** Wrong, and wrong in a specific way: the search was scoped
+   to `pdoom1-website` and never asked whether *pdoom1* reads it.
+3. **The truth: it has exactly ONE reader -- `release-sync-monitor.yml`, ours,
+   running daily, whose entire purpose is to notice when the site has fallen behind
+   a release.**
+
+**So the estate had a check for exactly this failure, and the check read the decoy
+file.** It would have reported green throughout the outage it appears to guard
+against. Not a missing guard, not a broken guard -- a guard aimed one directory to
+the left of the thing it was built to watch.
+
+This is a distinct mechanism from the four in `POSTMORTEM_2026-08-07_CAPTURE.md`
+and sharper than any of them, because every prior instance was something nobody was
+watching. Here somebody built the watcher, wired it up, and ran it daily.
+
+**Practical consequence, before anyone tidies:** do NOT delete
+`data/current-game-version.json` as dead weight. It would break the monitor. The
+real fix is repointing the monitor at what the site actually serves, which is what
+`pdoom1#1182` does.
+
+**The Saturday question this raises**, and it is harder than "add a check":
+`#1182` adds a freshness check with an eight-hour tolerance, argued from the
+website's six-hourly cron so it cannot cry wolf on every release. Its comparison
+logic was proven red before being proposed. But **its alarm path -- issue creation
+and de-duplication -- has never executed once.** So the new guard is in the same
+state the old one was in: reasoned, wired, and unobserved. Watching it fire costs
+one dispatch with `tolerance_minutes: 0` after a release.
+
+Unrelated, found in passing: a pre-commit gate forced `docs/TOOLS.md` to
+regenerate, which **deleted six entries pointing at `scripts/lib/scores/` and
+`scripts/lib/services/` -- directories that do not exist and that git has no record
+of ever containing.** The generated index has been advertising tooling that was
+never in the repo.
