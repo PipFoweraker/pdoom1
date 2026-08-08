@@ -3,6 +3,17 @@ All notable changes to P(Doom): Bureaucracy Strategy Game will be documented in 
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+> **Note on the "Archived draft" sections below (2026-08-09, issue #1165).**
+> This file carried SIX `## [Unreleased]` headings. Five were accumulator
+> residue: past releases that shipped without clearing the section, leaving
+> stale work filed under a heading that claims it never shipped. They are
+> retitled here, keeping their original titles and dates verbatim, so that
+> exactly one `[Unreleased]` heading remains -- the one at the top, which is
+> the live accumulator. Which release actually shipped each block was NOT
+> established; the file's ordering is unreliable in that stretch (the
+> 2025-09-19 block sits below `[0.7.1] - 2025-09-15`), so no version is
+> claimed. `scripts/check_release_notes.py --changelog-structure` now blocks
+> a second `[Unreleased]` heading from appearing again.
 
 ## [Unreleased]
 
@@ -586,7 +597,7 @@ nine doom streams, visible rivals, and the leaderboard going live -- see
 - **README**: Modernized with alpha testing features and screenshots
 - **Dependencies**: numpy>=2.3.3 now required for audio functionality
 
-## [Unreleased] - 'Input System Architecture Overhaul'
+## [Archived draft A] - 'Input System Architecture Overhaul'
 
 ### Added - Phase 2 Architecture
 - **[TARGET] InputEventManager System** - Extracted complete keyboard event processing from main.py monolith (500+ lines)
@@ -664,7 +675,7 @@ nine doom streams, visible rivals, and the leaderboard going live -- see
 - **Settings Flow** - Stable initialization sequence for consistent game startup
 - **Core Game Loop** - Validated deterministic behavior across all major systems
 
-## [Unreleased] - 2025-09-17 - 'RNG Architecture Discovery Release'
+## [Archived draft: 2025-09-17] - 'RNG Architecture Discovery Release'
 
 ### Major Discovery: RNG System Already Complete
 #### Analysis
@@ -925,7 +936,7 @@ nine doom streams, visible rivals, and the leaderboard going live -- see
   - Reusable components reduce code duplication across menu systems
   - Clear separation of concerns: layout, rendering, state management
 
-## [Unreleased] - 2025-09-19 - 'Bug Sweep Session: Critical Stability Fixes'
+## [Archived draft: 2025-09-19] - 'Bug Sweep Session: Critical Stability Fixes'
 ### Fixed
 - **CRITICAL DEBUG CONSOLE CRASH**: Fixed fatal access violation in debug console rendering
   - **Root Cause**: Font objects were not initialized before being used in draw methods
@@ -1292,7 +1303,7 @@ nine doom streams, visible rivals, and the leaderboard going live -- see
 - **Event Handling Priority**: Resolved conflicts between tutorial overlays and core game controls
 - **Modal Dialog Behavior**: Improved popup and dialog interaction handling
 
-## [Unreleased]
+## [Archived draft B]
 ### Added
 - **[ACHIEVE] Achievements & Enhanced Endgame System (Issue #195)**: Comprehensive achievement tracking and victory conditions beyond binary win/lose
   - 24 achievements across 8 categories: Survival, Workforce, Research, Financial, Safety, Reputation, Competitive, Rare
@@ -1462,7 +1473,7 @@ nine doom streams, visible rivals, and the leaderboard going live -- see
 - **Spacing & Layout**: Consistent margins and alignment across all resource displays
 - **Screenshot Functionality**: Alt+Tab and screen capture tools now work properly
 
-## [Unreleased]
+## [Archived draft C]
 ### Added
 - **[SETTINGS] Enhanced Settings System**: Comprehensive settings and configuration architecture
   - **Custom Seed Management**: Fixed critical 'Launch with Custom Seed' crash, added seed validation and normalization
