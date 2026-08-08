@@ -32,6 +32,7 @@ Declared with a `Layer:` line in a tool's module docstring; `--` = undeclared.
 | branch_manager.py | -- | Automated Branch Management System for P(Doom) | human (docstring usage) |
 | build_all_platforms.py | -- | Build P(Doom) for all platforms (Windows, Linux, macOS). | ci:enhanced-release.yml; test:test_build_all_platforms.py; tool:generate_release_metadata.py |
 | check_no_emoji.py | PROVE | Blocking no-emoji / ASCII enforcement for the Godot tree (issue #744). | pre-commit |
+| check_release_notes.py | -- | Guard against a release note that announces something we did not ship. | pre-commit; ci:enhanced-release.yml; ci:pre-release-checks.yml; test:test_release_notes_guard.py |
 | check_site_release_freshness.py | -- | Is pdoom1.com advertising the release we actually published? | ci:live-site-release-freshness.yml |
 | check_style_guide.py | -- | Style Guide Enforcement Check | pre-commit |
 | ci_health_integration.py | -- | CI/CD Health Integration - GitHub Actions Integration | ci:enhanced-cicd-pipeline.yml; ci:quality-checks.yml |
@@ -210,4 +211,4 @@ DISCUSSING CI); the rest are the hollow-runner shape -- read them.
 
 25 `.html` tool(s) under `tools/` (browser-opened, no docstring to parse): `tools/art_review/doom_overlay_preview.html`, `tools/art_review/hero_gallery_template.html`, `tools/art_review/icon_pass_2026-07-21.html`, `tools/art_review/icon_pass_verdicts_2026-07-21.html`, `tools/art_review/palette.html`, `tools/art_review/palette_swatches.html`, `tools/art_review/scene_wave2_2026-07-21.html`, `tools/art_review/style_review.html`, `tools/assets/review_generated.html`, `tools/music/commission_sheets.html`, `tools/music/jukebox.html`, `tools/music/listening_room.html`, `tools/music/stem_board.html`, `tools/runsheet/CEREMONY-ALL-GATES-2026-07-31.html`, `tools/runsheet/SUNDAY-postmortem-2026-08-07.html`, `tools/runsheet/chronicle-2026-08-06_07.html`, `tools/runsheet/fri-2026-07-31-EVENING-1620.html`, `tools/runsheet/fri-2026-07-31-GATES-1700.html`, `tools/runsheet/fri-2026-07-31-TO-MIDNIGHT-1733.html`, `tools/runsheet/fri-2026-07-31-league-day.html`, `tools/runsheet/playtest_card.html`, `tools/runsheet/wed-thu-2026-07-29.html`, `tools/social_composer.html`, `tools/ui_comparison.html`, `tools/ui_mockup/wireframe.html`.
 
-Total: 113 active tools (9 GENERATE, 6 OBSERVE, 5 PROVE, 1 SWEEP, 92 undeclared); 11 in UNKNOWN; 6 archived.
+Total: 114 active tools (9 GENERATE, 6 OBSERVE, 5 PROVE, 1 SWEEP, 93 undeclared); 11 in UNKNOWN; 6 archived.
