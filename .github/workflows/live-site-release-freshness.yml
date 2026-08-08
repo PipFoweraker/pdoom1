@@ -1,0 +1,321 @@
+name: Live site release freshness
+
+# Answers ONE question on a schedule: is pdoom1.com serving the release we
+# actually published?
+#
+# WHY THIS IS NOT ALREADY COVERED. release-sync-monitor.yml looks like this
+# check and is not. It reads
+# `repos/PipFoweraker/pdoom1-website/contents/data/current-game-version.json`
+# through the GitHub API -- a file in the website REPO. pdoom1-website#285
+# recorded those two things diverging in production on the v0.14.0 cut: the
+# repo held v0.14.0 while pdoom1.com served v0.13.2, for roughly 70 minutes,
+# with correct-looking green ticks throughout, while Pip was already sharing
+# the link.
+#
+# TWO DIFFERENT ASSERTIONS. Stating both, because conflating them is the whole
+# bug:
+#   A) the website REPO has been updated  -- release-sync-monitor.yml (daily)
+#   B) the LIVE SITE serves that update   -- this workflow
+# B can be false while A is true: the commit landed but the deploy did not run,
+# or ran and a CDN edge is still handing out the previous object. The live read
+# below therefore goes over HTTPS to pdoom1.com with a CACHE-BUSTER, not to the
+# GitHub API. A read without a cache-buster can be answered from an object
+# minted before the release existed -- which is precisely the mistake made on
+# 2026-08-07, when a single curl taken BEFORE the release was published was
+# used to assert for eight hours that the site was stale.
+#
+# It lives in pdoom1 rather than pdoom1-website because it is OUR release that
+# goes stale on their site, so the alarm should reach the people who cut it.
+#
+# READ-ONLY. One GET against a public JSON file, plus a read of this repo's own
+# releases. Writes nothing to either repo except the rolling issue below.
+
+on:
+  schedule:
+    # EVERY TWO HOURS, offset off the hour (this repo family's habit -- see
+    # release-sync-monitor.yml '17 6 * * *' and pdoom1-website's '17 */6 * * *').
+    # The offset is not cosmetic: top-of-hour is when GitHub's scheduler is most
+    # congested and scheduled runs are most delayed, and a freshness check that
+    # is itself late is a poor witness.
+    #
+    # Cadence is chosen against the ALARM THRESHOLD below, not against how fast
+    # anyone would like to know. With an 8h threshold, 2-hourly gives four
+    # samples inside the window, so the first run that can legitimately fire
+    # does fire within 2h of the condition becoming true. Polling every 15
+    # minutes would not detect anything sooner -- it would just re-ask a
+    # question whose answer cannot change verdict for hours. pdoom1-website's
+    # board-liveness.yml learned that directly: it went hourly for league night,
+    # reverted, and the standing note is "polling faster re-asks the same wrong
+    # question more often".
+    - cron: '43 */2 * * *'
+  workflow_dispatch:
+    inputs:
+      tolerance_minutes:
+        description: 'Minutes of lag to tolerate before failing (default 480)'
+        required: false
+        default: '480'
+        type: string
+
+# EXPLICIT, and issues:write is load-bearing. The alert job below opens or
+# comments on an issue; without this block the default token would be read-only
+# under the org's restricted default and the alert would 403 -- an alarm that
+# cannot be heard is worse than no alarm, because it also reports green.
+# This repo shipped exactly that: release-reminder.yml ran with NO permissions
+# block until #1177 (commit 5c83d034, 2026-08-08).
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: live-site-release-freshness
+  cancel-in-progress: false
+
+jobs:
+  check:
+    name: Compare pdoom1.com against the published release
+    runs-on: ubuntu-latest
+    if: github.repository == 'PipFoweraker/pdoom1'
+    outputs:
+      verdict: ${{ steps.check.outputs.verdict }}
+      live_version: ${{ steps.check.outputs.live_version }}
+      expected_version: ${{ steps.check.outputs.expected_version }}
+      age_minutes: ${{ steps.check.outputs.age_minutes }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      # `gh release view` with no tag is GitHub's own "latest": newest
+      # non-draft, non-prerelease. This is deliberately the exact command
+      # pdoom1-website#285 names in its closing condition, so that a green run
+      # here is evidence about that issue and not about a lookalike.
+      - name: Read the latest published release
+        id: release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          if ! gh release view --repo "$GITHUB_REPOSITORY" \
+                --json tagName,publishedAt > release.json; then
+            echo "::warning::No published release found. Nothing to compare against."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          TAG=$(jq -r '.tagName' release.json)
+          PUB=$(jq -r '.publishedAt' release.json)
+          echo "tag=$TAG"
+          echo "published_at=$PUB"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "published_at=$PUB" >> "$GITHUB_OUTPUT"
+          echo "skip=false" >> "$GITHUB_OUTPUT"
+
+      # Exit codes are the pdoom1-website board-liveness.yml convention, adopted
+      # here on purpose so the two repos' guards read the same way:
+      #   0 in sync, or lagging within tolerance -> green
+      #   1 stale beyond tolerance               -> RED, alert fires
+      #   2 UNKNOWN (unreachable / unreadable)   -> green, warning only.
+      # Quoting that workflow: "we cannot tell" is not the same as "we are
+      # losing scores". Same here: an outage at pdoom1.com, a DNS blip or a
+      # truncated response tells us nothing about whether the version is right,
+      # and failing on it would train everyone to ignore this job.
+      - name: Compare the live site against the release
+        id: check
+        if: steps.release.outputs.skip != 'true'
+        env:
+          EXPECTED: ${{ steps.release.outputs.tag }}
+          PUBLISHED_AT: ${{ steps.release.outputs.published_at }}
+          TOLERANCE: ${{ inputs.tolerance_minutes || '480' }}
+        run: |
+          set +e
+          python scripts/check_site_release_freshness.py \
+            --expected-version "$EXPECTED" \
+            --published-at "$PUBLISHED_AT" \
+            --tolerance-minutes "$TOLERANCE" | tee freshness.log
+          code=${PIPESTATUS[0]}
+          set -e
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          echo "script exit code: $code"
+
+          # Loud every run, in the place a human actually looks.
+          {
+            echo "## Live site release freshness"
+            echo ""
+            echo '```'
+            cat freshness.log
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          case "$code" in
+            2)
+              echo "::warning::pdoom1.com could not be read. UNKNOWN, not a mismatch -- this run proves nothing either way."
+              exit 0 ;;
+            1)
+              echo "::error::pdoom1.com is advertising a version other than the latest release, and has been for longer than $TOLERANCE minutes. The website's 6-hourly backstop should already have closed this."
+              exit 1 ;;
+            *)
+              exit 0 ;;
+          esac
+
+  # ---------------------------------------------------------------------------
+  # THE THRESHOLD, AND WHY IT IS NOT THE 10 MINUTES IN pdoom1-website#285.
+  #
+  # #285 proposes "within 10 minutes of a release publishing". That is the right
+  # CLOSING CONDITION for #285 -- it describes how fast a push-driven pipeline
+  # ought to be once built. It is the wrong ALARM THRESHOLD today, and shipping
+  # it as one would make this workflow useless on arrival.
+  #
+  # The mechanism the site currently has is a cron: auto-update-data.yml on
+  # pdoom1-website runs '0 */6 * * *' (verified 2026-08-08). So the honest
+  # worst case for a correctly functioning estate is ~6h of cron wait, plus
+  # GitHub's scheduled-run delay (routinely 5-20 min under load), plus the
+  # website's deploy job, plus CDN propagation -- call it 6h45m. An alarm at 10
+  # minutes would therefore fire on EVERY SINGLE RELEASE, be correct every time,
+  # and self-heal within six hours without anyone doing anything. That is the
+  # precise shape of alarm this repo family has already decided it does not
+  # want: board-liveness.yml, on reverting its hourly cadence, records that "a
+  # guard firing about a settled question trains people to stop reading it",
+  # and on its push-retry loop that "a red square that always goes green on its
+  # own trains people to stop reading it".
+  #
+  # 480 minutes (8h) is set so that firing means THE BACKSTOP ITSELF FAILED --
+  # at least one full 6-hourly cycle has come and gone without fixing it, with
+  # ~75 minutes of headroom over the honest worst case. Nothing automatic will
+  # clear it, so every alert is an alert a human must act on. That is the test
+  # a threshold has to pass: not "how soon could we know" but "will the person
+  # who gets this still be reading it in a month".
+  #
+  # WHEN #285 IS ACTUALLY FIXED (release publish drives the update rather than
+  # the clock), this number should drop hard -- to 30 or 60 minutes -- and the
+  # comment above becomes the reason it was ever this high. Until then, 8h.
+  #
+  # NOT triggered on `release: published`. A release published seconds ago has
+  # provably not propagated, so such a run could only ever report "lagging,
+  # tolerated" -- a green tick carrying no information, which is the category of
+  # reassurance that caused #285 in the first place.
+  # ---------------------------------------------------------------------------
+
+  alert:
+    name: Alert -- the live site is serving a stale release
+    needs: check
+    if: failure()
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/github-script@v7
+        env:
+          # Values from a live HTTP response go through env, never spliced into
+          # the script body.
+          LIVE: ${{ needs.check.outputs.live_version }}
+          EXPECTED: ${{ needs.check.outputs.expected_version }}
+          AGE: ${{ needs.check.outputs.age_minutes }}
+        with:
+          script: |
+            const title = 'pdoom1.com is serving a stale release';
+            const label = 'release';
+            const live = process.env.LIVE || 'unknown';
+            const expected = process.env.EXPECTED || 'unknown';
+            const age = process.env.AGE || '?';
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+
+            const body = [
+              '`https://pdoom1.com/data/version.json` (read live, with a cache-buster)',
+              `advertises **${live}**. The latest published release is **${expected}**,`,
+              `published **${age} minutes ago**.`,
+              '',
+              'This is past the tolerated window, which means the website\'s own 6-hourly',
+              '`auto-update-data.yml` backstop has had at least one full cycle and did not',
+              'fix it. Nothing automatic is going to clear this.',
+              '',
+              '**Anyone following a version-pinned link on pdoom1.com right now downloads',
+              'the wrong build.** Unversioned aliases (`/releases/latest`, `PDoom-Windows.zip`)',
+              'are unaffected -- see pdoom1-website#285.',
+              '',
+              '### Check it yourself',
+              '```bash',
+              'curl -s "https://pdoom1.com/data/version.json?cb=$(date +%s)" | jq -r .latest_release.version',
+              'gh release view --repo PipFoweraker/pdoom1 --json tagName --jq .tagName',
+              '```',
+              '',
+              '### Likely causes, cheapest first',
+              '1. `auto-update-data.yml` on pdoom1-website is failing -- check its runs.',
+              '2. It committed but the deploy did not run, or ran and failed.',
+              '3. It deployed and a CDN edge is still serving the previous object.',
+              '',
+              'Note that `release-sync-monitor.yml` can be GREEN while this is true: it',
+              'reads the website REPO file, not the served site. Those are different',
+              'assertions and pdoom1-website#285 records them diverging.',
+              '',
+              `Run: ${runUrl}`,
+              '',
+              '_Single rolling issue -- reused, not duplicated, per run. Closed',
+              'automatically by the same workflow when the site catches up._',
+            ].join('\n');
+
+            const existing = await github.rest.issues.listForRepo({
+              owner: context.repo.owner, repo: context.repo.repo,
+              state: 'open', labels: label, per_page: 100,
+            });
+            const found = existing.data.find(i => i.title === title);
+            if (found) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: found.number,
+                body: `Still true as of ${new Date().toUTCString()}: site says \`${live}\`, release is \`${expected}\` (${age} min old).\n\nRun: ${runUrl}`,
+              });
+            } else {
+              await github.rest.issues.create({
+                owner: context.repo.owner, repo: context.repo.repo,
+                title, body, labels: [label, 'pdoom-website', 'priority:high'],
+              });
+            }
+
+  # An alert with no close path is the documented failure mode next door:
+  # pdoom1-website#149, #204 and #230 all sat open describing conditions that
+  # had already resolved, because something opened them and nothing ever closed
+  # them. An open issue here should always describe a live condition. If the
+  # condition recurs, a FRESH issue is filed rather than this one reopened.
+  resolve:
+    name: Close the rolling issue when the site catches up
+    needs: check
+    if: needs.check.outputs.verdict == 'in-sync'
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - uses: actions/github-script@v7
+        env:
+          LIVE: ${{ needs.check.outputs.live_version }}
+        with:
+          script: |
+            const title = 'pdoom1.com is serving a stale release';
+            const label = 'release';
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+
+            const existing = await github.rest.issues.listForRepo({
+              owner: context.repo.owner, repo: context.repo.repo,
+              state: 'open', labels: label, per_page: 100,
+            });
+            const found = existing.data.find(i => i.title === title);
+            if (!found) { core.info('No open rolling issue to close.'); return; }
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner, repo: context.repo.repo,
+              issue_number: found.number,
+              body: [
+                `**Resolved automatically** -- pdoom1.com now serves \`${process.env.LIVE}\`,`,
+                `matching the latest published release, as of ${new Date().toUTCString()}.`,
+                '',
+                'Read live with a cache-buster, not from the website repo.',
+                '',
+                `Run: ${runUrl}`,
+              ].join('\n'),
+            });
+            await github.rest.issues.update({
+              owner: context.repo.owner, repo: context.repo.repo,
+              issue_number: found.number, state: 'closed', state_reason: 'completed',
+            });
+            core.info('Closed #' + found.number + '.');
