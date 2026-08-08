@@ -20,6 +20,17 @@ old runner did NOT, each of which is why CI was green while running zero tests:
      skips (parse error, or `extends Node` instead of GutTest) => count mismatch
      => hard failure naming the offending files. Silence is failure.
 
+Three outcomes, not two (#1181 / #1168): PASS / FAIL / NO RESULT. Point 2 above
+says a number that did not come from tests executing must not be trusted; the
+timeout path used to break that rule in the runner's own reporting. A run killed
+by the wall-clock cap produced no JUnit file, so no test count exists for it --
+yet it rendered as `simulation: 0 tests, 0 fail (FAIL)`, character-identical in
+shape to a measured result, and as `| simulation | 0 | 0 | FAIL |` in the CI
+summary table. Now a killed run reports NO RESULT, prints `-` where the counts
+would go, and exits 2 (distinct from 1 = measured failure, 0 = measured pass).
+The cap itself is `--timeout` / `PDOOM1_TEST_TIMEOUT`, default 900s -- the same
+900 that was hardcoded before, so CI's contract is unchanged.
+
 Non-blocking-tier surfacing (#964): the simulation tier is intentionally
 non-blocking in CI (slow, run-simulating). A failure there must still be LOUD,
 not silently green -- format_summary_markdown() emits a "[!] <MODE> TIER RED"
@@ -37,6 +48,11 @@ Usage:
     python scripts/run_godot_tests.py --quick --ci-mode --min-tests 300
     python scripts/run_godot_tests.py --simulation --summary            # print the RED-banner table locally
     python scripts/run_godot_tests.py --simulation --summary-file out.md
+    python scripts/run_godot_tests.py --simulation --timeout 3600  # slow box (#1181)
+    python scripts/run_godot_tests.py --simulation --timeout 0     # no cap at all
+
+Exit codes: 0 = measured pass, 1 = measured failure, 2 = NO RESULT (the run did
+not complete, so no measurement exists -- do not report a suite result from it).
 """
 
 import argparse
@@ -46,6 +62,7 @@ import re
 import subprocess
 import sys
 import tempfile
+import time
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
@@ -108,6 +125,70 @@ MODE_DIRS = {
     "integration": "res://tests/integration",
     "smoke": "res://tests/smoke",
 }
+
+
+# --- Outcomes (#1181) -------------------------------------------------------
+# Three states, deliberately not two. FAILED means "we measured, and it was
+# bad". NO_RESULT means "we did not measure": there is no count, no verdict, and
+# it must never be renderable in the shape of the former.
+PASSED = "PASS"
+FAILED = "FAIL"
+NO_RESULT = "NO RESULT"
+
+EXIT_OK = 0
+EXIT_FAILED = 1
+EXIT_NO_RESULT = 2
+
+# The wall-clock cap for one GUT invocation. 900 is the value that was hardcoded
+# at scripts/run_godot_tests.py:375 before #1181; it is kept as the default so
+# CI's behaviour is byte-identical unless someone opts out. It is now a
+# parameter because there is no single number right for every machine: the
+# Ubuntu CI runner completes the simulation tier in 460-550s, while Pip's
+# Windows box (concurrent agent lanes, art generation, several Godot instances)
+# was still emitting live GUT progress at 27m10s. A cap that cannot be raised
+# means that machine can never obtain a result from that tier at all.
+DEFAULT_TIMEOUT = 900
+TIMEOUT_ENV_VAR = "PDOOM1_TEST_TIMEOUT"
+
+
+def resolve_timeout(cli_timeout):
+    """Resolve the per-run wall-clock cap.
+
+    Precedence: --timeout, then $PDOOM1_TEST_TIMEOUT, then DEFAULT_TIMEOUT.
+    Returns (seconds_or_None, provenance_string); None means no cap at all
+    (`--timeout 0`). The provenance is printed, because an implicit cap that
+    silently destroys a measurement is the defect being fixed here -- the reader
+    should never have to guess which number was in force.
+    """
+    seconds = DEFAULT_TIMEOUT
+    source = "default"
+    if cli_timeout is not None:
+        seconds, source = cli_timeout, "--timeout"
+    else:
+        raw = os.environ.get(TIMEOUT_ENV_VAR, "").strip()
+        if raw:
+            try:
+                seconds, source = int(raw), f"${TIMEOUT_ENV_VAR}"
+            except ValueError:
+                print(
+                    f"[WARN] {TIMEOUT_ENV_VAR}={raw!r} is not an integer; "
+                    f"falling back to the {DEFAULT_TIMEOUT}s default."
+                )
+    if seconds <= 0:
+        return None, f"{source} (cap DISABLED)"
+    return seconds, source
+
+
+def _no_result(mode, detail):
+    """Build a result row for a run that produced no measurement."""
+    return {
+        "mode": mode,
+        "outcome": NO_RESULT,
+        "tests": None,
+        "failures": None,
+        "failing_tests": [],
+        "detail": detail,
+    }
 
 
 def find_godot():
@@ -327,10 +408,24 @@ def _parse_junit(junit_path):
         return None
 
 
-def run_gut_tests(godot_path, mode, test_dir, log_level, min_tests):
+def _fail_row(mode, tests=0, failures=0, failing_tests=None):
+    return {
+        "mode": mode,
+        "outcome": FAILED,
+        "tests": tests,
+        "failures": failures,
+        "failing_tests": failing_tests or [],
+        "detail": "",
+    }
+
+
+def run_gut_tests(godot_path, mode, test_dir, log_level, min_tests, timeout=DEFAULT_TIMEOUT):
     """Run one test directory and hard-gate on the JUnit results.
 
-    Returns (ok: bool, tests: int, failures: int, failing_tests: list).
+    Returns a result dict: {mode, outcome, tests, failures, failing_tests,
+    detail}. `outcome` is PASSED / FAILED / NO_RESULT. When outcome is
+    NO_RESULT, `tests` and `failures` are None -- there is deliberately no
+    number to print, because no number was measured.
     """
     disk_files = _disk_test_files(test_dir)
     if disk_files is None:
@@ -338,11 +433,11 @@ def run_gut_tests(godot_path, mode, test_dir, log_level, min_tests):
         # runner skipped missing dirs, which is exactly how the smoke gate
         # "passed" while pointing at a nonexistent tests/smoke (#629).
         print(f"\n[FAIL] Test directory {test_dir} does not exist -- cannot run '{mode}'.")
-        return (False, 0, 0, [])
+        return _fail_row(mode)
 
     if not disk_files:
         print(f"\n[FAIL] No test_*.gd files found in {test_dir} for '{mode}'.")
-        return (False, 0, 0, [])
+        return _fail_row(mode)
 
     junit_fs = GODOT_PROJECT / f"test-results-{mode}.xml"
     junit_res = f"res://test-results-{mode}.xml"
@@ -366,22 +461,38 @@ def run_gut_tests(godot_path, mode, test_dir, log_level, min_tests):
     print(f"[CMD] {' '.join(cmd)}\n")
 
     exit_code = None
+    started = time.monotonic()
     try:
         result = subprocess.run(
             cmd,
             cwd=GODOT_PROJECT,
             capture_output=False,
             text=True,
-            timeout=900,
+            timeout=timeout,
             env=ISOLATED_ENV,
         )
         exit_code = result.returncode
     except subprocess.TimeoutExpired:
-        print("\n[FAIL] Tests timed out after 15 minutes!")
-        return (False, 0, 0, [])
+        elapsed = time.monotonic() - started
+        detail = (
+            f"killed by the {timeout}s wall-clock cap after {elapsed:.0f}s, before "
+            "GUT wrote any results. Raise the cap with --timeout N (or "
+            f"{TIMEOUT_ENV_VAR}=N), or --timeout 0 to remove it."
+        )
+        print("\n" + "!" * 68)
+        print(f"[NO RESULT] '{mode}': TIMED OUT after {elapsed:.0f}s (cap {timeout}s).")
+        print("[NO RESULT] No JUnit file was written, so there is NO test count for")
+        print("[NO RESULT] this run: nothing passed and nothing failed. This is NOT a")
+        print("[NO RESULT] green run and NOT a measured failure -- it is an absence of")
+        print("[NO RESULT] measurement. Do not report a suite result from it.")
+        print(f"[NO RESULT] Fix: --timeout N / {TIMEOUT_ENV_VAR}=N (0 removes the cap).")
+        print("!" * 68)
+        return _no_result(mode, detail)
     except Exception as e:
-        print(f"\n[FAIL] Failed to run tests: {e}")
-        return (False, 0, 0, [])
+        detail = f"the Godot process could not be run to completion: {e}"
+        print(f"\n[NO RESULT] '{mode}': failed to run tests -- {e}")
+        print("[NO RESULT] No measurement exists for this run (not a pass, not a failure).")
+        return _no_result(mode, detail)
 
     # --- The gate: trust the JUnit file, not the exit code. ---
     parsed = _parse_junit(junit_fs)
@@ -390,7 +501,7 @@ def run_gut_tests(godot_path, mode, test_dir, log_level, min_tests):
             f"\n[FAIL] '{mode}': no parseable JUnit results at {junit_fs}. "
             "GUT ran nothing or quit early (missing import pass? bad args?)."
         )
-        return (False, 0, 0, [])
+        return _fail_row(mode)
 
     tests = parsed["tests"]
     failures = parsed["failures"]
@@ -430,12 +541,19 @@ def run_gut_tests(godot_path, mode, test_dir, log_level, min_tests):
     if exit_code not in (0, None) and ok:
         print(f"\n[WARN] '{mode}': JUnit looked clean but GUT exit code was {exit_code}.")
 
-    status = "PASS" if ok else "FAIL"
+    status = PASSED if ok else FAILED
     print(
         f"\n[{status}] '{mode}': {tests} tests, {failures} failures, "
         f"{len(collected)}/{len(disk_files)} files collected."
     )
-    return (ok, tests, failures, failing_tests)
+    return {
+        "mode": mode,
+        "outcome": status,
+        "tests": tests,
+        "failures": failures,
+        "failing_tests": failing_tests,
+        "detail": "",
+    }
 
 
 # Modes considered "non-blocking" tiers in CI: a failure here does not fail the
@@ -446,32 +564,84 @@ def run_gut_tests(godot_path, mode, test_dir, log_level, min_tests):
 NON_BLOCKING_MODES = {"simulation"}
 
 
+def format_totals_line(rows):
+    """The one-line [TOTALS] verdict.
+
+    A NO_RESULT row prints no counts at all. Before #1181 it printed
+    `0 tests, 0 fail (FAIL)` -- literally true and completely misleading, since
+    "0 fail" describes a run that never happened.
+    """
+    parts = []
+    for r in rows:
+        if r["outcome"] == NO_RESULT:
+            parts.append(f"{r['mode']}: NO RESULT -- run did not complete, no test count exists")
+        else:
+            parts.append(
+                f"{r['mode']}: {r['tests']} tests, {r['failures']} fail "
+                f"({'ok' if r['outcome'] == PASSED else 'FAIL'})"
+            )
+    return "[TOTALS] " + " | ".join(parts)
+
+
+def decide_exit(rows):
+    """0 measured pass / 1 measured failure / 2 no measurement.
+
+    NO_RESULT outranks FAILED: if any tier did not run, the most important thing
+    to tell the caller is that the run cannot be reported on, not that some
+    other tier was red.
+    """
+    if any(r["outcome"] == NO_RESULT for r in rows):
+        return EXIT_NO_RESULT
+    if any(r["outcome"] == FAILED for r in rows):
+        return EXIT_FAILED
+    return EXIT_OK
+
+
 def format_summary_markdown(rows):
     """Build one markdown report shared by GITHUB_STEP_SUMMARY, --summary, and
-    the PR-comment step (issue #964). `rows` is a list of
-    (mode, tests, failures, ok, failing_tests) tuples.
+    the PR-comment step (issue #964). `rows` is a list of result dicts from
+    run_gut_tests().
 
     Non-blocking tiers (currently: simulation) get an unmissable
     '[!] <MODE> TIER RED' banner plus a per-test failure table when they fail,
     since a plain PASS/FAIL row in a wall of green is exactly what went
     unnoticed for 5 main-branch runs before this was added.
+
+    A tier that did NOT COMPLETE gets its own banner and renders its counts as
+    `-`, never as 0 (#1181): the simulation tier is non-blocking in CI, so a
+    timeout there would otherwise appear as a quiet `| simulation | 0 | 0 |`
+    row that a reader would have to already know how to distrust.
     """
     lines = []
 
-    for mode, tests, failures, ok, failing_tests in rows:
-        if not ok and failing_tests and mode in NON_BLOCKING_MODES:
+    for r in rows:
+        if r["outcome"] != NO_RESULT:
+            continue
+        lines.append("")
+        lines.append(f"## [!] {r['mode'].upper()} DID NOT COMPLETE -- NO RESULT")
+        lines.append("")
+        lines.append(
+            f"`{r['mode']}` was {r['detail']} No test count exists for this run: it "
+            "is neither a pass nor a failure. Treat this tier as UNMEASURED and do "
+            "not quote a suite result from it."
+        )
+        lines.append("")
+
+    for r in rows:
+        if r["outcome"] == FAILED and r["failing_tests"] and r["mode"] in NON_BLOCKING_MODES:
             lines.append("")
-            lines.append(f"## [!] {mode.upper()} TIER RED (non-blocking, but real)")
+            lines.append(f"## [!] {r['mode'].upper()} TIER RED (non-blocking, but real)")
             lines.append("")
             lines.append(
-                f"`{mode}` tier: {failures}/{tests} test failures. This tier does "
-                "NOT block merges -- it is surfaced here so it is not silently red. "
-                "See docs/ARCHITECTURE.md / the sim-tier test files for context."
+                f"`{r['mode']}` tier: {r['failures']}/{r['tests']} test failures. This "
+                "tier does NOT block merges -- it is surfaced here so it is not "
+                "silently red. See docs/ARCHITECTURE.md / the sim-tier test files "
+                "for context."
             )
             lines.append("")
             lines.append("| Suite | Test | Failure |")
             lines.append("|---|---|---|")
-            for ft in failing_tests:
+            for ft in r["failing_tests"]:
                 lines.append(f"| {ft['suite']} | {ft['test']} | {ft['message']} |")
             lines.append("")
 
@@ -480,9 +650,14 @@ def format_summary_markdown(rows):
     lines.append("")
     lines.append("| Suite | Tests | Failures | Result |")
     lines.append("|---|---:|---:|---|")
-    for mode, tests, failures, ok, _failing_tests in rows:
-        tier_note = " (non-blocking)" if mode in NON_BLOCKING_MODES else ""
-        lines.append(f"| {mode}{tier_note} | {tests} | {failures} | {'PASS' if ok else 'FAIL'} |")
+    for r in rows:
+        tier_note = " (non-blocking)" if r["mode"] in NON_BLOCKING_MODES else ""
+        if r["outcome"] == NO_RESULT:
+            lines.append(f"| {r['mode']}{tier_note} | - | - | **NO RESULT (did not run)** |")
+        else:
+            lines.append(
+                f"| {r['mode']}{tier_note} | {r['tests']} | {r['failures']} | {r['outcome']} |"
+            )
     lines.append("")
 
     return "\n".join(lines)
@@ -562,6 +737,18 @@ def main():
         dest="no_import",
         help="Skip the headless import pass (only if the class cache is already warm)",
     )
+    parser.add_argument(
+        "--timeout",
+        type=int,
+        default=None,
+        help=(
+            "Wall-clock cap in seconds for EACH GUT run. Default "
+            f"{DEFAULT_TIMEOUT} -- the same value that was hardcoded before "
+            "#1181, so CI behaviour is unchanged. 0 removes the cap entirely. "
+            f"Env fallback: {TIMEOUT_ENV_VAR}. Exceeding the cap is reported as "
+            "NO RESULT (exit 2), never as a test failure."
+        ),
+    )
     parser.add_argument("--verbose", action="store_true", help="Verbose GUT output (log level 3)")
     parser.add_argument(
         "--summary",
@@ -615,14 +802,18 @@ def main():
     else:
         modes = ["quick", "simulation", "integration"]
 
-    all_passed = True
+    timeout, provenance = resolve_timeout(args.timeout)
+    print(
+        "\n[TIMEOUT] Per-run wall-clock cap: "
+        + (f"{timeout}s" if timeout else "DISABLED")
+        + f" (from {provenance})."
+    )
+
     summary_rows = []
     for mode in modes:
-        ok, tests, failures, failing_tests = run_gut_tests(
-            godot_path, mode, MODE_DIRS[mode], log_level, args.min_tests
+        summary_rows.append(
+            run_gut_tests(godot_path, mode, MODE_DIRS[mode], log_level, args.min_tests, timeout)
         )
-        summary_rows.append((mode, tests, failures, ok, failing_tests))
-        all_passed = all_passed and ok
 
     _write_step_summary(summary_rows)
     if args.summary_file:
@@ -631,21 +822,25 @@ def main():
         print("\n" + format_summary_markdown(summary_rows))
 
     print("\n" + "=" * 60)
-    print(
-        "[TOTALS] "
-        + " | ".join(
-            f"{m}: {t} tests, {fl} fail ({'ok' if o else 'FAIL'})"
-            for (m, t, fl, o, _ft) in summary_rows
+    print(format_totals_line(summary_rows))
+
+    incomplete = [r for r in summary_rows if r["outcome"] == NO_RESULT]
+    if incomplete:
+        print(
+            "[NO RESULT] "
+            + ", ".join(r["mode"] for r in incomplete)
+            + " did not run to completion. This is NOT a pass and NOT a test "
+            "failure -- no measurement exists. Do not report a suite result "
+            "from this run."
         )
-    )
-    if all_passed:
-        print("[SUCCESS] All requested suites passed the gate! CHECKED")
-        print("=" * 60)
-        sys.exit(0)
-    else:
+        for r in incomplete:
+            print(f"            {r['mode']}: {r['detail']}")
+    elif any(r["outcome"] == FAILED for r in summary_rows):
         print("[FAILURE] Gate failed (see above).")
-        print("=" * 60)
-        sys.exit(1)
+    else:
+        print("[SUCCESS] All requested suites passed the gate! CHECKED")
+    print("=" * 60)
+    sys.exit(decide_exit(summary_rows))
 
 
 if __name__ == "__main__":

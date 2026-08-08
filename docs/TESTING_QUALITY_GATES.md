@@ -353,6 +353,35 @@ python scripts/run_all_godot_tests.py --ci-mode
 python scripts/run_godot_tests.py --smoke-only
 ```
 
+### The wall-clock cap, and the third outcome (#1181 / #1168)
+
+Each GUT invocation is capped. The cap defaults to **900s** -- the value that was
+hardcoded before #1181, so CI is unchanged -- and is now settable:
+
+```bash
+python scripts/run_godot_tests.py --simulation --timeout 3600   # slow/contended box
+PDOOM1_TEST_TIMEOUT=3600 python scripts/run_godot_tests.py --simulation
+python scripts/run_godot_tests.py --simulation --timeout 0      # no cap at all
+```
+
+Raising it is the supported fix on Windows dev boxes, where the simulation tier
+has been measured still making progress at 27m10s while the Ubuntu CI runner
+finishes it in 460-550s.
+
+The runner reports **three** outcomes, not two:
+
+| Outcome | Exit | Means |
+|---|---:|---|
+| PASS | 0 | Measured: tests ran, floor met, no failures |
+| FAIL | 1 | Measured: tests ran and something was wrong |
+| NO RESULT | 2 | **Not measured.** The run was killed or could not start |
+
+A NO RESULT run prints no test counts anywhere (`-` in the summary table, no
+`N tests` in `[TOTALS]`). It used to print `0 tests, 0 fail (FAIL)`, which is
+literally true and completely misleading -- the same class of defect as #640,
+where the gate reported a number that did not come from tests executing.
+**Never quote a suite result from a NO RESULT run.**
+
 ---
 
 ## Coverage Goals
