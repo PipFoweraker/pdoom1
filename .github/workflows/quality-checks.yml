@@ -66,17 +66,27 @@ jobs:
         echo " A silent drift forks the leaderboard board-key, so this gate is FATAL.)"
         python tools/sync_version.py --check
 
-    - name: Ladder Bump Heuristic (advisory)
+    - name: Ladder Bump Check (blocking, ack-able)
       if: github.event_name == 'pull_request'
       env:
-        # SECURITY: branch name is user-influenced -- pass via env, not inline
+        # SECURITY: all three are user-influenced -- pass via env, never inline in run
         BASE_REF: ${{ github.base_ref }}
+        PR_BODY: ${{ github.event.pull_request.body }}
+        PR_LABELS: ${{ join(github.event.pull_request.labels.*.name, ',') }}
       run: |
-        echo "Build-vs-ladder split: warn when gameplay-surface files changed without a"
-        echo "ladder_version.txt bump (or vice versa). Advisory smell detector, never blocks;"
-        echo "reviewer acks against the spec Section 3.3 checklist."
+        echo "Build-vs-ladder split: fail when gameplay-surface files changed without a"
+        echo "ladder_version.txt bump (or vice versa) AND nobody acked it in writing."
+        echo "(Board key is (seed, ladder_version). A silent ladder move writes scores to a"
+        echo " board built under different rules -- issue #1178. This step ran with '|| true'"
+        echo " until 2026-08-09, so it could not fail; it missed the #1137 bump for 31 hours.)"
+        echo "Ack by putting 'ladder-ack: <reason>' in the PR body, or applying 'ladder-ack'."
         git fetch origin "$BASE_REF" --depth=1
-        python tools/check_ladder_bump.py --base "origin/$BASE_REF" || true
+        case ",$PR_LABELS," in
+          *,ladder-ack,*) LADDER_ACK="ladder-ack: the 'ladder-ack' label is applied to this PR" ;;
+          *)              LADDER_ACK="$PR_BODY" ;;
+        esac
+        export LADDER_ACK
+        python tools/check_ladder_bump.py --base "origin/$BASE_REF" --strict
 
     - name: Web Export System Check
       run: |

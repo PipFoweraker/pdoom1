@@ -37,9 +37,13 @@ announced in the day-log", which records *that* a freeze happened but not
 *what* was frozen. Without a SHA, "no new law crossed this line" has no
 line. Every later gate should be able to name its base commit.
 
-Check 5 is advisory by design: `check_ladder_bump.py` is a smell detector,
-not a proof (its own docstring says so). Acking a warning is a legitimate
-outcome; ignoring one silently is not.
+Check 5 is judgement over a smell detector: `check_ladder_bump.py` is not a
+proof (its own docstring says so). Acking a warning is a legitimate outcome;
+ignoring one silently is not -- and since #1178 that second half is machine-
+enforced. CI runs the checker with `--strict` and WITHOUT `|| true`, so an
+unacked warning now fails the PR; the ack is a `ladder-ack: <reason>` line in
+the PR body (or the `ladder-ack` label). At this gate, run it without `--strict`
+and record the ack in the day-log as before.
 
 ## The incantation
 

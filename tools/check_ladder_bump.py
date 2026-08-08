@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Heuristic guard: did this diff need a ladder_version bump (or get one it didn't need)?
 
-Layer: OBSERVE -- warn-only smell detector; CI runs it non-blocking (|| true)
+Layer: PROVE -- under --strict this fails the build unless a human acks in writing
 
 Part of the build-vs-ladder version split
 (docs/game-design/BUILD_VS_LADDER_VERSION_SPLIT.md, Section 4.2). The dangerous
@@ -14,27 +14,45 @@ This is a SMELL DETECTOR, not a proof: a comment-only edit inside
 ``godot/scripts/core/`` is a false positive, and an RNG-stream refactor hidden
 in a file outside the allowlist is a false negative (the golden-replay
 determinism backstop in the slow test tier is the stronger signal for that).
-Warnings are meant to be acked by a reviewer against the Section 3.3 checklist,
-not to hard-block.
+So a warning is not "you must bump" -- it is "a human must say, in writing,
+which of the two it is". ``--strict`` enforces exactly that: warnings fail the
+build UNLESS the ack text (see ``--ack-env``) carries a ``ladder-ack:`` line.
+
+Why the ack instead of a plain hard-fail (issue #1178): the ladder legitimately
+moves ONCE PER EPOCH, not once per PR (L1..L4 across hundreds of PRs), so
+"gameplay files changed and the ladder did not move" is the NORMAL case. A bare
+hard-fail would go red on nearly every gameplay PR and be switched off again --
+which is how this check spent its whole life behind ``|| true``.
 
 Usage::
 
     python tools/check_ladder_bump.py                  # diff vs origin/main, warn only
     python tools/check_ladder_bump.py --base <ref>     # explicit base ref
-    python tools/check_ladder_bump.py --strict         # exit 1 on any warning (CI gate)
+    python tools/check_ladder_bump.py --strict         # exit 1 on unacked warnings (CI gate)
+    LADDER_ACK="ladder-ack: cosmetic copy fix" python tools/check_ladder_bump.py --strict
 
-Default exit code is 0 even with warnings (advisory); ``--strict`` turns
-warnings into a failing exit for pipelines that want an explicit ack step.
+Default exit code is 0 even with warnings (advisory, for local and gate-ritual
+use); ``--strict`` is what CI runs, and CI runs it WITHOUT ``|| true``.
 """
 
 from __future__ import annotations
 
 import argparse
+import os
+import re
 import subprocess
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 LADDER_FILE = "ladder_version.txt"
+
+# A reviewer's written ack, looked for in the --ack-env text (in CI: the PR body,
+# or a synthesised line when the `ladder-ack` label is applied). The reason is
+# mandatory and must be substantive -- "ladder-ack: y" is not a decision record.
+ACK_PATTERN = re.compile(
+    r"^[^\S\n]*ladder-ack[^\S\n]*:[^\S\n]*(\S.*?)[^\S\n]*$", re.IGNORECASE | re.MULTILINE
+)
+ACK_MIN_REASON_CHARS = 8
 
 # Gameplay surface (spec Section 4.2): paths where a change plausibly alters
 # scores, trajectories, seeds, or RNG streams on a fixed seed -- i.e. the
@@ -50,11 +68,20 @@ EXCLUDE_PREFIXES = (
     "godot/scripts/dev/",
 )
 # Godot metadata churn, never gameplay: .uid = stable resource IDs, .import = import
-# metadata (both tracked on purpose, see CLAUDE.md).
+# metadata (both tracked on purpose, see CLAUDE.md). ".md" is prose that ships in
+# the .pck but cannot move a score -- it was a real false positive: the #1137 run
+# named godot/data/events/overrides/README.md as gameplay surface.
 EXCLUDE_SUFFIXES = (
     ".uid",
     ".import",
+    ".md",
 )
+# Exact paths under a gameplay prefix that are prose, not rules. Kept as an explicit
+# short list rather than a pattern, so adding one is a decision someone made.
+# patch_notes.json is release copy read only by godot/scripts/ui/whats_new_modal.gd;
+# it changes on EVERY release, so leaving it in made the strict gate demand an ack
+# on every release PR -- the exact noise that got '|| true' added in the first place.
+EXCLUDE_PATHS = ("godot/data/patch_notes.json",)
 
 
 def _git_diff_names(spec: list[str]) -> str:
@@ -87,6 +114,8 @@ def changed_files(base: str) -> list[str]:
 
 def is_gameplay_surface(path: str) -> bool:
     p = path.replace("\\", "/")
+    if p in EXCLUDE_PATHS:
+        return False
     if any(p.startswith(x) for x in EXCLUDE_PREFIXES):
         return False
     if any(p.endswith(x) for x in EXCLUDE_SUFFIXES):
@@ -94,6 +123,19 @@ def is_gameplay_surface(path: str) -> bool:
     if any(p.startswith(x) for x in GAMEPLAY_PREFIXES):
         return True
     return any(p.endswith("/" + name) or p == name for name in GAMEPLAY_BASENAMES)
+
+
+def find_ack(text: str) -> str | None:
+    """The reviewer's written ack reason, or None if the text carries no usable ack.
+
+    A ``ladder-ack:`` line with a too-short reason is deliberately NOT an ack --
+    the point of the mechanism is that someone had to state which case this is.
+    """
+    for match in ACK_PATTERN.finditer(text or ""):
+        reason = match.group(1).strip()
+        if len(reason) >= ACK_MIN_REASON_CHARS:
+            return reason
+    return None
 
 
 def main() -> int:
@@ -106,7 +148,15 @@ def main() -> int:
     parser.add_argument(
         "--strict",
         action="store_true",
-        help="exit 1 on any warning (default: advisory, exit 0)",
+        help="exit 1 on any warning that carries no written ack (this is what CI runs)",
+    )
+    parser.add_argument(
+        "--ack-env",
+        default="LADDER_ACK",
+        help=(
+            "name of the environment variable searched for a 'ladder-ack: <reason>' "
+            "line (default: LADDER_ACK). Only consulted under --strict."
+        ),
     )
     args = parser.parse_args()
 
@@ -143,11 +193,30 @@ def main() -> int:
 
     for w in warnings:
         print(f"[check_ladder_bump] WARNING: {w}")
-    if args.strict:
-        print("[check_ladder_bump] --strict: treating warnings as failure")
-        return 1
-    print("[check_ladder_bump] advisory mode: not failing the build. Reviewer must ack.")
-    return 0
+
+    if not args.strict:
+        print("[check_ladder_bump] advisory mode (no --strict): not failing. Reviewer must ack.")
+        return 0
+
+    ack = find_ack(os.environ.get(args.ack_env, ""))
+    if ack:
+        print(f"[check_ladder_bump] ACKED by reviewer via {args.ack_env}: {ack}")
+        print("[check_ladder_bump] --strict: warning(s) acked in writing, passing.")
+        return 0
+
+    print(
+        "[check_ladder_bump] --strict: FAILING. The warning above is not a demand to bump --\n"
+        "  it is a demand that a human state, in writing, which case this is.\n"
+        "  To ack, do EITHER:\n"
+        "    - add a line to the PR body:  ladder-ack: <reason, at least "
+        f"{ACK_MIN_REASON_CHARS} chars>\n"
+        "    - or apply the 'ladder-ack' label to the PR,\n"
+        "  then re-run this job. Decide against the Section 3.3 checklist in\n"
+        "  docs/game-design/BUILD_VS_LADDER_VERSION_SPLIT.md. If the diff CAN change a\n"
+        "  score/trajectory/seed/RNG stream on a fixed seed, bump ladder_version.txt and\n"
+        "  run: python tools/sync_version.py"
+    )
+    return 1
 
 
 if __name__ == "__main__":
