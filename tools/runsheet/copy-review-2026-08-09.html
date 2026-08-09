@@ -1,0 +1,630 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Copy review pack -- player-facing text, v0.13.2 to v0.14.1</title>
+<style>
+  /* Wide RIGHT margin on purpose: that column is the pen gutter. */
+  @page { size: A4 portrait; margin: 15mm 40mm 15mm 16mm; }
+  html { font-size: 12.5pt; }
+  body {
+    font: 12.5pt/1.45 Georgia, "Times New Roman", serif;
+    color: #000; background: #fff; margin: 0; padding: 0;
+  }
+  h1 { font-size: 20pt; margin: 0 0 .15em; line-height: 1.15; }
+  h2 { font-size: 15pt; margin: 0 0 .4em; padding: .25em .45em;
+       background: #111; color: #fff; page-break-after: avoid; }
+  h3 { font-size: 13pt; margin: .8em 0 .25em; padding-bottom: .1em;
+       border-bottom: 1.5px solid #000; page-break-after: avoid; }
+  h4 { font-size: 12.5pt; margin: .6em 0 .18em; page-break-after: avoid; }
+  p { margin: .4em 0; orphans: 3; widows: 3; }
+  .sub { font-size: 11pt; color: #333; margin: 0 0 1.2em; }
+  .why { font-size: 11.5pt; font-style: italic; margin: .3em 0 .7em; }
+  .where { font-size: 11pt; margin: .1em 0 .55em 1.6em;
+           border-left: 2px solid #999; padding-left: .6em; }
+  /* A quoted player-visible string. Boxed so a pen line reads unambiguously. */
+  .s { border: 1.2px solid #000; padding: .35em .5em; margin: .25em 0 .1em;
+       font: 12.5pt/1.4 "Consolas", "Courier New", monospace;
+       white-space: pre-wrap; word-wrap: break-word;
+       page-break-inside: avoid; }
+  .box { display: inline-block; border: 1.4px solid #000; width: .85em;
+         height: .85em; margin-right: .45em; vertical-align: -.05em; }
+  ul.marks { list-style: none; padding-left: 0; margin: .3em 0 .9em; }
+  ul.marks > li { margin: 0 0 .28em; padding-left: 1.5em; text-indent: -1.5em;
+                  font: 12.5pt/1.38 "Consolas", "Courier New", monospace;
+                  page-break-inside: avoid; }
+  .surface { page-break-before: always; }
+  .seen { border: 1.4px solid #000; padding: .5em .7em; margin: .8em 0 1.2em; }
+  .seen p { margin: .25em 0; font-size: 11.5pt; }
+  .rule { border: 0; border-top: 1px solid #000; margin: 1.4em 0; }
+  .tag { font: 10pt/1 "Consolas", monospace; border: 1px solid #000;
+         padding: .05em .35em; white-space: nowrap; }
+  .small { font-size: 11pt; color: #222; }
+  @media print { a { text-decoration: none; color: #000; } }
+</style>
+</head>
+<body>
+
+<h1>Copy review -- everything a player reads, v0.13.2 to v0.14.1</h1>
+<p class="sub">For Pip &middot; assembled Sunday 2026-08-09 from the pdoom1 seat &middot;
+sources: <span class="tag">godot/data/patch_notes.json</span>,
+<span class="tag">godot/scripts/ui/</span>, <span class="tag">godot/scenes/</span>,
+<span class="tag">CHANGELOG.md</span> &middot; nothing here has been edited, only quoted.</p>
+
+<p><strong>What this is.</strong> Every player-visible string written by an agent between
+2026-08-06 and 2026-08-08 that you have not signed off. You are the only copy authority and
+most of this shipped without passing your desk. It is grouped by <em>surface</em> -- the screen a
+player is looking at -- not by PR, because that is how you will judge it.</p>
+
+<p><strong>How to mark it.</strong> Each quoted block is a player-visible string, verbatim.
+The box beside it is yours: tick = keep, strike = kill, write over it = rewrite. The right
+margin is empty on purpose. Under each string is one line saying where it appears and when it
+fires -- copy cannot be judged without the moment it lands.</p>
+
+<p><strong>What is NOT here.</strong> Docs, ADRs, postmortems, chronicles, PR bodies, commit
+messages, code comments, test names. If a player cannot reach it, it is not copy review.</p>
+
+<div class="seen">
+  <p><strong>ALREADY SEEN -- skip these, they are recorded as approved:</strong></p>
+  <p>&middot; The cold-open line <em>"No, I can't tell you how it ends."</em> -- you approved it.</p>
+  <p>&middot; The game-over screen LAYOUT (shorter box, bigger body text, button row). The
+  <em>wording</em> on that screen is a separate question and IS in this pack.</p>
+  <p>&middot; The <span class="tag">Leaderboard [ENTER]</span> button on the game-over screen.</p>
+  <p>&middot; The credits cat tooltip.</p>
+  <p class="small">Everything else in this pack is treated as unreviewed. If you remember
+  reading something, strike the whole block and move on -- a false "unreviewed" costs you
+  seconds, a false "reviewed" ships un-checked prose.</p>
+</div>
+
+<hr class="rule">
+
+<!-- ==================================================================== -->
+<h2>1. WHAT'S NEW -- the in-game patch notes</h2>
+
+<p class="why">The heaviest item in the pack, and the least reviewed. Written wholesale by an
+agent on 2026-08-08 (#1175) to fill three releases where the What's New screen said nothing.
+It renders in the What's New modal on first launch after an update, and from the main menu's
+What's New button, for <em>every</em> player. Six versions, ~120 lines, none of them yours.
+This pack carries the two live ones in full and lists what it cut, at the end of the section.</p>
+
+<p class="where"><strong>Where:</strong> What's New modal -- fires automatically on first
+launch after an update, and on demand from the main menu.</p>
+
+<h3>v0.14.1 -- shipped 2026-08-08</h3>
+
+<h4>Title</h4>
+<div class="s"><span class="box"></span>You Can See Your Own Board Again</div>
+
+<h4>Highlights (the top block, read first)</h4>
+<ul class="marks">
+<li><span class="box"></span>Same board as v0.14.0 -- ladder L4, seed weekly-2026-w32. Your scores are still there and still count</li>
+<li><span class="box"></span>The game-over screen no longer scrolls, and the Leaderboard is a button instead of a line you had to scroll to find</li>
+<li><span class="box"></span>The leaderboard opens on the GLOBAL board instead of showing you only your own four scores</li>
+<li><span class="box"></span>If your score did not go to the global board, the game now tells you why, every run</li>
+<li><span class="box"></span>A successful submission is legible: bigger text, above the buttons instead of the last line on the screen</li>
+<li><span class="box"></span>A failed upload names the actual fault instead of always saying 'offline'</li>
+<li><span class="box"></span>In-game patch notes are back, and cover 0.12.0 onwards</li>
+</ul>
+
+<h4>Added</h4>
+<ul class="marks">
+<li><span class="box"></span>Patch notes for 0.12.0 through 0.14.0 -- three releases where this screen had nothing to say</li>
+<li><span class="box"></span>The release manifest publishes the league seed, so the website reads the board key instead of guessing it</li>
+</ul>
+
+<h4>Changed</h4>
+<ul class="marks">
+<li><span class="box"></span>The leaderboard screen opens on the global board. Builds with no leaderboard configured are unchanged and stay local-only</li>
+<li><span class="box"></span>The global fetch and the local view now read one board key from the board on screen, instead of two sources that could disagree</li>
+</ul>
+
+<h4>Fixed</h4>
+<ul class="marks">
+<li><span class="box"></span>The game-over screen scrolled, and the only route to the leaderboard was the last line inside the scroll. It is a button now, the screen is shorter, and the body text is bigger</li>
+<li><span class="box"></span>Two colours on the game-over screen failed accessible-contrast thresholds against the panel behind them</li>
+<li><span class="box"></span>A player who never opted in, and a player who declined, both saw nothing at game over -- both are now told where the score went and where to change it. It is a readout, not a prompt, and it does not opt anybody in</li>
+<li><span class="box"></span>The submit confirmation was small and below the buttons, so a successful upload looked like nothing happening</li>
+<li><span class="box"></span>A rotated token, a moved endpoint and a server fault all reported 'offline'. The real status reaches you now, and offline means the request never reached a server. Either way your score is kept locally</li>
+</ul>
+
+<h3>v0.14.0 -- shipped 2026-08-07</h3>
+
+<h4>Title</h4>
+<div class="s"><span class="box"></span>Ladder L4 -- The Comparability Fork</div>
+
+<h4>Highlights</h4>
+<ul class="marks">
+<li><span class="box"></span>New ladder epoch L4 -- scores from this version are NOT comparable with the L3 board</li>
+<li><span class="box"></span>Your L3 entries are still valid and still visible; they live on the L3 board</li>
+<li><span class="box"></span>Featured league seed rolls to weekly-2026-w32</li>
+<li><span class="box"></span>Pick the music from the pause menu, mid-run</li>
+<li><span class="box"></span>A credits screen you can actually reach</li>
+</ul>
+
+<h4>Added</h4>
+<ul class="marks">
+<li><span class="box"></span>Music track selection in the pause menu -- change the track while you play, not only in Settings</li>
+<li><span class="box"></span>A credits screen, reachable from the main menu</li>
+<li><span class="box"></span>Month review now shows what CHANGED since last month, and SPACE opens it</li>
+<li><span class="box"></span>Settings rebuilt as a front card plus an operations board, so the common dials are on the first screen</li>
+<li><span class="box"></span>A one-time 'claim a name' prompt before your first leaderboard upload, plus a lab-name generator</li>
+<li><span class="box"></span>The update check now reads the release manifest and tells you when an update forks your board</li>
+</ul>
+
+<h4>Changed</h4>
+<ul class="marks">
+<li><span class="box"></span>WHY THE BOARD FORKED: the historical event deck was retimed to one turn = one month, and the ruled event promotions were applied. Different events now fire on the same seed, so an L4 run is not comparable to an L3 run. That is the whole reason for the new epoch</li>
+<li><span class="box"></span>Difficulty is now locked where the value is USED, not just on one screen, and using Alpha Tools sets a sticky unranked flag on the run</li>
+<li><span class="box"></span>Keyboard navigation unified -- one table of choice keys, and one way out of every panel</li>
+<li><span class="box"></span>The last player-facing 'AP' is gone, and numbers are formatted the same way everywhere</li>
+<li><span class="box"></span>The player guide, the win condition and the cold open were rewritten to describe the game that actually exists</li>
+<li><span class="box"></span>The turn-1 action hand fits above the fold, and Fundraising is the first tile</li>
+<li><span class="box"></span>The debug event-trigger was deleted outright rather than hidden behind a guard</li>
+<li><span class="box"></span>Contact addresses were redacted from the bundled historical events</li>
+<li><span class="box"></span>The pause menu now grows to fit its text instead of growing its padding</li>
+</ul>
+
+<h4>Fixed</h4>
+<ul class="marks">
+<li><span class="box"></span>The achievement toast rendered as a giant purple rectangle in 0.13.2</li>
+<li><span class="box"></span>The office cat was a magenta checkerboard in every shipped build</li>
+<li><span class="box"></span>The server rack painted over the event feed, and staff sprites were oversized</li>
+<li><span class="box"></span>The public build wore a stale, clipped 'DEV BUILD' banner</li>
+<li><span class="box"></span>A failed global leaderboard fetch is now VISIBLE instead of silent, and the SmartScreen warning is explained</li>
+<li><span class="box"></span>Music was too loud and started on the wrong track; Graphics Settings was an empty header</li>
+<li><span class="box"></span>Percent rounding ties are pinned, so doom reads the same number on every platform</li>
+<li><span class="box"></span>The backslash dev key works again in release builds</li>
+</ul>
+
+<h3>v0.13.2 -- written retrospectively on 2026-08-08</h3>
+<p class="small">You lived this release. The <em>notes</em> for it are still an agent's prose.
+Title and highlights only -- the body is in the cut list below.</p>
+
+<h4>Title</h4>
+<div class="s"><span class="box"></span>League Build -- Ladder L3</div>
+
+<h4>Highlights</h4>
+<ul class="marks">
+<li><span class="box"></span>New ladder epoch L3 -- the effort economy was rebuilt, so scores are not comparable with L2 boards</li>
+<li><span class="box"></span>A real first fifteen minutes: start in a bedroom, then choose your first office</li>
+<li><span class="box"></span>Conference trips are a real commitment, not a menu skip</li>
+<li><span class="box"></span>'Accept Your Fate' -- end a run on purpose and still reach the leaderboard</li>
+</ul>
+
+<h4>Three lines from the body worth an eye (the rest is cut, see below)</h4>
+<ul class="marks">
+<li><span class="box"></span>Scouting actions for finding your next hire, including a deliberately loud strategic-shitposting option</li>
+<li><span class="box"></span>Founder Attention replaces the per-turn AP pool, with four-way founder hours: doors, approvals, audits and reserve</li>
+<li><span class="box"></span>The leaderboard screen now explains what a board IS, on the screen where people look at boards</li>
+</ul>
+
+<h3>v0.13.2 body, v0.13.1, v0.13.0, v0.12.0 -- CUT from this pack</h3>
+<p class="small">All written fresh on 2026-08-08, all player-visible in the same modal, all
+unreviewed -- and all cut, to keep this pack to a length you will finish. The reason for
+cutting these and not the two above: they describe releases one to three epochs behind the
+live board, so a wording change to them buys less than a wording change to v0.14.0 / v0.14.1,
+which is what a player updating today actually reads first. About 60 lines in total. Say the
+word and they come as a short second pack.</p>
+<ul class="marks">
+<li><span class="box"></span>I want the v0.13.2 / v0.13.1 / v0.13.0 / v0.12.0 notes as a second pack</li>
+<li><span class="box"></span>Do not bother -- accept them as shipped</li>
+</ul>
+
+<!-- ==================================================================== -->
+<div class="surface">
+<h2>2. THE GAME-OVER SCREEN</h2>
+
+<p class="why">Rewritten in #1179 -- cut from 32 lines to 16 so it stops scrolling. You have
+seen the layout and approved it. What follows is the <em>wording</em>, which is a separate
+question and has not been reviewed. Every one of these fires at the single most-read moment
+in the game: the run just ended.</p>
+
+<h3>Headline and subtitle</h3>
+
+<div class="s"><span class="box"></span>RUN ENDED
+You bought humanity more time</div>
+<p class="where">Title + subtitle, green. Fires when the run ends without a defeat condition
+(you chose to stop, or the clock ran out on a surviving lab).</p>
+
+<div class="s"><span class="box"></span>DEFEAT</div>
+<p class="where">Title, red. Fires on any of the three loss conditions below.</p>
+
+<h4>Defeat subtitles -- keyed to the counter that actually killed you</h4>
+<ul class="marks">
+<li><span class="box"></span>The AI Destroyed Humanity <em>(doom reached 100)</em></li>
+<li><span class="box"></span>You Lost All Credibility <em>(reputation hit zero)</em></li>
+<li><span class="box"></span>The Lab Went Bankrupt <em>(money below zero)</em></li>
+<li><span class="box"></span>The Experiment Ended <em>(fallback -- none of the above)</em></li>
+</ul>
+
+<h4>Defeat reason -- the sentence under the stats</h4>
+<ul class="marks">
+<li><span class="box"></span>Doom reached 100%. The AI became unaligned and humanity was lost.</li>
+<li><span class="box"></span>Your lab lost all credibility -- reputation hit zero and the doors closed.</li>
+<li><span class="box"></span>Your organization went bankrupt before the mission could be completed.</li>
+<li><span class="box"></span>The experiment ended prematurely.</li>
+</ul>
+<p class="where">Centred, red, below the horizontal rule. Note: "organization" is US
+spelling and is the only one on this screen.</p>
+
+<h3>The survival line (non-defeat runs)</h3>
+<div class="s"><span class="box"></span>Your lab held the line for [N] months. That is the whole game: time bought, not a war won.</div>
+<p class="where">Centred, green, replaces the defeat reason when the run did not lose.</p>
+
+<h3>Stats block labels</h3>
+<ul class="marks">
+<li><span class="box"></span>* FINAL SCORE *</li>
+<li><span class="box"></span>(vs [N] doing nothing)</li>
+<li><span class="box"></span>* Survived: [N] months</li>
+<li><span class="box"></span>* Final Doom: [N]%   ^ [N] Spiral   /   v [N] Flywheel</li>
+<li><span class="box"></span>* Resources: [money] | [N] compute | [N] research | [N] papers | [N] rep</li>
+<li><span class="box"></span>* Team: [N] -- [N] safety | [N] capability | [N] compute eng</li>
+<li><span class="box"></span>* Upgrades: [N] purchased</li>
+<li><span class="box"></span>* Achievements: [names] (+N more)</li>
+</ul>
+<p class="where">The scroll body, 20pt. "Spiral" and "Flywheel" are the doom-momentum
+words -- they appear nowhere else in the game.</p>
+
+<h3>The closing line</h3>
+<div class="s"><span class="box"></span>Learn about real AI safety: aisafety.info</div>
+<p class="where">Last line in the stats block, a live link. The only outbound link on the
+defeat screen.</p>
+
+<h3>Button row</h3>
+<ul class="marks">
+<li><span class="box"></span>Leaderboard [ENTER] &nbsp; <em>-- SEEN, approved</em></li>
+<li><span class="box"></span>Copy result</li>
+<li><span class="box"></span>Play Again</li>
+<li><span class="box"></span>Main Menu</li>
+</ul>
+</div>
+
+<!-- ==================================================================== -->
+<div class="surface">
+<h2>3. LEADERBOARD STATUS -- what the game says about your score</h2>
+
+<p class="why">All from #1173, all new on 2026-08-08. Before this, a rotated token, a moved
+endpoint and a server fault all told the player "offline". These lines sit above the button
+row on the game-over screen at 16pt -- the block the player is already reading.</p>
+
+<h3>3a. Submission outcome</h3>
+<ul class="marks">
+<li><span class="box"></span>Global leaderboard: submitting...</li>
+<li><span class="box"></span>Global leaderboard: submitted (rank [N])</li>
+<li><span class="box"></span>Global leaderboard: submitted</li>
+</ul>
+<p class="where">Fires immediately after the local save, on every opted-in run. The word
+"Global leaderboard: " is a fixed prefix on all of them.</p>
+
+<h3>3b. Failure -- the five distinct faults</h3>
+<ul class="marks">
+<li><span class="box"></span>offline -- score saved locally, will retry next launch</li>
+<li><span class="box"></span>server rejected this build (HTTP [N]) -- score saved locally, please report</li>
+<li><span class="box"></span>leaderboard endpoint not found (HTTP 404) -- score saved locally, please report</li>
+<li><span class="box"></span>leaderboard busy (HTTP 429) -- score saved locally, will retry next launch</li>
+<li><span class="box"></span>leaderboard server error (HTTP [N]) -- score saved locally, will retry next launch</li>
+<li><span class="box"></span>leaderboard refused the score (HTTP [N]) -- saved locally, please report</li>
+</ul>
+<p class="where">Same position, amber. Each is prefixed "Global leaderboard: " in the label,
+so a player reads e.g. <em>Global leaderboard: leaderboard busy (HTTP 429) ...</em> --
+<strong>the word "leaderboard" appears twice in four of the six.</strong> Worth a pen.</p>
+
+<h3>3c. The standing readout -- anonymous and declined players</h3>
+<p class="small">New behaviour: these fire on <em>every</em> run, not once. Deliberately a
+readout, not a prompt -- no dialog, no nudge, opts nobody in.</p>
+<ul class="marks">
+<li><span class="box"></span>Global leaderboard: OFF -- score saved locally only (turn on in Settings)</li>
+<li><span class="box"></span>Global leaderboard: OFF -- playing anonymously, score saved locally only (set a name and opt in via Settings)</li>
+<li><span class="box"></span>Global leaderboard: local only (change in Settings)</li>
+<li><span class="box"></span>[i] Playing anonymously -- set a name + opt in via Settings to join the global leaderboard</li>
+</ul>
+<p class="where">Grey, above the buttons. The last one is the ONE gracious nudge, shown once
+per install, ever.</p>
+
+<h3>3d. Unranked runs</h3>
+<ul class="marks">
+<li><span class="box"></span>NOT RANKED: scenario runs stay off the leaderboard. Play Standard Game for the board.</li>
+<li><span class="box"></span>[!] This run is now UNRANKED. Alpha Tools were used on turn [N]. Turning them off does not undo this.</li>
+<li><span class="box"></span>[!] ALPHA TOOLS -- using any of these takes this run off the leaderboard, permanently. These tools will not exist in the finished game.</li>
+</ul>
+<p class="where">First two: game-over screen, amber. Third: the Alpha Tools toggle in
+Settings, shown before you can switch anything on.</p>
+
+<h3>3e. The leaderboard screen itself</h3>
+<ul class="marks">
+<li><span class="box"></span>View: Global</li>
+<li><span class="box"></span>Contacting the global board ...</li>
+<li><span class="box"></span>[!] Global board unavailable -- could not reach the server. Showing your LOCAL scores.</li>
+<li><span class="box"></span>Retry</li>
+<li><span class="box"></span><em>tooltip:</em> Try fetching the global board again</li>
+<li><span class="box"></span>The global board for this seed is empty -- no scores posted yet.</li>
+<li><span class="box"></span>No scores yet. Play a game to see your scores here!</li>
+<li><span class="box"></span>New Run &nbsp; <em>tooltip:</em> Start a fresh run from the pre-game setup screen.</li>
+<li><span class="box"></span>&lt;- Previous &nbsp;/&nbsp; Next -&gt;</li>
+</ul>
+<p class="where">The board screen, reached from the main menu or the game-over button. The
+amber failure line and Retry button are the only way this screen reports trouble -- there is
+deliberately no silent path. Note the exclamation mark in "see your scores here!" -- the only
+one on the screen.</p>
+</div>
+
+<!-- ==================================================================== -->
+<div class="surface">
+<h2>4. CLAIMING A NAME -- the identity prompts</h2>
+
+<p class="why">From #957 / #1063 / #1133. The argument for it: a public board of identical
+"Researcher -- AI Safety Lab" rows is one nobody can find themselves on. Two dialogs, each
+shown at most once per install, both immediately before a first upload.</p>
+
+<h3>4a. The default-name prompt (one time, ever)</h3>
+
+<div class="s"><span class="box"></span>STILL THE DEFAULT NAME -- ONE-TIME ASK</div>
+<p class="where">Dialog title.</p>
+
+<div class="s"><span class="box"></span>This score is headed for the global board under the install defaults.
+Every unedited copy of the game posts as exactly this name, so nobody
+can tell your run from anyone else's. Claim yours here, once:</div>
+<p class="where">Dialog body. Fires at game over, before the first upload, only if the
+player is still on "Researcher" / "AI Safety Lab".</p>
+
+<ul class="marks">
+<li><span class="box"></span>Operator: &nbsp;<em>(field label -- the #957 nomenclature ruling)</em></li>
+<li><span class="box"></span>Lab: &nbsp;<em>(field label)</em></li>
+<li><span class="box"></span>Reroll &nbsp;<em>tooltip:</em> Roll a generated lab name until one fits</li>
+<li><span class="box"></span>[OK] Use this name &nbsp;<em>(confirm button)</em></li>
+<li><span class="box"></span>Keep the default &nbsp;<em>(cancel button)</em></li>
+</ul>
+
+<h3>4b. The consent prompt (one time, ever)</h3>
+
+<div class="s"><span class="box"></span>GLOBAL LEADERBOARD -- ONE-TIME CHOICE</div>
+<p class="where">Dialog title.</p>
+
+<div class="s"><span class="box"></span>Submit your scores to the global leaderboard?
+
+This shares publicly, for this and future runs:
+  player name: [name]
+  lab name:    [lab]
+  your score
+
+Nothing else is sent. Change any time in Settings.</div>
+<p class="where">Dialog body, at game over, before the first-ever upload. Note the field
+label here says <strong>"player name"</strong> while the other dialog says
+<strong>"Operator"</strong>. Same person, two words.</p>
+
+<ul class="marks">
+<li><span class="box"></span>[OK] Submit my runs</li>
+<li><span class="box"></span>Keep local only</li>
+</ul>
+
+<h3>4c. The lab-name generator's output</h3>
+<p class="small">The [random] button on pre-game setup, and Reroll in the prompt above. Five
+weighted shapes. The benchmark set for it was your own "Notkilleveryone Inc". Judge the
+<em>register</em>, not individual words -- these are the pools, and a player sees one draw.</p>
+
+<h4>Shapes 1-3, composed from word pools (75% of draws between them)</h4>
+<ul class="marks">
+<li><span class="box"></span><strong>Institute, 30%</strong> -- [Center for / Institute for / Bureau of / Department of / Coalition for / Office of / Commission on / Society for / Initiative for / Foundation for] + [AI Safety / Aligned Intelligence / Machine Cognition / Frontier Oversight / Existential Risk / Recursive Alignment / Model Interpretability / Beneficial Computation / Artificial Prudence / Catastrophe Deferral / Applied Foresight / Machine Ethics] + [Research / Studies / Assurance / Preparedness / Stewardship / Triage / Mitigation / Containment]</li>
+<li><span class="box"></span><strong>Corporate, 25%</strong> -- [Failsafe / Sentinel / Guardrail / Foresight / Redline / Tripwire / Bastion / Lighthouse / Deadline / Provenance / Halcyon / Meridian / Paperclip / Anodyne] + [Labs / Systems / Dynamics / Analytics / Holdings / Collective / Group / Trust / Inc / Ventures]</li>
+<li><span class="box"></span><strong>Firm, 20%</strong> -- [Voss / Okafor / Marlowe / Chen / Ishikawa / Reyes / Lindqvist / Adeyemi / Novak / Whitmore / Kaur / Petrov] &amp; [same list] + [Alignment / Oversight / Containment / Associates / Consulting]</li>
+</ul>
+
+<h4>Acronym shape, 15% -- curated, the letters actually expand</h4>
+<ul class="marks">
+<li><span class="box"></span>HALT (Halting Autonomous Lethal Takeoff)</li>
+<li><span class="box"></span>CALM (Center for Aligned Language Models)</li>
+<li><span class="box"></span>SAFE (Society Against Foom Events)</li>
+<li><span class="box"></span>GRIM (Global Risk Intervention Mechanism)</li>
+<li><span class="box"></span>LATE (League Against Terminal Events)</li>
+<li><span class="box"></span>WELP (Worldwide Emergency Longtermist Partnership)</li>
+<li><span class="box"></span>OMEN (Oversight of Machine-Emergent Networks)</li>
+<li><span class="box"></span>DOOM (Department of Ominous Machines)</li>
+</ul>
+
+<h4>Gallows shape, 10% -- rare on purpose, so it stays a punchline</h4>
+<ul class="marks">
+<li><span class="box"></span>Probably Fine Labs</li>
+<li><span class="box"></span>Time Buyers Collective</li>
+<li><span class="box"></span>The Off Switch Company</li>
+<li><span class="box"></span>Mostly Aligned Ventures</li>
+<li><span class="box"></span>Deadline Extension Bureau</li>
+<li><span class="box"></span>Five More Minutes Foundation</li>
+<li><span class="box"></span>Second Thoughts Institute</li>
+<li><span class="box"></span>It Gets Worse Analytics</li>
+<li><span class="box"></span>Room for Error Holdings</li>
+<li><span class="box"></span>Fine Print Futures</li>
+</ul>
+</div>
+
+<!-- ==================================================================== -->
+<div class="surface">
+<h2>5. PAUSE-MENU MUSIC CONTROLS</h2>
+
+<p class="why">#1146, built from your 2026-08-06 ask. It sits in the pause menu (ESC) next to
+the music volume slider. Picking a track does not unrank a run. The hard copy problem here:
+the status line has to say what is playing AND that a held pick is suppressing the adaptive
+score, in one sentence, mid-run.</p>
+
+<h3>Section header and picker</h3>
+<ul class="marks">
+<li><span class="box"></span>Music track &nbsp;<em>(section title, amber, 22pt)</em></li>
+<li><span class="box"></span>Automatic -- follows the situation &nbsp;<em>(first item in the dropdown, the default)</em></li>
+<li><span class="box"></span>[Track Title] -- Calm / Uneasy / Tense / Dire / Terminal &nbsp;<em>(the five doom-band beds)</em></li>
+</ul>
+<p class="where">Pause menu, ESC, any time during a run. The mood words are the only
+player-facing names for the doom bands anywhere in the game.</p>
+
+<h3>The status line -- five states, one per situation</h3>
+
+<div class="s"><span class="box"></span>Now playing: [Track] (Tense) -- following the situation.</div>
+<p class="where">Default state: no pick held, adaptive score running.</p>
+
+<div class="s"><span class="box"></span>Now playing: [Track] (Tense) -- your pick. It is what the game would play anyway.</div>
+<p class="where">Player has picked the track the game had already chosen.</p>
+
+<div class="s"><span class="box"></span>Now playing: [Track] (Tense) -- your pick. The game would switch to [Other] (Dire); it will not while your pick is held.</div>
+<p class="where">The main case: a held pick is overriding the adaptive score. This is the
+sentence that has to teach the whole feature.</p>
+
+<div class="s"><span class="box"></span>Now playing: [Track] -- your pick. The music that follows the situation is paused until you choose Automatic.</div>
+<p class="where">Player picked a standalone bed, which replaces the adaptive stream entirely.</p>
+
+<div class="s"><span class="box"></span>Now playing: [Track].</div>
+<p class="where"><strong>The degraded case.</strong> The adaptive stream could not be built
+(missing audio) and the legacy playlist took over. Deliberately does not say "your pick" --
+blaming the player for the game's fault was the thing to avoid.</p>
+
+<h3>The hint underneath</h3>
+<div class="s"><span class="box"></span>The score normally follows how the run is going. Pick a track to keep it playing instead -- you may miss what the music was telling you. Your pick lasts this run; a new run starts on Automatic.</div>
+<p class="where">Grey, 14pt, permanently under the picker. The only place the game admits the
+music is carrying information.</p>
+</div>
+
+<!-- ==================================================================== -->
+<div class="surface">
+<h2>6. CREDITS SCREEN</h2>
+
+<p class="why">#1161 -- a credits screen reachable from the main menu. Short surface; the one
+line of authored prose is the cats subtitle. The cat tooltip is SEEN.</p>
+
+<ul class="marks">
+<li><span class="box"></span>CREDITS &nbsp;<em>(screen title)</em></li>
+<li><span class="box"></span>The cats are real. Their people said yes.</li>
+<li><span class="box"></span>photo by [name] &nbsp;<em>(under each cat photo)</em></li>
+<li><span class="box"></span>[W] Open pdoom1.com &nbsp;<em>tooltip:</em> Opens the project website in your browser</li>
+<li><span class="box"></span>[ESC] Back</li>
+</ul>
+<p class="where">Main menu -&gt; Credits. The cat names shown: Arwen, Arwen &amp; Chuck,
+Chucky, Doom Cat, Luna, Mando, Missy, Nigel. Credits: Matilda, Nicki T., Pip, Spicy.</p>
+
+<h3>Section text (generated into the screen from CREDITS.md)</h3>
+<ul class="marks">
+<li><span class="box"></span>Design, direction, and development: Pip Foweraker (adjust name form as preferred)</li>
+<li><span class="box"></span>Engine: Godot Engine 4.5.1 (MIT License)</li>
+<li><span class="box"></span>Original adaptive score (the composed five-tier doom-band soundtrack + the run-end and menu cues that ship today):</li>
+<li><span class="box"></span>Composition, direction, and taste authority: Pip Foweraker -- the musician and director; every note judged by ear over the workshop sessions.</li>
+<li><span class="box"></span>Composed with: Claude (Anthropic's Claude Code, "Fable"), as the live-coding instrument and studio hand, under Pip's direction. The score was workshopped in Strudel patches and rendered to the game's audio beds.</li>
+<li><span class="box"></span>Authoring tool: Strudel (live-codeable music in the browser).</li>
+<li><span class="box"></span>The score learned from, but did not copy, a set of north-star artists (Master Musicians of Bukkake, Philip Glass, and others). They are inspirations only, with no affiliation or endorsement.</li>
+</ul>
+<p class="where"><strong>Two things worth your eye:</strong> the parenthetical "(adjust name
+form as preferred)" is an unanswered question that is currently <em>shipping to players</em>;
+and the named artists appear in a public credits screen under your name.</p>
+</div>
+
+<!-- ==================================================================== -->
+<div class="surface">
+<h2>7. THE PLAYER GUIDE -- fully rewritten</h2>
+
+<p class="why">#1136. The old guide taught a game that does not exist -- it told players to
+"reduce P(Doom) to 0% to win". Every section below is new prose. Main menu -&gt; guide,
+readable at any time; it is the only place the game explains itself in full sentences.</p>
+
+<div class="s"><span class="box"></span>One turn is one month. Plan it, watch it, survive the next one.</div>
+<p class="where">Subtitle under "PLAYER GUIDE".</p>
+
+<h3>THE OBJECTIVE</h3>
+<div class="s"><span class="box"></span>You cannot win. You can only buy time. There is no victory screen and no finish line.
+
+Your score is turns survived -- the number of months your lab kept going. The run ends when P(Doom) reaches 100%, or when your reputation collapses to zero. Runs that survive the same number of months are separated by how much doom they held off along the way.
+
+P(Doom) is the probability of AI catastrophe. Nothing you can do drives it to zero. A good month is one where the curve bends, not one where the number gets small.</div>
+
+<h3>THE MONTH: PLAN, THEN WATCH</h3>
+<div class="s"><span class="box"></span>Every turn is one calendar month, played in two halves. The banner at the top of the screen always says which half you are in and what the next verb is.
+
+## PLAN -- lay out the month. Click action tiles to queue them. Hover a tile for its name, its cost, and why it is greyed out.
+## WATCH -- the month plays out in the feed. Respond to windows as they arrive. Then a month review, and you plan the next month.
+
+Mouse: click tiles and buttons; hover anything you do not recognise
+1-9: queue the numbered action    Z: undo last    C: clear the queue
+SPACE / COMMIT THE MONTH &gt;: end planning, with warnings if the plan looks dangerous
+ENTER: commit straight away with no warnings -- this also reserves all your leftover Attention
+ESC: pause menu    N: report a bug</div>
+
+<h3>ATTENTION AND RESOURCES</h3>
+<div class="s"><span class="box"></span>Attention is the founder's month. You get a fresh grant every month and whatever you do not spend evaporates -- there is no banking.
+
+Attention splits two ways. Planning hours queue strategic work; operating hours pay for response windows, hiring and travel. A crisis can eat your planning hours, and planning can never buy back presence. That is why a tile can be dead while the top bar still shows Attention left: hover the tile, and hover the Attention readout, to see which hours are gone.
+
+Money ($): hire staff, buy compute, fund research
+Compute: required to run experiments
+Research: accumulated knowledge; enough of it publishes a paper on its own
+Papers: published work -- raises reputation
+Reputation: drives fundraising and hiring; at zero, the run ends
+
+Staff glyphs beside Attention: green * safety researchers, red * capability researchers, blue * compute engineers.</div>
+
+<h3>STRATEGY TIPS</h3>
+<div class="s"><span class="box"></span>1. Runway first. Fundraising is the first tile for a reason. Most early runs die of bookkeeping, not of doom.
+2. Spend the month. Unspent Attention evaporates at month end, so an under-planned month is a wasted one.
+3. Both kinds of research cost you something. Capability work buys leverage and adds doom; safety work buys the reverse.
+4. Reputation is life support, not a vanity stat -- it ends runs.
+5. Read the feed during WATCH. Rival labs, the literature and your own results all land there.
+6. Read events carefully. Response windows cost operating hours, and a rejected choice tells you why.</div>
+</div>
+
+<!-- ==================================================================== -->
+<div class="surface">
+<h2>8. ODDS AND ENDS</h2>
+
+<h3>Cold open (main menu -&gt; new run, before turn 1)</h3>
+<div class="s"><span class="box"></span>Hello past me! No, I can't tell you how it ends. You know nothing yet -- go and find out. Read something, show up somewhere, or be loud online. Scouting. -- MHS</div>
+<p class="where"><strong>SEEN -- you approved the second sentence.</strong> Quoted whole so
+you can check what it now sits next to; the rest of the line changed in the same edit.</p>
+
+<h3>Pre-game setup</h3>
+<div class="s"><span class="box"></span>Locked to Standard for the first leagues -- every score sits on one comparable board. Difficulty tiers return once the board can tell them apart.</div>
+<p class="where">Tooltip on the greyed-out difficulty dropdown, pre-game setup.</p>
+
+<h3>Main menu</h3>
+<ul class="marks">
+<li><span class="box"></span>Credits &nbsp;<em>(new main-menu button, #1161)</em></li>
+<li><span class="box"></span>v0.14.1 &nbsp;<em>(version stamp, bottom of the welcome screen)</em></li>
+</ul>
+
+<h3>Settings</h3>
+<ul class="marks">
+<li><span class="box"></span>[OK] saved</li>
+<li><span class="box"></span>[OK] Intro queued for next launch</li>
+</ul>
+<p class="where">Confirmation blips in the rebuilt Settings screen (#1096 / #1103).</p>
+
+<hr class="rule">
+
+<h2>9. THE PUBLISHED RELEASE BODIES</h2>
+
+<p class="why">These go on the public releases page and the website, and are extracted verbatim
+from <span class="tag">CHANGELOG.md</span>. The <em>bullet lists</em> in them restate section 1
+almost line for line -- reviewing them twice is waste, so only the framing prose unique to the
+public pages is reproduced here. Mark section 1 and these follow.</p>
+
+<h3>v0.14.0 -- the opening paragraph a reader hits first</h3>
+<div class="s"><span class="box"></span>Ladder epoch L3 -&gt; L4 -- this is a FORKING release. The historical event deck was retimed to one-turn-one-month and the ruled promotions were applied (#1137), which changes which events fire on a given seed, so scores are not comparable with L3 boards. L3 entries stay valid and visible under L3; new runs land on L4. Featured league seed rolls to weekly-2026-w32.</div>
+<p class="where">First paragraph of the v0.14.0 release body, above every bullet. Issue
+numbers are visible to the public here and nowhere in-game.</p>
+
+<h3>v0.14.1 -- the opening paragraphs</h3>
+<div class="s"><span class="box"></span>The board key does NOT move. Ladder stays L4, featured seed stays weekly-2026-w32, board key stays (weekly-2026-w32, L4). Your v0.14.0 scores are still valid and still on the same board. Nothing here touches scoring, run outcomes, or replay determinism -- these are UI, diagnosis and tooling fixes.
+
+Players on v0.14.0 could not see their own leaderboard. Six separate defects made it invisible; this makes it visible. Every entry below is tied to a commit merged between v0.14.0 and this release.</div>
+<p class="where">First two paragraphs of the v0.14.1 release body. The second one admits a
+six-defect failure to every reader of the releases page -- consistent with the seat voice, but
+it is your name on the page, so it is a call for you.</p>
+
+<h3>Also on the public page, under a "Test provenance" heading</h3>
+<div class="s"><span class="box"></span>Test provenance: the fast gate was measured locally on the tagged tree. The simulation tier was verified in CI on the same tree, not locally -- the local runner's hardcoded 900s cap is not meetable on the machine this was cut from. No local simulation pass is claimed.</div>
+<p class="where">v0.14.1 release body, third paragraph. Honest, and also the most internal
+sentence on a page aimed at players -- worth deciding whether it belongs there at all.</p>
+
+<hr class="rule">
+
+<p class="small"><strong>Not in this pack, deliberately:</strong> the patch notes for v0.11.0
+and older (unchanged, pre-date the agent authoring); the full 15-line Added list for v0.12.0
+(trimmed to 8, marked above); the full CHANGELOG bullet lists (duplicate section 1); the event
+promotion pass copy in <span class="tag">promotion_pass_2026_08.json</span> (historical event
+text, not authored prose -- ask if you want it as a second pack); every doc, ADR, postmortem
+and chronicle written in the same window.</p>
+
+</body>
+</html>
