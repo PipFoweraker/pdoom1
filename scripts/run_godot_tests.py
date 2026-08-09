@@ -20,6 +20,15 @@ old runner did NOT, each of which is why CI was green while running zero tests:
      skips (parse error, or `extends Node` instead of GutTest) => count mismatch
      => hard failure naming the offending files. Silence is failure.
 
+Three outcomes, not two (#1181): PASSED / FAILED / DID-NOT-COMPLETE. A run that
+was killed by the timeout never produced a test count, so the runner refuses to
+print one -- the counts render as `-`, the word FAIL never appears, and the exit
+code is 2 (distinct from 1 = measured failure, 0 = measured pass). This is the
+#640 rule pointed at the runner itself: a number that did not come from tests
+executing must not be shown in the shape of one. Cutting v0.14.1 a timeout
+rendered as `simulation: 0 tests, 0 fail (FAIL)`, which a human had to
+disambiguate from a real failure by reading a process list.
+
 Non-blocking-tier surfacing (#964): the simulation tier is intentionally
 non-blocking in CI (slow, run-simulating). A failure there must still be LOUD,
 not silently green -- format_summary_markdown() emits a "[!] <MODE> TIER RED"
@@ -37,15 +46,23 @@ Usage:
     python scripts/run_godot_tests.py --quick --ci-mode --min-tests 300
     python scripts/run_godot_tests.py --simulation --summary            # print the RED-banner table locally
     python scripts/run_godot_tests.py --simulation --summary-file out.md
+    python scripts/run_godot_tests.py --simulation --timeout 3600   # slow box (#1181)
+    python scripts/run_godot_tests.py --simulation --timeout 0      # no cap at all
+
+Exit codes: 0 = measured pass, 1 = measured failure, 2 = DID NOT COMPLETE
+(timeout / stall / could not launch -- no measurement exists).
 """
 
 import argparse
+import collections
 import hashlib
 import os
 import re
 import subprocess
 import sys
 import tempfile
+import threading
+import time
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
@@ -110,6 +127,207 @@ MODE_DIRS = {
 }
 
 
+# --- Outcomes (#1181) -------------------------------------------------------
+# Three states, deliberately not two. FAILED means "we measured, and it was
+# bad". NO_RESULT means "we did not measure" -- no count, no verdict, and it
+# must never be renderable as the former.
+PASSED = "PASSED"
+FAILED = "FAILED"
+NO_RESULT = "DID-NOT-COMPLETE"
+
+EXIT_OK = 0
+EXIT_FAILED = 1
+EXIT_NO_RESULT = 2
+
+# --- Timeout defaults (#1181) -----------------------------------------------
+# The cap exists to bound a HUNG process, not to enforce a performance budget,
+# and the two ways of being wrong are wildly asymmetric:
+#   too low  -> destroys a measurement that was about to succeed, costs a full
+#               re-run, and (before this change) reported the destruction as a
+#               test failure;
+#   too high -> costs wall clock ONLY when something is genuinely stuck, and
+#               the stall detector below now catches that case in minutes.
+# So the total cap should sit well above the slowest observed HEALTHY run on
+# the slowest machine we care about, and the real hang detector should be
+# "no output for N seconds" -- hung means no progress, slow means progress.
+#
+# Measured while fixing #1181, on Pip's Windows box, through the streaming path
+# below (5 runs, 107 tests and 0 failures every time):
+#     5731dd2e  pre-#1137 ....... 434s, 412s   (mean 423s)
+#     8791ba47  the #1137 merge . 584s
+#     1ddb033d  main ............ 586s, 619s   (mean 602s)
+# So the local sim tier is ~7-10 min, comparable to CI's 460-550s -- NOT the
+# ">1630s and still going" that motivated this issue. What made it unrunnable
+# was never the platform, the machine load, or the #1137 retiming: it was the
+# runner handing Godot an inherited stdout (see _stream_process for the table).
+#
+# So why keep a parameter at all, if local and CI now agree? Because a cap is
+# insurance against the case we have not measured, and the cost of setting it
+# too low is the whole of this issue. 2700s locally is ~4.4x the slowest healthy
+# run observed here; CI stays at 900s so its contract is unchanged. Both are
+# defaults, not budgets -- override freely.
+DEFAULT_TIMEOUT_CI = 900
+DEFAULT_TIMEOUT_LOCAL = {"simulation": 2700}
+DEFAULT_TIMEOUT_LOCAL_OTHER = 900
+DEFAULT_STALL_TIMEOUT = 300
+DEFAULT_HEARTBEAT = 30
+
+
+def _in_ci():
+    return os.environ.get("CI", "").lower() in ("1", "true", "yes")
+
+
+def resolve_timeout(mode, cli_timeout):
+    """Return (seconds, human-readable provenance). 0/negative == no cap."""
+    if cli_timeout is not None:
+        return cli_timeout, "--timeout"
+    env = os.environ.get("PDOOM1_TEST_TIMEOUT")
+    if env:
+        try:
+            return int(env), "PDOOM1_TEST_TIMEOUT env"
+        except ValueError:
+            print(f"[WARN] PDOOM1_TEST_TIMEOUT={env!r} is not an integer; ignoring.")
+    if _in_ci():
+        return DEFAULT_TIMEOUT_CI, "default (CI)"
+    return (
+        DEFAULT_TIMEOUT_LOCAL.get(mode, DEFAULT_TIMEOUT_LOCAL_OTHER),
+        "default (local, no CI env var)",
+    )
+
+
+def _stream_process(cmd, cwd, env, timeout, stall_timeout, heartbeat, label, echo=True):
+    """Run a subprocess, streaming its output, with a heartbeat and a stall detector.
+
+    Returns (status, exit_code, elapsed_seconds, output_text) where status is one
+    of "completed" / "timeout" / "stall" / "error".
+
+    Why streaming rather than subprocess.run(): with capture_output the caller
+    sees nothing until the end, and with capture_output=False the caller sees
+    text but the RUNNER sees nothing -- so it cannot tell a slow run from a hung
+    one. On 2026-08-08 that distinction cost the most time of anything in the
+    incident behind #1181; it was settled by checking process RSS in `tasklist`.
+    Reading the pipe ourselves gives us both: the human still sees GUT's output
+    live, and we get a last-output timestamp to hang the stall detector on.
+
+    Owning the pipe is ALSO what makes the sim tier runnable locally at all, and
+    that was the surprise in #1181. `capture_output=False` handed Godot whatever
+    stdout the parent happened to have, and Godot's per-line write cost depends
+    enormously on what that is. Measured on one Windows box, 200,000 identical
+    print() calls from the same headless build:
+
+        native Win32 pipe, drained by this reader ....  2.42s  (82,600/s)
+        Git Bash `> file` redirect .................. 432.3s  (   463/s)
+        Git Bash `| cat` (MSYS pipe) ................ ~2900s  (    68/s)
+        redirected to NUL ...........................  1.25s
+
+    The sim tier emits ~4-5M lines per run, so a 100x per-line penalty is the
+    difference between 8 minutes and most of a day. Which is why the echo below
+    is BATCHED: writing 5M lines one at a time to a Windows console would
+    reintroduce the exact pathology on the runner's own side of the pipe.
+    """
+    try:
+        proc = subprocess.Popen(
+            cmd,
+            cwd=cwd,
+            env=env,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            bufsize=1,
+            errors="replace",
+        )
+    except Exception as e:
+        return ("error", None, 0.0, f"failed to launch: {e}")
+
+    # Keep only a tail in memory: the sim tier emits tens of thousands of RNG
+    # trace lines and we only ever print the tail on failure.
+    buf = collections.deque(maxlen=4000)
+    state = {"lines": 0, "last_at": time.monotonic(), "last_line": ""}
+    lock = threading.Lock()
+
+    def _reader():
+        pending = []
+        last_flush = time.monotonic()
+
+        def _flush():
+            if pending:
+                sys.stdout.write("".join(pending))
+                sys.stdout.flush()
+                pending.clear()
+
+        try:
+            for line in proc.stdout:
+                with lock:
+                    state["lines"] += 1
+                    state["last_at"] = time.monotonic()
+                    stripped = line.rstrip()
+                    if stripped:
+                        state["last_line"] = stripped
+                buf.append(line)
+                if echo:
+                    pending.append(line)
+                    now = time.monotonic()
+                    # Batch: one write per 500 lines or per 0.25s, whichever
+                    # comes first. Keeps output feeling live without paying a
+                    # syscall per line on a slow sink (see the table above).
+                    if len(pending) >= 500 or (now - last_flush) >= 0.25:
+                        _flush()
+                        last_flush = now
+            if echo:
+                _flush()
+        except Exception:
+            pass
+        finally:
+            try:
+                proc.stdout.close()
+            except Exception:
+                pass
+
+    reader = threading.Thread(target=_reader, daemon=True)
+    reader.start()
+
+    start = time.monotonic()
+    last_beat = start
+    status = "completed"
+    while True:
+        rc = proc.poll()
+        if rc is not None:
+            break
+        now = time.monotonic()
+        with lock:
+            lines = state["lines"]
+            quiet_for = now - state["last_at"]
+            last_line = state["last_line"]
+        if timeout and (now - start) > timeout:
+            status = "timeout"
+            break
+        if stall_timeout and quiet_for > stall_timeout:
+            status = "stall"
+            break
+        if now - last_beat >= heartbeat:
+            last_beat = now
+            print(
+                f"[PROGRESS] {label}: {int(now - start)}s elapsed, {lines} output lines, "
+                f"{int(quiet_for)}s since last output | {last_line[:100]}",
+                flush=True,
+            )
+        time.sleep(0.5)
+
+    elapsed = time.monotonic() - start
+    if status != "completed":
+        print(
+            f"\n[KILL] {label}: {status} -- terminating process after {int(elapsed)}s.", flush=True
+        )
+        try:
+            proc.kill()
+            proc.wait(timeout=30)
+        except Exception:
+            pass
+        rc = None
+    reader.join(timeout=10)
+    return (status, rc, elapsed, "".join(buf))
+
+
 def find_godot():
     """Find Godot executable on system."""
     for path in GODOT_PATHS:
@@ -129,7 +347,7 @@ def find_godot():
     return None
 
 
-def run_import(godot_path):
+def run_import(godot_path, heartbeat=DEFAULT_HEARTBEAT):
     """Populate the class cache so GUT does not quit(0) before running tests.
 
     This is THE fix for the zero-test false-green (#629): a fresh checkout has no
@@ -138,24 +356,29 @@ def run_import(godot_path):
     """
     print("\n[IMPORT] Running headless import pass (populates class cache)...")
     cmd = [godot_path, "--headless", "--path", str(GODOT_PROJECT), "--import"]
-    try:
-        result = subprocess.run(cmd, capture_output=True, text=True, timeout=600, env=ISOLATED_ENV)
-        # --import can exit non-zero on benign asset warnings; only treat a hard
-        # failure (no cache produced) as fatal. The cache file confirms success.
-        cache = GODOT_PROJECT / ".godot" / "global_script_class_cache.cfg"
-        if cache.exists():
-            print("[IMPORT] Class cache present -- import OK.")
-            return True
-        print("[IMPORT][WARN] class cache missing after import; exit", result.returncode)
-        print(result.stdout[-2000:])
-        print(result.stderr[-2000:])
-        return False
-    except subprocess.TimeoutExpired:
-        print("[IMPORT][ERROR] Import pass timed out after 10 minutes!")
-        return False
-    except Exception as e:
-        print(f"[IMPORT][ERROR] Import pass failed: {e}")
-        return False
+    status, exit_code, elapsed, tail = _stream_process(
+        cmd,
+        cwd=None,
+        env=ISOLATED_ENV,
+        timeout=600,
+        stall_timeout=None,  # the import pass is legitimately silent for long stretches
+        heartbeat=heartbeat,
+        label="import",
+        echo=False,  # ~1200 asset lines; only the tail is useful, and only on failure
+    )
+    if status != "completed":
+        print(f"[IMPORT][NO RESULT] Import pass did not complete ({status}) after {int(elapsed)}s.")
+        print(tail[-2000:])
+        return NO_RESULT
+    # --import can exit non-zero on benign asset warnings; only treat a hard
+    # failure (no cache produced) as fatal. The cache file confirms success.
+    cache = GODOT_PROJECT / ".godot" / "global_script_class_cache.cfg"
+    if cache.exists():
+        print(f"[IMPORT] Class cache present -- import OK ({int(elapsed)}s).")
+        return PASSED
+    print("[IMPORT][WARN] class cache missing after import; exit", exit_code)
+    print(tail[-2000:])
+    return FAILED
 
 
 SYNTAX_WALK_SCENE = "res://tools/syntax_walk.tscn"
@@ -182,7 +405,7 @@ def _disk_gd_files():
     return sorted(files)
 
 
-def check_syntax(godot_path):
+def check_syntax(godot_path, heartbeat=DEFAULT_HEARTBEAT):
     """Compile-check EVERY non-addon .gd, not just the ones the boot reaches.
 
     History (issue #1082): the old check ran `--headless --quit`, which BOOTS
@@ -219,16 +442,22 @@ def check_syntax(godot_path):
         "compile error",
     ]
 
-    try:
-        result = subprocess.run(cmd, capture_output=True, text=True, timeout=300, env=ISOLATED_ENV)
-    except subprocess.TimeoutExpired:
-        print("[ERROR] Syntax walker timed out after 300s.")
-        return False
-    except Exception as e:
-        print(f"[ERROR] Syntax check failed to run: {e}")
-        return False
+    status, _exit_code, elapsed, output = _stream_process(
+        cmd,
+        cwd=None,
+        env=ISOLATED_ENV,
+        timeout=600,
+        stall_timeout=None,
+        heartbeat=heartbeat,
+        label="syntax",
+        echo=False,
+    )
+    if status != "completed":
+        # Not "syntax is broken" -- we never got to find out (#1181).
+        print(f"[NO RESULT] Syntax walker did not complete ({status}) after {int(elapsed)}s.")
+        print(output[-2000:])
+        return NO_RESULT
 
-    output = result.stdout + result.stderr
     lower = output.lower()
     found_errors = [m for m in REAL_ERROR_MARKERS if m in lower]
 
@@ -241,7 +470,7 @@ def check_syntax(godot_path):
             "Refusing to pass on silence."
         )
         print(output[-4000:])
-        return False
+        return FAILED
 
     # (b) manifest: walker count must equal what is on disk
     walked = int(marker.group(1))
@@ -252,7 +481,7 @@ def check_syntax(godot_path):
             "are on disk (excluding addons/). Walker and gate disagree about "
             "coverage -- fix the mismatch, do not trust this run."
         )
-        return False
+        return FAILED
 
     # (c) no parse/compile markers
     if found_errors:
@@ -264,10 +493,10 @@ def check_syntax(godot_path):
         ]
         for line in marker_lines[:80]:
             print("    " + line)
-        return False
+        return FAILED
 
     print(f"[PASS] GDScript syntax check passed! Compiled {walked}/{on_disk} scripts. CHECKED")
-    return True
+    return PASSED
 
 
 def _disk_test_files(test_dir):
@@ -327,10 +556,31 @@ def _parse_junit(junit_path):
         return None
 
 
-def run_gut_tests(godot_path, mode, test_dir, log_level, min_tests):
+def _result(mode, outcome, tests=None, failures=None, failing_tests=None, detail="", elapsed=0.0):
+    """One suite's outcome. tests/failures are None whenever they were never
+    measured -- the whole point of #1181 is that an unmeasured count must not be
+    representable as 0."""
+    return {
+        "mode": mode,
+        "outcome": outcome,
+        "tests": tests,
+        "failures": failures,
+        "failing_tests": failing_tests or [],
+        "detail": detail,
+        "elapsed": elapsed,
+    }
+
+
+def run_gut_tests(
+    godot_path, mode, test_dir, log_level, min_tests, timeout, stall_timeout, heartbeat
+):
     """Run one test directory and hard-gate on the JUnit results.
 
-    Returns (ok: bool, tests: int, failures: int, failing_tests: list).
+    Returns a result dict (see _result). Outcome is PASSED, FAILED, or
+    NO_RESULT; NO_RESULT is reserved for "the process did not finish", i.e. we
+    have no measurement at all. A process that DID finish and produced nothing
+    parseable is a FAILED -- we watched it run and produce nothing, which is the
+    #629/#590 silence-is-failure case and a genuine measurement.
     """
     disk_files = _disk_test_files(test_dir)
     if disk_files is None:
@@ -338,11 +588,11 @@ def run_gut_tests(godot_path, mode, test_dir, log_level, min_tests):
         # runner skipped missing dirs, which is exactly how the smoke gate
         # "passed" while pointing at a nonexistent tests/smoke (#629).
         print(f"\n[FAIL] Test directory {test_dir} does not exist -- cannot run '{mode}'.")
-        return (False, 0, 0, [])
+        return _result(mode, FAILED, 0, 0, detail=f"test directory {test_dir} does not exist")
 
     if not disk_files:
         print(f"\n[FAIL] No test_*.gd files found in {test_dir} for '{mode}'.")
-        return (False, 0, 0, [])
+        return _result(mode, FAILED, 0, 0, detail=f"no test_*.gd files in {test_dir}")
 
     junit_fs = GODOT_PROJECT / f"test-results-{mode}.xml"
     junit_res = f"res://test-results-{mode}.xml"
@@ -365,23 +615,34 @@ def run_gut_tests(godot_path, mode, test_dir, log_level, min_tests):
     print(f"\n[TEST] Running '{mode}' tests in {test_dir} ({len(disk_files)} files on disk)")
     print(f"[CMD] {' '.join(cmd)}\n")
 
-    exit_code = None
-    try:
-        result = subprocess.run(
-            cmd,
-            cwd=GODOT_PROJECT,
-            capture_output=False,
-            text=True,
-            timeout=900,
-            env=ISOLATED_ENV,
-        )
-        exit_code = result.returncode
-    except subprocess.TimeoutExpired:
-        print("\n[FAIL] Tests timed out after 15 minutes!")
-        return (False, 0, 0, [])
-    except Exception as e:
-        print(f"\n[FAIL] Failed to run tests: {e}")
-        return (False, 0, 0, [])
+    status, exit_code, elapsed, tail = _stream_process(
+        cmd,
+        cwd=GODOT_PROJECT,
+        env=ISOLATED_ENV,
+        timeout=timeout,
+        stall_timeout=stall_timeout,
+        heartbeat=heartbeat,
+        label=mode,
+    )
+
+    if status != "completed":
+        # NOT a test result. No count is known, so none is reported.
+        if status == "timeout":
+            detail = (
+                f"timed out after {int(elapsed)}s (cap {timeout}s) -- the run was killed, "
+                "so NO test count exists. Raise the cap with --timeout SECONDS "
+                "(or PDOOM1_TEST_TIMEOUT) and re-run; this is not a test failure."
+            )
+        elif status == "stall":
+            detail = (
+                f"produced no output for {stall_timeout}s and was killed at {int(elapsed)}s "
+                "-- looks genuinely hung rather than slow. NO test count exists."
+            )
+        else:
+            detail = f"could not be launched/run: {tail[-300:]}"
+        print(f"\n[NO RESULT] '{mode}': {detail}")
+        print("[NO RESULT] This is the ABSENCE of a measurement, not a failing measurement.")
+        return _result(mode, NO_RESULT, None, None, detail=detail, elapsed=elapsed)
 
     # --- The gate: trust the JUnit file, not the exit code. ---
     parsed = _parse_junit(junit_fs)
@@ -390,7 +651,14 @@ def run_gut_tests(godot_path, mode, test_dir, log_level, min_tests):
             f"\n[FAIL] '{mode}': no parseable JUnit results at {junit_fs}. "
             "GUT ran nothing or quit early (missing import pass? bad args?)."
         )
-        return (False, 0, 0, [])
+        return _result(
+            mode,
+            FAILED,
+            0,
+            0,
+            detail="no parseable JUnit results (GUT quit early)",
+            elapsed=elapsed,
+        )
 
     tests = parsed["tests"]
     failures = parsed["failures"]
@@ -430,12 +698,20 @@ def run_gut_tests(godot_path, mode, test_dir, log_level, min_tests):
     if exit_code not in (0, None) and ok:
         print(f"\n[WARN] '{mode}': JUnit looked clean but GUT exit code was {exit_code}.")
 
-    status = "PASS" if ok else "FAIL"
+    label = "PASS" if ok else "FAIL"
     print(
-        f"\n[{status}] '{mode}': {tests} tests, {failures} failures, "
-        f"{len(collected)}/{len(disk_files)} files collected."
+        f"\n[{label}] '{mode}': {tests} tests, {failures} failures, "
+        f"{len(collected)}/{len(disk_files)} files collected, {int(elapsed)}s."
     )
-    return (ok, tests, failures, failing_tests)
+    return _result(
+        mode,
+        PASSED if ok else FAILED,
+        tests,
+        failures,
+        failing_tests,
+        detail="",
+        elapsed=elapsed,
+    )
 
 
 # Modes considered "non-blocking" tiers in CI: a failure here does not fail the
@@ -446,32 +722,57 @@ def run_gut_tests(godot_path, mode, test_dir, log_level, min_tests):
 NON_BLOCKING_MODES = {"simulation"}
 
 
+def _count(v):
+    """Render a count that may never have been measured. '-' is deliberate: a
+    dash cannot be mistaken for a measured zero (#1181)."""
+    return "-" if v is None else str(v)
+
+
 def format_summary_markdown(rows):
     """Build one markdown report shared by GITHUB_STEP_SUMMARY, --summary, and
-    the PR-comment step (issue #964). `rows` is a list of
-    (mode, tests, failures, ok, failing_tests) tuples.
+    the PR-comment step (issue #964). `rows` is a list of result dicts
+    (see _result).
 
     Non-blocking tiers (currently: simulation) get an unmissable
     '[!] <MODE> TIER RED' banner plus a per-test failure table when they fail,
     since a plain PASS/FAIL row in a wall of green is exactly what went
     unnoticed for 5 main-branch runs before this was added.
+
+    A DID-NOT-COMPLETE tier gets its OWN banner, distinct from RED, because it
+    is a different claim: RED says the tier is broken, NO RESULT says we do not
+    know (#1181).
     """
     lines = []
 
-    for mode, tests, failures, ok, failing_tests in rows:
-        if not ok and failing_tests and mode in NON_BLOCKING_MODES:
+    for r in rows:
+        mode = r["mode"]
+        if r["outcome"] == NO_RESULT:
+            lines.append("")
+            lines.append(f"## [?] {mode.upper()} TIER: NO RESULT (not run to completion)")
+            lines.append("")
+            lines.append(
+                f"`{mode}` did not finish, so there is no pass/fail verdict and no test "
+                f"count for it. Reason: {r['detail']}"
+            )
+            lines.append("")
+            lines.append(
+                "Do NOT read this as a failure and do NOT read it as a pass. "
+                "Nothing was measured."
+            )
+            lines.append("")
+        elif r["outcome"] == FAILED and r["failing_tests"] and mode in NON_BLOCKING_MODES:
             lines.append("")
             lines.append(f"## [!] {mode.upper()} TIER RED (non-blocking, but real)")
             lines.append("")
             lines.append(
-                f"`{mode}` tier: {failures}/{tests} test failures. This tier does "
+                f"`{mode}` tier: {r['failures']}/{r['tests']} test failures. This tier does "
                 "NOT block merges -- it is surfaced here so it is not silently red. "
                 "See docs/ARCHITECTURE.md / the sim-tier test files for context."
             )
             lines.append("")
             lines.append("| Suite | Test | Failure |")
             lines.append("|---|---|---|")
-            for ft in failing_tests:
+            for ft in r["failing_tests"]:
                 lines.append(f"| {ft['suite']} | {ft['test']} | {ft['message']} |")
             lines.append("")
 
@@ -480,12 +781,49 @@ def format_summary_markdown(rows):
     lines.append("")
     lines.append("| Suite | Tests | Failures | Result |")
     lines.append("|---|---:|---:|---|")
-    for mode, tests, failures, ok, _failing_tests in rows:
-        tier_note = " (non-blocking)" if mode in NON_BLOCKING_MODES else ""
-        lines.append(f"| {mode}{tier_note} | {tests} | {failures} | {'PASS' if ok else 'FAIL'} |")
+    for r in rows:
+        tier_note = " (non-blocking)" if r["mode"] in NON_BLOCKING_MODES else ""
+        verdict = {PASSED: "PASS", FAILED: "FAIL", NO_RESULT: "NO RESULT (not measured)"}[
+            r["outcome"]
+        ]
+        lines.append(
+            f"| {r['mode']}{tier_note} | {_count(r['tests'])} | "
+            f"{_count(r['failures'])} | {verdict} |"
+        )
     lines.append("")
 
     return "\n".join(lines)
+
+
+def format_totals_line(rows):
+    """The one-line TOTALS report.
+
+    This single line is the whole of #1181: under the old runner a timed-out
+    simulation tier rendered here as `simulation: 0 tests, 0 fail (FAIL)` --
+    two invented numbers and a verdict, none of which came from a test running.
+    A suite that did not complete now gets NO numbers and no verdict.
+    """
+    parts = []
+    for r in rows:
+        if r["outcome"] == NO_RESULT:
+            parts.append(f"{r['mode']}: DID NOT COMPLETE after {int(r['elapsed'])}s -- NO RESULT")
+        else:
+            parts.append(
+                f"{r['mode']}: {r['tests']} tests, {r['failures']} fail "
+                f"({'ok' if r['outcome'] == PASSED else 'FAIL'})"
+            )
+    return "[TOTALS] " + " | ".join(parts)
+
+
+def decide_exit(rows):
+    """Exit code from outcomes. Incompleteness OUTRANKS failure: if any suite
+    did not finish we cannot claim to know the state of the run, so 2 (no
+    result) is more honest than 1 (measured failure)."""
+    if any(r["outcome"] == NO_RESULT for r in rows):
+        return EXIT_NO_RESULT
+    if any(r["outcome"] == FAILED for r in rows):
+        return EXIT_FAILED
+    return EXIT_OK
 
 
 def _write_step_summary(rows):
@@ -564,6 +902,39 @@ def main():
     )
     parser.add_argument("--verbose", action="store_true", help="Verbose GUT output (log level 3)")
     parser.add_argument(
+        "--timeout",
+        type=int,
+        default=None,
+        help=(
+            "Wall-clock cap in seconds per suite. 0 = no cap. Overrides "
+            "PDOOM1_TEST_TIMEOUT. Default: 900 in CI; locally 2700 for the "
+            "simulation tier and 900 elsewhere (#1181). Hitting the cap is "
+            "reported as DID-NOT-COMPLETE, never as a test failure."
+        ),
+    )
+    parser.add_argument(
+        "--stall-timeout",
+        type=int,
+        default=DEFAULT_STALL_TIMEOUT,
+        dest="stall_timeout",
+        help=(
+            "Kill a suite that has produced NO output for this many seconds "
+            f"(default {DEFAULT_STALL_TIMEOUT}; 0 disables). This -- not the "
+            "wall-clock cap -- is the hang detector: hung means no progress, "
+            "slow means progress."
+        ),
+    )
+    parser.add_argument(
+        "--heartbeat",
+        type=int,
+        default=DEFAULT_HEARTBEAT,
+        help=(
+            f"Seconds between [PROGRESS] lines (default {DEFAULT_HEARTBEAT}; 0 "
+            "disables). Makes 'slow' visibly different from 'hung' without "
+            "opening Task Manager."
+        ),
+    )
+    parser.add_argument(
         "--summary",
         action="store_true",
         help=(
@@ -592,14 +963,22 @@ def main():
 
     # Import pass FIRST -- without it GUT quits(0) before running anything.
     if not args.no_import:
-        if not run_import(godot_path):
+        outcome = run_import(godot_path, heartbeat=args.heartbeat)
+        if outcome == NO_RESULT:
+            print("\n[NO RESULT] Import pass did not complete; nothing was measured.")
+            sys.exit(EXIT_NO_RESULT)
+        if outcome != PASSED:
             print("\n[ERROR] Import pass failed; aborting (GUT would run zero tests).")
-            sys.exit(1)
+            sys.exit(EXIT_FAILED)
 
     if not args.no_syntax_check:
-        if not check_syntax(godot_path):
+        outcome = check_syntax(godot_path, heartbeat=args.heartbeat)
+        if outcome == NO_RESULT:
+            print("\n[NO RESULT] Syntax check did not complete; nothing was measured.")
+            sys.exit(EXIT_NO_RESULT)
+        if outcome != PASSED:
             print("\n[ERROR] Syntax check failed! Fix errors before running tests.")
-            sys.exit(1)
+            sys.exit(EXIT_FAILED)
 
     log_level = 3 if args.verbose else 2
 
@@ -615,14 +994,28 @@ def main():
     else:
         modes = ["quick", "simulation", "integration"]
 
-    all_passed = True
     summary_rows = []
     for mode in modes:
-        ok, tests, failures, failing_tests = run_gut_tests(
-            godot_path, mode, MODE_DIRS[mode], log_level, args.min_tests
+        timeout, provenance = resolve_timeout(mode, args.timeout)
+        print(
+            f"\n[TIMEOUT] '{mode}': wall-clock cap "
+            + (f"{timeout}s" if timeout else "DISABLED")
+            + f" (from {provenance}); stall detector "
+            + (f"{args.stall_timeout}s" if args.stall_timeout else "DISABLED")
+            + f"; heartbeat every {args.heartbeat}s."
         )
-        summary_rows.append((mode, tests, failures, ok, failing_tests))
-        all_passed = all_passed and ok
+        summary_rows.append(
+            run_gut_tests(
+                godot_path,
+                mode,
+                MODE_DIRS[mode],
+                log_level,
+                args.min_tests,
+                timeout,
+                args.stall_timeout,
+                args.heartbeat,
+            )
+        )
 
     _write_step_summary(summary_rows)
     if args.summary_file:
@@ -631,21 +1024,24 @@ def main():
         print("\n" + format_summary_markdown(summary_rows))
 
     print("\n" + "=" * 60)
-    print(
-        "[TOTALS] "
-        + " | ".join(
-            f"{m}: {t} tests, {fl} fail ({'ok' if o else 'FAIL'})"
-            for (m, t, fl, o, _ft) in summary_rows
+    print(format_totals_line(summary_rows))
+
+    incomplete = [r for r in summary_rows if r["outcome"] == NO_RESULT]
+    if incomplete:
+        print(
+            "[NO RESULT] "
+            + ", ".join(r["mode"] for r in incomplete)
+            + " did not run to completion. This is NOT a test failure and NOT a "
+            "pass -- no measurement exists. Do not report a suite result from this run."
         )
-    )
-    if all_passed:
-        print("[SUCCESS] All requested suites passed the gate! CHECKED")
-        print("=" * 60)
-        sys.exit(0)
-    else:
+        for r in incomplete:
+            print(f"           {r['mode']}: {r['detail']}")
+    elif any(r["outcome"] == FAILED for r in summary_rows):
         print("[FAILURE] Gate failed (see above).")
-        print("=" * 60)
-        sys.exit(1)
+    else:
+        print("[SUCCESS] All requested suites passed the gate! CHECKED")
+    print("=" * 60)
+    sys.exit(decide_exit(summary_rows))
 
 
 if __name__ == "__main__":

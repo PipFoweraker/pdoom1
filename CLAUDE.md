@@ -17,8 +17,25 @@ runtime -- the old Python bridge is gone). Python exists only for CI/tooling in
   `python scripts/run_godot_tests.py --quick --ci-mode --min-tests 300`
   (`tests/unit`, non-recursive). The runner does the `--import` pass itself.
 - **Slow simulation tier:** `--simulation` (`tests/unit/simulation`, full-run /
-  replay / determinism, ~3 min). **Non-blocking** in CI -- do NOT wait on it for a
+  replay / determinism). **Non-blocking** in CI -- do NOT wait on it for a
   scoped change. Run it only when you touched simulation/economy/replay code.
+  Budget **~7-10 min**: 460-550s on CI, and 412-619s measured locally on
+  Windows across 5 runs (#1181). It is NOT an hour-long tier; if it behaves
+  like one, read the next bullet.
+- **If the sim tier ever crawls locally, suspect stdout, not the tests.** The
+  tier emits ~4-5M `print()` lines, and Godot's per-line write cost depends
+  wildly on what stdout is attached to -- 200k prints measured at 2.4s through
+  a native pipe, 432s through a Git Bash `> file` redirect, ~2900s through
+  `| cat`. The runner now owns the pipe itself, so run it directly; do NOT wrap
+  it in shell redirection you can avoid (#1181).
+- **Three outcomes, not two (#1181).** The runner exits `0` = measured pass,
+  `1` = measured failure, `2` = **DID NOT COMPLETE**. A timeout prints
+  `DID NOT COMPLETE ... NO RESULT` with counts as `-`; it NEVER prints a test
+  count, because none exists. If you see exit 2, you have no measurement --
+  do not report a suite result from that run. Cap it yourself with
+  `--timeout SECONDS` (`0` = none) or `PDOOM1_TEST_TIMEOUT`; defaults are 900s
+  in CI and, locally, 2700s for `--simulation` / 900s elsewhere. `[PROGRESS]`
+  heartbeats every 30s tell slow from hung without opening Task Manager.
 - **Fresh worktree gotcha:** GUT quits(0) before running anything if the class
   cache is cold. The runner's import pass fixes this; if you invoke Godot/GUT
   directly, run `godot --headless --path godot --import` first. Running headless
