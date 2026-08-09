@@ -19,6 +19,17 @@ extends Control
 ##
 ## Design source: docs/game-design/COLD_OPEN_SEQUENCE.md +
 ## docs/game-design/ONBOARDING_STORY_DESIGN.md (#801).
+##
+## ARRIVAL VISUALS (#1112 -- Pip approved B1 "Portal Stitch" + B2 "Held Frame",
+## docs/design/INTRO_AND_POSTER_ART.md): the time_portal shader (built FOR this
+## sequence's UPGRADE layer, shipped unused since #801) is now the connective
+## tissue of the arrival. Black -> doom-red vortex opens under "Doom is coming."
+## -> the street poster (intro_bus_strangers_help, B2's held frame, slow push)
+## resolves behind the decaying swirl as the questions land -> the vortex
+## collapses, its palette handing off doom-red -> CRT phosphor green as the
+## phone rises -> the dawn office fades up only at "Begin >>": dawn = arrival.
+## The portal is TIME-driven procedural (no RNG); all choreography is Tweens on
+## shader uniforms + modulate (README_shader_animation.md's reusable pattern).
 
 # ============================================================================
 # TUNABLE COPY + TIMING -- Pip edits EVERYTHING player-facing here, in ONE place.
@@ -28,9 +39,11 @@ extends Control
 
 # The narrative beats, played top-to-bottom. kind "text" = a fade-up line; the single
 # kind "phone" beat hands off to the interactive phone. duration = auto-advance hold (s).
+# "cue" = the visual-arrival hook fired when the beat begins (#1112 B1) -- machinery,
+# not copy: the strings are the ruled #801 copy, unchanged.
 const BEATS: Array = [
-	{"kind": "text", "text": "Doom is coming.", "duration": 3.0},
-	{"kind": "text", "text": "But... when am I?\nWhat can I do?  What *day* is it?", "duration": 4.0},
+	{"kind": "text", "text": "Doom is coming.", "duration": 3.0, "cue": "portal_open"},
+	{"kind": "text", "text": "But... when am I?\nWhat can I do?  What *day* is it?", "duration": 4.0, "cue": "world_resolves"},
 	{"kind": "text", "text": "*checks pockets*  --  a primitive phone!", "duration": 3.0},
 	{"kind": "phone", "text": "", "duration": 0.0},
 ]
@@ -75,10 +88,45 @@ const LUCKY_HOLD: float = 1.3           # how long "Oh! how lucky!" holds before
 const HOLD_SKIP_SECONDS: float = 3.0    # how long the conviction ring takes to fill -> skip
 const HOLD_DECAY_SECONDS: float = 0.7   # how fast the ring empties when released early
 
-# Hero art behind the fade (imports as CompressedTexture2D). Re-pointed from the retired
-# dump_october_31_2025/hero-bg (main #792 moved that dir out of godot/ to shrink the .pck)
-# to a shipped in-tree background -- a wide dawn office fits the fade-up-from-black arrival.
+# The dawn office. Since #1112/B1 it no longer sits behind the whole sequence: it fades
+# up ONLY at "Begin >>" -- dawn = arrival. (Re-pointed from the retired hero-bg in #792.)
 const HERO_ART: String = "res://assets/images/backgrounds/office_wide_dawn.webp"
+
+# --- Arrival visuals (#1112: B1 portal stitch + B2 held frame) --------------
+# B2's held frame: the rainy street the traveler lands in (endgame_concepts_gen2 v1,
+# review verdict KEEP, silhouette principle already reviewed into it -- and it rhymes
+# with Pip's 2026-08-04 prior-beat sketch: teleport back, meet a bus).
+const POSTER_ART: String = "res://assets/images/backgrounds/intro_bus_strangers_help.webp"
+# The vortex. Every uniform is live-tunable in godot/scenes/dev/portal_shader_demo.tscn.
+const PORTAL_SHADER: String = "res://assets/shaders/time_portal.gdshader"
+
+# Portal timing + legibility dials
+const PORTAL_OPEN_SECONDS: float = 1.8      # open_progress 0 -> 1 under "Doom is coming."
+const PORTAL_COLLAPSE_SECONDS: float = 2.2  # open_progress 1 -> 0 as the phone rises
+const PORTAL_ALPHA: float = 0.42            # portal modulate while text holds -- keeps the
+											# centred text readable over the swirl (B1 risk note)
+const PORTAL_DECAY_SECONDS: float = 7.0     # the jump dying across beats 1-2:
+const PORTAL_SWIRL_END: float = 0.22        #   swirl_speed 0.6 (shader default) -> this
+const PORTAL_GLOW_END: float = 0.9          #   glow_strength 1.6 (default) -> this
+
+# Palette handoff during the collapse: doom-red -> the phone's CRT phosphor green
+# (both presets from the shader header; green = TerminalTheme.GREEN family).
+const PORTAL_GREEN_PALETTE: Dictionary = {
+	"color_core": Color(0.75, 1.00, 0.80),
+	"color_mid": Color(0.36, 0.93, 0.47),
+	"color_edge": Color(0.03, 0.20, 0.08),
+}
+
+# Held-frame (poster) dials
+const POSTER_FADE_SECONDS: float = 1.4      # fade-up as "when am I?" lands
+const POSTER_ALPHA_TEXT: float = 0.60       # poster brightness under the narrative text
+const POSTER_ALPHA_PHONE: float = 0.32      # dimmer once the phone slab is up
+const KENBURNS_SCALE: float = 1.06          # B2's slow push: 1.00 -> this...
+const KENBURNS_SECONDS: float = 16.0        # ...across the rest of the sequence
+
+# Arrival dials ("Begin >>")
+const ARRIVAL_DAWN_SECONDS: float = 1.1     # dawn office fade-up as everything else lets go
+const ARRIVAL_DAWN_HOLD: float = 0.4        # beat of quiet dawn before main.tscn
 
 # ============================================================================
 # End tunables. Machinery below.
@@ -100,7 +148,18 @@ var _hold_progress: float = 0.0
 # Node refs (built in code)
 var _bg: TextureRect
 var _black: ColorRect
+var _poster: TextureRect
+var _portal: TextureRect
+var _portal_mat: ShaderMaterial
 var _text_label: Label
+
+# Arrival tweens -- separate from _active_tween (which click-to-advance kills) so a fast
+# click-through never truncates the portal choreography mid-frame; each cue kills only
+# its own predecessors.
+var _portal_tween: Tween
+var _decay_tween: Tween
+var _poster_tween: Tween
+var _kenburns_tween: Tween
 var _phone_root: Control
 var _lock_panel: Control
 var _keypad_panel: Control
@@ -122,7 +181,15 @@ func _ready() -> void:
 
 
 func _build_ui() -> void:
-	# Hero background (dimmed so text reads), behind a black fade overlay.
+	# Solid black floor. The arrival layers (dawn office, poster, portal) fade in ABOVE
+	# this, so there is no fade-from-black overlay any more: black IS the base state.
+	_black = ColorRect.new()
+	_black.color = Color.BLACK
+	_black.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_black.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(_black)
+
+	# Dawn office (dimmed so text reads) -- INVISIBLE until "Begin >>": dawn = arrival.
 	_bg = TextureRect.new()
 	_bg.set_anchors_preset(Control.PRESET_FULL_RECT)
 	_bg.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
@@ -130,14 +197,23 @@ func _build_ui() -> void:
 	_bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	if ResourceLoader.exists(HERO_ART):
 		_bg.texture = load(HERO_ART)
-	_bg.modulate = Color(0.45, 0.45, 0.45, 1.0)  # darken the hero
+	_bg.modulate = Color(0.45, 0.45, 0.45, 0.0)  # darkened AND held transparent until arrival
 	add_child(_bg)
 
-	_black = ColorRect.new()
-	_black.color = Color.BLACK
-	_black.set_anchors_preset(Control.PRESET_FULL_RECT)
-	_black.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(_black)
+	# B2 held frame: the street the traveler lands in. Fades up on the "world_resolves"
+	# cue, pushes in very slowly (Ken Burns by tween), dims further under the phone.
+	_poster = TextureRect.new()
+	_poster.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_poster.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	_poster.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	_poster.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	if ResourceLoader.exists(POSTER_ART):
+		_poster.texture = load(POSTER_ART)
+	_poster.modulate = Color(0.62, 0.62, 0.62, 0.0)  # slightly darkened; alpha driven by cues
+	_poster.resized.connect(func() -> void: _poster.pivot_offset = _poster.size / 2.0)
+	add_child(_poster)
+
+	_build_portal()
 
 	# Narrative text: full-rect, centred, pivot kept centred so pop-in scales in place.
 	_text_label = Label.new()
@@ -155,6 +231,102 @@ func _build_ui() -> void:
 
 	_build_skip_affordance()
 	_build_phone()
+
+
+func _build_portal() -> void:
+	# B1: the vortex, full-rect, above poster + dawn, below the text. A TextureRect only
+	# draws when it HAS a texture (else the fragment never runs); the shader ignores
+	# TEXTURE and writes its own COLOR, so a white 8x8 stretched to fill is an identity
+	# backdrop (the trick from README_shader_animation.md / portal_capture.gd).
+	_portal_mat = ShaderMaterial.new()
+	_portal_mat.shader = load(PORTAL_SHADER)
+	_portal_mat.set_shader_parameter("open_progress", 0.0)  # born closed; the cue opens it
+
+	_portal = TextureRect.new()
+	var img := Image.create(8, 8, false, Image.FORMAT_RGBA8)
+	img.fill(Color.WHITE)
+	_portal.texture = ImageTexture.create_from_image(img)
+	_portal.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	_portal.stretch_mode = TextureRect.STRETCH_SCALE
+	_portal.material = _portal_mat
+	_portal.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_portal.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_portal.modulate.a = 0.0
+	# Keep the disc circular on any window shape (the shader's aspect dial).
+	_portal.resized.connect(_update_portal_aspect)
+	add_child(_portal)
+	call_deferred("_update_portal_aspect")
+
+
+func _update_portal_aspect() -> void:
+	if _portal == null or _portal_mat == null:
+		return
+	var sz: Vector2 = _portal.size
+	if sz.y > 0.0:
+		_portal_mat.set_shader_parameter("aspect", sz.x / sz.y)
+
+
+# ---------------------------------------------------------------------------
+# Arrival cues (#1112 B1) -- fired as their beat begins. Each rides its own Tween,
+# NOT _active_tween, so click-to-advance (which kills _active_tween) fast-forwards
+# the words without beheading the choreography; every cue still fires in order
+# because beats are only ever entered sequentially.
+# ---------------------------------------------------------------------------
+func _play_cue(cue: String) -> void:
+	match cue:
+		"portal_open":
+			_cue_portal_open()
+		"world_resolves":
+			_cue_world_resolves()
+
+
+func _cue_portal_open() -> void:
+	# The jump, mid-flight: doom-red vortex grows from a point under "Doom is coming.",
+	# held at PORTAL_ALPHA so the centred text stays legible over the swirl.
+	_kill_tween(_portal_tween)
+	_portal_tween = create_tween().set_parallel(true)
+	_portal_tween.tween_property(_portal_mat, "shader_parameter/open_progress", 1.0, PORTAL_OPEN_SECONDS) \
+		.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	_portal_tween.tween_property(_portal, "modulate:a", PORTAL_ALPHA, PORTAL_OPEN_SECONDS)
+
+
+func _cue_world_resolves() -> void:
+	# The street fades up behind the swirl and starts its slow push (B2's held frame);
+	# the vortex begins dying -- the time-jump is ending.
+	_kill_tween(_poster_tween)
+	_poster_tween = create_tween()
+	_poster_tween.tween_property(_poster, "modulate:a", POSTER_ALPHA_TEXT, POSTER_FADE_SECONDS)
+	_kill_tween(_kenburns_tween)
+	_poster.scale = Vector2.ONE
+	_kenburns_tween = create_tween()
+	_kenburns_tween.tween_property(_poster, "scale", Vector2(KENBURNS_SCALE, KENBURNS_SCALE), KENBURNS_SECONDS)
+	_kill_tween(_decay_tween)
+	_decay_tween = create_tween().set_parallel(true)
+	_decay_tween.tween_property(_portal_mat, "shader_parameter/swirl_speed", PORTAL_SWIRL_END, PORTAL_DECAY_SECONDS)
+	_decay_tween.tween_property(_portal_mat, "shader_parameter/glow_strength", PORTAL_GLOW_END, PORTAL_DECAY_SECONDS)
+
+
+func _cue_portal_collapse() -> void:
+	# Fired with the phone reveal: the vortex dies (open_progress 1 -> 0), handing its
+	# palette from doom-red to the phone's CRT green as it goes; the poster dims so the
+	# slab reads. If the player clicked through fast the collapse starts from wherever
+	# the open got to -- tween_property always starts from the current value.
+	_kill_tween(_portal_tween)
+	_kill_tween(_decay_tween)
+	_portal_tween = create_tween().set_parallel(true)
+	_portal_tween.tween_property(_portal_mat, "shader_parameter/open_progress", 0.0, PORTAL_COLLAPSE_SECONDS) \
+		.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
+	_portal_tween.tween_property(_portal, "modulate:a", 0.0, PORTAL_COLLAPSE_SECONDS)
+	for uni in PORTAL_GREEN_PALETTE.keys():
+		_portal_tween.tween_property(_portal_mat, "shader_parameter/" + uni, PORTAL_GREEN_PALETTE[uni], PORTAL_COLLAPSE_SECONDS * 0.7)
+	_kill_tween(_poster_tween)
+	_poster_tween = create_tween()
+	_poster_tween.tween_property(_poster, "modulate:a", POSTER_ALPHA_PHONE, PORTAL_COLLAPSE_SECONDS)
+
+
+func _kill_tween(t: Tween) -> void:
+	if t != null and t.is_valid():
+		t.kill()
 
 
 func _build_skip_affordance() -> void:
@@ -428,16 +600,15 @@ func _play_next_beat() -> void:
 
 
 func _play_text_beat(beat: Dictionary) -> void:
+	_play_cue(str(beat.get("cue", "")))
 	_text_label.text = str(beat.get("text", ""))
 	_text_label.modulate.a = 0.0
 	_text_label.scale = Vector2(0.94, 0.94)
 	var dur: float = float(beat.get("duration", 3.0))
 	_kill_active_tween()
 	_active_tween = create_tween()
-	# Fade the opening black away as the first line rises, then just fade text per-beat.
-	if _black.modulate.a > 0.0:
-		_active_tween.parallel().tween_property(_black, "modulate:a", 0.0, FADE_IN_TIME)
-	# Pop-in: fade + overshoot scale (parallel), hold, fade out.
+	# Pop-in: fade + overshoot scale (parallel), hold, fade out. (The old fade-from-black
+	# overlay is gone: black is the base layer and the arrival cues fade things in over it.)
 	_active_tween.parallel().tween_property(_text_label, "modulate:a", 1.0, FADE_IN_TIME)
 	_active_tween.parallel().tween_property(_text_label, "scale", Vector2(POP_OVERSHOOT, POP_OVERSHOOT), FADE_IN_TIME * 0.6) \
 		.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
@@ -450,6 +621,8 @@ func _play_text_beat(beat: Dictionary) -> void:
 func _show_phone() -> void:
 	_phone_active = true
 	_kill_active_tween()
+	# The vortex collapses (red -> CRT green) as the phone slab rises out of the street.
+	_cue_portal_collapse()
 	# Fade any lingering text out and the phone in.
 	_active_tween = create_tween()
 	_active_tween.tween_property(_text_label, "modulate:a", 0.0, FADE_OUT_TIME * 0.5)
@@ -606,7 +779,26 @@ func _finish(skipped: bool, via_hold_skip: bool = false) -> void:
 	# Show-once: a skip counts as seen (same as the whats-new modal).
 	GameConfig.mark_intro_seen()
 	print("[ColdOpen] finishing (skipped=%s, via_hold_skip=%s) -> main" % [skipped, via_hold_skip])
-	SceneTransition.go_to("res://scenes/main.tscn")
+	if skipped:
+		# Hold-to-skip asked to leave -- leave. No arrival flourish on the exit ramp.
+		SceneTransition.go_to("res://scenes/main.tscn")
+		return
+	# Arrival (#1112 B1): the dawn office fades up as phone, poster and any portal
+	# remnant let go -- dawn = you are HERE now. All state writes above are already
+	# done, so closing the game mid-flourish loses nothing.
+	_kill_tween(_portal_tween)
+	_kill_tween(_decay_tween)
+	_kill_tween(_poster_tween)
+	_kill_tween(_kenburns_tween)
+	var tw := create_tween()
+	tw.set_parallel(true)
+	tw.tween_property(_bg, "modulate:a", 1.0, ARRIVAL_DAWN_SECONDS)
+	tw.tween_property(_phone_root, "modulate:a", 0.0, ARRIVAL_DAWN_SECONDS)
+	tw.tween_property(_poster, "modulate:a", 0.0, ARRIVAL_DAWN_SECONDS)
+	tw.tween_property(_portal, "modulate:a", 0.0, ARRIVAL_DAWN_SECONDS * 0.5)
+	tw.tween_property(_text_label, "modulate:a", 0.0, ARRIVAL_DAWN_SECONDS * 0.5)
+	tw.chain().tween_interval(ARRIVAL_DAWN_HOLD)
+	tw.chain().tween_callback(func() -> void: SceneTransition.go_to("res://scenes/main.tscn"))
 
 
 func _kill_active_tween() -> void:
