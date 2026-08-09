@@ -1,0 +1,553 @@
+<title>Monday stack -- 2026-08-10 -- pdoom1 seat</title>
+<style>
+@page { size: A4 portrait; margin: 10mm 10mm 11mm; }
+html { font-size: 12.5pt; }
+body { font-family: "Segoe UI", Calibri, Arial, sans-serif; line-height: 1.23;
+       color: #000; background: #fff; max-width: 195mm; margin: 0 auto; }
+h1 { font-size: 18pt; margin: 0 0 1mm; line-height: 1.1; }
+h2 { font-size: 12.5pt; margin: 3.6mm 0 1.4mm; padding: 1.1mm 2mm;
+     background: #1a1a1a; color: #fff; page-break-after: avoid;
+     page-break-inside: avoid; }
+h3 { font-size: 12.5pt; margin: 2mm 0 1mm; page-break-after: avoid; }
+p, li, td, th { font-size: 12.5pt; }
+p { margin: 1.1mm 0; }
+table { border-collapse: collapse; width: 100%; margin: 1.4mm 0 2mm; }
+th, td { border: 1px solid #444; padding: 0.9mm 1.5mm; text-align: left;
+         vertical-align: top; font-size: 12.5pt; line-height: 1.18; }
+th { background: #e8e8e8; font-weight: 700; }
+code { font-family: Consolas, monospace; font-size: 11.5pt; background: #eee;
+       padding: 0.1mm 0.6mm; }
+pre { font-family: Consolas, monospace; font-size: 10.5pt; background: #f2f2f2;
+      padding: 1.4mm 2mm; border: 1px solid #ccc; white-space: pre-wrap;
+      word-wrap: break-word; margin: 1.1mm 0; line-height: 1.2; }
+ul, ol { margin: 0.9mm 0 1.4mm; padding-left: 5.5mm; }
+li { margin-bottom: 0.5mm; }
+blockquote { border-left: 3pt solid #000; margin: 1.2mm 0;
+             padding: 0.5mm 0 0.5mm 3mm; }
+.card { margin-bottom: 0.5mm; }
+.ask { border: 1.4pt solid #000; padding: 1.4mm 2mm; margin: 1.4mm 0 0;
+       background: #f7f7f7; page-break-inside: avoid; }
+.ask p { margin: 0 0 0.8mm; font-weight: 700; font-size: 12.5pt; }
+.ask li { margin-bottom: 1.1mm; font-size: 12.5pt; }
+.box { font-family: Consolas, monospace; font-weight: 700; }
+.fill { border-bottom: 1pt solid #000; display: inline-block;
+        min-width: 42mm; }
+.tag { font-size: 10pt; font-weight: 700; letter-spacing: 0.4pt;
+       background: #1a1a1a; color: #fff; padding: 0.4mm 1.6mm; }
+.tag.grey { background: #666; }
+.sub { font-size: 11pt; color: #333; margin: 0 0 3mm; }
+.rule { border: 0; border-top: 1.2pt solid #999; margin: 4mm 0 3mm; }
+.warn { border: 1.6pt solid #000; padding: 2mm 2.5mm; margin: 3mm 0; }
+</style>
+
+<h1>Monday stack -- Mon 2026-08-10</h1>
+<p class="sub"><strong>From the pdoom1 seat, assembled Sun 2026-08-09 evening.</strong>
+Thirteen decisions, each self-contained. Full working, with every citation and the
+evidence cut from this sheet: <code>docs/MONDAY_STACK_2026-08-10.md</code>.</p>
+
+<div class="warn">
+<p style="margin-top:0"><strong>Ordering:</strong> M1-M3 have a Monday date. M4-M6
+unblock another seat. M7-M13 have neither.
+<strong>M7 is the highest-harm item on the sheet</strong> -- 14 open issues are
+publicly announced as delivered on the page your download button points at -- and
+it is at position 7 only because it carries no date. Do not read the order as
+priority.</p>
+<p style="margin-bottom:0"><strong>Two things this sheet does NOT contain, on
+purpose.</strong> <strong>(1) The eleven dated commitments</strong> -- already on
+paper, as section 2 of <code>week-2026-08-10-plan.html</code>, with sources and
+reminder status. Nine of eleven are marked NOTHING. Reprinting them is the exact
+waste <code>coordination#50</code> measured today. <strong>(2) Every player-facing
+string</strong> -- on your desk as the 20-page
+<code>copy-review-2026-08-09.html</code>. Three defects from it are on this sheet
+as M10 because you have not seen them.</p>
+</div>
+
+<h2>Before the cards: two things I could not do, stated rather than papered over</h2>
+<p><strong>1. The print protocol &mdash; pdoom1 does not know it, and did not
+invent one.</strong> <code>coordination#50</code>, opened 09:04Z today, asks
+coordination whether a print stack or queue exists at all and
+<strong>had zero comments</strong> when this was written. The canonical
+<code>PRINT_AND_PROCESS_REFERENCE.md</code> is <strong>v2 dated 2026-08-02</strong>
+but was updated <strong>18:51 today</strong>, so my copy may be stale; its
+2026-08-07 carve-out puts the pdoom trio's printing with the <strong>G-seat</strong>.
+pdoom1 holds only <code>print_doc.py</code> &mdash; no queue, no ledger, no
+supersession &mdash; <strong>so this pack was printed directly, which is the
+no-mechanism fallback, not a preference.</strong> pdoom1 has stood down and asked
+on <code>#50</code>, committing to follow that thread over its own plan.</p>
+<p><strong>2. The calendar generator does not exist.</strong> I was told a lane
+owns <code>scripts/generate_commitment_calendar.py</code>. <strong>The file is
+absent from the repo</strong> &mdash; the only trace anywhere is a permission entry
+in <code>.claude/settings.local.json</code>, i.e. somebody was authorised to run it
+and it was never created. <strong>Nothing has been built to close the reminder
+gap.</strong></p>
+
+<hr class="rule">
+
+<div class="card">
+<h2>M1 &nbsp; IP / trademark to the Australian lawyers &nbsp; <span class="tag">DUE TODAY</span></h2>
+<p><code>#1061</code>, <code>priority:high</code>, also <code>beacon-internal#15</code>.
+Week-plan item P1. <strong>The only card with a hard Monday date.</strong></p>
+<p><strong>The title still says DUE 2026-08-03.</strong> It slipped to 08-10 on
+2026-08-06, and <strong>the stated reason was the funding block -- which has now
+expired</strong>, because the weekend money arrived. The thing that justified
+deferring it once cannot justify deferring it again. <strong>You asked to be
+forced.</strong> The premortem trigger was: the point at which the project has
+money attached is the point at which unregistered mark exposure stops being
+theoretical. That has fired.</p>
+<p><strong>The five-point brief:</strong> (1) trade mark position for
+<strong>P(Doom)</strong> / <strong>P(Doom)1</strong> -- searchable, registrable,
+already conflicted? (2) which class(es), and whether the education / AI-safety
+framing needs a second; (3) Beacon entity vs game IP -- who owns what, is an
+assignment needed; (4) whether public launch + live leaderboard changes the
+position (prior use, disclosure timing); (5) cost and timeline to file.</p>
+<p><strong>Facts they will ask for:</strong> pdoom1.com live; public builds since
+v0.11.0; first public league night Fri 2026-07-31; Manifund application live with
+a <strong>2026-09-09</strong> deadline.</p>
+<p><strong>Close condition is not "asked the lawyers"</strong> -- it is
+<em>a written position on whether to file, in which classes, and by when.</em></p>
+<div class="ask"><p>ASK</p>
+<ul>
+<li><span class="box">[ ]</span> Contacted the lawyers today</li>
+<li><span class="box">[ ]</span> Deferred again &mdash; new date <span class="fill"></span>
+and the reason, <strong>which cannot be the funding block</strong>:
+<span class="fill" style="min-width:80mm"></span></li>
+</ul></div>
+</div>
+
+<div class="card">
+<h2>M2 &nbsp; Read the Workshop 2 minute &mdash; and its C5 bet scores Sun 08-16</h2>
+<p>Week-plan items P2 and P11. <code>coordination#47</code>.</p>
+<p><strong>Workshop 2 ran and closed without you, by design.</strong> pdoom-data
+chaired, all four phases ran, closed <strong>11:35 AEST</strong>. The chair's
+words: you <em>"were absent throughout and were not needed once."</em>
+<strong>The minute had not been verified as published when this was written</strong>
+-- last thread activity was a post-close correction at 06:30Z, not the minute.</p>
+<p><strong>Rulings that touch pdoom1:</strong> <strong>R3</strong> -- the merged
+taxonomy is <strong>eight classes</strong>, and <strong>class 5, the knowing
+allowlist, defeats every remedy any seat proposed</strong> (a check that prints
+three divergences and exits 0 by design, and has for about eight months -- the
+check is not fooled, the reader is, by its exit code). <strong>R4</strong> --
+action outranks detection, <strong>pdoom1's line adopted verbatim</strong>,
+supported independently by three seats who had read nothing of each other.
+<strong>R6</strong> -- <strong>pdoom1's red-run rule is adopted as the standard all
+four C5 bets are scored against.</strong></p>
+<blockquote>"No guard counts as installed until a RED run of it has been observed
+and its run ID recorded. On 2026-08-16, ask for three run IDs -- one per guard --
+each showing the guard in its FAILING state. <strong>If fewer than three exist,
+the bet was named and not operated.</strong>"</blockquote>
+<p><strong>The unflattering part: the three PRs that ARE that bet are all
+unmerged</strong> -- <code>#1189</code> (instalment one, sat since 08-08),
+<code>#1184</code>, <code>#1185</code>. If they are still unmerged on 08-16,
+pdoom1 loses its own bet in another repo's public ledger, having written the rule
+everyone else is scored by. <strong>And nobody owns the 08-16 scoring</strong> --
+<code>#47</code> is closed and no seat claimed it.</p>
+<div class="ask"><p>ASK</p>
+<ul>
+<li><span class="box">[ ]</span> Minute read</li>
+<li><span class="box">[ ]</span> Owner of the 08-16 C5 scoring: <span class="fill"></span></li>
+<li><span class="box">[ ]</span> Chair ask 1 &mdash; pdoom-data's <code>main</code>
+push trigger is dead; one empty commit settles it, and a chair ruling forbids
+unattended writes to <code>main</code>. &nbsp; <strong>Yes / No</strong></li>
+<li><span class="box">[ ]</span> Chair ask 2 &mdash; class 8 needs an owner (one
+check across all three repos that a <code>main</code> tip carries a completed
+run). Owner: <span class="fill"></span></li>
+</ul></div>
+</div>
+
+<div class="card">
+<h2>M3 &nbsp; The next design workshop has no name, no number and no date</h2>
+<p>Week-plan item P3 (week of 08-10) &mdash; undated inside its own window.</p>
+<p><strong>W5 and W6 do not exist.</strong> <code>docs/GLOSSARY.md:414-430</code>
+separates two numbers that get confused: <strong>WS-n / Workshop n</strong> is a
+whole multi-day session producing ADRs (sub-sessions get letters, W-3a, W-3b);
+<strong>Wn</strong> is a <strong>timeboxed agenda block inside one workshop
+day</strong>. <strong>W4 was an agenda block on Wed 2026-07-29</strong> --
+"next-epoch planning", alongside W0 (review Tuesday's builds), W1 (colour
+architecture), W2 (decorating math), W3 (league cadence + Friday prep).
+<strong>It was not a workshop.</strong> The glossary lists blocks only to W4.</p>
+<p><strong>Three things are waiting on the unnamed workshop, and they may be one
+thing.</strong> (1) <code>#984</code>, <strong>your own ruling of 2026-07-27
+18:11</strong> -- half-day audit-mechanics deep-dive, target window "week of
+2026-08-10, before the 2026-08-31 formal review", scheduled against ADR-0011's
+question <em>did optimistic self-reporting + audits earn its complexity</em>.
+(2) The research/safety unsubtlety -- your words: <em>"this element of the game is
+a little unsubtle for now"</em>, ruled <strong>a workshop, not a lane</strong>;
+the Research door opens an allocation panel, not a verb list.
+(3) The standing proposal to fold (2) into (1) rather than open a second workshop,
+<strong>because audits and research integrity are the same distortion surface from
+two ends</strong>. Its falsifier: if they need separate ADRs they were separate
+workshops and merging cost a week.</p>
+<div class="ask"><p>ASK</p>
+<ul>
+<li><span class="box">[ ]</span> Day and time booked: <span class="fill"></span></li>
+<li><span class="box">[ ]</span> One session or two &mdash; <strong>fold / separate</strong></li>
+<li><span class="box">[ ]</span> Its name and number: <span class="fill"></span></li>
+</ul></div>
+</div>
+
+<div class="card">
+<h2>M4 &nbsp; Merge <code>#1190</code> &mdash; a citation of mine points at a file not on main <span class="tag grey">UNBLOCKS A SEAT</span></h2>
+<p><code>coordination#48</code> is a league-cutover timing contract pdoom1 filed
+<strong>to</strong> pdoom1-website so they can pre-announce cutovers. It cites
+<em>"pdoom1 PR #1190, <code>docs/design/LEAGUE_CUTOVER_PLAYBOOK.md</code>"</em>.
+<strong>That file exists only in unmerged PR <code>#1190</code>, so a reader
+following the link today gets nothing.</strong> The measured numbers in the issue
+body are correct and self-contained; the citation is not.
+<strong>This is Workshop 2's class 3, mis-aimed referent, committed by the seat
+that argued the taxonomy.</strong> Recorded, not apologised for.</p>
+<table>
+<tr><th>Phase</th><th>v0.14.0</th><th>v0.14.1</th><th>Predictable?</th></tr>
+<tr><td>Tag pushed &rarr; release published on GitHub</td><td>5m 18s</td><td>5m 28s</td><td><strong>YES</strong> &mdash; two samples ten seconds apart, includes the full cross-platform build</td></tr>
+<tr><td>Release published &rarr; pdoom1.com serves it</td><td>1h 10m 58s</td><td>18m 00s</td><td>No</td></tr>
+<tr><td>&hellip;unattended</td><td colspan="2">never observed</td><td><strong>UNMEASURED</strong></td></tr>
+</table>
+<p><strong>pdoom1 can publish in 5m30s and cannot tell you when pdoom1.com will
+agree.</strong> That is why no public schedule can be promised yet.</p>
+<p><strong>A second dangling citation, found while checking this one:</strong> the
+week plan on your printer cites <code>docs/design/WEEK_2026-08-10_PLAN.md</code> as
+its full working. <strong>That file does not exist either.</strong> Same class,
+different sheet.</p>
+<div class="ask"><p>ASK</p>
+<ul>
+<li><span class="box">[ ]</span> Merge <code>#1190</code> &mdash; <strong>Yes / No</strong></li>
+<li><span class="box">[ ]</span> If no, <code>coordination#48</code>'s citation must
+be corrected instead. Who: <span class="fill"></span></li>
+</ul></div>
+</div>
+
+<div class="card">
+<h2>M5 &nbsp; Asset provenance &mdash; pdoom1 is the blocking party, return Thu 08-13 <span class="tag grey">UNBLOCKS A SEAT</span></h2>
+<p><code>coordination#32</code>, week-plan item P4. <strong>Another repo is waiting
+and there is no automated reminder.</strong></p>
+<p>The question: does a published asset carry <code>origin</code>
+(<code>generated</code> / <code>human</code> / <code>photo</code>), and is the
+website <strong>required</strong> to be able to say which? It is a
+<strong>Manifund commitment</strong> &mdash; a truth obligation on the website
+created by an art decision.</p>
+<p><strong>Measured in pdoom1: provenance is not recorded anywhere. The obligation
+is UNMET, not at risk.</strong> No <code>origin</code> field in ADR-0019 which
+defines the three asset states; no manifest of any kind in
+<code>godot/assets/</code>; nothing pdoom1 emits carries provenance; what exists is
+batch-level metadata as <strong>prose</strong> in
+<code>art_source/pixellab_*/MANIFEST.md</code> and <strong>it is stripped before a
+file reaches the pack</strong>; <code>#900</code> still lists provenance logging as
+an open prerequisite. <strong>No amount of website-side work can fix this: the
+information does not survive the pipeline.</strong> pdoom1 has not advanced it
+since filing.</p>
+<p>Of 27 open coordination issues, <strong>exactly two carry a return date</strong>:
+<code>#32</code> (08-13, live) and <code>#19</code> (08-05, four days past).</p>
+<div class="ask"><p>ASK &mdash; one word, and it sizes everything downstream</p>
+<ul>
+<li><span class="box">[ ]</span> <strong>Retroactive</strong> (backfill provenance
+for already-shipped assets) or <strong>prospective only</strong> (record from here
+forward)? &nbsp; <span class="fill"></span></li>
+</ul></div>
+</div>
+
+<div class="card">
+<h2>M6 &nbsp; <code>pdoom1-website#289</code> &mdash; awaiting their call, plus one thing they must not assume</h2>
+<p><strong>Nothing is owed by pdoom1.</strong> Flagged only so it is not waiting on
+a seat that has gone dark. <code>#289</code> implements <strong>their</strong>
+<code>#285</code> verbatim &mdash; add <code>repository_dispatch</code>, keep the
+6-hourly cron as a <strong>backstop, not the mechanism</strong>. Not pushed, not
+merged, <code>#285</code> not closed. Theirs to accept, amend or reject.</p>
+<p><strong>The correction they need first:</strong> <code>#1194</code> measured that
+<code>sync-game-version.yml</code> has been writing four artefacts into their repo
+that <strong>nothing reads</strong> &mdash; including a
+<code>version-history.json</code> that <strong>has never existed in that
+repo</strong> and a <code>repository_dispatch game_version_sync</code> with
+<strong>total_count: 0 runs, ever</strong>. <strong>Every step printed SUCCESS
+while the answer was no.</strong> Also relevant to <code>coordination#40</code>.</p>
+<div class="ask"><p>ASK</p>
+<ul>
+<li><span class="box">[ ]</span> Nothing required from you. Chase only if
+<code>#289</code> is still silent by Thursday &mdash; <strong>chase / leave</strong></li>
+</ul></div>
+</div>
+
+<div class="card">
+<h2>M7 &nbsp; <code>gh release edit v0.14.0</code> &mdash; 14 open issues publicly announced as delivered <span class="tag">HIGHEST HARM</span></h2>
+<p><strong>Merge <code>#1194</code> FIRST. The ordering is not cosmetic.</strong></p>
+<p>The published body of <strong>v0.14.0</strong> announces
+<strong>14 open issues as delivered</strong>.
+<strong>That page is where pdoom1.com's download button sends people.</strong>
+Counted independently rather than inherited, by one batched GraphQL query over all
+68 numbers cited: <strong>68 cited, 54 closed, 14 OPEN.</strong> Verified rather
+than assumed that the CHANGELOG section IS the published body &mdash; the first 74
+lines diff byte-identical.</p>
+<p>The fourteen, in short: <code>#802</code> music controller,
+<code>#957</code> own-row highlight (not implemented), <code>#1063</code> name on
+first screen (prompt appears at upload instead), <code>#1111</code>,
+<code>#1125</code> rulings with deferred items remaining, <code>#793</code> office
+floor (all staff still render as one character), <code>#1067</code> build stamp
+(CI still never runs it), <code>#1126</code>, <code>#1068</code>,
+<code>#1072</code> (unconfirmed against a shipped build), <code>#1117</code>,
+<code>#798</code>, <code>#1115</code> (capability deleted, not replaced),
+<code>#1093</code>. <strong>Nothing was deleted</strong> &mdash; every one has a
+real merged commit in range; each now discloses what is unfinished, the part a
+player can act on. Full table in the <code>.md</code>.</p>
+<p><strong>Why <code>#1194</code> must merge first:</strong> it carries the
+corrected body <strong>and</strong> repairs
+<code>sync-game-version.yml</code>. <strong>Run the edit before merging and the
+release-edit event re-fires a changelog extraction into pdoom1-website</strong> --
+into the dead-end write paths in M6, which nothing reads and which report SUCCESS
+regardless.</p>
+<p><strong>Prepared, verified, NOT run.</strong> The corrected body passes
+<code>check_release_notes.py --body ... --tag v0.14.0</code>, satisfying
+<code>#1183</code>'s own RN004 rule that every bullet ties to a commit in range.</p>
+<pre>gh release edit v0.14.0 --notes-file docs/release-body-v0.14.0-CORRECTED.md</pre>
+<p><strong>Not run, because applying it edits outward-facing text under your name.</strong>
+One caveat found by using <code>#1183</code>'s guard: it treats any line starting
+with <code>#</code> as a new claim unit, including a wrapped citation like
+<code>#1081).</code>, which can report a FAIL that is not real.
+<strong>Fail-safe direction only</strong> &mdash; it can never manufacture a false
+pass. Worked around, not fixed.</p>
+<div class="ask"><p>ASK</p>
+<ul>
+<li><span class="box">[ ]</span> Merge <code>#1194</code> &mdash; <strong>Yes / No</strong></li>
+<li><span class="box">[ ]</span> Then run the edit &mdash; <strong>you / delegate to the seat</strong></li>
+<li><span class="box">[ ]</span> Ruled disclosure syntax is prose
+(<code>#500 is still OPEN</code>), not <code>#500 [open]</code>, because these
+sections render to players &mdash; <strong>confirm / change</strong></li>
+</ul></div>
+</div>
+
+<div class="card">
+<h2>M8 &nbsp; Eleven open PRs, none draft, all awaiting you</h2>
+<p>The week plan lists them. This adds what it does not: which need judgement, and
+one pair it may have mis-called.</p>
+<table>
+<tr><th>PR</th><th>What it does</th><th>Judgement or stamp</th></tr>
+<tr><td><strong>#1166</strong></td><td><strong>A share set &mdash; 126 candidates, 6.3% text-leak measured. The entire route from your 262 art verdicts to a public surface.</strong> Sat since <strong>08-07</strong></td><td><strong>JUDGEMENT</strong> &mdash; this is the natural-traffic lane you asked for</td></tr>
+<tr><td>#1164</td><td>Art L2 wave, 306 images, USD 15.30, already generated</td><td>JUDGEMENT (spend incurred; policy expires 08-15)</td></tr>
+<tr><td>#1194</td><td>Repairs the 14 public false claims + stops the dead-end writes</td><td>JUDGEMENT &mdash; card M7</td></tr>
+<tr><td>#1190</td><td>League cutover playbook</td><td>JUDGEMENT &mdash; card M4, unblocks a seat</td></tr>
+<tr><td>#1189</td><td>force_alarm drill for the freshness check, whose alarm had never once fired</td><td>STAMP &mdash; and it is C5 bet instalment 1</td></tr>
+<tr><td>#1191</td><td>Workshop 2 sealed position, 1 file, docs only</td><td>STAMP &mdash; the artefact behind the 08-16 bet</td></tr>
+<tr><td>#1176</td><td>Operator identity &mdash; card M11</td><td>PARKED ON YOUR RULING</td></tr>
+<tr><td>#1192 / #1186</td><td><strong>PAIR.</strong> Both close #1181 (a timeout is not a test result)</td><td><strong>PICK ONE</strong></td></tr>
+<tr><td>#1185 / #1184</td><td><strong>PAIR.</strong> Both cite #1178 (arm the ladder guard)</td><td><strong>LOOK BEFORE CLOSING</strong></td></tr>
+</table>
+<p><strong>The pairs, sized, because "duplicate" undersells one and oversells the
+other.</strong> <code>#1192</code> and <code>#1186</code> both rewrite
+<code>scripts/run_godot_tests.py</code>, both add a test file for it, both edit
+<code>docs/TOOLS.md</code>. <strong>They will conflict on merge.</strong> That pair
+is real. <strong>But <code>#1184</code> and <code>#1185</code> I am less sure
+about</strong> &mdash; <code>#1184</code> arms <code>check_ladder_bump.py</code> and
+proves it can fail; <code>#1185</code> arms the <em>board-key</em> guard by dropping
+a <code>|| true</code>. They share two files but read as <strong>two guards,
+stacked, not duplicated</strong>. <strong>Worth one look before either is closed as
+redundant &mdash; closing the wrong one silently loses a guard, which is this
+estate's defining failure shape.</strong></p>
+<div class="ask"><p>ASK</p>
+<ul>
+<li><span class="box">[ ]</span> <strong>#1166</strong> &mdash; <strong>merge / changes / park</strong> &nbsp; (this is the traffic route)</li>
+<li><span class="box">[ ]</span> #1181 pair: keep <strong>#1192 / #1186</strong></li>
+<li><span class="box">[ ]</span> #1178 pair: <strong>duplicates, keep <span class="fill" style="min-width:16mm"></span> / actually two guards, merge both</strong></li>
+<li><span class="box">[ ]</span> Stamps #1189 + #1191 &mdash; <strong>merge / hold</strong></li>
+</ul></div>
+</div>
+
+<div class="card">
+<h2>M9 &nbsp; The board cleanup &mdash; and two of the three numbers I was given are wrong</h2>
+<p><strong>Nothing here has been run.</strong> No Godot process was running when
+this was checked.</p>
+<p><strong>What happened</strong> (<code>CLAUDE.md:81-102</code>): a test run wrote
+<strong>1,330 files</strong> into your live player profile,
+<strong>destroyed the 50-entry 2026-07-31 league board</strong> (50 &rarr; 0),
+mutated <code>config.cfg</code>/<code>keybinds.cfg</code>/<code>theme.cfg</code>,
+and injected <strong>23 synthetic rows</strong> into the live
+<code>(weekly-2026-w32, L4)</code> board during a release playtest. Cause: the
+user-data dir derives from <code>config/name</code> in <code>project.godot</code>,
+<strong>not from the worktree path</strong>, so all worktrees share ONE profile.
+<strong>Filed as #1070 on 2026-07-31 and left open seven days before it went
+off.</strong></p>
+<p><strong>Measured tonight, read-only:</strong> 1,333 files in
+<code>leaderboards/</code>, of which <strong>exactly 1,330</strong> match
+<code>*__test.json</code>; <code>weekly-2026-w31__L3</code> has
+<strong>0 entries</strong>; <code>weekly-2026-w32__L4</code> has
+<strong>32</strong>.</p>
+<p><strong>Correction 1 &mdash; the right backup is the 08-01 one, not 07-31.</strong>
+Both backups hold a 50-entry w31 board, <strong>so a count check cannot tell them
+apart</strong>. The <code>_backup_20260731_160443</code> board was taken at 16:04
+and its newest row is 10:36 that morning &mdash; <strong>before league
+night</strong>. <code>_backup_20260801_095039</code> contains the 18:11
+<em>Notkilleveryone Inc / 47</em> run. <strong>Restore from 08-01.</strong></p>
+<p><strong>Correction 2 &mdash; <code>reset_player_state.py --restore</code> will
+NOT do this.</strong> It takes the newest backup and <strong>skips any child
+already present</strong>. <code>leaderboards/</code> exists, so a bare
+<code>--restore</code> <strong>skips it entirely and silently succeeds.</strong></p>
+<p><strong>Correction 3 &mdash; "4 genuine rows" is not sourceable.</strong> The
+local L4 board has <strong>32</strong> entries. <code>turns_survived</code>,
+<code>timestamp</code> and <code>final_doom</code> are <strong>null in every
+row</strong>; the only discriminator is <code>duration_seconds</code>, which yields
+<strong>23 rows under 11s</strong> (the synthetic block, matching the documented 23
+exactly) and <strong>9 above 30s &mdash; not 4</strong>.
+<strong>I did not filter to 4 on a number I cannot source.</strong> The "4" most
+likely refers to the <em>server-side</em> board, not this file. Related: you have
+since confirmed both named players on that board, <code>GRIM</code> and
+<code>gronklabs</code>, are you &mdash; which is why row counts there are not
+player counts.</p>
+<pre># 0. PRECONDITION -- must return nothing. A running editor, game or headless test
+#    shares the one profile and will re-serialise over anything you restore.
+Get-Process | Where-Object { $_.ProcessName -like "*odot*" -or $_.ProcessName -like "*PDoom*" }
+
+$LB = "C:\Users\Pip\AppData\Roaming\Godot\app_userdata\P(Doom)\leaderboards"
+$BK = "C:\Users\Pip\AppData\Roaming\Godot\app_userdata\P(Doom)\_backup_20260801_095039\leaderboards"
+
+# 1. Restore the 50-entry July league board. COPY, not move -- keep the backup intact.
+Copy-Item "$BK\leaderboard_weekly-2026-w31__L3.json" "$LB\leaderboard_weekly-2026-w31__L3.json" -Force
+
+# 2. Clear the 1,330 test files. Leaves exactly 3 files.
+Get-ChildItem "$LB" -Filter "*__test.json" | Remove-Item -Confirm:$false
+
+# 3. Filter L4 -- NO SAFE CANNED COMMAND EXISTS. See correction 3.</pre>
+<div class="ask"><p>ASK</p>
+<ul>
+<li><span class="box">[ ]</span> Steps 1 and 2 &mdash; <strong>run / hold</strong></li>
+<li><span class="box">[ ]</span> Step 3 target is <strong>the local file (9 plausible rows) / the server board / neither</strong> <span class="fill" style="min-width:24mm"></span></li>
+<li><span class="box">[ ]</span> Should <code>reset_player_state.py</code> gain a
+<code>--restore --force</code> that overwrites? <strong>Yes / No</strong></li>
+</ul></div>
+</div>
+
+<div class="card">
+<h2>M10 &nbsp; The copy review pack &mdash; three findings you have not seen</h2>
+<p>The 20-page pack is on your desk:
+<code>tools/runsheet/copy-review-2026-08-09.html</code>. It quotes every
+player-facing string; nothing in it was edited, only quoted.
+<strong>These three are here because they are defects rather than taste calls.</strong></p>
+<p><strong>1. The doubled word.</strong>
+<code>game_over_screen.gd:632</code> prefixes every sync message with
+<code>"Global leaderboard: %s"</code>, and four of the six messages in
+<code>leaderboard_sync.gd:270-276</code> themselves begin with "leaderboard".
+<strong>What a player reads:</strong></p>
+<pre>Global leaderboard: leaderboard busy (HTTP 429) -- score saved locally, will retry next launch</pre>
+<p><strong>2. Operator vs "player name" &mdash; same person, two words, two dialogs
+minutes apart.</strong> The claim-a-name dialog labels the field
+<code>Operator:</code> (the #957 nomenclature ruling). The upload-consent dialog at
+game over says <code>player name: [name]</code>. <strong>This is the same surface
+<code>#1176</code> exists to fix &mdash; see M11.</strong></p>
+<p><strong>3. <code>CREDITS.md:18</code> ships an unanswered question to
+players.</strong></p>
+<pre>- **Design, direction, and development:** Pip Foweraker  *(adjust name form as preferred)*</pre>
+<p>The generator drops entries carrying <code>[Pip to fill]</code> or
+<code>[Pip to confirm]</code>. <strong>This parenthetical is neither, so it is not
+dropped &mdash; it ships</strong>, rendering on a public credits screen under your
+name, alongside the named artists.</p>
+<div class="ask"><p>ASK</p>
+<ul>
+<li><span class="box">[ ]</span> Name form: <span class="fill" style="min-width:70mm"></span> &nbsp;(then delete the parenthetical)</li>
+<li><span class="box">[ ]</span> Fix findings 1 and 2 &mdash; <strong>now / with #1176 / park</strong></li>
+<li><span class="box">[ ]</span> Should the generator's placeholder-drop also catch
+bare parentheticals? <strong>Yes / No</strong></li>
+</ul></div>
+</div>
+
+<div class="card">
+<h2>M11 &nbsp; <code>#1176</code> operator names for 0.14.2 &mdash; parked on your both-names ruling</h2>
+<p>Open since 2026-08-07. 22 files, +1,249/-42. <strong>Parked deliberately. It is
+not stalled; it is waiting on you.</strong></p>
+<p><strong>The Operator name was collected from the player and then went
+nowhere.</strong> The PR introduces <strong>two identity fields</strong> rather
+than one &mdash; your both-names ruling made concrete &mdash; and fixes a
+truncation that was amputating names rather than eliding them.</p>
+<p><strong>This is the same surface as M10's finding 2</strong>: the copy says
+"Operator" in one dialog and "player name" in the next <em>because there genuinely
+are two concepts and the UI had one word</em>. <strong>Deciding #1176 decides the
+copy.</strong> At 22 files across the identity path it is not a rubber stamp, and
+it targets 0.14.2 rather than a patch.</p>
+<div class="ask"><p>ASK</p>
+<ul>
+<li><span class="box">[ ]</span> Both names carried, per your ruling &mdash; <strong>confirm / amend</strong></li>
+<li><span class="box">[ ]</span> Ship in <strong>0.14.2 / later</strong></li>
+<li><span class="box">[ ]</span> The player-facing word is <strong>Operator / player name / both, in defined places</strong>: <span class="fill" style="min-width:40mm"></span></li>
+</ul></div>
+</div>
+
+<div class="card">
+<h2>M12 &nbsp; The art payload is unruled, and it has grown three times</h2>
+<p><strong>Not on the week plan. No date. Nobody is chasing it.</strong>
+From <code>HANDOVER_2026-08-06_EVENING.md:178-180</code>, under "Still unruled":</p>
+<blockquote><strong>Art promotion is at 200.4 MB</strong>, from the 58 MB Pip
+agreed to. It has grown three times, <strong>each time because a fix revealed cost
+a bug was hiding.</strong> Worth re-ruling rather than assuming the old answer
+holds.</blockquote>
+<p><strong>The numbers, with their own caveat attached.</strong> The analysis gives
+<code>1,206 files, 200.4 MB</code> promotable, and
+<strong>200.4 MB &rarr; 46.5 MB at 1x display size, 71.2 MB at 2x</strong>, saving
+129-154 MB. <strong>Contested by <code>CLAIM_AUDIT_2026-08-06.md:282-286</code>
+(entry U7): the set and its 200.4 MB come from a gitignored store, so the number is
+not independently checkable from the repo.</strong> Reported because it is
+unflattering to the claim, not despite it.</p>
+<p><strong>Why it is not just disk:</strong> Godot packs the <em>entire</em>
+<code>godot/</code> tree into the <code>.pck</code>, referenced or not. A payload
+ruling is a download-size ruling.</p>
+<p><strong>Expiring alongside it (week-plan P10):</strong> your generation spend
+policy &mdash; <em>"$100 AUD/day unconstrained until 2026-08-15"</em> &mdash;
+<strong>expires Saturday</strong>. <code>coordination#33</code> has USD 44
+headroom; <code>#1164</code> is generated and unmerged.
+<strong>Nothing alarms when it expires; it just stops being true, silently.</strong></p>
+<div class="ask"><p>ASK</p>
+<ul>
+<li><span class="box">[ ]</span> Payload ceiling: <strong>58 MB stands / new figure
+<span class="fill" style="min-width:18mm"></span> MB / downscale to 1x (46.5 MB) /
+downscale to 2x (71.2 MB)</strong></li>
+<li><span class="box">[ ]</span> Spend policy after 08-15: <strong>lapse / extend to
+<span class="fill" style="min-width:22mm"></span> / new daily cap
+<span class="fill" style="min-width:18mm"></span></strong></li>
+</ul></div>
+</div>
+
+<div class="card">
+<h2>M13 &nbsp; "The rewrite thing" &mdash; your words, verbatim, not interpreted</h2>
+<p><strong>Recorded exactly as said, because it is a half-formed thought and
+paraphrasing it would lose it.</strong></p>
+<blockquote><strong>"The rewrite thing falls into a pattern of rules that I think
+is now just mere hours away from me adopting, so I will defer these
+decisions."</strong><br>
+&mdash; Pip, 2026-08-09, quoted by the pdoom-data seat in
+<code>coordination#49</code></blockquote>
+<p><strong>No interpretation is offered, and none should be inferred from the
+placement of this card.</strong></p>
+<p><strong>The concrete instance it was said about belongs to the pdoom-data seat,
+not pdoom1.</strong> <code>pdoom-data#72</code> redacts email addresses of named
+academics at HEAD; <strong>the addresses remain in git history, in every existing
+clone, and in every fork.</strong> Removing them requires a history rewrite &mdash;
+disruptive and irreversible. <strong>Scope, so the rule can be sized against a real
+number: 405 unique addresses across 13 files</strong>, one of them a 196 MB
+untracked local dump; published history is the tracked subset only.</p>
+<p>pdoom-data's own framing, repeated rather than restated:</p>
+<blockquote><strong>Do not treat this as an open question needing an answer
+Monday.</strong> Pip has deferred it deliberately because he judges it an instance
+of a general rule he is close to adopting, and deciding it case-by-case first would
+pre-empt the rule. <strong>The ask on Monday is whether the rule has landed, not
+what to do about these addresses.</strong></blockquote>
+<div class="ask"><p>ASK</p>
+<ul>
+<li><span class="box">[ ]</span> Has the rule landed? <strong>Yes</strong> &mdash;
+state it: <span class="fill" style="min-width:95mm"></span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="fill" style="min-width:150mm"></span><br>
+<span class="box">[ ]</span> <strong>No, still forming</strong></li>
+<li><span class="box">[ ]</span> If yes, does it settle <code>pdoom-data#72</code>'s
+history rewrite? <strong>Yes / No / needs its own pass</strong></li>
+</ul></div>
+</div>
+
+<hr class="rule">
+
+<h2>What was cut from this sheet, and where it is instead</h2>
+<p>Cut deliberately rather than dropped, <strong>because a stack you will not
+finish is not lossless in the way that matters.</strong> Nothing below was
+summarised away &mdash; each lives in a document that is already printed or already
+published, and every card that touches one names it.</p>
+<table>
+<tr><th>Cut</th><th>Where it is</th></tr>
+<tr><td>The eleven dated commitments P1-P11, in full, with sources and reminder status</td><td>Section 2, <code>tools/runsheet/week-2026-08-10-plan.html</code> &mdash; <strong>on the printer</strong></td></tr>
+<tr><td>The three ranked suggestions S1-S3</td><td>Section 5 of the same plan</td></tr>
+<tr><td>Every player-facing string, quoted</td><td><code>tools/runsheet/copy-review-2026-08-09.html</code>, 20 pages &mdash; <strong>on your desk</strong></td></tr>
+<tr><td>Workshop 2's full ruling ledger R1-R10 and the eight-class taxonomy with evidence</td><td><code>coordination#47</code> and the recorder's minute</td></tr>
+<tr><td>The full 14-issue release table, the four dead-end write paths, PR diffs</td><td><code>docs/MONDAY_STACK_2026-08-10.md</code> and GitHub</td></tr>
+</table>
+<p style="margin-top:4mm"><strong>pdoom1 seat, 2026-08-09.</strong> Full working:
+<code>G:\Documents\Organising_Life\Code\pdoom1\docs\MONDAY_STACK_2026-08-10.md</code></p>
