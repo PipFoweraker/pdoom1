@@ -9,6 +9,7 @@ must go RED on the exact text that reached players. A guard that has never been
 shown to fail is not evidence.
 """
 
+import re
 import sys
 from pathlib import Path
 
@@ -157,3 +158,55 @@ def test_the_real_changelog_has_exactly_one_unreleased_heading():
     """Regression pin for the six-heading corruption (#1165)."""
     findings = guard.check_changelog_structure(guard.CHANGELOG.read_text(encoding="utf-8"))
     assert "RN001" not in codes(findings)
+
+
+# --------------------------------------------------------------------------
+# RN005 -- the disclosure escape checked in the OTHER direction.
+# Taken from the non-overlapping half of #1187. It matters now because the
+# [0.14.0] correction added fourteen `is still OPEN` markers in one edit; every
+# one of them becomes a false claim on the day its issue closes.
+# --------------------------------------------------------------------------
+
+
+def test_rn005_stale_disclosure_is_fatal():
+    body = "- **Music picker** (#1146) -- shipped. **#1146 is still OPEN**.\n"
+    findings, _ = guard.check_body_citations(body, "vX")
+    assert "RN005" in codes(findings)
+
+
+def test_rn005_does_not_fire_on_a_live_disclosure():
+    # #500 is OPEN in the fixture, so the disclosure is true and must pass.
+    body = "- **Research quality** (#500, #1146). **#500 is still OPEN**.\n"
+    findings, _ = guard.check_body_citations(body, "vX")
+    assert codes(findings) == []
+
+
+def test_rn005_is_scoped_to_the_bullet_that_discloses():
+    """A stale marker in one bullet must not condemn a clean neighbour."""
+    body = "- clean (#1146).\n\n- stale (#965). **#965 is still OPEN**.\n"
+    findings, _ = guard.check_body_citations(body, "vX")
+    fatal = [f for f in findings if f.fatal]
+    assert [f.code for f in fatal] == ["RN005"]
+    assert "#965" in fatal[0].message
+
+
+def test_rn005_and_rn003_do_not_both_fire_on_one_citation():
+    """An OPEN issue with no disclosure is RN003 only; RN005 is the inverse."""
+    body = "- undisclosed (#500).\n"
+    findings, _ = guard.check_body_citations(body, "vX")
+    assert codes(findings) == ["RN003"]
+
+
+def test_corrected_0140_section_passes_all_rules_offline():
+    """Regression pin for this PR's own subject.
+
+    The [0.14.0] section is byte-identical to the first 74 lines of the
+    PUBLISHED v0.14.0 body, so a regression here is a regression in player-
+    facing text, not in a repo file.
+    """
+    section = guard.extract_changelog_section("0.14.0", guard.CHANGELOG.read_text(encoding="utf-8"))
+    assert section, "[0.14.0] section must still be extractable"
+    for number in (793, 798, 802, 957, 1063, 1067, 1068, 1072, 1093, 1111, 1115, 1117, 1125, 1126):
+        assert "#{} is still OPEN".format(number) in re.sub(r"[*_`]", "", section).replace(
+            "\n", " "
+        ), "#{} lost its disclosure".format(number)

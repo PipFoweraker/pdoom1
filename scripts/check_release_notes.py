@@ -21,6 +21,13 @@ RN003  an issue or PR number cited in a release body whose issue is still
 RN004  an issue or PR number cited in a version's release body that cannot be
        tied to any commit message between that version's tag and the previous
        one.  FATAL when a tag range is supplied.
+RN005  a bullet that says `#N is still OPEN` about an issue that has since
+       CLOSED.  FATAL.  The disclosure escape is only worth having if it is
+       checked in both directions: a stale "still open" tells a player that
+       finished work is unfinished, which is the same defect as RN003 pointing
+       the other way. Taken from #1187, whose author identified this; the
+       `[0.14.0]` correction added fourteen of these markers at once, so the
+       rot has somewhere to happen now.
 
 WHAT THIS DOES NOT CHECK (still a human's job -- see docs/RELEASE_NOTES_GUARD.md)
 --------------------------------------------------------------------------------
@@ -404,6 +411,22 @@ def check_body_citations(
                     False,
                     "{}: could not resolve #{} (line {})".format(label, number, line_no),
                     "Treated as unresolved, not as a pass.",
+                )
+            )
+        elif is_disclosed(number, unit):
+            findings.append(
+                Finding(
+                    "RN005",
+                    True,
+                    "{}: says #{} is still OPEN, but it is {}".format(label, number, state),
+                    "line {}: {}\n".format(line_no, unit.strip().splitlines()[0][:100])
+                    + 'Drop the "#{} is still OPEN" clause. '.format(number)
+                    + "A disclosure that has gone stale is its own false claim,\n"
+                    + "in the same file and to the same reader -- it now tells a\n"
+                    + "player that finished work is unfinished. RN003 is the only\n"
+                    + "reason the disclosure wording exists, so the wording has to\n"
+                    + "be checked in BOTH directions or the escape rots into\n"
+                    + "decoration. Taken from the non-overlapping half of #1187.",
                 )
             )
     return findings, numbers

@@ -60,6 +60,15 @@ Consequences worth stating plainly:
 | RN002 | the same version heading appearing twice | warn |
 | RN003 | a cited issue/PR whose state is OPEN | fatal |
 | RN004 | a cited issue/PR that no commit in `<prev tag>..<tag>` mentions | fatal |
+| RN005 | a bullet saying `#N is still OPEN` about an issue that has CLOSED | fatal |
+
+RN005 is the disclosure escape checked in the other direction, added 2026-08-09
+and taken from the non-overlapping half of #1187, whose author identified it.
+Without it the escape rots into decoration: a marker written truthfully in
+August is a false claim to a player in September, in the same file and on the
+same page, and RN003 -- the only reason the wording exists -- would never look
+at it. It became load-bearing immediately, because the `[0.14.0]` correction
+added fourteen such markers in one edit.
 
 RN002 is a warning because `CHANGELOG.md` carries a genuine historical
 duplicate (`[0.7.4]`, twice on 2025-09-16) that predates the guard. Making it
