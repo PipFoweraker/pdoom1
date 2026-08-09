@@ -87,22 +87,34 @@ Featured league seed rolls to `weekly-2026-w32`.
 
 Every entry below is tied to a commit merged between `v0.13.2` and this release.
 
+**Corrected 2026-08-09.** As first published, this section named 14 issues in
+wording that read as "we delivered this", and all 14 were -- and still are --
+open. The code behind each one is real and merged in this range; the issue it
+belongs to is not finished. Every such citation now says so in the same
+sentence, so you can tell what shipped from what only moved. Nothing about the
+build changed, and no entry was deleted.
+
 ### Added
 - **Pick the music from the pause menu** (#802, #1146) -- track selection while
-  you play, not only in Settings.
+  you play, not only in Settings. The wider music controller is not done:
+  **#802 is still OPEN** for mute/skip and the doom-triggered rotation.
 - **A credits screen you can actually reach** (#1161).
 - **Month review shows what CHANGED**, and SPACE opens it (#1100).
 - **Settings rebuilt as a front card plus an operations board** (#1096, #1103).
 - **One-time "claim a name" prompt before your first upload**, plus a lab-name
   generator (#957, #1063, #1133) -- a public board of identical
-  "Researcher -- AI Safety Lab" rows is one nobody can find themselves on.
+  "Researcher -- AI Safety Lab" rows is one nobody can find themselves on. The
+  prompt appears at upload, not on the first screen (**#1063 is still OPEN**),
+  and your own row is not yet highlighted on the board (**#957 is still OPEN**).
 - **Epoch-aware update check** reads `release_manifest.json`; the manifest now
   carries the ladder epoch and sha256 anchors (#1110).
 
 ### Changed
 - **Historical event deck retimed to one turn = one month**, with a timing dial
-  and the ruled promotions applied (#1111, #1125, #1137). *This is the change
-  that forks the ladder.*
+  and the ruled promotions applied (#1137), against Pip's rulings of 2026-08-04.
+  *This is the change that forks the ladder.* The ruling records stay open
+  because deferred items remain in them (**#1111 is still OPEN**,
+  **#1125 is still OPEN**); the retime itself shipped.
 - **Difficulty lock enforced where the value is CONSUMED**, not on one screen,
   and Alpha Tools now set a sticky unranked flag (#1058, #1060, #1084, #1104).
 - **One table for choice keys, one door per panel** -- keyboard and navigation
@@ -123,29 +135,41 @@ Every entry below is tied to a commit merged between `v0.13.2` and this release.
   (#1083).
 - **The office cat was a magenta checkerboard in every shipped build** -- not one
   flaky JPG (#796, #1080).
-- **The server rack painted over the feed and the staff were oversized** (#793,
-  #1081).
+- **The server rack painted over the feed and the staff were oversized**
+  (#793, #1081). Every staff member still renders as the same character, so
+  **#793 is still OPEN**.
 - **The public build wore a stale, clipped "DEV BUILD" banner** (#1067, #1079).
+  The banner is fixed; CI still does not run `write_build_stamp.py`, so
+  **#1067 is still OPEN**.
 - **A failed global leaderboard fetch is now VISIBLE**, and players are warned
-  about SmartScreen (#1126, #1127).
+  about SmartScreen (#1127). The toggle's own un-press behaviour is unverified
+  in a shipped build, so **#1126 is still OPEN**.
 - **Music was too loud and the wrong track; Graphics Settings was an empty
   header** (#1095).
 - **Percent tie direction pinned**, so doom reads the same on every platform.
 - **Release export filename derives from the preset**, and the Linux alias is
-  published (#1068, #1072, #1099).
+  published (#1099). Neither the site's Linux download button
+  (**#1068 is still OPEN**) nor the hardcoded-output-name issue
+  (**#1072 is still OPEN**) has been confirmed closed against a shipped build.
 - **The backslash dev key returns in release builds** (dev gates split) (#1129).
 
 ### Dev / tooling (no player-visible change)
 - CI exports now route through `build_release.py`'s freshness proof (#1069,
   #1114); the GDScript syntax gate COMPILES every `.gd` rather than only what
   boot reaches (#1082, #1119).
-- New instruments: `find_dead_code.py` (#1117, #1124), an action-taxonomy checker
-  (#798, #1139), a generated `docs/TOOLS.md` (#1123), a generated
-  `decisions/README.md` (#1108).
-- Dead paths retired; what remains is LOUD (#1115, #1118).
+- New instruments: `find_dead_code.py` (#1124), an action-taxonomy checker
+  (#1139), a generated `docs/TOOLS.md` (#1123), a generated
+  `decisions/README.md` (#1108). These are instruments, not fixes: the dead-path
+  sweep they serve is unfinished (**#1117 is still OPEN**) and the taxonomy
+  checker reports the action grouping it was built to measure
+  (**#798 is still OPEN**).
+- Dead paths retired; what remains is LOUD (#1118). The pdoom-data re-sync
+  capability was deleted rather than replaced, so **#1115 is still OPEN**.
 - Art pipeline: promotion map unblocks 605 then all 327 remaining approved assets
-  (#1093, #1107, #1122); 2,713 human verdicts made durable; the 2026-08-07 art
+  (#1107, #1122); 2,713 human verdicts made durable; the 2026-08-07 art
   night fired 652 images (#1158); art-review gallery keyboard repaired (#1162).
+  The review backlog those assets came from is not cleared, so
+  **#1093 is still OPEN**.
 - Issue triage across all 201 open issues plus a 7-fix drive-by batch (#1144),
   and a pre-close mining pass (#1153).
 - ADR-0019 (the pack is a function of declared demand), a phase-critical state

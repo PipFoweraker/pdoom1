@@ -2,13 +2,31 @@ name: Release Sync Monitor
 
 # Belt-and-braces LOUD failure detector for the version-sync pipeline.
 #
-# The primary sync path (sync-game-version.yml, driven from enhanced-release.yml
-# via workflow_call) can still silently no-op if someone changes how releases
-# are cut. This job independently compares the latest PUBLISHED game release
-# against what the website currently advertises, and FAILS RED (plus ::error::)
-# when they diverge -- which means the primary path did not run. A red scheduled
-# run is the loud signal; re-fire the sync with:
-#   gh workflow run sync-game-version.yml -f target_version=vX.Y.Z
+# Compares the latest PUBLISHED game release against what the website repo
+# holds, and FAILS RED (plus ::error::) when they diverge. A red scheduled run
+# is the loud signal; the site's own refresh is a 6-hourly cron
+# (pdoom1-website auto-update-data.yml), so re-fire it with:
+#   gh workflow run auto-update-data.yml --repo PipFoweraker/pdoom1-website
+#
+# REPOINTED 2026-08-09. This used to read
+# `pdoom1-website:data/current-game-version.json`, written by our own
+# sync-game-version.yml. That made it a decoy in two ways at once:
+#   1. it was the ONLY reader of that file, so it was really checking "did our
+#      own workflow run", not "is the website in sync";
+#   2. the file lives at the website repo root, OUTSIDE `public/`, and their
+#      deploy rsyncs `public/` only -- so it could read "v0.14.1" while
+#      pdoom1.com served something older, which is exactly what happened on
+#      the v0.14.0 cut (pdoom1-website#285).
+# It now reads `public/data/version.json` -- the file that is actually
+# deployed and actually served, and the same artefact
+# live-site-release-freshness.yml (#1182) fetches over HTTP.
+#
+# TWO ASSERTIONS, still deliberately separate:
+#   A) the website REPO has the update       -- this workflow (via the API)
+#   B) the LIVE SITE serves it               -- live-site-release-freshness.yml
+# Both now name the same artefact, so a divergence between them means
+# "committed but not deployed" rather than "we are comparing two unrelated
+# files", which is what it meant before.
 #
 # Read-only: no writes to any repo. Uses CROSS_REPO_TOKEN only to READ the
 # (possibly private) website file.
@@ -42,26 +60,39 @@ jobs:
             exit 0
           fi
 
-          # What the website currently advertises. Read-only; tolerate a missing
-          # file (warn, do not fail) so a first-time setup does not false-alarm.
+          # What the website will actually DEPLOY. public/data/version.json is
+          # inside public/, which is the only tree deploy-dreamhost.yml rsyncs,
+          # and it is the same file live-site-release-freshness.yml fetches
+          # over HTTP. Read-only; tolerate a missing/unreadable file (warn, do
+          # not fail) rather than false-alarming on an API hiccup.
           WEB_RAW=$(GH_TOKEN="$WEBSITE_TOKEN" gh api \
-            repos/PipFoweraker/pdoom1-website/contents/data/current-game-version.json \
+            repos/PipFoweraker/pdoom1-website/contents/public/data/version.json \
             --jq '.content' 2>/dev/null | base64 -d 2>/dev/null || true)
 
           if [ -z "$WEB_RAW" ]; then
-            echo "::warning::Could not read website current-game-version.json (missing or unreadable); skipping strict check."
+            echo "::warning::Could not read pdoom1-website public/data/version.json (missing or unreadable); skipping strict check."
             exit 0
           fi
 
-          WEB_VERSION=$(printf '%s' "$WEB_RAW" | jq -r '.current_version // empty')
+          # That file stores the tag WITH its leading v ("v0.14.1"); strip it so
+          # both sides are compared in the same shape.
+          WEB_VERSION=$(printf '%s' "$WEB_RAW" | jq -r '.latest_release.version // empty')
+          WEB_VERSION="${WEB_VERSION#v}"
 
-          echo "Latest published release: $LATEST"
-          echo "Website current version:  $WEB_VERSION"
+          if [ -z "$WEB_VERSION" ]; then
+            echo "::warning::public/data/version.json has no .latest_release.version; skipping strict check."
+            exit 0
+          fi
+
+          echo "Latest published release:      $LATEST"
+          echo "Website repo (to be deployed): $WEB_VERSION"
 
           if [ "$WEB_VERSION" = "$LATEST" ]; then
-            echo "IN SYNC: website matches the latest published release."
+            echo "IN SYNC: the website repo holds the latest published release."
+            echo "NOTE: this says the REPO is current, not that pdoom1.com serves it."
+            echo "live-site-release-freshness.yml makes that second assertion."
             exit 0
           fi
 
-          echo "::error::Website version ($WEB_VERSION) does not match latest published release ($LATEST). The version-sync pipeline did not run for this release. Re-fire: gh workflow run sync-game-version.yml -f target_version=v$LATEST"
+          echo "::error::pdoom1-website repo advertises $WEB_VERSION, latest published release is $LATEST. The website has not picked this release up. Its refresh is a 6-hourly cron; re-fire it with: gh workflow run auto-update-data.yml --repo PipFoweraker/pdoom1-website"
           exit 1
