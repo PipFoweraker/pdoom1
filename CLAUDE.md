@@ -78,6 +78,44 @@ runtime -- the old Python bridge is gone). Python exists only for CI/tooling in
   this repo repeatedly (mangled `\d`/`\s`/`\u` escapes, `gh issue create` bodies
   dying on quoting). Write the file, then act on it.
 
+## Godot writes to Pip's REAL player profile -- isolate it (2026-08-08, cost a board)
+- **Every `godot --headless` run on this machine writes into
+  `C:/Users/Pip/AppData/Roaming/Godot/app_userdata/P(Doom)/`.** The user data dir
+  derives from `config/name` in `project.godot`, NOT from the worktree path, so
+  all worktrees share ONE profile. `scripts/run_godot_tests.py` inherits the
+  parent `APPDATA`.
+- **What it cost:** a test run wrote **1,330 files** into that profile,
+  **destroyed the 50-entry 2026-07-31 league board** (recovered from a backup),
+  mutated `config.cfg`/`keybinds.cfg`/`theme.cfg`, and injected 23 synthetic rows
+  into the LIVE `(weekly-2026-w32, L4)` board during a release playtest -- which
+  then corrupted the evidence being used to diagnose a separate ship blocker.
+  Filed as **#1070 on 2026-07-31 and left open for seven days** before it went off.
+- **Do this, every Godot invocation:**
+  `APPDATA=C:/Users/Pip/AppData/Local/Temp/claude/godot-iso-<lane> godot --headless ...`
+  (PowerShell: set `$env:APPDATA` first.) **`XDG_DATA_HOME` does NOT work on
+  Windows** -- proven, no effect. Verify by printing `OS.get_user_data_dir()` once
+  and confirming it is not under `AppData/Roaming`.
+- **Consequence nobody expects:** an isolated `APPDATA` has no Godot **export
+  templates** (`%APPDATA%/Godot/export_templates/`), so `build_release.py` dies
+  with a bare `exited 1`. Copy the templates into the sandbox, or build unisolated
+  (builds do not write boards).
+- Do NOT set `use_custom_user_dir` in `project.godot` -- that ships to players and
+  would move every real player's save directory.
+
+## Relay only what you verified (2026-08-06..09, measured)
+- A claim audit over one cycle's output found **6 of 68 headline claims wrong
+  (8.8%)** -- two already merged, one already propagated to two other repos
+  (`docs/CLAIM_AUDIT_2026-08-06.md`). Every one was an assertion made from a
+  summary, a memory, or another agent's report rather than from a source.
+- **Adopted rule:** a claim in a title, summary line, table cell or bolded
+  sentence must be reducible to a command another party can run, or it moves into
+  the body with its hedge. Two amendments learned since: **a runnable command is
+  not a run command** (re-run it against the tree that merges), and **a published
+  command must be shown capable of returning the other answer.**
+- **The specific trap:** relaying a sibling agent's characterisation. A lane was
+  told to adopt two things from a rival PR "because they were better"; both were
+  **backwards** when checked against the code. Read the diff, not the description.
+
 ## Agent gotchas (hard-won 2026-07-20..22)
 - **Pushes hang on Git Credential Manager** (interactive prompt, no GUI):
   prefix `GIT_TERMINAL_PROMPT=0` on `git push` -- pushes instantly via gh's
