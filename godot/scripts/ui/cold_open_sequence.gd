@@ -111,6 +111,15 @@ const PORTAL_GLOW_END: float = 0.9          #   glow_strength 1.6 (default) -> t
 
 # Palette handoff during the collapse: doom-red -> the phone's CRT phosphor green
 # (both presets from the shader header; green = TerminalTheme.GREEN family).
+# The RED preset is set EXPLICITLY at build time even though it equals the shader
+# defaults: an unset uniform has no concrete material property value, and
+# tween_property cannot interpolate from nothing -- the first capture proved the
+# handoff silently no-ops without this (still red at 94% of the tween, measured).
+const PORTAL_RED_PALETTE: Dictionary = {
+	"color_core": Color(1.00, 0.85, 0.55),
+	"color_mid": Color(0.95, 0.12, 0.10),
+	"color_edge": Color(0.35, 0.02, 0.05),
+}
 const PORTAL_GREEN_PALETTE: Dictionary = {
 	"color_core": Color(0.75, 1.00, 0.80),
 	"color_mid": Color(0.36, 0.93, 0.47),
@@ -241,6 +250,10 @@ func _build_portal() -> void:
 	_portal_mat = ShaderMaterial.new()
 	_portal_mat.shader = load(PORTAL_SHADER)
 	_portal_mat.set_shader_parameter("open_progress", 0.0)  # born closed; the cue opens it
+	# Seed the red palette EXPLICITLY (see PORTAL_RED_PALETTE's comment: the collapse
+	# tween needs concrete start values, defaults are not material properties).
+	for uni in PORTAL_RED_PALETTE.keys():
+		_portal_mat.set_shader_parameter(uni, PORTAL_RED_PALETTE[uni])
 
 	_portal = TextureRect.new()
 	var img := Image.create(8, 8, false, Image.FORMAT_RGBA8)
@@ -316,9 +329,12 @@ func _cue_portal_collapse() -> void:
 	_portal_tween = create_tween().set_parallel(true)
 	_portal_tween.tween_property(_portal_mat, "shader_parameter/open_progress", 0.0, PORTAL_COLLAPSE_SECONDS) \
 		.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
-	_portal_tween.tween_property(_portal, "modulate:a", 0.0, PORTAL_COLLAPSE_SECONDS)
+	# Alpha eases IN (stays visible, then drops) so the green actually READS before the
+	# disc is gone; the palette lands by 50% of the collapse for the same reason.
+	_portal_tween.tween_property(_portal, "modulate:a", 0.0, PORTAL_COLLAPSE_SECONDS) \
+		.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
 	for uni in PORTAL_GREEN_PALETTE.keys():
-		_portal_tween.tween_property(_portal_mat, "shader_parameter/" + uni, PORTAL_GREEN_PALETTE[uni], PORTAL_COLLAPSE_SECONDS * 0.7)
+		_portal_tween.tween_property(_portal_mat, "shader_parameter/" + uni, PORTAL_GREEN_PALETTE[uni], PORTAL_COLLAPSE_SECONDS * 0.5)
 	_kill_tween(_poster_tween)
 	_poster_tween = create_tween()
 	_poster_tween.tween_property(_poster, "modulate:a", POSTER_ALPHA_PHONE, PORTAL_COLLAPSE_SECONDS)
