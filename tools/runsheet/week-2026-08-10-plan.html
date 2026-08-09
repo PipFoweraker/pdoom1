@@ -1,0 +1,362 @@
+<title>Week preview -- Mon 2026-08-10 to Sun 2026-08-16</title>
+<style>
+  @page { margin: 13mm 13mm; }
+  body {
+    font: 12.5pt/1.34 Georgia, "Times New Roman", serif;
+    color: #000; background: #fff;
+    max-width: 44em; margin: 2rem auto; padding: 0 1.5rem;
+  }
+  h1 { font-size: 20pt; margin: 0 0 .15em; line-height: 1.15; }
+  h2 { font-size: 14pt; margin: 1.1em 0 .35em; padding-bottom: .15em;
+       border-bottom: 1.5px solid #000; page-break-after: avoid; }
+  h3 { font-size: 12.5pt; margin: 1.1em 0 .3em; page-break-after: avoid; }
+  p, li, td, th { orphans: 3; widows: 3; }
+  p { margin: .5em 0; }
+  .sub { font-size: 11pt; margin: 0 0 1.1em; }
+  .verdict { border: 2.5px solid #000; padding: .8em 1em; margin: 1.1em 0;
+             page-break-inside: avoid; }
+  .verdict p { margin: 0 0 .4em; font-size: 13pt; }
+  .verdict p:last-child { margin-bottom: 0; }
+  table { border-collapse: collapse; width: 100%; font-size: 11pt; margin: .6em 0;
+          page-break-inside: avoid; }
+  th, td { border: 1px solid #000; padding: .22em .4em; text-align: left;
+           vertical-align: top; }
+  th { background: #e8e8e8; }
+  ul { padding-left: 1.2em; margin: .4em 0; }
+  li { margin: .25em 0; }
+  .tag { font: 10pt/1 "Consolas","Courier New",monospace; }
+  pre { font: 10pt/1.35 "Consolas","Courier New",monospace; background: #f2f2f2;
+        border-left: 3px solid #666; padding: .6em .8em; page-break-inside: avoid; }
+  blockquote { margin: .5em 0 .5em 1em; padding-left: .8em;
+               border-left: 3px solid #000; font-size: 11.5pt; }
+  .mark { border: 1.5px solid #000; display: inline-block; width: .85em;
+          height: .85em; vertical-align: -.1em; margin-right: .4em; }
+  .rule { width: 100%; border-bottom: 1px solid #000; display: inline-block;
+          margin-top: .9em; }
+  .cite { font-size: 10.5pt; }
+  .src { font-size: 10pt; }
+  hr { border: 0; border-top: 1px solid #000; margin: 1.4em 0; }
+  .pb { page-break-before: always; }
+  @media print { body { margin: 0; max-width: none; } a { text-decoration: none; color: #000; } }
+</style>
+
+<h1>The coming week &mdash; what exists</h1>
+<p class="sub">Mon 2026-08-10 to Sun 2026-08-16 &middot; for Pip &middot; from the
+pdoom1 seat &middot; built 2026-08-09 against <span class="tag">origin/main 7b59166e</span>
+&middot; all times AEST</p>
+
+<div class="verdict">
+  <p><strong>You predicted CURRENT and PLANNED would be thin. Half right.</strong>
+  PLANNED holds <strong>eleven dated items</strong> landing inside these seven
+  days &mdash; it is not thin. <strong>What is thin is that nine of the eleven
+  have no reminder of any kind</strong>, and the two that do are reminded by a
+  person.</p>
+  <p><strong>Nothing this week is in a calendar, a milestone, a tool or a Jira.</strong>
+  pdoom1 does not use Jira and never has. No GitHub milestone falls due in August.
+  Every date below lives in a markdown file or an issue body, and nothing reads
+  either on a schedule.</p>
+</div>
+
+<h2>1. Is it anywhere? Per system, including the blanks</h2>
+
+<table>
+  <tr><th>System</th><th>Holds</th><th>Fires next week?</th></tr>
+  <tr><td><strong>Jira</strong></td>
+      <td><strong>NOT USED.</strong> Zero occurrences of "jira" across every
+      <span class="tag">.md .py .gd .yml .json</span> in the repo. Deferred by
+      policy: <span class="tag">ROADMAP.md:111-113</span></td>
+      <td><strong>No. Do not look here</strong></td></tr>
+  <tr><td><strong>GitHub milestones</strong><br><span class="src">CLAUDE.md calls
+      these the live "Now"</span></td>
+      <td><strong>Nothing from this week.</strong> Due dates: Future Releases
+      2025-12-30 (8 months overdue), First Contact 2026-09-29, Tech Debt
+      2026-10-30, Rivals &amp; News 2026-12-30</td>
+      <td><strong>No.</strong> <span class="tag">#1061</span> and
+      <span class="tag">#984</span> are both <span class="tag">milestone=none</span></td></tr>
+  <tr><td><strong>GitHub issues</strong></td>
+      <td>P1 <span class="tag">#1061</span>, P3 <span class="tag">#984</span>,
+      P4 <span class="tag">coord#32</span>, P2/P11 <span class="tag">coord#47</span></td>
+      <td><strong>No.</strong> No due-date field, no bot. Dates live in prose</td></tr>
+  <tr><td><strong>Repo docs</strong></td>
+      <td>P4-P11 all traceable to a file and a line</td>
+      <td><strong>No.</strong> A dated line is read when someone opens the file</td></tr>
+  <tr><td><strong>tools/runsheet/</strong></td>
+      <td>11 printed sheets, <strong>all retrospective or same-day</strong>.
+      Latest <span class="tag">sat-2026-08-08-release-status.html</span></td>
+      <td><strong>Only this sheet.</strong> First forward-looking one in the folder</td></tr>
+  <tr><td><strong>tools/ + CI</strong></td>
+      <td>Version, ladder and freshness gates; a daily release-sync monitor</td>
+      <td><strong>No.</strong> Every gate fires on a <em>commit</em>.
+      <strong>None fires on a date</strong></td></tr>
+  <tr><td><strong>GitHub Projects</strong></td>
+      <td><strong>NO VISIBILITY.</strong> <span class="tag">gh project list</span>
+      failed &mdash; token missing <span class="tag">read:project</span></td>
+      <td><strong>Unknown.</strong> Fix:
+      <span class="tag">gh auth refresh -s read:project</span></td></tr>
+  <tr><td><strong>Calendars</strong><br>(Google / phone / paper)</td>
+      <td><strong>I HAVE NO VISIBILITY OF ANY CALENDAR.</strong> Cannot read one,
+      cannot write to one</td>
+      <td><strong>Unknown to me.</strong> Every "none" below means <em>nothing in
+      the repo or on GitHub</em>, not <em>nothing anywhere</em></td></tr>
+  <tr><td><strong>Physical</strong></td>
+      <td>The walkpack/runsheet print habit &mdash; the estate's only demonstrated
+      forcing function</td>
+      <td><strong>Only if printed.</strong> Which is why this page exists</td></tr>
+</table>
+
+<p class="cite">The one recurring anchor I can see documented: <strong>Rektango,
+Friday 17:30</strong> (<span class="tag">WORKSHOP_3_PREP.md</span>, "the weekly
+anchor") &mdash; a hard stop on <strong>Fri 08-14</strong>, the same day three
+falsifiers fall due.</p>
+
+<h2>2. PLANNED &mdash; eleven dated items, and what would remind you</h2>
+
+<table>
+  <tr><th>Date</th><th>Item &middot; who committed it</th><th>Reminder</th></tr>
+  <tr><td><strong>Mon<br>08-10</strong></td>
+      <td><strong>P1. IP / trademark to the Australian lawyers.</strong> Five-point
+      brief. <strong>You</strong>, and you asked to be forced.
+      <span class="tag">#1061</span><br>
+      <span class="src">Slipped 08-03 &rarr; 08-10 on 2026-08-06. Funding block, not
+      priority block</span></td>
+      <td><strong>NOTHING</strong></td></tr>
+  <tr><td><strong>Mon<br>08-10</strong></td>
+      <td><strong>P2. Read the Workshop 2 minute.</strong> Ten rulings R1-R10;
+      closed 11:35 today; you were absent by design and the chair says you "was not
+      needed once". <span class="tag">coord#47</span></td>
+      <td>The recorder posting it. <strong>A person</strong></td></tr>
+  <tr><td><strong>Week of<br>08-10</strong></td>
+      <td><strong>P3. Half-day audit-mechanics workshop.</strong>
+      <strong>Your</strong> ruling, 2026-07-27 18:11, target window "week of
+      2026-08-10, before the 2026-08-31 formal review".
+      <span class="tag">#984</span></td>
+      <td><strong>NOTHING</strong></td></tr>
+  <tr><td><strong>Thu<br>08-13</strong></td>
+      <td><strong>P4. Asset provenance: retroactive or prospective only?</strong>
+      Manifund obligation. <strong>The pdoom1 seat</strong> named itself blocking
+      party in public. <span class="tag">coord#32</span></td>
+      <td>None automated.<br><strong>Another repo is waiting</strong></td></tr>
+  <tr><td><strong>Thu 08-13<br>Fri 08-14</strong></td>
+      <td><strong>P5/P6. Thursday dev, Friday push.</strong> "Friday is an ordinary
+      patch day." <strong>You</strong>, 2026-08-06.
+      <span class="tag">HANDOVER_2026-08-06_EVENING.md:163</span></td>
+      <td><strong>NOTHING</strong></td></tr>
+  <tr><td><strong>Fri<br>08-14</strong></td>
+      <td><strong>P7. Open-issue count.</strong> If &gt;= 208, the weekly
+      close-sweep did not happen and the triage lane must not re-run.
+      <span class="tag">POSTMORTEM_2026-08-07_CAPTURE.md:758</span></td>
+      <td>None. <strong>Already failing:<br>211 today</strong></td></tr>
+  <tr><td><strong>Fri<br>08-14</strong></td>
+      <td><strong>P8.</strong> <span class="tag">grep -n MEASURED
+      docs/art/SEED_ART_COST_MODEL.md</span> &mdash; any survivor means the finding
+      was documented and not fixed</td>
+      <td><strong>NOTHING</strong></td></tr>
+  <tr><td><strong>Fri<br>08-14</strong></td>
+      <td><strong>P9. The pack's own falsifier.</strong> If none of P1-P8 started
+      and no issue cites the document, <strong>stop producing printed packs</strong></td>
+      <td><strong>NOTHING</strong><br><span class="src">and this page is evidence</span></td></tr>
+  <tr><td><strong>Sat<br>08-15</strong></td>
+      <td><strong>P10. Generation spend policy EXPIRES.</strong> "$100 AUD/day
+      unconstrained <strong>until 2026-08-15</strong>." <strong>You</strong>,
+      2026-07-26. <span class="tag">PIXELLAB_OPERATIONS.md:39-41</span></td>
+      <td>None. It simply stops<br>being true, silently</td></tr>
+  <tr><td><strong>Sun<br>08-16</strong></td>
+      <td><strong>P11. Workshop 2 C5 &mdash; four cross-repo bets scored.</strong>
+      Ruled <strong>R6</strong>: pdoom1's red-run rule is the standard all four are
+      scored against. <span class="tag">coord#47</span></td>
+      <td><strong>NOTHING in pdoom1.</strong><br>The issue is closed; no seat<br>owns the scoring</td></tr>
+</table>
+
+<p><strong>P11 in full, because pdoom1 set the bar the other three are measured
+against:</strong></p>
+<blockquote>"No guard counts as installed until a RED run of it has been observed
+and its run ID recorded. On 2026-08-16, ask for three run IDs &mdash; one per
+guard &mdash; each showing the guard in its FAILING state. <strong>If fewer than
+three exist, the bet was named and not operated.</strong>"
+<span class="src">&mdash; docs/workshop-2/position.md:545-552</span></blockquote>
+<p class="cite"><strong>PR #1189 is that bet's first instalment and it is
+unmerged.</strong> Predicted cost 2-3 agent-hours, <strong>zero of your
+attention</strong>.</p>
+
+<h3>Three asks from the Workshop 2 chair, and nothing else needs you</h3>
+<p><span class="mark"></span><strong>1.</strong> <span class="tag">pdoom-data</span>'s
+<span class="tag">main</span> push trigger is dead. One empty-commit push settles
+it. <strong>Yes / No:</strong> <span class="rule"></span></p>
+<p><span class="mark"></span><strong>2.</strong> Class 8 needs an owner &mdash; one
+check across all three repos that a <span class="tag">main</span> tip carries a
+completed run. <strong>Owner:</strong> <span class="rule"></span></p>
+<p><span class="mark"></span><strong>3.</strong> The four C5 bets are scored
+2026-08-16. <em>Nothing required today.</em></p>
+
+<h2 class="pb">3. CURRENT &mdash; what is actually in flight</h2>
+
+<h3>Eleven open PRs, none draft, all awaiting you</h3>
+<table>
+  <tr><th>PR</th><th>What</th></tr>
+  <tr><td>#1194</td><td>Repair the 14 false changelog claims that are public right now</td></tr>
+  <tr><td>#1192<br>#1186</td><td><strong>DUPLICATE PAIR</strong> &mdash; both close #1181 (a timeout is not a test result). <strong>Pick one</strong></td></tr>
+  <tr><td>#1185<br>#1184</td><td><strong>DUPLICATE PAIR</strong> &mdash; both close #1178 (arm the ladder guard). <strong>Pick one</strong></td></tr>
+  <tr><td>#1191</td><td>The workshop-2 sealed position &mdash; the artefact behind the 08-16 bet</td></tr>
+  <tr><td>#1190</td><td><strong>LEAGUE_CUTOVER_PLAYBOOK.md.</strong> <span class="tag">coord#48</span> cites it to another repo as the "full measured record" &mdash; <strong>and it does not exist on main</strong></td></tr>
+  <tr><td>#1189</td><td>The <span class="tag">force_alarm</span> drill. <strong>Instalment 1 of the 08-16 bet</strong></td></tr>
+  <tr><td>#1176</td><td>Two identity fields &mdash; the truncated-lab-name fix from Saturday Item 1</td></tr>
+  <tr><td>#1166</td><td><strong>The art share set.</strong> The only route from your 143 keeps to a public surface</td></tr>
+  <tr><td>#1164</td><td>Art L2 wave &mdash; 306 images, USD 15.30, generated and unmerged</td></tr>
+</table>
+<p class="cite">Also live: the Fable cold-open intro lane,
+<span class="tag">origin/feat/intro-portal-stitch-1112</span>, last commit
+<strong>16:08 today</strong>. Not touched by this document.</p>
+
+<h3>One correction to the brief, because it changes what next week is for</h3>
+<p>The art was described to me as "unreviewed with no route to a public surface".
+<strong>The first half is no longer true.</strong> You applied <strong>262
+verdicts</strong> to the 08-07 art night, producing <strong>143 keeps</strong>
+(PR #1166, quoting you). ADR-0019 mentions publication <strong>not once</strong>,
+so an asset you like that no game slot demands is never packed and the website has
+nothing to pull. <strong>#1166 builds that route and has sat unmerged since
+08-07.</strong></p>
+<p>So: <strong>the art is reviewed, the route is written, and neither is
+merged.</strong> The bottleneck moved from your taste to a merge queue.</p>
+<p class="cite"><strong>One figure I could not source.</strong> A "74.75 USD" run
+was cited to me; <span class="tag">grep 74.75</span> returns nothing repo-wide.
+Measured instead: ceiling <strong>USD 75.50</strong>, projected total
+<strong>USD 71.98 = AUD 101.94</strong>
+(<span class="tag">ART_RUN_2026-08-07.md:449,623</span>), plus USD 15.30 unmerged
+in #1164. I am not rounding toward a number I cannot find.</p>
+
+<h3>W4 / W5 / W6 &mdash; they do not exist, and the question has a collision in it</h3>
+<p><span class="tag">GLOSSARY.md:415-427</span> says these two schemes are
+"routinely confused":</p>
+<ul>
+  <li><strong>WS-&lt;n&gt;</strong> = a whole multi-day design workshop producing
+  ADRs. WS-1, WS-2, WS-3 (run 07-27 to 07-29).</li>
+  <li><strong>W&lt;n&gt;</strong> = a timeboxed <em>agenda block inside one
+  workshop day</em>. On Wed 2026-07-29: W0 = PR review, W1 = colour, W2 =
+  decorating math, W3 = league cadence, <strong>W4 = next-epoch planning</strong>.</li>
+</ul>
+<p><strong>So W4 already happened, on 2026-07-29, as a block. There is no W5 and
+no W6 anywhere in this repo.</strong> The next design workshop &mdash; WS-3's
+successor &mdash; has no name, no number and no date. <strong>The only workshop
+with a date this week is #984</strong>, and "week of 2026-08-10" is a target
+window you wrote a fortnight ago, not a booking.</p>
+
+<h2>4. The gap, and why it is the whole point</h2>
+
+<p><strong>Eleven dated commitments. Two have a reminder mechanism, and both of
+those mechanisms are a human being remembering.</strong></p>
+
+<p>This repo already has both case studies, nine days apart:</p>
+
+<p><strong>#1061 slipped 08-03 to 08-10</strong>, and its deferral comment wrote
+its own escalation rule: <em>"If Monday 2026-08-10 passes without lodgement AND
+funds have arrived, the deferral reason has expired and this should be escalated
+rather than moved again."</em> <strong>That rule has no executor.</strong> Nothing
+reads the issue on Tuesday. If Monday passes, the sentence will be true and
+unread.</p>
+
+<p><strong>#1070 sat correctly diagnosed for seven days.</strong> Filed 07-31,
+naming the exact file and line. On 08-07 the suite wrote <strong>1,330
+files</strong> into your live profile and took the 07-31 league board from
+<strong>50 entries to 0</strong>.</p>
+
+<blockquote>"The Saturday question is not 'how do we find these' &mdash; we found
+it. It is what makes a filed, correctly-diagnosed defect get acted on before it
+costs something. <strong>Any answer that ends in 'file an issue' has missed the
+point.</strong>"
+<span class="src">&mdash; POSTMORTEM_SATURDAY_ITEMS_2026-08-08.md, Item 3</span></blockquote>
+
+<p>Workshop 2 ruled on exactly this today. <strong>R4: C3 is two findings, and
+action outranks detection</strong> &mdash; with pdoom1's line adopted verbatim and
+supporting evidence from three seats who had read nothing of each other.</p>
+
+<h3>The mechanism already exists. You designed it. Nobody built it.</h3>
+<blockquote>"when I'm being harassed about things for the second, third, fourth and
+fifth time, I get more and more and more context, and you make making the decision
+&mdash; based off printed material attached to it &mdash; easier and easier, until
+the repetition waste of paper annoys me until I make a decision"
+<span class="src">&mdash; you, 2026-08-07 16:55, capture
+<span class="tag">2026-08-07_165534__57c0a1f4</span>, filed as coord#43</span></blockquote>
+<p>It escalates <strong>helpfulness</strong>, not urgency &mdash; "much harder to
+become numb to". It is not scheduled and not scoped, and its one open question
+(what happens at the top of the ladder) is <strong>yours to rule</strong>.</p>
+<p><strong>Note the shape.</strong> The mechanism designed to stop asks being
+forgotten has itself sat unactioned for two days with <strong>no return
+date</strong> &mdash; which under the estate's own vocabulary ("parking without a
+date is abandonment with better manners") renders it <strong>abandoned</strong>.
+Of <strong>27 open coordination issues, exactly two carry a return date</strong>:
+#32 (08-13, live) and #19 (08-05, four days past).</p>
+
+<h2>5. SUGGESTED &mdash; three, ranked</h2>
+
+<p class="cite">Offered only because CURRENT and PLANNED are as thin as you
+predicted: eleven dates, zero scheduled. Weighted to what you said you wanted
+&mdash; <em>"ease off code, ramp UX/player experience, get a little natural
+traffic"</em> (<span class="tag">WALKPACK_2026-08-02.html:194</span>, quoting your
+own Friday plan).</p>
+
+<h3><span class="mark"></span>S1. Monday morning, before anything else: put the eleven dates somewhere that fires without you</h3>
+<p><strong>Why first:</strong> every other item is downstream of this one, because
+the measured failure is not capacity and not noticing &mdash; it is that a
+correct, dated, written commitment reaches nobody on its date, twice proven at a
+cost of one real league board and a seven-day IP slip. The medium matters far less
+than that it is <strong>not a markdown file</strong>: a scheduled agent, eleven
+phone alarms, or one sheet on the desk.<br>
+<strong>Falsifier:</strong> on Sun 08-16, count how many of P1-P11 were acted on.
+Fewer than eight means the choice did not work and should be replaced, not tuned.</p>
+<p>Medium chosen: <span class="rule"></span></p>
+
+<h3><span class="mark"></span>S2. Ease off code by <em>merging</em>, not by writing &mdash; clear the eleven-PR queue Monday, #1166 and #1189 first</h3>
+<p><strong>Why:</strong> the queue is the reason "ease off code" has not started
+&mdash; three of your stated priorities are already built and blocked on a merge,
+not on effort. #1166 is the whole route from your 262 verdicts to a public surface
+(that <em>is</em> the natural-traffic lane); #1189 is instalment one of the bet
+scored 08-16, so leaving it is a public loss in another repo's ledger; and the two
+duplicate pairs are pure waste that grows. <strong>This is review work, not code
+work &mdash; exactly the ramp you asked for.</strong><br>
+<strong>Falsifier:</strong> if it takes more than three hours, the PRs were not
+review-ready and the problem is upstream of this suggestion.</p>
+
+<h3><span class="mark"></span>S3. Book #984 as a real half-day, and fold the research/safety unsubtlety into it rather than opening a second workshop</h3>
+<p><strong>Why:</strong> you said the research/safety mechanics are "a little
+unsubtle for now" and need <strong>a workshop, not a lane</strong>, and #984
+already asks for a half-day <em>this week</em> on the adjacent question &mdash;
+what auditing FEELS like as a player verb, the distortion-source roster,
+trust-as-a-resource. <strong>Audits and research integrity are the same distortion
+surface from two ends</strong>; #1090 (Research Quality is still a global
+Plan-screen toggle when your ruling moved it to project level) sits on the
+boundary. One session, one ADR, before the <strong>2026-08-31</strong> formal
+review #984 was written to precede.<br>
+<strong>Falsifier:</strong> if the two need separate ADRs, they were separate
+workshops and merging them cost a week &mdash; visible at the end of the session,
+not before.</p>
+<p>Day / time booked: <span class="rule"></span></p>
+
+<h3>Explicitly NOT suggested</h3>
+<ul>
+  <li><strong>A new tracking document.</strong> P9 fires Friday if nothing acts on
+  the last one. A twelfth artefact this week would be the finding, not the fix.</li>
+  <li><strong>More art generation.</strong> #33 has USD 44 headroom and L2/L3
+  unrun &mdash; but #1164 is <em>already generated and unmerged</em>, and the spend
+  policy expires 08-15 regardless.</li>
+  <li><strong>Anything in the Fable intro lane.</strong> Live as of 16:08 today.</li>
+</ul>
+
+<h2>6. What this page does not know</h2>
+<ul>
+  <li><strong>Any calendar.</strong> Every "NOTHING" above means <em>nothing in the
+  repo or on GitHub will remind you</em> &mdash; not <em>nothing anywhere will</em>.
+  If these eleven dates are already in your calendar, section 4 is wrong and S1 is
+  unnecessary. <strong>You are the only one who can close that gap.</strong></li>
+  <li><strong>GitHub Projects.</strong> Token scope blocked the read. Unanswered,
+  not answered negatively.</li>
+  <li><strong>Whether the Workshop 2 minute has published.</strong> Due 12:00
+  today; last activity on coord#47 was 16:30. Not verified at time of writing.</li>
+  <li><strong>The 74.75 USD figure.</strong> Not sourceable. See section 3.</li>
+</ul>
+
+<hr>
+<p class="src">pdoom1 seat, 2026-08-09. Full working with every citation:
+<span class="tag">docs/design/WEEK_2026-08-10_PLAN.md</span>. The reference sheet
+named in the commission (<span class="tag">fri-2026-08-07-evening.html</span>) does
+not exist; house style taken from
+<span class="tag">sat-2026-08-08-release-status.html</span>, which does.</p>
