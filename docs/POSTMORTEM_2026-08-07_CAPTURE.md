@@ -763,6 +763,32 @@ started and no issue references this document, then it is the fourth printed
 document nobody acted on, and the correct response is to stop producing them --
 not to produce a better one.
 
+### These nine dates, declared so something other than a person can hold them
+
+Section 6's dates were correct, written down, and reachable by
+nobody on the day -- which is the same defect as F-series, one level up. The
+lines below are the machine-readable form (`docs/calendar/COMMITMENTS.md`); they
+restate the table above rather than replacing it, and the table stays the
+argument.
+
+COMMITMENT: 2026-08-14 -- P7 falsifier: open-issue count. At or above 208 means the weekly close-sweep did not happen and the triage lane must not re-run -- owner: pdoom1-seat -- kind: falsifier -- note: measured 211 on 2026-08-09, so this is already failing unless 4+ close first.
+
+COMMITMENT: 2026-08-14 -- P8 falsifier: grep -n MEASURED docs/art/SEED_ART_COST_MODEL.md. Any survivor beside a log-derived cost is F10 repeating one week on -- owner: pdoom1-seat -- kind: falsifier
+
+COMMITMENT: 2026-08-14 -- P9, the pack's OWN falsifier: if none of P1-P8 started and no issue cites this document, stop producing printed packs -- owner: pdoom1-seat -- kind: falsifier -- note: the only item on the list whose subject is the planning apparatus itself.
+
+COMMITMENT: 2026-08-20 -- P3 falsifier: re-run the claim audit. A WRONG rate at or above 9 per cent means the control-line rule did not take -- owner: pdoom1-seat -- kind: falsifier -- covers: docs/CLAIM_AUDIT_2026-08-06.md -- note: section 6's P3 row carries TWO dates, 2026-08-13 in the falsifier prose and 2026-08-20 in the Date column. The Date column wins here; that ambiguity is exactly what a declaration removes.
+
+COMMITMENT: 2026-08-21 -- P1 falsifier: if the ladder-bump check has fired zero times and no ladder-owed change merged unbumped, delete it rather than keep a green ornament -- owner: pdoom1-seat -- kind: falsifier
+
+COMMITMENT: 2026-08-21 -- P2 falsifier: if no push-triggered run touched only godot/data or godot JSON paths, the path-filter change bought nothing -- owner: pdoom1-seat -- kind: falsifier
+
+COMMITMENT: 2026-08-21 -- P4 falsifier: more than two false alarms from zero-result-reads-are-errors means it is mis-tuned and narrows to art tooling -- owner: pdoom1-seat -- kind: falsifier
+
+COMMITMENT: 2026-08-21 -- P6 falsifier: read git reflog in the main checkout. Any agent-attributable reset or checkout -- means the worktree rule was written and not operated -- owner: pdoom1-seat -- kind: falsifier
+
+COMMITMENT: 2026-09-01 -- P5 falsifier: if the parse-before-write gate has rejected nothing, the raw-string fix was sufficient alone and the gate is cost without benefit -- owner: pdoom1-seat -- kind: falsifier
+
 ---
 
 ## 7. Open questions for Pip
