@@ -322,6 +322,85 @@ Recommendation: ship 4.1 + the CI heuristic (4.2 middle) before the first
 gameplay hotpatch; add the golden-replay backstop when replay verification is
 wired to CI.
 
+### 4.2a AS BUILT (2026-08-09, issue #1178) -- and where this section was wrong
+
+The middle option shipped as `tools/check_ladder_bump.py` and then ran with
+`|| true` for its whole life, which made it structurally incapable of failing a
+build. Its record over two consecutive releases, measured by re-running it over
+real history:
+
+| range | old gate | correct answer |
+| --- | --- | --- |
+| `#1137` historical-deck retime (`8791ba47`) | WARN (invisible: `\|\| true`) | WARN |
+| `#1101` net fix in `godot/autoload/event_service.gd` (`d7b47a1a`) | **OK -- blind** | WARN |
+| v0.14.0 epoch cut (`7368e237`) | **WARN -- wrong** | OK |
+| v0.14.1 patch cut (`0dc8adb9`) | **WARN -- wrong** | OK |
+
+Note the first row, because issue #1178 states it differently: the old gate DID
+flag `#1137`, via `godot/data/events/**`, not via the autoload file. The 31-hour
+miss was caused by `|| true`, not by the allowlist. The allowlist gap is real and
+independently fatal -- row 2 is a genuine gameplay change in `godot/autoload/`
+that the old gate called clean -- but it was not what hid `#1137`.
+
+**Three places this section contradicted the rest of the spec, all inherited by
+the code:**
+
+1. **The allowlist cannot reach this spec's own triggers.** Section 3.1 makes
+   "anything that changes which events fire on a given seed" a bump trigger, but
+   the allowlist above (`godot/scripts/core/**`, `godot/data/**`) excludes
+   `godot/autoload/`, where `event_service.gd` (event scheduling) and
+   `balance.gd` live. An allowlist has to enumerate every gameplay directory in
+   advance, so it is wrong the first time a system moves.
+2. **`godot/data/**` wholesale contradicts Section 3.2.** Section 3.2 lists
+   "copy/text, patch notes" as explicitly non-bumping, and `patch_notes.json`
+   ships in `godot/data/` on every patch. That is the v0.14.1 false positive.
+3. **`seed_schedule.gd` as a loose basename was redundant** -- the file is at
+   `godot/scripts/core/seed_schedule.gd`, already inside the allowlist.
+
+**As built now:**
+
+- **Gameplay is the DEFAULT inside `godot/`.** Everything under the game root
+  counts as gameplay surface unless it is on an explicit cosmetic denylist
+  (`scenes/`, `scripts/ui/`, `assets/`, `theme/`, `tests/`, `scripts/dev|debug/`,
+  `addons/`, `tools/`, `docs/`; plus `patch_notes.json`, `credits.json`,
+  `icon_mapping.json`, `project.godot`, `export_presets.cfg`, `build_stamp.txt`,
+  and `.md`/`.uid`/`.import`). A new autoload or a moved system now fails safe.
+  The costs are asymmetric: a missed bump silently merges scores earned under
+  different rules and cannot be undone once played; a spurious flag costs one
+  line in a commit message.
+- **`game_config.gd` is judged by its changed LINES, not its path.** It is real
+  gameplay surface (it holds `effective_difficulty()` and the league difficulty
+  lock) and also a `sync_version.py` stamp target, so every release cut touches
+  it. If the only lines that moved are `CURRENT_VERSION`, `LADDER_VERSION`,
+  `INTRO_VERSION` or `FEATURED_SEED_OVERRIDE`, it is not evidence of gameplay
+  change. **New ruling, argue with it if you disagree:** rolling
+  `FEATURED_SEED_OVERRIDE` is NOT a bump trigger -- it changes which seed is
+  featured, not what happens on any given seed, so it starts a new board by
+  SEED, not a new epoch. Sections 3.1/3.2 did not cover this case.
+- **The epoch cut is now visible.** When a diff bumps the ladder, the gate does
+  not ask "did this PR change gameplay" -- an epoch cut is version-files-only by
+  construction and never does. It looks back over the whole epoch window (the
+  previous ladder-bumping commit .. HEAD). Costs: full git history
+  (`fetch-depth: 0`), and it proves only that the epoch contains SOME gameplay
+  change, not that it contains the one that justified the bump.
+- **A deliberate no-bump must be STATED, not merely not-forgotten.** A gameplay
+  diff that correctly does not bump declares it in a commit message or the PR
+  body: `Ladder-Impact: none -- <reason>` (or `Ladder-Impact: bump` for the
+  reverse case). Without it the job fails. Measured cost before arming: 26 of the
+  81 first-parent commits since v0.13.2 touch gameplay directories, so this is
+  roughly one line per three PRs. The gate cannot decide whether a diff changes
+  behaviour; it can insist a human answered, in a place git preserves and the
+  release cut can read.
+- **`|| true` is gone.** The job fails. `--advisory` exists for local use.
+- **The gate proves itself on every build.** `--self-test` replays the four rows
+  of the table above and fails if the gate stops going red on the two misses or
+  starts crying wolf on the two release cuts. A guard that has never been shown
+  to fail is not evidence (#640).
+
+Still not caught, and the golden-replay backstop below remains the only real
+answer: an RNG-stream change inside a cosmetic path, and a false
+`Ladder-Impact: none`.
+
 ### 4.3 One-time test for the split itself
 
 Add a fast unit test asserting `GameConfig.get_board_version()` returns
