@@ -120,6 +120,17 @@ target -- ceremonial surface, mechanical spine.
 - Arm the Saturday-morning hotpatch window (`ship:hotpatch-48h`
   discipline). A forking change is not a hotpatch no matter how urgent --
   urgency and forking are independent axes.
+- **Fire the freshness drill, once per release cycle.** Dispatch
+  `Live site release freshness` with `force_alarm: true`
+  (`gh workflow run live-site-release-freshness.yml -f force_alarm=true`),
+  confirm a `[DRILL]` issue appears, then close it. The run goes RED on
+  purpose -- red is how the alarm reaches anyone, so a drill that stayed
+  green would be exercising a different path. A green drill run means
+  pdoom1.com was unreachable and the drill proved nothing; re-run it.
+  **A drill that has never been run is the same as a guard that has never
+  failed.** That workflow's comparison was proven red before it shipped
+  (#1182); its issue-filing half had never executed once, which is a
+  distinction nothing in the Actions list makes visible.
 - Watch the probe cadence. Six hours is too slow for a live league evening
   (noted 2026-07-30); if a board or a door dies at 1900 you want to know by
   1930, not by breakfast.
