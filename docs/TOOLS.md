@@ -59,7 +59,7 @@ Declared with a `Layer:` line in a tool's module docstring; `--` = undeclared.
 | pre_version_bump.py | -- | Pre-Version Bump Quality Checks for P(Doom) | human (docstring usage) |
 | project_health.py | -- | P(Doom) Project Health Dashboard - BLITZ MODE IMPLEMENTATION | make; ci:enhanced-cicd-pipeline.yml; ci:quality-checks.yml |
 | repo-status.py | -- | P(Doom) Ecosystem Repository Status Dashboard | NONE FOUND |
-| run_godot_tests.py | PROVE | Run Godot GUT (Godot Unit Test) tests from command line. | make; ci:godot-tests.yml; test:test_find_dead_code.py; test:test_generate_tools_index.py |
+| run_godot_tests.py | PROVE | Run Godot GUT (Godot Unit Test) tests from command line. | make; ci:godot-tests.yml; test:test_find_dead_code.py; test:test_generate_tools_index.py; test:test_run_godot_tests_outcomes.py |
 | setup-token.py | -- | GitHub Token Setup Helper for VS Code Users | NONE FOUND |
 | sync_website_docs.py | -- | Sync documentation from pdoom1 repo to website export format. | ci:docs-sync.yml |
 | test_before_push.py | -- | Test Before Push - Local Development Workflow | human (docstring usage) |
