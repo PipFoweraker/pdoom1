@@ -32,7 +32,7 @@ static func _hex(c: Color) -> String:
 # Operator name AND a Lab name; the remote board's frozen contract carries one
 # string, and it is the lab. Until the server takes both (coordination item),
 # the prompt says which one goes public rather than implying both do.
-const IDENTITY_PROMPT_BOARD_NOTE := "The global board shows your Lab name. Your Operator name is saved with the run on this machine -- one Operator can run many labs, and the board will carry both once the server does."
+const IDENTITY_PROMPT_BOARD_NOTE := "The global board shows both, as 'Lab -- Operator'. One Operator can run many labs, and lab names collide, so the Operator name is what tells two identical labs apart. Long names are shortened with '...' to fit the board."
 
 @onready var panel_container = $CenterContainer/PanelContainer
 @onready var title_label = $CenterContainer/PanelContainer/MarginContainer/VBox/TitleLabel
