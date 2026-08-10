@@ -353,6 +353,54 @@ python scripts/run_all_godot_tests.py --ci-mode
 python scripts/run_godot_tests.py --smoke-only
 ```
 
+### The wall-clock cap, and the third outcome (#1181 / #1168)
+
+*(This section is adopted from PR #1186, which lost the adjudication on
+implementation but documented the outcome model better than this PR did.)*
+
+Each GUT invocation is capped. The cap was hardcoded at 900s with no flag until
+#1181; it is now settable, and CI's default is still 900 so its contract is
+unchanged:
+
+```bash
+python scripts/run_godot_tests.py --simulation --timeout 3600   # slow/contended box
+PDOOM1_TEST_TIMEOUT=3600 python scripts/run_godot_tests.py --simulation
+python scripts/run_godot_tests.py --simulation --timeout 0      # no cap at all
+```
+
+Locally the simulation tier defaults to 2700s and everything else to 900s. The
+runner prints which cap it resolved, and where the number came from, before
+every run.
+
+The runner reports **three** outcomes, not two:
+
+| Outcome | Exit | Means |
+|---|---:|---|
+| PASS | 0 | Measured: tests ran, floor met, no failures |
+| FAIL | 1 | Measured: tests ran and something was wrong |
+| NO RESULT | 2 | **Not measured.** The run was killed or could not start |
+
+A NO RESULT run prints no test counts anywhere (`-` in the summary table, no
+`N tests` in `[TOTALS]`). It used to print `0 tests, 0 fail (FAIL)`, which is
+literally true and completely misleading -- the same class of defect as #640,
+where the gate reported a number that did not come from tests executing.
+**Never quote a suite result from a NO RESULT run.**
+
+Incompleteness outranks failure in the exit code: if any tier did not finish,
+"we do not know" is the more honest claim than "some other tier was red".
+
+Note the boundary. A process that DID finish and produced nothing parseable
+stays **FAIL**, not NO RESULT -- we watched it run and produce nothing, which is
+a genuine observation (the #629/#590 silence-is-failure case).
+
+Two more knobs, because a cap alone cannot tell slow from hung:
+
+- `--stall-timeout` (default 300s) kills a suite that has produced **no output**
+  for that long. This, not the wall-clock cap, is the hang detector: hung means
+  no progress, slow means progress.
+- `--heartbeat` (default 30s) prints `[PROGRESS]` with elapsed time, output line
+  count, seconds since the last line, and the last line itself.
+
 ---
 
 ## Coverage Goals
