@@ -10,13 +10,17 @@ directions on two consecutive releases:
     but it landed in ``godot/autoload/event_service.gd`` and the old
     ``GAMEPLAY_PREFIXES`` allowlist covered only ``godot/scripts/core/`` and
     ``godot/data/``. A human caught it at cut time, not CI.
-  * It WARNED on the v0.14.0 epoch cut, which was correct. An epoch cut is by
+  * It WARNED on the v0.14.0 epoch cut, which was WRONG. An epoch cut is by
     construction a version-files-only commit; the gameplay change it pays for
-    landed in an earlier PR. The old check could only see one PR.
+    landed in an earlier PR. The old check could only see one PR, so it cried
+    wolf on a correct cut -- and a gate that is wrong on the routine case is a
+    gate someone eventually switches off.
 
-Both failures are fixed here, and both fixes are proven against real history by
-``tests/test_check_ladder_bump.py`` (the #1137 range must go RED, the v0.14.0
-and v0.14.1 cuts must go GREEN).
+Both failures are fixed here, and both fixes are proven against REAL HISTORY by
+``--self-test`` (run in CI on every build): the #1137 and #1101 ranges must go
+RED, the v0.14.0 and v0.14.1 cuts must go GREEN. ``tests/test_check_ladder_bump.py``
+covers the same logic hermetically, on a synthetic repo, so the classification
+rules stay pinned even when history is unreachable (shallow clone).
 
 Spec: ``docs/game-design/BUILD_VS_LADDER_VERSION_SPLIT.md`` Sections 3.1/3.2
 (what bumps the ladder) and 4.2 (this guard). The rule it enforces: the ladder
@@ -161,7 +165,17 @@ RELEASE_LINE_PATTERNS = (
     re.compile(r"^\s*const FEATURED_SEED_OVERRIDE\b"),
 )
 
-DECLARATION_RE = re.compile(r"^\s*Ladder-Impact:\s*(none|bump|n/a)\b", re.IGNORECASE | re.MULTILINE)
+# A declaration is a VERDICT plus a REASON. The reason is mandatory and must be
+# substantive: the whole mechanism is "a human stated which case this is, in a
+# place git preserves", and `Ladder-Impact: none` on its own states a verdict
+# without stating anything anyone can later check or argue with. The minimum
+# length is adopted from PR #1185, which made the same argument about its
+# `ladder-ack:` line and was right about it.
+DECLARATION_RE = re.compile(
+    r"^\s*Ladder-Impact:\s*(none|bump|n/a)\b[^\S\n]*(?:--|:)?[^\S\n]*(.*?)[^\S\n]*$",
+    re.IGNORECASE | re.MULTILINE,
+)
+DECLARATION_MIN_REASON_CHARS = 8
 
 
 # ---------------------------------------------------------------------------
@@ -279,12 +293,25 @@ def _release_lines_only(rng: Range, path: str) -> bool:
     return all(any(pat.match(ln) for pat in RELEASE_LINE_PATTERNS) for ln in lines)
 
 
+def find_declaration(text: str) -> str | None:
+    """The Ladder-Impact declaration in `text`, or None if it carries no usable one.
+
+    A verdict with a missing or token reason is deliberately NOT a declaration:
+    `Ladder-Impact: none` records that someone typed the magic words, not which
+    case this is or why. Adopted from #1185's `ladder-ack:` minimum-reason rule.
+    """
+    for m in DECLARATION_RE.finditer(text or ""):
+        if len(m.group(2).strip()) >= DECLARATION_MIN_REASON_CHARS:
+            return m.group(0).strip()
+    return None
+
+
 def declaration(rng: Range) -> str | None:
     """The Ladder-Impact declaration, from commit messages or CI-supplied text."""
     for text in (os.environ.get("LADDER_DECLARATION_TEXT", ""), rng.commit_messages()):
-        m = DECLARATION_RE.search(text or "")
-        if m:
-            return m.group(0).strip()
+        found = find_declaration(text)
+        if found:
+            return found
     return None
 
 

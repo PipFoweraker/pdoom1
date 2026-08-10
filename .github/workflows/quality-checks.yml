@@ -79,6 +79,13 @@ jobs:
         echo "gameplay change, and GREEN on the v0.14.0 epoch cut and the v0.14.1 patch."
         echo "This runs on every build so the gate is never merely ASSUMED to work (#640)."
         python tools/check_ladder_bump.py --self-test
+        echo ""
+        echo "And the hermetic suite (adopted from #1185), which pins the classification"
+        echo "rules on a synthetic repo so a shallow checkout cannot quietly reduce this"
+        echo "gate's coverage to nothing. Run BLOCKING here on purpose: the only other CI"
+        echo "run of tests/ is 'python -m unittest discover tests || echo INFO', which"
+        echo "swallows failures -- the same shape as the '|| true' this PR is removing."
+        python -m unittest tests.test_check_ladder_bump -v
 
     - name: Ladder Bump Gate
       if: github.event_name == 'pull_request'
