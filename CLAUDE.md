@@ -118,6 +118,10 @@ runtime -- the old Python bridge is gone). Python exists only for CI/tooling in
   (builds do not write boards).
 - Do NOT set `use_custom_user_dir` in `project.godot` -- that ships to players and
   would move every real player's save directory.
+- **This rule is WINDOWS-SPECIFIC. On Linux it is backwards:** `APPDATA` means
+  nothing and `XDG_DATA_HOME` is the lever that works. An agent following the
+  paragraph above on the Debian laptop runs UNISOLATED. Linux incantation and
+  its first-run confirmation step: `docs/LAPTOP_DEBIAN_SETUP.md` section 4.
 
 ## Relay only what you verified (2026-08-06..09, measured)
 - A claim audit over one cycle's output found **6 of 68 headline claims wrong
