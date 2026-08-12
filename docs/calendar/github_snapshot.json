@@ -1,0 +1,2279 @@
+{
+  "issues": [
+    {
+      "dates": [
+        "2026-07-30",
+        "2026-08-04",
+        "2026-08-10"
+      ],
+      "declarations": [],
+      "number": 17,
+      "repo": "PipFoweraker/coordination",
+      "ship_labels": [],
+      "title": "pdoom1-website seat check-in, and a proposal: run a CONTENT workshop across the three sister repos",
+      "url": "https://github.com/PipFoweraker/coordination/issues/17"
+    },
+    {
+      "dates": [
+        "2025-10-17",
+        "2025-11-10",
+        "2026-08-04",
+        "2026-08-05"
+      ],
+      "declarations": [],
+      "number": 19,
+      "repo": "PipFoweraker/coordination",
+      "ship_labels": [],
+      "title": "STANDING -- CVTas seat: open questions awaiting Pip, answer by number here",
+      "url": "https://github.com/PipFoweraker/coordination/issues/19"
+    },
+    {
+      "dates": [
+        "2026-08-04"
+      ],
+      "declarations": [],
+      "number": 20,
+      "repo": "PipFoweraker/coordination",
+      "ship_labels": [],
+      "title": "Mechanism proposal: a seat may cache state, but may not assert from cache about the present",
+      "url": "https://github.com/PipFoweraker/coordination/issues/20"
+    },
+    {
+      "dates": [
+        "2026-07-31",
+        "2026-08-04",
+        "2026-08-05",
+        "2026-08-08"
+      ],
+      "declarations": [],
+      "number": 21,
+      "repo": "PipFoweraker/coordination",
+      "ship_labels": [],
+      "title": "From Pip, 2026-08-04 evening: per-repo value hierarchies (conversation for tomorrow), and a runsheet that has to check every repo's expectations",
+      "url": "https://github.com/PipFoweraker/coordination/issues/21"
+    },
+    {
+      "dates": [
+        "2026-07-28",
+        "2026-08-04",
+        "2026-08-05",
+        "2026-08-06"
+      ],
+      "declarations": [],
+      "number": 23,
+      "repo": "PipFoweraker/coordination",
+      "ship_labels": [],
+      "title": "pip-personal-homepage seat check-in: the guard that does not travel, what the migration leaves behind, and three asks",
+      "url": "https://github.com/PipFoweraker/coordination/issues/23"
+    },
+    {
+      "dates": [
+        "2026-08-01",
+        "2026-08-05",
+        "2026-08-06"
+      ],
+      "declarations": [],
+      "number": 27,
+      "repo": "PipFoweraker/coordination",
+      "ship_labels": [],
+      "title": "Coordination's own inbox from 2026-08-06: cycle-time tracking, three cadences, the Lisha countdown, and what this session did not finish",
+      "url": "https://github.com/PipFoweraker/coordination/issues/27"
+    },
+    {
+      "dates": [
+        "2026-02-09",
+        "2026-03-16",
+        "2026-03-24",
+        "2026-06-15",
+        "2026-06-16",
+        "2026-07-28",
+        "2026-08-03",
+        "2026-08-06"
+      ],
+      "declarations": [],
+      "number": 29,
+      "repo": "PipFoweraker/coordination",
+      "ship_labels": [],
+      "title": "certes seat check-in: never checked in, ten strategy docs possibly stranded on the old PC, and a guard that has been false for six months",
+      "url": "https://github.com/PipFoweraker/coordination/issues/29"
+    },
+    {
+      "dates": [
+        "2025-12-12",
+        "2025-12-25",
+        "2026-07-30",
+        "2026-08-06",
+        "2026-09-09"
+      ],
+      "declarations": [],
+      "number": 30,
+      "repo": "PipFoweraker/coordination",
+      "ship_labels": [],
+      "title": "AGENDA: tri-repo content workshop, 2026-08-06 -- six items, three need Pip, and A1 has deferred three times",
+      "url": "https://github.com/PipFoweraker/coordination/issues/30"
+    },
+    {
+      "dates": [
+        "2026-08-06",
+        "2026-08-13"
+      ],
+      "declarations": [],
+      "number": 32,
+      "repo": "PipFoweraker/coordination",
+      "ship_labels": [],
+      "title": "Asset provenance is UNMET, not at-risk: the Manifund obligation has no capture mechanism in pdoom1 -- blocking party pdoom1, return date 2026-08-13",
+      "url": "https://github.com/PipFoweraker/coordination/issues/32"
+    },
+    {
+      "dates": [
+        "2026-08-06",
+        "2026-08-07"
+      ],
+      "declarations": [],
+      "number": 33,
+      "repo": "PipFoweraker/coordination",
+      "ship_labels": [],
+      "title": "Open offer: pdoom1 runs a funded generative art batch tomorrow 2026-08-07 -- marginal cost is low, ask by midday (and read the provenance caveat before you say yes)",
+      "url": "https://github.com/PipFoweraker/coordination/issues/33"
+    },
+    {
+      "dates": [
+        "2026-08-06",
+        "2026-08-07"
+      ],
+      "declarations": [],
+      "number": 34,
+      "repo": "PipFoweraker/coordination",
+      "ship_labels": [],
+      "title": "Mechanism proposal: measurement must be built before the question -- the rule of three, section-level denominators, and annotated regimes",
+      "url": "https://github.com/PipFoweraker/coordination/issues/34"
+    },
+    {
+      "dates": [
+        "2026-08-07",
+        "2026-08-10",
+        "2026-08-13"
+      ],
+      "declarations": [],
+      "number": 35,
+      "repo": "PipFoweraker/coordination",
+      "ship_labels": [],
+      "title": "Pip is out this evening through Rektango -- last synchronous window today. Post your asks ranked, or say you have none",
+      "url": "https://github.com/PipFoweraker/coordination/issues/35"
+    },
+    {
+      "dates": [
+        "2026-07-31",
+        "2026-08-06",
+        "2026-08-07"
+      ],
+      "declarations": [],
+      "number": 36,
+      "repo": "PipFoweraker/coordination",
+      "ship_labels": [],
+      "title": "STANDING - beacon-internal seat: open questions awaiting Pip, answer by number here",
+      "url": "https://github.com/PipFoweraker/coordination/issues/36"
+    },
+    {
+      "dates": [
+        "2026-03-20",
+        "2026-06-15",
+        "2026-08-04",
+        "2026-08-06",
+        "2026-08-07"
+      ],
+      "declarations": [],
+      "number": 37,
+      "repo": "PipFoweraker/coordination",
+      "ship_labels": [],
+      "title": "pipfoweraker-dashboard has no seat, and its cadence meter measures commits rather than publication -- a 140-day content miss reading green",
+      "url": "https://github.com/PipFoweraker/coordination/issues/37"
+    },
+    {
+      "dates": [
+        "2026-08-02",
+        "2026-08-07",
+        "2026-08-08"
+      ],
+      "declarations": [],
+      "number": 41,
+      "repo": "PipFoweraker/coordination",
+      "ship_labels": [],
+      "title": "Registry claim api-pdoom1-on-vps proves hosting and is read as liveness -- a 410 also contains nginx",
+      "url": "https://github.com/PipFoweraker/coordination/issues/41"
+    },
+    {
+      "dates": [
+        "2026-08-07"
+      ],
+      "declarations": [],
+      "number": 42,
+      "repo": "PipFoweraker/coordination",
+      "ship_labels": [],
+      "title": "Campaign 'posted' stamps are all null while posts have actually gone out -- the outbound record is unwritten, not empty",
+      "url": "https://github.com/PipFoweraker/coordination/issues/42"
+    },
+    {
+      "dates": [
+        "2026-07-28",
+        "2026-08-07"
+      ],
+      "declarations": [],
+      "number": 43,
+      "repo": "PipFoweraker/coordination",
+      "ship_labels": [],
+      "title": "Pip's idea: an ask that goes unanswered comes back BIGGER -- escalate context, not urgency, until deciding is cheaper than ignoring",
+      "url": "https://github.com/PipFoweraker/coordination/issues/43"
+    },
+    {
+      "dates": [
+        "2026-08-07"
+      ],
+      "declarations": [],
+      "number": 44,
+      "repo": "PipFoweraker/coordination",
+      "ship_labels": [],
+      "title": "Nothing alerts when a FACT EXPIRES -- alerting fires on 'our job broke' and never on 'this was true twenty minutes ago'",
+      "url": "https://github.com/PipFoweraker/coordination/issues/44"
+    },
+    {
+      "dates": [
+        "2026-08-07"
+      ],
+      "declarations": [],
+      "number": 45,
+      "repo": "PipFoweraker/coordination",
+      "ship_labels": [],
+      "title": "Capture loop: schedule the ingest (the only manual step, median 6m20s / max 29m) and give post_verified a local receipt so 'routed' stops being UNKNOWN",
+      "url": "https://github.com/PipFoweraker/coordination/issues/45"
+    },
+    {
+      "dates": [
+        "2026-08-04",
+        "2026-08-08",
+        "2026-08-09"
+      ],
+      "declarations": [],
+      "number": 46,
+      "repo": "PipFoweraker/coordination",
+      "ship_labels": [],
+      "title": "D-seat checks in with G-seat: no memo has ever reached NEW-BORT, and #45's measured loop is exactly why that was invisible",
+      "url": "https://github.com/PipFoweraker/coordination/issues/46"
+    },
+    {
+      "dates": [
+        "2026-08-09"
+      ],
+      "declarations": [],
+      "number": 47,
+      "repo": "PipFoweraker/coordination",
+      "ship_labels": [],
+      "title": "WORKSHOP 2 OPEN: the weekend deployment postmortem -- pdoom-data chairs, Phase 1 seals due 11:00 AEST, Pip absent by design",
+      "url": "https://github.com/PipFoweraker/coordination/issues/47"
+    },
+    {
+      "dates": [
+        "2026-08-07",
+        "2026-09-04"
+      ],
+      "declarations": [],
+      "number": 48,
+      "repo": "PipFoweraker/coordination",
+      "ship_labels": [],
+      "title": "League cutover timing contract: pdoom1 can publish in 5m30s and cannot tell you when pdoom1.com will agree -- what do you need to pre-announce?",
+      "url": "https://github.com/PipFoweraker/coordination/issues/48"
+    },
+    {
+      "dates": [
+        "2026-08-09"
+      ],
+      "declarations": [],
+      "number": 49,
+      "repo": "PipFoweraker/coordination",
+      "ship_labels": [],
+      "title": "pdoom-data seat: six items for the MONDAY print stack -- the history rewrite is DEFERRED by Pip pending a rule, the rest are yes/no",
+      "url": "https://github.com/PipFoweraker/coordination/issues/49"
+    },
+    {
+      "dates": [
+        "2026-07-31",
+        "2026-08-09"
+      ],
+      "declarations": [],
+      "number": 50,
+      "repo": "PipFoweraker/coordination",
+      "ship_labels": [],
+      "title": "Does a print stack/queue exist? Pip wants queue + revise + supersession + collection-on-receipt -- and thinks a watched folder unlocks working remotely",
+      "url": "https://github.com/PipFoweraker/coordination/issues/50"
+    },
+    {
+      "dates": [
+        "2025-11-27"
+      ],
+      "declarations": [],
+      "number": 467,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "Employee living and office environment outfitting system",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/467"
+    },
+    {
+      "dates": [
+        "2025-11-27"
+      ],
+      "declarations": [],
+      "number": 471,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "Office cosmetic shopping system",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/471"
+    },
+    {
+      "dates": [
+        "2025-11-27"
+      ],
+      "declarations": [],
+      "number": 473,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "Character creation and lab setup point allocation system",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/473"
+    },
+    {
+      "dates": [
+        "2025-11-27"
+      ],
+      "declarations": [],
+      "number": 475,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "Comprehensive upgrades system overhaul",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/475"
+    },
+    {
+      "dates": [
+        "2025-11-27"
+      ],
+      "declarations": [],
+      "number": 476,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "Progressive finance and software management system",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/476"
+    },
+    {
+      "dates": [],
+      "declarations": [],
+      "number": 506,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [
+        "ship:next-release"
+      ],
+      "title": "chore: Clean up GDScript warnings and style issues",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/506"
+    },
+    {
+      "dates": [],
+      "declarations": [],
+      "number": 508,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [
+        "ship:hotpatch-48h"
+      ],
+      "title": "Add hero art/images to event popup options",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/508"
+    },
+    {
+      "dates": [],
+      "declarations": [],
+      "number": 545,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [
+        "ship:next-release"
+      ],
+      "title": "Cross-repo sync: careful cleanup pass (pdoom1 -> pdoom1-website / pdoom-data)",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/545"
+    },
+    {
+      "dates": [],
+      "declarations": [],
+      "number": 577,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [
+        "ship:next-release"
+      ],
+      "title": "UI jitter on hover/button; layout realignment when new actions (Strategic moves) appear",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/577"
+    },
+    {
+      "dates": [],
+      "declarations": [],
+      "number": 578,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [
+        "ship:next-release"
+      ],
+      "title": "Legibility pass (buildable soon): doom blow-by-blow, ledger/overlay discoverability, researcher info, event fanfare",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/578"
+    },
+    {
+      "dates": [],
+      "declarations": [],
+      "number": 579,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [
+        "ship:next-release"
+      ],
+      "title": "Balance/design from session 2 (workshop #2): events depth, upgrade rebalance, compute economy, investor-pressure frequency",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/579"
+    },
+    {
+      "dates": [],
+      "declarations": [],
+      "number": 595,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [
+        "ship:next-release"
+      ],
+      "title": "Audit strategic options/events/buttons that cost but have no meaningful game impact",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/595"
+    },
+    {
+      "dates": [],
+      "declarations": [],
+      "number": 600,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [
+        "ship:next-release"
+      ],
+      "title": "Dev overlays (DEV MODE + F3) can't read live game state; 29 runtime errors; nudge/advance-turn wiring",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/600"
+    },
+    {
+      "dates": [],
+      "declarations": [],
+      "number": 601,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [
+        "ship:next-release"
+      ],
+      "title": "Ledger UX: layout wrong/cramped, L-to-close, critical-due popup, distinct warning colour",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/601"
+    },
+    {
+      "dates": [],
+      "declarations": [],
+      "number": 603,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [
+        "ship:hotpatch-48h"
+      ],
+      "title": "Popups: fanfare needs a dimming backdrop (events leak under it); bug-report 'thanks' Submit still clickable",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/603"
+    },
+    {
+      "dates": [
+        "2026-07-16"
+      ],
+      "declarations": [],
+      "number": 648,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [
+        "ship:next-release"
+      ],
+      "title": "Check Godot port for team_player uncapped-stacking exploit + poaching rate (salvaged from pre-Godot notes)",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/648"
+    },
+    {
+      "dates": [],
+      "declarations": [],
+      "number": 700,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [
+        "ship:hotpatch-48h"
+      ],
+      "title": "Local Leaderboard.add_score does not dedupe by entry_uuid (remote PHP does)",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/700"
+    },
+    {
+      "dates": [
+        "2026-07-18"
+      ],
+      "declarations": [],
+      "number": 703,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [
+        "ship:next-release"
+      ],
+      "title": "Playtest v0.11.0: defeat-pacing drag + hiring pipeline feels gappy (coalesce/de-branch)",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/703"
+    },
+    {
+      "dates": [
+        "2026-07-19"
+      ],
+      "declarations": [],
+      "number": 707,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [
+        "ship:next-release"
+      ],
+      "title": "UI consistency sweep after asset promotion + office-sim integration (level-2 visual pass)",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/707"
+    },
+    {
+      "dates": [
+        "2026-07-20"
+      ],
+      "declarations": [],
+      "number": 714,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [
+        "ship:next-release"
+      ],
+      "title": "Perf: turn-1 / early-days processing feels slow (watch-and-track)",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/714"
+    },
+    {
+      "dates": [],
+      "declarations": [],
+      "number": 721,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [
+        "ship:next-release"
+      ],
+      "title": "Onboarding: data-driven contextual hints (Factorio-style show-once triggers)",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/721"
+    },
+    {
+      "dates": [],
+      "declarations": [],
+      "number": 722,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [
+        "ship:next-release"
+      ],
+      "title": "Onboarding: opt-in Tutorial Mode (relaunchable guided steps)",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/722"
+    },
+    {
+      "dates": [],
+      "declarations": [],
+      "number": 723,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [
+        "ship:next-release"
+      ],
+      "title": "Website: publish the player guide to pdoom1.com with pdoom1 -> website sync",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/723"
+    },
+    {
+      "dates": [],
+      "declarations": [],
+      "number": 724,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [
+        "ship:next-release"
+      ],
+      "title": "Cross-repo sync: fold player-guide mapping into the #545 cleanup pass",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/724"
+    },
+    {
+      "dates": [
+        "2026-07-21"
+      ],
+      "declarations": [],
+      "number": 745,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [
+        "ship:next-release"
+      ],
+      "title": "Art tooling: compare-and-contrast mode for kept assets (batch style reviews)",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/745"
+    },
+    {
+      "dates": [
+        "2026-07-21"
+      ],
+      "declarations": [],
+      "number": 753,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [
+        "ship:next-release"
+      ],
+      "title": "chore: docs typographic ASCII cleanup (em-dashes, box-drawing) -- low priority",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/753"
+    },
+    {
+      "dates": [],
+      "declarations": [],
+      "number": 755,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [
+        "ship:hotpatch-48h"
+      ],
+      "title": "UI: theme the event popup / dialog buttons (still default grey after menu theme)",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/755"
+    },
+    {
+      "dates": [
+        "2026-07-21"
+      ],
+      "declarations": [],
+      "number": 763,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [
+        "ship:next-release"
+      ],
+      "title": "Nomenclature + pacing: strategic-options unlock expressed at month grain; align fanfare hero",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/763"
+    },
+    {
+      "dates": [
+        "2026-07-22"
+      ],
+      "declarations": [],
+      "number": 777,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [
+        "ship:next-release"
+      ],
+      "title": "In-game screenshot flow: make [ capture the dev-blog default",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/777"
+    },
+    {
+      "dates": [],
+      "declarations": [],
+      "number": 786,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [
+        "ship:next-release"
+      ],
+      "title": "Finalize CREDITS.md (fill names) + merge after F&F deploy",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/786"
+    },
+    {
+      "dates": [
+        "2026-07-22"
+      ],
+      "declarations": [],
+      "number": 788,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [
+        "ship:hotpatch-48h"
+      ],
+      "title": "Leaderboard: mark runs where dev mode was used (visible badge, NOT exclusion)",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/788"
+    },
+    {
+      "dates": [
+        "2026-07-22"
+      ],
+      "declarations": [],
+      "number": 789,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [
+        "ship:hotpatch-48h"
+      ],
+      "title": "Hiring stitch: onboarding sub-actions as AP-sink prompts on offer-accept + interview schedule->happen flow",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/789"
+    },
+    {
+      "dates": [
+        "2026-07-22"
+      ],
+      "declarations": [],
+      "number": 790,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [
+        "ship:hotpatch-48h"
+      ],
+      "title": "Newness-glow: draw the eye to new/changed state (glow-until-mouseover)",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/790"
+    },
+    {
+      "dates": [
+        "2026-07-22"
+      ],
+      "declarations": [],
+      "number": 791,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [
+        "ship:next-release"
+      ],
+      "title": "Early economy: force a small early lease spend; bedroom/basement start hard-caps hires; unlocks small-now, bigger-over-time",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/791"
+    },
+    {
+      "dates": [
+        "2026-07-22"
+      ],
+      "declarations": [],
+      "number": 793,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [
+        "ship:hotpatch-48h"
+      ],
+      "title": "Office floor: all staff render as the same character + sprites oversized vs the room",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/793"
+    },
+    {
+      "dates": [],
+      "declarations": [],
+      "number": 794,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [
+        "ship:next-release"
+      ],
+      "title": "PLAN operations gantt: bigger font/area + a 'what's next / ETA to land' indicator",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/794"
+    },
+    {
+      "dates": [
+        "2026-07-22"
+      ],
+      "declarations": [],
+      "number": 798,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [
+        "ship:hotpatch-48h"
+      ],
+      "title": "Put 'Buy Compute' under an operations-style submenu (action grouping)",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/798"
+    },
+    {
+      "dates": [
+        "2026-07-22"
+      ],
+      "declarations": [],
+      "number": 800,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "In-game bug reporter (F8) does not transmit -- reports die on player's local disk, confirmation text lies",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/800"
+    },
+    {
+      "dates": [
+        "2026-07-23"
+      ],
+      "declarations": [],
+      "number": 804,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "Procurement + equipment lead-time: pre-order laptops, start-date scheduling, dead-time as opportunity cost",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/804"
+    },
+    {
+      "dates": [
+        "2026-07-24",
+        "2026-08-24"
+      ],
+      "declarations": [],
+      "number": 808,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "Reflective review (on/after 2026-08-24): release/league cycle nomenclature + cadence",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/808"
+    },
+    {
+      "dates": [
+        "2026-07-24"
+      ],
+      "declarations": [],
+      "number": 809,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "Remove vestigial victory plumbing + reconcile runtime ADR-0002 (no-victory is half-implemented)",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/809"
+    },
+    {
+      "dates": [
+        "2026-07-24"
+      ],
+      "declarations": [],
+      "number": 810,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "Archive migration: move evolutionary/cruft docs off main repo to keep repo-wide search crisp",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/810"
+    },
+    {
+      "dates": [
+        "2025-07-30",
+        "2026-07-24",
+        "2026-07-26",
+        "2026-07-27",
+        "2026-07-28",
+        "2026-07-29",
+        "2026-08-24"
+      ],
+      "declarations": [],
+      "number": 811,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "Workshop 3 (mechanics) -- Mon 07-27 W-3a / Tue 07-28 build / Wed 07-29 W-3b-W-4: crisp parts, brutal decisions",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/811"
+    },
+    {
+      "dates": [
+        "2026-07-24"
+      ],
+      "declarations": [],
+      "number": 812,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "feat(leaderboard): show lab name + operator name by default",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/812"
+    },
+    {
+      "dates": [
+        "2026-07-24"
+      ],
+      "declarations": [],
+      "number": 813,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "feat(hiring): stateful candidate representation -- knowledge-gated portrait to lanyard",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/813"
+    },
+    {
+      "dates": [
+        "2026-07-24"
+      ],
+      "declarations": [],
+      "number": 814,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "feat(onboarding): progressive disclosure -- operator monologue, greyed-UI intro, hire waterfall",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/814"
+    },
+    {
+      "dates": [
+        "2026-07-24"
+      ],
+      "declarations": [],
+      "number": 815,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "feat(cat): photo->pixel cat pipeline, 3 base models",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/815"
+    },
+    {
+      "dates": [
+        "2026-07-24"
+      ],
+      "declarations": [],
+      "number": 816,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "feat(cat): scene flashover on cat adoption (curled-cat asset)",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/816"
+    },
+    {
+      "dates": [
+        "2026-07-24"
+      ],
+      "declarations": [],
+      "number": 817,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "feat(cold-open): cycle hero backgrounds per text beat",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/817"
+    },
+    {
+      "dates": [
+        "2026-07-24"
+      ],
+      "declarations": [],
+      "number": 818,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "fast-follow(music): drop BPM 10-15%, consider 2 layered tracks",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/818"
+    },
+    {
+      "dates": [
+        "2026-07-24"
+      ],
+      "declarations": [],
+      "number": 819,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "feat(ux): action-queue visual feedback -- work-card flies to the queue (A/B dev toggle)",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/819"
+    },
+    {
+      "dates": [
+        "2026-07-24"
+      ],
+      "declarations": [],
+      "number": 820,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "feat(display): window mode options (windowed / borderless / fullscreen)",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/820"
+    },
+    {
+      "dates": [
+        "2026-07-24"
+      ],
+      "declarations": [],
+      "number": 822,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "feat(mechanic): overbook TEETH -- forcing-function instead of a flat reject",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/822"
+    },
+    {
+      "dates": [
+        "2026-07-24"
+      ],
+      "declarations": [],
+      "number": 823,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "design(liveops): layered / overlapping leagues -- staggered lifespans, default to freshest",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/823"
+    },
+    {
+      "dates": [
+        "2026-07-24"
+      ],
+      "declarations": [],
+      "number": 824,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "feat(ux): MTG-style pass-priority / F6 -- accept defaults, skip to end-turn summary",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/824"
+    },
+    {
+      "dates": [
+        "2026-07-24"
+      ],
+      "declarations": [],
+      "number": 825,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "design(events): OUTS sweep -- every event response offers a resource trade-off (no dead-ends)",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/825"
+    },
+    {
+      "dates": [
+        "2026-07-24"
+      ],
+      "declarations": [],
+      "number": 826,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "docs: rendered HTML architecture + nomenclature map (turn/game systems, with diagrams)",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/826"
+    },
+    {
+      "dates": [
+        "2026-07-24"
+      ],
+      "declarations": [],
+      "number": 828,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "observe/design(ux): hiring actions don't appear in the action queue (top bar + hiring submenu only)",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/828"
+    },
+    {
+      "dates": [
+        "2026-07-24"
+      ],
+      "declarations": [],
+      "number": 830,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "ux(hiring): statefulness -- ask WHO, per-candidate interviews, interview popup w/ card+info fade-in, portraits, embedded employee panel",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/830"
+    },
+    {
+      "dates": [
+        "2026-07-24"
+      ],
+      "declarations": [],
+      "number": 833,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "design: 'people & money' cohesion spine -- recruitment epic -> roles/salary/manager -> payroll -> finance/roster",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/833"
+    },
+    {
+      "dates": [
+        "2026-07-25"
+      ],
+      "declarations": [],
+      "number": 848,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [
+        "ship:next-release"
+      ],
+      "title": "feat(dev): in-game live A/B icon rotation (dev-mode asset swapper)",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/848"
+    },
+    {
+      "dates": [
+        "2026-07-25"
+      ],
+      "declarations": [],
+      "number": 850,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [
+        "ship:next-release"
+      ],
+      "title": "art: coherence + dedup pass over approved assets (consistent borders, kill redundant icons)",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/850"
+    },
+    {
+      "dates": [
+        "2026-07-25"
+      ],
+      "declarations": [],
+      "number": 880,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "Financing submenu inconsistent with Fundraising: no icons, costs not shown",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/880"
+    },
+    {
+      "dates": [
+        "2026-07-25"
+      ],
+      "declarations": [],
+      "number": 881,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "Submit-paper submenu needs interim UI pass (reuse existing icons)",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/881"
+    },
+    {
+      "dates": [
+        "2026-07-25"
+      ],
+      "declarations": [],
+      "number": 882,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "Bug-report auto-close: show a visible countdown before dismissing",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/882"
+    },
+    {
+      "dates": [
+        "2026-07-25"
+      ],
+      "declarations": [],
+      "number": 889,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "Architecture Week: systematic destructive testing + integrity/security review sweep",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/889"
+    },
+    {
+      "dates": [
+        "2026-07-25"
+      ],
+      "declarations": [],
+      "number": 894,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "Future UI: atmosphere/weather through windows (graphics-quality jump, ~2 epochs out)",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/894"
+    },
+    {
+      "dates": [
+        "2026-07-25"
+      ],
+      "declarations": [],
+      "number": 900,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "Pre-WS-3 art ramp: scale up pixellab (round-2, gap-fill) + pixel-density review",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/900"
+    },
+    {
+      "dates": [
+        "2026-07-26"
+      ],
+      "declarations": [],
+      "number": 903,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [
+        "ship:next-release"
+      ],
+      "title": "art: quirk/perk icon set for the employee surfaces (16 icons, valence colour-coding)",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/903"
+    },
+    {
+      "dates": [
+        "2026-07-26"
+      ],
+      "declarations": [],
+      "number": 912,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "art: RESERVED ASSETS -- high-doom bipedal horror cats (do not ship... yet)",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/912"
+    },
+    {
+      "dates": [
+        "2026-07-26"
+      ],
+      "declarations": [],
+      "number": 913,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "office juice: water-cooler bubbles, sneaky 1.1x cat scale, butt-flash alternate north loop",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/913"
+    },
+    {
+      "dates": [
+        "2026-07-26"
+      ],
+      "declarations": [],
+      "number": 917,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "deploy: robust cross-OS releases (Windows/Linux/macOS) by next Epoch",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/917"
+    },
+    {
+      "dates": [
+        "2026-07-26"
+      ],
+      "declarations": [],
+      "number": 923,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "community: contributor-cat digitization pipeline (Kambu pilot, the ur-cat)",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/923"
+    },
+    {
+      "dates": [
+        "2026-07-26"
+      ],
+      "declarations": [],
+      "number": 924,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "office: cat interaction animations -- bend-and-pat, be-patted, scamper-away (single-entity decomposition)",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/924"
+    },
+    {
+      "dates": [
+        "2026-07-26"
+      ],
+      "declarations": [],
+      "number": 925,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "office: W3 pre-build -- decision-agnostic engineering so W3 rulings flow into builds without decision fatigue",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/925"
+    },
+    {
+      "dates": [
+        "2026-07-26"
+      ],
+      "declarations": [],
+      "number": 929,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "tools(art-review): verdict provenance -- timestamped, append-only progression capture",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/929"
+    },
+    {
+      "dates": [
+        "2026-07-26"
+      ],
+      "declarations": [],
+      "number": 934,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "tools(art): cycle-closeout script -- move assets to their right home when a generation cycle finishes",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/934"
+    },
+    {
+      "dates": [
+        "2026-07-26"
+      ],
+      "declarations": [],
+      "number": 936,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "ui: attention items force left-hand action menu to compact with inconsistent item sizes",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/936"
+    },
+    {
+      "dates": [
+        "2026-07-26"
+      ],
+      "declarations": [],
+      "number": 940,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "data: morning-briefing metric stubs -- passive, append-only collection architecture",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/940"
+    },
+    {
+      "dates": [
+        "2026-07-26"
+      ],
+      "declarations": [],
+      "number": 944,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "sandbox v5: controls as buttons in top-left negative space -- declutter the legend wall",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/944"
+    },
+    {
+      "dates": [
+        "2026-07-26",
+        "2026-07-30"
+      ],
+      "declarations": [],
+      "number": 950,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "creative: 2026-07-26 closing harvest -- easter eggs, pickups, extras (Fable + full-day context)",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/950"
+    },
+    {
+      "dates": [
+        "2026-07-26"
+      ],
+      "declarations": [],
+      "number": 951,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "integration & closeout lane (Tuesday queue): wire promoted art into the game + retire superseded assets",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/951"
+    },
+    {
+      "dates": [
+        "2026-07-26"
+      ],
+      "declarations": [],
+      "number": 953,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "ux(advisor): large upper-right advisor text -- context per hovered action (teach what Interview/Offer reveal)",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/953"
+    },
+    {
+      "dates": [
+        "2026-07-26"
+      ],
+      "declarations": [],
+      "number": 954,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "ux(hiring): click small pool card -> full candidate card (full portrait, detailed strengths/weaknesses, reveal-gated)",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/954"
+    },
+    {
+      "dates": [
+        "2026-07-26"
+      ],
+      "declarations": [],
+      "number": 955,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "ui(endgame): major refresh of the end-game board before leaderboard transition (old button pattern, wasted space)",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/955"
+    },
+    {
+      "dates": [
+        "2026-07-26"
+      ],
+      "declarations": [],
+      "number": 956,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "design(narrative): mysterious-stranger messages delivered via an in-world basic PC (unlock/boot/password)",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/956"
+    },
+    {
+      "dates": [
+        "2026-07-26"
+      ],
+      "declarations": [],
+      "number": 957,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "feat(leaderboard): optional Operator name + visually highlight own lab row",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/957"
+    },
+    {
+      "dates": [
+        "2026-07-26"
+      ],
+      "declarations": [],
+      "number": 958,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "content(leaderboard): massively more lab-name variety; randomly generate player lab name by default",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/958"
+    },
+    {
+      "dates": [
+        "2026-07-26"
+      ],
+      "declarations": [],
+      "number": 959,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "feat(ux): Surrender button on the in-game menu -- end run to leaderboard instead of abandoning",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/959"
+    },
+    {
+      "dates": [
+        "2026-07-26"
+      ],
+      "declarations": [],
+      "number": 961,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "design(hiring): W3 -- revisit the candidate pool cap (MAX_CANDIDATES=6); stale once networking changes, and cap-hits are partly silent",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/961"
+    },
+    {
+      "dates": [
+        "2026-07-27"
+      ],
+      "declarations": [],
+      "number": 962,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "feat(engine): integrate frontier-labs dataset (pdoom-data#37); expose a list the website can pull to fix calculate-game-stats",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/962"
+    },
+    {
+      "dates": [
+        "2026-07-27"
+      ],
+      "declarations": [],
+      "number": 967,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "finance_engine desperation_payroll promises '-N doom now' but writes to the clobbered inert sink (silently never fires)",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/967"
+    },
+    {
+      "dates": [
+        "2026-07-27",
+        "2026-08-10",
+        "2026-08-31"
+      ],
+      "declarations": [],
+      "number": 984,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "Half-day workshop: audit mechanics deep-dive (next epoch) -- something amazing under the smell",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/984"
+    },
+    {
+      "dates": [
+        "2026-07-27"
+      ],
+      "declarations": [],
+      "number": 986,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "ADR-0015 M-ticket: risk_events re-author + rebalance (20 live fields) + #967 finance fix + political_pressure dead-write",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/986"
+    },
+    {
+      "dates": [
+        "2026-07-27"
+      ],
+      "declarations": [],
+      "number": 987,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "Bureaucratic tells: bodies telegraph doom via procedural anomaly (design, Wed W-block)",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/987"
+    },
+    {
+      "dates": [
+        "2026-07-26",
+        "2026-07-27",
+        "2026-08-07",
+        "2031-04-18"
+      ],
+      "declarations": [],
+      "number": 994,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "feat(emit): calibration artifact -- baseline p(Doom), sim 100%-topout date, ladder version (unblocks the website's doom clock + pdoom1-website#177)",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/994"
+    },
+    {
+      "dates": [
+        "2026-07-28"
+      ],
+      "declarations": [],
+      "number": 1004,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "design(upgrades): next-epoch review -- three parked upgrade-backed mechanics (chairs attrition, board oversight/payroll UI, ethicist headcount)",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1004"
+    },
+    {
+      "dates": [
+        "2026-07-28"
+      ],
+      "declarations": [],
+      "number": 1008,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "Release feed index is hand-maintained in practice: generated feed is uploaded as an artifact, never committed back",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1008"
+    },
+    {
+      "dates": [
+        "2026-07-29",
+        "2026-07-31"
+      ],
+      "declarations": [],
+      "number": 1009,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "devblog automation: repair as a draft-generator (never auto-publish) -- post-league",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1009"
+    },
+    {
+      "dates": [
+        "2026-07-31"
+      ],
+      "declarations": [],
+      "number": 1011,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "docs+emit(keybinds): three docs disagree with keybind_manager.gd; emit a keybind artifact so the website derives instead of mirroring",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1011"
+    },
+    {
+      "dates": [
+        "2026-07-19",
+        "2026-07-26",
+        "2026-07-29",
+        "2026-07-31"
+      ],
+      "declarations": [],
+      "number": 1012,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "leaderboard integrity: no dev-mode/verification field reaches a submitted score, so the website cannot filter on it",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1012"
+    },
+    {
+      "dates": [
+        "2026-07-29"
+      ],
+      "declarations": [],
+      "number": 1014,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "deploy(web): playable browser demo via Godot HTML5 export -- lower the try-it barrier to zero",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1014"
+    },
+    {
+      "dates": [
+        "2026-07-29"
+      ],
+      "declarations": [],
+      "number": 1015,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "positioning: the AI-generated-art immune reaction is a reputational risk, not just an art-quality one",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1015"
+    },
+    {
+      "dates": [
+        "2026-07-29"
+      ],
+      "declarations": [],
+      "number": 1016,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "design(content): provenance real infrastructure failure modes into the event history as flavour text / metadata",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1016"
+    },
+    {
+      "dates": [
+        "2026-07-29"
+      ],
+      "declarations": [],
+      "number": 1017,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "release: ship a FIRST-RUN.txt in the zip -- macOS instructions currently reach nobody who has downloaded",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1017"
+    },
+    {
+      "dates": [
+        "2026-07-28",
+        "2026-07-29"
+      ],
+      "declarations": [],
+      "number": 1018,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "Philosophy Quest: progressive supersession scan over the ADR set + stricter admission rules",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1018"
+    },
+    {
+      "dates": [
+        "2026-07-29"
+      ],
+      "declarations": [],
+      "number": 1020,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "ADR-0005 seed schedules are INERT in real play: nothing passes a schedule to GameState, so event_schedule is always empty",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1020"
+    },
+    {
+      "dates": [
+        "2026-07-29"
+      ],
+      "declarations": [],
+      "number": 1023,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "LEAGUE-CRITICAL: game does not initialise on launch -- full UI, Phase: Not Started, no action buttons",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1023"
+    },
+    {
+      "dates": [
+        "2026-07-29"
+      ],
+      "declarations": [],
+      "number": 1024,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "art: regen the endgame poster batch under the provisional rules, THEN decide which rules survive",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1024"
+    },
+    {
+      "dates": [
+        "2026-07-29",
+        "2026-07-30"
+      ],
+      "declarations": [],
+      "number": 1025,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "ritual: [Gate 2: THE FREEZE] can precede [Gate 4: PROVEN BUILD] -- Council of Elders vote before next league",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1025"
+    },
+    {
+      "dates": [
+        "2026-07-30"
+      ],
+      "declarations": [],
+      "number": 1026,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "post-league mortem: #1023 boot failure -- five whys, captured",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1026"
+    },
+    {
+      "dates": [
+        "2026-07-24",
+        "2026-07-30"
+      ],
+      "declarations": [],
+      "number": 1027,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "architecture: the project has left explosive-growth phase -- design the guarded, review-heavy cycle before contributors arrive",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1027"
+    },
+    {
+      "dates": [
+        "2026-07-30"
+      ],
+      "declarations": [],
+      "number": 1028,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "input(dev): ESC/pause disables ALL diagnostic surfaces -- root cause is process_mode, not input priority",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1028"
+    },
+    {
+      "dates": [
+        "2026-07-28",
+        "2026-07-30"
+      ],
+      "declarations": [],
+      "number": 1037,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "nomenclature: stale 'AP' vocabulary in player-facing text after the attention-economy migration (#996) -- scoped sweep + GLOSSARY.md is missing",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1037"
+    },
+    {
+      "dates": [
+        "2026-07-30"
+      ],
+      "declarations": [],
+      "number": 1038,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "trust: make provable declarations about what the game touches -- exit surfaces, provenance, signing",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1038"
+    },
+    {
+      "dates": [
+        "2026-07-30"
+      ],
+      "declarations": [],
+      "number": 1041,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "playtest 2026-07-30 (v0.13.2 artifact): UI/UX findings from the Gate 4 run",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1041"
+    },
+    {
+      "dates": [
+        "2026-07-30"
+      ],
+      "declarations": [],
+      "number": 1042,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "Score payload: emit player name AND lab name, plus a dev-mode-used flag (website side is built)",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1042"
+    },
+    {
+      "dates": [
+        "2026-07-30"
+      ],
+      "declarations": [],
+      "number": 1043,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "ui(layout): the Plan screen wastes its middle and scatters its text -- legibility-first layout brief",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1043"
+    },
+    {
+      "dates": [
+        "2026-07-30"
+      ],
+      "declarations": [],
+      "number": 1044,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "design(tempo): actions resolve instantly, so the early game has no rhythm -- time, sequencing, and the queue's promise",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1044"
+    },
+    {
+      "dates": [
+        "2026-07-30",
+        "2026-07-31"
+      ],
+      "declarations": [],
+      "number": 1046,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "Main-screen warnings: tell players the ladder can fork BEFORE they play (draft copy inside)",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1046"
+    },
+    {
+      "dates": [
+        "2026-07-27",
+        "2026-07-31"
+      ],
+      "declarations": [],
+      "number": 1049,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "ADR set: correctness/staleness/cohesion pass, and an implementation-status field the website can render",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1049"
+    },
+    {
+      "dates": [
+        "2025-12-25",
+        "2026-07-13"
+      ],
+      "declarations": [],
+      "number": 1052,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "ADR-0015 / DQ-21: what should a pdoom-data event carry, now that literal doom fields are deprecated?",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1052"
+    },
+    {
+      "dates": [
+        "2026-07-30",
+        "2026-07-31"
+      ],
+      "declarations": [],
+      "number": 1053,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "build_release: refuse to build from a stale or dirty tree -- prove build-matches-INTENT, not just pack-matches-build",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1053"
+    },
+    {
+      "dates": [
+        "2026-07-13",
+        "2026-07-31"
+      ],
+      "declarations": [],
+      "number": 1055,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "Ecosystem coherence: pdoom-data ADR-007 (anti-corruption layer) and ADR-008 (provenance/annotation model)",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1055"
+    },
+    {
+      "dates": [
+        "2026-07-30",
+        "2026-07-31"
+      ],
+      "declarations": [],
+      "number": 1056,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "convention: printed docs carry a next-review date and its TRIGGER, not just a print date",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1056"
+    },
+    {
+      "dates": [
+        "2026-07-31"
+      ],
+      "declarations": [],
+      "number": 1057,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "bug reports die on the player's disk: the website intake is built, the game never calls it",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1057"
+    },
+    {
+      "dates": [
+        "2026-07-31",
+        "2026-08-03",
+        "2026-09-09"
+      ],
+      "declarations": [],
+      "number": 1061,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "IP / trademark follow-up -- Australian lawyers, DUE Monday 2026-08-03",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1061"
+    },
+    {
+      "dates": [
+        "2026-07-31"
+      ],
+      "declarations": [],
+      "number": 1062,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "Leaderboard: the Duration column is meaningless when the score is turns survived",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1062"
+    },
+    {
+      "dates": [
+        "2026-07-31"
+      ],
+      "declarations": [],
+      "number": 1063,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "Let the player set player name + lab name on the FIRST screen (not only in setup)",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1063"
+    },
+    {
+      "dates": [
+        "2026-07-31"
+      ],
+      "declarations": [],
+      "number": 1064,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "Play Again / Back after a run ends: \"there wasn't a game to play again from\"",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1064"
+    },
+    {
+      "dates": [
+        "2026-07-31"
+      ],
+      "declarations": [],
+      "number": 1065,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "UNRESOLVED from the 10:24 playtest: \"critical ladder bug, it's translated into the local thing\"",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1065"
+    },
+    {
+      "dates": [
+        "2026-07-31"
+      ],
+      "declarations": [],
+      "number": 1066,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "League: test seeds are visible in the public seed filter, on the GLOBAL board, and survive Clear Local Scores",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1066"
+    },
+    {
+      "dates": [
+        "2026-07-11",
+        "2026-07-31"
+      ],
+      "declarations": [],
+      "number": 1067,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "Release builds ship a STALE build_stamp.txt -- CI never runs write_build_stamp.py",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1067"
+    },
+    {
+      "dates": [
+        "2026-07-31"
+      ],
+      "declarations": [],
+      "number": 1068,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "The site's Linux download button 404s (PDoom.x86_64 is not a release asset)",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1068"
+    },
+    {
+      "dates": [
+        "2026-07-31"
+      ],
+      "declarations": [],
+      "number": 1070,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "Test suite writes REAL leaderboard files into the developer's player profile",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1070"
+    },
+    {
+      "dates": [
+        "2026-07-31"
+      ],
+      "declarations": [],
+      "number": 1071,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "No macOS build has ever been verified to run; the Steam framework breaks on non-mac checkouts",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1071"
+    },
+    {
+      "dates": [
+        "2026-07-31"
+      ],
+      "declarations": [],
+      "number": 1072,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "build_release.py hardcodes the output name PDoom.exe regardless of --preset",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1072"
+    },
+    {
+      "dates": [
+        "2026-07-31",
+        "2026-08-01"
+      ],
+      "declarations": [],
+      "number": 1074,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "Postmortem input: the coordination layer on league day -- what the paper/voice loop did well, and six ways it failed",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1074"
+    },
+    {
+      "dates": [
+        "2026-03-09",
+        "2026-07-27",
+        "2026-08-01"
+      ],
+      "declarations": [],
+      "number": 1075,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "Postmortem input: one failure signature, five times this week -- a check whose input comes from the system it checks",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1075"
+    },
+    {
+      "dates": [
+        "2026-03-09",
+        "2026-07-27",
+        "2026-07-29",
+        "2026-07-30",
+        "2026-08-01"
+      ],
+      "declarations": [],
+      "number": 1076,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "Postmortem input: one failure shape across both workstreams, and why the register didn't stop it",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1076"
+    },
+    {
+      "dates": [
+        "2025-09-14",
+        "2026-07-13",
+        "2026-07-29",
+        "2026-08-01"
+      ],
+      "declarations": [],
+      "number": 1077,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "Postmortem contribution from pdoom-data: load-bearing breakage, false greens, and asking the person",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1077"
+    },
+    {
+      "dates": [
+        "2026-07-17",
+        "2026-07-29",
+        "2026-08-01"
+      ],
+      "declarations": [],
+      "number": 1078,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "Postmortem contribution from pdoom1-website: the league opened, and the site hid it for 90 minutes",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1078"
+    },
+    {
+      "dates": [
+        "2026-08-01"
+      ],
+      "declarations": [],
+      "number": 1085,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "bug(window): minimising v0.13.2 does not minimise -- window left in a wrong state until re-maximised (first run after #1079)",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1085"
+    },
+    {
+      "dates": [
+        "2026-08-01"
+      ],
+      "declarations": [],
+      "number": 1086,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "ux(hiring): onboard-now window -- tooltip omits the Attention cost (costs dict has money only), prints raw 'money: 3000.0', and Q/W read as the same option",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1086"
+    },
+    {
+      "dates": [
+        "2026-08-01"
+      ],
+      "declarations": [],
+      "number": 1088,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "Rivals appear for the first time in the month summary, having never been introduced",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1088"
+    },
+    {
+      "dates": [
+        "2026-08-01"
+      ],
+      "declarations": [],
+      "number": 1089,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "ui(fanfare): 'Strategic Moves Unlocked' -- the game's biggest milestone beat renders as bare text on black",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1089"
+    },
+    {
+      "dates": [
+        "2026-08-01"
+      ],
+      "declarations": [],
+      "number": 1090,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "design(research): Research Quality (Rushed/Standard/Thorough) is still a global Plan-screen toggle -- the ruling moved it to research-project level",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1090"
+    },
+    {
+      "dates": [
+        "2026-08-01"
+      ],
+      "declarations": [],
+      "number": 1091,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "design(hiring): no hire may be onboarded-by-silence -- every hiring route must surface the choice; arrivals come through a door",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1091"
+    },
+    {
+      "dates": [
+        "2026-08-01",
+        "2026-08-15"
+      ],
+      "declarations": [],
+      "number": 1092,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "art(sweep): events name physical things the office never shows -- install a security system, no cameras appear; sweep events for asset refs, then bulk-generate",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1092"
+    },
+    {
+      "dates": [
+        "2026-07-25",
+        "2026-08-01"
+      ],
+      "declarations": [],
+      "number": 1093,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "art(review): generation was paid for and the outputs were never reviewed -- inventory the backlog and package a decision session",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1093"
+    },
+    {
+      "dates": [
+        "2026-07-28"
+      ],
+      "declarations": [],
+      "number": 1094,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "Postmortem input: week of 2026-07-28 and the league-launch effort (outside vantage)",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1094"
+    },
+    {
+      "dates": [
+        "2026-08-02"
+      ],
+      "declarations": [],
+      "number": 1097,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "Pip's rulings, 2026-08-02 -- velocity portfolio weights, and a review pdoom-data is waiting on",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1097"
+    },
+    {
+      "dates": [
+        "2026-07-12"
+      ],
+      "declarations": [],
+      "number": 1102,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "Review: what does pdoom1 actually want from pdoom-data? (measured inventory, no proposal)",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1102"
+    },
+    {
+      "dates": [
+        "2026-08-03"
+      ],
+      "declarations": [],
+      "number": 1109,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [
+        "ship:next-release"
+      ],
+      "title": "art: promotion adds ~105 MB to the pack -- subtle refinement pass owed for a future epoch",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1109"
+    },
+    {
+      "dates": [
+        "2026-08-04"
+      ],
+      "declarations": [],
+      "number": 1111,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "Pip's rulings on the event-promotion pack, 2026-08-04 11:17 -- approved, plus the turn-pacing premise is wrong",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1111"
+    },
+    {
+      "dates": [
+        "2026-08-04"
+      ],
+      "declarations": [],
+      "number": 1112,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "Pip's rulings on intro + poster art, 2026-08-04 11:34 -- B1/B2 approved, dev-vs-alpha tool split, and a prior story beat",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1112"
+    },
+    {
+      "dates": [
+        "2025-11-24",
+        "2026-08-04"
+      ],
+      "declarations": [],
+      "number": 1113,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "art request: jocular interior art personifying the three sister repos -- let them grow their own lore",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1113"
+    },
+    {
+      "dates": [
+        "2025-12-25",
+        "2026-08-02"
+      ],
+      "declarations": [],
+      "number": 1115,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "No working re-sync path from pdoom-data (dead sync script deleted; capability still needed)",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1115"
+    },
+    {
+      "dates": [
+        "2026-08-01",
+        "2026-08-04"
+      ],
+      "declarations": [],
+      "number": 1121,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "The dot-matrix printer: a diegetic anti-rot machine that cannot report quietly",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1121"
+    },
+    {
+      "dates": [
+        "2026-07-26",
+        "2026-08-05"
+      ],
+      "declarations": [],
+      "number": 1126,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "The Local/Global toggle silently un-presses itself on fetch failure -- indistinguishable from a dead button",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1126"
+    },
+    {
+      "dates": [
+        "2025-09-15",
+        "2026-07-22",
+        "2026-08-04",
+        "2026-08-05"
+      ],
+      "declarations": [],
+      "number": 1128,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "sync-documentation.yml commits arbitrary dirty state into pdoom1-website (git add . in a foreign checkout)",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1128"
+    },
+    {
+      "dates": [
+        "2026-08-06"
+      ],
+      "declarations": [],
+      "number": 1135,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [
+        "ship:next-release"
+      ],
+      "title": "Lab-name generator: future-epoch content pass -- more shapes, more pool, backfilled bacronyms",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1135"
+    },
+    {
+      "dates": [
+        "2026-07-31",
+        "2026-08-06"
+      ],
+      "declarations": [],
+      "number": 1147,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "release: add a BEHAVIOURAL build-identity check to the release checklist (a feature the old build cannot have)",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1147"
+    },
+    {
+      "dates": [
+        "2026-07-22",
+        "2026-08-06"
+      ],
+      "declarations": [],
+      "number": 1150,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "content: promote the real-people/real-venue content guardrail from a closing issue comment to a tracked doc",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1150"
+    },
+    {
+      "dates": [
+        "2026-07-29",
+        "2026-08-06"
+      ],
+      "declarations": [],
+      "number": 1152,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "docs: ladder epoch columns are off by one from v0.14 down in ROADMAP.md and RELEASE_NOMENCLATURE.md",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1152"
+    },
+    {
+      "dates": [
+        "2026-08-06",
+        "2026-08-07"
+      ],
+      "declarations": [],
+      "number": 1163,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "godot/data/historical_events.json carries two mojibake titles; the upstream repair cannot reach a hand-carried copy",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1163"
+    },
+    {
+      "dates": [
+        "2026-08-01",
+        "2026-08-07"
+      ],
+      "declarations": [],
+      "number": 1171,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "Ladder eligibility must be visible BEFORE the run starts, not delivered at death (ruled by Pip 2026-08-07)",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1171"
+    },
+    {
+      "dates": [
+        "2026-08-08"
+      ],
+      "declarations": [],
+      "number": 1178,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "check_ladder_bump.py runs with '|| true' -- the guard on the board-key invariant cannot fail, and it already missed one for 31 hours",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1178"
+    },
+    {
+      "dates": [
+        "2026-08-08"
+      ],
+      "declarations": [],
+      "number": 1181,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "run_godot_tests.py: the 900s sim cap has no flag, and reports a timeout as '0 tests, 0 fail (FAIL)'",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1181"
+    },
+    {
+      "dates": [
+        "2026-08-06",
+        "2026-08-09"
+      ],
+      "declarations": [],
+      "number": 1193,
+      "repo": "PipFoweraker/pdoom1",
+      "ship_labels": [],
+      "title": "#1137's event retiming made a simulated run ~38% more expensive -- is that the intended event density?",
+      "url": "https://github.com/PipFoweraker/pdoom1/issues/1193"
+    }
+  ],
+  "repos": [
+    "PipFoweraker/pdoom1",
+    "PipFoweraker/coordination"
+  ]
+}
