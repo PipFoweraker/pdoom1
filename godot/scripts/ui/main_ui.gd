@@ -815,7 +815,10 @@ func _boot_game():
 		# sibling of #979) exists to catch callers that DON'T declare that intent.
 		if game_manager.load_saved_game(load_path, true):
 			return
-		log_message("[color=red]Load failed -- starting a new game instead.[/color]")
+		# The boot lands in PLAN, so a bare feed line here was invisible: the player asked for
+		# a save, silently got a fresh run, and had nothing on screen saying so. Same door as
+		# the other PLAN-time refusals (see report_rejection).
+		report_rejection("Load failed -- starting a new game instead.")
 	log_message("[color=cyan]Initializing game...[/color]")
 	# #617 debt: was hardcoded "test-seed" -- every boot ran the SAME timeline and
 	# GameConfig.game_seed was ignored. Empty arg -> GameManager falls back to
@@ -1431,6 +1434,24 @@ func _on_error_occurred(error_msg: String):
 	# EventResultPresenter now.
 	event_result_presenter.present_error(error_msg)
 
+func report_rejection(message: String) -> void:
+	"""Refuse a player action THROUGH THE SAME DOOR the backend's error_occurred uses.
+
+	Why this exists: the feed (log_message -> watch_screen.message_log) lives inside
+	WatchScreen, which ScreenModeController hides for the whole of PLAN. Most of the view's
+	rejections fire while PLAN is on screen, so a bare log_message() wrote them into a hidden
+	node and the player saw nothing happen at all -- the click just did not land.
+
+	EventResultPresenter.present_error() already solved this for rejections raised by the
+	BACKEND (it writes the feed line AND flashes plan_screen's toast). The view's own
+	pre-checks shadowed that fix: they `return` before game_manager.select_action() can emit
+	error_occurred, so the toast never fired for exactly the messages its comment names.
+	Routing them here restores one presentation door for both paths.
+
+	`message` must be PLAIN TEXT -- present_error applies the feed colour itself, and the
+	PLAN toast is a plain Label, so BBCode passed in here would be shown literally."""
+	event_result_presenter.present_error(message)
+
 func _notification(what: int) -> void:
 	# P0 rage-quit friction: intercept the window-manager close during a run and route to the
 	# Main Menu instead of quitting to desktop. Quit-to-desktop stays available from the pause
@@ -1660,7 +1681,13 @@ func _on_dynamic_action_pressed(action_id: String, action_name: String):
 		_open_submenu(action_id)
 		return
 
-	# Check if action can be afforded before adding to UI queue (#456)
+	# Check if action can be afforded before adding to UI queue (#456).
+	# These two branches are the game's highest-volume rejection: they fire on every
+	# unaffordable click, during PLAN, which is where the player spends most of the run.
+	# They report through report_rejection() (feed line + PLAN toast), NOT log_message()
+	# alone -- the feed is inside WatchScreen and is hidden for the whole of PLAN, so the
+	# old bare log_message() left an unaffordable click looking like a dead button. The
+	# guards themselves are UNCHANGED: same conditions, same early return, same gameplay.
 	var action_def = _get_action_by_id(action_id)
 	var attention_cost: int = GameActions.attention_cost(action_def)
 	var hour_type: String = GameActions.hour_type(action_def)
@@ -1668,12 +1695,12 @@ func _on_dynamic_action_pressed(action_id: String, action_name: String):
 	var available_hours = game_manager.state.get_available_hours(hour_type)
 
 	if available_attention < attention_cost or available_hours < attention_cost:
-		log_message("[color=red]Not enough Attention: need %d %s hours, have %d[/color]" % [
+		report_rejection("Not enough Attention: need %d %s hours, have %d" % [
 			attention_cost, hour_type, mini(available_hours, available_attention)])
 		return
 
 	if not game_manager.state.can_afford(action_def.get("costs", {})):
-		log_message("[color=red]Cannot afford action: %s[/color]" % action_name)
+		report_rejection("Cannot afford action: %s" % action_name)
 		return
 
 	# Track queued action -- #821: only add the UI tile when the backend accepts
@@ -2224,9 +2251,11 @@ func _on_pass_button_pressed():
 	var action_id = pass_action.get("id", GameActions.PASS_ACTION_ID)
 	var action_name = pass_action.get("name", "Do Nothing")
 
-	# Check if we're in action selection phase
+	# Check if we're in action selection phase. The Do Nothing button lives in PlanScreen's
+	# command zone, so both refusals below are PLAN-time -- report_rejection, not the
+	# WATCH-only feed (see report_rejection's docstring).
 	if current_turn_phase.to_upper() != "ACTION_SELECTION":
-		log_message("[color=red]Cannot pass - not in action selection phase[/color]")
+		report_rejection("Cannot pass - not in action selection phase")
 		return
 
 	# Check Attention availability (pass costs 0 but still verify game state)
@@ -2234,7 +2263,7 @@ func _on_pass_button_pressed():
 	var ap_cost: int = GameActions.attention_cost(pass_action)
 
 	if available_ap < ap_cost:
-		log_message("[color=red]Not enough Attention: need %d, have %d[/color]" % [ap_cost, available_ap])
+		report_rejection("Not enough Attention: need %d, have %d" % [ap_cost, available_ap])
 		return
 
 	log_message("[color=gray]%s - skipping this action[/color]" % action_name)
