@@ -65,14 +65,19 @@ CAPTURES: dict[str, dict] = {
     # to bypass the gate for capture; see tools/README_capture.md "Capturing the
     # cold-open" for resetting the gate if you want the real entry flow instead.
     #
-    # "cold_open": {
-    #     "scene": "res://scenes/cold_open_sequence.tscn",
-    #     "fps": 60,
-    #     "resolution": (1920, 1080),
-    #     "duration": 30.0,          # the cold-open is interactive (phone passcode);
-    #     "gif_fps": 20,             # for an unattended capture make a dedicated
-    #     "gif_width": 640,          # auto-playing variant, as portal_capture.tscn is.
-    # },
+    # The cold-open arrival (portal stitch #1112/B1+B2): pointing the runner straight
+    # at the scene bypasses the show-once gate. Unattended it plays the full portal +
+    # poster choreography and stops at the phone lock screen (passcode needs input) --
+    # exactly the stretch worth capturing. 18s covers black hold -> portal open ->
+    # poster resolve -> collapse -> phone slab fade-up, with margin.
+    "cold_open": {
+        "scene": "res://scenes/cold_open_sequence.tscn",
+        "fps": 30,
+        "resolution": (1920, 1080),
+        "duration": 18.0,
+        "gif_fps": 15,
+        "gif_width": 640,
+    },
     #
     # A future doom-scroll trailer: a scene that auto-drives the doom feed.
     # "doom_scroll": {
