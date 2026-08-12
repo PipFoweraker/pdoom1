@@ -61,7 +61,7 @@ func test_infobar_maintains_height():
 	info_bar.add_child(label)
 
 	# Set single-line text (unhovered)
-	label.text = "[color=gray]Hover over actions to see details...\n [/color]"
+	label.text = "[color=gray]Click an action to add it to this month's plan. Hover an action to see what it costs.\n [/color]"
 	assert_true(label.text.contains("\n"), "Unhover text should maintain 2-line format")
 
 	# Set multi-line text (hovered)
@@ -75,7 +75,7 @@ func test_infobar_maintains_height():
 
 func test_info_label_unhover_text_format():
 	# Test that unhover text maintains 2-line format
-	var unhover_text = "[color=gray]Hover over actions to see details...\n [/color]"
+	var unhover_text = "[color=gray]Click an action to add it to this month's plan. Hover an action to see what it costs.\n [/color]"
 
 	# Count newlines
 	var newline_count = unhover_text.count("\n")

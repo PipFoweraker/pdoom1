@@ -810,7 +810,11 @@ func _finish_month_playback() -> void:
 	var review := {
 		"id": MONTH_REVIEW_EVENT_ID,
 		"name": "Month Review -- %s" % label,
-		"description": "%s\n\nQueue this month's actions, then End Turn to play the month out." % body,
+		# Name the control the player can actually see. "End Turn" is the internal name for this
+		# commit (end_month() below, the EndTurnButton node); the BUTTON is labelled
+		# "COMMIT THE MONTH >". This popup is the most-repeated instruction in the game -- once a
+		# month, every month -- so it was also the most-repeated wrong one.
+		"description": "%s\n\nQueue this month's actions, then press COMMIT THE MONTH to play the month out." % body,
 		"type": "popup",
 		"options": [
 			{"id": "begin_planning", "text": "Begin planning %s" % label, "costs": {}, "effects": {}}

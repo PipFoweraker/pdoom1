@@ -268,8 +268,8 @@ layout_mode = 2
 layout_mode = 2
 text = "Buy time -- survival is the score | Lose: P(Doom) = 100%"
 horizontal_alignment = 1
-theme_override_font_sizes/font_size = 10
-theme_override_colors/font_color = Color(0.6, 0.7, 0.6, 0.8)
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.7, 0.85, 0.7, 1)
 tooltip_text = "P(Doom) = Probability of catastrophic AI outcome.
 There is no victory condition. Your score is the number of months you survive.
 The run ends when doom reaches 100%, or when your reputation collapses to zero."
@@ -310,7 +310,7 @@ theme_override_constants/separation = 8
 
 [node name="QueueHint" type="Label" parent="TabManager/MainUI/ContentArea/InstrumentColumn/QueuePanel/QueueContainer"]
 layout_mode = 2
-text = "No actions queued..."
+text = "No actions queued yet -- click an action to add it here."
 modulate = Color(0.5, 0.5, 0.5, 1)
 
 [node name="WatchScreen" parent="TabManager/MainUI/ContentArea" instance=ExtResource("14_watch_screen")]
@@ -335,7 +335,7 @@ theme_override_constants/margin_bottom = 5
 [node name="InfoLabel" type="RichTextLabel" parent="TabManager/MainUI/InfoBar/MarginContainer"]
 layout_mode = 2
 bbcode_enabled = true
-text = "[color=gray]Hover over actions to see details...
+text = "[color=gray]Click an action to add it to this month's plan. Hover an action to see what it costs.
  [/color]"
 fit_content = true
 scroll_active = false
@@ -372,7 +372,7 @@ theme_override_font_sizes/font_size = 12
 layout_mode = 2
 size_flags_horizontal = 3
 text = "COMMIT THE MONTH >"
-tooltip_text = "Commit the queued plan and advance the month. Warns if you have unspent Attention."
+tooltip_text = "Commit the queued plan and advance the month."
 disabled = true
 theme_override_font_sizes/font_size = 16
 theme_override_colors/font_color = Color(0.118, 0.765, 0.702, 1)
@@ -389,7 +389,7 @@ theme_override_font_sizes/font_size = 12
 layout_mode = 2
 size_flags_horizontal = 3
 bbcode_enabled = true
-text = "[color=white]Phase: Not Started[/color]"
+text = "[color=white]Phase: Starting up...[/color]"
 fit_content = true
 scroll_active = false
 

@@ -213,6 +213,25 @@ func _render_flat(categories: Dictionary, category_order: Array, category_colors
 			icon_stack.add_child(icon_button)
 
 
+## The hover tooltip for one action tile/row. PLAIN TEXT ONLY -- Godot tooltips render BBCode
+## literally, so the info bar's markup (main_ui._on_action_hover) must not be reused here.
+##
+## Why it carries the description. The hand is 13 uncaptioned pictograms, and the tooltip used to
+## repeat only the tile's own name -- which tells a player nothing they cannot already see. Two
+## external playtests in a week landed on the same wall: 2026-08-05, "2 of 2 external players
+## could not find Fundraising" (see the FUNDING LEADS note in render()); 2026-08-10, Jason, asked
+## whether it was apparent what he was meant to do -- "Not yet." The description already rides in
+## the action dictionary, so this is a free caption.
+func _tooltip_for(action_name: String, action: Dictionary, is_coming_soon: bool) -> String:
+	var tip := action_name
+	var description := String(action.get("description", "")).strip_edges()
+	if description != "":
+		tip += "\n" + description
+	if is_coming_soon:
+		tip += COMING_SOON_TOOLTIP_SUFFIX
+	return tip
+
+
 ## VARIANT PLUG POINT: builds ONE classic icon tile. A display variant overrides this to restyle
 ## the tile without touching _render_flat's grouping/affordability logic. Verbatim from the
 ## pre-carve inline build.
@@ -280,8 +299,7 @@ func _build_action_tile(action: Dictionary, category_key, category_colors: Dicti
 		var button_color = category_colors.get(category_key, Color(1.0, 1.0, 1.0))
 		icon_button.modulate = Color(0.9, 0.9, 0.9).lerp(button_color, 0.4)
 
-	# Simple tooltip for accessibility
-	icon_button.tooltip_text = (action_name + COMING_SOON_TOOLTIP_SUFFIX) if is_coming_soon else action_name
+	icon_button.tooltip_text = _tooltip_for(action_name, action, is_coming_soon)
 
 	# Tag with action_id so submenus can align to the button that opened them (#510)
 	icon_button.set_meta("action_id", action_id)
@@ -396,7 +414,7 @@ func _build_action_row(action: Dictionary, accent: Color, current_state: Diction
 		row.modulate = Color(0.4, 0.4, 0.4)
 	else:
 		row.modulate = Color(0.9, 0.9, 0.9).lerp(accent, 0.4)
-	row.tooltip_text = (action_name + COMING_SOON_TOOLTIP_SUFFIX) if is_coming_soon else action_name
+	row.tooltip_text = _tooltip_for(action_name, action, is_coming_soon)
 	row.pressed.connect(func(): host._on_dynamic_action_pressed(action_id, action_name))
 	row.mouse_entered.connect(func(): host._on_action_hover(action, can_afford, missing_resources))
 	row.mouse_exited.connect(func(): host._on_action_unhover())
