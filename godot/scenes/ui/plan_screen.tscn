@@ -10,10 +10,11 @@ script = ExtResource("1_plan")
 
 [node name="GettingStartedHint" type="Label" parent="."]
 layout_mode = 2
-text = "TIP: Hire safety researchers to reduce P(Doom)"
+text = "Each month: click actions below to plan them, then COMMIT THE MONTH to play it out."
 horizontal_alignment = 1
-theme_override_font_sizes/font_size = 10
-theme_override_colors/font_color = Color(0.5, 0.8, 0.5, 0.9)
+autowrap_mode = 3
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.7, 0.85, 0.7, 1)
 
 [node name="ActionsScroll" type="ScrollContainer" parent="."]
 layout_mode = 2

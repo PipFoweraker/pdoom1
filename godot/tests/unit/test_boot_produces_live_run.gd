@@ -12,8 +12,9 @@ extends GutTest
 ##
 ## The hole this file closes is the third mode, and it is the one that matches Pip's report
 ## most literally: **the run boots but the view never receives it.** Every existing boot test
-## asserts on GameManager only. A UI left rendering main.tscn's baked chrome -- "Phase: Not
-## Started", "58.5%", "Money: $0", "Week 1 | Mon Jul 3, 2017 | Day 1/5" -- is indistinguishable
+## asserts on GameManager only. A UI left rendering main.tscn's baked chrome -- "Phase:
+## Starting up..." (was "Phase: Not Started" when #1023 was filed), "58.5%", "Money: $0",
+## "Week 1 | Mon Jul 3, 2017 | Day 1/5" -- is indistinguishable
 ## from a healthy boot to all 990 of them. That was measured too: severing the state->view
 ## handler produced exactly ONE failure in the whole suite, this file's placeholder test.
 ##
@@ -49,7 +50,7 @@ const BOOT_FRAME_BUDGET := 60  # _ready awaits 1 frame then _boot_game; 60 is sl
 # InstrumentColumn/CoreZone/RightZones/NumericDoomZone/NumericDoomLabel.
 const PLACEHOLDER_TURN := "Week 1 |"
 const PLACEHOLDER_MONEY := "Money: $0"
-const PLACEHOLDER_PHASE := "Not Started"
+const PLACEHOLDER_PHASE := "Starting up"
 const PLACEHOLDER_DOOM := "58.5%"
 
 var _prev_pending_load_path: String = ""

@@ -2188,8 +2188,13 @@ func _on_action_hover(action: Dictionary, can_afford: bool, missing_resources: A
 	_highlight_resources(action_costs)
 
 func _on_action_unhover():
-	"""Reset info bar when mouse leaves action - maintain 2-line format to prevent flicker (issue #450)"""
-	info_label.text = "[color=gray]Hover over actions to see details...\n [/color]"
+	"""Reset info bar when mouse leaves action - maintain 2-line format to prevent flicker (issue #450)
+
+	The resting copy INSTRUCTS (playtest 2026-08-10, Jason: "Is it at all apparent what you're
+	meant to do?" / "Not yet."). This strip is full-width prime real estate and spends most of
+	the turn idle, so it names the core verb instead of describing itself. Must keep the
+	trailing "\\n " -- that is the #450 two-line height lock."""
+	info_label.text = "[color=gray]Click an action to add it to this month's plan. Hover an action to see what it costs.\n [/color]"
 	# Reset resource highlights
 	_reset_resource_highlights()
 
