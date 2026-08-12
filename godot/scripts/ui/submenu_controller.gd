@@ -142,12 +142,17 @@ func on_option_selected(action_id: String, action_name: String, dialog: Control,
 	var hour_type: String = GameActions.hour_type(action_def)
 	var available_hours: int = host.game_manager.state.get_available_hours(hour_type)
 	var available_attention: int = host.game_manager.state.get_available_attention()
+	# Submenus are opened from the PLAN screen, so these two refusals are PLAN-time: they go
+	# through host.report_rejection() (feed line + PLAN toast), not the WATCH-only feed, which
+	# ScreenModeController hides for the whole of PLAN. Same guards, same early return -- only
+	# the presentation door changed. Plain text: present_error colours the feed line itself and
+	# the PLAN toast is a plain Label.
 	if available_attention < attention_cost or available_hours < attention_cost:
-		host.log_message("[color=red]Not enough Attention: need %d %s hours, have %d[/color]" % [
+		host.report_rejection("Not enough Attention: need %d %s hours, have %d" % [
 			attention_cost, hour_type, mini(available_hours, available_attention)])
 		return
 	if not host.game_manager.state.can_afford(action_def.get("costs", {})):
-		host.log_message("[color=red]Cannot afford: %s[/color]" % action_name)
+		host.report_rejection("Cannot afford: %s" % action_name)
 		return
 	host.log_message("[color=cyan]%s: %s[/color]" % [log_label, action_name])
 	if plan_controller.select_action(action_id):
