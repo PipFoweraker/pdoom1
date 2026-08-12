@@ -68,6 +68,22 @@ Declared with a `Layer:` line in a tool's module docstring; `--` = undeclared.
 | validate_historical_data.py | -- | Historical Data Validation Script | make; ci:data-validation.yml; ci:enhanced-release.yml |
 | verify_release_urls.py | -- | Verify release-feed download URLs actually resolve. | ci:enhanced-release.yml; tool:generate_release_metadata.py |
 
+## `scripts/lib/scores/`
+
+| Tool | Layer | Purpose | Invoked by |
+|---|---|---|---|
+| enhanced_leaderboard.py | -- | Enhanced Leaderboard Manager for P(Doom) v0.4.1+ | NONE FOUND |
+| local_store.py | -- | Local leaderboard storage for PDoom1. | NONE FOUND |
+
+## `scripts/lib/services/`
+
+| Tool | Layer | Purpose | Invoked by |
+|---|---|---|---|
+| data_paths.py | -- | Cross-platform data directory management for PDoom1. | NONE FOUND |
+| deterministic_rng.py | -- | Deterministic RNG System for P(Doom): Reproducible Strategic Gameplay | NONE FOUND |
+| leaderboard.py | -- | Privacy-Respecting Leaderboard Foundation for P(Doom) | NONE FOUND |
+| version.py | -- | Version management for P(Doom): Bureaucracy Strategy Game | NONE FOUND |
+
 ## `tools/`
 
 | Tool | Layer | Purpose | Invoked by |
@@ -75,13 +91,14 @@ Declared with a `Layer:` line in a tool's module docstring; `--` = undeclared.
 | archive_masters.py | -- | Sync the local art-masters cache to off-site object storage (DreamObjects). | tool:slim_repo.py |
 | build_release.py | PROVE | build_release.py -- export a P(Doom) build FROM A VERIFIED-CLEAN STATE. | ci:enhanced-release.yml; test:test_build_all_platforms.py; test:test_build_release_paths.py; tool:build_all_platforms.py; tool:find_dead_code.py |
 | capture_cinematic.py | -- | Cinematic capture harness for P(Doom)1 -- deterministic scene footage -> mp4/gif. | test:test_find_dead_code.py; tool:find_dead_code.py |
-| check_ladder_bump.py | PROVE | Guard: did this diff need a ladder_version bump (or get one it did not need)? | ci:quality-checks.yml; test:test_check_ladder_bump.py; tool:sync_version.py |
+| check_ladder_bump.py | PROVE | Guard: did this diff need a ladder_version bump (or get one it did not need)? | ci:quality-checks.yml; test:test_check_ladder_bump.py; test:test_check_self_merge_eligibility.py; tool:sync_version.py |
 | check_scene_nav.py | PROVE | check_scene_nav.py -- enforce the single-scene-navigation-chokepoint invariant. | pre-commit; ci:quality-checks.yml; tool:enforce_standards.py |
+| check_self_merge_eligibility.py | PROVE | Guard: does this PR actually qualify for the self-merge class it claims? | ci:self-merge-eligibility.yml; test:test_check_self_merge_eligibility.py |
 | cleanup-duplicate-issues.py | -- | Cleanup script for duplicate GitHub issues created by sync tool failure. | NONE FOUND |
 | collect_ui_evolution.py | -- | UI evolution capture collector for P(Doom). | human (docstring usage) |
 | commit.py | -- | Commit wrapper that absorbs the "hook reformatted a file then aborted" dance. | make; test:test_find_dead_code.py; tool:find_dead_code.py |
 | find_dead_code.py | -- | find_dead_code.py -- report-only dead-path scanner for P(Doom)1. | test:test_find_dead_code.py; tool:generate_tools_index.py |
-| generate_cat_placeholders.py | -- | Generate placeholder cat images for different doom levels. | NONE FOUND |
+| generate_cat_placeholders.py | -- | Generate placeholder cat images for different doom levels. | tool:backfill_provenance.py |
 | ingest_recordings.py | -- | Pull fresh OBS recordings into the repo's working area. | human (docstring usage) |
 | phase2_setup.py | -- | Phase 2: Events System Setup | human (docstring usage) |
 | phase3_setup.py | -- | Phase 3: Extract Features to Shared | human (docstring usage) |
@@ -102,7 +119,7 @@ Declared with a `Layer:` line in a tool's module docstring; `--` = undeclared.
 | Tool | Layer | Purpose | Invoked by |
 |---|---|---|---|
 | analyze_verdicts.py | -- | Analyze art triage exports (verdict JSONs) for BOTH art libraries. | human (docstring usage) |
-| apply_review.py | SWEEP | apply_review.py -- wire art-review verdicts into the P(Doom)1 asset pipeline. | test:test_art_promotion_pipeline.py; tool:build_full_gallery.py; tool:measure_taste.py; tool:slot_model.py |
+| apply_review.py | SWEEP | apply_review.py -- wire art-review verdicts into the P(Doom)1 asset pipeline. | test:test_art_promotion_pipeline.py; tool:build_full_gallery.py; tool:measure_taste.py; tool:serve_review.py; tool:slot_model.py |
 | apply_slot_picks.py | -- | apply_slot_picks.py -- fold a slot_picker.html export into the TRACKED | test:test_slot_picker.py; tool:build_slot_picker.py |
 | author_anchor_sockets.py | -- | Author godot/data/office/anchor_sockets.json -- Anchor Sockets V2 (#894 #900 #913). | tool:build_cat_sweep_sheet.py |
 | build.py | -- | Build the P(Doom)1 style-review tool: a self-contained, single-file HTML page | test:test_find_dead_code.py; tool:select_assets.py |
@@ -148,8 +165,10 @@ Declared with a `Layer:` line in a tool's module docstring; `--` = undeclared.
 | Tool | Layer | Purpose | Invoked by |
 |---|---|---|---|
 | audit_icons.py | -- | Icon Asset Audit Tool | human (docstring usage) |
+| backfill_provenance.py | -- | Backfill asset provenance for everything already packed into godot/assets/. | tool:check_provenance.py |
 | build_review_gallery.py | -- | Rebuild tools/assets/review_generated.html from whatever PNGs are on disk under | human (docstring usage) |
 | build_share_set.py | -- | Derive the ART SHARE SET from verdicts already applied -- no new review pass. | human (docstring usage) |
+| check_provenance.py | -- | Guard: the provenance manifest and the pack must agree, and `unknown` must not grow. | tool:backfill_provenance.py |
 | extract_palette.py | -- | Extract a brand palette from an image (default: the P(Doom)1 hero background). | human (docstring usage) |
 | generate_images.py | -- | Generalized batch image generator for pdoom1 art assets. | tool:promote_assets.py |
 | promote_assets.py | -- | Asset promotion tool for pdoom1. | NONE FOUND |
@@ -170,10 +189,16 @@ Declared with a `Layer:` line in a tool's module docstring; `--` = undeclared.
 
 ## UNKNOWN -- no declaration, no usage hint, no discoverable caller
 
-12 tool(s) that nothing declares, documents, or calls. Each one is either
+17 tool(s) that nothing declares, documents, or calls. Each one is either
 a rot candidate or an undocumented dependency -- find out which (`tools/find_dead_code.py` lane).
 
 - `scripts/ascii_compliance_fixer.py`
+- `scripts/lib/scores/enhanced_leaderboard.py`
+- `scripts/lib/scores/local_store.py`
+- `scripts/lib/services/data_paths.py`
+- `scripts/lib/services/deterministic_rng.py`
+- `scripts/lib/services/leaderboard.py`
+- `scripts/lib/services/version.py`
 - `scripts/logging_system.py`
 - `scripts/monitor-sync.py`
 - `scripts/repo-status.py`
@@ -184,7 +209,6 @@ a rot candidate or an undocumented dependency -- find out which (`tools/find_dea
 - `tools/assets/promote_assets.py`
 - `tools/assets/render_latex_pdoom.py`
 - `tools/cleanup-duplicate-issues.py`
-- `tools/generate_cat_placeholders.py`
 
 ## Claim-vs-reality gaps
 
@@ -217,6 +241,6 @@ DISCUSSING CI); the rest are the hollow-runner shape -- read them.
 
 ## Not indexed: HTML tools
 
-26 `.html` tool(s) under `tools/` (browser-opened, no docstring to parse): `tools/art_review/doom_overlay_preview.html`, `tools/art_review/hero_gallery_template.html`, `tools/art_review/icon_pass_2026-07-21.html`, `tools/art_review/icon_pass_verdicts_2026-07-21.html`, `tools/art_review/palette.html`, `tools/art_review/palette_swatches.html`, `tools/art_review/scene_wave2_2026-07-21.html`, `tools/art_review/style_review.html`, `tools/assets/review_generated.html`, `tools/music/commission_sheets.html`, `tools/music/jukebox.html`, `tools/music/listening_room.html`, `tools/music/stem_board.html`, `tools/runsheet/CEREMONY-ALL-GATES-2026-07-31.html`, `tools/runsheet/SUNDAY-postmortem-2026-08-07.html`, `tools/runsheet/chronicle-2026-08-06_07.html`, `tools/runsheet/copy-review-2026-08-09.html`, `tools/runsheet/fri-2026-07-31-EVENING-1620.html`, `tools/runsheet/fri-2026-07-31-GATES-1700.html`, `tools/runsheet/fri-2026-07-31-TO-MIDNIGHT-1733.html`, `tools/runsheet/fri-2026-07-31-league-day.html`, `tools/runsheet/playtest_card.html`, `tools/runsheet/wed-thu-2026-07-29.html`, `tools/social_composer.html`, `tools/ui_comparison.html`, `tools/ui_mockup/wireframe.html`.
+29 `.html` tool(s) under `tools/` (browser-opened, no docstring to parse): `tools/art_review/doom_overlay_preview.html`, `tools/art_review/hero_gallery_template.html`, `tools/art_review/icon_pass_2026-07-21.html`, `tools/art_review/icon_pass_verdicts_2026-07-21.html`, `tools/art_review/palette.html`, `tools/art_review/palette_swatches.html`, `tools/art_review/scene_wave2_2026-07-21.html`, `tools/art_review/style_review.html`, `tools/assets/review_generated.html`, `tools/music/commission_sheets.html`, `tools/music/jukebox.html`, `tools/music/listening_room.html`, `tools/music/stem_board.html`, `tools/runsheet/CEREMONY-ALL-GATES-2026-07-31.html`, `tools/runsheet/SUNDAY-postmortem-2026-08-07.html`, `tools/runsheet/chronicle-2026-08-06_07.html`, `tools/runsheet/copy-review-2026-08-09.html`, `tools/runsheet/decisions-2026-08-10.html`, `tools/runsheet/fri-2026-07-31-EVENING-1620.html`, `tools/runsheet/fri-2026-07-31-GATES-1700.html`, `tools/runsheet/fri-2026-07-31-TO-MIDNIGHT-1733.html`, `tools/runsheet/fri-2026-07-31-league-day.html`, `tools/runsheet/playtest_card.html`, `tools/runsheet/sat-2026-08-08-release-status.html`, `tools/runsheet/wed-thu-2026-07-29.html`, `tools/runsheet/week-2026-08-10-plan.html`, `tools/social_composer.html`, `tools/ui_comparison.html`, `tools/ui_mockup/wireframe.html`.
 
-Total: 119 active tools (9 GENERATE, 5 OBSERVE, 6 PROVE, 1 SWEEP, 98 undeclared); 12 in UNKNOWN; 6 archived.
+Total: 128 active tools (9 GENERATE, 5 OBSERVE, 7 PROVE, 1 SWEEP, 106 undeclared); 17 in UNKNOWN; 6 archived.

@@ -5,21 +5,35 @@ It serves both art tracks in a single gallery:
   * pixellab sprites/office-sim under  art_source/**            (committed)
   * gpt-image icons/banners/bg/textures under art_generated/**  (gitignored, ~1.1 GB)
 
-Per asset you get a clickable keep / iterate / discard verdict, a free-text NOTE
-field and optional comma-separated TAGS. Every edit AUTO-PERSISTS to a real file
-on disk -- tools/art_review/review_state.json -- via a POST endpoint, so a review
-survives across sittings, can be revised over many sessions, and is a clean input
-for promote/regenerate tooling. (No browser localStorage: too fragile for multi-session.)
+TWO AXES (v3, 2026-08-13). A VERDICT is the asset's fate -- exactly one, exclusive.
+A HARVEST TAG is something that survives that fate -- any number, and it still
+applies when the image itself is discarded. "No, but I like the corner" is not a
+verdict; it is a discard plus a harvest tag. Encoding it as a verdict would force
+a false choice and lose the salvage the moment the image is rejected.
 
-Verdict model (v2):
-  * keep    -- accept it (green).
-  * iterate -- on-brief but not final; regenerate to compare/hone. The DEFAULT
-               "slight reject". (amber)
-  * discard -- OFF-brief / wrong direction; note is prompted-for. NOT regenerated
-               -- it signals the brief itself needs reconsidering. (red)
-"Decided" = keep OR discard (moves to the Decisions archive). iterate stays live
-(it expects a fresh variant). Old "maybe" and "reroll" verdicts migrate to
-"iterate" transparently on load.
+Verdict model (v3):
+  * keep    -- ship it. Decided. (green)
+  * remix   -- regenerate and compare. Spends budget. Stays LIVE. (amber)
+              Called "iterate" in v2; migrates automatically.
+  * hold    -- right, but not now. Spends nothing. Stays LIVE. (blue)
+              REQUIRES a return condition -- a trigger, not a date. A hold with
+              no way back is an abandonment with better manners, so both the UI
+              and the server refuse one.
+  * discard -- OFF-brief; note is prompted-for. NOT regenerated -- it signals the
+               brief itself needs reconsidering. Decided. (red)
+"Decided" = keep OR discard (moves to the Decisions archive).
+Old "maybe" / "reroll" / "iterate" verdicts migrate to "remix" on load.
+
+The vocabulary above is DEFINED ONCE, in VERDICTS_DOC / HARVEST_DOC below. The
+in-app help panel (press ?) and docs/art/NOMENCLATURE.md are both generated from
+it, so no other repo can quote a version this app no longer uses.
+
+HISTORY. Every edit appends to tools/art_review/review_log.jsonl -- append-only,
+and the source of truth. review_state.json is a PROJECTION of that log (last
+write per asset wins) and is what every downstream tool reads. This is what makes
+a revised note non-destructive and makes "discarded in August, revived in
+November" visible at all. (No browser localStorage for verdicts: too fragile for
+multi-session. localStorage is used only for view toggles.)
 
 Nothing is embedded or copied: PNGs stream live from disk through /img?p=<relpath>,
 so the big gitignored art_generated/ tree is never duplicated or committed.
@@ -53,6 +67,7 @@ import json
 import os
 import pathlib
 import re
+import sys
 import threading
 import webbrowser
 from datetime import datetime, timezone
@@ -62,6 +77,13 @@ from urllib.parse import parse_qs, quote, urlparse
 HERE = pathlib.Path(__file__).resolve().parent
 REPO = HERE.parents[1]
 STATE_PATH = HERE / "review_state.json"
+# Append-only decision log. THIS is the source of truth for what was decided and
+# when; review_state.json is a projection of it (last write per asset wins).
+# Why: the state file overwrites -- a revised note destroys the old one, so
+# "demoted in August, revived in November" is invisible, which is exactly the
+# Magic-card-file behaviour Pip asked for. A log makes revision history exist.
+# Rebuild the projection at any time with:  python serve_review.py --replay-log
+LOG_PATH = HERE / "review_log.jsonl"
 
 # generated file names: "<id>[_vN]_<size>.png"; strip _<size>, then optional _vN
 _SIZE_RE = re.compile(r"^(.+?)_(\d+)\.png$")
@@ -71,14 +93,97 @@ _ROT_RE = re.compile(r"_(north|south|east|west|north-east|north-west|south-east|
 # prefer a mid size to show; fall back to whatever exists
 _SIZE_PREF = ["512", "256", "1024", "128", "64"]
 
-VALID_VERDICTS = {"keep", "iterate", "discard"}
-# old verdicts -> new; applied on every state load so pre-v2 files just work.
-_VERDICT_MIGRATE = {"maybe": "iterate", "reroll": "iterate"}
+# -- verdict model v3 (2026-08-13) -------------------------------------------
+# FOUR verdicts, one axis, exactly one per asset. This is the asset's FATE.
+# Anything that is not a fate lives on the `tags` axis instead (see HARVEST).
+VALID_VERDICTS = {"keep", "remix", "discard", "shelf"}
+# old verdicts -> new; applied on every state load so pre-v3 files just work.
+# "iterate" was the v2 name for "remix" -- Pip's own word, and the one he will
+# type a few thousand times, so the storage takes his word rather than the tool's.
+_VERDICT_MIGRATE = {"maybe": "remix", "reroll": "remix", "iterate": "remix"}
+
+# "shelf" without a return condition is "parked without a return date", which the
+# estate has already ruled is just "abandoned" wearing a nicer word
+# (coordination COORDINATION_CONVENTIONS 5c). The guard is what keeps the shelf
+# from becoming a landfill: a hold MUST say what would bring it back.
+SHELF_REQUIRES_REASON = True
+
+# -- THE canonical vocabulary ------------------------------------------------
+# ONE definition. The in-app help panel and docs/art/NOMENCLATURE.md are both
+# GENERATED from this, so the other repos and coordination cannot end up quoting
+# a stale version of it. (Same anti-rot rule as DQ_INDEX.md: indexes are
+# generated from source, never hand-maintained.) Regenerate the doc with:
+#     python tools/art_review/serve_review.py --emit-nomenclature
+VERDICTS_DOC = [
+    (
+        "keep",
+        "K",
+        "Ship it.",
+        "This asset is good as it stands. Decided -- moves to the archive. "
+        "Does NOT mean promoted: promotion is a separate gate.",
+    ),
+    (
+        "remix",
+        "R",
+        "Regenerate and compare.",
+        "On-brief but not final. Spends generation budget: a remix is a request "
+        "for a fresh variant. Stays LIVE -- it expects a new image to judge. "
+        "Was called `iterate` in v2 and migrates automatically.",
+    ),
+    (
+        "shelf",
+        "S",
+        "Right, but not now.",
+        "Correct work with no current home -- the wrong brief, the wrong season, "
+        "or a scene not yet written. Spends nothing. REQUIRES a return condition "
+        "(a trigger, not a date). Without one it is an abandonment with better "
+        "manners, so the server rejects it. NAMED `shelf`, NOT `hold`, "
+        "DELIBERATELY: apply_review.py uses `held` for a PROMOTION state -- a keep "
+        "the pipeline withholds from godot/assets with a rule reason -- and "
+        "pdoom1-website#249 has already been told the promotion vocabulary is "
+        "promotable/contested/held/blocked. Reviewer-defers and pipeline-withholds "
+        "are different layers and must not be one letter apart. Ruled by Pip "
+        "2026-08-13. Key is S; H still works as an alias for the hour this was "
+        "called `hold`.",
+    ),
+    (
+        "discard",
+        "D",
+        "Off-brief.",
+        "Wrong direction. NOT regenerated -- a discard says the BRIEF needs a "
+        "rethink, not a re-roll. Decided -- moves to the archive. Prompts for a "
+        "note, because the reason is the reusable part.",
+    ),
+]
+
+HARVEST_DOC = [
+    (
+        "element:<thing>",
+        "element:corner, element:lamp",
+        "A component worth keeping when the image is not. Survives a discard.",
+    ),
+    (
+        "composition",
+        "composition",
+        "The arrangement works even if the render does not.",
+    ),
+    (
+        "palette",
+        "palette",
+        "The colour relationship is the keeper.",
+    ),
+    (
+        "seed:<idea>",
+        "seed:new-scene",
+        "An idea this image PRODUCED, which outlives it. Feeds the next batch's "
+        "queue spec rather than describing this asset at all.",
+    ),
+]
 
 
 def migrate_verdict(v):
-    """Map a stored verdict onto the v2 model. keep/iterate/discard pass through;
-    legacy maybe/reroll fold into iterate; anything else -> None."""
+    """Map a stored verdict onto the v3 model. keep/remix/discard/hold pass
+    through; legacy maybe/reroll/iterate fold into remix; anything else -> None."""
     if v in VALID_VERDICTS:
         return v
     return _VERDICT_MIGRATE.get(v)
@@ -288,8 +393,25 @@ def normalize_tags(raw):
     return out
 
 
+def append_log(event):
+    """Append one decision event to review_log.jsonl. Append-only, never rewritten.
+
+    A failure here must NOT lose the reviewer's verdict, so it is reported but
+    swallowed -- review_state.json is still written either way. The log losing an
+    event degrades history; raising here would lose the decision itself.
+    """
+    try:
+        with LOG_PATH.open("a", encoding="utf-8", newline="\n") as fh:
+            fh.write(json.dumps(event, sort_keys=True) + "\n")
+        return True
+    except OSError as exc:  # pragma: no cover -- disk-level failure
+        sys.stderr.write("[art-review] LOG WRITE FAILED: %s\n" % exc)
+        return False
+
+
 def apply_patch(patch):
-    """Merge one {asset_id, verdict?, note?, tags?} patch into the state file.
+    """Merge one {asset_id, verdict?, note?, tags?, shelf_reason?} patch into the
+    state file AND append the change to the append-only log.
     Returns (status, response_dict)."""
     asset_id = patch.get("asset_id")
     if not asset_id or not isinstance(asset_id, str):
@@ -300,23 +422,263 @@ def apply_patch(patch):
         entry.setdefault("verdict", None)
         entry.setdefault("note", "")
         entry.setdefault("tags", [])
+        before = {
+            "verdict": entry.get("verdict"),
+            "note": entry.get("note", ""),
+            "tags": list(entry.get("tags") or []),
+            "shelf_reason": entry.get("shelf_reason", ""),
+        }
+        if "shelf_reason" in patch:
+            entry["shelf_reason"] = (
+                "" if patch["shelf_reason"] is None else str(patch["shelf_reason"])
+            )
         if "verdict" in patch:
             v = patch["verdict"]
-            entry["verdict"] = v if v in VALID_VERDICTS else None
+            v = v if v in VALID_VERDICTS else None
+            # THE GUARD. A hold with no return condition is an abandonment with
+            # better manners, so the server refuses it rather than trusting the UI.
+            if v == "shelf" and SHELF_REQUIRES_REASON:
+                reason = str(entry.get("shelf_reason") or "").strip()
+                if not reason:
+                    return 400, {
+                        "ok": False,
+                        "error": "shelf_requires_reason",
+                        "message": (
+                            "A hold needs a return condition -- what would bring "
+                            "this back? (a trigger, not a date: 'when there is a "
+                            "night-scene brief', 'if the palette lane lands')"
+                        ),
+                    }
+            entry["verdict"] = v
+            if v != "shelf":
+                # leaving hold retires its return condition rather than orphaning it
+                entry.pop("shelf_reason", None)
         if "note" in patch:
             entry["note"] = "" if patch["note"] is None else str(patch["note"])
         if "tags" in patch:
             entry["tags"] = normalize_tags(patch["tags"]) or []
         entry["updated_at"] = now_iso()
-        # drop an entry that carries no signal, to keep the file clean
+        # drop an entry that carries no signal, to keep the file clean.
+        # NOTE: dropping it from the projection does NOT erase it from the log --
+        # the clearing is itself an event, so "I un-decided this" stays visible.
         if not entry["verdict"] and not entry["note"].strip() and not entry["tags"]:
             state.pop(asset_id, None)
             saved = None
         else:
             state[asset_id] = entry
             saved = entry
+        after = {
+            "verdict": entry.get("verdict"),
+            "note": entry.get("note", ""),
+            "tags": list(entry.get("tags") or []),
+            "shelf_reason": entry.get("shelf_reason", ""),
+        }
+        if after != before:
+            append_log(
+                {
+                    "ts": entry["updated_at"],
+                    "asset": asset_id,
+                    "prev": before,
+                    "next": after,
+                    "cleared": saved is None,
+                }
+            )
         save_state(state)
     return 200, {"ok": True, "asset_id": asset_id, "entry": saved}
+
+
+def replay_log():
+    """Rebuild review_state.json from review_log.jsonl (last write per asset wins).
+
+    This is the proof that the log is the source of truth and the state file is a
+    projection: if this cannot reproduce the state, the claim is false. Events
+    predating the log (everything before 2026-08-13) are not in it, so a replay
+    over a partial log is a SUBSET, not a correction -- it is reported, not
+    silently written over the top.
+    """
+    if not LOG_PATH.is_file():
+        print("no log at %s -- nothing to replay" % LOG_PATH)
+        return {}
+    state, n, bad = {}, 0, 0
+    for line in LOG_PATH.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            ev = json.loads(line)
+        except ValueError:
+            bad += 1
+            continue
+        n += 1
+        aid, nxt = ev.get("asset"), ev.get("next") or {}
+        if not aid:
+            continue
+        if ev.get("cleared"):
+            state.pop(aid, None)
+            continue
+        entry = {
+            "verdict": nxt.get("verdict"),
+            "note": nxt.get("note", ""),
+            "tags": list(nxt.get("tags") or []),
+            "updated_at": ev.get("ts"),
+        }
+        if nxt.get("shelf_reason"):
+            entry["shelf_reason"] = nxt["shelf_reason"]
+        state[aid] = entry
+    live = load_state()
+    print("replayed %d events (%d unparseable) -> %d assets" % (n, bad, len(state)))
+    print("current review_state.json has %d assets" % len(live))
+    only_live = set(live) - set(state)
+    if only_live:
+        print(
+            "%d assets exist in the state file but NOT in the log -- these predate "
+            "the log (2026-08-13). The replay is a SUBSET; state file NOT "
+            "overwritten." % len(only_live)
+        )
+    return state
+
+
+def render_help():
+    """The help panel, GENERATED from VERDICTS_DOC / HARVEST_DOC. Never hand-edit
+    the panel: edit the vocabulary above and both this and the doc follow."""
+    rows = "".join(
+        "<tr><td><b class='v-%s-t'>%s</b></td><td><kbd>%s</kbd></td>"
+        "<td><i>%s</i><br>%s</td></tr>" % (esc(name), esc(name), esc(key), esc(gloss), esc(body))
+        for name, key, gloss, body in VERDICTS_DOC
+    )
+    harvest = "".join(
+        "<tr><td><code>%s</code></td><td><code>%s</code></td><td>%s</td></tr>"
+        % (esc(pat), esc(ex), esc(desc))
+        for pat, ex, desc in HARVEST_DOC
+    )
+    return """
+<h4>Two axes, not one</h4>
+<p>A <b>verdict</b> is the asset's <b>fate</b> -- exactly one per asset, exclusive.
+A <b>harvest tag</b> is something you want to <b>survive</b> that fate -- any number,
+and it still applies when the image itself is discarded. "No, but I like the corner"
+is not a verdict; it is a discard plus a harvest tag.</p>
+
+<h4>Verdicts -- pick exactly one</h4>
+<table class="helptbl"><thead><tr><th>verdict</th><th>key</th><th>meaning</th></tr></thead>
+<tbody>%s</tbody></table>
+
+<h4>Harvest tags -- add as many as apply</h4>
+<p>These go in the tags field and are <b>independent of the verdict</b>. They are how
+you answer "I like this lamp" without pretending you like the image.</p>
+<table class="helptbl"><thead><tr><th>pattern</th><th>example</th><th>meaning</th></tr></thead>
+<tbody>%s</tbody></table>
+
+<h4>Nothing you decide is overwritten</h4>
+<p>Every change appends to <code>tools/art_review/review_log.jsonl</code>, which is
+append-only and the source of truth. <code>review_state.json</code> is a projection of
+it (last write per asset wins). So a note you revise in November does not destroy
+the one you wrote in August, and an asset you discard now and revive later shows
+both. Rebuild the projection any time with
+<code>python tools/art_review/serve_review.py --replay-log</code>.</p>
+
+<h4>Keys</h4>
+<p><kbd>K</kbd> keep &middot; <kbd>R</kbd> remix &middot; <kbd>S</kbd> shelf &middot;
+<kbd>D</kbd> discard &middot; <kbd>N</kbd> note &middot; <kbd>F</kbd> full size &middot;
+<kbd>&larr;</kbd><kbd>&rarr;</kbd> move &middot; <kbd>?</kbd> this panel &middot;
+<kbd>Esc</kbd> back.
+In full-size mode the arrows and every verdict key keep working, so a hero pass is
+arrow-arrow-<kbd>K</kbd> without dropping back to thumbnails.</p>
+
+<h4>View toggles</h4>
+<p><b>Poster density</b> widens cards to 520px for hero/poster work.
+<b>Pixel-crisp</b> restores nearest-neighbour rendering for 32/48px sprite and icon
+work; it is off by default because it stair-steps large art.</p>
+
+<h4>Decided vs live</h4>
+<p><b>keep</b> and <b>discard</b> are decided and move to the Decisions archive.
+<b>remix</b> and <b>shelf</b> stay live -- remix because it expects a fresh variant,
+shelf because it expects a future occasion.</p>
+
+<p class="helpfoot">This panel is generated from the vocabulary in
+<code>serve_review.py</code>. The same source emits
+<code>docs/art/NOMENCLATURE.md</code>, which is the version other repos and
+coordination should quote.</p>
+""" % (
+        rows,
+        harvest,
+    )
+
+
+def emit_nomenclature():
+    """Write docs/art/NOMENCLATURE.md from the SAME vocabulary the app renders."""
+    out = REPO / "docs" / "art" / "NOMENCLATURE.md"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    lines = [
+        "# Art review nomenclature -- P(Doom)1",
+        "",
+        "**GENERATED FILE -- do not hand-edit.** Regenerate with:",
+        "",
+        "```",
+        "python tools/art_review/serve_review.py --emit-nomenclature",
+        "```",
+        "",
+        "The source of truth is `VERDICTS_DOC` / `HARVEST_DOC` in",
+        "`tools/art_review/serve_review.py`. This file exists so `pdoom1-website`,",
+        "`pdoom-data` and `coordination` can quote the vocabulary without reading the",
+        "app, and cannot end up quoting a version the app no longer uses.",
+        "",
+        "## Two axes, not one",
+        "",
+        "A **verdict** is an asset's **fate** -- exactly one per asset, exclusive.",
+        "A **harvest tag** is something that **survives** that fate -- any number, and",
+        'still applies when the image is discarded. "No, but I like the corner" is not',
+        "a verdict; it is a discard plus a harvest tag.",
+        "",
+        "## Verdicts (exactly one per asset)",
+        "",
+        "| verdict | key | meaning | detail |",
+        "|---|---|---|---|",
+    ]
+    for name, key, gloss, body in VERDICTS_DOC:
+        lines.append("| `%s` | `%s` | %s | %s |" % (name, key, gloss, body))
+    lines += [
+        "",
+        "`keep` and `discard` are **decided**. `remix` and `hold` stay **live**.",
+        "",
+        "**`keep` is not `promoted`.** Promotion to the game or to a public surface is",
+        "a separate gate, ruled distinct by Pip on 2026-08-06.",
+        "",
+        "## Harvest tags (zero or more, independent of the verdict)",
+        "",
+        "| pattern | example | meaning |",
+        "|---|---|---|",
+    ]
+    for pat, ex, desc in HARVEST_DOC:
+        lines.append("| `%s` | `%s` | %s |" % (pat, ex, desc))
+    lines += [
+        "",
+        "## Storage contract",
+        "",
+        "| file | role |",
+        "|---|---|",
+        "| `tools/art_review/review_log.jsonl` | **append-only, source of truth.** One "
+        "event per change: `{ts, asset, prev, next, cleared}` |",
+        "| `tools/art_review/review_state.json` | **projection** -- last write per "
+        "asset. Rebuildable via `--replay-log` |",
+        "",
+        "Events predate the log only for decisions made before **2026-08-13**; a replay",
+        "over the partial log is reported as a SUBSET and never silently overwrites.",
+        "",
+        "Asset ids: `gen:<batch>:<family>:<variant>`, `px:<relpath>`, `file:<relpath>`.",
+        "**Resolution is never part of the id**, so a verdict applies to a family and",
+        "cannot orphan its own downscales.",
+        "",
+        "## Legacy verdicts",
+        "",
+        "`iterate` (v2), `maybe` and `reroll` (v1) all migrate to `remix` on load.",
+        "Migration is in-memory and lossless; files are rewritten opportunistically.",
+        "",
+    ]
+    out.write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")
+    print(
+        "wrote %s (%d verdicts, %d harvest patterns)" % (out, len(VERDICTS_DOC), len(HARVEST_DOC))
+    )
+    return out
 
 
 # ------------------------------------------------------------------ rendering
@@ -339,12 +701,14 @@ def render_cell(c, in_set=False):
         <div class="idline">{aid}</div>
         {win}
         <div class="verdict" role="group" aria-label="Verdict">
-          <button type="button" class="vbtn" data-v="keep" title="Keep (K)">keep</button>
-          <button type="button" class="vbtn" data-v="iterate" title="Iterate (I)">iterate</button>
-          <button type="button" class="vbtn" data-v="discard" title="Discard (D)">discard</button>
+          <button type="button" class="vbtn" data-v="keep" title="Keep (K) -- ship it">keep</button>
+          <button type="button" class="vbtn" data-v="remix" title="Remix (R) -- regenerate and compare">remix</button>
+          <button type="button" class="vbtn" data-v="shelf" title="Shelf (S) -- right, not now; needs a return condition">shelf</button>
+          <button type="button" class="vbtn" data-v="discard" title="Discard (D) -- off-brief">discard</button>
         </div>
         <textarea class="note" rows="2" placeholder="note... (N)" aria-label="Note"></textarea>
-        <input type="text" class="tags" placeholder="tags, comma, separated" aria-label="Tags">
+        <input type="text" class="tags" placeholder="harvest: corner, lamp, composition, seed:new-scene" aria-label="Harvest tags">
+        <input type="text" class="shelfreason" placeholder="hold needs a return condition -- what brings this back?" aria-label="Hold return condition">
       </div>"""
 
 
@@ -373,7 +737,7 @@ def render_section(s):
                 f'<div class="setbar"><span class="setlbl">SET // {esc(base)} '
                 f"<b>{len(members)}</b> variants</span>"
                 f'<span class="setspacer"></span>'
-                f'<button type="button" class="setbtn" data-set="iterate" '
+                f'<button type="button" class="setbtn" data-set="remix" '
                 f'title="Iterate the whole set">iterate set</button>'
                 f'<button type="button" class="setbtn" data-set="discard" '
                 f'title="Discard the whole set">discard set</button>'
@@ -423,6 +787,7 @@ def render_page(art_root):
         _TEMPLATE.replace("{{SUBTITLE}}", esc(subtitle))
         .replace("{{NAV}}", nav)
         .replace("{{BODY}}", body)
+        .replace("{{HELP}}", render_help())
         .replace("{{SEED}}", json.dumps(state))
     )
 
@@ -511,10 +876,15 @@ _TEMPLATE = r"""<!doctype html><html lang="en"><head><meta charset="utf-8">
   @media (prefers-color-scheme:light){:root{
     --ground:#efe6d6;--panel:#f7efe0;--panel-2:#fbf5e9;--ink:#2b2116;--ink-dim:#6b5b45;--ink-faint:#9a876c;
     --amber:#b9741a;--amber-deep:#8f5710;--win:#3f8a5c;--line:#ddccb0;--checker-a:#e6dac4;--checker-b:#ded1b8;
-    --field:#fffaf0;--shadow:rgba(80,55,20,.18);--keep:#3f8a5c;--iterate:#b9741a;--discard:#c14a3a;}}
+    --field:#fffaf0;--shadow:rgba(80,55,20,.18);--keep:#3f8a5c;--iterate:#b9741a;--discard:#c14a3a;--shelf:#5b7fa8;}}
   *{box-sizing:border-box}
   body{margin:0;background:var(--ground);color:var(--ink);font-family:ui-sans-serif,system-ui,"Segoe UI",Helvetica,Arial,sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased}
-  img{image-rendering:pixelated;image-rendering:crisp-edges;max-width:100%;height:auto;display:block}
+  /* Rendering is a TOGGLE, not a constant. `pixelated` is right for 32/48px icon
+     and sprite work and actively wrong for 1024/1536px poster art, where it turns
+     smooth gradients into visible stair-stepping and makes good heroes look cheap.
+     Default smooth; body.px-crisp restores the sprite behaviour. (2026-08-13) */
+  img{image-rendering:auto;max-width:100%;height:auto;display:block}
+  body.px-crisp img{image-rendering:pixelated;image-rendering:crisp-edges}
   a{color:inherit}
   .wrap{max-width:1320px;margin:0 auto;padding:1.6rem 1.3rem 6rem}
   .eyebrow{font-family:ui-monospace,Consolas,monospace;font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;color:var(--amber);margin:0 0 .5rem}
@@ -546,7 +916,7 @@ _TEMPLATE = r"""<!doctype html><html lang="en"><head><meta charset="utf-8">
   .setbtn{font-family:ui-monospace,Consolas,monospace;font-size:.66rem;text-transform:uppercase;letter-spacing:.03em;
     padding:.28rem .55rem;border-radius:6px;border:1px solid var(--line);background:var(--field);color:var(--ink-dim);cursor:pointer}
   .setbtn:hover{color:var(--ink);border-color:var(--ink-faint)}
-  .setbtn[data-set="iterate"]:hover{border-color:var(--iterate);color:var(--iterate)}
+  .setbtn[data-set="remix"]:hover{border-color:var(--iterate);color:var(--iterate)}
   .setbtn[data-set="discard"]:hover{border-color:var(--discard);color:var(--discard)}
   .setgrid{grid-template-columns:repeat(auto-fill,minmax(190px,1fr))}
   .winbtn{font-family:ui-monospace,Consolas,monospace;font-size:.64rem;text-transform:uppercase;letter-spacing:.03em;
@@ -558,10 +928,16 @@ _TEMPLATE = r"""<!doctype html><html lang="en"><head><meta charset="utf-8">
     display:flex;align-items:center;gap:.7rem;padding-bottom:.4rem;border-bottom:1px solid var(--line)}
   .seccount{font-size:.72rem;color:var(--ink-faint);border:1px solid var(--line);border-radius:10px;padding:0 .5rem}
   .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:.9rem}
+  /* Poster density: 190px cards are right for icons and useless for hero/poster
+     art, which cannot be judged at thumbnail size -- composition, value structure
+     and the reserved title space only read large. (2026-08-13) */
+  body.poster .grid,body.poster .setgrid{grid-template-columns:repeat(auto-fill,minmax(520px,1fr));gap:1.4rem}
+  body.poster .wrap{max-width:none}
   .cell{display:flex;flex-direction:column;gap:.4rem;background:var(--panel);border:1px solid var(--line);
     border-radius:12px;padding:.7rem;scroll-margin:80px}
   .cell.v-keep{border-color:var(--keep);box-shadow:0 0 0 1px var(--keep)}
-  .cell.v-iterate{border-color:var(--iterate);box-shadow:0 0 0 1px var(--iterate)}
+  .cell.v-remix{border-color:var(--iterate);box-shadow:0 0 0 1px var(--iterate)}
+  .cell.v-shelf{border-color:var(--shelf);box-shadow:0 0 0 1px var(--shelf)}
   .cell.v-discard{border-color:var(--discard);box-shadow:0 0 0 1px var(--discard)}
   .cell.focused{outline:2px solid var(--amber);outline-offset:2px}
   /* decided (keep/discard) cells are physically MOVED into #archive; a section or
@@ -584,7 +960,7 @@ _TEMPLATE = r"""<!doctype html><html lang="en"><head><meta charset="utf-8">
   #lightbox{position:fixed;inset:0;z-index:80;display:none;place-items:center;padding:3vmin;
     background:rgba(0,0,0,.82);backdrop-filter:blur(3px);cursor:zoom-out}
   #lightbox.open{display:grid}
-  #lightbox img{image-rendering:pixelated;max-width:94vw;max-height:88vh;width:auto;height:auto;
+  #lightbox img{max-width:94vw;max-height:88vh;width:auto;height:auto;
     border:1px solid var(--line);border-radius:8px;box-shadow:0 8px 40px rgba(0,0,0,.6);background:var(--checker-a)}
   #lightbox .lbcap{position:fixed;bottom:2vmin;left:0;right:0;text-align:center;color:var(--ink-dim);
     font-family:ui-monospace,Consolas,monospace;font-size:.78rem;pointer-events:none}
@@ -602,13 +978,36 @@ _TEMPLATE = r"""<!doctype html><html lang="en"><head><meta charset="utf-8">
   .vbtn:hover{color:var(--ink);border-color:var(--ink-faint)}
   .vbtn:focus-visible{outline:2px solid var(--amber);outline-offset:1px}
   .vbtn.on[data-v="keep"]{background:var(--keep);border-color:var(--keep);color:#12251a}
-  .vbtn.on[data-v="iterate"]{background:var(--iterate);border-color:var(--iterate);color:#2a1e08}
+  .vbtn.on[data-v="remix"]{background:var(--iterate);border-color:var(--iterate);color:#2a1e08}
+  .vbtn.on[data-v="shelf"]{background:var(--shelf);border-color:var(--shelf);color:#0d1620}
+  /* the return-condition field only exists while the asset is actually on hold */
+  .shelfreason{display:none}
+  .cell.v-shelf .shelfreason{display:block}
+  .cell.needsreason .shelfreason{display:block;outline:2px solid var(--discard)}
   .vbtn.on[data-v="discard"]{background:var(--discard);border-color:var(--discard);color:#2a1210}
-  .note,.tags{width:100%;background:var(--field);color:var(--ink);border:1px solid var(--line);border-radius:6px;
+  .helpbody{padding:1rem 1.2rem 1.4rem;max-height:76vh;overflow-y:auto;font-size:.88rem}
+  .helpbody h4{font-family:ui-monospace,Consolas,monospace;font-size:.82rem;letter-spacing:.04em;
+    text-transform:uppercase;color:var(--amber);margin:1.3rem 0 .45rem}
+  .helpbody h4:first-child{margin-top:0}
+  .helpbody p{margin:.35rem 0 .6rem;color:var(--ink-dim);max-width:78ch}
+  .helpbody code{font-family:ui-monospace,Consolas,monospace;font-size:.82em;
+    background:var(--panel-2);border:1px solid var(--line);border-radius:4px;padding:.05rem .3rem}
+  .helptbl{border-collapse:collapse;width:100%;margin:.3rem 0 .5rem}
+  .helptbl th{text-align:left;font-family:ui-monospace,Consolas,monospace;font-size:.66rem;
+    letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);
+    border-bottom:1px solid var(--line);padding:.3rem .5rem}
+  .helptbl td{vertical-align:top;padding:.45rem .5rem;border-bottom:1px solid var(--line);color:var(--ink-dim)}
+  .helptbl td i{color:var(--ink);font-style:normal;font-weight:600}
+  .helpbody .v-keep-t{color:var(--keep)}
+  .helpbody .v-remix-t{color:var(--iterate)}
+  .helpbody .v-shelf-t{color:var(--shelf)}
+  .helpbody .v-discard-t{color:var(--discard)}
+  .helpfoot{font-size:.72rem;color:var(--ink-faint);border-top:1px solid var(--line);padding-top:.7rem;margin-top:1.4rem}
+  .note,.tags,.shelfreason{width:100%;background:var(--field);color:var(--ink);border:1px solid var(--line);border-radius:6px;
     padding:.35rem .5rem;font-size:.74rem;font-family:ui-sans-serif,system-ui,sans-serif}
   .note{resize:vertical;min-height:2.2rem;line-height:1.4}
-  .tags{font-family:ui-monospace,Consolas,monospace;font-size:.68rem}
-  .note:focus-visible,.tags:focus-visible{outline:2px solid var(--amber);outline-offset:1px}
+  .tags,.shelfreason{font-family:ui-monospace,Consolas,monospace;font-size:.68rem}
+  .note:focus-visible,.tags:focus-visible,.shelfreason:focus-visible{outline:2px solid var(--amber);outline-offset:1px}
   /* keyboard legend */
   .kbd-legend{position:fixed;top:10px;right:10px;z-index:60;display:flex;flex-direction:column;gap:.28rem;
     background:color-mix(in srgb,var(--panel) 92%,transparent);border:1px solid var(--line);border-radius:9px;
@@ -645,8 +1044,10 @@ _TEMPLATE = r"""<!doctype html><html lang="en"><head><meta charset="utf-8">
 </style></head><body>
 <div class="kbd-legend" aria-hidden="true">
   <span><kbd>&larr;</kbd><kbd>&rarr;</kbd> move focus</span>
-  <span><b>K</b> keep &middot; <b>I</b> iterate &middot; <b>D</b> discard</span>
+  <span><b>K</b> keep &middot; <b>R</b> remix &middot; <b>D</b> discard</span>
   <span><kbd>N</kbd> note &middot; <kbd>Esc</kbd> back</span>
+  <span><b>S</b> shelf &middot; <kbd>F</kbd> full size (arrows + verdicts keep working)</span>
+  <span><kbd>?</kbd> help + nomenclature</span>
 </div>
 <div class="wrap">
   <p class="eyebrow">P(Doom)1 &middot; art direction &middot; local review app</p>
@@ -666,6 +1067,9 @@ _TEMPLATE = r"""<!doctype html><html lang="en"><head><meta charset="utf-8">
     <div class="tally" id="tally"></div>
     <div class="save" id="save">state file: tools/art_review/review_state.json</div>
     <div class="spacer"></div>
+    <button type="button" class="btn ghost" id="helpbtn">Help + nomenclature (?)</button>
+    <button type="button" class="btn ghost" id="posterbtn">Poster density: <b>off</b></button>
+    <button type="button" class="btn ghost" id="crispbtn">Pixel-crisp: <b>off</b></button>
     <button type="button" class="btn ghost" id="archivebtn">Decisions archive (<b>0</b>)</button>
     <button type="button" class="btn ghost" id="exportbtn">View state JSON</button>
   </div>
@@ -681,11 +1085,15 @@ _TEMPLATE = r"""<!doctype html><html lang="en"><head><meta charset="utf-8">
   <div class="modal-head"><h3>// review_state.json</h3><button type="button" class="btn ghost" id="copybtn">copy</button></div>
   <div class="modal-body"><textarea id="exporttext" readonly></textarea></div>
 </dialog>
+<dialog id="helpdlg">
+  <div class="modal-head"><h3>// how this review works</h3><button type="button" class="btn ghost" id="helpclose">close</button></div>
+  <div class="modal-body helpbody">{{HELP}}</div>
+</dialog>
 <script>
 (function(){
   "use strict";
   var SEED={{SEED}};
-  var VERDICTS=['keep','iterate','discard'];
+  var VERDICTS=['keep','remix','shelf','discard'];
   var CELLS=[].slice.call(document.querySelectorAll('.cell'));
   var cellById={};CELLS.forEach(function(c){cellById[c.getAttribute('data-asset')]=c;});
   var archGrid=document.getElementById('archivegrid');
@@ -709,7 +1117,7 @@ _TEMPLATE = r"""<!doctype html><html lang="en"><head><meta charset="utf-8">
 
   // -- verdict state on a cell --
   function applyVerdict(cell,v){
-    cell.classList.remove('v-keep','v-iterate','v-discard');
+    cell.classList.remove('v-keep','v-remix','v-shelf','v-discard');
     if(v)cell.classList.add('v-'+v);
     if(v!=='keep')cell.classList.remove('iswinner');
     cell.classList.toggle('decided',v==='keep'||v==='discard');
@@ -717,7 +1125,8 @@ _TEMPLATE = r"""<!doctype html><html lang="en"><head><meta charset="utf-8">
   }
   function curVerdict(cell){
     if(cell.classList.contains('v-keep'))return 'keep';
-    if(cell.classList.contains('v-iterate'))return 'iterate';
+    if(cell.classList.contains('v-remix'))return 'remix';
+    if(cell.classList.contains('v-shelf'))return 'hold';
     if(cell.classList.contains('v-discard'))return 'discard';
     return null;
   }
@@ -738,6 +1147,31 @@ _TEMPLATE = r"""<!doctype html><html lang="en"><head><meta charset="utf-8">
   // interactive verdict from a button/key: toggles off, prompts a discard note
   function setVerdict(cell,v){
     if(curVerdict(cell)===v)v=null;               // toggle off -> undecided
+    if(v==='shelf'){
+      // THE GUARD, client side. The server refuses a reasonless hold too -- this
+      // is the friendly half, not the enforcing half.
+      var hr=cell.querySelector('.shelfreason'), have=hr?hr.value.trim():'';
+      if(!have){
+        var hq=window.prompt('Shelf -- what would bring this back?
+(a TRIGGER, not a date: "when there is a night-scene brief", "if the palette lane lands")
+
+A shelf with no return condition is just an abandonment with better manners, so this is required.','');
+        if(hq===null)return;                       // cancelled -> leave as-is
+        have=hq.trim();
+        if(!have){                                 // blank -> refuse, show the field
+          cell.classList.add('needsreason');
+          if(hr){hr.focus();}
+          saveMsg('shelf needs a return condition','err');
+          return;
+        }
+      }
+      cell.classList.remove('needsreason');
+      if(hr)hr.value=have;
+      applyVerdict(cell,'shelf');
+      persist(cell.getAttribute('data-asset'),{verdict:'shelf',shelf_reason:have});
+      placeCell(cell);refreshLayout();
+      return;
+    }
     if(v==='discard'&&!getNote(cell)){
       var r=window.prompt('Discard note -- why is this OFF-brief / wrong direction?\n(a discard says the BRIEF needs a rethink, not a re-roll. Blank = skip.)','');
       if(r===null)return;                         // cancelled -> leave as-is
@@ -762,6 +1196,15 @@ _TEMPLATE = r"""<!doctype html><html lang="en"><head><meta charset="utf-8">
   function openLightbox(src,cap){lbImg.src=src;lbCap.textContent=cap||'';lb.classList.add('open');lb.setAttribute('aria-hidden','false');}
   function closeLightbox(){lb.classList.remove('open');lb.setAttribute('aria-hidden','true');lbImg.removeAttribute('src');}
   lb.addEventListener('click',closeLightbox);
+  // Re-point the OPEN lightbox at whatever cell now has focus. Without this the
+  // arrow keys moved the grid selection behind the overlay while the displayed
+  // image stayed put -- so full-size comparison meant close, arrow, re-open for
+  // every single image, which is why the hero batches never got reviewed.
+  function syncLightbox(){
+    if(!lb.classList.contains('open')||!focusCell)return;
+    var im=focusCell.querySelector('.stage img');
+    if(im){lbImg.src=im.src;lbCap.textContent=focusCell.getAttribute('data-asset')||'';}
+  }
 
   // hydrate every cell + wire it up
   CELLS.forEach(function(cell){
@@ -773,6 +1216,7 @@ _TEMPLATE = r"""<!doctype html><html lang="en"><head><meta charset="utf-8">
     applyVerdict(cell,s.verdict||null);
     var note=cell.querySelector('.note'); if(note)note.value=s.note||'';
     var tags=cell.querySelector('.tags'); if(tags)tags.value=(s.tags||[]).join(', ');
+    var hrf=cell.querySelector('.shelfreason'); if(hrf)hrf.value=s.shelf_reason||'';
     cell.querySelectorAll('.vbtn').forEach(function(btn){
       btn.addEventListener('click',function(){focusOn(cell,false);setVerdict(cell,btn.getAttribute('data-v'));});
     });
@@ -782,6 +1226,10 @@ _TEMPLATE = r"""<!doctype html><html lang="en"><head><meta charset="utf-8">
     if(img)img.addEventListener('click',function(){openLightbox(img.src,cell.getAttribute('data-asset'));});
     if(note)note.addEventListener('input',function(e){debounce(id,{note:e.target.value});});
     if(tags)tags.addEventListener('input',function(e){debounce(id,{tags:parseTags(e.target.value)});});
+    if(hrf)hrf.addEventListener('input',function(e){
+      if(e.target.value.trim())cell.classList.remove('needsreason');
+      debounce(id,{shelf_reason:e.target.value});
+    });
     cell.addEventListener('mousedown',function(){focusOn(cell,false);});
   });
 
@@ -843,12 +1291,33 @@ _TEMPLATE = r"""<!doctype html><html lang="en"><head><meta charset="utf-8">
     if(tag==='input'||tag==='textarea'||t.isContentEditable){if(e.key==='Escape')t.blur();return;}
     if(e.ctrlKey||e.metaKey||e.altKey)return;
     var k=e.key;
-    if(k==='ArrowRight'||k==='ArrowDown'){move(1);e.preventDefault();}
-    else if(k==='ArrowLeft'||k==='ArrowUp'){move(-1);e.preventDefault();}
+    if(k==='ArrowRight'||k==='ArrowDown'){move(1);syncLightbox();e.preventDefault();}
+    else if(k==='ArrowLeft'||k==='ArrowUp'){move(-1);syncLightbox();e.preventDefault();}
     else if(k==='k'||k==='K'){if(focusCell){setVerdict(focusCell,'keep');e.preventDefault();}}
-    else if(k==='i'||k==='I'){if(focusCell){setVerdict(focusCell,'iterate');e.preventDefault();}}
+    else if(k==='r'||k==='R'){if(focusCell){setVerdict(focusCell,'remix');e.preventDefault();}}
+    else if(k==='s'||k==='S'){if(focusCell){setVerdict(focusCell,'shelf');e.preventDefault();}}
+    // H kept as an alias: it was the key for the hour this verdict was called
+    // "hold", and a dead key is worse than a duplicate one.
+    else if(k==='h'||k==='H'){if(focusCell){setVerdict(focusCell,'shelf');e.preventDefault();}}
+    // 'I' was the v2 key for iterate. Kept as an alias rather than freed, so old
+    // muscle memory lands on remix instead of silently doing nothing (or worse,
+    // hitting whatever gets bound to I next).
+    else if(k==='i'||k==='I'){if(focusCell){setVerdict(focusCell,'remix');e.preventDefault();}}
     else if(k==='d'||k==='D'){if(focusCell){setVerdict(focusCell,'discard');e.preventDefault();}}
+    // F = full-size review mode: open the lightbox on the focused cell and stay in
+    // it. K/I/D keep working while it is open, so a hero pass is arrow-arrow-K
+    // without ever dropping back to thumbnails.
+    else if(k==='f'||k==='F'){
+      if(!focusCell)move(1);
+      if(focusCell){
+        if(lb.classList.contains('open')){closeLightbox();}
+        else{var fi=focusCell.querySelector('.stage img');
+             if(fi)openLightbox(fi.src,focusCell.getAttribute('data-asset'));}
+        e.preventDefault();
+      }
+    }
     else if(k==='n'||k==='N'||k==='Enter'){if(!focusCell)move(1);if(focusCell){var n=focusCell.querySelector('.note');if(n)n.focus();}e.preventDefault();}
+    else if(k==='?'){openHelp();e.preventDefault();}
     else if(k==='Escape'){if(focusCell){focusCell.classList.remove('focused');focusCell=null;}}
   });
 
@@ -894,6 +1363,29 @@ _TEMPLATE = r"""<!doctype html><html lang="en"><head><meta charset="utf-8">
     if(d.open)d.scrollIntoView({block:'start'});
   });
 
+  // View toggles. These are DISPLAY preferences, not review state, so localStorage
+  // is the right home for them -- the docstring's ban on localStorage covers
+  // verdicts/notes (which must survive a machine), not how wide the cards are.
+  function viewToggle(btnId,cls,key){
+    var btn=document.getElementById(btnId),lbl=btn.querySelector('b');
+    function paint(){var on=document.body.classList.contains(cls);lbl.textContent=on?'on':'off';}
+    try{if(localStorage.getItem(key)==='1')document.body.classList.add(cls);}catch(err){}
+    paint();
+    btn.addEventListener('click',function(){
+      var on=document.body.classList.toggle(cls);
+      try{localStorage.setItem(key,on?'1':'0');}catch(err){}
+      paint();
+      if(focusCell)focusCell.scrollIntoView({block:'center'});
+    });
+  }
+  viewToggle('posterbtn','poster','pdoom_art_poster');
+  viewToggle('crispbtn','px-crisp','pdoom_art_crisp');
+
+  var helpdlg=document.getElementById('helpdlg');
+  function openHelp(){if(typeof helpdlg.showModal==='function'&&!helpdlg.open)helpdlg.showModal();}
+  document.getElementById('helpbtn').addEventListener('click',openHelp);
+  document.getElementById('helpclose').addEventListener('click',function(){helpdlg.close();});
+
   var dlg=document.getElementById('exportdlg'),txt=document.getElementById('exporttext');
   document.getElementById('exportbtn').addEventListener('click',function(){
     fetch('/api/state').then(function(r){return r.text();}).then(function(s){
@@ -922,7 +1414,24 @@ def main():
         "point at the main checkout when running from a worktree).",
     )
     ap.add_argument("--no-browser", action="store_true", help="do not auto-open a browser")
+    ap.add_argument(
+        "--emit-nomenclature",
+        action="store_true",
+        help="regenerate docs/art/NOMENCLATURE.md from the vocabulary; does not serve",
+    )
+    ap.add_argument(
+        "--replay-log",
+        action="store_true",
+        help="rebuild state from review_log.jsonl and report the diff; does not serve",
+    )
     args = ap.parse_args()
+
+    if args.emit_nomenclature:
+        emit_nomenclature()
+        return
+    if args.replay_log:
+        replay_log()
+        return
 
     art_root = pathlib.Path(args.art_root).resolve()
     httpd = ReviewServer((args.host, args.port), art_root)
