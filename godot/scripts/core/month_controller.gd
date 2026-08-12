@@ -392,7 +392,11 @@ func _open_plan_month(mi: int) -> void:
 	current_month_index = mi
 	windows_surfaced_this_month = 0
 	var ordinal := Clock.month_ordinal_since_start(state.turn, state.start_year, state.start_month, state.start_day)
-	state.month_plan.begin_month(state.attention_per_month, ordinal)
+	# 2026-08-12 ruling: the budget comes from the ONE derivation point, never from
+	# `state.attention_per_month` directly. `mi` is already the absolute month index the
+	# derivation wants. Identical number today; one function to edit when it stops being.
+	var capacity: Dictionary = state.capacity_for_month(mi)
+	state.month_plan.begin_month(int(capacity["value"]), ordinal)
 	# Office rent (#791): the predictable monthly cash sink, on the payroll rail (a direct
 	# deduction, not a compounding ledger payable -- see office.gd's rail decision). No-op
 	# for an unsigned run, so a bedroom-only game is economically unchanged.
