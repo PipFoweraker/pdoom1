@@ -429,8 +429,10 @@ func test_game_over_screen_submits_the_operator_name_too():
 
 
 func test_identity_prompt_is_honest_about_what_reaches_the_board():
-	# The prompt collects "Operator:" and "Lab:". Until the wire carries both,
-	# a prompt that implies both appear publicly is lying to the player.
+	# The prompt collects "Operator:" and "Lab:". The wire carries BOTH, composed
+	# as `LAB -- OPERATOR` into the frozen `player_name` field (leaderboard.gd:196),
+	# so a prompt that implies only the lab appears publicly is lying to the player
+	# -- and lying in the direction a privacy statement must never be wrong in.
 	var src := _read(GAME_OVER_SRC)
 	assert_true(src.contains("IDENTITY_PROMPT_BOARD_NOTE"),
 		"the identity prompt must state which of the two values the board shows today")
