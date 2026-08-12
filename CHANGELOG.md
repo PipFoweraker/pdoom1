@@ -17,6 +17,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- **Contact email addresses were publicly fetchable from the bundled historical
+  events, and the changelog said they had been removed.** Both are fixed here.
+  `godot/data/historical_events.json` carried **12 addresses naming 26 real
+  researchers** across 10 of its 1,194 records, served with HTTP 200 from
+  `raw.githubusercontent.com`. The 2026-08-04 copy predates `pdoom-data`'s
+  2026-08-09 widening, so three PDF-extraction shapes went unmatched: a space
+  inside the domain, brace groups naming several authors at once, and a space
+  before the `@`. Redacted with `pdoom-data`'s own
+  `scripts/privacy/redact_emails.py` rather than a new tool, using the same
+  `[email address redacted]` marker already present in the file. Event text is
+  otherwise untouched: 1,194 records in and out, all 24,145 leaf values
+  identical except the 10 descriptions, each of which is byte-for-byte the
+  original with only the address replaced.
+- **A fourth mangling mode, not handled upstream: the truncation-severed
+  address.** The importer caps `description` at 1,000 characters, and one cap
+  landed inside a contact line, leaving an address with its TLD cut off.
+  `pdoom-data`'s verifier cannot see it, because it requires a dot and a TLD.
+  Redacted here; **the same fragment is still live at `pdoom-data` HEAD in
+  three files including the public serveable zone**, which is that repo's fix
+  to make, not this one's.
+
+### Still outstanding, and they are Pip's calls
+The addresses remain in the git history of this repo, `pdoom-data` and
+`pdoom1-website`; they remain in every distributed game build, which cannot be
+recalled; and the 26 people have not been notified. None of that is decided
+here. Institutional postal addresses from paper letterheads (2 records) are
+deliberately left in place as arguably public institutional data.
+
 **Featured league seed rolls to `weekly-2026-w33`.** Board key becomes
 `(weekly-2026-w33, L4)`.
 
@@ -145,6 +174,15 @@ build changed, and no entry was deleted.
 - **A third-party endpoint and its unreachable fetch path were removed** (#1101,
   #1105).
 - **Contact addresses redacted from the bundled historical events** (#1106).
+  **CORRECTION, 2026-08-13: this claim was not true when it was made.** The
+  redaction was real but incomplete. The bundled copy was taken from
+  `pdoom-data` on 2026-08-04, after a narrow redaction on 08-01 and before a
+  widened one on 08-09, so it carried 12 addresses covering 26 people that the
+  narrow pattern could not match -- domains broken by a space, brace groups
+  naming several authors at once, and a space before the `@`. They stayed
+  publicly fetchable from `raw.githubusercontent.com` until 2026-08-13. The
+  redaction is now complete and verified by an independently written scanner.
+  See the entry under Unreleased.
 - **The pause menu grows into its text, not into padding** (#1155).
 
 ### Fixed
