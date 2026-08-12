@@ -106,15 +106,15 @@ func test_rename_entry_renames_in_place_name_only():
 	board.add_score(other)
 
 	assert_true(board.rename_entry(entry.entry_uuid, "Paperclip Holdings"))
-	assert_eq(entry.player_name, "Paperclip Holdings")
-	assert_eq(other.player_name, "Rival Lab", "only the targeted row is renamed")
+	assert_eq(entry.lab_name, "Paperclip Holdings")
+	assert_eq(other.lab_name, "Rival Lab", "only the targeted row is renamed")
 	assert_eq(board.get_top_scores(1)[0].entry_uuid, other.entry_uuid,
 		"rename is name-only: rank order untouched")
 
 	# Guards: unknown uuid and empty name are refused.
 	assert_false(board.rename_entry("no-such-uuid", "X"))
 	assert_false(board.rename_entry(entry.entry_uuid, "   "))
-	assert_eq(entry.player_name, "Paperclip Holdings")
+	assert_eq(entry.lab_name, "Paperclip Holdings")
 
 	board.clear()
 	board.free()

@@ -28,6 +28,12 @@ static func _hex(c: Color) -> String:
 	used on this screen so a colour can never be spelled two ways."""
 	return c.to_html(false)
 
+# What the identity prompt is allowed to promise. The prompt collects an
+# Operator name AND a Lab name; the remote board's frozen contract carries one
+# string, and it is the lab. Until the server takes both (coordination item),
+# the prompt says which one goes public rather than implying both do.
+const IDENTITY_PROMPT_BOARD_NOTE := "The global board shows both, as 'Lab -- Operator'. One Operator can run many labs, and lab names collide, so the Operator name is what tells two identical labs apart. Long names are shortened with '...' to fit the board."
+
 @onready var panel_container = $CenterContainer/PanelContainer
 @onready var title_label = $CenterContainer/PanelContainer/MarginContainer/VBox/TitleLabel
 @onready var subtitle_label = $CenterContainer/PanelContainer/MarginContainer/VBox/SubtitleLabel
@@ -341,6 +347,11 @@ func _persist_and_submit_score(final_state: Dictionary, game_seed: String) -> vo
 		sync_status_label.add_theme_color_override("font_color", Color(1.0, 0.75, 0.25))
 		return
 	var duration = Time.get_ticks_msec() / 1000.0 - game_start_time
+	# BOTH identity values (Pip's ruling 2026-08-08). Until this, only the lab
+	# was passed -- into a field then named `player_name` -- so #1133 could
+	# collect an Operator name that no code path ever carried anywhere. A player
+	# who typed their name saw it nowhere. The operator reaches the LOCAL board
+	# now; the remote wire still carries the lab alone (see ScoreEntry.to_wire_dict).
 	var entry = Leaderboard.ScoreEntry.new(
 		final_turns,
 		GameConfig.lab_name,
@@ -349,7 +360,8 @@ func _persist_and_submit_score(final_state: Dictionary, game_seed: String) -> vo
 		duration,
 		baseline_turns,  # Baseline turns for comparison (Issue #372); 0 when not ready
 		final_doom_integral,  # ADR-0002 tiebreak
-		baseline_doom_integral
+		baseline_doom_integral,
+		GameConfig.player_name  # the Operator -- the human, distinct from the lab
 	)
 
 	# ---- local save (authoritative: the score must exist locally regardless of network) --
@@ -500,6 +512,16 @@ func _show_default_identity_prompt(entry, game_seed: String, flow: String) -> vo
 	)
 	vbox.add_child(info)
 
+	# HONESTY (2026-08-08): the prompt collects two values and the global board
+	# carries only one of them today. Saying so is the whole point -- a prompt
+	# that implies both appear publicly is lying to the player about what they
+	# just typed.
+	var board_note := Label.new()
+	board_note.text = IDENTITY_PROMPT_BOARD_NOTE
+	board_note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	board_note.add_theme_color_override("font_color", Color(0.72, 0.72, 0.72))
+	vbox.add_child(board_note)
+
 	var name_row := HBoxContainer.new()
 	var name_label := Label.new()
 	name_label.text = "Operator:"  # nomenclature ruling (#957): the player is the Operator
@@ -562,9 +584,12 @@ func _apply_identity_from_prompt(name_text: String, lab_text: String, entry, gam
 	GameConfig.save_config()
 	print("[GameOverScreen] Identity claimed at default-name prompt: %s -- %s"
 		% [GameConfig.player_name, GameConfig.lab_name])
-	if new_lab != "" and entry != null and "player_name" in entry:
-		# The ScoreEntry's display field carries the LAB name (leaderboard.gd).
-		entry.player_name = new_lab
+	# The claimed OPERATOR name is retrofitted too -- it is stored on the entry
+	# and on the local board, and is the value waiting for the server to carry it.
+	if entry != null and "operator_name" in entry and new_name != "":
+		entry.operator_name = new_name
+	if new_lab != "" and entry != null and "lab_name" in entry:
+		entry.lab_name = new_lab
 		# The LOCAL row was saved before the dialog (rule 2: durable first), under
 		# the old default -- rename it in place so the player can recognise their
 		# run on their own board too. Name-only; rank order untouched.

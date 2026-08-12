@@ -145,7 +145,7 @@ python scripts/export_leaderboards.py --verbose
 | Field | Type | Description |
 |-------|------|-------------|
 | `score` | int | Turns survived (primary ranking metric) |
-| `player_name` | string | Lab name displayed on leaderboard |
+| `player_name` | string | **Misnamed: this carries the LAB name, and since 2026-08-10 the operator too, composed as `Lab -- Operator`.** Max 40 BYTES -- the server cuts the rest with a byte-wise `substr` and says nothing. A cut that splits a codepoint WIPES THE BOARD; see below. |
 | `date` | ISO datetime | When score was achieved |
 | `level_reached` | int | Final turn number (same as score) |
 | `game_mode` | string | Economic model version |
@@ -158,6 +158,109 @@ python scripts/export_leaderboards.py --verbose
 | `final_compute` | int | Compute resources |
 | `research_papers_published` | int | Papers published during game |
 | `technical_debt_accumulated` | int | Technical debt accrued |
+
+### Name budget: 40 bytes, measured
+
+The limit was **measured, not assumed**. On 2026-08-08 the live
+`(weekly-2026-w32, L4)` board held this row:
+
+```
+"GRIM (Global Risk Intervention Mechanism"    <- 40 bytes, as stored
+"GRIM (Global Risk Intervention Mechanism)"   <- 41 bytes, as submitted
+```
+
+The server ate exactly one byte and gave no signal. The cut is byte-wise, so a
+non-ASCII name can also be split mid-codepoint and stored as invalid UTF-8.
+
+Confirmed again on 2026-08-10 by direct probe of the deployed API on a throwaway
+board: 41 ASCII bytes submitted -> 40 stored; 40 ASCII bytes -> stored untouched.
+The unit is **bytes, not characters**.
+
+`Leaderboard.fit_board_name()` (`godot/scripts/leaderboard.gd`) fits the value
+before submission -- word-boundary cut plus a visible `...` mark -- so the
+server's `substr` never fires.
+
+### A split codepoint DESTROYS THE BOARD (measured 2026-08-10)
+
+This is the severe one, and it was found by probing rather than reading.
+
+A submission whose byte-wise cut at 40 splits a UTF-8 codepoint **empties the
+entire board file**. Measured on a throwaway board: 7 rows went to 0 rows while
+the server answered
+
+```
+HTTP 200  {"ok":true,"added":true,"rank":7}
+```
+
+Mechanism, visible in `server/leaderboard/score_api.php`: `substr($s, 0, 40)`
+can leave malformed UTF-8; PHP `json_encode()` returns `false` on malformed
+UTF-8; the handler then does `ftruncate($fp, 0)` and writes that `false` as an
+empty string. Every row is gone and the response still says success.
+
+The trigger is **precisely the split**, not merely being non-ASCII: an over-40
+multi-byte name whose cut lands ON a codepoint boundary (21 x 2-byte = 42 bytes)
+was stored normally in the same probe run.
+
+Consequence for this repo: `fit_board_name()` is a **board-integrity guard**, not
+a cosmetic nicety. Any client that submits an unfitted player-typed name can wipe
+a public league board by accident.
+
+`score_api.php` as deployed is not writable from here. **The server-side fix is
+the real fix** -- see the coordination ask below.
+
+### Two identity values, one wire field (shipped 2026-08-10)
+
+Pip ruled on 2026-08-08 that the board should carry **both** an Operator (the
+human) and a Lab (the org), because generated lab names collide and one player
+may run several labs over time. He restated it on 2026-08-10 after a second real
+external player landed on the live board: *"It'll be good to bump the board to
+include player name or we're going to get a LOT of colliding labs."*
+
+**Measured, so no longer a guess:** an unknown extra key on a POST is *accepted*
+(HTTP 200) and then **silently dropped** by the `$ALLOWED_FIELDS` whitelist --
+absent on read-back. Tested with `operator_name` and with a nonsense control key;
+both behaved identically. So the feared rejection does **not** happen, but a
+second key delivers nothing either.
+
+Since a second key is a no-op, both names now travel **composed inside the one
+frozen `player_name` field**, via `Leaderboard.compose_board_name()`:
+
+```
+GRIM -- Pip
+GRIM (Global Risk... -- Pip
+Kaur, Chen & Lindqvist -- Priya
+AI Safety Lab                      <- no operator: byte-identical to before
+```
+
+Format rules, each forced by a real constraint:
+
+- **Lab first.** The rows already on the board hold a bare lab in this column;
+  leading with the operator would change what the column means halfway down.
+- **`--`, not parentheses.** The one real lab name we have,
+  `GRIM (Global Risk Intervention Mechanism)`, already contains brackets, so
+  `LAB (OPERATOR)` would nest them.
+- **Neither half may erase the other.** The operator is capped at half the
+  composable budget; the lab takes the remainder. The operator exists to break
+  lab-name collisions, so it must not be the half that silently vanishes.
+- **No operator -> unchanged output.** Legacy rows and anonymous players submit
+  exactly as they did before: no separator, no empty parenthetical, and no
+  back-filled identity on read (`from_dict` defaults `operator_name` to `""`).
+
+`to_wire_dict()` still omits an `operator_name` **key**, now for a measured
+reason rather than a cautious one: it is dropped, so sending it would put the
+operator on the wire twice and desync the day the server whitelists it.
+
+### Coordination ask (pdoom1-website / API)
+
+Not decided or changed in this repo. In priority order:
+
+1. **Fix the board-wipe.** Guard the write: either cut on a character boundary
+   (`mb_substr($s, 0, 40, 'UTF-8')`) or refuse to overwrite the board when
+   `json_encode()` returns `false`. Today one malformed name destroys a league.
+2. **Whitelist `operator_name`** in `$ALLOWED_FIELDS` and render it as a second
+   column, so the two names stop sharing 40 bytes.
+3. **Raise the 40-byte limit**, and **return the stored value** in the POST
+   response so the client can tell the player what actually landed.
 
 ---
 
