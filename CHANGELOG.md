@@ -17,6 +17,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+**Featured league seed rolls to `weekly-2026-w33`.** Board key becomes
+`(weekly-2026-w33, L4)`.
+
+**The ladder does NOT move.** 14 August is the second Friday of the month, so
+this is a weekly Seed, not an Epoch -- `RELEASE_NOMENCLATURE.md` puts the Epoch
+on the first Friday, and the next one is v0.15 on 4 September. `ladder_version.txt`
+stays `4`.
+
+Scores posted on `(weekly-2026-w32, L4)` are untouched and remain valid on that
+board. Each seed is its own board; rolling the seed opens a new one rather than
+retiring the old.
+
+Rolled at Pip's call per `docs/rituals/gate_5_seed_blessing.md`, which requires the
+const to be **merged and inside the cut before** Gate 5 -- blessing a seed without
+editing the const makes the blessed and posted boards diverge silently, and looks
+correct from both ends.
+
 ## [0.14.1] - 2026-08-08
 
 **The board key does NOT move.** Ladder stays **L4**, featured seed stays
