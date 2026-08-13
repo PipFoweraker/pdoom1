@@ -681,6 +681,77 @@ def emit_nomenclature():
     return out
 
 
+# -- OCR text-leak flags -----------------------------------------------------
+# The 2026-08-07 prompts banned text outright and the model printed words on
+# props anyway (PENDING, APPROVED, REJECTED, DESICCANT). A reviewer cannot see a
+# 40px word on a thumbnail, so the scan result is surfaced ON the cell rather
+# than left in a JSON nobody opens while reviewing.
+#
+# NOT every hit is a defect. Deliberately typographic assets exist -- the
+# P(doom) wordmarks and the LaTeX Bayes renders SHOULD carry text. The badge
+# reports what was detected and lets the reviewer judge; it never auto-verdicts.
+_TEXT_SCANS = ("text_scan_ALL_2026-08-13.json", "text_scan_TRACKED_2026-08-13.json")
+
+
+def load_text_flags():
+    """asset_id -> [(text, conf), ...] for detections at or above CONF_STRONG."""
+    flags = {}
+    for name in _TEXT_SCANS:
+        path = HERE / name
+        if not path.is_file():
+            continue
+        try:
+            payload = json.loads(path.read_text(encoding="utf-8"))
+        except (ValueError, OSError):
+            continue
+        for aid, rec in (payload.get("assets") or {}).items():
+            hits = [
+                (h.get("text", ""), h.get("conf", 0.0))
+                for h in (rec.get("hits") or [])
+                if h.get("conf", 0.0) >= 0.60
+            ]
+            if not hits:
+                continue
+            for key in _flag_keys(aid):
+                flags.setdefault(key, [])
+                for h in hits:
+                    if h not in flags[key]:
+                        flags[key].append(h)
+    return flags
+
+
+def _flag_keys(asset_id):
+    """Every id this detection should badge under.
+
+    The ledger scan keys on `gen:<block>:<cell>:<variant>`; the tracked/public
+    scan keys on `file:<relpath>` because several public batches carry no gen:
+    cell at all. The gallery renders gen: ids, so a file: key would join to
+    nothing and the 43 public detections would be invisible in the very tool
+    built to surface them. Derive the gen: form using THIS module's own regexes
+    (_SIZE_RE / _VAR_RE) rather than a second parser that could drift.
+    """
+    keys = [asset_id]
+    if not asset_id.startswith("file:"):
+        return keys
+    rel = asset_id[len("file:") :]
+    parts = rel.split("/")
+    # art_generated/<cat>/v1/<name>_<size>.png
+    if len(parts) >= 4 and parts[0] == "art_generated":
+        cat, fname = parts[1], parts[-1]
+        m = _SIZE_RE.match(fname)
+        if m:
+            stem = m.group(1)
+            vm = _VAR_RE.match(stem)
+            if vm:
+                keys.append("gen:%s:%s:v%s" % (cat, vm.group(1), vm.group(2)))
+            else:
+                keys.append("gen:%s:%s:v1" % (cat, stem))
+    return keys
+
+
+TEXT_FLAGS = load_text_flags()
+
+
 # ------------------------------------------------------------------ rendering
 def render_cell(c, in_set=False):
     aid = esc(c["asset_id"])
@@ -694,9 +765,20 @@ def render_cell(c, in_set=False):
         if in_set
         else ""
     )
+    hits = TEXT_FLAGS.get(c["asset_id"]) or []
+    if hits:
+        shown = ", ".join('"%s" %.2f' % (t, cf) for t, cf in hits[:4])
+        leak = (
+            '<div class="leak" title="OCR detected lettering at conf &gt;= 0.60. '
+            "NOT automatically a defect -- wordmarks and formula renders are "
+            'meant to carry text. Judge it.">[TEXT] %s</div>' % esc(shown)
+        )
+    else:
+        leak = ""
     return f"""
-      <div class="cell" data-asset="{aid}" data-base="{esc(c.get('base',''))}">
+      <div class="cell{' hasleak' if hits else ''}" data-asset="{aid}" data-base="{esc(c.get('base',''))}" data-leak="{'1' if hits else '0'}">
         <div class="stage"><img loading="lazy" src="{esc(src)}" alt="{esc(c['label'])}"></div>
+        {leak}
         <div class="cap"><span class="lbl">{esc(c['label'])}</span>{meta}</div>
         <div class="idline">{aid}</div>
         {win}
@@ -945,6 +1027,11 @@ _TEMPLATE = r"""<!doctype html><html lang="en"><head><meta charset="utf-8">
   .sec.empty{display:none}
   .setframe.empty{display:none}
   .stage img{cursor:zoom-in}
+  /* OCR text-leak badge -- reports, never verdicts */
+  .leak{font-family:ui-monospace,Consolas,monospace;font-size:.62rem;line-height:1.35;
+    color:#f0c9a0;background:rgba(193,74,58,.16);border:1px solid var(--discard);
+    border-radius:5px;padding:.25rem .4rem;margin:.1rem 0 0;word-break:break-word}
+  .cell.hasleak{border-color:var(--discard)}
   /* decisions archive panel */
   #archive{margin:2.5rem 0;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
   #archive>summary{cursor:pointer;list-style:none;padding:.85rem 1.1rem;font-family:ui-monospace,Consolas,monospace;

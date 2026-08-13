@@ -1,0 +1,3098 @@
+{
+ "any_hit_count": 48,
+ "assets": {
+  "file:art_generated/action_icons_missing/v1/acquire_startup_v1_1024.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/acquire_startup_v1_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/acquire_startup_v1_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/acquire_startup_v1_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/acquire_startup_v1_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/acquire_startup_v2_1024.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/acquire_startup_v2_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/acquire_startup_v2_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/acquire_startup_v2_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/acquire_startup_v2_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/grant_proposal_v1_1024.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/grant_proposal_v1_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/grant_proposal_v1_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/grant_proposal_v1_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/grant_proposal_v1_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/grant_proposal_v2_1024.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/grant_proposal_v2_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/grant_proposal_v2_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/grant_proposal_v2_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/grant_proposal_v2_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/lobby_government_v1_1024.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/lobby_government_v1_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/lobby_government_v1_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/lobby_government_v1_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/lobby_government_v1_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/lobby_government_v2_1024.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/lobby_government_v2_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/lobby_government_v2_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/lobby_government_v2_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/lobby_government_v2_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/network_v1_1024.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/network_v1_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/network_v1_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/network_v1_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/network_v1_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/network_v2_1024.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/network_v2_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/network_v2_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/network_v2_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/network_v2_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/open_source_release_v1_1024.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/open_source_release_v1_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/open_source_release_v1_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/open_source_release_v1_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/open_source_release_v1_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/open_source_release_v2_1024.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/open_source_release_v2_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/open_source_release_v2_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/open_source_release_v2_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/open_source_release_v2_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/sabotage_competitor_v1_1024.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/sabotage_competitor_v1_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/sabotage_competitor_v1_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/sabotage_competitor_v1_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/sabotage_competitor_v1_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/sabotage_competitor_v2_1024.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/sabotage_competitor_v2_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/sabotage_competitor_v2_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/sabotage_competitor_v2_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/sabotage_competitor_v2_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/take_loan_v1_1024.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/take_loan_v1_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/take_loan_v1_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/take_loan_v1_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/take_loan_v1_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/take_loan_v2_1024.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/take_loan_v2_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/take_loan_v2_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/take_loan_v2_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/take_loan_v2_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/team_building_v1_1024.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/team_building_v1_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/team_building_v1_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/team_building_v1_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/team_building_v1_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/team_building_v2_1024.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/team_building_v2_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/team_building_v2_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/team_building_v2_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/action_icons_missing/v1/team_building_v2_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/core_resource_icons/v1/compute_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/core_resource_icons/v1/compute_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/core_resource_icons/v1/compute_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/core_resource_icons/v1/compute_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/core_resource_icons/v1/doom_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/core_resource_icons/v1/doom_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/core_resource_icons/v1/doom_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/core_resource_icons/v1/doom_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/core_resource_icons/v1/logo_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/core_resource_icons/v1/logo_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/core_resource_icons/v1/logo_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/core_resource_icons/v1/logo_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/core_resource_icons/v1/money_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/core_resource_icons/v1/money_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/core_resource_icons/v1/money_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/core_resource_icons/v1/money_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/core_resource_icons/v1/paper_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/core_resource_icons/v1/paper_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/core_resource_icons/v1/paper_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/core_resource_icons/v1/paper_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/core_resource_icons/v1/reputation_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/core_resource_icons/v1/reputation_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/core_resource_icons/v1/reputation_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/core_resource_icons/v1/reputation_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/core_resource_icons/v1/research_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/core_resource_icons/v1/research_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/core_resource_icons/v1/research_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/core_resource_icons/v1/research_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/crt_frame_overlay/v1/crt_frame_bezel_heavy_1536.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/crt_frame_overlay/v1/crt_frame_bezel_heavy_768.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/crt_frame_overlay/v1/crt_frame_curved_glass_1536.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/crt_frame_overlay/v1/crt_frame_curved_glass_768.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/crt_frame_overlay/v1/crt_frame_vignette_light_1536.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/crt_frame_overlay/v1/crt_frame_vignette_light_768.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/hero_banners/v1/banner_doom_rising_v1_1536.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/hero_banners/v1/banner_doom_rising_v1_768.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/hero_banners/v1/banner_doom_rising_v2_1536.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/hero_banners/v1/banner_doom_rising_v2_768.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/hero_banners/v1/banner_doom_rising_v3_1536.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/hero_banners/v1/banner_doom_rising_v3_768.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/hero_banners/v1/banner_title_hero_v1_1536.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/hero_banners/v1/banner_title_hero_v1_768.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/hero_banners/v1/banner_title_hero_v2_1536.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/hero_banners/v1/banner_title_hero_v2_768.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/hero_banners/v1/banner_title_hero_v3_1536.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/hero_banners/v1/banner_title_hero_v3_768.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/hero_banners/v1/fanfare_strategic_moves_v1_1536.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/hero_banners/v1/fanfare_strategic_moves_v1_768.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/hero_banners/v1/fanfare_strategic_moves_v2_1536.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/hero_banners/v1/fanfare_strategic_moves_v2_768.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/hero_banners/v1/fanfare_strategic_moves_v3_1536.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/hero_banners/v1/fanfare_strategic_moves_v3_768.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_doom_8bit_v1_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_doom_8bit_v1_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_doom_8bit_v1_32.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_doom_8bit_v1_48.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_doom_8bit_v1_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_doom_8bit_v1_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_doom_8bit_v2_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_doom_8bit_v2_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_doom_8bit_v2_32.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_doom_8bit_v2_48.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_doom_8bit_v2_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_doom_8bit_v2_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_doom_8bit_v3_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_doom_8bit_v3_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_doom_8bit_v3_32.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_doom_8bit_v3_48.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_doom_8bit_v3_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_doom_8bit_v3_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_doom_8bit_v4_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_doom_8bit_v4_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_doom_8bit_v4_32.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_doom_8bit_v4_48.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_doom_8bit_v4_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_doom_8bit_v4_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_evil_v1_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_evil_v1_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_evil_v1_32.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_evil_v1_48.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_evil_v1_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_evil_v1_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_evil_v2_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_evil_v2_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_evil_v2_32.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_evil_v2_48.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_evil_v2_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_evil_v2_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_evil_v3_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_evil_v3_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_evil_v3_32.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_evil_v3_48.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_evil_v3_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_evil_v3_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_evil_v4_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_evil_v4_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_evil_v4_32.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_evil_v4_48.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_evil_v4_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_evil_v4_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_loaf_v1_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_loaf_v1_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_loaf_v1_32.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_loaf_v1_48.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_loaf_v1_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_loaf_v1_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_loaf_v2_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_loaf_v2_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_loaf_v2_32.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_loaf_v2_48.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_loaf_v2_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_loaf_v2_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_loaf_v3_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_loaf_v3_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_loaf_v3_32.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_loaf_v3_48.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_loaf_v3_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_loaf_v3_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_sitting_v1_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_sitting_v1_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_sitting_v1_32.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_sitting_v1_48.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_sitting_v1_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_sitting_v1_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_sitting_v2_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_sitting_v2_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_sitting_v2_32.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_sitting_v2_48.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_sitting_v2_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_sitting_v2_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_sitting_v3_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_sitting_v3_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_sitting_v3_32.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_sitting_v3_48.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_sitting_v3_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_cat_sitting_v3_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_dial_doom_arc_v1_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_dial_doom_arc_v1_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_dial_doom_arc_v1_32.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "file:art_generated/iconset_round2/v1/gen_dial_doom_arc_v1_48.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "file:art_generated/iconset_round2/v1/gen_dial_doom_arc_v1_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_dial_doom_arc_v1_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_dial_doom_arc_v2_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_dial_doom_arc_v2_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_dial_doom_arc_v2_32.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "file:art_generated/iconset_round2/v1/gen_dial_doom_arc_v2_48.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "file:art_generated/iconset_round2/v1/gen_dial_doom_arc_v2_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_dial_doom_arc_v2_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_dial_doom_semi_v1_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_dial_doom_semi_v1_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_dial_doom_semi_v1_32.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "file:art_generated/iconset_round2/v1/gen_dial_doom_semi_v1_48.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "file:art_generated/iconset_round2/v1/gen_dial_doom_semi_v1_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_dial_doom_semi_v1_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_dial_doom_semi_v2_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_dial_doom_semi_v2_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_dial_doom_semi_v2_32.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "file:art_generated/iconset_round2/v1/gen_dial_doom_semi_v2_48.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "file:art_generated/iconset_round2/v1/gen_dial_doom_semi_v2_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_dial_doom_semi_v2_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_seal_dod_formal_v1_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_seal_dod_formal_v1_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_seal_dod_formal_v1_32.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "file:art_generated/iconset_round2/v1/gen_seal_dod_formal_v1_48.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "file:art_generated/iconset_round2/v1/gen_seal_dod_formal_v1_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_seal_dod_formal_v1_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_seal_dod_formal_v2_128.png": {
+   "hits": [
+    {
+     "conf": 0.7063,
+     "text": "DOCUE"
+    }
+   ],
+   "strong_hits": 1,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_seal_dod_formal_v2_256.png": {
+   "hits": [
+    {
+     "conf": 0.634,
+     "text": "OF"
+    }
+   ],
+   "strong_hits": 1,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_seal_dod_formal_v2_32.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "file:art_generated/iconset_round2/v1/gen_seal_dod_formal_v2_48.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "file:art_generated/iconset_round2/v1/gen_seal_dod_formal_v2_512.png": {
+   "hits": [
+    {
+     "conf": 0.6625,
+     "text": "OF"
+    }
+   ],
+   "strong_hits": 1,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_seal_dod_formal_v2_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_seal_dod_grunge_v1_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_seal_dod_grunge_v1_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_seal_dod_grunge_v1_32.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "file:art_generated/iconset_round2/v1/gen_seal_dod_grunge_v1_48.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "file:art_generated/iconset_round2/v1/gen_seal_dod_grunge_v1_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_seal_dod_grunge_v1_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_seal_dod_grunge_v2_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_seal_dod_grunge_v2_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_seal_dod_grunge_v2_32.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "file:art_generated/iconset_round2/v1/gen_seal_dod_grunge_v2_48.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "file:art_generated/iconset_round2/v1/gen_seal_dod_grunge_v2_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_seal_dod_grunge_v2_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_seal_dod_wax_v1_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_seal_dod_wax_v1_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_seal_dod_wax_v1_32.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "file:art_generated/iconset_round2/v1/gen_seal_dod_wax_v1_48.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "file:art_generated/iconset_round2/v1/gen_seal_dod_wax_v1_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_seal_dod_wax_v1_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_seal_dod_wax_v2_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_seal_dod_wax_v2_256.png": {
+   "hits": [
+    {
+     "conf": 0.6585,
+     "text": "OF"
+    }
+   ],
+   "strong_hits": 1,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_seal_dod_wax_v2_32.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "file:art_generated/iconset_round2/v1/gen_seal_dod_wax_v2_48.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "file:art_generated/iconset_round2/v1/gen_seal_dod_wax_v2_512.png": {
+   "hits": [
+    {
+     "conf": 0.6597,
+     "text": "OF"
+    }
+   ],
+   "strong_hits": 1,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_seal_dod_wax_v2_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_type_pdoom_inaction_v1_128.png": {
+   "hits": [
+    {
+     "conf": 0.8184,
+     "text": "P(dgom inaction"
+    }
+   ],
+   "strong_hits": 1,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_type_pdoom_inaction_v1_256.png": {
+   "hits": [
+    {
+     "conf": 0.6679,
+     "text": "P(dcom"
+    },
+    {
+     "conf": 0.8168,
+     "text": "inaction"
+    }
+   ],
+   "strong_hits": 2,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_type_pdoom_inaction_v1_32.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "file:art_generated/iconset_round2/v1/gen_type_pdoom_inaction_v1_48.png": {
+   "hits": [
+    {
+     "conf": 0.6038,
+     "text": "P)"
+    }
+   ],
+   "strong_hits": 1,
+   "verdict": "discard"
+  },
+  "file:art_generated/iconset_round2/v1/gen_type_pdoom_inaction_v1_512.png": {
+   "hits": [
+    {
+     "conf": 0.8602,
+     "text": "P(dgom inaction"
+    }
+   ],
+   "strong_hits": 1,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_type_pdoom_inaction_v1_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_type_pdoom_inaction_v2_128.png": {
+   "hits": [
+    {
+     "conf": 0.7979,
+     "text": "doom"
+    },
+    {
+     "conf": 0.8766,
+     "text": "inaction"
+    }
+   ],
+   "strong_hits": 2,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_type_pdoom_inaction_v2_256.png": {
+   "hits": [
+    {
+     "conf": 0.6041,
+     "text": "P("
+    },
+    {
+     "conf": 0.798,
+     "text": "doom"
+    },
+    {
+     "conf": 0.8826,
+     "text": "inaction"
+    }
+   ],
+   "strong_hits": 3,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_type_pdoom_inaction_v2_32.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "file:art_generated/iconset_round2/v1/gen_type_pdoom_inaction_v2_48.png": {
+   "hits": [
+    {
+     "conf": 0.5515,
+     "text": "P( [)"
+    }
+   ],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "file:art_generated/iconset_round2/v1/gen_type_pdoom_inaction_v2_512.png": {
+   "hits": [
+    {
+     "conf": 0.7906,
+     "text": "doom"
+    },
+    {
+     "conf": 0.8397,
+     "text": "inaction"
+    }
+   ],
+   "strong_hits": 2,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_type_pdoom_inaction_v2_64.png": {
+   "hits": [
+    {
+     "conf": 0.58,
+     "text": "P( /ratim)"
+    }
+   ],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_type_pdoom_us_v1_128.png": {
+   "hits": [
+    {
+     "conf": 0.7322,
+     "text": "((doom| us)"
+    }
+   ],
+   "strong_hits": 1,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_type_pdoom_us_v1_256.png": {
+   "hits": [
+    {
+     "conf": 0.7929,
+     "text": "?(doom| us)"
+    }
+   ],
+   "strong_hits": 1,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_type_pdoom_us_v1_32.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "file:art_generated/iconset_round2/v1/gen_type_pdoom_us_v1_48.png": {
+   "hits": [
+    {
+     "conf": 0.5059,
+     "text": "((dum]a)"
+    }
+   ],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "file:art_generated/iconset_round2/v1/gen_type_pdoom_us_v1_512.png": {
+   "hits": [
+    {
+     "conf": 0.7979,
+     "text": "?(doom | us)"
+    }
+   ],
+   "strong_hits": 1,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_type_pdoom_us_v1_64.png": {
+   "hits": [
+    {
+     "conf": 0.615,
+     "text": "((dm/u)"
+    }
+   ],
+   "strong_hits": 1,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_type_pdoom_us_v2_128.png": {
+   "hits": [
+    {
+     "conf": 0.862,
+     "text": "P(doom us)"
+    }
+   ],
+   "strong_hits": 1,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_type_pdoom_us_v2_256.png": {
+   "hits": [
+    {
+     "conf": 0.8004,
+     "text": "P(doom | us )"
+    }
+   ],
+   "strong_hits": 1,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_type_pdoom_us_v2_32.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "file:art_generated/iconset_round2/v1/gen_type_pdoom_us_v2_48.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "file:art_generated/iconset_round2/v1/gen_type_pdoom_us_v2_512.png": {
+   "hits": [
+    {
+     "conf": 0.769,
+     "text": "P(doom | us )"
+    }
+   ],
+   "strong_hits": 1,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_type_pdoom_us_v2_64.png": {
+   "hits": [
+    {
+     "conf": 0.6096,
+     "text": "[P(40 [s)"
+    }
+   ],
+   "strong_hits": 1,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_type_pdoom_v1_128.png": {
+   "hits": [
+    {
+     "conf": 0.73,
+     "text": "P()"
+    },
+    {
+     "conf": 0.7208,
+     "text": "doom"
+    }
+   ],
+   "strong_hits": 2,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_type_pdoom_v1_256.png": {
+   "hits": [
+    {
+     "conf": 0.6436,
+     "text": "P("
+    },
+    {
+     "conf": 0.7593,
+     "text": "doom)"
+    }
+   ],
+   "strong_hits": 2,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_type_pdoom_v1_32.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "file:art_generated/iconset_round2/v1/gen_type_pdoom_v1_48.png": {
+   "hits": [
+    {
+     "conf": 0.7167,
+     "text": "P()-"
+    }
+   ],
+   "strong_hits": 1,
+   "verdict": "keep"
+  },
+  "file:art_generated/iconset_round2/v1/gen_type_pdoom_v1_512.png": {
+   "hits": [
+    {
+     "conf": 0.6354,
+     "text": "P("
+    },
+    {
+     "conf": 0.7637,
+     "text": "doom)"
+    }
+   ],
+   "strong_hits": 2,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_type_pdoom_v1_64.png": {
+   "hits": [
+    {
+     "conf": 0.6225,
+     "text": "P())"
+    }
+   ],
+   "strong_hits": 1,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_type_pdoom_v2_128.png": {
+   "hits": [
+    {
+     "conf": 0.7548,
+     "text": "P(aoom)"
+    }
+   ],
+   "strong_hits": 1,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_type_pdoom_v2_256.png": {
+   "hits": [
+    {
+     "conf": 0.7735,
+     "text": "P(aoom)"
+    }
+   ],
+   "strong_hits": 1,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_type_pdoom_v2_32.png": {
+   "hits": [
+    {
+     "conf": 0.54,
+     "text": "P-)"
+    }
+   ],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "file:art_generated/iconset_round2/v1/gen_type_pdoom_v2_48.png": {
+   "hits": [
+    {
+     "conf": 0.6914,
+     "text": "P(2-)"
+    }
+   ],
+   "strong_hits": 1,
+   "verdict": "discard"
+  },
+  "file:art_generated/iconset_round2/v1/gen_type_pdoom_v2_512.png": {
+   "hits": [
+    {
+     "conf": 0.7607,
+     "text": "P(aoom)"
+    }
+   ],
+   "strong_hits": 1,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/gen_type_pdoom_v2_64.png": {
+   "hits": [
+    {
+     "conf": 0.554,
+     "text": "P(C)"
+    }
+   ],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/render_latex_pdoom_bayes_128.png": {
+   "hits": [
+    {
+     "conf": 0.6906,
+     "text": "R(doom|E)"
+    },
+    {
+     "conf": 0.6718,
+     "text": "F[E[docen) P(docen)"
+    },
+    {
+     "conf": 0.5557,
+     "text": "HB)"
+    }
+   ],
+   "strong_hits": 2,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/render_latex_pdoom_bayes_256.png": {
+   "hits": [
+    {
+     "conf": 0.8595,
+     "text": "P(E I doom) P(doom"
+    },
+    {
+     "conf": 0.8679,
+     "text": "P(doom |E) = :"
+    },
+    {
+     "conf": 0.6886,
+     "text": "P(E)"
+    }
+   ],
+   "strong_hits": 3,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/render_latex_pdoom_bayes_32.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "file:art_generated/iconset_round2/v1/render_latex_pdoom_bayes_48.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "file:art_generated/iconset_round2/v1/render_latex_pdoom_bayes_512.png": {
+   "hits": [
+    {
+     "conf": 0.8587,
+     "text": "P(E I doom) P(doom"
+    },
+    {
+     "conf": 0.8541,
+     "text": "P(doom"
+    },
+    {
+     "conf": 0.7348,
+     "text": "E)="
+    },
+    {
+     "conf": 0.7993,
+     "text": "P(E)"
+    }
+   ],
+   "strong_hits": 4,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/render_latex_pdoom_bayes_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/render_latex_pdoom_inaction_128.png": {
+   "hits": [
+    {
+     "conf": 0.7071,
+     "text": "P(doom"
+    },
+    {
+     "conf": 0.8363,
+     "text": "[inaction"
+    }
+   ],
+   "strong_hits": 2,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/render_latex_pdoom_inaction_256.png": {
+   "hits": [
+    {
+     "conf": 0.8103,
+     "text": "P(doom"
+    },
+    {
+     "conf": 0.8949,
+     "text": "inaction)"
+    }
+   ],
+   "strong_hits": 2,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/render_latex_pdoom_inaction_32.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "file:art_generated/iconset_round2/v1/render_latex_pdoom_inaction_48.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "file:art_generated/iconset_round2/v1/render_latex_pdoom_inaction_512.png": {
+   "hits": [
+    {
+     "conf": 0.8507,
+     "text": "P(doom"
+    },
+    {
+     "conf": 0.8396,
+     "text": "inaction"
+    }
+   ],
+   "strong_hits": 2,
+   "verdict": null
+  },
+  "file:art_generated/iconset_round2/v1/render_latex_pdoom_inaction_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleA_authoritarian_pessimist_v1_1024.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleA_authoritarian_pessimist_v1_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleA_authoritarian_pessimist_v1_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleA_authoritarian_pessimist_v2_1024.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleA_authoritarian_pessimist_v2_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleA_authoritarian_pessimist_v2_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleA_burned_out_senior_v1_1024.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleA_burned_out_senior_v1_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleA_burned_out_senior_v1_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleA_burned_out_senior_v2_1024.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleA_burned_out_senior_v2_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleA_burned_out_senior_v2_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleA_capabilities_optimist_v1_1024.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleA_capabilities_optimist_v1_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleA_capabilities_optimist_v1_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleA_capabilities_optimist_v2_1024.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleA_capabilities_optimist_v2_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleA_capabilities_optimist_v2_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleA_fresh_grad_believer_v1_1024.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleA_fresh_grad_believer_v1_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleA_fresh_grad_believer_v1_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleA_fresh_grad_believer_v2_1024.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleA_fresh_grad_believer_v2_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleA_fresh_grad_believer_v2_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleA_moral_crusader_v1_1024.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleA_moral_crusader_v1_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleA_moral_crusader_v1_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleA_moral_crusader_v2_1024.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleA_moral_crusader_v2_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleA_moral_crusader_v2_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleA_people_pleaser_v1_1024.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleA_people_pleaser_v1_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleA_people_pleaser_v1_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleA_people_pleaser_v2_1024.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleA_people_pleaser_v2_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleA_people_pleaser_v2_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleB_authoritarian_pessimist_v1_1024.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleB_authoritarian_pessimist_v1_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleB_authoritarian_pessimist_v1_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleB_authoritarian_pessimist_v2_1024.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleB_authoritarian_pessimist_v2_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleB_authoritarian_pessimist_v2_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleB_burned_out_senior_v1_1024.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleB_burned_out_senior_v1_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleB_burned_out_senior_v1_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleB_burned_out_senior_v2_1024.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleB_burned_out_senior_v2_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleB_burned_out_senior_v2_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleB_capabilities_optimist_v1_1024.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleB_capabilities_optimist_v1_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleB_capabilities_optimist_v1_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleB_capabilities_optimist_v2_1024.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleB_capabilities_optimist_v2_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleB_capabilities_optimist_v2_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleB_fresh_grad_believer_v1_1024.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleB_fresh_grad_believer_v1_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleB_fresh_grad_believer_v1_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleB_fresh_grad_believer_v2_1024.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleB_fresh_grad_believer_v2_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleB_fresh_grad_believer_v2_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleB_moral_crusader_v1_1024.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleB_moral_crusader_v1_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleB_moral_crusader_v1_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleB_moral_crusader_v2_1024.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleB_moral_crusader_v2_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleB_moral_crusader_v2_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleB_people_pleaser_v1_1024.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleB_people_pleaser_v1_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleB_people_pleaser_v1_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleB_people_pleaser_v2_1024.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleB_people_pleaser_v2_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/researcher_portraits_pilot/v1/poleB_people_pleaser_v2_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/acquire_startup_r3_v1_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/acquire_startup_r3_v1_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/acquire_startup_r3_v1_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/acquire_startup_r3_v1_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/acquire_startup_r3_v2_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/acquire_startup_r3_v2_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/acquire_startup_r3_v2_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/acquire_startup_r3_v2_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/dossier_capabilities_optimist_a_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/dossier_capabilities_optimist_a_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/dossier_capabilities_optimist_a_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/dossier_capabilities_optimist_a_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/dossier_capabilities_optimist_b_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/dossier_capabilities_optimist_b_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/dossier_capabilities_optimist_b_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/dossier_capabilities_optimist_b_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/dossier_fresh_grad_a_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/dossier_fresh_grad_a_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/dossier_fresh_grad_a_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/dossier_fresh_grad_a_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/dossier_fresh_grad_b_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/dossier_fresh_grad_b_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/dossier_fresh_grad_b_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/dossier_fresh_grad_b_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/dossier_people_pleaser_a_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/dossier_people_pleaser_a_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/dossier_people_pleaser_a_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/dossier_people_pleaser_a_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/dossier_people_pleaser_b_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/dossier_people_pleaser_b_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/dossier_people_pleaser_b_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/dossier_people_pleaser_b_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/grant_proposal_r3_v1_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/grant_proposal_r3_v1_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/grant_proposal_r3_v1_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/grant_proposal_r3_v1_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/grant_proposal_r3_v2_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/grant_proposal_r3_v2_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/grant_proposal_r3_v2_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/grant_proposal_r3_v2_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/lobby_government_r3_v1_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/lobby_government_r3_v1_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/lobby_government_r3_v1_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/lobby_government_r3_v1_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/lobby_government_r3_v2_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/lobby_government_r3_v2_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/lobby_government_r3_v2_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/lobby_government_r3_v2_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/network_r3_v1_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/network_r3_v1_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/network_r3_v1_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/network_r3_v1_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/network_r3_v2_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/network_r3_v2_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/network_r3_v2_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/network_r3_v2_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/open_source_release_r3_v1_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/open_source_release_r3_v1_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/open_source_release_r3_v1_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/open_source_release_r3_v1_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/open_source_release_r3_v2_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/open_source_release_r3_v2_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/open_source_release_r3_v2_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/open_source_release_r3_v2_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/painterly_capabilities_optimist_a_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/painterly_capabilities_optimist_a_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/painterly_capabilities_optimist_a_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/painterly_capabilities_optimist_a_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/painterly_capabilities_optimist_b_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/painterly_capabilities_optimist_b_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/painterly_capabilities_optimist_b_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/painterly_capabilities_optimist_b_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/painterly_fresh_grad_a_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/painterly_fresh_grad_a_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/painterly_fresh_grad_a_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/painterly_fresh_grad_a_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/painterly_fresh_grad_b_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/painterly_fresh_grad_b_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/painterly_fresh_grad_b_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/painterly_fresh_grad_b_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/sabotage_competitor_r3_v1_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/sabotage_competitor_r3_v1_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/sabotage_competitor_r3_v1_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/sabotage_competitor_r3_v1_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/sabotage_competitor_r3_v2_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/sabotage_competitor_r3_v2_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/sabotage_competitor_r3_v2_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/sabotage_competitor_r3_v2_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/take_loan_r3_v1_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/take_loan_r3_v1_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/take_loan_r3_v1_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/take_loan_r3_v1_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/take_loan_r3_v2_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/take_loan_r3_v2_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/take_loan_r3_v2_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/take_loan_r3_v2_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/team_building_r3_v1_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/team_building_r3_v1_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/team_building_r3_v1_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/team_building_r3_v1_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/team_building_r3_v2_128.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/team_building_r3_v2_256.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/team_building_r3_v2_512.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls/v1/team_building_r3_v2_64.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls_banners/v1/banner_doom_rising_r3_v1_768.png": {
+   "hits": [
+    {
+     "conf": 0.7748,
+     "text": "CHITCALALERT"
+    },
+    {
+     "conf": 0.8836,
+     "text": "SYSTEMFAILURE"
+    },
+    {
+     "conf": 0.8623,
+     "text": "WARNING"
+    }
+   ],
+   "strong_hits": 3,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls_banners/v1/banner_doom_rising_r3_v2_768.png": {
+   "hits": [
+    {
+     "conf": 0.7914,
+     "text": "ERROR"
+    }
+   ],
+   "strong_hits": 1,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls_banners/v1/banner_title_hero_r3_v1_768.png": {
+   "hits": [
+    {
+     "conf": 0.8258,
+     "text": "HANGIN"
+    },
+    {
+     "conf": 0.8444,
+     "text": "THERE!"
+    }
+   ],
+   "strong_hits": 2,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls_banners/v1/banner_title_hero_r3_v2_768.png": {
+   "hits": [
+    {
+     "conf": 0.8185,
+     "text": "HANG IN"
+    },
+    {
+     "conf": 0.8343,
+     "text": "THERE!"
+    }
+   ],
+   "strong_hits": 2,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls_banners/v1/fanfare_strategic_moves_r3_v1_768.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/round3_rerolls_banners/v1/fanfare_strategic_moves_r3_v2_768.png": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "file:art_generated/scene_art_wave2/v1/event_board_v1.webp": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "file:art_generated/scene_art_wave2/v1/event_board_v2.webp": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "iterate"
+  },
+  "file:art_generated/scene_art_wave2/v1/event_board_v3.webp": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "iterate"
+  },
+  "file:art_generated/scene_art_wave2/v1/event_board_v4.webp": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "iterate"
+  },
+  "file:art_generated/scene_art_wave2/v1/event_crisis_v1.webp": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "file:art_generated/scene_art_wave2/v1/event_crisis_v2.webp": {
+   "hits": [
+    {
+     "conf": 0.8569,
+     "text": "WARNING"
+    }
+   ],
+   "strong_hits": 1,
+   "verdict": "keep"
+  },
+  "file:art_generated/scene_art_wave2/v1/event_crisis_v3.webp": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "iterate"
+  },
+  "file:art_generated/scene_art_wave2/v1/event_crisis_v4.webp": {
+   "hits": [
+    {
+     "conf": 0.7718,
+     "text": "ERROR"
+    }
+   ],
+   "strong_hits": 1,
+   "verdict": "keep"
+  },
+  "file:art_generated/scene_art_wave2/v1/event_opportunity_v1.webp": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "iterate"
+  },
+  "file:art_generated/scene_art_wave2/v1/event_opportunity_v2.webp": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "iterate"
+  },
+  "file:art_generated/scene_art_wave2/v1/event_opportunity_v3.webp": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "file:art_generated/scene_art_wave2/v1/event_opportunity_v4.webp": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "file:art_generated/scene_art_wave2/v1/event_secret_v1.webp": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "file:art_generated/scene_art_wave2/v1/event_secret_v2.webp": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "file:art_generated/scene_art_wave2/v1/event_secret_v3.webp": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "file:art_generated/scene_art_wave2/v1/event_secret_v4.webp": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "file:art_generated/scene_art_wave2/v1/office_corner_dusk.webp": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "file:art_generated/scene_art_wave2/v1/office_desk_forward_night.webp": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "file:art_generated/scene_art_wave2/v1/office_lab_aisle.webp": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "file:art_generated/scene_art_wave2/v1/office_mezzanine.webp": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "file:art_generated/scene_art_wave2/v1/office_wide_dawn.webp": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "file:art_generated/scene_art_wave2/v1/office_wide_day.webp": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "file:art_generated/scene_art_wave2/v1/records_brass_plaques.webp": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "file:art_generated/scene_art_wave2/v1/records_crt_ranktable.webp": {
+   "hits": [
+    {
+     "conf": 0.7454,
+     "text": "300"
+    },
+    {
+     "conf": 0.7075,
+     "text": "3996"
+    },
+    {
+     "conf": 0.5321,
+     "text": "010"
+    },
+    {
+     "conf": 0.5034,
+     "text": "$36S"
+    },
+    {
+     "conf": 0.5875,
+     "text": "826"
+    },
+    {
+     "conf": 0.569,
+     "text": "02"
+    },
+    {
+     "conf": 0.5478,
+     "text": "SRES"
+    },
+    {
+     "conf": 0.5344,
+     "text": "328"
+    },
+    {
+     "conf": 0.6585,
+     "text": "5388"
+    },
+    {
+     "conf": 0.5561,
+     "text": "06"
+    },
+    {
+     "conf": 0.6775,
+     "text": "0575"
+    },
+    {
+     "conf": 0.6184,
+     "text": "9910"
+    },
+    {
+     "conf": 0.5157,
+     "text": "866"
+    },
+    {
+     "conf": 0.5711,
+     "text": "0810"
+    },
+    {
+     "conf": 0.6121,
+     "text": "6776"
+    },
+    {
+     "conf": 0.7401,
+     "text": "820"
+    },
+    {
+     "conf": 0.6803,
+     "text": "5825"
+    },
+    {
+     "conf": 0.7425,
+     "text": "920"
+    },
+    {
+     "conf": 0.6353,
+     "text": "D824"
+    }
+   ],
+   "strong_hits": 10,
+   "verdict": "keep"
+  },
+  "file:art_generated/scene_art_wave2/v1/records_microfiche.webp": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "file:art_generated/scene_art_wave2/v1/records_stacks.webp": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "file:art_generated/scene_art_wave2/v1/records_trophy_terminal.webp": {
+   "hits": [
+    {
+     "conf": 0.521,
+     "text": "WISALECS+"
+    },
+    {
+     "conf": 0.5129,
+     "text": "+9131290"
+    },
+    {
+     "conf": 0.6632,
+     "text": "+913:7420"
+    },
+    {
+     "conf": 0.6448,
+     "text": "BE271"
+    }
+   ],
+   "strong_hits": 2,
+   "verdict": "keep"
+  },
+  "file:art_generated/scene_art_wave2/v1/records_vault.webp": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  }
+ },
+ "conf_strong": 0.6,
+ "engine": "rapidocr-onnxruntime",
+ "from_ledger": false,
+ "from_tree": false,
+ "limits": "OCR is a LOWER BOUND on leakage -- small, low-contrast or stylised lettering is missed, and texture false-positives at low confidence. A clean scan is evidence of absence, not proof of it.",
+ "run_id": "art_night_2026-08-07",
+ "scanned_count": 534,
+ "schema_version": "1.0",
+ "scope": "every git-tracked image under art_generated (the PUBLIC set)",
+ "strong_hit_count": 43,
+ "tracked_only": false
+}
