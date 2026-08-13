@@ -134,7 +134,7 @@ class ScoreEntry:
 	# labs over several months is a feature, which a single conflated field
 	# would destroy permanently.
 	var lab_name: String  # The org the player runs. What the frozen wire key `player_name` has always carried.
-	var operator_name: String  # The human (GameConfig.player_name, "Operator:" in the prompt). Local-only so far.
+	var operator_name: String  # The human (GameConfig.player_name, "Operator:" in the prompt). PUBLISHED: composed into `player_name` by to_wire_dict() as `LAB -- OPERATOR` (:196).
 	var date: String  # ISO timestamp
 	var level_reached: int  # Final turn number (== score; kept for back-compat)
 	var game_mode: String  # Game version, e.g. "v0.11.0"
