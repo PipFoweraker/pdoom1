@@ -164,7 +164,11 @@ func _build_notification_panel(data: Dictionary) -> PanelContainer:
 	var message_label = Label.new()
 	message_label.text = data["message"]
 	message_label.custom_minimum_size = Vector2(330, 0)
-	message_label.add_theme_font_size_override("font_size", ThemeManager.get_font_size("body"))
+	# Key is "body_size", not "body" -- get_font_size() takes the LITERAL ThemeData.fonts
+	# key (unlike apply_label_style(), which appends "_size" for you). "body" missed the
+	# dict and silently returned the hardcoded 16 default, so the Retro Terminal theme's
+	# 18pt body size never reached toasts.
+	message_label.add_theme_font_size_override("font_size", ThemeManager.get_font_size("body_size"))
 	message_label.add_theme_color_override("font_color", Color.WHITE)
 	message_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	message_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL

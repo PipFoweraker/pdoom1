@@ -277,7 +277,15 @@ func get_color(color_name: String) -> Color:
 	var theme = get_theme()
 	return theme.colors.get(color_name, Color.WHITE)
 
-## Get a font size from current theme
+## Get a font size from current theme.
+##
+## TAKES THE LITERAL `ThemeData.fonts` KEY -- "body_size", not "body". This differs from
+## apply_label_style()/create_label() below, which take a bare semantic name ("body") and
+## append "_size" themselves. The two conventions in one module are a trap: a miss here is
+## SILENT, because the fallback 16 happens to equal the default theme's body_size, so the
+## bug only shows on a non-default theme. It cost exactly that on the toast label (see
+## notification_manager.gd). If #1224 makes this the font-size SSOT for the 378 scattered
+## decisions, pick ONE convention first -- do not scale the trap.
 func get_font_size(size_name: String) -> int:
 	var theme = get_theme()
 	return theme.fonts.get(size_name, 16)

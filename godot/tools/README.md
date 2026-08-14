@@ -1,224 +1,64 @@
-# Godot Development Tools
+# Godot-side tools (`godot/tools/`)
 
-Development utilities for P(Doom) Godot implementation.
+GDScript entry points that CI and the Python tooling invoke headlessly. Both of
+them are **driven by a script in the repo-root `scripts/` or `tools/` dir** --
+neither is meant to be run by hand as part of normal development.
 
-## Tools Overview
+Anything you add here ships inside the `.pck` (Godot packs the entire `godot/`
+tree whether referenced or not), so keep this directory to things that actually
+run.
 
-### SUCCESS `dev_tool_minimal.gd` - Code Validation Tool (WORKING)
+## `syntax_walk.gd` + `syntax_walk.tscn` -- the GDScript compile gate
 
-Validates GameState code structure without instantiating it. **This is the recommended tool to use.**
+Compile-coverage walker for the syntax gate (issue #1082). It enumerates and
+`load()`s every `.gd` in the project, then prints a `SYNTAX_WALK_COMPLETE`
+manifest with a file count.
 
-**Why minimal?** Instantiating GameState triggers all autoloads (GameManager, GameConfig, etc.) which prevent clean script exit. The minimal version inspects the code without running it.
+Invoked by **`scripts/run_godot_tests.py`** (`check_syntax()`), which greps the
+output for `SCRIPT ERROR` / `Parse Error` and requires the completion marker to
+match its own disk glob. The pass/fail decision lives in Python, outside GUT.
 
-**Usage:**
+It is a **scene**, not a `--script`, on purpose: booting a scene boots the
+project normally, so autoloads are initialised and the `class_name` cache is
+live. Per-file `--check-only` cannot do this -- it false-failed 186 of 260 files
+with "Identifier not found: <autoload>".
 
-```bash
-# Full path (recommended until PATH is fixed)
-"/c/Program Files/Godot/Godot_v4.5.1-stable_win64.exe" --headless --script tools/dev_tool_minimal.gd
-
-# Run all validations
-godot --headless --script tools/dev_tool_minimal.gd
-
-# Run specific validation
-godot --headless --script tools/dev_tool_minimal.gd --test exists
-godot --headless --script tools/dev_tool_minimal.gd --test methods
-godot --headless --script tools/dev_tool_minimal.gd --test properties
+```
+godot --headless --path godot res://tools/syntax_walk.tscn
 ```
 
-**What it checks:**
-- SUCCESS GameState script exists and loads
-- SUCCESS GameState has expected methods
-- SUCCESS GameState has expected properties
-- SUCCESS Lists all available methods and properties
+## `validate_assets_probe.gd` -- asset-import validation
 
-**Example Output:**
-```
-[CHECKED] GameState script found: res://scripts/core/game_state.gd
-[CHECKED] seed - Found
-[CHECKED] turn - Found
-[CHECKED] money - Found
-[CHECKED] doom - Found
-[CHECKED] reputation - Found
-```
+Walks `res://assets`, `load()`s every importable resource, and asserts each one
+resolves to a non-null resource of a sane type. Catches a corrupt or undecodable
+asset that imports "successfully" but fails to load.
 
----
+Invoked by **`tools/validate_assets.py`**; run that rather than the probe
+directly.
 
-### WARNING `dev_tool_v2.gd` - Runtime Testing (HANGS - DO NOT USE)
+Headless-safe checks only: textures are validated by metadata (`get_width()` /
+`get_height()` > 0), **not** by `get_image()` -- VRAM-compressed textures
+legitimately discard their CPU image under the headless dummy renderer. So this
+proves a resource is structurally loadable; it does not GPU-decode. That last
+mile is the human release-build playtest
+(`docs/LEADERBOARD_CRASH_DIAGNOSIS.md`).
 
-This version instantiates GameState to test runtime behavior, but it hangs due to autoload initialization.
+## Running Godot headless on this project
 
-**Status:** Does not exit cleanly, requires Ctrl+C to kill
-**Issue:** Autoloads (GameManager, etc.) prevent script exit
-**Solution:** Use `dev_tool_minimal.gd` instead for validation
+Read the "Godot writes to Pip's REAL player profile" section of the root
+`CLAUDE.md` **before** any headless invocation. The user-data dir derives from
+`config/name` in `project.godot`, not from the worktree path, so every worktree
+shares one profile and an unisolated run can overwrite live leaderboard data.
+Isolation differs by OS (Windows: `APPDATA`; Linux: `XDG_DATA_HOME` -- see
+`docs/LAPTOP_DEBIAN_SETUP.md` section 4).
 
----
+## History
 
-### WARNING `dev_tool.gd` - Original Full Test Suite (HANGS - DO NOT USE)
-
-Original comprehensive test suite. Has same hanging issue as v2.
-
-**Status:** Archived for reference
-**Use instead:** `dev_tool_minimal.gd`
-
----
-
-### SUCCESS `quick_test.gd` - Basic Functionality Test (WORKING)
-
-Simple test to verify GDScript basics and script loading.
-
-**Usage:**
-```bash
-godot --headless --script tools/quick_test.gd
-```
-
-**What it does:**
-- Tests basic GDScript functionality
-- Checks for autoloads
-- Loads GameState script (but doesn't instantiate)
-- Quick validation that environment is working
-
----
-
-## PATH Issues with Godot
-
-**Problem:** Space in "Program Files" breaks bash PATH
-
-**Temporary Solution (per session):**
-```bash
-alias godot='"/c/Program Files/Godot/Godot_v4.5.1-stable_win64.exe"'
-```
-
-**Permanent Solution (create wrapper in project root):**
-```bash
-# Create godot.sh in project root
-printf '#!/bin/bash\n"/c/Program Files/Godot/Godot_v4.5.1-stable_win64.exe" "$@"\n' > ../godot.sh
-chmod +x ../godot.sh
-
-# Use it
-./godot.sh --headless --script tools/dev_tool_minimal.gd
-```
-
-**Best Solution (move Godot):**
-```bash
-mkdir -p /c/Godot
-cp "/c/Program Files/Godot/Godot_v4.5.1-stable_win64.exe" /c/Godot/godot.exe
-export PATH="/c/Godot:$PATH"  # Add to ~/.bashrc
-```
-
----
-
-## Discovered GameState Structure
-
-From validation tool output:
-
-**Methods:**
-- `reset()` - Reset game state
-- `can_afford(amount)` - Check if player can afford cost
-
-**Properties:**
-- `seed` - Game seed
-- `turn` - Current turn number
-- `money`, `compute`, `research`, `papers` - Resources
-- `reputation`, `doom` - Key metrics
-- `action_points`, `committed_ap`, `reserved_ap`, `used_event_ap` - Action point tracking
-- `safety_researchers`, `capability_researchers`, `compute_engineers`, `managers` - Staff (not single `staff` property)
-
-**Note:** Method names differ from Python version:
-- Python: `initialize()`  ->  Godot: `reset()`
-- Python: `advance_turn()` / `end_turn()`  ->  Godot: (different implementation)
-
----
-
-## Development Workflow
-
-### Quick Validation
-```bash
-cd godot
-"/c/Program Files/Godot/Godot_v4.5.1-stable_win64.exe" --headless --script tools/dev_tool_minimal.gd
-```
-
-### Check Specific Aspect
-```bash
-# Check methods only
-godot --headless --script tools/dev_tool_minimal.gd --test methods
-
-# Check properties only
-godot --headless --script tools/dev_tool_minimal.gd --test properties
-```
-
-### After Code Changes
-```bash
-# Validate code structure is intact
-godot --headless --script tools/dev_tool_minimal.gd
-```
-
----
-
-## Comparison: Python vs Godot Tools
-
-| Feature | Python (tools/dev_tool.py) | Godot (tools/dev_tool_minimal.gd) |
-|---------|---------------------------|-----------------------------------|
-| **Status** | SUCCESS Working | SUCCESS Working |
-| **Method** | Runtime testing | Static validation |
-| **Exit behavior** | Clean | Clean (forced with OS.kill) |
-| **Instantiates GameState** | Yes | No (avoids autoload issues) |
-| **Tests gameplay** | Yes | No (structure only) |
-| **Tests consistency** | Yes (seed parity) | No |
-| **Use case** | Full integration testing | Code structure validation |
-
----
-
-## Future Improvements
-
-### High Priority
-1. **Fix autoload hanging issue** - Investigate why autoloads prevent script exit
-2. **Create wrapper script** - Permanent solution to PATH problem
-3. **Runtime testing** - Get dev_tool_v2.gd working without hanging
-
-### Medium Priority
-4. **Seed parity validator** - Compare Python vs Godot results
-5. **Integration tests** - Headless full-game simulations
-6. **CI/CD integration** - Automate validation in GitHub Actions
-
-### Low Priority
-7. **Performance profiling** - Automated benchmarks
-8. **Export validation** - Test built executables
-
----
-
-## Troubleshooting
-
-### Script hangs and won't exit
-**Problem:** Instantiating GameState triggers autoloads that don't shut down
-**Solution:** Use `dev_tool_minimal.gd` which doesn't instantiate
-**Workaround:** Kill with Ctrl+C
-
-### "bash: /c/Program: No such file or directory"
-**Problem:** Space in "Program Files" breaks bash
-**Solution:** Use full quoted path: `"/c/Program Files/Godot/Godot_v4.5.1-stable_win64.exe"`
-**Or:** Create wrapper script (see PATH Issues section)
-
-### "Could not load GameState script"
-**Problem:** Wrong working directory or script path
-**Solution:** Run from `godot/` directory: `cd godot`
-**Check:** Script is at `res://scripts/core/game_state.gd`
-
----
-
-## Notes
-
-- All tools work in `--headless` mode (no GUI)
-- Exit codes: 0 = success, 1 = failure
-- Verbose output by default for debugging
-- Tools are deterministic and repeatable
-
----
-
-## Contributing
-
-When adding new tools:
-1. Test exit behavior (`quit(0)` or `OS.kill()`)
-2. Add verbose logging
-3. Document in this README
-4. Avoid instantiating objects with autoload dependencies
-5. Prefer validation over runtime testing when possible
+A family of Python-to-Godot port-verification scripts used to live here
+(`dev_tool.gd`, `dev_tool_v2.gd`, `dev_tool_minimal.gd`, `quick_test.gd`,
+`simple_test.gd`). They were removed in the 2026-08-14 dead-code sweep: they
+validated `GameState` against the pygame-era API (`initialize()`,
+`advance_turn()`, `end_turn()`, `.seed`, `.staff`), none of which still exists,
+so the two that instantiated anything could not run at all. The Python bridge
+they existed to cross-check is gone; `scripts/run_godot_tests.py` is the real
+gate now.
