@@ -821,7 +821,7 @@ def render_cell(c, in_set=False):
         leak = ""
     return f"""
       <div class="cell{' hasleak' if hits else ''}" data-asset="{aid}" data-base="{esc(c.get('base',''))}" data-leak="{'1' if hits else '0'}">
-        <div class="stage"><img loading="lazy" src="{esc(src)}" alt="{esc(c['label'])}"></div>
+        <div class="stage"><input type="checkbox" class="selbox" aria-label="Select for batch action" title="Select (click; shift-click for a range)"><img loading="lazy" src="{esc(src)}" alt="{esc(c['label'])}"></div>
         {leak}
         <div class="cap"><span class="lbl">{esc(c['label'])}</span>{meta}</div>
         <div class="idline">{aid}</div>
@@ -1075,7 +1075,31 @@ _TEMPLATE = r"""<!doctype html><html lang="en"><head><meta charset="utf-8">
      set frame left with no live cells collapses out of the live flow */
   .sec.empty{display:none}
   .setframe.empty{display:none}
+  .stage{position:relative}
   .stage img{cursor:zoom-in}
+  /* batch selection -- the sweep lane. At 2.9 seconds an asset there is no room
+     to type, so selection has to be one click and bulk action has to be one more. */
+  .selbox{position:absolute;top:.4rem;left:.4rem;z-index:5;width:1.15rem;height:1.15rem;
+    cursor:pointer;accent-color:var(--amber);opacity:.55}
+  .selbox:hover,.selbox:checked{opacity:1}
+  .cell.sel{outline:2px solid var(--amber);outline-offset:2px;background:color-mix(in srgb,var(--amber) 12%,var(--panel))}
+  #selbar{position:fixed;left:50%;transform:translateX(-50%);bottom:1.1rem;z-index:70;
+    display:none;align-items:center;gap:.55rem;padding:.6rem .9rem;border-radius:10px;
+    background:var(--panel);border:1px solid var(--amber);box-shadow:0 6px 28px var(--shadow)}
+  #selbar.on{display:flex}
+  #selbar .n{font-family:ui-monospace,Consolas,monospace;font-size:.8rem;color:var(--amber)}
+  #selbar button{font-family:ui-monospace,Consolas,monospace;font-size:.72rem;text-transform:uppercase;
+    letter-spacing:.04em;padding:.32rem .6rem;border-radius:6px;border:1px solid var(--line);
+    background:var(--field);color:var(--ink-dim);cursor:pointer}
+  #selbar button:hover{color:var(--ink);border-color:var(--ink-faint)}
+  #selbar button[data-bulk="keep"]:hover{border-color:var(--keep);color:var(--keep)}
+  #selbar button[data-bulk="discard"]:hover{border-color:var(--discard);color:var(--discard)}
+  /* filter chips */
+  .filters{display:flex;gap:.35rem;flex-wrap:wrap;align-items:center;margin:.2rem 0 1rem}
+  .filters .fbtn{font-family:ui-monospace,Consolas,monospace;font-size:.7rem;padding:.25rem .6rem;
+    border-radius:20px;border:1px solid var(--line);background:transparent;color:var(--ink-dim);cursor:pointer}
+  .filters .fbtn.on{background:var(--amber);border-color:var(--amber);color:#20140a}
+  .cell.hidden{display:none}
   /* OCR text-leak badge -- reports, never verdicts */
   .leak{font-family:ui-monospace,Consolas,monospace;font-size:.62rem;line-height:1.35;
     color:#f0c9a0;background:rgba(193,74,58,.16);border:1px solid var(--discard);
@@ -1190,6 +1214,19 @@ _TEMPLATE = r"""<!doctype html><html lang="en"><head><meta charset="utf-8">
   <h1>Art review -- all tracks, one place</h1>
   <p class="lede">{{SUBTITLE}}</p>
   <nav class="nav">{{NAV}}</nav>
+  <div class="filters" id="filters">
+    <span style="font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint);margin-right:.3rem">show</span>
+    <button type="button" class="fbtn on" data-f="all">all</button>
+    <button type="button" class="fbtn" data-f="undecided">undecided</button>
+    <button type="button" class="fbtn" data-f="keep">keep</button>
+    <button type="button" class="fbtn" data-f="remix">remix</button>
+    <button type="button" class="fbtn" data-f="shelf">shelf</button>
+    <button type="button" class="fbtn" data-f="discard">discard</button>
+    <button type="button" class="fbtn" data-f="leak">text-leak</button>
+    <span style="flex:1"></span>
+    <button type="button" class="fbtn" id="selvisible">select all shown</button>
+    <button type="button" class="fbtn" id="selnone">clear selection</button>
+  </div>
   {{BODY}}
   <details id="archive">
     <summary>Decisions archive <b class="archcount">0</b> decided <span class="archbreak"></span></summary>
@@ -1211,6 +1248,15 @@ _TEMPLATE = r"""<!doctype html><html lang="en"><head><meta charset="utf-8">
   </div>
   <footer>Every verdict / note / tag POSTs to the local server and is written to
   <b>review_state.json</b> on disk -- reload any time, across sessions, and your review is still here.</footer>
+</div>
+<div id="selbar" aria-live="polite">
+  <span class="n"><b id="selcount">0</b> selected</span>
+  <button type="button" data-bulk="keep">keep</button>
+  <button type="button" data-bulk="remix">remix</button>
+  <button type="button" data-bulk="shelf">shelf</button>
+  <button type="button" data-bulk="discard">discard</button>
+  <button type="button" data-bulk="clear">un-decide</button>
+  <button type="button" id="seldone">deselect</button>
 </div>
 <div id="lightbox" aria-hidden="true">
   <span class="lbclose">[ESC] close</span>
@@ -1535,6 +1581,110 @@ _TEMPLATE = r"""<!doctype html><html lang="en"><head><meta charset="utf-8">
       if(focusCell)focusCell.scrollIntoView({block:'center'});
     });
   }
+  // ---- batch selection + filters -------------------------------------------
+  // Built 2026-08-15 from a measurement, not a preference: the first mass review
+  // ran at 2.9 seconds an asset and used ZERO harvest tags, because there is no
+  // room to type in that lane. Sweeping wants one click to select and one to act.
+  var selbar=document.getElementById('selbar'),selcount=document.getElementById('selcount');
+  var lastAnchor=null;
+  function selectedCells(){return CELLS.filter(function(c){return c.classList.contains('sel');});}
+  function updateSelBar(){
+    var n=selectedCells().length;
+    selcount.textContent=n;
+    selbar.classList.toggle('on',n>0);
+  }
+  function setSel(cell,on){
+    cell.classList.toggle('sel',!!on);
+    var b=cell.querySelector('.selbox'); if(b)b.checked=!!on;
+  }
+  CELLS.forEach(function(cell){
+    var box=cell.querySelector('.selbox'); if(!box)return;
+    box.addEventListener('click',function(e){
+      e.stopPropagation();                       // never open the lightbox
+      if(e.shiftKey&&lastAnchor){
+        // range-select across what is CURRENTLY VISIBLE, in document order, so a
+        // filtered sweep selects the run you can see rather than hidden cells.
+        var vis=CELLS.filter(function(c){return !c.classList.contains('hidden');});
+        var i=vis.indexOf(lastAnchor),j=vis.indexOf(cell);
+        if(i>-1&&j>-1){
+          var a=Math.min(i,j),b2=Math.max(i,j);
+          for(var k=a;k<=b2;k++)setSel(vis[k],true);
+        }
+      }else{
+        setSel(cell,box.checked);
+      }
+      lastAnchor=cell;
+      updateSelBar();
+    });
+  });
+  document.getElementById('seldone').addEventListener('click',function(){
+    selectedCells().forEach(function(c){setSel(c,false);});updateSelBar();
+  });
+  document.getElementById('selnone').addEventListener('click',function(){
+    selectedCells().forEach(function(c){setSel(c,false);});updateSelBar();
+  });
+  document.getElementById('selvisible').addEventListener('click',function(){
+    CELLS.forEach(function(c){if(!c.classList.contains('hidden'))setSel(c,true);});
+    updateSelBar();
+  });
+
+  // Bulk apply. Shelf still REQUIRES a return condition -- asked once for the
+  // batch rather than per asset, because the guard is about the shelf meaning
+  // something, not about typing it repeatedly.
+  selbar.querySelectorAll('button[data-bulk]').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var v=btn.getAttribute('data-bulk');
+      var cells=selectedCells();
+      if(!cells.length)return;
+      var reason=null,note=null;
+      if(v==='shelf'){
+        reason=window.prompt('Shelf '+cells.length+' assets -- what would bring them back?\n(a TRIGGER, not a date. Required.)','');
+        if(reason===null)return;
+        reason=reason.trim();
+        if(!reason){saveMsg('shelf needs a return condition','err');return;}
+      }
+      if(v==='discard'||v==='keep'){
+        note=window.prompt('Optional note for all '+cells.length+' (blank = none):','');
+        if(note===null)return;
+        note=note.trim();
+      }
+      cells.forEach(function(cell){
+        var id=cell.getAttribute('data-asset');
+        var verdict=(v==='clear')?null:v;
+        applyVerdict(cell,verdict);
+        var patch={verdict:verdict};
+        if(reason)patch.shelf_reason=reason;
+        if(note){setNoteField(cell,note);patch.note=note;}
+        persist(id,patch);
+        setSel(cell,false);
+      });
+      cells.forEach(function(cell){
+        if(cell._set)placeSet(cell._set); else placeCell(cell);
+      });
+      refreshLayout();updateSelBar();
+    });
+  });
+
+  // Filters. 'undecided' is the sweep default -- it is what "what is left" means.
+  var curFilter='all';
+  function applyFilter(f){
+    curFilter=f;
+    CELLS.forEach(function(cell){
+      var v=curVerdict(cell),show;
+      if(f==='all')show=true;
+      else if(f==='undecided')show=!v;
+      else if(f==='leak')show=cell.getAttribute('data-leak')==='1';
+      else show=(v===f);
+      cell.classList.toggle('hidden',!show);
+    });
+    document.querySelectorAll('#filters .fbtn[data-f]').forEach(function(b){
+      b.classList.toggle('on',b.getAttribute('data-f')===f);
+    });
+  }
+  document.querySelectorAll('#filters .fbtn[data-f]').forEach(function(b){
+    b.addEventListener('click',function(){applyFilter(b.getAttribute('data-f'));});
+  });
+
   viewToggle('posterbtn','poster','pdoom_art_poster');
   viewToggle('crispbtn','px-crisp','pdoom_art_crisp');
 

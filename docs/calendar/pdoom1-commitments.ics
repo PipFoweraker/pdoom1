@@ -1257,6 +1257,29 @@ DESCRIPTION:needs a declaration -- check_refusal_classification.py (unpars
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:bee9ba301fd16d80@commitments.pdoom1
+DTSTAMP:20260814T000000Z
+DTSTART;VALUE=DATE:20260814
+DTEND;VALUE=DATE:20260815
+SUMMARY:[UNPARSED] needs a declaration -- check_review_js.py
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/check_review_js.
+ py:6. 1 line(s) in tools/check_review_js.py mention this date and no COMM
+ ITMENT: declaration accounts for it. Either add a declaration or the date
+  is incidental. First line: On 2026-08-14 the art review gallery was comp
+ letely dead -- no verdicts\, no -- Generated from tracked sources by scri
+ pts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- check_review_js.py (unparsed) -- unowne
+ d
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:27de25ab53d988fc@commitments.pdoom1
 DTSTAMP:20260814T000000Z
 DTSTART;VALUE=DATE:20260814
@@ -1358,6 +1381,29 @@ BEGIN:VALARM
 ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- pdoom1#1092 (unparsed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:fbded144e15b8e52@commitments.pdoom1
+DTSTAMP:20260815T000000Z
+DTSTART;VALUE=DATE:20260815
+DTEND;VALUE=DATE:20260816
+SUMMARY:[UNPARSED] needs a declaration -- serve_review.py
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/art_review/serve
+ _review.py:1585. 1 line(s) in tools/art_review/serve_review.py mention th
+ is date and no COMMITMENT: declaration accounts for it. Either add a decl
+ aration or the date is incidental. First line: // Built 2026-08-15 from a
+  measurement\, not a preference: the first mass review -- Generated from 
+ tracked sources by scripts/generate_commitment_calendar.py\; regenerate t
+ o update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- serve_review.py (unparsed) -- unowned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT

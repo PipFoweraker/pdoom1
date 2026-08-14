@@ -13,7 +13,7 @@ Horizon: **2026-08-09** (the prose scan reports dates at or after this; roll it
 forward deliberately in `COMMITMENTS.md`, never automatically -- a clock-reading
 generator goes stale overnight and trains people to ignore the check).
 
-**48 declared, 4 release-train, 57 UNPARSED, 0 malformed.**
+**48 declared, 4 release-train, 59 UNPARSED, 0 malformed.**
 
 ## Declared commitments
 
@@ -160,10 +160,12 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-14 | `docs/art/audit_2026-08-13/THE_REVISIONS_ARE_THE_STORY.md` | 82 | Measured coverage as at 2026-08-14: **1,391 of 2,099 families decided (66.3%)**. |
 | 2026-08-14 | `docs/art/audit_2026-08-13/THE_REVISIONS_ARE_THE_STORY.md` | 119 | \| **review state, verdict, notes, revision history** \| **yes, as of 2026-08-14** \| |
 | 2026-08-14 | `tools/art_review/serve_review.py` | 212 | # block is FOR and what a decision here means. (2026-08-14, Pip's ask.) |
-| 2026-08-14 | `tools/art_review/serve_review.py` | 1325 | // all move to the archive together. (2026-08-14, Pip's ask.) |
+| 2026-08-14 | `tools/art_review/serve_review.py` | 1371 | // all move to the archive together. (2026-08-14, Pip's ask.) |
 | 2026-08-14 | `tools/check_refusal_classification.py` | 7 | WHY (playtest 2026-08-14, Pip): |
+| 2026-08-14 | `tools/check_review_js.py` | 6 | On 2026-08-14 the art review gallery was completely dead -- no verdicts, no |
 | 2026-08-15 | `docs/art/audit_2026-08-13/NEXT_ROUND_BRIEF.md` | 83 | - **Generation spend policy expires 2026-08-15.** |
 | 2026-08-15 | `pdoom1#1092` | 0 | art(sweep): events name physical things the office never shows -- install a security system, no cameras appear; sweep events for asset refs, then bulk |
+| 2026-08-15 | `tools/art_review/serve_review.py` | 1585 | // Built 2026-08-15 from a measurement, not a preference: the first mass review |
 | 2026-08-16 | `docs/workshop-2/position.md` | 547 | **On 2026-08-16**, ask for three run IDs -- one per guard -- each showing the |
 | 2026-08-16 | `docs/workshop-2/position.md` | 647 | 2026-08-16. |
 | 2026-08-24 | `docs/design/LEAGUE_CUTOVER_PLAYBOOK.md` | 41 | at L4, and is pinned for reflective review on/after 2026-08-24. |
