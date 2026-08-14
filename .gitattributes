@@ -31,6 +31,15 @@
 *.gdshader text eol=lf
 *.svg      text eol=lf
 
+# --- iCalendar: RFC 5545 3.1 REQUIRES CRLF line breaks ---
+# The repo-wide `eol=lf` above would silently downgrade the generated calendar to
+# LF on checkout. Most clients tolerate LF; a strict one does not, and "mostly
+# standards-compliant" is not a thing. `-text` disables conversion in both
+# directions, so what the generator wrote is what git stores and checks out.
+# The mixed-line-ending / trailing-whitespace / end-of-file hooks are excluded
+# for the same reason in .pre-commit-config.yaml.
+*.ics   -text
+
 # --- Binary assets: never apply text/EOL conversion ---
 *.png   binary
 *.jpg   binary

@@ -43,6 +43,7 @@ Declared with a `Layer:` line in a tool's module docstring; `--` = undeclared.
 | find_duplicates.py | -- | Duplicate File Detector | human (docstring usage) |
 | generate_action_taxonomy.py | GENERATE | Generate docs/ACTION_TAXONOMY.md and check the action taxonomy for rot. | pre-commit; test:test_generate_action_taxonomy.py |
 | generate_adr_index.py | GENERATE | Generate docs/game-design/decisions/README.md from the ADR files themselves. | pre-commit; tool:generate_action_taxonomy.py; tool:generate_tools_index.py |
+| generate_commitment_calendar.py | GENERATE | Generate a subscribable .ics calendar + index from this repo's dated commitments. | pre-commit; test:test_generate_commitment_calendar.py |
 | generate_credits.py | GENERATE | Generate godot/data/credits.json from CREDITS.md. | pre-commit |
 | generate_dq_index.py | GENERATE | Generate docs/game-design/DQ_INDEX.md from WORKSHOP_2_BACKLOG.md. | pre-commit; tool:enforce_standards.py; tool:generate_credits.py; tool:generate_release_metadata.py; tool:intelligent_ascii_converter.py |
 | generate_mechanics_docs.py | GENERATE | Generate mechanics documentation from game code. | ci:docs-sync.yml |
@@ -217,6 +218,7 @@ The tool's own docstring names an automated caller category that the scan
 could not corroborate. Some are prose false-positives (a docstring merely
 DISCUSSING CI); the rest are the hollow-runner shape -- read them.
 
+- `scripts/generate_commitment_calendar.py` -- docstring mentions CI; no workflow calls it
 - `scripts/health_automation.py` -- docstring mentions CI; no workflow calls it
 - `scripts/logging_system.py` -- docstring mentions CI; no workflow calls it
 - `tools/art_review/apply_review.py` -- docstring mentions pre-commit; no pre-commit hook calls it
@@ -242,6 +244,6 @@ DISCUSSING CI); the rest are the hollow-runner shape -- read them.
 
 ## Not indexed: HTML tools
 
-29 `.html` tool(s) under `tools/` (browser-opened, no docstring to parse): `tools/art_review/doom_overlay_preview.html`, `tools/art_review/hero_gallery_template.html`, `tools/art_review/icon_pass_2026-07-21.html`, `tools/art_review/icon_pass_verdicts_2026-07-21.html`, `tools/art_review/palette.html`, `tools/art_review/palette_swatches.html`, `tools/art_review/scene_wave2_2026-07-21.html`, `tools/art_review/style_review.html`, `tools/assets/review_generated.html`, `tools/music/commission_sheets.html`, `tools/music/jukebox.html`, `tools/music/listening_room.html`, `tools/music/stem_board.html`, `tools/runsheet/CEREMONY-ALL-GATES-2026-07-31.html`, `tools/runsheet/SUNDAY-postmortem-2026-08-07.html`, `tools/runsheet/chronicle-2026-08-06_07.html`, `tools/runsheet/copy-review-2026-08-09.html`, `tools/runsheet/decisions-2026-08-10.html`, `tools/runsheet/fri-2026-07-31-EVENING-1620.html`, `tools/runsheet/fri-2026-07-31-GATES-1700.html`, `tools/runsheet/fri-2026-07-31-TO-MIDNIGHT-1733.html`, `tools/runsheet/fri-2026-07-31-league-day.html`, `tools/runsheet/playtest_card.html`, `tools/runsheet/sat-2026-08-08-release-status.html`, `tools/runsheet/wed-thu-2026-07-29.html`, `tools/runsheet/week-2026-08-10-plan.html`, `tools/social_composer.html`, `tools/ui_comparison.html`, `tools/ui_mockup/wireframe.html`.
+30 `.html` tool(s) under `tools/` (browser-opened, no docstring to parse): `tools/art_review/doom_overlay_preview.html`, `tools/art_review/hero_gallery_template.html`, `tools/art_review/icon_pass_2026-07-21.html`, `tools/art_review/icon_pass_verdicts_2026-07-21.html`, `tools/art_review/palette.html`, `tools/art_review/palette_swatches.html`, `tools/art_review/scene_wave2_2026-07-21.html`, `tools/art_review/style_review.html`, `tools/assets/review_generated.html`, `tools/music/commission_sheets.html`, `tools/music/jukebox.html`, `tools/music/listening_room.html`, `tools/music/stem_board.html`, `tools/runsheet/CEREMONY-ALL-GATES-2026-07-31.html`, `tools/runsheet/SUNDAY-postmortem-2026-08-07.html`, `tools/runsheet/chronicle-2026-08-06_07.html`, `tools/runsheet/commitments-2026-08.html`, `tools/runsheet/copy-review-2026-08-09.html`, `tools/runsheet/decisions-2026-08-10.html`, `tools/runsheet/fri-2026-07-31-EVENING-1620.html`, `tools/runsheet/fri-2026-07-31-GATES-1700.html`, `tools/runsheet/fri-2026-07-31-TO-MIDNIGHT-1733.html`, `tools/runsheet/fri-2026-07-31-league-day.html`, `tools/runsheet/playtest_card.html`, `tools/runsheet/sat-2026-08-08-release-status.html`, `tools/runsheet/wed-thu-2026-07-29.html`, `tools/runsheet/week-2026-08-10-plan.html`, `tools/social_composer.html`, `tools/ui_comparison.html`, `tools/ui_mockup/wireframe.html`.
 
-Total: 129 active tools (9 GENERATE, 5 OBSERVE, 7 PROVE, 1 SWEEP, 107 undeclared); 17 in UNKNOWN; 6 archived.
+Total: 130 active tools (10 GENERATE, 5 OBSERVE, 7 PROVE, 1 SWEEP, 107 undeclared); 17 in UNKNOWN; 6 archived.

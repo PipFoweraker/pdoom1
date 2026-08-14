@@ -78,6 +78,13 @@ var player_frontier: float:
 # ATTENTION, granted per PLAN MONTH and held by month_plan (MonthPlan), typed 2-way into
 # planning vs operating hours. `attention_per_month` is the grant size -- difficulty scales
 # THIS now (it used to scale max_action_points).
+#
+# 2026-08-12 ruling: this field is an INPUT to the budget, not the budget. Do NOT read it
+# to open a month -- call `capacity_for_month()` (-> Capacity.derive), which is the single
+# derivation point. Difficulty, scenario packs and save/load still WRITE here: this is the
+# grant modifier they set, and the derivation reads it back out as `modifiers.grant`. The
+# two numbers are identical today by contract, and the point of the indirection is that the
+# day they stop being identical, exactly one function changes.
 var attention_per_month: int = 20
 var stationery: float = 100.0  # Office supplies, depletes with staff usage
 
@@ -324,7 +331,11 @@ func reset():
 	# L1/ADR-0009: fresh month plan, opened with the first month's Attention grant. The plan
 	# month ordinal is derived from the calendar (turn 0 -> ordinal 0).
 	month_plan = MonthPlan.new()
-	month_plan.begin_month(attention_per_month, 0)
+	# Ordinal 0 is the run's START month by definition, so the derivation is asked about
+	# turn 0's calendar month, not `turn` (reset() zeroes `turn` further down, and a
+	# restart would otherwise ask about the month the previous run died in).
+	var start_capacity: Dictionary = capacity_for_month(Clock.month_index(0, start_year, start_month, start_day))
+	month_plan.begin_month(int(start_capacity["value"]), 0)
 	hiring = HiringPipeline.new()  # Phase B: fresh pipeline per game (created BEFORE candidates
 	                               # are populated so add_candidate can stamp their ids)
 	cause_log.clear()      # EE-8: fresh attribution trail per game
@@ -1127,6 +1138,26 @@ func add_upgrade(upgrade_id: String):
 		# Handle special upgrade effects
 		if upgrade_id == "cat_adoption":
 			has_cat = true
+
+# --- Founder Attention capacity (2026-08-12 ruling: ONE derivation point) ------------
+func current_month_index() -> int:
+	"""Absolute month ordinal (Clock.month_index form) for the turn the run is on. The
+	argument capacity_for_month() wants; also the month-boundary counter MonthController
+	already uses, so both sides agree on what 'this month' means."""
+	return Clock.month_index(turn, start_year, start_month, start_day)
+
+func capacity_for_month(month_index: int) -> Dictionary:
+	"""THE derivation point for this run's monthly Attention budget: {value, reason}.
+
+	Every site that opens a plan month goes through here rather than reading
+	`attention_per_month` directly (GameState.reset, MonthController._open_plan_month,
+	GameManager._set_attention_grant). The seed is passed from the first line even though
+	`value` ignores it -- see capacity.gd for why that is the whole point.
+
+	Zero behaviour change today: `value` is exactly `attention_per_month`, for every seed
+	and every month. Only the `reason` varies, and it varies by seed+month, never by an
+	rng draw off the run stream."""
+	return Capacity.derive(game_seed_str, month_index, {Capacity.MOD_GRANT: attention_per_month})
 
 # --- Founder Attention accessors (T2: the AP reserve system is gone; these read the plan) ---
 func get_available_attention() -> int:

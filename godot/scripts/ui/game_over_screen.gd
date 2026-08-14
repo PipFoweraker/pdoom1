@@ -29,9 +29,13 @@ static func _hex(c: Color) -> String:
 	return c.to_html(false)
 
 # What the identity prompt is allowed to promise. The prompt collects an
-# Operator name AND a Lab name; the remote board's frozen contract carries one
-# string, and it is the lab. Until the server takes both (coordination item),
-# the prompt says which one goes public rather than implying both do.
+# Operator name AND a Lab name, and BOTH are published: the remote board's
+# frozen contract carries one string, and `ScoreEntry.to_wire_dict()` composes
+# both names into it as `LAB -- OPERATOR` (see `Leaderboard.compose_board_name`,
+# godot/scripts/leaderboard.gd:32 and :196). A separate `operator_name` key is
+# not sent because the server drops unknown keys via $ALLOWED_FIELDS (measured
+# 2026-08-10) -- that is a wire-shape detail, NOT a limit on what goes public.
+# So the prompt must say both names go public, and it does.
 const IDENTITY_PROMPT_BOARD_NOTE := "The global board shows both, as 'Lab -- Operator'. One Operator can run many labs, and lab names collide, so the Operator name is what tells two identical labs apart. Long names are shortened with '...' to fit the board."
 
 @onready var panel_container = $CenterContainer/PanelContainer
@@ -350,8 +354,9 @@ func _persist_and_submit_score(final_state: Dictionary, game_seed: String) -> vo
 	# BOTH identity values (Pip's ruling 2026-08-08). Until this, only the lab
 	# was passed -- into a field then named `player_name` -- so #1133 could
 	# collect an Operator name that no code path ever carried anywhere. A player
-	# who typed their name saw it nowhere. The operator reaches the LOCAL board
-	# now; the remote wire still carries the lab alone (see ScoreEntry.to_wire_dict).
+	# who typed their name saw it nowhere. The operator now reaches BOTH the local
+	# board and the PUBLIC one: ScoreEntry.to_wire_dict() composes it into the
+	# frozen `player_name` field as `LAB -- OPERATOR` (leaderboard.gd:196).
 	var entry = Leaderboard.ScoreEntry.new(
 		final_turns,
 		GameConfig.lab_name,

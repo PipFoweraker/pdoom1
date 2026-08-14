@@ -1153,7 +1153,16 @@ func _set_attention_grant(per_month: int) -> void:
 	which is why a plain re-begin is safe here and would not be mid-month."""
 	state.attention_per_month = per_month
 	if state.month_plan != null:
-		state.month_plan.begin_month(per_month, state.month_plan.month_ordinal)
+		# `per_month` is the MODIFIER we just stored, not the budget. Re-open through the
+		# derivation point so difficulty/scenario grants pass through the same one function
+		# as everything else (2026-08-12 ruling). Same number today, by contract.
+		# Month index from the plan's own ordinal, not from `turn`: this restates the month
+		# the plan is currently on, which at setup time is month 0 and would be the same
+		# either way, but stays correct if it is ever called later.
+		var mi: int = Clock.month_index(0, state.start_year, state.start_month, state.start_day) \
+			+ state.month_plan.month_ordinal
+		var capacity: Dictionary = state.capacity_for_month(mi)
+		state.month_plan.begin_month(int(capacity["value"]), state.month_plan.month_ordinal)
 
 func _apply_scenario_overrides():
 	"""Apply scenario pack overrides to game state (Issue #483)"""

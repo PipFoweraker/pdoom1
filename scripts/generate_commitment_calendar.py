@@ -1,0 +1,936 @@
+"""Generate a subscribable .ics calendar + index from this repo's dated commitments.
+
+Layer: GENERATE
+
+Why this exists
+---------------
+Measured 2026-08-09 (`docs/design/WEEK_2026-08-10_PLAN.md`): eleven dated
+commitments landed inside one week and **two** had a reminder mechanism, both of
+which were "a person remembers". The structural finding was:
+
+    Every tool and CI gate in this repo fires on a COMMIT. None fires on a DATE.
+
+Two proven costs: `#1061` slipped 2026-08-03 -> 08-10 with nothing to catch it;
+`#1070` sat correctly diagnosed for seven days and then destroyed a real 50-entry
+league board. This script does not fix that by itself -- a file cannot ring --
+but it turns dates scattered through prose into one artefact a calendar app can
+subscribe to, and it makes an undeclared date LOUD instead of invisible.
+
+Sources (all offline; the GitHub half is a tracked snapshot, see --refresh-github)
+---------------------------------------------------------------------------------
+1. `COMMITMENT:` declaration lines in any tracked text file (the convention;
+   see `docs/calendar/COMMITMENTS.md`).
+2. `COMMITMENT:` declaration lines inside GitHub issue bodies, via the snapshot.
+3. The Monthly Themes table in `docs/ROADMAP.md` -- the release train, derived
+   from the roadmap rather than re-typed here.
+4. A PROSE SCAN of every tracked text file for ISO dates at or after the pinned
+   horizon. Anything not accounted for by a declaration is emitted as
+   `UNPARSED -- needs a declaration`, in BOTH outputs. A calendar that silently
+   omits is worse than no calendar, because it looks complete.
+
+Determinism
+-----------
+Output is a pure function of tracked files. Nothing reads the clock: the prose
+scan is bounded by `CALENDAR-HORIZON:` declared in `docs/calendar/COMMITMENTS.md`,
+and every DTSTAMP is derived from the event's own date. That is what makes
+`--check` safe to run in pre-commit -- a clock-reading generator would go stale
+overnight and train people to ignore it.
+
+Usage
+-----
+    python scripts/generate_commitment_calendar.py             # (re)write outputs
+    python scripts/generate_commitment_calendar.py --check     # exit 1 if stale
+    python scripts/generate_commitment_calendar.py --refresh-github  # network
+    python scripts/generate_commitment_calendar.py --report    # stdout summary
+"""
+
+import hashlib
+import json
+import re
+import subprocess
+import sys
+from datetime import date, timedelta
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+OUT_DIR = ROOT / "docs" / "calendar"
+SRC_DECL = OUT_DIR / "COMMITMENTS.md"
+SNAPSHOT = OUT_DIR / "github_snapshot.json"
+OUT_ICS = OUT_DIR / "pdoom1-commitments.ics"
+OUT_INDEX = OUT_DIR / "COMMITMENTS_INDEX.md"
+ROADMAP = ROOT / "docs" / "ROADMAP.md"
+
+GITHUB_REPOS = ("PipFoweraker/pdoom1", "PipFoweraker/coordination")
+
+# Prose scan reads these; the same set a human would call "the written record".
+SCAN_GLOBS = ("docs/**/*.md", "tools/**/*.py", "scripts/**/*.py", "*.md")
+SCAN_EXCLUDE = (
+    "docs/archive/",
+    "docs/calendar/COMMITMENTS_INDEX.md",  # generated; would scan its own output
+    "CHANGELOG.md",  # a log of the past, and 100k of it
+    "scripts/generate_commitment_calendar.py",  # this file discusses the marker
+    # GENERATED indexes. Their dates are echoes of dates in the files they derive
+    # from, so scanning them double-counts: a runsheet FILENAME containing a date
+    # became an UNPARSED "commitment" the moment docs/TOOLS.md listed it. Declare
+    # a commitment in the source, never in an index.
+    "docs/TOOLS.md",
+    "docs/ACTION_TAXONOMY.md",
+    "docs/game-design/DQ_INDEX.md",
+)
+
+ISO_DATE = re.compile(r"\b(20[2-9]\d)-([01]\d)-([0-3]\d)\b")
+DECL = re.compile(r"COMMITMENT:\s*(.+?)\s*$")
+HORIZON = re.compile(r"^CALENDAR-HORIZON:\s*(\d{4}-\d{2}-\d{2})\s*$", re.M)
+FIELD = re.compile(r"^(owner|kind|lead|covers|from|until|note)\s*:\s*(.*)$", re.I)
+WEEKDAYS = {"MO": 0, "TU": 1, "WE": 2, "TH": 3, "FR": 4, "SA": 5, "SU": 6}
+
+# Reminder lead times, in days before the date, per kind. Argued in
+# docs/calendar/COMMITMENTS.md section 3 -- a lodgement deadline and a recurring
+# dev day want different warnings, and a cadence you already know about is the
+# fastest route to muting the whole calendar.
+LEADS = {
+    "deadline": (14, 7, 2, 0),
+    "expiry": (7, 1, 0),
+    "review": (14, 3, 0),
+    "handoff": (3, 1, 0),
+    "release": (7, 1, 0),
+    "falsifier": (1, 0),
+    "task": (2, 0),
+    "cadence": (0,),
+    "unparsed": (0,),
+}
+DEFAULT_KIND = "task"
+
+ASCII_MAP = {
+    "\u00b7": "-",
+    "\u2013": "--",
+    "\u2014": "--",
+    "\u2018": "'",
+    "\u2019": "'",
+    "\u201c": '"',
+    "\u201d": '"',
+    "\u2192": "->",
+    "\u2264": "<=",
+    "\u2265": ">=",
+    "\u2026": "...",
+}
+
+
+def to_ascii(text):
+    for src, dst in ASCII_MAP.items():
+        text = text.replace(src, dst)
+    return text.encode("ascii", "replace").decode("ascii")
+
+
+def rel(path):
+    return str(Path(path).relative_to(ROOT)).replace("\\", "/")
+
+
+class Commitment:
+    """One dated obligation, with the source that proves it."""
+
+    def __init__(self, when, title, owner, kind, source, leads=None, note="", covers=()):
+        self.when = when  # datetime.date
+        self.title = to_ascii(title).strip()
+        self.owner = to_ascii(owner).strip() or "unowned"
+        self.kind = kind
+        self.source = to_ascii(source).strip()
+        self.note = to_ascii(note).strip()
+        self.covers = tuple(covers)
+        self.leads = leads or LEADS.get(kind, LEADS[DEFAULT_KIND])
+
+    @property
+    def uid(self):
+        """Stable across regenerations: derived from identity, not position.
+
+        A stable UID is what lets a re-import UPDATE an event instead of
+        duplicating it. It deliberately excludes the line number, so moving a
+        declaration down a file does not mint a second calendar entry.
+        """
+        seed = "|".join([self.kind, self.title, self.when.isoformat(), self.owner])
+        return hashlib.sha1(seed.encode("utf-8")).hexdigest()[:16] + "@commitments.pdoom1"
+
+    def sort_key(self):
+        return (self.when, self.kind, self.title)
+
+
+# --------------------------------------------------------------------------
+# Declaration parsing -- the convention
+# --------------------------------------------------------------------------
+
+
+def parse_declaration(text, source, horizon):
+    """Parse one `COMMITMENT: ...` payload into zero or more Commitments.
+
+    Grammar (documented for humans in docs/calendar/COMMITMENTS.md):
+
+        COMMITMENT: <YYYY-MM-DD> -- <what> -- owner: <who> [-- kind: <k>] ...
+        COMMITMENT: every <DAY>[,<DAY>] -- <what> -- owner: <who> -- from: <date>
+
+    Only the DATE is positional. Everything else is keyword-extracted, so a
+    title containing ` -- ` (which house ASCII style produces constantly) does
+    not corrupt the parse. Returns (commitments, error_or_None).
+    """
+    m = re.match(
+        r"^\s*(\d{4}-\d{2}-\d{2}|every\s+[A-Za-z]{2}(?:\s*,\s*[A-Za-z]{2})*)\s*--\s*(.*)$",
+        text,
+    )
+    if not m:
+        return [], "no date token or missing ' -- ' after it"
+    datetok, rest = m.group(1), m.group(2)
+
+    # Chunk on ' -- '. A chunk that starts with a known keyword opens that field;
+    # a chunk that does not CONTINUES whatever it follows (the title at first, then
+    # the open field). So both `A -- B` in a title and `note: X -- Y` survive: house
+    # ASCII style makes ' -- ' an ordinary word separator, and a grammar that broke
+    # on it would be a grammar nobody could use.
+    title_parts, fields, current = [], {}, None
+    for chunk in rest.split(" -- "):
+        chunk = chunk.strip()
+        fm = FIELD.match(chunk)
+        if fm:
+            current = fm.group(1).lower()
+            fields[current] = fm.group(2).strip()
+        elif current:
+            fields[current] = (fields[current] + " -- " + chunk).strip(" -")
+        else:
+            title_parts.append(chunk)
+    title = " -- ".join(p for p in title_parts if p)
+    if not title:
+        return [], "no title"
+
+    kind = fields.get("kind", DEFAULT_KIND).lower()
+    if kind not in LEADS:
+        return [], "unknown kind '%s' (known: %s)" % (kind, ", ".join(sorted(LEADS)))
+    owner = fields.get("owner", "")
+    if not owner:
+        return [], "no owner: field"
+    leads = None
+    if "lead" in fields:
+        try:
+            leads = tuple(int(x.strip().rstrip("dD")) for x in fields["lead"].split(","))
+        except ValueError:
+            return [], "unparseable lead: '%s'" % fields["lead"]
+    covers = [c.strip() for c in fields.get("covers", "").split(",") if c.strip()]
+    note = fields.get("note", "")
+
+    def make(when):
+        return Commitment(when, title, owner, kind, source, leads, note, covers)
+
+    if not datetok.lower().startswith("every"):
+        return [make(date.fromisoformat(datetok))], None
+
+    # Recurrence: expand to concrete dates. Expanding rather than emitting an
+    # RRULE keeps every event individually traceable in the index, and keeps the
+    # .ics readable by the widest set of clients. Bounded by `until:` or one year.
+    days = [d.strip().upper() for d in datetok.split(None, 1)[1].split(",")]
+    if any(d not in WEEKDAYS for d in days):
+        return [], "unknown weekday in '%s'" % datetok
+    if "from" not in fields:
+        return [], "recurring commitment needs a from: <YYYY-MM-DD>"
+    start = date.fromisoformat(fields["from"])
+    end = date.fromisoformat(fields["until"]) if "until" in fields else start + timedelta(days=365)
+    out, cur = [], max(start, horizon)
+    while cur <= end:
+        if any(cur.weekday() == WEEKDAYS[d] for d in days):
+            out.append(make(cur))
+        cur += timedelta(days=1)
+    return out, None
+
+
+# --------------------------------------------------------------------------
+# Source readers
+# --------------------------------------------------------------------------
+
+
+def iter_scan_files():
+    seen = set()
+    for pattern in SCAN_GLOBS:
+        for p in sorted(ROOT.glob(pattern)):
+            r = rel(p)
+            if r in seen or any(r.startswith(x) for x in SCAN_EXCLUDE):
+                continue
+            seen.add(r)
+            yield p, r
+
+
+def read_horizon():
+    m = HORIZON.search(SRC_DECL.read_text(encoding="utf-8"))
+    if not m:
+        raise SystemExit("FATAL: no 'CALENDAR-HORIZON: <date>' line in %s" % rel(SRC_DECL))
+    return date.fromisoformat(m.group(1))
+
+
+def collect_declarations(horizon):
+    """Every COMMITMENT: line in a tracked text file, plus the GitHub snapshot."""
+    items, errors, claims = [], [], []
+    for path, r in iter_scan_files():
+        for n, line in enumerate(
+            path.read_text(encoding="utf-8", errors="replace").splitlines(), 1
+        ):
+            if "COMMITMENT:" not in line:
+                continue
+            payload = DECL.search(line).group(1)
+            # A payload containing '<' is a grammar example, not a declaration.
+            # This is how the convention can be DOCUMENTED in a scanned file.
+            if "<" in payload:
+                continue
+            got, err = parse_declaration(payload, "%s:%d" % (r, n), horizon)
+            if err:
+                errors.append(("%s:%d" % (r, n), err, to_ascii(payload)[:90]))
+                continue
+            items.extend(got)
+            claims.append((r, n, got))
+
+    for src, issue, payload, when_hint in iter_snapshot_declarations():
+        got, err = parse_declaration(payload, src, horizon)
+        if err:
+            errors.append((src, err, to_ascii(payload)[:90]))
+            continue
+        for c in got:
+            c.note = (c.note + " " + issue).strip()
+        items.extend(got)
+        claims.append((src, 0, got))
+        del when_hint
+    return items, errors, claims
+
+
+def iter_snapshot_declarations():
+    if not SNAPSHOT.exists():
+        return
+    snap = json.loads(SNAPSHOT.read_text(encoding="utf-8"))
+    for iss in snap.get("issues", []):
+        for payload in iss.get("declarations", []):
+            yield (
+                iss["url"],
+                "(%s#%s)" % (iss["repo"].split("/")[-1], iss["number"]),
+                payload,
+                None,
+            )
+
+
+def collect_roadmap_releases(horizon):
+    """Derive the release train from the ROADMAP Monthly Themes table.
+
+    Rule, stated so it is falsifiable: rows are read in file order from the
+    `## Monthly Themes` heading; each `Ships` cell is a `<Mon> <D>` with no year,
+    so the year is carried forward from ROADMAP_BASE_YEAR and incremented
+    whenever the month number decreases relative to the previous row. If the
+    table is ever reordered, this produces obviously wrong years rather than
+    quietly plausible ones.
+    """
+    if not ROADMAP.exists():
+        return []
+    text = ROADMAP.read_text(encoding="utf-8")
+    idx = text.find("## Monthly Themes")
+    if idx < 0:
+        return []
+    months = {
+        m: i + 1 for i, m in enumerate("Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec".split())
+    }
+    out = []
+    year, prev_month = horizon.year, 0
+    for line in text[idx:].splitlines():
+        row = re.match(r"^\|\s*(v\d+\.\d+)\s*\|\s*([A-Z][a-z]{2})\s+(\d{1,2})\s*\|(.*)$", line)
+        if not row:
+            if out and line.strip().startswith("|") is False and line.strip():
+                break
+            continue
+        ver, mon, day, tail = row.group(1), row.group(2), int(row.group(3)), row.group(4)
+        if mon not in months:
+            continue
+        if months[mon] < prev_month:
+            year += 1
+        prev_month = months[mon]
+        when = date(year, months[mon], day)
+        if when < horizon:
+            continue
+        theme = to_ascii(tail.split("|")[1] if tail.count("|") >= 2 else "").strip()
+        out.append(
+            Commitment(
+                when,
+                "Release train: %s ships%s" % (ver, (" -- " + theme) if theme else ""),
+                "pip",
+                "release",
+                "docs/ROADMAP.md (Monthly Themes table)",
+                note="Monthly release train, first Friday. Derived from the roadmap table, not re-typed.",
+            )
+        )
+    return out
+
+
+def collect_unparsed(horizon, declared):
+    """Every future ISO date in the written record that no declaration accounts for.
+
+    Suppression rule: a declaration for date D suppresses reporting of D within
+    the file the declaration lives in, plus any file named in its `covers:`
+    field. Per-FILE rather than global, because a global rule would let one
+    declared commitment silently swallow a different, undeclared commitment that
+    happens to fall on the same day -- which is the exact failure this generator
+    exists to prevent.
+    """
+    accounted = {}  # date -> set(files)
+    for c in declared:
+        files = set(c.covers)
+        if ":" in c.source and not c.source.startswith("http"):
+            files.add(c.source.rsplit(":", 1)[0])
+        accounted.setdefault(c.when, set()).update(files)
+
+    rows = []
+    for path, r in iter_scan_files():
+        for n, line in enumerate(
+            path.read_text(encoding="utf-8", errors="replace").splitlines(), 1
+        ):
+            # Skip declarations, and skip the generator's own control input --
+            # the horizon line is a parameter, not a commitment.
+            if "COMMITMENT:" in line or line.startswith("CALENDAR-HORIZON:"):
+                continue
+            for m in ISO_DATE.finditer(line):
+                try:
+                    when = date(int(m.group(1)), int(m.group(2)), int(m.group(3)))
+                except ValueError:
+                    continue
+                if when < horizon:
+                    continue
+                if r in accounted.get(when, ()):
+                    continue
+                rows.append((when, r, n, to_ascii(line.strip())[:150]))
+
+    # GitHub issues get the same treatment: a future date in an issue body with no
+    # declaration is exactly as invisible as one in a doc. #1061's Monday date lives
+    # in prose and a comment, which is why it slipped once already.
+    if SNAPSHOT.exists():
+        snap = json.loads(SNAPSHOT.read_text(encoding="utf-8"))
+        declared_urls = {c.source for c in declared}
+        for iss in snap.get("issues", []):
+            if iss["url"] in declared_urls or iss.get("declarations"):
+                continue
+            key = "%s#%s" % (iss["repo"].split("/")[-1], iss["number"])
+            for d in iss.get("dates", []):
+                when = date.fromisoformat(d)
+                if when < horizon:
+                    continue
+                rows.append((when, key, 0, to_ascii(iss["title"])[:150]))
+    return rows
+
+
+def unparsed_to_commitments(rows):
+    """One event per (date, file) -- not per line, or a table of falsifiers
+    becomes eight identical calendar entries."""
+    seen, out = set(), []
+    for when, r, n, line in rows:
+        key = (when, r)
+        if key in seen:
+            continue
+        seen.add(key)
+        same = [x for x in rows if (x[0], x[1]) == key]
+        out.append(
+            Commitment(
+                when,
+                "needs a declaration -- %s" % r.rsplit("/", 1)[-1],
+                "unowned",
+                "unparsed",
+                "%s:%d" % (r, n),
+                note="%d line(s) in %s mention this date and no COMMITMENT: declaration "
+                "accounts for it. Either add a declaration or the date is incidental. "
+                "First line: %s" % (len(same), r, line),
+            )
+        )
+    return out
+
+
+# --------------------------------------------------------------------------
+# ICS emission (RFC 5545)
+# --------------------------------------------------------------------------
+
+
+def ics_escape(text):
+    return text.replace("\\", "\\\\").replace(";", "\\;").replace(",", "\\,").replace("\n", "\\n")
+
+
+def fold(line):
+    """RFC 5545 3.1: content lines are folded at 75 octets, continuation lines
+    begin with a single space. Unfolded output is the most common way a
+    hand-rolled .ics gets rejected by a strict client."""
+    out, cur = [], line
+    limit = 74
+    while len(cur.encode("utf-8")) > limit:
+        cut = limit
+        while len(cur[:cut].encode("utf-8")) > limit:
+            cut -= 1
+        out.append(cur[:cut])
+        cur = " " + cur[cut:]
+        limit = 74
+    out.append(cur)
+    return out
+
+
+def trigger_for(days_before):
+    """08:00 local on the day `days_before` ahead of an all-day (midnight) event.
+
+    days_before == 0 therefore emits a POSITIVE trigger (8h AFTER DTSTART), which
+    is 08:00 on the morning of. A -PT0H alarm would fire at midnight, which is
+    how a calendar teaches you to swipe it away unread.
+    """
+    if days_before == 0:
+        return "PT8H"
+    return "-PT%dH" % (days_before * 24 - 8)
+
+
+def render_ics(commitments, horizon):
+    lines = [
+        "BEGIN:VCALENDAR",
+        "VERSION:2.0",
+        "PRODID:-//pdoom1//commitment calendar//EN",
+        "CALSCALE:GREGORIAN",
+        "METHOD:PUBLISH",
+        "X-WR-CALNAME:P(Doom) commitments",
+        "X-WR-TIMEZONE:Australia/Sydney",
+        "X-WR-CALDESC:Generated by scripts/generate_commitment_calendar.py from "
+        "COMMITMENT: declarations\\, the ROADMAP release train and a prose scan. "
+        "Horizon %s. Do not hand-edit." % horizon.isoformat(),
+    ]
+    for c in sorted(commitments, key=Commitment.sort_key):
+        stamp = c.when.strftime("%Y%m%dT000000Z")
+        desc = "Owner: %s. Kind: %s. Source: %s." % (c.owner, c.kind, c.source)
+        if c.note:
+            desc += " " + c.note
+        desc += (
+            " -- Generated from tracked sources by "
+            "scripts/generate_commitment_calendar.py; regenerate to update."
+        )
+        body = [
+            "BEGIN:VEVENT",
+            "UID:" + c.uid,
+            "DTSTAMP:" + stamp,
+            "DTSTART;VALUE=DATE:" + c.when.strftime("%Y%m%d"),
+            "DTEND;VALUE=DATE:" + (c.when + timedelta(days=1)).strftime("%Y%m%d"),
+            "SUMMARY:" + ics_escape("[%s] %s" % (c.kind.upper(), c.title)),
+            "DESCRIPTION:" + ics_escape(desc),
+            "CATEGORIES:" + ics_escape(c.kind.upper()),
+            "TRANSP:TRANSPARENT",
+            "SEQUENCE:0",
+            "STATUS:CONFIRMED",
+        ]
+        for d in c.leads:
+            body += [
+                "BEGIN:VALARM",
+                "ACTION:DISPLAY",
+                "TRIGGER:" + trigger_for(d),
+                "DESCRIPTION:" + ics_escape("%s (%s) -- %s" % (c.title, c.kind, c.owner)),
+                "END:VALARM",
+            ]
+        body.append("END:VEVENT")
+        lines.extend(body)
+    lines.append("END:VCALENDAR")
+
+    folded = []
+    for line in lines:
+        folded.extend(fold(line))
+    # RFC 5545 requires CRLF. Written with newline="" so Python does not translate,
+    # and .gitattributes marks the .ics binary so the LF hook leaves it alone.
+    return "\r\n".join(folded) + "\r\n"
+
+
+# --------------------------------------------------------------------------
+# Index emission
+# --------------------------------------------------------------------------
+
+
+def render_index(declared, releases, unparsed_rows, errors, horizon):
+    events = sorted(declared + releases, key=Commitment.sort_key)
+    unp = sorted(unparsed_to_commitments(unparsed_rows), key=Commitment.sort_key)
+    out = [
+        "# Commitment calendar index (GENERATED -- do not hand-edit)",
+        "",
+        "> Derived by `scripts/generate_commitment_calendar.py` from `COMMITMENT:`",
+        "> declarations, `docs/ROADMAP.md`'s Monthly Themes table, and a prose scan",
+        "> of the written record. Regenerate with:",
+        "> `python scripts/generate_commitment_calendar.py`. A pre-commit check",
+        "> fails commits that change a source without regenerating.",
+        ">",
+        "> Calendar file: `docs/calendar/pdoom1-commitments.ics`.",
+        "> Convention and how to subscribe: `docs/calendar/COMMITMENTS.md`.",
+        "",
+        "Horizon: **%s** (the prose scan reports dates at or after this; roll it"
+        % horizon.isoformat(),
+        "forward deliberately in `COMMITMENTS.md`, never automatically -- a" " clock-reading",
+        "generator goes stale overnight and trains people to ignore the check).",
+        "",
+        "**%d declared, %d release-train, %d UNPARSED, %d malformed.**"
+        % (len(declared), len(releases), len(unp), len(errors)),
+        "",
+        "## Declared commitments",
+        "",
+        "| Date | Kind | What | Owner | Reminders (days before) | Source |",
+        "|---|---|---|---|---|---|",
+    ]
+    for c in events:
+        out.append(
+            "| %s | %s | %s | %s | %s | `%s` |"
+            % (
+                c.when.isoformat(),
+                c.kind,
+                c.title.replace("|", "\\|"),
+                c.owner,
+                ", ".join(str(d) for d in c.leads),
+                c.source,
+            )
+        )
+    out += [
+        "",
+        "## UNPARSED -- a date in the written record with no declaration",
+        "",
+        "Every row below is a future date this generator found and could NOT bind to",
+        "a commitment. It is in the calendar too, as an `[UNPARSED]` event, because a",
+        "calendar that silently omits is worse than no calendar -- it looks complete.",
+        "",
+        "To clear a row: add a `COMMITMENT:` line to the same file (a declaration",
+        "suppresses that date for its own file, plus anything in its `covers:` list).",
+        "If the date is incidental -- a citation, a model retirement someone else",
+        "owns -- declare it anyway with `kind: expiry` and an owner, or accept that it",
+        "keeps appearing. There is deliberately no silent ignore list.",
+        "",
+        "| Date | File | Line | Text |",
+        "|---|---|---|---|",
+    ]
+    for when, r, n, line in sorted(unparsed_rows):
+        out.append("| %s | `%s` | %d | %s |" % (when.isoformat(), r, n, line.replace("|", "\\|")))
+    if errors:
+        out += [
+            "",
+            "## MALFORMED declarations",
+            "",
+            "A `COMMITMENT:` line the parser rejected. These are NOT in the calendar.",
+            "",
+            "| Where | Problem | Line |",
+            "|---|---|---|",
+        ]
+        for where, err, payload in errors:
+            out.append("| `%s` | %s | %s |" % (where, err, payload.replace("|", "\\|")))
+    out.append("")
+    return "\n".join(out)
+
+
+# --------------------------------------------------------------------------
+# Print sheet (house style: A4, 12.5pt floor, ASCII, no emoji)
+# --------------------------------------------------------------------------
+
+HTML_HEAD = """<title>Commitment calendar -- %(month)s</title>
+<style>
+  @page { size: A4; margin: 16mm 15mm; }
+  body {
+    font: 12.5pt/1.45 Georgia, "Times New Roman", serif;
+    color: #111; background: #fff;
+    max-width: 44em; margin: 2rem auto; padding: 0 1.5rem;
+  }
+  h1 { font-size: 20pt; margin: 0 0 .2em; line-height: 1.2; }
+  h2 { font-size: 14pt; margin: 1.6em 0 .5em; padding-bottom: .2em;
+       border-bottom: 1.5px solid #111; page-break-after: avoid; }
+  h3 { font-size: 12.5pt; margin: 1.2em 0 .3em; page-break-after: avoid; }
+  p, li { orphans: 3; widows: 3; }
+  .sub { color: #444; font-size: 12pt; margin: 0 0 1.4em; }
+  .verdict { border: 2.5px solid #111; padding: .9em 1.1em; margin: 1.3em 0;
+             page-break-inside: avoid; }
+  .verdict p { margin: 0; font-size: 13pt; }
+  .verdict .small { font-size: 12pt; color: #333; margin-top: .5em; }
+  pre { font: 11pt/1.35 "Consolas", "Courier New", monospace;
+        background: #f4f4f4; border-left: 3px solid #999;
+        padding: .6em .8em; overflow-x: auto; page-break-inside: avoid;
+        word-break: break-all; white-space: pre-wrap; }
+  table { border-collapse: collapse; width: 100%%; font-size: 12pt; margin: .7em 0;
+          page-break-inside: auto; }
+  th, td { border: 1px solid #bbb; padding: .3em .5em; text-align: left;
+           vertical-align: top; }
+  th { background: #eee; }
+  tr { page-break-inside: avoid; }
+  td.d { white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .k { font: 11pt/1 monospace; border: 1px solid #111; padding: .1em .35em;
+       text-transform: uppercase; white-space: nowrap; }
+  .box { border: 1px solid #111; padding: .1em .4em; font-size: 11pt;
+         white-space: nowrap; }
+  ul { padding-left: 1.3em; } li { margin: .3em 0; }
+  .note { font-size: 12pt; color: #333; font-style: italic; }
+  .src { font: 11pt/1.25 "Consolas", monospace; color: #444;
+         word-break: break-all; }
+  hr { border: 0; border-top: 1px solid #ccc; margin: 1.8em 0; }
+  @media print { body { margin: 0; max-width: none; } a { text-decoration: none; } }
+</style>
+"""
+
+
+def esc(text):
+    return text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+
+
+def render_html(declared, releases, unparsed_rows, horizon, until):
+    events = [
+        c
+        for c in sorted(declared + releases, key=Commitment.sort_key)
+        if horizon <= c.when <= until
+    ]
+    later = [c for c in sorted(declared + releases, key=Commitment.sort_key) if c.when > until]
+    unp = sorted({(w, r) for w, r, _n, _l in unparsed_rows if w <= until})
+    n_cad = sum(1 for c in events if c.kind == "cadence")
+
+    out = [HTML_HEAD % {"month": horizon.strftime("%B %Y")}]
+    out.append(
+        "<h1>Commitments &mdash; %s to %s</h1>\n"
+        '<p class="sub">Generated from the repo by '
+        "<code>scripts/generate_commitment_calendar.py</code> &middot; horizon %s "
+        "&middot; all dates AEST &middot; GENERATED, do not annotate and expect it "
+        "to survive &mdash; edit the source declaration</p>\n"
+        % (horizon.strftime("%d %b"), until.strftime("%d %b %Y"), horizon.isoformat())
+    )
+    out.append(
+        '<div class="verdict"><p><strong>%d dated commitments in the next %d days, '
+        "of which %d are the weekly cadence. Until this file is subscribed to by "
+        "something that notifies, none of them will reach you on the day.</strong></p>"
+        '<p class="small">The calendar file that fixes that, and the two-step to '
+        "subscribe, are on the last page. A repo cannot ring.</p></div>\n"
+        % (len(events), (until - horizon).days, n_cad)
+    )
+
+    # The cadence is collapsed to one line rather than printed as fifteen rows.
+    # On paper the job is the EXCEPTIONAL; a recurring anchor printed weekly is
+    # the noise that makes a sheet get skimmed instead of read.
+    cadence_titles = []
+    for c in events:
+        if c.kind == "cadence" and c.title not in cadence_titles:
+            cadence_titles.append(c.title)
+    if cadence_titles:
+        out.append(
+            '<p class="note"><strong>Weekly, every week, not repeated below:</strong> '
+            + "; ".join(esc(t.split(" -- ")[0]) for t in cadence_titles)
+            + ". (%d occurrences are in the .ics, each with a day-of reminder only.)</p>\n" % n_cad
+        )
+
+    out.append("<h2>Dated, owned, sourced</h2>\n")
+    out.append(
+        "<table>\n<tr><th>Date</th><th>Day</th><th>Kind</th><th>What</th>" "<th>Owner</th></tr>\n"
+    )
+    for c in events:
+        if c.kind == "cadence":
+            continue
+        out.append(
+            '<tr><td class="d">%s</td><td class="d">%s</td>'
+            '<td><span class="k">%s</span></td><td>%s<br><span class="src">%s</span></td>'
+            '<td><span class="box">%s</span></td></tr>\n'
+            % (
+                c.when.strftime("%m-%d"),
+                c.when.strftime("%a"),
+                esc(c.kind),
+                esc(c.title),
+                esc(c.source),
+                esc(c.owner),
+            )
+        )
+    out.append("</table>\n")
+
+    out.append(
+        "<h2>Beyond the window, because they shape it</h2>\n<table>\n"
+        "<tr><th>Date</th><th>Kind</th><th>What</th><th>Owner</th></tr>\n"
+    )
+    for c in later:
+        if c.kind == "cadence":
+            continue
+        out.append(
+            '<tr><td class="d">%s</td><td><span class="k">%s</span></td>'
+            '<td>%s</td><td><span class="box">%s</span></td></tr>\n'
+            % (c.when.isoformat(), esc(c.kind), esc(c.title), esc(c.owner))
+        )
+    out.append("</table>\n")
+
+    out.append(
+        "<h2>UNPARSED &mdash; %d dates nothing owns</h2>\n"
+        '<p class="note">A date found in the written record that no '
+        "<code>COMMITMENT:</code> declaration accounts for. These are in the "
+        'calendar too, as <span class="k">unparsed</span> events, because a '
+        "calendar that silently omits looks complete and is not. Clearing a row "
+        "takes one line in the file it names.</p>\n<table>\n"
+        "<tr><th>Date</th><th>Where</th></tr>\n" % len(unp)
+    )
+    for when, r in unp:
+        out.append(
+            '<tr><td class="d">%s</td><td class="src">%s</td></tr>\n' % (when.isoformat(), esc(r))
+        )
+    out.append("</table>\n")
+
+    out.append(
+        "<h2>Getting this into your calendar</h2>\n"
+        "<p><strong>Subscribe, do not import.</strong> An imported .ics is a copy: "
+        "if a commitment is cancelled, regenerating this file cannot reach the "
+        "events already sitting in your calendar's database, and they stay there "
+        "forever. A subscribed URL is replaced wholesale on each poll, so a removed "
+        "commitment genuinely disappears. That is the only route that retracts.</p>\n"
+        "<pre>https://raw.githubusercontent.com/PipFoweraker/pdoom1/main/"
+        "docs/calendar/pdoom1-commitments.ics</pre>\n"
+        "<ul>\n"
+        "<li><strong>Google Calendar:</strong> Other calendars &rarr; + &rarr; "
+        "<em>From URL</em> &rarr; paste &rarr; Add. Polls on its own schedule, "
+        "commonly 8&ndash;24 h, so a same-day change may lag.</li>\n"
+        "<li><strong>Apple Calendar:</strong> File &rarr; New Calendar Subscription "
+        "&rarr; paste &rarr; auto-refresh Every day.</li>\n"
+        "<li><strong>Outlook / Microsoft 365:</strong> Add calendar &rarr; "
+        "Subscribe from web &rarr; paste.</li>\n"
+        "<li><strong>Thunderbird:</strong> New Calendar &rarr; On the Network "
+        "&rarr; iCalendar (ICS) &rarr; paste.</li>\n"
+        "</ul>\n"
+        "<p>The local file, to inspect or import one-shot:</p>\n"
+        "<pre>G:\\Documents\\Organising_Life\\Code\\pdoom1\\docs\\calendar\\"
+        "pdoom1-commitments.ics</pre>\n"
+        '<p class="note">Reminder lead times differ by kind and are argued in '
+        "<code>docs/calendar/COMMITMENTS.md</code>: a deadline warns at 14, 7, 2 and "
+        "0 days; a falsifier at 1 and 0, because you cannot run a check early; the "
+        "weekly cadence warns only on the morning of, because a reminder for a thing "
+        "you already do every Thursday is the fastest way to teach yourself to swipe "
+        "the whole calendar away unread.</p>\n"
+    )
+    return to_ascii("".join(out))
+
+
+# --------------------------------------------------------------------------
+# GitHub snapshot refresh (the only networked path; never runs in --check)
+# --------------------------------------------------------------------------
+
+
+def refresh_github():
+    issues = []
+    for repo in GITHUB_REPOS:
+        raw = subprocess.run(
+            [
+                "gh",
+                "issue",
+                "list",
+                "--repo",
+                repo,
+                "--state",
+                "open",
+                "--limit",
+                "500",
+                "--json",
+                "number,title,url,body,labels",
+            ],
+            capture_output=True,
+            check=True,
+        ).stdout.decode("utf-8")
+        for iss in json.loads(raw):
+            body = iss.get("body") or ""
+            decls = [
+                DECL.search(ln).group(1)
+                for ln in body.splitlines()
+                if "COMMITMENT:" in ln and "<" not in DECL.search(ln).group(1)
+            ]
+            dates = sorted({m.group(0) for m in ISO_DATE.finditer(body + " " + iss["title"])})
+            ships = sorted(lab["name"] for lab in iss["labels"] if lab["name"].startswith("ship:"))
+            if not decls and not dates and not ships:
+                continue
+            issues.append(
+                {
+                    "repo": repo,
+                    "number": iss["number"],
+                    "url": iss["url"],
+                    "title": to_ascii(iss["title"]),
+                    "declarations": [to_ascii(d) for d in decls],
+                    "dates": dates,
+                    "ship_labels": ships,
+                }
+            )
+    issues.sort(key=lambda i: (i["repo"], i["number"]))
+    SNAPSHOT.write_text(
+        json.dumps({"repos": list(GITHUB_REPOS), "issues": issues}, indent=2, sort_keys=True)
+        + "\n",
+        encoding="utf-8",
+        newline="\n",
+    )
+    print("Wrote %s (%d issues)" % (rel(SNAPSHOT), len(issues)))
+
+
+# --------------------------------------------------------------------------
+
+
+def build():
+    horizon = read_horizon()
+    declared, errors, _claims = collect_declarations(horizon)
+    releases = collect_roadmap_releases(horizon)
+    unparsed_rows = collect_unparsed(horizon, declared + releases)
+    unparsed = unparsed_to_commitments(unparsed_rows)
+    ics = render_ics(declared + releases + unparsed, horizon)
+    index = render_index(declared, releases, unparsed_rows, errors, horizon)
+    return ics, index, declared, releases, unparsed_rows, errors
+
+
+def main():
+    if "--refresh-github" in sys.argv:
+        refresh_github()
+        return 0
+    ics, index, declared, releases, unparsed_rows, errors = build()
+    if "--html" in sys.argv:
+        dest = Path(sys.argv[sys.argv.index("--html") + 1])
+        horizon = read_horizon()
+        weeks = 5
+        if "--weeks" in sys.argv:
+            weeks = int(sys.argv[sys.argv.index("--weeks") + 1])
+        html = render_html(
+            declared,
+            releases,
+            unparsed_rows,
+            horizon,
+            horizon + timedelta(weeks=weeks),
+        )
+        dest.write_text(html, encoding="ascii", newline="\n")
+        print("Wrote %s" % dest)
+        return 0
+    unp = unparsed_to_commitments(unparsed_rows)
+    summary = "%d declared + %d release-train + %d UNPARSED = %d events; %d malformed" % (
+        len(declared),
+        len(releases),
+        len(unp),
+        len(declared) + len(releases) + len(unp),
+        len(errors),
+    )
+    if "--check" in sys.argv:
+        stale = []
+        if not OUT_ICS.exists() or OUT_ICS.read_bytes().decode("utf-8") != ics:
+            stale.append(rel(OUT_ICS))
+        if not OUT_INDEX.exists() or OUT_INDEX.read_text(encoding="utf-8") != index:
+            stale.append(rel(OUT_INDEX))
+        if stale:
+            print("Commitment calendar is STALE: " + ", ".join(stale))
+            print("  computed: " + summary)
+            print("  fix: python scripts/generate_commitment_calendar.py")
+            for line in _first_diff(index):
+                print("  " + line)
+            return 1
+        print("Commitment calendar up to date (" + summary + ")")
+        return 0
+    OUT_DIR.mkdir(parents=True, exist_ok=True)
+    with open(OUT_ICS, "w", encoding="utf-8", newline="") as fh:
+        fh.write(ics)
+    OUT_INDEX.write_text(index, encoding="utf-8", newline="\n")
+    print("Wrote %s and %s" % (rel(OUT_ICS), rel(OUT_INDEX)))
+    print("  " + summary)
+    if errors:
+        print("  MALFORMED declarations (not calendared):")
+        for where, err, payload in errors:
+            print("    %s -- %s -- %s" % (where, err, payload))
+    return 0
+
+
+def _first_diff(computed):
+    """Name what changed, so a red --check is actionable without a diff tool."""
+    if not OUT_INDEX.exists():
+        return ["index does not exist yet"]
+    old = set(OUT_INDEX.read_text(encoding="utf-8").splitlines())
+    new = [ln for ln in computed.splitlines() if ln.startswith("| 20") and ln not in old]
+    gone = [ln for ln in old if ln.startswith("| 20") and ln not in set(computed.splitlines())]
+    out = []
+    for ln in new[:6]:
+        out.append("MISSING from the committed index: " + ln)
+    for ln in gone[:6]:
+        out.append("STALE in the committed index:      " + ln)
+    return out or ["(no row-level change; header or counts moved)"]
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

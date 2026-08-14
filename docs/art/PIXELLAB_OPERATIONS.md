@@ -40,6 +40,8 @@ Spend policy (Pip, 2026-07-26): generation spend is unconstrained to $100
 AUD/day until 2026-08-15 -- rationing is the anti-pattern, queue time is the
 real cost.
 
+COMMITMENT: 2026-08-15 -- Generation spend policy EXPIRES: $100 AUD/day unconstrained reverts to unset -- owner: pip -- kind: expiry -- note: set by Pip 2026-07-26 for a stated window. On 2026-08-16 there is no spend policy at all unless he renews it, and nothing else in the repo notices.
+
 ## 2. Concurrency and priority slots (UI, Pip 2026-07-26)
 
 Facts from the account UI (none of this appears in public docs -- [verify]

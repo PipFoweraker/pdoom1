@@ -6,8 +6,13 @@ repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.5.0
     hooks:
+      # .ics is excluded from all three whitespace/EOL hooks: RFC 5545 3.1
+      # mandates CRLF and folds long lines with a leading space, so "fixing" it
+      # produces a file a strict calendar client rejects. See .gitattributes.
       - id: trailing-whitespace
+        exclude: '\.ics$'
       - id: end-of-file-fixer
+        exclude: '\.ics$'
       - id: check-yaml
         args: ['--allow-multiple-documents', '--unsafe']
       - id: check-json
@@ -21,6 +26,7 @@ repos:
       - id: detect-private-key
       - id: mixed-line-ending
         args: ['--fix=lf']
+        exclude: '\.ics$'
 
   # Python formatting
   - repo: https://github.com/psf/black
@@ -129,6 +135,22 @@ repos:
         entry: python scripts/generate_credits.py --check
         language: system
         files: '^(CREDITS\.md|godot/data/credits\.json|scripts/generate_credits\.py)$'
+        pass_filenames: false
+
+      # The commitment calendar is GENERATED (same anti-rot pattern as the DQ/ADR/
+      # tools indexes). It fires on the files the calendar DERIVES from -- every
+      # doc, the roadmap, the GitHub snapshot and the generator -- because a
+      # COMMITMENT: declaration can be written anywhere, and a hook scoped to
+      # docs/calendar/ would miss the one place it matters: someone adding a dated
+      # promise to the document where the promise belongs.
+      # Offline and deterministic by construction: the prose scan is bounded by the
+      # pinned CALENDAR-HORIZON, not by the clock, so this cannot go red overnight
+      # without a human edit.
+      - id: commitment-calendar-check
+        name: commitment calendar (.ics + index) up to date
+        entry: python scripts/generate_commitment_calendar.py --check
+        language: system
+        files: '^(docs/.*\.md|docs/calendar/github_snapshot\.json|scripts/generate_commitment_calendar\.py|tools/.*\.py|scripts/.*\.py|[^/]*\.md)$'
         pass_filenames: false
 
       - id: scene-nav-check
