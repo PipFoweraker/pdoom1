@@ -134,19 +134,25 @@ func _show_travel_submenu():
 		var cost_text = host._format_costs_inline(travel_costs)
 		var is_free = cost_text == "Free"
 
-		# Check affordability
-		var can_afford = true
-		if is_stub:
-			can_afford = false
-		else:
-			can_afford = host._costs_affordable(travel_costs, current_state)
+		# STUB-VS-RULE (scripts/core/refusal.gd). "We have not built this" and "you cannot
+		# pay for this" are DIFFERENT STATEMENTS, and this used to give them one costume:
+		# `if is_stub: can_afford = false` sent unbuilt options down the unaffordable branch,
+		# which also greys the on-face PRICE. send_delegation costs nothing, so the player
+		# saw a button whose own label read "Free" rendered as if they could not pay for it
+		# -- a price lie standing in for an apology. Affordability is now computed honestly
+		# for every option; being unbuilt is tracked separately. Both still disable the
+		# button (correctly -- you cannot press either), but only a real money/Attention
+		# problem greys the price, and the unbuilt one says out loud that it is unbuilt.
+		var can_afford = host._costs_affordable(travel_costs, current_state)
 
-		if not can_afford:
+		if is_stub or not can_afford:
 			btn.disabled = true
 			btn.modulate = Color(0.5, 0.5, 0.5)
 
 		# Tooltip
 		btn.tooltip_text = "%s\n%s\n\nCosts: %s" % [travel_name, travel_desc, cost_text]
+		if is_stub:
+			btn.tooltip_text = Refusal.mark_stub(btn.tooltip_text)
 
 		# Connect button
 		btn.pressed.connect(func(): _on_travel_option_selected(travel_id, travel_name, dialog))
@@ -161,7 +167,9 @@ func _show_travel_submenu():
 		name_label.add_theme_color_override("font_color", Color(0.8, 0.8, 0.8))
 		item_vbox.add_child(name_label)
 
-		# On-face cost line (#822 cost-display sweep) -- greyed along with the button when unaffordable.
+		# On-face cost line (#822 cost-display sweep) -- greyed along with the button when
+		# unaffordable, and ONLY then: greying an unbuilt option's price says the wrong
+		# thing about the price (see the stub-vs-rule note above).
 		var travel_cost_label = host._make_cost_label(cost_text, is_free)
 		if not can_afford:
 			travel_cost_label.modulate = Color(0.5, 0.5, 0.5)

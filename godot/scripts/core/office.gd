@@ -188,8 +188,17 @@ static func apply_upgrade(state, upgrade_id: String) -> Dictionary:
 			def = u
 			break
 	if def.is_empty():
-		return {"success": false, "message": "No such office upgrade: %s" % upgrade_id}
+		# STUB-VS-RULE (scripts/core/refusal.gd). offices.json ships `"upgrades": []`, so
+		# upgrade_defs() is empty forever and this branch ALWAYS fires. Unmarked, the
+		# sentence reads as "you named a bad id" -- a data-entry rule -- when the truth is
+		# that the fit-out catalogue has no entries yet. Same derived discriminator as the
+		# window resolver: when content lands, the empty-catalogue branch stops firing and a
+		# genuinely bad id gets the plain rule back, with nothing to remember to switch off.
+		# (The sentence itself is unchanged; only the marker is added.)
+		if upgrade_defs().is_empty():
+			return Refusal.stub("No such office upgrade: %s" % upgrade_id)
+		return Refusal.rule("No such office upgrade: %s" % upgrade_id)
 	if state.office_upgrades.has(upgrade_id):
-		return {"success": false, "message": "Already fitted: %s" % String(def.get("name", upgrade_id))}
+		return Refusal.rule("Already fitted: %s" % String(def.get("name", upgrade_id)))
 	state.office_upgrades.append(upgrade_id)
 	return {"success": true, "message": "Fitted %s." % String(def.get("name", upgrade_id))}
