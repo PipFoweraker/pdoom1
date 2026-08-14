@@ -13,7 +13,7 @@ Horizon: **2026-08-09** (the prose scan reports dates at or after this; roll it
 forward deliberately in `COMMITMENTS.md`, never automatically -- a clock-reading
 generator goes stale overnight and trains people to ignore the check).
 
-**48 declared, 4 release-train, 53 UNPARSED, 0 malformed.**
+**48 declared, 4 release-train, 55 UNPARSED, 0 malformed.**
 
 ## Declared commitments
 
@@ -130,6 +130,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-13 | `docs/art/audit_2026-08-13/PROVENANCE_COMPLETENESS.md` | 3 | Audit date 2026-08-13. Scope: the 1,098 `.meta.json` sidecars under |
 | 2026-08-13 | `docs/art/audit_2026-08-13/PROVENANCE_COMPLETENESS.md` | 311 | **That hash still matches the file on disk today (measured 2026-08-13).** The |
 | 2026-08-13 | `docs/art/audit_2026-08-13/RETENTION_ANALYSIS.md` | 1 | # art_generated/ retention analysis -- 2026-08-13 |
+| 2026-08-13 | `docs/art/audit_2026-08-13/THE_REVISIONS_ARE_THE_STORY.md` | 68 | The append-only log (`review_log.jsonl`) landed on the morning of **2026-08-13** |
 | 2026-08-13 | `docs/content/ROLE_CREATIVE_DIRECTOR.md` | 4 | > The header read "DRAFT ... Not committed anywhere yet" until 2026-08-13, which |
 | 2026-08-13 | `docs/content/ROLE_CREATIVE_DIRECTOR.md` | 13 | > **CORRECTED 2026-08-13, per the retirement prescribed in |
 | 2026-08-13 | `docs/content/ROLE_CREATIVE_DIRECTOR.md` | 17 | > 2026-08-13 (`pdoom1-website#249`): the game emits an artefact, the website |
@@ -152,6 +153,11 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-13 | `tools/art_review/shortlist_l3_heroes.py` | 347 | "<p class='note'>Generated 2026-08-13. Ordered by contrast + detail density,", |
 | 2026-08-13 | `tools/check_class_cache.py` | 6 | WHY (2026-08-13, cost a first-time playtester's session): |
 | 2026-08-14 | `docs/art/audit_2026-08-13/SESSION_2026-08-14_first-mass-review.md` | 3 | **Recorded by `seat:pdoom`, 2026-08-14.** Every number below is re-derivable from |
+| 2026-08-14 | `docs/art/audit_2026-08-13/THE_REVISIONS_ARE_THE_STORY.md` | 3 | **Draft for Pip, 2026-08-14, by `seat:pdoom`.** Raw material for a blog post and |
+| 2026-08-14 | `docs/art/audit_2026-08-13/THE_REVISIONS_ARE_THE_STORY.md` | 19 | ## What happened on 2026-08-14 |
+| 2026-08-14 | `docs/art/audit_2026-08-13/THE_REVISIONS_ARE_THE_STORY.md` | 69 | and the session ran on **2026-08-14**. **It was about four hours old when it first |
+| 2026-08-14 | `docs/art/audit_2026-08-13/THE_REVISIONS_ARE_THE_STORY.md` | 82 | Measured coverage as at 2026-08-14: **1,391 of 2,099 families decided (66.3%)**. |
+| 2026-08-14 | `docs/art/audit_2026-08-13/THE_REVISIONS_ARE_THE_STORY.md` | 119 | \| **review state, verdict, notes, revision history** \| **yes, as of 2026-08-14** \| |
 | 2026-08-14 | `tools/art_review/serve_review.py` | 212 | # block is FOR and what a decision here means. (2026-08-14, Pip's ask.) |
 | 2026-08-14 | `tools/art_review/serve_review.py` | 1325 | // all move to the archive together. (2026-08-14, Pip's ask.) |
 | 2026-08-14 | `tools/check_refusal_classification.py` | 7 | WHY (playtest 2026-08-14, Pip): |

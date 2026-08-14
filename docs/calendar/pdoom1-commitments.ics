@@ -840,6 +840,30 @@ DESCRIPTION:needs a declaration -- ROLE_CREATIVE_DIRECTOR.md (unparsed) --
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:0923e04b170938ff@commitments.pdoom1
+DTSTAMP:20260813T000000Z
+DTSTART;VALUE=DATE:20260813
+DTEND;VALUE=DATE:20260814
+SUMMARY:[UNPARSED] needs a declaration -- THE_REVISIONS_ARE_THE_STORY.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/art/audit_2026-08
+ -13/THE_REVISIONS_ARE_THE_STORY.md:68. 1 line(s) in docs/art/audit_2026-0
+ 8-13/THE_REVISIONS_ARE_THE_STORY.md mention this date and no COMMITMENT: 
+ declaration accounts for it. Either add a declaration or the date is inci
+ dental. First line: The append-only log (`review_log.jsonl`) landed on th
+ e morning of **2026-08-13** -- Generated from tracked sources by scripts/
+ generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- THE_REVISIONS_ARE_THE_STORY.md (unparse
+ d) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:08d66d9b47b25bbe@commitments.pdoom1
 DTSTAMP:20260813T000000Z
 DTSTART;VALUE=DATE:20260813
@@ -1159,6 +1183,30 @@ ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- SESSION_2026-08-14_first-mass-review.md
   (unparsed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:37ab07eee16f2109@commitments.pdoom1
+DTSTAMP:20260814T000000Z
+DTSTART;VALUE=DATE:20260814
+DTEND;VALUE=DATE:20260815
+SUMMARY:[UNPARSED] needs a declaration -- THE_REVISIONS_ARE_THE_STORY.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/art/audit_2026-08
+ -13/THE_REVISIONS_ARE_THE_STORY.md:3. 5 line(s) in docs/art/audit_2026-08
+ -13/THE_REVISIONS_ARE_THE_STORY.md mention this date and no COMMITMENT: d
+ eclaration accounts for it. Either add a declaration or the date is incid
+ ental. First line: **Draft for Pip\, 2026-08-14\, by `seat:pdoom`.** Raw 
+ material for a blog post and -- Generated from tracked sources by scripts
+ /generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- THE_REVISIONS_ARE_THE_STORY.md (unparse
+ d) -- unowned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
