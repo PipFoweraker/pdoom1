@@ -85,6 +85,46 @@ func present_error(error_msg: String) -> void:
 		host.plan_screen.flash_error(error_msg)
 
 
+# --- Backend verdict for the BESPOKE submenu panels (hiring / travel) ----------------------
+
+func present_outcome(result: Dictionary, verb: String) -> bool:
+	"""ONE door for the {success, message} Dictionaries the bespoke submenu panels get back
+	from their backend delegates. An ACCEPTANCE keeps the cyan feed line those panels already
+	wrote; a REFUSAL goes out through present_error, so it reaches the PLAN toast as well as
+	the feed. Returns result.success, so a call site can gate its follow-up on the backend
+	having actually accepted (#821: the UI tile appears only when the backend accepts).
+
+	Why this exists -- the gap #1204 left open. _on_dynamic_action_pressed returns at its
+	`is_submenu` branch, ABOVE the attention/affordability guards that report through
+	report_rejection(). SubmenuController.on_option_selected re-armed those guards for the six
+	icon-grid panels plus financing, but the two BESPOKE panels never queue through it: hiring
+	and travel call GameManager.hiring_* / GameActions.*_conference_* directly and presented
+	the refusal with a bare log_message(). The feed lives inside WatchScreen, which
+	ScreenModeController hides for the whole of PLAN, so every refused hiring/travel click
+	looked like a dead button. Playtest, verbatim: "I can fail silently if I queue 19
+	fundraisings and then try to make offers to 2 people. Making offers doesn't show up as a
+	card."
+
+	The refusal REASON is relayed from the backend VERBATIM, on purpose. The view must not
+	re-derive it: a shadow pre-check in the view is exactly the defect #1204 fixed, and the
+	backend is the only thing that knows why it said no (a hiring click can be refused for
+	Attention, money, reputation, desk space, or pipeline state). It already answers in house
+	voice and names the number -- "Not enough Attention to make an offer (1 needed)" -- the
+	same shape as the view's own "Not enough Attention: need %d %s hours, have %d".
+
+	This changes NO gameplay: same conditions, same early returns, same economy. Only which
+	surface the refusal lands on."""
+	var accepted := bool(result.get("success", false))
+	var message := String(result.get("message", "")).strip_edges()
+	if accepted:
+		host.log_message("[color=cyan]%s: %s[/color]" % [verb, message])
+		return true
+	# A refusal with no reason is the same dead button by another route -- name the action at
+	# least, so the player knows which click was rejected.
+	present_error(message if message != "" else "%s was refused (no reason given)." % verb)
+	return false
+
+
 # --- Delta formatting helper (was main_ui._format_deltas) ---------------------------------
 
 func _format_deltas(deltas: Dictionary) -> String:

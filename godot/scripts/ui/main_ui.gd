@@ -1452,6 +1452,20 @@ func report_rejection(message: String) -> void:
 	PLAN toast is a plain Label, so BBCode passed in here would be shown literally."""
 	event_result_presenter.present_error(message)
 
+func report_outcome(result: Dictionary, verb: String) -> bool:
+	"""Report a BACKEND VERDICT ({success, message}) through the same door as report_rejection.
+
+	The bespoke submenu panels (hiring, travel) do not queue through PlanController -- they
+	call the GameManager.hiring_* / GameActions conference delegates and get a result
+	Dictionary back. They used to render it with a bare log_message(), which is the
+	PLAN-hidden feed, so a refused hiring/travel click said nothing at all. This is the one
+	place that decides what an acceptance and a refusal look like for those panels; the call
+	sites just hand it the verdict.
+
+	Returns result.success so a call site can gate its follow-up on the backend accepting
+	(#821: no UI tile unless it did). See EventResultPresenter.present_outcome."""
+	return event_result_presenter.present_outcome(result, verb)
+
 func _notification(what: int) -> void:
 	# P0 rage-quit friction: intercept the window-manager close during a run and route to the
 	# Main Menu instead of quitting to desktop. Quit-to-desktop stays available from the pause
@@ -1678,6 +1692,15 @@ func _on_dynamic_action_pressed(action_id: String, action_name: String):
 		# built from config; hiring/travel delegate back to the bespoke builders here).
 		# #602 P1: the click path and the hotkey path share ONE door (_open_submenu), which
 		# also tags the panel with its id + aligns it to the clicked button (#510).
+		#
+		# THIS RETURN IS DELIBERATELY ABOVE THE COST GUARDS BELOW -- do not "fix" that by
+		# hoisting them. The submenu DRIVER is free; the CHILD inside the menu carries the
+		# cost, so guarding here would refuse to OPEN a menu the player is entitled to browse.
+		# The child-side refusals are reported at each panel family's own chokepoint:
+		#   grid + financing -> SubmenuController.on_option_selected  (report_rejection)
+		#   hiring           -> HiringPanelController._hiring_action_result -> report_outcome
+		#   travel           -> TravelPanelController leaf commits          -> report_outcome
+		# Every one of those ends at EventResultPresenter.present_error, so PLAN sees them.
 		_open_submenu(action_id)
 		return
 
