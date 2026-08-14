@@ -408,6 +408,29 @@ DESCRIPTION:needs a declaration -- LEADERBOARD_WEBSITE_INTEGRATION.md (unp
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:8e831c030d543610@commitments.pdoom1
+DTSTAMP:20260810T000000Z
+DTSTART;VALUE=DATE:20260810
+DTEND;VALUE=DATE:20260811
+SUMMARY:[UNPARSED] needs a declaration -- PRIVACY_POSTURE.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/PRIVACY_POSTURE.m
+ d:25. 1 line(s) in docs/PRIVACY_POSTURE.md mention this date and no COMMI
+ TMENT: declaration accounts for it. Either add a declaration or the date 
+ is incidental. First line: **HOW the two names are published (measured\, 
+ PR #1176\, 2026-08-10).** Both names -- Generated from tracked sources by
+  scripts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- PRIVACY_POSTURE.md (unparsed) -- unowne
+ d
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:7100c8b2d40bb03c@commitments.pdoom1
 DTSTAMP:20260810T000000Z
 DTSTART;VALUE=DATE:20260810

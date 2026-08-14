@@ -13,7 +13,7 @@ Horizon: **2026-08-09** (the prose scan reports dates at or after this; roll it
 forward deliberately in `COMMITMENTS.md`, never automatically -- a clock-reading
 generator goes stale overnight and trains people to ignore the check).
 
-**48 declared, 4 release-train, 37 UNPARSED, 0 malformed.**
+**48 declared, 4 release-train, 38 UNPARSED, 0 malformed.**
 
 ## Declared commitments
 
@@ -110,6 +110,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-10 | `docs/LEADERBOARD_WEBSITE_INTEGRATION.md` | 183 | ### A split codepoint DESTROYS THE BOARD (measured 2026-08-10) |
 | 2026-08-10 | `docs/LEADERBOARD_WEBSITE_INTEGRATION.md` | 211 | ### Two identity values, one wire field (shipped 2026-08-10) |
 | 2026-08-10 | `docs/LEADERBOARD_WEBSITE_INTEGRATION.md` | 215 | may run several labs over time. He restated it on 2026-08-10 after a second real |
+| 2026-08-10 | `docs/PRIVACY_POSTURE.md` | 25 | **HOW the two names are published (measured, PR #1176, 2026-08-10).** Both names |
 | 2026-08-10 | `pdoom1#984` | 0 | Half-day workshop: audit mechanics deep-dive (next epoch) -- something amazing under the smell |
 | 2026-08-10 | `tools/check_self_merge_eligibility.py` | 18 | 2026-08-10 and, until this file existed, they **promised eligibility and checked |
 | 2026-08-11 | `tools/assets/backfill_provenance.py` | 5 | `docs/design/ASSET_PROVENANCE_SCOPE_2026-08-06.md`, authorised by Pip 2026-08-11 |
