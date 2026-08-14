@@ -396,13 +396,38 @@ Attention is the founder's month, and it is the ONLY currency you spend as the f
   back presence. This is why an action can be greyed out while the Attention counter
   still shows a number.
 
+### The four kinds of founder hour
+When the game refuses an action, the message names the kind of time it needed --
+for example "Not enough Attention: need 2 doors hours, have 0". Every founder
+hour is one of four kinds:
+
+- **Doors** (operating) -- face-time: pitching funders, talking to press, being
+  in the room. If it only works because you are physically there, it is doors.
+- **Approvals** (planning) -- decisions: signing off hires, setting direction,
+  queueing next month's strategic work. The work you can still do from an
+  airport.
+- **Audits** (operating) -- checking: going and looking at what your team
+  actually did, rather than reading what they reported. Audit actions such as
+  Audit Self-Directed Work are exactly the actions that spend these.
+- **Reserve** (operating) -- the emergency hours. Attention you set aside with
+  **Reserve Attention** and later spend reacting to events is booked as reserve.
+  The button and the hour kind are the same idea: the verb and its noun.
+
+The kinds are labels on the two budgets above, not four separate budgets. Doors,
+audits and reserve all draw on your operating hours; approvals draw on planning.
+So "need 2 doors hours" means the action is face-time and your operating budget
+ran out -- the kind names the sort of work, the planning/operating split is what
+actually ran dry. In the current alpha the game never limits one kind separately
+from its family.
+
 ### What staff actually buy you
 - **Researchers** work their own lanes on the workstream backlog. Unassigned staff do
   not idle -- they self-direct, and they report their progress optimistically.
 - **Ops/admin staff** reduce the founder-price of routine actions rather than adding
   to your pool.
-- **Audits** spend founder hours to ground-truth what your team reported. The
-  simulation never lies to you; characters sometimes do.
+- **Audits** spend founder hours -- the audits kind, above -- to ground-truth
+  what your team reported. The simulation never lies to you; characters
+  sometimes do.
 
 ### Visual indicators
 - **Attention readout**: top bar, e.g. `Attention: 20 (14 free, 3 reserved)`; hover it
@@ -414,7 +439,8 @@ Attention is the founder's month, and it is the ONLY currency you spend as the f
 
 ### Strategic tips
 - **Reserve deliberately.** Committing a plan with nothing queued holds all Attention
-  for reacting to events. That is a real strategy, not a wasted month.
+  for reacting to events. That is a real strategy, not a wasted month. Reserved
+  hours you then spend on events are the reserve hour kind described above.
 - **Watch the hour type, not just the total.** Running out of operating hours is the
   usual cause of "I have Attention but the button is dead".
 - **Hire for lanes, not for capacity.** More staff does not mean more founder decisions.
@@ -799,14 +825,46 @@ Your score is how many turns you survived. Try to beat your previous best!
 
 
 ---
-=======
-
 
 ## Seeds & High Scores
 
-**Weekly Seed**: Everyone gets the same challenge each week - compete with friends!
-**Custom Seed**: Use any text as a seed for repeatable games
-**High Scores**: Tracked separately for each seed in `local_highscore.json`
+### What a seed is
+A seed is a short piece of text that fixes which game you get. Every roll of the
+dice in a run is drawn from it -- the events that fire, the candidates who turn
+up, all of it. Two players on the same seed are playing the same world, so their
+scores are comparable. Two players on different seeds are playing different
+games -- neither is harder or easier by design, they are just not the same test.
+
+- **League seed**: the featured seed everyone is playing right now. Leave the
+  seed box empty on the setup screen and this is what you get (the setup screen
+  calls it the "weekly challenge seed" -- same thing). It is named for the year
+  and week it was cut, e.g. `weekly-2026-w33`. In the current alpha the rotation
+  is done by hand, so a league can run a little longer than a calendar week.
+- **Custom seed**: any text you type. Use it for repeatable runs, or as a
+  private challenge -- you and a friend on the same custom seed are on the same
+  board.
+
+### How boards are keyed
+A leaderboard board is one seed played on one ladder epoch. That pair is the
+board's whole identity, and both halves are chosen for fairness:
+
+- The **ladder epoch** is the rules version, shown as `Epoch L4` on the
+  Leaderboard screen. It moves only when the gameplay rules change -- scoring,
+  costs, events, anything that changes what a turn is worth. When it moves, a
+  fresh board opens and the old scores are retired with the rules they were
+  earned under, never mixed with new ones.
+- The **build version** (v0.13.1 and so on) is deliberately not part of the
+  key. A patch that fixes a typo or restyles a screen cannot fork a board:
+  your scores, and your rivals', stay together across updates. Only a real
+  rules change can separate them.
+
+That is the guarantee behind every board: any two rows on it were earned on the
+same world under the same rules. It is also why difficulty is locked to
+Standard for the first leagues, and why scenario starts like Sandbox or Crisis
+are playable but unranked -- the game warns you before an unranked run starts.
+
+Your score is turns survived. Boards are stored on your machine per seed and
+epoch, and shown on the Leaderboard screen.
 
 ---
 
