@@ -132,6 +132,7 @@ Declared with a `Layer:` line in a tool's module docstring; `--` = undeclared.
 | build_cat_refinement_sheet.py | -- | Build art_generated/cat_refinement_sheet.html -- the cat refinement batch. | human (docstring usage) |
 | build_cat_sweep_sheet.py | -- | Build art_generated/cat_sweep_sheet.html -- the full 8-direction cat sweep. | human (docstring usage) |
 | build_cat_west_walk_picks.py | -- | build_cat_west_walk_picks -- 2026-07-27 cat_sweep_black_side_heft WEST walk pick sheet. | human (docstring usage) |
+| build_cull_sheet.py | -- | Render a contact sheet of reviewed assets with their notes as captions. | human (docstring usage) |
 | build_doom_strip_sheet.py | -- | Generate art_generated/doom_strip_sheet.html -- ADR-0015 doom-strip triage | human (docstring usage) |
 | build_endgame_review.py | -- | Build a verdict-capturing review page for the endgame concept batch. | human (docstring usage) |
 | build_full_gallery.py | OBSERVE | build_full_gallery.py -- ONE stateful gallery over ALL art on disk, in three | tool:apply_review.py; tool:run_art_night.py |
@@ -144,6 +145,7 @@ Declared with a `Layer:` line in a tool's module docstring; `--` = undeclared.
 | build_worker_round2_sheet.py | -- | build_worker_round2_sheet -- 2026-07-27 worker reroll + fresh worker (A+B). | human (docstring usage) |
 | butt_dot_stamp.py | -- | Stamp the anatomical dot onto butt-flash frames (issue #913 follow-up). | tool:build_cat_refinement_sheet.py |
 | export_picks.py | -- | export_picks.py -- turn the gallery review state into a picks file the | human (docstring usage) |
+| extract_pullquotes.py | -- | Derive the pull-quote atoms from review_log.jsonl. | tool:build_cull_sheet.py |
 | gen_contact_sheet.py | -- | Generate a self-contained pixellab contact-sheet / triage HTML. Local review tool. | tool:analyze_verdicts.py; tool:review_style.py |
 | gen_generative_pass.py | -- | Generative (gpt-image) pass for the P(Doom)1 app-icon + settings-bg fast pass. | human (docstring usage) |
 | gen_hero_gallery.py | -- | Generate art_generated/hero_gallery.html -- triage gallery for gpt-image-1 hero/banner/icon o... | tool:analyze_verdicts.py; tool:review_style.py |
@@ -250,4 +252,4 @@ DISCUSSING CI); the rest are the hollow-runner shape -- read them.
 
 30 `.html` tool(s) under `tools/` (browser-opened, no docstring to parse): `tools/art_review/doom_overlay_preview.html`, `tools/art_review/hero_gallery_template.html`, `tools/art_review/icon_pass_2026-07-21.html`, `tools/art_review/icon_pass_verdicts_2026-07-21.html`, `tools/art_review/palette.html`, `tools/art_review/palette_swatches.html`, `tools/art_review/scene_wave2_2026-07-21.html`, `tools/art_review/style_review.html`, `tools/assets/review_generated.html`, `tools/music/commission_sheets.html`, `tools/music/jukebox.html`, `tools/music/listening_room.html`, `tools/music/stem_board.html`, `tools/runsheet/CEREMONY-ALL-GATES-2026-07-31.html`, `tools/runsheet/SUNDAY-postmortem-2026-08-07.html`, `tools/runsheet/chronicle-2026-08-06_07.html`, `tools/runsheet/commitments-2026-08.html`, `tools/runsheet/copy-review-2026-08-09.html`, `tools/runsheet/decisions-2026-08-10.html`, `tools/runsheet/fri-2026-07-31-EVENING-1620.html`, `tools/runsheet/fri-2026-07-31-GATES-1700.html`, `tools/runsheet/fri-2026-07-31-TO-MIDNIGHT-1733.html`, `tools/runsheet/fri-2026-07-31-league-day.html`, `tools/runsheet/playtest_card.html`, `tools/runsheet/sat-2026-08-08-release-status.html`, `tools/runsheet/wed-thu-2026-07-29.html`, `tools/runsheet/week-2026-08-10-plan.html`, `tools/social_composer.html`, `tools/ui_comparison.html`, `tools/ui_mockup/wireframe.html`.
 
-Total: 133 active tools (10 GENERATE, 5 OBSERVE, 9 PROVE, 1 SWEEP, 108 undeclared); 17 in UNKNOWN; 6 archived.
+Total: 135 active tools (10 GENERATE, 5 OBSERVE, 9 PROVE, 1 SWEEP, 110 undeclared); 17 in UNKNOWN; 6 archived.
