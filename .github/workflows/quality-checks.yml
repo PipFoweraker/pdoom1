@@ -72,6 +72,19 @@ jobs:
         echo " A silent drift forks the leaderboard board-key, so this gate is FATAL.)"
         python tools/sync_version.py --check
 
+    - name: Stale class-cache guard -- prove the DETECTOR still works
+      run: |
+        echo "CI cannot reproduce the bug this guards: a stale"
+        echo "godot/.godot/global_script_class_cache.cfg only exists in a long-lived working"
+        echo "copy, and CI clones fresh every run, so it always generates a correct cache."
+        echo "What CI CAN prove is that the detector has not decayed into a function that"
+        echo "always returns 0 -- so these tests assert BOTH answers against a synthetic tree"
+        echo "shaped like Godot's own writer output, including the exact 2026-08-13 shape"
+        echo "(cache correct about all 95 other classes, silent about the one #1211 added)."
+        echo "BLOCKING on purpose: the only other CI run of tests/ is"
+        echo "'unittest discover tests || echo INFO', which swallows failures (#640)."
+        python -m unittest tests.test_check_class_cache -v
+
     - name: Ladder Bump Gate -- self-test (prove it can still fail)
       run: |
         echo "Replaying the historical acceptance cases from issue #1178: the gate must go"
