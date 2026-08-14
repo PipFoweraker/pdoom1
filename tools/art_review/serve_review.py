@@ -206,6 +206,50 @@ _GEN_HOME = {
     "hero_banners": "Wide hero banners behind menu / screen titles",
     "screen_backgrounds": "Full-screen backdrops -- menus, office floor, records room",
     "terminal_textures": "CRT / terminal surface textures + frame overlays",
+    # -- the 2026-08-07 art night. These had NO purpose text at all, which is
+    # part of why they went unreviewed: a reviewer facing 220 unlabelled images
+    # cannot tell what judgement is even being asked for. Each line says what the
+    # block is FOR and what a decision here means. (2026-08-14, Pip's ask.)
+    "an0807_l0_anchors": (
+        "ANCHORS -- the reference images the whole night was calibrated against. "
+        "Judge: does this represent the subject correctly? Not whether it is pretty"
+    ),
+    "an0807_l0_sheets": (
+        "SWATCH SHEETS -- palette/style reference, not shippable art. "
+        "Judge: is this a usable reference?"
+    ),
+    "an0807_l1_family": (
+        "SUBJECT FAMILIES -- each subject rendered several ways. "
+        "Judge: which treatment of this subject works. Pick a winner per row"
+    ),
+    "an0807_l1_grid": (
+        "THE FULL GRID -- subject x rendering x palette, the widest sweep of the "
+        "night and the biggest unreviewed block. Pick a winner per row"
+    ),
+    "an0807_l1_palette": (
+        "PALETTE PROBES -- the same subject across colour schemes. "
+        "Judge: which palette carries the brief"
+    ),
+    "an0807_l1_probe": "SMALL PROBES -- cheap tests before committing to a sweep",
+    # The l2_a_* blocks are PARAMETER SWEEPS: one axis varied, everything else
+    # held. The decision is ONE WINNER PER AXIS, not a verdict per image -- which
+    # is why ~7 judgements retire ~1.5 GB here.
+    "an0807_l2_a_decay": "SWEEP: decay/wear amount. ONE winner for the axis",
+    "an0807_l2_a_distance": "SWEEP: camera distance. ONE winner for the axis",
+    "an0807_l2_a_pitch": "SWEEP: camera pitch. ONE winner for the axis",
+    "an0807_l2_a_quiet": "SWEEP: how understated the scene is. ONE winner for the axis",
+    "an0807_l2_a_style_tween": "SWEEP: style blend between two references. ONE winner",
+    "an0807_l2_a_title_space": (
+        "SWEEP: how much negative space is reserved for a title. ONE winner"
+    ),
+    "an0807_l2_a_yaw": "SWEEP: camera yaw. ONE winner for the axis",
+    "an0807_l3_hero_land": (
+        "HERO POSTERS, landscape 1536x1024 -- promotional art, the brief calls it "
+        "POSTER ART. Judge as a poster: value structure, composition, title space"
+    ),
+    "an0807_l3_hero_port": (
+        "HERO POSTERS, portrait 1024x1536 -- same brief, vertical crop. " "None chosen yet"
+    ),
 }
 
 
@@ -823,7 +867,12 @@ def render_section(s):
                 f'title="Iterate the whole set">iterate set</button>'
                 f'<button type="button" class="setbtn" data-set="discard" '
                 f'title="Discard the whole set">discard set</button>'
-                f'<span class="sethint">pick a winner below, or decide the set</span>'
+                f'<span class="sethint">'
+                f"<b>[*] WINNER</b> = this variant becomes <b>keep</b> and every sibling "
+                f"becomes <b>discard</b> -- one click settles the whole row. "
+                f"Siblings stay on screen until a winner is picked (or the set is "
+                f"discarded), so you can compare the line-up as you judge it."
+                f"</span>"
                 f"</div>"
                 f'<div class="grid setgrid">{inner}</div></div>'
             )
@@ -1228,7 +1277,7 @@ _TEMPLATE = r"""<!doctype html><html lang="en"><head><meta charset="utf-8">
     var patch={verdict:v};
     if(note!=null){setNoteField(cell,note);patch.note=note;}
     persist(id,patch);
-    placeCell(cell);
+    if(cell._set)placeSet(cell._set); else placeCell(cell);
     refreshLayout();
   }
   // interactive verdict from a button/key: toggles off, prompts a discard note
@@ -1269,10 +1318,34 @@ _TEMPLATE = r"""<!doctype html><html lang="en"><head><meta charset="utf-8">
 
   // -- archive placement: decided cells physically move into #archivegrid; an
   // anchor comment marks each cell's live home so it restores in place --
+  // A cell in a comparison set that still NEEDS A WINNER must stay on screen even
+  // once it is decided, because you cannot pick a favourite from a line-up whose
+  // members vanish as you judge them. Only when the set has a winner (or every
+  // member is decided with none kept, i.e. the whole set was rejected) do they
+  // all move to the archive together. (2026-08-14, Pip's ask.)
+  function setNeedsWinner(set){
+    if(!set)return false;
+    var anyKeep=false, allDecided=true;
+    set.cells.forEach(function(c){
+      var v=curVerdict(c);
+      if(v==='keep')anyKeep=true;
+      if(!(v==='keep'||v==='discard'))allDecided=false;
+    });
+    if(anyKeep)return false;      // a winner exists -- set is resolved
+    if(allDecided)return false;   // whole set rejected -- also resolved
+    return true;                  // still mid-comparison: hold everything visible
+  }
   function placeCell(cell){
     var dec=isDecided(cell),inArch=cell.parentNode===archGrid;
+    if(cell._set&&setNeedsWinner(cell._set))dec=false;   // hold the line-up together
     if(dec&&!inArch){archGrid.appendChild(cell);}
     else if(!dec&&inArch){cell._anchor.parentNode.insertBefore(cell,cell._anchor);}
+  }
+  // After any verdict inside a set, re-place EVERY member -- resolving the set
+  // has to sweep the siblings that were being held back.
+  function placeSet(set){
+    if(!set)return;
+    set.cells.forEach(function(c){placeCell(c);});
   }
 
   // -- lightbox --

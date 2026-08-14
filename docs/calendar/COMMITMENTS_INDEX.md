@@ -13,7 +13,7 @@ Horizon: **2026-08-09** (the prose scan reports dates at or after this; roll it
 forward deliberately in `COMMITMENTS.md`, never automatically -- a clock-reading
 generator goes stale overnight and trains people to ignore the check).
 
-**48 declared, 4 release-train, 52 UNPARSED, 0 malformed.**
+**48 declared, 4 release-train, 53 UNPARSED, 0 malformed.**
 
 ## Declared commitments
 
@@ -141,17 +141,19 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-13 | `tools/art_review/serve_review.py` | 8 | TWO AXES (v3, 2026-08-13). A VERDICT is the asset's fate -- exactly one, exclusive. |
 | 2026-08-13 | `tools/art_review/serve_review.py` | 96 | # -- verdict model v3 (2026-08-13) ------------------------------------------- |
 | 2026-08-13 | `tools/art_review/serve_review.py` | 146 | "2026-08-13. Key is S; H still works as an alias for the hour this was " |
-| 2026-08-13 | `tools/art_review/serve_review.py` | 495 | predating the log (everything before 2026-08-13) are not in it, so a replay |
-| 2026-08-13 | `tools/art_review/serve_review.py` | 535 | "the log (2026-08-13). The replay is a SUBSET; state file NOT " |
-| 2026-08-13 | `tools/art_review/serve_review.py` | 664 | "Events predate the log only for decisions made before **2026-08-13**; a replay", |
-| 2026-08-13 | `tools/art_review/serve_review.py` | 967 | Default smooth; body.px-crisp restores the sprite behaviour. (2026-08-13) */ |
-| 2026-08-13 | `tools/art_review/serve_review.py` | 1015 | and the reserved title space only read large. (2026-08-13) */ |
+| 2026-08-13 | `tools/art_review/serve_review.py` | 539 | predating the log (everything before 2026-08-13) are not in it, so a replay |
+| 2026-08-13 | `tools/art_review/serve_review.py` | 579 | "the log (2026-08-13). The replay is a SUBSET; state file NOT " |
+| 2026-08-13 | `tools/art_review/serve_review.py` | 708 | "Events predate the log only for decisions made before **2026-08-13**; a replay", |
+| 2026-08-13 | `tools/art_review/serve_review.py` | 1016 | Default smooth; body.px-crisp restores the sprite behaviour. (2026-08-13) */ |
+| 2026-08-13 | `tools/art_review/serve_review.py` | 1064 | and the reserved title space only read large. (2026-08-13) */ |
 | 2026-08-13 | `tools/art_review/shortlist_l3_heroes.py` | 13 | The 140 L3 heroes have ZERO verdicts (measured 2026-08-13). Presented flat they |
 | 2026-08-13 | `tools/art_review/shortlist_l3_heroes.py` | 235 | "**GENERATED** by `tools/art_review/shortlist_l3_heroes.py`, 2026-08-13.", |
 | 2026-08-13 | `tools/art_review/shortlist_l3_heroes.py` | 335 | "<title>L3 hero shortlist -- 2026-08-13</title>", |
 | 2026-08-13 | `tools/art_review/shortlist_l3_heroes.py` | 347 | "<p class='note'>Generated 2026-08-13. Ordered by contrast + detail density,", |
 | 2026-08-13 | `tools/check_class_cache.py` | 6 | WHY (2026-08-13, cost a first-time playtester's session): |
 | 2026-08-14 | `docs/art/audit_2026-08-13/SESSION_2026-08-14_first-mass-review.md` | 3 | **Recorded by `seat:pdoom`, 2026-08-14.** Every number below is re-derivable from |
+| 2026-08-14 | `tools/art_review/serve_review.py` | 212 | # block is FOR and what a decision here means. (2026-08-14, Pip's ask.) |
+| 2026-08-14 | `tools/art_review/serve_review.py` | 1325 | // all move to the archive together. (2026-08-14, Pip's ask.) |
 | 2026-08-14 | `tools/check_refusal_classification.py` | 7 | WHY (playtest 2026-08-14, Pip): |
 | 2026-08-15 | `pdoom1#1092` | 0 | art(sweep): events name physical things the office never shows -- install a security system, no cameras appear; sweep events for asset refs, then bulk |
 | 2026-08-16 | `docs/workshop-2/position.md` | 547 | **On 2026-08-16**, ask for three run IDs -- one per guard -- each showing the |
