@@ -42,12 +42,39 @@ func test_all_events_have_required_fields():
 ## CARVE-OUTS (deliberate, both documented in ADR-0015):
 ##  1. START CONFIG -- `starting_resources.doom` sets the initial LEVEL. That is a legitimate
 ##     scenario dial, not an event effect, and is not scanned.
-##  2. risk_events.json -- its 20 pool `effects.doom` fields are LIVE (turn_manager routes
-##     them through doom_system.add_event_doom), so re-authoring them is a BALANCE change
-##     deferred to the ADR-0015 M-ticket. Budgeted below so the count can only shrink.
+##  2. risk_events.json -- its pool `effects.doom` fields are LIVE: turn_manager routes them
+##     through doom_system.add_event_doom(), which is add_stream_input() under a back-compat
+##     name, so they DO arrive as a named stream. See the ratchet note below.
+##
 ## --------------------------------------------------------------------------------------
-
-const RISK_EVENTS_DOOM_BUDGET := 20  # M-ticket backlog; MUST only ever go down
+## THE RATCHET WAS DELIBERATELY LOOSENED -- 2026-08-14, ruled by Pip, for content velocity.
+##
+## This guard used to cap risk_events.json at RISK_EVENTS_DOOM_BUDGET := 20, "may only ever
+## shrink" -- and 20 was exactly the count on the day it was written. That made the real rule
+## "no NEW risk event may carry doom at all, even positive", which is not what ADR-0015 says.
+## It blocked 28 events of good content (#1230) whose positive pool effects were legitimate
+## and established, while the two actual violations -- negative doom literals in
+## event_service.gd -- sat in .gd files this scan never looked at. A count budget cannot tell
+## a legitimate positive pool effect from an illegitimate direct write; it is a proxy that
+## happened to correlate, and it failed in both directions at once.
+##
+## Pip, 2026-08-14: "I want new content to come in, so am willing to ratify a deliberate
+## loosening of that ratchet, as long as this kind of thing is documented and, ideally, we
+## uplift mechanisms in this and the surrounding patterns to improve mechanistic and fail-loud
+## enforcement."
+##
+## So the count cap is GONE and the MECHANISM is enforced instead:
+##   * risk-pool doom must be POSITIVE. A pool is a hazard; positive doom routes through
+##     add_event_doom -> a named stream and is honest. A NEGATIVE literal is the exploit
+##     class this whole lane exists to kill and stays illegal, everywhere, in data and code.
+##   * everything else in res://data stays at zero literals, unchanged.
+##   * and the scan no longer stops at the data tree -- test_adr_0015_runtime_doom_literals.gd
+##     now scans the .gd tree for the same defect, which is where it was actually hiding.
+##
+## If you are reading this in six months wondering whether the looser rule was an erosion:
+## it was a decision, made on 2026-08-14, by Pip, buying content velocity and paying for it
+## with a tighter and wider mechanism. It is not licence to add a negative doom literal.
+## --------------------------------------------------------------------------------------
 
 func _all_data_json_paths(dir_path: String, out: Array) -> void:
 	var dir := DirAccess.open(dir_path)
@@ -82,9 +109,10 @@ func _scan_for_doom_effects(node, path: String, trail: String, hits: Array) -> v
 	for key in node.keys():
 		var child = node[key]
 		var child_trail := "%s.%s" % [trail, key]
-		# (a) the event-choice / event effect schema
+		# (a) the event-choice / event effect schema. Carries the VALUE so the caller can
+		# enforce the sign rule (positive risk-pool doom is legal; negative never is).
 		if key == "effects" and child is Dictionary and child.has("doom"):
-			hits.append("%s%s.doom" % [path, child_trail])
+			hits.append("%s%s.doom=%s" % [path, child_trail, str(child["doom"])])
 		# (b) the pdoom-data override schema (impacts[].variable == "doom")
 		if key == "impacts" and child is Array:
 			for i in range(child.size()):
@@ -123,9 +151,20 @@ func test_no_authored_event_content_writes_literal_doom():
 	assert_eq(hits.size(), 0,
 		"authored content must write an intermediary, never a literal doom effect. Offenders: "
 		+ ", ".join(PackedStringArray(hits)))
-	assert_lte(risk_hits.size(), RISK_EVENTS_DOOM_BUDGET,
-		"the risk_events.json carve-out may only shrink (ADR-0015 M-ticket); found %d"
-		% risk_hits.size())
+
+	# The loosened ratchet: no count cap on risk_events.json (content velocity, ruled
+	# 2026-08-14), but the MECHANISM is enforced -- a risk pool is a hazard, so its doom must
+	# be positive. A negative literal here would be the exploit class in a legal costume.
+	var negative_risk_doom: Array[String] = []
+	for hit in risk_hits:
+		var value_text: String = str(hit).split("=")[-1]
+		if value_text.is_valid_float() and value_text.to_float() < 0.0:
+			negative_risk_doom.append(hit)
+	assert_eq(negative_risk_doom.size(), 0,
+		("risk-pool doom must be POSITIVE -- a pool is a hazard, and a negative literal is a "
+		+ "direct doom write wearing a pool's clothes. Reduce hazard by writing an "
+		+ "intermediary (safety_absorption / global_alarm), never by printing negative doom. "
+		+ "Offenders: ") + ", ".join(PackedStringArray(negative_risk_doom)))
 
 func test_event_count():
 	# Test that we have a substantial number of events
