@@ -1099,6 +1099,511 @@
 					"message": "Researcher departed for competitor (lost a valuable team member)"
 				}
 			]
+		},
+		{
+			"id": "preprint_race",
+			"name": "Scooped, Almost",
+			"description": "A rival lab has posted a preprint of substantially your result. Your version is better documented and three weeks from ready. Their version is on the front page of two aggregators.",
+			"type": "popup",
+			"trigger_type": "random",
+			"trigger_condition": "research >= 20",
+			"probability": 0.05,
+			"min_turn": 10,
+			"cooldown_turns": 40,
+			"repeatable": true,
+			"options": [
+				{
+					"id": "post_tonight",
+					"text": "Post Tonight, Without the Ablations",
+					"costs": {
+						"research": 10
+					},
+					"effects": {
+						"papers": 1,
+						"reputation": 3,
+						"general_capability": 2
+					},
+					"message": "Posted at 2am. Concurrent work, independently derived, missing its appendix (+1 paper, +3 reputation, +capability diffusion)"
+				},
+				{
+					"id": "finish_properly",
+					"text": "Finish It Properly",
+					"effects": {
+						"reputation": -6,
+						"safety_absorption": 15
+					},
+					"message": "Priority conceded. Months later, the careful version is the one people actually build on (-6 reputation, +safety absorption)"
+				}
+			]
+		},
+		{
+			"id": "insurance_exclusion",
+			"name": "Insurance Renewal",
+			"description": "Your liability insurer has drafted a new exclusion: 'losses arising from emergent behaviour of computational systems'. Your broker says everyone is getting this clause. Your counsel says the word 'emergent' is doing a lot of work.",
+			"type": "popup",
+			"trigger_type": "random",
+			"probability": 0.05,
+			"min_turn": 12,
+			"cooldown_turns": 45,
+			"repeatable": true,
+			"options": [
+				{
+					"id": "pay_tripled_premium",
+					"text": "Pay the Tripled Premium",
+					"costs": {
+						"money": 45000
+					},
+					"effects": {
+						"reputation": 2
+					},
+					"message": "Coverage maintained at triple the rate. The board is reassured; the treasurer is not (-$45k, +2 reputation)"
+				},
+				{
+					"id": "accept_exclusion",
+					"text": "Accept the Exclusion",
+					"effects": {
+						"reputation": -4,
+						"loyalty_hit": 5
+					},
+					"message": "The board minutes record your decision in full. Senior staff have read the minutes (-4 reputation, loyalty eroding)"
+				}
+			]
+		},
+		{
+			"id": "grant_report_honesty",
+			"name": "The Annual Report",
+			"description": "The flagship grant's annual report is due. The honest summary of the year's results is 'mixed, with caveats'. The program officer who championed you is up for review herself.",
+			"type": "popup",
+			"trigger_type": "random",
+			"trigger_condition": "papers >= 1",
+			"probability": 0.05,
+			"min_turn": 15,
+			"cooldown_turns": 45,
+			"repeatable": true,
+			"options": [
+				{
+					"id": "report_straight",
+					"text": "Report It Straight",
+					"effects": {
+						"money": -40000,
+						"reputation": 4,
+						"safety_absorption": 10
+					},
+					"message": "Renewal reduced; credibility banked. Your caveats section is quietly circulated as an example (-$40k in future funding, +4 reputation, +safety absorption)"
+				},
+				{
+					"id": "polish_narrative",
+					"text": "Polish the Narrative",
+					"costs": {
+						"attention": 1
+					},
+					"effects": {
+						"research": -5,
+						"loyalty_hit": 8
+					},
+					"message": "Funding preserved. The researcher who drafted the honest version has stopped attending the grants meeting (-5 research, loyalty eroding)"
+				}
+			]
+		},
+		{
+			"id": "keynote_slot",
+			"name": "The Keynote Slot",
+			"description": "The year's largest industry conference offers your founder the opening keynote. The previous three keynotes were product launches. The organisers say they want 'balance'.",
+			"type": "popup",
+			"trigger_type": "random",
+			"trigger_condition": "reputation >= 40",
+			"probability": 0.05,
+			"min_turn": 15,
+			"cooldown_turns": 45,
+			"repeatable": true,
+			"options": [
+				{
+					"id": "say_uncomfortable_thing",
+					"text": "Say the Uncomfortable Thing",
+					"costs": {
+						"attention": 2
+					},
+					"effects": {
+						"reputation": 6,
+						"global_alarm": 8,
+						"money": -10000
+					},
+					"message": "Standing ovation from a third of the room; two sponsor meetings cancel (+6 reputation, +global alarm, -$10k)"
+				},
+				{
+					"id": "give_safe_version",
+					"text": "Give the Safe Version",
+					"costs": {
+						"attention": 1,
+						"money": 5000
+					},
+					"effects": {
+						"reputation": 3
+					},
+					"message": "Well received and instantly forgotten (-$5k media training, +3 reputation)"
+				},
+				{
+					"id": "decline_slot",
+					"text": "Decline the Slot",
+					"effects": {
+						"reputation": -3,
+						"general_capability": 2
+					},
+					"message": "The slot goes to a lab with a launch to announce (-3 reputation, +capability diffusion)"
+				}
+			]
+		},
+		{
+			"id": "special_issue",
+			"name": "Guest Editorship",
+			"description": "A respected journal invites your lab to guest-edit a special issue on alignment evaluation. It is a service to the field, which is another way of saying it is unpaid.",
+			"type": "popup",
+			"trigger_type": "random",
+			"trigger_condition": "papers >= 2",
+			"probability": 0.05,
+			"min_turn": 10,
+			"cooldown_turns": 50,
+			"repeatable": true,
+			"options": [
+				{
+					"id": "edit_personally",
+					"text": "Take It On Personally",
+					"costs": {
+						"attention": 2
+					},
+					"effects": {
+						"reputation": 6,
+						"safety_absorption": 10
+					},
+					"message": "A year of refereeing disputes about the word 'alignment' (+6 reputation, +safety absorption)"
+				},
+				{
+					"id": "delegate_editing",
+					"text": "Hand It to a Senior Researcher",
+					"effects": {
+						"research": -10,
+						"reputation": 3
+					},
+					"message": "Their project stalls for two quarters; the issue is excellent (-10 research, +3 reputation)"
+				},
+				{
+					"id": "decline_editorship",
+					"text": "Decline Politely",
+					"effects": {
+						"reputation": -4
+					},
+					"message": "Declining service roles is noticed by exactly the people who do them (-4 reputation)"
+				}
+			]
+		},
+		{
+			"id": "weights_request",
+			"name": "The Evaluation Request",
+			"description": "A government evaluation office requests access to your model weights, citing a framework agreement your lab signed at a conference reception.",
+			"type": "popup",
+			"trigger_type": "random",
+			"trigger_condition": "reputation >= 30",
+			"probability": 0.04,
+			"min_turn": 18,
+			"cooldown_turns": 50,
+			"repeatable": true,
+			"options": [
+				{
+					"id": "hand_them_over",
+					"text": "Hand Them Over",
+					"effects": {
+						"safety_absorption": 20,
+						"reputation": -5,
+						"global_alarm": 3
+					},
+					"message": "Weights transferred under seal. Your researchers learn of it from the newsletter (+safety absorption, -5 reputation, +global alarm)"
+				},
+				{
+					"id": "negotiate_access_regime",
+					"text": "Negotiate an Access Regime",
+					"costs": {
+						"money": 30000,
+						"attention": 1
+					},
+					"effects": {
+						"safety_absorption": 10,
+						"reputation": 3
+					},
+					"message": "Structured access agreed after four drafting rounds (-$30k, +safety absorption, +3 reputation)"
+				},
+				{
+					"id": "refuse_request",
+					"text": "Refuse, Citing the Reception",
+					"effects": {
+						"reputation": -6,
+						"global_alarm": 2
+					},
+					"message": "Refusal noted 'for the file'. Files like this have a way of being remembered (-6 reputation, +global alarm)"
+				},
+				{
+					"id": "comply_slowly",
+					"text": "Comply As Slowly As Possible",
+					"costs": {
+						"money": 15000
+					},
+					"effects": {
+						"reputation": -2,
+						"research": -8
+					},
+					"message": "A working group is established. Its first deliverable is a timeline for future deliverables (-$15k, -2 reputation, -8 research)"
+				}
+			]
+		},
+		{
+			"id": "incident_disclosure",
+			"name": "The Quarterly Report Question",
+			"description": "A contained near-miss occurred in week three. It is now week twelve, the transparency report is due, and exactly eleven people know. The report template has a section for this. The section has never been used.",
+			"type": "popup",
+			"trigger_type": "random",
+			"trigger_condition": "researchers >= 3",
+			"probability": 0.04,
+			"min_turn": 15,
+			"cooldown_turns": 50,
+			"repeatable": true,
+			"options": [
+				{
+					"id": "use_the_section",
+					"text": "Use the Section",
+					"effects": {
+						"reputation": -6,
+						"global_alarm": 6,
+						"safety_absorption": 15
+					},
+					"message": "First recorded use of Section 4b in the industry. Uncomfortable, and cited within a month (-6 reputation, +global alarm, +safety absorption)"
+				},
+				{
+					"id": "disclose_aggregate",
+					"text": "Disclose in Aggregate",
+					"costs": {
+						"attention": 1
+					},
+					"effects": {
+						"reputation": -2,
+						"global_alarm": 2
+					},
+					"message": "'One incident of moderate severity' does a lot of quiet work (-2 reputation, +global alarm)"
+				},
+				{
+					"id": "defer_quarter",
+					"text": "Defer to Next Quarter",
+					"effects": {
+						"research": -5,
+						"loyalty_hit": 6
+					},
+					"message": "The engineer who filed the report has started cc'ing herself on everything (-5 research, loyalty eroding)"
+				},
+				{
+					"id": "reclassify_routine",
+					"text": "Reclassify as Routine",
+					"effects": {
+						"loyalty_hit": 12,
+						"safety_absorption": -10
+					},
+					"message": "The incident is now a 'learning'. Eleven people watch you call it that (loyalty eroding, -safety absorption)"
+				}
+			]
+		},
+		{
+			"id": "dual_use_result",
+			"name": "An Unfortunately Excellent Result",
+			"description": "Your interpretability team's new probe doubles as a capability elicitation technique. The write-up is brilliant. Every reviewer will notice what it implies, at roughly the second paragraph.",
+			"type": "popup",
+			"trigger_type": "random",
+			"trigger_condition": "researchers >= 2",
+			"probability": 0.05,
+			"min_turn": 12,
+			"cooldown_turns": 45,
+			"repeatable": true,
+			"options": [
+				{
+					"id": "publish_in_full",
+					"text": "Publish in Full",
+					"effects": {
+						"papers": 1,
+						"reputation": 8,
+						"general_capability": 6
+					},
+					"message": "Landmark paper. The appendix is already being 'extended' elsewhere (+1 paper, +8 reputation, +capability diffusion)"
+				},
+				{
+					"id": "publish_redacted",
+					"text": "Publish With the Appendix Withheld",
+					"costs": {
+						"money": 10000,
+						"attention": 1
+					},
+					"effects": {
+						"papers": 1,
+						"reputation": 2,
+						"general_capability": 2
+					},
+					"message": "Redacted release after infohazard review. The redaction is itself a hint (-$10k, +1 paper, +2 reputation, +capability diffusion)"
+				},
+				{
+					"id": "shelve_result",
+					"text": "Shelve It",
+					"effects": {
+						"research": -10,
+						"loyalty_hit": 6
+					},
+					"message": "The result goes in the drawer. The first author updates their availability on a hiring site (-10 research, loyalty eroding)"
+				},
+				{
+					"id": "license_quietly",
+					"text": "License It Quietly",
+					"effects": {
+						"money": 90000,
+						"reputation": -10,
+						"frontier_capability": 8,
+						"global_panic": 3
+					},
+					"message": "A partner lab pays well for exclusive access. This is the sort of decision that has a paper trail (+$90k, -10 reputation, +frontier capability, +global panic)"
+				}
+			]
+		},
+		{
+			"id": "advisory_board_requirement",
+			"name": "The Advisory Board Requirement",
+			"description": "Your largest funder now requires an independent advisory board with 'meaningful oversight authority', as defined in an appendix that uses the word 'meaningful' eleven times.",
+			"type": "popup",
+			"trigger_type": "random",
+			"trigger_condition": "reputation >= 25",
+			"probability": 0.05,
+			"min_turn": 15,
+			"repeatable": false,
+			"options": [
+				{
+					"id": "recruit_heavyweights",
+					"text": "Recruit Heavyweights",
+					"costs": {
+						"money": 40000,
+						"attention": 1
+					},
+					"effects": {
+						"reputation": 10,
+						"global_alarm": 3
+					},
+					"message": "Distinguished, independent, and each with a column inch to fill (-$40k in honoraria, +10 reputation, +global alarm)"
+				},
+				{
+					"id": "funder_nominates",
+					"text": "Let the Funder Nominate",
+					"costs": {
+						"attention": 2
+					},
+					"effects": {
+						"safety_absorption": 15,
+						"reputation": 3,
+						"research": -5
+					},
+					"message": "Their nominees ask excellent questions at inconvenient times (+safety absorption, +3 reputation, -5 research)"
+				},
+				{
+					"id": "friendly_academics",
+					"text": "Appoint Friendly Academics",
+					"costs": {
+						"money": 15000
+					},
+					"effects": {
+						"reputation": 2,
+						"safety_absorption": -5
+					},
+					"message": "Quarterly meetings conclude on schedule with no findings (-$15k, +2 reputation, -safety absorption)"
+				},
+				{
+					"id": "dispute_meaningful",
+					"text": "Dispute the Word 'Meaningful'",
+					"costs": {
+						"money": 20000,
+						"attention": 1
+					},
+					"effects": {
+						"reputation": -4
+					},
+					"message": "Counsel produces a nine-page memo on 'meaningful'. The funder produces a shorter one (-$20k, -4 reputation)"
+				},
+				{
+					"id": "refuse_board",
+					"text": "Refuse Outright",
+					"effects": {
+						"money": -50000,
+						"reputation": -6
+					},
+					"message": "The funder's next disbursement arrives reduced, with a cover letter (-$50k, -6 reputation)"
+				}
+			]
+		},
+		{
+			"id": "staff_red_line_letter",
+			"name": "The Internal Letter",
+			"description": "Thirty-one staff have signed an internal letter asking the lab to adopt a public red line on deployment assistance. It is politely worded. There is a shared document tracking who has not signed.",
+			"type": "popup",
+			"trigger_type": "random",
+			"trigger_condition": "researchers >= 5",
+			"probability": 0.04,
+			"min_turn": 20,
+			"cooldown_turns": 60,
+			"repeatable": true,
+			"options": [
+				{
+					"id": "adopt_publicly",
+					"text": "Adopt It Publicly",
+					"effects": {
+						"reputation": 5,
+						"global_alarm": 5,
+						"money": -30000
+					},
+					"message": "Two funders pause pending 'clarification'; the staff channel is briefly euphoric (+5 reputation, +global alarm, -$30k)"
+				},
+				{
+					"id": "adopt_privately",
+					"text": "Adopt It as Internal Policy",
+					"costs": {
+						"attention": 1
+					},
+					"effects": {
+						"safety_absorption": 10,
+						"reputation": -2
+					},
+					"message": "Policy adopted without announcement. Screenshots reach a journalist within the month (+safety absorption, -2 reputation)"
+				},
+				{
+					"id": "wording_committee",
+					"text": "Convene a Wording Committee",
+					"costs": {
+						"attention": 2,
+						"money": 10000
+					},
+					"effects": {
+						"research": -5
+					},
+					"message": "Fourteen meetings produce the phrase 'appropriately robust'. Nobody is happy, which the committee records as consensus (-$10k, -5 research)"
+				},
+				{
+					"id": "decline_with_reasons",
+					"text": "Decline, With Reasons",
+					"effects": {
+						"loyalty_hit": 8,
+						"reputation": -3
+					},
+					"message": "Your reasons are reasonable. The shared document gains a second tab (loyalty eroding, -3 reputation)"
+				},
+				{
+					"id": "manage_out_organiser",
+					"text": "Manage Out the Organiser",
+					"effects": {
+						"lose_researcher": 1,
+						"loyalty_hit": 15,
+						"reputation": -8
+					},
+					"message": "The organiser departs 'to pursue other opportunities'. Everyone knows what this means, including the press (loyalty eroding, -8 reputation)"
+				}
+			]
 		}
 	]
 }

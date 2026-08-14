@@ -393,24 +393,32 @@ func test_property_all_risk_events_have_valid_effects():
 					assert_true(resource in valid_resources,
 						"Event %s has invalid resource key: %s" % [event.get("id", ""), resource])
 
-func test_property_all_risk_events_have_doom_effect():
-	# Property: Most risk events should have a doom effect (it's a risk system)
+func test_property_all_risk_events_have_teeth():
+	# Property REWRITTEN with the 2026-08 content pass. The old assertion ("at
+	# least 50% of risk events carry a literal doom effect") encoded the
+	# pre-ADR-0015 philosophy and became unsatisfiable the moment content grew:
+	# the doom carve-out in risk_events.json is SHRINK-ONLY
+	# (test_events.gd::RISK_EVENTS_DOOM_BUDGET), so every NEW risk event must
+	# express severity through resources/staff instead of doom, and the ratio
+	# can only fall. The honest invariants that remain:
+	#   1. no toothless events -- every risk event applies at least one effect;
+	#   2. the doom carve-out never grows (mirrored here at the same budget so
+	#      this suite fails locally, not just the simulation tier).
 	var risk_events = GameEvents.get_risk_events()
 	var events_with_doom = 0
-	var total_events = 0
 
 	for pool_name in risk_events:
 		var pool_events = risk_events[pool_name]
 		for severity in pool_events:
 			var events = pool_events[severity]
 			for event in events:
-				total_events += 1
+				assert_gt(event.get("effects", {}).size(), 0,
+					"Risk event %s has no effects -- a toothless event" % event.get("id", "unknown"))
 				if event.get("effects", {}).has("doom"):
 					events_with_doom += 1
 
-	# At least 50% of risk events should affect doom
-	var ratio = float(events_with_doom) / float(total_events)
-	assert_gt(ratio, 0.5, "At least 50%% of risk events should affect doom (got %.1f%%)" % (ratio * 100))
+	assert_lte(events_with_doom, 20,
+		"risk_events.json doom carve-out may only shrink (ADR-0015); found %d" % events_with_doom)
 
 # ============================================================================
 # SERIALIZATION TESTS
