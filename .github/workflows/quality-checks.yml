@@ -60,6 +60,14 @@ jobs:
         echo " See docs/LEADERBOARD_CRASH_DIAGNOSIS.md.)"
         python tools/check_scene_nav.py
 
+    - name: Refusal Classification Check
+      run: |
+        echo "Enforcing: every player-facing refusal says whether it is a RULE or a STUB."
+        echo "(A stub that refuses in the voice of a rule teaches the player a rule that"
+        echo " does not exist. See godot/scripts/core/refusal.gd; playtest 2026-08-14.)"
+        python tools/check_refusal_classification.py --self-test
+        python tools/check_refusal_classification.py
+
     - name: Import Cleanup Check
       run: |
         echo "INFO  Project migrated to Godot - Python import checks skipped"

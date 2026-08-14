@@ -78,6 +78,7 @@ Declared with a `Layer:` line in a tool's module docstring; `--` = undeclared.
 | capture_cinematic.py | -- | Cinematic capture harness for P(Doom)1 -- deterministic scene footage -> mp4/gif. | test:test_find_dead_code.py; tool:find_dead_code.py |
 | check_class_cache.py | PROVE | check_class_cache.py -- catch a STALE global script class cache before it eats a playtest. | pre-commit; make; test:test_check_class_cache.py |
 | check_ladder_bump.py | PROVE | Guard: did this diff need a ladder_version bump (or get one it did not need)? | ci:quality-checks.yml; test:test_check_ladder_bump.py; test:test_check_self_merge_eligibility.py; tool:sync_version.py |
+| check_refusal_classification.py | PROVE | check_refusal_classification.py -- every NEW player-facing refusal must say whether it | pre-commit; ci:quality-checks.yml |
 | check_scene_nav.py | PROVE | check_scene_nav.py -- enforce the single-scene-navigation-chokepoint invariant. | pre-commit; ci:quality-checks.yml; tool:enforce_standards.py |
 | check_self_merge_eligibility.py | PROVE | Guard: does this PR actually qualify for the self-merge class it claims? | ci:self-merge-eligibility.yml; test:test_check_self_merge_eligibility.py |
 | cleanup-duplicate-issues.py | -- | Cleanup script for duplicate GitHub issues created by sync tool failure. | NONE FOUND |

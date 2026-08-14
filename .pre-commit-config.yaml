@@ -180,6 +180,13 @@ repos:
         files: '\.gd$'
         pass_filenames: true
 
+      - id: refusal-classification-check
+        name: Player-facing refusals say whether they are a rule or a stub
+        entry: python tools/check_refusal_classification.py
+        language: system
+        files: '\.gd$'
+        pass_filenames: true
+
       - id: version-sync-check
         name: version.txt + ladder_version.txt synced to derived copies
         entry: python tools/sync_version.py --check

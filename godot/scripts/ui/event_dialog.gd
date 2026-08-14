@@ -520,11 +520,23 @@ func _on_shown_dialog_gone(dialog: Control) -> void:
 
 
 func _show_reason(message: String) -> void:
-	"""Surface a rejection reason inside the still-open dialog (direction-b)."""
+	"""Surface a rejection reason inside the still-open dialog (direction-b).
+
+	A STUB refusal (scripts/core/refusal.gd) arrives with the alpha marker already appended.
+	Lift it back out and give it its own line instead of leaving it wedged mid-sentence:
+	"-- pick another option." belongs with the reason, and the marker is an aside to the
+	player about the BUILD, not part of the in-fiction sentence. Purely presentational --
+	neither string is reworded, and a message with no marker renders exactly as before."""
 	if not is_instance_valid(_reason_label):
 		return
 	var text := message if message != "" else "That choice was rejected."
-	_reason_label.text = "[!] %s -- pick another option." % text
+	var marker := ""
+	if Refusal.is_stub_message(text):
+		marker = "\n%s" % Refusal.ALPHA_STUB_MARKER
+		text = Refusal.strip_marker(text)
+		if text.is_empty():
+			text = "That choice was rejected."
+	_reason_label.text = "[!] %s -- pick another option.%s" % [text, marker]
 	_reason_label.visible = true
 
 

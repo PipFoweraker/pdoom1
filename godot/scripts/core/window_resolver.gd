@@ -64,6 +64,8 @@ static func resolve(state: GameState, plan: MonthPlan, event: Dictionary, respon
 	var event_id := String(event.get("id", ""))
 	var cost := attention_cost(event)
 	var result := {
+		# refusal: n/a -- result TEMPLATE, not a refusal. It says nothing to a player; each
+		# branch below either succeeds or fills in its own message and `refusal` kind.
 		"success": false,
 		"response": response,
 		"payment_source": "",
@@ -86,9 +88,30 @@ static func resolve(state: GameState, plan: MonthPlan, event: Dictionary, respon
 
 		"handle_cannibalize":
 			var pay := plan.pay_by_cannibalizing(cost)
-			result["cancelled_wip"] = pay.get("cancelled", [])
+			var cancelled: Array = pay.get("cancelled", [])
+			result["cancelled_wip"] = cancelled
 			if not pay.get("paid", false):
+				# STUB-VS-RULE (see scripts/core/refusal.gd). ONE sentence was covering TWO
+				# different failures, and the commoner of the two is not a rule at all.
+				#
+				# cancelled.is_empty() <=> pay_by_cannibalizing found NO strategic WIP to eat,
+				# so the "pull from planned work" half of this verb did nothing. In the shipped
+				# game that is ALWAYS the case: MonthPlan.queued_strategic has no production
+				# writer -- its only one, GameManager.queue_strategic_action(), has zero callers
+				# -- while the queue the player can SEE lives in GameState.queued_actions, which
+				# this path cannot reach. Refusing with "insufficient capacity" taught a budget
+				# rule for what is really an unbuilt mechanic (playtest 2026-08-14, Pip: "which,
+				# like, isn't strictly true?").
+				#
+				# The discriminator is derived, not declared, so it self-heals: the day anything
+				# wires queue_strategic_action() up, cancelled stops being empty and the genuine
+				# RULE branch takes over on its own. There is no flag to remember to clear.
 				result["message"] = "Insufficient capacity to handle by cannibalizing"
+				if cancelled.is_empty():
+					result["message"] = Refusal.mark_stub(result["message"])
+					result["refusal"] = Refusal.CLASS_STUB
+				else:
+					result["refusal"] = Refusal.CLASS_RULE
 				return result
 			result["payment_source"] = "cannibalize"
 			result["attention_paid"] = cost
