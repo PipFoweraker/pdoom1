@@ -7,9 +7,18 @@
 > in `pdoom1-website`, which PULLS raw material from `pdoom1`. See the active
 > contract at `docs/copy/README.md`.
 >
-> **Pip to revise** during doc uplift and approve the updated version; may be
-> moved to `pdoom1-website` if that turns out correct. Retained meanwhile
-> because its diff history is useful. Do NOT build from this as-is.
+> **SUPERSEDED, not merely "outdated in spirit", as of 2026-08-13.** Pip ruled
+> **`pull`** on `pdoom1-website#249`: the game emits an artefact, the website
+> derives from it, and `pdoom1` never pushes. That is the direction this document
+> proposed the opposite of, so the question it was waiting on is now answered
+> rather than open. Retirement prescribed by
+> `docs/design/WORKSHOP_TRI_REPO_PREP_2026-08-06.md`.
+>
+> **Still open, and Pip's call, not a seat's:** whether this moves to
+> `pdoom1-website`. Under `pull` the website owns publishing, so a document about
+> a publishing engine has a better home there than here -- but that is a
+> cross-repo move and nobody has asked for it. Retained meanwhile because its
+> diff history is useful. Do NOT build from this as-is.
 
 **Status**: Design Phase
 **Created**: 2025-11-25

@@ -1,0 +1,7494 @@
+{
+ "any_hit_count": 106,
+ "assets": {
+  "gen:an0807_l0_anchors:s01_r01_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l0_anchors:s01_r01_p01:v2": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l0_anchors:s01_r01_p02:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l0_anchors:s01_r01_p02:v2": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l0_anchors:s01_r01_p03:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l0_anchors:s01_r01_p03:v2": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l0_anchors:s01_r01_p04:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l0_anchors:s01_r01_p04:v2": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l0_anchors:s01_r01_p05:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l0_anchors:s01_r01_p05:v2": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l0_anchors:s01_r01_p06:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l0_anchors:s01_r01_p06:v2": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l0_anchors:s01_r01_p07:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l0_anchors:s01_r01_p07:v2": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l0_anchors:s01_r01_p08:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l0_anchors:s01_r01_p08:v2": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l0_anchors:s01_r01_p09:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l0_anchors:s01_r01_p09:v2": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l0_anchors:s04_r01_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l0_anchors:s04_r01_p01:v2": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l0_anchors:s04_r01_p02:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l0_anchors:s04_r01_p02:v2": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l0_anchors:s04_r01_p03:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l0_anchors:s04_r01_p03:v2": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l0_anchors:s04_r01_p04:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l0_anchors:s04_r01_p04:v2": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l0_anchors:s04_r01_p05:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l0_anchors:s04_r01_p05:v2": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l0_anchors:s04_r01_p06:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l0_anchors:s04_r01_p06:v2": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l0_anchors:s04_r01_p07:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l0_anchors:s04_r01_p07:v2": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l0_anchors:s04_r01_p08:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l0_anchors:s04_r01_p08:v2": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l0_anchors:s04_r01_p09:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l0_anchors:s04_r01_p09:v2": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l0_anchors:s07_r01_p01:v1": {
+   "hits": [
+    {
+     "conf": 0.6659,
+     "text": "12"
+    },
+    {
+     "conf": 0.5954,
+     "text": "10"
+    },
+    {
+     "conf": 0.8484,
+     "text": "PENDING"
+    },
+    {
+     "conf": 0.8458,
+     "text": "APPROVED"
+    },
+    {
+     "conf": 0.8232,
+     "text": "REJECTED"
+    }
+   ],
+   "strong_hits": 4,
+   "verdict": null
+  },
+  "gen:an0807_l0_anchors:s07_r01_p01:v2": {
+   "hits": [
+    {
+     "conf": 0.6664,
+     "text": "12"
+    },
+    {
+     "conf": 0.6628,
+     "text": "10"
+    },
+    {
+     "conf": 0.8649,
+     "text": "PENDING"
+    },
+    {
+     "conf": 0.7881,
+     "text": "REVIEW"
+    },
+    {
+     "conf": 0.8831,
+     "text": "APPROVED"
+    }
+   ],
+   "strong_hits": 5,
+   "verdict": null
+  },
+  "gen:an0807_l0_anchors:s07_r01_p02:v1": {
+   "hits": [
+    {
+     "conf": 0.665,
+     "text": "12"
+    },
+    {
+     "conf": 0.6417,
+     "text": "10"
+    },
+    {
+     "conf": 0.8739,
+     "text": "INCOMING"
+    },
+    {
+     "conf": 0.853,
+     "text": "PENDING"
+    },
+    {
+     "conf": 0.8074,
+     "text": "APPROVED"
+    }
+   ],
+   "strong_hits": 5,
+   "verdict": null
+  },
+  "gen:an0807_l0_anchors:s07_r01_p02:v2": {
+   "hits": [
+    {
+     "conf": 0.6636,
+     "text": "12"
+    },
+    {
+     "conf": 0.7543,
+     "text": "Pending"
+    },
+    {
+     "conf": 0.8509,
+     "text": "In Review"
+    },
+    {
+     "conf": 0.8742,
+     "text": "Approved"
+    }
+   ],
+   "strong_hits": 4,
+   "verdict": null
+  },
+  "gen:an0807_l0_anchors:s07_r01_p03:v1": {
+   "hits": [
+    {
+     "conf": 0.6236,
+     "text": ".8"
+    },
+    {
+     "conf": 0.5481,
+     "text": "4."
+    },
+    {
+     "conf": 0.8002,
+     "text": "PENDING"
+    },
+    {
+     "conf": 0.8774,
+     "text": "APPROVED"
+    },
+    {
+     "conf": 0.8806,
+     "text": "REIJECTED"
+    }
+   ],
+   "strong_hits": 4,
+   "verdict": null
+  },
+  "gen:an0807_l0_anchors:s07_r01_p03:v2": {
+   "hits": [
+    {
+     "conf": 0.8479,
+     "text": "APPROVED"
+    },
+    {
+     "conf": 0.802,
+     "text": "PENDING"
+    },
+    {
+     "conf": 0.8847,
+     "text": "REJECTED"
+    }
+   ],
+   "strong_hits": 3,
+   "verdict": null
+  },
+  "gen:an0807_l0_anchors:s07_r01_p04:v1": {
+   "hits": [
+    {
+     "conf": 0.5741,
+     "text": "11"
+    },
+    {
+     "conf": 0.5247,
+     "text": "10"
+    },
+    {
+     "conf": 0.8662,
+     "text": "PENDING"
+    },
+    {
+     "conf": 0.8841,
+     "text": "APPROVED"
+    },
+    {
+     "conf": 0.85,
+     "text": "REJECTED"
+    }
+   ],
+   "strong_hits": 3,
+   "verdict": null
+  },
+  "gen:an0807_l0_anchors:s07_r01_p04:v2": {
+   "hits": [
+    {
+     "conf": 0.6539,
+     "text": "12"
+    },
+    {
+     "conf": 0.7265,
+     "text": "PENDIN"
+    },
+    {
+     "conf": 0.744,
+     "text": "APPRO"
+    },
+    {
+     "conf": 0.787,
+     "text": "REJE"
+    }
+   ],
+   "strong_hits": 4,
+   "verdict": null
+  },
+  "gen:an0807_l0_anchors:s07_r01_p05:v1": {
+   "hits": [
+    {
+     "conf": 0.6569,
+     "text": "12"
+    },
+    {
+     "conf": 0.6594,
+     "text": "10"
+    },
+    {
+     "conf": 0.8266,
+     "text": "ROVED"
+    }
+   ],
+   "strong_hits": 3,
+   "verdict": null
+  },
+  "gen:an0807_l0_anchors:s07_r01_p05:v2": {
+   "hits": [
+    {
+     "conf": 0.6651,
+     "text": "12"
+    },
+    {
+     "conf": 0.6136,
+     "text": "11"
+    },
+    {
+     "conf": 0.6648,
+     "text": "10"
+    },
+    {
+     "conf": 0.5312,
+     "text": "4."
+    },
+    {
+     "conf": 0.8066,
+     "text": "PENDING"
+    },
+    {
+     "conf": 0.8748,
+     "text": "APPROVED"
+    },
+    {
+     "conf": 0.8342,
+     "text": "REJECTED"
+    }
+   ],
+   "strong_hits": 6,
+   "verdict": null
+  },
+  "gen:an0807_l0_anchors:s07_r01_p06:v1": {
+   "hits": [
+    {
+     "conf": 0.6647,
+     "text": "10"
+    },
+    {
+     "conf": 0.5213,
+     "text": "4."
+    },
+    {
+     "conf": 0.7135,
+     "text": "eeding"
+    },
+    {
+     "conf": 0.5506,
+     "text": "Hpioved"
+    },
+    {
+     "conf": 0.7681,
+     "text": "Jegeted"
+    }
+   ],
+   "strong_hits": 3,
+   "verdict": null
+  },
+  "gen:an0807_l0_anchors:s07_r01_p06:v2": {
+   "hits": [
+    {
+     "conf": 0.6654,
+     "text": "12"
+    },
+    {
+     "conf": 0.6647,
+     "text": "10"
+    },
+    {
+     "conf": 0.6642,
+     "text": "4."
+    },
+    {
+     "conf": 0.5402,
+     "text": "7."
+    },
+    {
+     "conf": 0.7418,
+     "text": "DING"
+    },
+    {
+     "conf": 0.7738,
+     "text": "ROVED"
+    },
+    {
+     "conf": 0.859,
+     "text": "APPROVED"
+    }
+   ],
+   "strong_hits": 6,
+   "verdict": null
+  },
+  "gen:an0807_l0_anchors:s07_r01_p07:v1": {
+   "hits": [
+    {
+     "conf": 0.8586,
+     "text": "PENDING"
+    }
+   ],
+   "strong_hits": 1,
+   "verdict": null
+  },
+  "gen:an0807_l0_anchors:s07_r01_p07:v2": {
+   "hits": [
+    {
+     "conf": 0.5027,
+     "text": "12"
+    },
+    {
+     "conf": 0.6539,
+     "text": "10"
+    },
+    {
+     "conf": 0.8901,
+     "text": "APPLICATIONS"
+    },
+    {
+     "conf": 0.753,
+     "text": "PENDING"
+    },
+    {
+     "conf": 0.847,
+     "text": "REJECTED"
+    }
+   ],
+   "strong_hits": 4,
+   "verdict": null
+  },
+  "gen:an0807_l0_anchors:s07_r01_p08:v1": {
+   "hits": [
+    {
+     "conf": 0.6617,
+     "text": "12"
+    },
+    {
+     "conf": 0.6645,
+     "text": "10"
+    },
+    {
+     "conf": 0.8094,
+     "text": "APPROVED"
+    },
+    {
+     "conf": 0.8643,
+     "text": "PENDING"
+    },
+    {
+     "conf": 0.8387,
+     "text": "REJECTED"
+    }
+   ],
+   "strong_hits": 5,
+   "verdict": null
+  },
+  "gen:an0807_l0_anchors:s07_r01_p08:v2": {
+   "hits": [
+    {
+     "conf": 0.6291,
+     "text": "12"
+    },
+    {
+     "conf": 0.663,
+     "text": "10"
+    },
+    {
+     "conf": 0.8595,
+     "text": "APPROVED"
+    },
+    {
+     "conf": 0.8267,
+     "text": "PENDING"
+    },
+    {
+     "conf": 0.8529,
+     "text": "REJECTED"
+    }
+   ],
+   "strong_hits": 5,
+   "verdict": null
+  },
+  "gen:an0807_l0_anchors:s07_r01_p09:v1": {
+   "hits": [
+    {
+     "conf": 0.6639,
+     "text": "12"
+    },
+    {
+     "conf": 0.6627,
+     "text": "10"
+    },
+    {
+     "conf": 0.7643,
+     "text": "PENDING"
+    },
+    {
+     "conf": 0.8248,
+     "text": "APPROVED"
+    },
+    {
+     "conf": 0.874,
+     "text": "REJECTED"
+    },
+    {
+     "conf": 0.8479,
+     "text": "URGENT"
+    }
+   ],
+   "strong_hits": 6,
+   "verdict": null
+  },
+  "gen:an0807_l0_anchors:s07_r01_p09:v2": {
+   "hits": [
+    {
+     "conf": 0.6638,
+     "text": "12"
+    },
+    {
+     "conf": 0.66,
+     "text": "10"
+    },
+    {
+     "conf": 0.5553,
+     "text": "RE"
+    }
+   ],
+   "strong_hits": 2,
+   "verdict": null
+  },
+  "gen:an0807_l0_sheets:p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "iterate"
+  },
+  "gen:an0807_l0_sheets:p01:v2": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l0_sheets:p02:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "iterate"
+  },
+  "gen:an0807_l0_sheets:p02:v2": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l0_sheets:p03:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l0_sheets:p03:v2": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "iterate"
+  },
+  "gen:an0807_l0_sheets:p04:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "gen:an0807_l0_sheets:p04:v2": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "gen:an0807_l0_sheets:p05:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l0_sheets:p05:v2": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l0_sheets:p06:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l0_sheets:p06:v2": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "gen:an0807_l0_sheets:p07:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l0_sheets:p07:v2": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l0_sheets:p08:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "gen:an0807_l0_sheets:p08:v2": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "gen:an0807_l0_sheets:p09:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "iterate"
+  },
+  "gen:an0807_l0_sheets:p09:v2": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "iterate"
+  },
+  "gen:an0807_l1_family:s01_f01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s01_f02:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "iterate"
+  },
+  "gen:an0807_l1_family:s01_f03:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s01_f04:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s01_f05:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "iterate"
+  },
+  "gen:an0807_l1_family:s01_f06:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s01_f07:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s01_f08:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s01_f09:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s01_f10:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "iterate"
+  },
+  "gen:an0807_l1_family:s01_f11:v1": {
+   "hits": [
+    {
+     "conf": 0.5545,
+     "text": "SANCIRC"
+    }
+   ],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "gen:an0807_l1_family:s01_f12:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "gen:an0807_l1_family:s02_f01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s02_f02:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "iterate"
+  },
+  "gen:an0807_l1_family:s02_f03:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s02_f04:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s02_f05:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "iterate"
+  },
+  "gen:an0807_l1_family:s02_f06:v1": {
+   "hits": [
+    {
+     "conf": 0.5113,
+     "text": "De Bg aat"
+    }
+   ],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s02_f07:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s02_f08:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "gen:an0807_l1_family:s02_f09:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "gen:an0807_l1_family:s02_f10:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "iterate"
+  },
+  "gen:an0807_l1_family:s02_f11:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "iterate"
+  },
+  "gen:an0807_l1_family:s02_f12:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "gen:an0807_l1_family:s03_f01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s03_f02:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s03_f03:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s03_f04:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s03_f05:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s03_f06:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "iterate"
+  },
+  "gen:an0807_l1_family:s03_f07:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "iterate"
+  },
+  "gen:an0807_l1_family:s03_f08:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s03_f09:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "iterate"
+  },
+  "gen:an0807_l1_family:s03_f10:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s03_f11:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "gen:an0807_l1_family:s03_f12:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "gen:an0807_l1_family:s04_f01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s04_f02:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "gen:an0807_l1_family:s04_f03:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "gen:an0807_l1_family:s04_f04:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s04_f05:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s04_f06:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s04_f07:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "gen:an0807_l1_family:s04_f08:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "gen:an0807_l1_family:s04_f09:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s04_f10:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s04_f11:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s04_f12:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s05_f01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s05_f02:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "gen:an0807_l1_family:s05_f03:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s05_f04:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s05_f05:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s05_f06:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "gen:an0807_l1_family:s05_f07:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "iterate"
+  },
+  "gen:an0807_l1_family:s05_f08:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "gen:an0807_l1_family:s05_f09:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s05_f10:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s05_f11:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "gen:an0807_l1_family:s05_f12:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "gen:an0807_l1_family:s06_f01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s06_f02:v1": {
+   "hits": [
+    {
+     "conf": 0.8432,
+     "text": "Plan A"
+    },
+    {
+     "conf": 0.8372,
+     "text": "Plan B"
+    },
+    {
+     "conf": 0.8534,
+     "text": "Final Decision"
+    }
+   ],
+   "strong_hits": 3,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s06_f03:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "iterate"
+  },
+  "gen:an0807_l1_family:s06_f04:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "iterate"
+  },
+  "gen:an0807_l1_family:s06_f05:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s06_f06:v1": {
+   "hits": [
+    {
+     "conf": 0.7773,
+     "text": "Plan A"
+    },
+    {
+     "conf": 0.8325,
+     "text": "Plan B"
+    },
+    {
+     "conf": 0.7939,
+     "text": "Nex+ Steps"
+    }
+   ],
+   "strong_hits": 3,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s06_f07:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "gen:an0807_l1_family:s06_f08:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "gen:an0807_l1_family:s06_f09:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s06_f10:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "iterate"
+  },
+  "gen:an0807_l1_family:s06_f11:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "gen:an0807_l1_family:s06_f12:v1": {
+   "hits": [
+    {
+     "conf": 0.7707,
+     "text": "PLAN:A-B\\u2192C"
+    }
+   ],
+   "strong_hits": 1,
+   "verdict": "iterate"
+  },
+  "gen:an0807_l1_family:s07_f01:v1": {
+   "hits": [
+    {
+     "conf": 0.6446,
+     "text": "12"
+    },
+    {
+     "conf": 0.5325,
+     "text": "11"
+    },
+    {
+     "conf": 0.6654,
+     "text": "10"
+    },
+    {
+     "conf": 0.7632,
+     "text": "PENDING"
+    },
+    {
+     "conf": 0.849,
+     "text": "REVIEW"
+    },
+    {
+     "conf": 0.7832,
+     "text": "APPROVED"
+    }
+   ],
+   "strong_hits": 5,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s07_f02:v1": {
+   "hits": [
+    {
+     "conf": 0.5211,
+     "text": "12"
+    },
+    {
+     "conf": 0.6642,
+     "text": "10"
+    },
+    {
+     "conf": 0.5626,
+     "text": "4."
+    },
+    {
+     "conf": 0.8599,
+     "text": "PENDING"
+    },
+    {
+     "conf": 0.843,
+     "text": "REVIEW"
+    },
+    {
+     "conf": 0.8826,
+     "text": "APPROVED"
+    }
+   ],
+   "strong_hits": 4,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s07_f03:v1": {
+   "hits": [
+    {
+     "conf": 0.6648,
+     "text": "10"
+    },
+    {
+     "conf": 0.7932,
+     "text": "PENDING"
+    },
+    {
+     "conf": 0.8505,
+     "text": "APPROVED"
+    }
+   ],
+   "strong_hits": 3,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s07_f04:v1": {
+   "hits": [
+    {
+     "conf": 0.6389,
+     "text": "12"
+    },
+    {
+     "conf": 0.5849,
+     "text": "11"
+    },
+    {
+     "conf": 0.6367,
+     "text": "10"
+    },
+    {
+     "conf": 0.9141,
+     "text": "APPLICATIONS"
+    },
+    {
+     "conf": 0.8076,
+     "text": "PENDING"
+    },
+    {
+     "conf": 0.8734,
+     "text": "APPROVED"
+    }
+   ],
+   "strong_hits": 5,
+   "verdict": "iterate"
+  },
+  "gen:an0807_l1_family:s07_f05:v1": {
+   "hits": [
+    {
+     "conf": 0.6655,
+     "text": "12"
+    },
+    {
+     "conf": 0.5974,
+     "text": "11"
+    },
+    {
+     "conf": 0.6658,
+     "text": "10"
+    },
+    {
+     "conf": 0.845,
+     "text": "PENDING"
+    },
+    {
+     "conf": 0.8613,
+     "text": "APPROVED"
+    },
+    {
+     "conf": 0.8783,
+     "text": "REJECTED"
+    }
+   ],
+   "strong_hits": 5,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s07_f06:v1": {
+   "hits": [
+    {
+     "conf": 0.6406,
+     "text": "12"
+    },
+    {
+     "conf": 0.6622,
+     "text": "10"
+    },
+    {
+     "conf": 0.5849,
+     "text": "4."
+    },
+    {
+     "conf": 0.886,
+     "text": "APPLICATIONS"
+    },
+    {
+     "conf": 0.8423,
+     "text": "PENDING"
+    },
+    {
+     "conf": 0.8526,
+     "text": "PPROVED"
+    }
+   ],
+   "strong_hits": 5,
+   "verdict": "discard"
+  },
+  "gen:an0807_l1_family:s07_f07:v1": {
+   "hits": [
+    {
+     "conf": 0.6538,
+     "text": "12"
+    },
+    {
+     "conf": 0.8684,
+     "text": "PENDING"
+    },
+    {
+     "conf": 0.7712,
+     "text": "IN REVIEW"
+    },
+    {
+     "conf": 0.8727,
+     "text": "APPROVED"
+    },
+    {
+     "conf": 0.8413,
+     "text": "DEADLINE"
+    }
+   ],
+   "strong_hits": 5,
+   "verdict": "discard"
+  },
+  "gen:an0807_l1_family:s07_f08:v1": {
+   "hits": [
+    {
+     "conf": 0.663,
+     "text": "12"
+    },
+    {
+     "conf": 0.5468,
+     "text": "11"
+    },
+    {
+     "conf": 0.6636,
+     "text": "10"
+    },
+    {
+     "conf": 0.5414,
+     "text": ".8"
+    },
+    {
+     "conf": 0.6215,
+     "text": "4."
+    },
+    {
+     "conf": 0.5797,
+     "text": "IN"
+    },
+    {
+     "conf": 0.8593,
+     "text": "PENDOVED"
+    },
+    {
+     "conf": 0.8827,
+     "text": "APPROVED"
+    }
+   ],
+   "strong_hits": 5,
+   "verdict": "discard"
+  },
+  "gen:an0807_l1_family:s07_f09:v1": {
+   "hits": [
+    {
+     "conf": 0.5694,
+     "text": "12"
+    },
+    {
+     "conf": 0.827,
+     "text": "PENDING"
+    },
+    {
+     "conf": 0.883,
+     "text": "APPROVED"
+    },
+    {
+     "conf": 0.8839,
+     "text": "REJECTED"
+    }
+   ],
+   "strong_hits": 3,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s07_f10:v1": {
+   "hits": [
+    {
+     "conf": 0.6444,
+     "text": "4."
+    },
+    {
+     "conf": 0.8618,
+     "text": "PENDING"
+    },
+    {
+     "conf": 0.7285,
+     "text": "OUT"
+    }
+   ],
+   "strong_hits": 3,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s07_f11:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "gen:an0807_l1_family:s07_f12:v1": {
+   "hits": [
+    {
+     "conf": 0.6645,
+     "text": "12"
+    },
+    {
+     "conf": 0.6203,
+     "text": "11"
+    },
+    {
+     "conf": 0.6658,
+     "text": "10"
+    },
+    {
+     "conf": 0.7489,
+     "text": "PENDING"
+    },
+    {
+     "conf": 0.8351,
+     "text": "REVIEW"
+    },
+    {
+     "conf": 0.8434,
+     "text": "APPROVED"
+    }
+   ],
+   "strong_hits": 6,
+   "verdict": "discard"
+  },
+  "gen:an0807_l1_family:s08_f01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s08_f02:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s08_f03:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s08_f04:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s08_f05:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "gen:an0807_l1_family:s08_f06:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "gen:an0807_l1_family:s08_f07:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "gen:an0807_l1_family:s08_f08:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "gen:an0807_l1_family:s08_f09:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "iterate"
+  },
+  "gen:an0807_l1_family:s08_f10:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s08_f11:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "gen:an0807_l1_family:s08_f12:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "gen:an0807_l1_family:s09_f01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s09_f02:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "gen:an0807_l1_family:s09_f03:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s09_f04:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s09_f05:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s09_f06:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "gen:an0807_l1_family:s09_f07:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "gen:an0807_l1_family:s09_f08:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "gen:an0807_l1_family:s09_f09:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s09_f10:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s09_f11:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "gen:an0807_l1_family:s09_f12:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "gen:an0807_l1_family:s10_f01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s10_f02:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s10_f03:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s10_f04:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s10_f05:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s10_f06:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "iterate"
+  },
+  "gen:an0807_l1_family:s10_f07:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "iterate"
+  },
+  "gen:an0807_l1_family:s10_f08:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "gen:an0807_l1_family:s10_f09:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s10_f10:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s10_f11:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "gen:an0807_l1_family:s10_f12:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "gen:an0807_l1_family:s11_f01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s11_f02:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "iterate"
+  },
+  "gen:an0807_l1_family:s11_f03:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "gen:an0807_l1_family:s11_f04:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s11_f05:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s11_f06:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s11_f07:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "iterate"
+  },
+  "gen:an0807_l1_family:s11_f08:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "iterate"
+  },
+  "gen:an0807_l1_family:s11_f09:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s11_f10:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s11_f11:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "gen:an0807_l1_family:s11_f12:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "gen:an0807_l1_family:s12_f01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s12_f02:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "gen:an0807_l1_family:s12_f03:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "iterate"
+  },
+  "gen:an0807_l1_family:s12_f04:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s12_f05:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s12_f06:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "gen:an0807_l1_family:s12_f07:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s12_f08:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "gen:an0807_l1_family:s12_f09:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "iterate"
+  },
+  "gen:an0807_l1_family:s12_f10:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s12_f11:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "gen:an0807_l1_family:s12_f12:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "gen:an0807_l1_family:s13_f01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s13_f02:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "iterate"
+  },
+  "gen:an0807_l1_family:s13_f03:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s13_f04:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_family:s13_f05:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s13_f06:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s13_f07:v1": {
+   "hits": [
+    {
+     "conf": 0.7875,
+     "text": "8888"
+    }
+   ],
+   "strong_hits": 1,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s13_f08:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s13_f09:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s13_f10:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s13_f11:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s13_f12:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s14_f01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s14_f02:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s14_f03:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s14_f04:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s14_f05:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s14_f06:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s14_f07:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s14_f08:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s14_f09:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s14_f10:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s14_f11:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s14_f12:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s15_f01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s15_f02:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s15_f03:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s15_f04:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s15_f05:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s15_f06:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s15_f07:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s15_f08:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s15_f09:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s15_f10:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s15_f11:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s15_f12:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s16_f01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s16_f02:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s16_f03:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s16_f04:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s16_f05:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s16_f06:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s16_f07:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s16_f08:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s16_f09:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s16_f10:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s16_f11:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s16_f12:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s17_f01:v1": {
+   "hits": [
+    {
+     "conf": 0.8944,
+     "text": "DESICCANT"
+    }
+   ],
+   "strong_hits": 1,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s17_f02:v1": {
+   "hits": [
+    {
+     "conf": 0.604,
+     "text": "Gucnitinad"
+    }
+   ],
+   "strong_hits": 1,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s17_f03:v1": {
+   "hits": [
+    {
+     "conf": 0.6697,
+     "text": "Shoa et"
+    },
+    {
+     "conf": 0.6199,
+     "text": "Sic Bet"
+    }
+   ],
+   "strong_hits": 2,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s17_f04:v1": {
+   "hits": [
+    {
+     "conf": 0.6398,
+     "text": "DO"
+    }
+   ],
+   "strong_hits": 1,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s17_f05:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s17_f06:v1": {
+   "hits": [
+    {
+     "conf": 0.5673,
+     "text": "360"
+    },
+    {
+     "conf": 0.6598,
+     "text": "30"
+    },
+    {
+     "conf": 0.6562,
+     "text": "20"
+    },
+    {
+     "conf": 0.5761,
+     "text": "20"
+    },
+    {
+     "conf": 0.5873,
+     "text": "30-"
+    },
+    {
+     "conf": 0.515,
+     "text": "20"
+    },
+    {
+     "conf": 0.5627,
+     "text": "20"
+    }
+   ],
+   "strong_hits": 2,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s17_f07:v1": {
+   "hits": [
+    {
+     "conf": 0.8203,
+     "text": "DESICCANT"
+    }
+   ],
+   "strong_hits": 1,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s17_f08:v1": {
+   "hits": [
+    {
+     "conf": 0.7674,
+     "text": "Slica A Gel."
+    },
+    {
+     "conf": 0.8115,
+     "text": "Do Not Eat"
+    }
+   ],
+   "strong_hits": 2,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s17_f09:v1": {
+   "hits": [
+    {
+     "conf": 0.8356,
+     "text": "DESICCANT"
+    },
+    {
+     "conf": 0.8334,
+     "text": "DESICCANT"
+    }
+   ],
+   "strong_hits": 2,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s17_f10:v1": {
+   "hits": [
+    {
+     "conf": 0.7809,
+     "text": "DO NOT"
+    },
+    {
+     "conf": 0.7983,
+     "text": "DO NE EAT"
+    }
+   ],
+   "strong_hits": 2,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s17_f11:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s17_f12:v1": {
+   "hits": [
+    {
+     "conf": 0.662,
+     "text": "30"
+    },
+    {
+     "conf": 0.5824,
+     "text": "30"
+    },
+    {
+     "conf": 0.6194,
+     "text": "80"
+    },
+    {
+     "conf": 0.5481,
+     "text": "30"
+    },
+    {
+     "conf": 0.6636,
+     "text": "20"
+    },
+    {
+     "conf": 0.6051,
+     "text": "40."
+    },
+    {
+     "conf": 0.5723,
+     "text": "40"
+    },
+    {
+     "conf": 0.6138,
+     "text": "30"
+    },
+    {
+     "conf": 0.5996,
+     "text": "20"
+    },
+    {
+     "conf": 0.7496,
+     "text": "100"
+    },
+    {
+     "conf": 0.6395,
+     "text": "00"
+    },
+    {
+     "conf": 0.7385,
+     "text": "SILCA GEK"
+    },
+    {
+     "conf": 0.8592,
+     "text": "SILIA NDT GEE"
+    },
+    {
+     "conf": 0.7493,
+     "text": "DO INTEAT"
+    },
+    {
+     "conf": 0.8024,
+     "text": "SILICA GEL"
+    },
+    {
+     "conf": 0.7927,
+     "text": "DO NOTEAT"
+    },
+    {
+     "conf": 0.7602,
+     "text": "DOIOA GET"
+    }
+   ],
+   "strong_hits": 13,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s18_f01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s18_f02:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s18_f03:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s18_f04:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s18_f05:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s18_f06:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s18_f07:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s18_f08:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s18_f09:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s18_f10:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s18_f11:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s18_f12:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s19_f01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s19_f02:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s19_f03:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s19_f04:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s19_f05:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s19_f06:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s19_f07:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s19_f08:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s19_f09:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s19_f10:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s19_f11:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s19_f12:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s20_f01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s20_f02:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s20_f03:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s20_f04:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s20_f05:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s20_f06:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s20_f07:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s20_f08:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s20_f09:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s20_f10:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s20_f11:v1": {
+   "hits": [
+    {
+     "conf": 0.5581,
+     "text": "88"
+    }
+   ],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s20_f12:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s21_f01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s21_f02:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s21_f03:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s21_f04:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s21_f05:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s21_f06:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s21_f07:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s21_f08:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s21_f09:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s21_f10:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s21_f11:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s21_f12:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s22_f01:v1": {
+   "hits": [
+    {
+     "conf": 0.6609,
+     "text": "40"
+    },
+    {
+     "conf": 0.67,
+     "text": "Hz "
+    },
+    {
+     "conf": 0.5593,
+     "text": "20"
+    },
+    {
+     "conf": 0.5254,
+     "text": "16"
+    },
+    {
+     "conf": 0.7456,
+     "text": "RPM"
+    }
+   ],
+   "strong_hits": 3,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s22_f02:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s22_f03:v1": {
+   "hits": [
+    {
+     "conf": 0.7871,
+     "text": "FAULT"
+    },
+    {
+     "conf": 0.8248,
+     "text": "ALERT"
+    },
+    {
+     "conf": 0.6396,
+     "text": "12"
+    },
+    {
+     "conf": 0.6005,
+     "text": "25"
+    },
+    {
+     "conf": 0.6488,
+     "text": "4G"
+    },
+    {
+     "conf": 0.6632,
+     "text": "80"
+    },
+    {
+     "conf": 0.6606,
+     "text": "10"
+    },
+    {
+     "conf": 0.6655,
+     "text": "40"
+    },
+    {
+     "conf": 0.8721,
+     "text": "SYSTEM OK"
+    },
+    {
+     "conf": 0.6023,
+     "text": "40"
+    },
+    {
+     "conf": 0.7071,
+     "text": "OFF"
+    },
+    {
+     "conf": 0.7228,
+     "text": "LOW"
+    },
+    {
+     "conf": 0.6596,
+     "text": "ON"
+    },
+    {
+     "conf": 0.6501,
+     "text": "HIGH"
+    },
+    {
+     "conf": 0.6429,
+     "text": "20"
+    },
+    {
+     "conf": 0.6396,
+     "text": "130"
+    },
+    {
+     "conf": 0.6647,
+     "text": "20"
+    },
+    {
+     "conf": 0.5894,
+     "text": "10"
+    },
+    {
+     "conf": 0.5061,
+     "text": "20"
+    },
+    {
+     "conf": 0.5949,
+     "text": "20"
+    },
+    {
+     "conf": 0.5131,
+     "text": "20"
+    },
+    {
+     "conf": 0.6656,
+     "text": "20"
+    },
+    {
+     "conf": 0.6435,
+     "text": "30"
+    },
+    {
+     "conf": 0.6577,
+     "text": "25"
+    },
+    {
+     "conf": 0.6265,
+     "text": "240"
+    },
+    {
+     "conf": 0.7934,
+     "text": "VACUDM"
+    },
+    {
+     "conf": 0.7481,
+     "text": "RPM"
+    },
+    {
+     "conf": 0.6392,
+     "text": "20"
+    },
+    {
+     "conf": 0.741,
+     "text": "x10000"
+    }
+   ],
+   "strong_hits": 25,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s22_f04:v1": {
+   "hits": [
+    {
+     "conf": 0.5198,
+     "text": "nfu"
+    }
+   ],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s22_f05:v1": {
+   "hits": [
+    {
+     "conf": 0.6632,
+     "text": "30"
+    },
+    {
+     "conf": 0.6659,
+     "text": "13"
+    },
+    {
+     "conf": 0.6077,
+     "text": "50"
+    },
+    {
+     "conf": 0.5659,
+     "text": "15"
+    },
+    {
+     "conf": 0.5475,
+     "text": "12"
+    },
+    {
+     "conf": 0.6604,
+     "text": "80"
+    },
+    {
+     "conf": 0.6531,
+     "text": "20"
+    },
+    {
+     "conf": 0.6643,
+     "text": "40"
+    },
+    {
+     "conf": 0.6597,
+     "text": "10"
+    },
+    {
+     "conf": 0.5684,
+     "text": "20"
+    },
+    {
+     "conf": 0.5647,
+     "text": "70"
+    },
+    {
+     "conf": 0.6599,
+     "text": "20"
+    },
+    {
+     "conf": 0.6326,
+     "text": "30-"
+    },
+    {
+     "conf": 0.5041,
+     "text": "-0"
+    },
+    {
+     "conf": 0.6216,
+     "text": "40"
+    },
+    {
+     "conf": 0.5029,
+     "text": "80"
+    },
+    {
+     "conf": 0.7436,
+     "text": "100"
+    },
+    {
+     "conf": 0.6638,
+     "text": "12"
+    },
+    {
+     "conf": 0.5177,
+     "text": "10"
+    },
+    {
+     "conf": 0.7887,
+     "text": "STOP"
+    },
+    {
+     "conf": 0.5344,
+     "text": "4."
+    }
+   ],
+   "strong_hits": 13,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s22_f06:v1": {
+   "hits": [
+    {
+     "conf": 0.629,
+     "text": "120"
+    },
+    {
+     "conf": 0.5338,
+     "text": "88"
+    },
+    {
+     "conf": 0.5942,
+     "text": "13-"
+    },
+    {
+     "conf": 0.657,
+     "text": "20-"
+    },
+    {
+     "conf": 0.5777,
+     "text": "20"
+    },
+    {
+     "conf": 0.5579,
+     "text": "19\\u3001"
+    },
+    {
+     "conf": 0.5479,
+     "text": "4."
+    }
+   ],
+   "strong_hits": 2,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s22_f07:v1": {
+   "hits": [
+    {
+     "conf": 0.8273,
+     "text": "ALERT"
+    },
+    {
+     "conf": 0.6705,
+     "text": "OFF"
+    },
+    {
+     "conf": 0.7178,
+     "text": "OFF"
+    },
+    {
+     "conf": 0.8514,
+     "text": "NORMAL"
+    },
+    {
+     "conf": 0.8493,
+     "text": "NORMAL"
+    },
+    {
+     "conf": 0.7379,
+     "text": "OFF"
+    }
+   ],
+   "strong_hits": 6,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s22_f08:v1": {
+   "hits": [
+    {
+     "conf": 0.6272,
+     "text": "50"
+    },
+    {
+     "conf": 0.5242,
+     "text": "50"
+    },
+    {
+     "conf": 0.6647,
+     "text": "40"
+    },
+    {
+     "conf": 0.6924,
+     "text": "180"
+    },
+    {
+     "conf": 0.5538,
+     "text": "1180"
+    },
+    {
+     "conf": 0.6586,
+     "text": "180"
+    },
+    {
+     "conf": 0.5211,
+     "text": "60"
+    },
+    {
+     "conf": 0.612,
+     "text": "40"
+    },
+    {
+     "conf": 0.6658,
+     "text": "40"
+    },
+    {
+     "conf": 0.6783,
+     "text": "220"
+    },
+    {
+     "conf": 0.7164,
+     "text": "430"
+    },
+    {
+     "conf": 0.7307,
+     "text": "2200"
+    },
+    {
+     "conf": 0.6158,
+     "text": "30"
+    },
+    {
+     "conf": 0.6844,
+     "text": "130"
+    },
+    {
+     "conf": 0.6783,
+     "text": "130"
+    },
+    {
+     "conf": 0.6369,
+     "text": "40"
+    },
+    {
+     "conf": 0.6695,
+     "text": "180"
+    },
+    {
+     "conf": 0.6253,
+     "text": "RE"
+    },
+    {
+     "conf": 0.5173,
+     "text": "S0"
+    },
+    {
+     "conf": 0.6524,
+     "text": "30"
+    }
+   ],
+   "strong_hits": 16,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s22_f09:v1": {
+   "hits": [
+    {
+     "conf": 0.6624,
+     "text": "20"
+    },
+    {
+     "conf": 0.5088,
+     "text": "28"
+    },
+    {
+     "conf": 0.5715,
+     "text": "28"
+    },
+    {
+     "conf": 0.5892,
+     "text": "20k"
+    },
+    {
+     "conf": 0.7099,
+     "text": "T89999999991"
+    }
+   ],
+   "strong_hits": 2,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s22_f10:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s22_f11:v1": {
+   "hits": [
+    {
+     "conf": 0.5859,
+     "text": "JJUUUUUUUU"
+    }
+   ],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_family:s22_f12:v1": {
+   "hits": [
+    {
+     "conf": 0.812,
+     "text": "FAULT"
+    },
+    {
+     "conf": 0.762,
+     "text": "ALARM"
+    },
+    {
+     "conf": 0.7527,
+     "text": "READY"
+    },
+    {
+     "conf": 0.8549,
+     "text": "OFFLINE"
+    },
+    {
+     "conf": 0.664,
+     "text": "20"
+    },
+    {
+     "conf": 0.6641,
+     "text": "12"
+    },
+    {
+     "conf": 0.666,
+     "text": "20"
+    },
+    {
+     "conf": 0.6647,
+     "text": "20"
+    },
+    {
+     "conf": 0.6595,
+     "text": "20"
+    },
+    {
+     "conf": 0.6649,
+     "text": "20"
+    },
+    {
+     "conf": 0.588,
+     "text": "20-"
+    },
+    {
+     "conf": 0.6251,
+     "text": "18-"
+    },
+    {
+     "conf": 0.5899,
+     "text": "20"
+    },
+    {
+     "conf": 0.5213,
+     "text": "20"
+    },
+    {
+     "conf": 0.5556,
+     "text": "20-"
+    },
+    {
+     "conf": 0.5184,
+     "text": "25"
+    },
+    {
+     "conf": 0.6379,
+     "text": "Hz"
+    },
+    {
+     "conf": 0.5152,
+     "text": "20"
+    },
+    {
+     "conf": 0.638,
+     "text": "80"
+    },
+    {
+     "conf": 0.6439,
+     "text": "12"
+    },
+    {
+     "conf": 0.576,
+     "text": "26"
+    },
+    {
+     "conf": 0.6211,
+     "text": "100"
+    },
+    {
+     "conf": 0.6092,
+     "text": "40"
+    },
+    {
+     "conf": 0.654,
+     "text": "25"
+    },
+    {
+     "conf": 0.6225,
+     "text": "3-"
+    },
+    {
+     "conf": 0.6581,
+     "text": "129-"
+    },
+    {
+     "conf": 0.614,
+     "text": "200"
+    },
+    {
+     "conf": 0.6457,
+     "text": "4."
+    },
+    {
+     "conf": 0.6168,
+     "text": "129"
+    }
+   ],
+   "strong_hits": 22,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s01_r01_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s01_r02_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s01_r03_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s01_r04_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s01_r05_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s01_r06_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s01_r07_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s01_r08_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s01_r09_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s01_r10_p01:v1": {
+   "hits": [
+    {
+     "conf": 0.5103,
+     "text": "185858686"
+    }
+   ],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s02_r01_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s02_r02_p01:v1": {
+   "hits": [
+    {
+     "conf": 0.5364,
+     "text": "BEDEGIG"
+    }
+   ],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s02_r03_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s02_r04_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s02_r05_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s02_r06_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s02_r07_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s02_r08_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s02_r09_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s02_r10_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s03_r01_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s03_r02_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s03_r03_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s03_r04_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s03_r05_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s03_r06_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s03_r07_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s03_r08_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s03_r09_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s03_r10_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s04_r01_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s04_r02_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s04_r03_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s04_r04_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s04_r05_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s04_r06_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s04_r07_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s04_r08_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s04_r09_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s04_r10_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s05_r01_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s05_r02_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s05_r03_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s05_r04_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s05_r05_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s05_r06_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s05_r07_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s05_r08_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s05_r09_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s05_r10_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s06_r01_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s06_r02_p01:v1": {
+   "hits": [
+    {
+     "conf": 0.7868,
+     "text": ".Access Codes"
+    },
+    {
+     "conf": 0.8458,
+     "text": "Secure Site"
+    },
+    {
+     "conf": 0.9026,
+     "text": "Containment Protocol"
+    }
+   ],
+   "strong_hits": 3,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s06_r03_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s06_r04_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s06_r05_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s06_r06_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s06_r07_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s06_r08_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s06_r09_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s06_r10_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s07_r01_p01:v1": {
+   "hits": [
+    {
+     "conf": 0.5214,
+     "text": "12"
+    },
+    {
+     "conf": 0.5435,
+     "text": "11"
+    },
+    {
+     "conf": 0.655,
+     "text": "10"
+    },
+    {
+     "conf": 0.5376,
+     "text": ".8"
+    },
+    {
+     "conf": 0.7746,
+     "text": "PENDING"
+    },
+    {
+     "conf": 0.8796,
+     "text": "APPROVED"
+    },
+    {
+     "conf": 0.8618,
+     "text": "REJECTED"
+    }
+   ],
+   "strong_hits": 4,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s07_r02_p01:v1": {
+   "hits": [
+    {
+     "conf": 0.6653,
+     "text": "12"
+    },
+    {
+     "conf": 0.8334,
+     "text": "PENDING"
+    },
+    {
+     "conf": 0.8348,
+     "text": "APPROVED"
+    },
+    {
+     "conf": 0.8817,
+     "text": "REJECTED"
+    }
+   ],
+   "strong_hits": 4,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s07_r03_p01:v1": {
+   "hits": [
+    {
+     "conf": 0.664,
+     "text": "12"
+    },
+    {
+     "conf": 0.6642,
+     "text": "10"
+    },
+    {
+     "conf": 0.7215,
+     "text": "PENDING"
+    },
+    {
+     "conf": 0.808,
+     "text": "REVIEW"
+    },
+    {
+     "conf": 0.7662,
+     "text": "APPROVED"
+    }
+   ],
+   "strong_hits": 5,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s07_r04_p01:v1": {
+   "hits": [
+    {
+     "conf": 0.6649,
+     "text": "12"
+    },
+    {
+     "conf": 0.5798,
+     "text": "10"
+    },
+    {
+     "conf": 0.6572,
+     "text": "4."
+    },
+    {
+     "conf": 0.8441,
+     "text": "PENDING"
+    },
+    {
+     "conf": 0.8474,
+     "text": "REVIEW"
+    }
+   ],
+   "strong_hits": 4,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s07_r05_p01:v1": {
+   "hits": [
+    {
+     "conf": 0.5957,
+     "text": "10"
+    },
+    {
+     "conf": 0.856,
+     "text": "PENDING"
+    },
+    {
+     "conf": 0.8857,
+     "text": "APPROVED"
+    }
+   ],
+   "strong_hits": 2,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s07_r06_p01:v1": {
+   "hits": [
+    {
+     "conf": 0.5257,
+     "text": "10"
+    },
+    {
+     "conf": 0.866,
+     "text": "PENDING"
+    },
+    {
+     "conf": 0.882,
+     "text": "APPROVED"
+    }
+   ],
+   "strong_hits": 2,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s07_r07_p01:v1": {
+   "hits": [
+    {
+     "conf": 0.664,
+     "text": "12"
+    },
+    {
+     "conf": 0.6146,
+     "text": "10"
+    },
+    {
+     "conf": 0.8497,
+     "text": "APPROVED"
+    },
+    {
+     "conf": 0.7773,
+     "text": "PENDING"
+    },
+    {
+     "conf": 0.8756,
+     "text": "REJECTED"
+    }
+   ],
+   "strong_hits": 5,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s07_r08_p01:v1": {
+   "hits": [
+    {
+     "conf": 0.5743,
+     "text": "12"
+    },
+    {
+     "conf": 0.6638,
+     "text": "10"
+    },
+    {
+     "conf": 0.658,
+     "text": ".8"
+    },
+    {
+     "conf": 0.8575,
+     "text": "PENDING"
+    },
+    {
+     "conf": 0.7691,
+     "text": "APPROVED"
+    }
+   ],
+   "strong_hits": 4,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s07_r09_p01:v1": {
+   "hits": [
+    {
+     "conf": 0.5724,
+     "text": "111"
+    },
+    {
+     "conf": 0.6624,
+     "text": "10"
+    },
+    {
+     "conf": 0.8775,
+     "text": "APPROVED"
+    },
+    {
+     "conf": 0.8189,
+     "text": "PENDING"
+    },
+    {
+     "conf": 0.7952,
+     "text": "REJECTED"
+    }
+   ],
+   "strong_hits": 4,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s07_r10_p01:v1": {
+   "hits": [
+    {
+     "conf": 0.8157,
+     "text": "PENDING"
+    },
+    {
+     "conf": 0.8489,
+     "text": "REVIEW"
+    },
+    {
+     "conf": 0.8309,
+     "text": "APPROVED"
+    }
+   ],
+   "strong_hits": 3,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s08_r01_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s08_r02_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s08_r03_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s08_r04_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s08_r05_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s08_r06_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s08_r07_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s08_r08_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s08_r09_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s08_r10_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s09_r01_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s09_r02_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s09_r03_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s09_r04_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s09_r05_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s09_r06_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s09_r07_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s09_r08_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s09_r09_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s09_r10_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s10_r01_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s10_r02_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s10_r03_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s10_r04_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s10_r05_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s10_r06_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s10_r07_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s10_r08_p01:v1": {
+   "hits": [
+    {
+     "conf": 0.8716,
+     "text": "SECTION A-A"
+    }
+   ],
+   "strong_hits": 1,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s10_r09_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s10_r10_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s11_r01_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s11_r02_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s11_r03_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s11_r04_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s11_r05_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s11_r06_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s11_r07_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s11_r08_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s11_r09_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s11_r10_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s12_r01_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s12_r02_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s12_r03_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s12_r04_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s12_r05_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s12_r06_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s12_r07_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s12_r08_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s12_r09_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s12_r10_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s13_r01_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s13_r02_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s13_r03_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s13_r04_p01:v1": {
+   "hits": [
+    {
+     "conf": 0.5197,
+     "text": "KK"
+    }
+   ],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s13_r05_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s13_r06_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s13_r07_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s13_r08_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s13_r09_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s13_r10_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s14_r01_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s14_r02_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s14_r03_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s14_r04_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s14_r05_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s14_r06_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s14_r07_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s14_r08_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s14_r09_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s14_r10_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s15_r01_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s15_r02_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s15_r03_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s15_r04_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s15_r05_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s15_r06_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s15_r07_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s15_r08_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s15_r09_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s15_r10_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s16_r01_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s16_r02_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s16_r03_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s16_r04_p01:v1": {
+   "hits": [
+    {
+     "conf": 0.6015,
+     "text": "888"
+    }
+   ],
+   "strong_hits": 1,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s16_r05_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s16_r06_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s16_r07_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s16_r08_p01:v1": {
+   "hits": [
+    {
+     "conf": 0.7342,
+     "text": "A-A"
+    },
+    {
+     "conf": 0.6511,
+     "text": "A-A"
+    }
+   ],
+   "strong_hits": 2,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s16_r09_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s16_r10_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s17_r01_p01:v1": {
+   "hits": [
+    {
+     "conf": 0.6081,
+     "text": "Slca Eut"
+    }
+   ],
+   "strong_hits": 1,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s17_r02_p01:v1": {
+   "hits": [
+    {
+     "conf": 0.5743,
+     "text": "St.mitao Gel"
+    },
+    {
+     "conf": 0.6272,
+     "text": "C30"
+    }
+   ],
+   "strong_hits": 1,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s17_r03_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s17_r04_p01:v1": {
+   "hits": [
+    {
+     "conf": 0.5955,
+     "text": "6336"
+    },
+    {
+     "conf": 0.7422,
+     "text": "Sinidlca Gell"
+    },
+    {
+     "conf": 0.8101,
+     "text": "Pe Saicant"
+    }
+   ],
+   "strong_hits": 2,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s17_r05_p01:v1": {
+   "hits": [
+    {
+     "conf": 0.8861,
+     "text": "DESICCANT"
+    },
+    {
+     "conf": 0.8198,
+     "text": "SILICA GEL"
+    },
+    {
+     "conf": 0.8246,
+     "text": "TRROW AWAY"
+    },
+    {
+     "conf": 0.8497,
+     "text": "DO NOT EAT"
+    }
+   ],
+   "strong_hits": 4,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s17_r06_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s17_r07_p01:v1": {
+   "hits": [
+    {
+     "conf": 0.621,
+     "text": "20"
+    },
+    {
+     "conf": 0.6406,
+     "text": "20"
+    },
+    {
+     "conf": 0.8109,
+     "text": "SIICA CEL"
+    },
+    {
+     "conf": 0.6379,
+     "text": "DCiN No!"
+    }
+   ],
+   "strong_hits": 4,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s17_r08_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s17_r09_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s17_r10_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s18_r01_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s18_r02_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s18_r03_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s18_r04_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s18_r05_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s18_r06_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s18_r07_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s18_r08_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s18_r09_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s18_r10_p01:v1": {
+   "hits": [
+    {
+     "conf": 0.729,
+     "text": "AYAVA"
+    }
+   ],
+   "strong_hits": 1,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s19_r01_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s19_r02_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s19_r03_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s19_r04_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s19_r05_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s19_r06_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s19_r07_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s19_r08_p01:v1": {
+   "hits": [
+    {
+     "conf": 0.5017,
+     "text": "OD"
+    }
+   ],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s19_r09_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s19_r10_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s20_r01_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s20_r02_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s20_r03_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s20_r04_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s20_r05_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s20_r06_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s20_r07_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s20_r08_p01:v1": {
+   "hits": [
+    {
+     "conf": 0.7595,
+     "text": "SECTION A-A"
+    }
+   ],
+   "strong_hits": 1,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s20_r09_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s20_r10_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s21_r01_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s21_r02_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s21_r03_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s21_r04_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s21_r05_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s21_r06_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s21_r07_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s21_r08_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s21_r09_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s21_r10_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s22_r01_p01:v1": {
+   "hits": [
+    {
+     "conf": 0.8476,
+     "text": "DANGER"
+    },
+    {
+     "conf": 0.7027,
+     "text": "FLIP"
+    },
+    {
+     "conf": 0.702,
+     "text": "FAIL"
+    }
+   ],
+   "strong_hits": 3,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s22_r02_p01:v1": {
+   "hits": [
+    {
+     "conf": 0.6566,
+     "text": "10"
+    },
+    {
+     "conf": 0.6171,
+     "text": "22"
+    }
+   ],
+   "strong_hits": 2,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s22_r03_p01:v1": {
+   "hits": [
+    {
+     "conf": 0.6334,
+     "text": "30"
+    },
+    {
+     "conf": 0.524,
+     "text": ":30"
+    },
+    {
+     "conf": 0.6135,
+     "text": "28"
+    },
+    {
+     "conf": 0.6647,
+     "text": "30"
+    },
+    {
+     "conf": 0.6271,
+     "text": "20"
+    },
+    {
+     "conf": 0.6251,
+     "text": "39"
+    },
+    {
+     "conf": 0.7178,
+     "text": "220-"
+    },
+    {
+     "conf": 0.6637,
+     "text": "20"
+    },
+    {
+     "conf": 0.6091,
+     "text": "30"
+    },
+    {
+     "conf": 0.5161,
+     "text": "003"
+    },
+    {
+     "conf": 0.7145,
+     "text": "120-"
+    },
+    {
+     "conf": 0.663,
+     "text": "29"
+    },
+    {
+     "conf": 0.5906,
+     "text": "100"
+    },
+    {
+     "conf": 0.6758,
+     "text": "130"
+    },
+    {
+     "conf": 0.5604,
+     "text": "90"
+    },
+    {
+     "conf": 0.5965,
+     "text": "20-"
+    },
+    {
+     "conf": 0.5887,
+     "text": "200"
+    }
+   ],
+   "strong_hits": 11,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s22_r04_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s22_r05_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s22_r06_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s22_r07_p01:v1": {
+   "hits": [
+    {
+     "conf": 0.6312,
+     "text": "29"
+    },
+    {
+     "conf": 0.5488,
+     "text": "30"
+    },
+    {
+     "conf": 0.6643,
+     "text": "20"
+    },
+    {
+     "conf": 0.5087,
+     "text": "36-"
+    },
+    {
+     "conf": 0.6144,
+     "text": "29-"
+    }
+   ],
+   "strong_hits": 3,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s22_r08_p01:v1": {
+   "hits": [
+    {
+     "conf": 0.665,
+     "text": "60"
+    },
+    {
+     "conf": 0.51,
+     "text": "30"
+    },
+    {
+     "conf": 0.6547,
+     "text": "50"
+    },
+    {
+     "conf": 0.6589,
+     "text": "60"
+    },
+    {
+     "conf": 0.6652,
+     "text": "50"
+    },
+    {
+     "conf": 0.6572,
+     "text": "80"
+    },
+    {
+     "conf": 0.5192,
+     "text": "50"
+    },
+    {
+     "conf": 0.6639,
+     "text": "20"
+    },
+    {
+     "conf": 0.5842,
+     "text": "20"
+    },
+    {
+     "conf": 0.6418,
+     "text": "220"
+    },
+    {
+     "conf": 0.6326,
+     "text": "20"
+    },
+    {
+     "conf": 0.5102,
+     "text": "40"
+    },
+    {
+     "conf": 0.7469,
+     "text": "100"
+    },
+    {
+     "conf": 0.6004,
+     "text": "-20"
+    },
+    {
+     "conf": 0.6596,
+     "text": "120-"
+    },
+    {
+     "conf": 0.7479,
+     "text": "100"
+    },
+    {
+     "conf": 0.6284,
+     "text": "100"
+    },
+    {
+     "conf": 0.6217,
+     "text": "12"
+    }
+   ],
+   "strong_hits": 14,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s22_r09_p01:v1": {
+   "hits": [
+    {
+     "conf": 0.5581,
+     "text": "10"
+    }
+   ],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_grid:s22_r10_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l1_palette:s01_r01_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_palette:s01_r01_p02:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "iterate"
+  },
+  "gen:an0807_l1_palette:s01_r01_p03:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_palette:s01_r01_p04:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_palette:s01_r01_p05:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_palette:s01_r01_p06:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_palette:s01_r01_p07:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_palette:s01_r01_p08:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "iterate"
+  },
+  "gen:an0807_l1_palette:s01_r01_p09:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "iterate"
+  },
+  "gen:an0807_l1_palette:s05_r01_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "iterate"
+  },
+  "gen:an0807_l1_palette:s05_r01_p02:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_palette:s05_r01_p03:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_palette:s05_r01_p04:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_palette:s05_r01_p05:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_palette:s05_r01_p06:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_palette:s05_r01_p07:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "iterate"
+  },
+  "gen:an0807_l1_palette:s05_r01_p08:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_palette:s05_r01_p09:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_palette:s08_r01_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_palette:s08_r01_p02:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_palette:s08_r01_p03:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_palette:s08_r01_p04:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "iterate"
+  },
+  "gen:an0807_l1_palette:s08_r01_p05:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_palette:s08_r01_p06:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_palette:s08_r01_p07:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_palette:s08_r01_p08:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "iterate"
+  },
+  "gen:an0807_l1_palette:s08_r01_p09:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_palette:s09_r01_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "gen:an0807_l1_palette:s09_r01_p02:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "gen:an0807_l1_palette:s09_r01_p03:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_palette:s09_r01_p04:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "iterate"
+  },
+  "gen:an0807_l1_palette:s09_r01_p05:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_palette:s09_r01_p06:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "iterate"
+  },
+  "gen:an0807_l1_palette:s09_r01_p07:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "gen:an0807_l1_palette:s09_r01_p08:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_palette:s09_r01_p09:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_palette:s11_r01_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_palette:s11_r01_p02:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_palette:s11_r01_p03:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_palette:s11_r01_p04:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_palette:s11_r01_p05:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_palette:s11_r01_p06:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_palette:s11_r01_p07:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "iterate"
+  },
+  "gen:an0807_l1_palette:s11_r01_p08:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_palette:s11_r01_p09:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_palette:s13_r01_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_palette:s13_r01_p02:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_palette:s13_r01_p03:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_palette:s13_r01_p04:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "iterate"
+  },
+  "gen:an0807_l1_palette:s13_r01_p05:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_palette:s13_r01_p06:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_palette:s13_r01_p07:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "gen:an0807_l1_palette:s13_r01_p08:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "iterate"
+  },
+  "gen:an0807_l1_palette:s13_r01_p09:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_palette:s16_r01_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "iterate"
+  },
+  "gen:an0807_l1_palette:s16_r01_p02:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "gen:an0807_l1_palette:s16_r01_p03:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "gen:an0807_l1_palette:s16_r01_p04:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_palette:s16_r01_p05:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "iterate"
+  },
+  "gen:an0807_l1_palette:s16_r01_p06:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "iterate"
+  },
+  "gen:an0807_l1_palette:s16_r01_p07:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "iterate"
+  },
+  "gen:an0807_l1_palette:s16_r01_p08:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_palette:s16_r01_p09:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "iterate"
+  },
+  "gen:an0807_l1_palette:s18_r01_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_palette:s18_r01_p02:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_palette:s18_r01_p03:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_palette:s18_r01_p04:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "iterate"
+  },
+  "gen:an0807_l1_palette:s18_r01_p05:v1": {
+   "hits": [
+    {
+     "conf": 0.5118,
+     "text": "AA"
+    }
+   ],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "gen:an0807_l1_palette:s18_r01_p06:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_palette:s18_r01_p07:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "gen:an0807_l1_palette:s18_r01_p08:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_palette:s18_r01_p09:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "iterate"
+  },
+  "gen:an0807_l1_palette:s20_r01_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "gen:an0807_l1_palette:s20_r01_p02:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_palette:s20_r01_p03:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_palette:s20_r01_p04:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_palette:s20_r01_p05:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "iterate"
+  },
+  "gen:an0807_l1_palette:s20_r01_p06:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_palette:s20_r01_p07:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "gen:an0807_l1_palette:s20_r01_p08:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_palette:s20_r01_p09:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "iterate"
+  },
+  "gen:an0807_l1_palette:s21_r01_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "iterate"
+  },
+  "gen:an0807_l1_palette:s21_r01_p02:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_palette:s21_r01_p03:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "iterate"
+  },
+  "gen:an0807_l1_palette:s21_r01_p04:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_palette:s21_r01_p05:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_palette:s21_r01_p06:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_palette:s21_r01_p07:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "discard"
+  },
+  "gen:an0807_l1_palette:s21_r01_p08:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "iterate"
+  },
+  "gen:an0807_l1_palette:s21_r01_p09:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_probe:s01_r01_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_probe:s01_r02_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "iterate"
+  },
+  "gen:an0807_l1_probe:s04_r01_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_probe:s04_r02_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "iterate"
+  },
+  "gen:an0807_l1_probe:s21_r01_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l1_probe:s21_r02_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": "keep"
+  },
+  "gen:an0807_l2_a_decay:s01_r01_p02_a_decay_s1:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_decay:s01_r01_p02_a_decay_s2:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_decay:s01_r01_p02_a_decay_s3:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_decay:s01_r01_p02_a_decay_s4:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_decay:s01_r01_p02_a_decay_s5:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_decay:s01_r01_p02_a_decay_s6:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_decay:s02_r01_p01_a_decay_s1:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_decay:s02_r01_p01_a_decay_s2:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_decay:s02_r01_p01_a_decay_s3:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_decay:s02_r01_p01_a_decay_s4:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_decay:s02_r01_p01_a_decay_s5:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_decay:s02_r01_p01_a_decay_s6:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_decay:s06_r05_p04_a_decay_s1:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_decay:s06_r05_p04_a_decay_s2:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_decay:s06_r05_p04_a_decay_s3:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_decay:s06_r05_p04_a_decay_s4:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_decay:s06_r05_p04_a_decay_s5:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_decay:s06_r05_p04_a_decay_s6:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_decay:s09_r01_p04_a_decay_s1:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_decay:s09_r01_p04_a_decay_s2:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_decay:s09_r01_p04_a_decay_s3:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_decay:s09_r01_p04_a_decay_s4:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_decay:s09_r01_p04_a_decay_s5:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_decay:s09_r01_p04_a_decay_s6:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_decay:s10_r03_p09_a_decay_s1:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_decay:s10_r03_p09_a_decay_s2:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_decay:s10_r03_p09_a_decay_s3:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_decay:s10_r03_p09_a_decay_s4:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_decay:s10_r03_p09_a_decay_s5:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_decay:s10_r03_p09_a_decay_s6:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_decay:s16_r01_p06_a_decay_s1:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_decay:s16_r01_p06_a_decay_s2:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_decay:s16_r01_p06_a_decay_s3:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_decay:s16_r01_p06_a_decay_s4:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_decay:s16_r01_p06_a_decay_s5:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_decay:s16_r01_p06_a_decay_s6:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_decay:s21_r01_p01_a_decay_s1:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_decay:s21_r01_p01_a_decay_s2:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_decay:s21_r01_p01_a_decay_s3:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_decay:s21_r01_p01_a_decay_s4:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_decay:s21_r01_p01_a_decay_s5:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_decay:s21_r01_p01_a_decay_s6:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_distance:s01_r07_p03_a_distance_s1:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_distance:s01_r07_p03_a_distance_s2:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_distance:s01_r07_p03_a_distance_s3:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_distance:s01_r07_p03_a_distance_s4:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_distance:s01_r07_p03_a_distance_s5:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_distance:s01_r07_p03_a_distance_s6:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_distance:s03_r06_p06_a_distance_s1:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_distance:s03_r06_p06_a_distance_s2:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_distance:s03_r06_p06_a_distance_s3:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_distance:s03_r06_p06_a_distance_s4:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_distance:s03_r06_p06_a_distance_s5:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_distance:s03_r06_p06_a_distance_s6:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_distance:s08_r01_p04_a_distance_s1:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_distance:s08_r01_p04_a_distance_s2:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_distance:s08_r01_p04_a_distance_s3:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_distance:s08_r01_p04_a_distance_s4:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_distance:s08_r01_p04_a_distance_s5:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_distance:s08_r01_p04_a_distance_s6:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_distance:s08_r06_p06_a_distance_s1:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_distance:s08_r06_p06_a_distance_s2:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_distance:s08_r06_p06_a_distance_s3:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_distance:s08_r06_p06_a_distance_s4:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_distance:s08_r06_p06_a_distance_s5:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_distance:s08_r06_p06_a_distance_s6:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_distance:s12_r06_p06_a_distance_s1:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_distance:s12_r06_p06_a_distance_s2:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_distance:s12_r06_p06_a_distance_s3:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_distance:s12_r06_p06_a_distance_s4:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_distance:s12_r06_p06_a_distance_s5:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_distance:s12_r06_p06_a_distance_s6:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_distance:s16_r01_p01_a_distance_s1:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_distance:s16_r01_p01_a_distance_s2:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_distance:s16_r01_p01_a_distance_s3:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_distance:s16_r01_p01_a_distance_s4:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_distance:s16_r01_p01_a_distance_s5:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_distance:s16_r01_p01_a_distance_s6:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_distance:s20_r01_p05_a_distance_s1:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_distance:s20_r01_p05_a_distance_s2:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_distance:s20_r01_p05_a_distance_s3:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_distance:s20_r01_p05_a_distance_s4:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_distance:s20_r01_p05_a_distance_s5:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_distance:s20_r01_p05_a_distance_s6:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_pitch:s01_r01_p01_a_pitch_s1:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_pitch:s01_r01_p01_a_pitch_s2:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_pitch:s01_r01_p01_a_pitch_s3:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_pitch:s01_r01_p01_a_pitch_s4:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_pitch:s01_r01_p01_a_pitch_s5:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_pitch:s01_r01_p01_a_pitch_s6:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_pitch:s03_r03_p09_a_pitch_s1:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_pitch:s03_r03_p09_a_pitch_s2:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_pitch:s03_r03_p09_a_pitch_s3:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_pitch:s03_r03_p09_a_pitch_s4:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_pitch:s03_r03_p09_a_pitch_s5:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_pitch:s03_r03_p09_a_pitch_s6:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_pitch:s04_r02_p01_a_pitch_s1:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_pitch:s04_r02_p01_a_pitch_s2:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_pitch:s04_r02_p01_a_pitch_s3:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_pitch:s04_r02_p01_a_pitch_s4:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_pitch:s04_r02_p01_a_pitch_s5:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_pitch:s04_r02_p01_a_pitch_s6:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_pitch:s05_r01_p07_a_pitch_s1:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_pitch:s05_r01_p07_a_pitch_s2:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_pitch:s05_r01_p07_a_pitch_s3:v1": {
+   "hits": [
+    {
+     "conf": 0.5265,
+     "text": "ru.."
+    }
+   ],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_pitch:s05_r01_p07_a_pitch_s4:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_pitch:s05_r01_p07_a_pitch_s5:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_pitch:s05_r01_p07_a_pitch_s6:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_pitch:s07_r04_p07_a_pitch_s1:v1": {
+   "hits": [
+    {
+     "conf": 0.6638,
+     "text": "12"
+    },
+    {
+     "conf": 0.5167,
+     "text": "11"
+    },
+    {
+     "conf": 0.6596,
+     "text": "10"
+    }
+   ],
+   "strong_hits": 2,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_pitch:s07_r04_p07_a_pitch_s2:v1": {
+   "hits": [
+    {
+     "conf": 0.5437,
+     "text": "12"
+    },
+    {
+     "conf": 0.6645,
+     "text": "10"
+    },
+    {
+     "conf": 0.6078,
+     "text": ".8"
+    },
+    {
+     "conf": 0.8666,
+     "text": "APPROVED"
+    },
+    {
+     "conf": 0.7686,
+     "text": "PENDING"
+    },
+    {
+     "conf": 0.8245,
+     "text": "REJECTED"
+    }
+   ],
+   "strong_hits": 5,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_pitch:s07_r04_p07_a_pitch_s3:v1": {
+   "hits": [
+    {
+     "conf": 0.5607,
+     "text": "12"
+    },
+    {
+     "conf": 0.5028,
+     "text": "10"
+    }
+   ],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_pitch:s07_r04_p07_a_pitch_s4:v1": {
+   "hits": [
+    {
+     "conf": 0.5544,
+     "text": "12"
+    },
+    {
+     "conf": 0.5025,
+     "text": "11"
+    },
+    {
+     "conf": 0.6589,
+     "text": "10"
+    },
+    {
+     "conf": 0.5041,
+     "text": "4."
+    }
+   ],
+   "strong_hits": 1,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_pitch:s07_r04_p07_a_pitch_s5:v1": {
+   "hits": [
+    {
+     "conf": 0.5349,
+     "text": "10"
+    },
+    {
+     "conf": 0.6253,
+     "text": ".8"
+    },
+    {
+     "conf": 0.5197,
+     "text": "4."
+    },
+    {
+     "conf": 0.7172,
+     "text": "OUT"
+    },
+    {
+     "conf": 0.8536,
+     "text": "PENDING"
+    }
+   ],
+   "strong_hits": 3,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_pitch:s07_r04_p07_a_pitch_s6:v1": {
+   "hits": [
+    {
+     "conf": 0.6248,
+     "text": "12"
+    },
+    {
+     "conf": 0.6206,
+     "text": "10"
+    },
+    {
+     "conf": 0.8192,
+     "text": "PENDING"
+    },
+    {
+     "conf": 0.5654,
+     "text": "4."
+    },
+    {
+     "conf": 0.8194,
+     "text": "PENDING"
+    },
+    {
+     "conf": 0.7265,
+     "text": "OUT"
+    }
+   ],
+   "strong_hits": 5,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_pitch:s12_r05_p04_a_pitch_s1:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_pitch:s12_r05_p04_a_pitch_s2:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_pitch:s12_r05_p04_a_pitch_s3:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_pitch:s12_r05_p04_a_pitch_s4:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_pitch:s12_r05_p04_a_pitch_s5:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_pitch:s12_r05_p04_a_pitch_s6:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_pitch:s13_r01_p08_a_pitch_s1:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_pitch:s13_r01_p08_a_pitch_s2:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_pitch:s13_r01_p08_a_pitch_s3:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_pitch:s13_r01_p08_a_pitch_s4:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_pitch:s13_r01_p08_a_pitch_s5:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_pitch:s13_r01_p08_a_pitch_s6:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_pitch:s18_r01_p09_a_pitch_s1:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_pitch:s18_r01_p09_a_pitch_s2:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_pitch:s18_r01_p09_a_pitch_s3:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_pitch:s18_r01_p09_a_pitch_s4:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_pitch:s18_r01_p09_a_pitch_s5:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_pitch:s18_r01_p09_a_pitch_s6:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_quiet:s01_r01_p08_a_quiet_s1:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_quiet:s01_r01_p08_a_quiet_s2:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_quiet:s01_r01_p08_a_quiet_s3:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_quiet:s01_r01_p08_a_quiet_s4:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_quiet:s01_r01_p08_a_quiet_s5:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_quiet:s01_r01_p08_a_quiet_s6:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_quiet:s02_r07_p03_a_quiet_s1:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_quiet:s02_r07_p03_a_quiet_s2:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_quiet:s02_r07_p03_a_quiet_s3:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_quiet:s02_r07_p03_a_quiet_s4:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_quiet:s02_r07_p03_a_quiet_s5:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_quiet:s02_r07_p03_a_quiet_s6:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_quiet:s06_r04_p07_a_quiet_s1:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_quiet:s06_r04_p07_a_quiet_s2:v1": {
+   "hits": [
+    {
+     "conf": 0.527,
+     "text": "30\\u514301"
+    }
+   ],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_quiet:s06_r04_p07_a_quiet_s3:v1": {
+   "hits": [
+    {
+     "conf": 0.6721,
+     "text": "060"
+    }
+   ],
+   "strong_hits": 1,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_quiet:s06_r04_p07_a_quiet_s4:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_quiet:s06_r04_p07_a_quiet_s5:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_quiet:s06_r04_p07_a_quiet_s6:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_quiet:s09_r01_p06_a_quiet_s1:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_quiet:s09_r01_p06_a_quiet_s2:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_quiet:s09_r01_p06_a_quiet_s3:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_quiet:s09_r01_p06_a_quiet_s4:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_quiet:s09_r01_p06_a_quiet_s5:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_quiet:s09_r01_p06_a_quiet_s6:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_quiet:s11_r09_p05_a_quiet_s1:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_quiet:s11_r09_p05_a_quiet_s2:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_quiet:s11_r09_p05_a_quiet_s3:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_quiet:s11_r09_p05_a_quiet_s4:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_quiet:s11_r09_p05_a_quiet_s5:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_quiet:s11_r09_p05_a_quiet_s6:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_quiet:s16_r01_p07_a_quiet_s1:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_quiet:s16_r01_p07_a_quiet_s2:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_quiet:s16_r01_p07_a_quiet_s3:v1": {
+   "hits": [
+    {
+     "conf": 0.5013,
+     "text": "57"
+    }
+   ],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_quiet:s16_r01_p07_a_quiet_s4:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_quiet:s16_r01_p07_a_quiet_s5:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_quiet:s16_r01_p07_a_quiet_s6:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_quiet:s21_r01_p03_a_quiet_s1:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_quiet:s21_r01_p03_a_quiet_s2:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_quiet:s21_r01_p03_a_quiet_s3:v1": {
+   "hits": [
+    {
+     "conf": 0.5126,
+     "text": "ODO04"
+    }
+   ],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_quiet:s21_r01_p03_a_quiet_s4:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_quiet:s21_r01_p03_a_quiet_s5:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_quiet:s21_r01_p03_a_quiet_s6:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_style_tween:s01_r01_p09_a_style_tween_s1:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_style_tween:s01_r01_p09_a_style_tween_s2:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_style_tween:s01_r01_p09_a_style_tween_s3:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_style_tween:s01_r01_p09_a_style_tween_s4:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_style_tween:s01_r01_p09_a_style_tween_s5:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_style_tween:s01_r01_p09_a_style_tween_s6:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_style_tween:s02_r10_p08_a_style_tween_s1:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_style_tween:s02_r10_p08_a_style_tween_s2:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_style_tween:s02_r10_p08_a_style_tween_s3:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_style_tween:s02_r10_p08_a_style_tween_s4:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_style_tween:s02_r10_p08_a_style_tween_s5:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_style_tween:s02_r10_p08_a_style_tween_s6:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_style_tween:s06_r07_p03_a_style_tween_s1:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_style_tween:s06_r07_p03_a_style_tween_s2:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_style_tween:s06_r07_p03_a_style_tween_s3:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_style_tween:s06_r07_p03_a_style_tween_s4:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_style_tween:s06_r07_p03_a_style_tween_s5:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_style_tween:s06_r07_p03_a_style_tween_s6:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_style_tween:s11_r01_p07_a_style_tween_s1:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_style_tween:s11_r01_p07_a_style_tween_s2:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_style_tween:s11_r01_p07_a_style_tween_s3:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_style_tween:s11_r01_p07_a_style_tween_s4:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_style_tween:s11_r01_p07_a_style_tween_s5:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_style_tween:s11_r01_p07_a_style_tween_s6:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_style_tween:s11_r03_p09_a_style_tween_s1:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_style_tween:s11_r03_p09_a_style_tween_s2:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_style_tween:s11_r03_p09_a_style_tween_s3:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_style_tween:s11_r03_p09_a_style_tween_s4:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_style_tween:s11_r03_p09_a_style_tween_s5:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_style_tween:s11_r03_p09_a_style_tween_s6:v1": {
+   "hits": [
+    {
+     "conf": 0.5816,
+     "text": "88"
+    }
+   ],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_style_tween:s16_r01_p09_a_style_tween_s1:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_style_tween:s16_r01_p09_a_style_tween_s2:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_style_tween:s16_r01_p09_a_style_tween_s3:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_style_tween:s16_r01_p09_a_style_tween_s4:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_style_tween:s16_r01_p09_a_style_tween_s5:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_style_tween:s16_r01_p09_a_style_tween_s6:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_style_tween:s21_r01_p08_a_style_tween_s1:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_style_tween:s21_r01_p08_a_style_tween_s2:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_style_tween:s21_r01_p08_a_style_tween_s3:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_style_tween:s21_r01_p08_a_style_tween_s4:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_style_tween:s21_r01_p08_a_style_tween_s5:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_style_tween:s21_r01_p08_a_style_tween_s6:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_title_space:s02_r09_p05_a_title_space_s1:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_title_space:s02_r09_p05_a_title_space_s2:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_title_space:s02_r09_p05_a_title_space_s3:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_title_space:s02_r09_p05_a_title_space_s4:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_title_space:s02_r09_p05_a_title_space_s5:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_title_space:s02_r09_p05_a_title_space_s6:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_title_space:s05_r03_p09_a_title_space_s1:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_title_space:s05_r03_p09_a_title_space_s2:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_title_space:s05_r03_p09_a_title_space_s3:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_title_space:s05_r03_p09_a_title_space_s4:v1": {
+   "hits": [
+    {
+     "conf": 0.5353,
+     "text": "BIN"
+    },
+    {
+     "conf": 0.5271,
+     "text": "1011"
+    }
+   ],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_title_space:s05_r03_p09_a_title_space_s5:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_title_space:s05_r03_p09_a_title_space_s6:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_title_space:s08_r01_p08_a_title_space_s1:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_title_space:s08_r01_p08_a_title_space_s2:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_title_space:s08_r01_p08_a_title_space_s3:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_title_space:s08_r01_p08_a_title_space_s4:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_title_space:s08_r01_p08_a_title_space_s5:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_title_space:s08_r01_p08_a_title_space_s6:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_title_space:s10_r02_p08_a_title_space_s1:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_title_space:s10_r02_p08_a_title_space_s2:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_title_space:s10_r02_p08_a_title_space_s3:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_title_space:s10_r02_p08_a_title_space_s4:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_title_space:s10_r02_p08_a_title_space_s5:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_title_space:s10_r02_p08_a_title_space_s6:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_title_space:s13_r09_p05_a_title_space_s1:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_title_space:s13_r09_p05_a_title_space_s2:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_title_space:s13_r09_p05_a_title_space_s3:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_title_space:s13_r09_p05_a_title_space_s4:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_title_space:s13_r09_p05_a_title_space_s5:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_title_space:s13_r09_p05_a_title_space_s6:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_title_space:s16_r01_p05_a_title_space_s1:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_title_space:s16_r01_p05_a_title_space_s2:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_title_space:s16_r01_p05_a_title_space_s3:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_title_space:s16_r01_p05_a_title_space_s4:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_title_space:s16_r01_p05_a_title_space_s5:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_title_space:s16_r01_p05_a_title_space_s6:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_title_space:s20_r01_p09_a_title_space_s1:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_title_space:s20_r01_p09_a_title_space_s2:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_title_space:s20_r01_p09_a_title_space_s3:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_title_space:s20_r01_p09_a_title_space_s4:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_title_space:s20_r01_p09_a_title_space_s5:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_title_space:s20_r01_p09_a_title_space_s6:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_yaw:s01_r02_p01_a_yaw_s1:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_yaw:s01_r02_p01_a_yaw_s2:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_yaw:s01_r02_p01_a_yaw_s3:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_yaw:s01_r02_p01_a_yaw_s4:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_yaw:s01_r02_p01_a_yaw_s5:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_yaw:s01_r02_p01_a_yaw_s6:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_yaw:s01_r09_p05_a_yaw_s1:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_yaw:s01_r09_p05_a_yaw_s2:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_yaw:s01_r09_p05_a_yaw_s3:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_yaw:s01_r09_p05_a_yaw_s4:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_yaw:s01_r09_p05_a_yaw_s5:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_yaw:s01_r09_p05_a_yaw_s6:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_yaw:s03_r02_p08_a_yaw_s1:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_yaw:s03_r02_p08_a_yaw_s2:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_yaw:s03_r02_p08_a_yaw_s3:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_yaw:s03_r02_p08_a_yaw_s4:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_yaw:s03_r02_p08_a_yaw_s5:v1": {
+   "hits": [
+    {
+     "conf": 0.5298,
+     "text": "Cuie"
+    }
+   ],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_yaw:s03_r02_p08_a_yaw_s6:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_yaw:s05_r01_p01_a_yaw_s1:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_yaw:s05_r01_p01_a_yaw_s2:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_yaw:s05_r01_p01_a_yaw_s3:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_yaw:s05_r01_p01_a_yaw_s4:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_yaw:s05_r01_p01_a_yaw_s5:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_yaw:s05_r01_p01_a_yaw_s6:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_yaw:s06_r09_p02_a_yaw_s1:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_yaw:s06_r09_p02_a_yaw_s2:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_yaw:s06_r09_p02_a_yaw_s3:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_yaw:s06_r09_p02_a_yaw_s4:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_yaw:s06_r09_p02_a_yaw_s5:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_yaw:s06_r09_p02_a_yaw_s6:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_yaw:s11_r02_p02_a_yaw_s1:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_yaw:s11_r02_p02_a_yaw_s2:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_yaw:s11_r02_p02_a_yaw_s3:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_yaw:s11_r02_p02_a_yaw_s4:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_yaw:s11_r02_p02_a_yaw_s5:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_yaw:s11_r02_p02_a_yaw_s6:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_yaw:s13_r01_p04_a_yaw_s1:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_yaw:s13_r01_p04_a_yaw_s2:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_yaw:s13_r01_p04_a_yaw_s3:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_yaw:s13_r01_p04_a_yaw_s4:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_yaw:s13_r01_p04_a_yaw_s5:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_yaw:s13_r01_p04_a_yaw_s6:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_yaw:s18_r01_p04_a_yaw_s1:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_yaw:s18_r01_p04_a_yaw_s2:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_yaw:s18_r01_p04_a_yaw_s3:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_yaw:s18_r01_p04_a_yaw_s4:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_yaw:s18_r01_p04_a_yaw_s5:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l2_a_yaw:s18_r01_p04_a_yaw_s6:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s01_r03_p09:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s01_r03_p09:v2": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s01_r03_p09:v3": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s01_r03_p09:v4": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s02_r03_p09:v1": {
+   "hits": [
+    {
+     "conf": 0.5703,
+     "text": "000"
+    }
+   ],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s02_r03_p09:v2": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s02_r03_p09:v3": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s02_r03_p09:v4": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s02_r05_p04:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s02_r05_p04:v2": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s02_r05_p04:v3": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s02_r05_p04:v4": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s03_r01_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s03_r01_p01:v2": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s03_r01_p01:v3": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s03_r01_p01:v4": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s03_r02_p02:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s03_r02_p02:v2": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s03_r02_p02:v3": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s03_r02_p02:v4": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s03_r04_p07:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s03_r04_p07:v2": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s03_r04_p07:v3": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s03_r04_p07:v4": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s04_r01_p01:v1": {
+   "hits": [
+    {
+     "conf": 0.519,
+     "text": "DT"
+    }
+   ],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s04_r01_p01:v2": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s04_r01_p01:v3": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s04_r01_p01:v4": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s04_r10_p08:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s04_r10_p08:v2": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s04_r10_p08:v3": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s04_r10_p08:v4": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s05_r06_p06:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s05_r06_p06:v2": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s05_r06_p06:v3": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s05_r06_p06:v4": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s06_r01_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s06_r01_p01:v2": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s06_r01_p01:v3": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s06_r01_p01:v4": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s06_r06_p06:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s06_r06_p06:v2": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s06_r06_p06:v3": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s06_r06_p06:v4": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s08_r01_p03:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s08_r01_p03:v2": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s08_r01_p03:v3": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s08_r01_p03:v4": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s08_r04_p07:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s08_r04_p07:v2": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s08_r04_p07:v3": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s08_r04_p07:v4": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s08_r05_p04:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s08_r05_p04:v2": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s08_r05_p04:v3": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s08_r05_p04:v4": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s09_r06_p06:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s09_r06_p06:v2": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s09_r06_p06:v3": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s09_r06_p06:v4": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s10_r06_p06:v1": {
+   "hits": [
+    {
+     "conf": 0.6307,
+     "text": "000."
+    }
+   ],
+   "strong_hits": 1,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s10_r06_p06:v2": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s10_r06_p06:v3": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s10_r06_p06:v4": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s10_r07_p03:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s10_r07_p03:v2": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s10_r07_p03:v3": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s10_r07_p03:v4": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s11_r04_p07:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s11_r04_p07:v2": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s11_r04_p07:v3": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s11_r04_p07:v4": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s11_r06_p06:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s11_r06_p06:v2": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s11_r06_p06:v3": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s11_r06_p06:v4": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s12_r03_p09:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s12_r03_p09:v2": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s12_r03_p09:v3": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s12_r03_p09:v4": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s12_r04_p07:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s12_r04_p07:v2": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s12_r04_p07:v3": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s12_r04_p07:v4": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s12_r07_p03:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s12_r07_p03:v2": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s12_r07_p03:v3": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s12_r07_p03:v4": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s13_r01_p09:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s13_r01_p09:v2": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s13_r01_p09:v3": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s13_r01_p09:v4": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s20_r01_p02:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s20_r01_p02:v2": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s20_r01_p02:v3": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s20_r01_p02:v4": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s20_r01_p03:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s20_r01_p03:v2": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s20_r01_p03:v3": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s20_r01_p03:v4": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s20_r01_p08:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s20_r01_p08:v2": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s20_r01_p08:v3": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s20_r01_p08:v4": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s21_r01_p02:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s21_r01_p02:v2": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s21_r01_p02:v3": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s21_r01_p02:v4": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s21_r01_p05:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s21_r01_p05:v2": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s21_r01_p05:v3": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_land:s21_r01_p05:v4": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_port:s01_r03_p09:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_port:s02_r03_p09:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_port:s02_r05_p04:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_port:s03_r01_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_port:s03_r02_p02:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_port:s03_r04_p07:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_port:s04_r01_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_port:s04_r10_p08:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_port:s05_r06_p06:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_port:s06_r01_p01:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_port:s06_r06_p06:v1": {
+   "hits": [
+    {
+     "conf": 0.6237,
+     "text": "285"
+    }
+   ],
+   "strong_hits": 1,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_port:s08_r01_p03:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_port:s08_r04_p07:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_port:s08_r05_p04:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_port:s09_r06_p06:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_port:s10_r06_p06:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_port:s10_r07_p03:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_port:s11_r04_p07:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_port:s11_r06_p06:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_port:s12_r03_p09:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_port:s12_r04_p07:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_port:s12_r07_p03:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_port:s13_r01_p09:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_port:s20_r01_p02:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_port:s20_r01_p03:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_port:s20_r01_p08:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_port:s21_r01_p02:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  },
+  "gen:an0807_l3_hero_port:s21_r01_p05:v1": {
+   "hits": [],
+   "strong_hits": 0,
+   "verdict": null
+  }
+ },
+ "conf_strong": 0.6,
+ "engine": "rapidocr-onnxruntime",
+ "from_ledger": true,
+ "limits": "OCR is a LOWER BOUND on leakage -- small, low-contrast or stylised lettering is missed, and texture false-positives at low confidence. A clean scan is evidence of absence, not proof of it.",
+ "run_id": "art_night_2026-08-07",
+ "scanned_count": 1098,
+ "schema_version": "1.0",
+ "scope": "ALL ledger masters (every level, reviewed or not)",
+ "strong_hit_count": 85
+}

@@ -45,13 +45,14 @@ REPO = Path(__file__).resolve().parents[2]
 STATE = REPO / "tools" / "art_review" / "review_state.json"
 OUT = REPO / "docs" / "art" / "NOTES_BRIEF.md"
 
-VERDICT_MIGRATE = {"maybe": "iterate", "reroll": "iterate"}
-VERDICTS = ("keep", "iterate", "discard")
+VERDICT_MIGRATE = {"maybe": "remix", "reroll": "remix", "iterate": "remix"}
+VERDICTS = ("keep", "remix", "shelf", "discard")
 # Section order is the order the brief should be READ in: what to preserve
 # first, what to fix second, what to stop doing last.
 SECTIONS = [
     ("keep", "KEEP -- what is working, preserve it"),
-    ("iterate", "ITERATE -- what to change in the next round"),
+    ("remix", "REMIX -- what to change in the next round"),
+    ("shelf", "SHELF -- right but not now; each carries a return condition"),
     ("discard", "DISCARD -- what to stop generating"),
     ("", "UNJUDGED -- noted but no verdict yet"),
 ]

@@ -1,12 +1,23 @@
 # Role: Creative Director (content/video), P(Doom)1
 
-> Status: DRAFT for Pip review, 2026-07-26. Not committed anywhere yet.
+> Status: LIVE. Drafted 2026-07-26, committed 2026-07-27 in `25e3f0eb` (#946).
+> The header read "DRAFT ... Not committed anywhere yet" until 2026-08-13, which
+> stopped being true the day it landed.
 >
-> PROPOSED PERMANENT HOME: `pdoom1/docs/content/` (procedures live next to the
-> game they capture; `pdoom1-website` is a publish TARGET the pipeline pushes to,
-> not the home of the process). Tradeoff: if content ops later outgrows the game
-> repo (multi-game, hires with no code access), lift the whole `docs/content/`
-> dir into its own repo -- the docs are written to survive that move.
+> PERMANENT HOME: `pdoom1/docs/content/` -- procedures live next to the game they
+> capture; see `docs/copy/README.md` clause 1, direction is one-way and the
+> website reads the game. Tradeoff: if content ops later outgrows the game repo
+> (multi-game, hires with no code access), lift the whole `docs/content/` dir
+> into its own repo -- the docs are written to survive that move.
+>
+> **CORRECTED 2026-08-13, per the retirement prescribed in
+> `docs/design/WORKSHOP_TRI_REPO_PREP_2026-08-06.md`.** This block previously
+> justified that home with the clause *"`pdoom1-website` is a publish TARGET the
+> pipeline pushes to, not the home of the process"*. Pip ruled **`pull`** on
+> 2026-08-13 (`pdoom1-website#249`): the game emits an artefact, the website
+> derives from it, and pdoom1 does not push. The "procedures live next to the
+> game" rationale is unaffected and now cites the policy instead of restating a
+> direction of its own.
 
 ## 1. What the Creative Director DECIDES (cannot be proceduralized)
 

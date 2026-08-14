@@ -672,6 +672,77 @@ DESCRIPTION:needs a declaration -- CLAUDE.md (unparsed) -- unowned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:e303193f6693ac93@commitments.pdoom1
+DTSTAMP:20260813T000000Z
+DTSTART;VALUE=DATE:20260813
+DTEND;VALUE=DATE:20260814
+SUMMARY:[UNPARSED] needs a declaration -- CONTENT_DISTRIBUTION_SYSTEM.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/CONTENT_DISTRIBUT
+ ION_SYSTEM.md:10. 1 line(s) in docs/CONTENT_DISTRIBUTION_SYSTEM.md mentio
+ n this date and no COMMITMENT: declaration accounts for it. Either add a 
+ declaration or the date is incidental. First line: > **SUPERSEDED\, not m
+ erely "outdated in spirit"\, as of 2026-08-13.** Pip ruled -- Generated f
+ rom tracked sources by scripts/generate_commitment_calendar.py\; regenera
+ te to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- CONTENT_DISTRIBUTION_SYSTEM.md (unparse
+ d) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:e39f13e4fc16ef7d@commitments.pdoom1
+DTSTAMP:20260813T000000Z
+DTSTART;VALUE=DATE:20260813
+DTEND;VALUE=DATE:20260814
+SUMMARY:[UNPARSED] needs a declaration -- L3_HERO_SHORTLIST.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/art/audit_2026-08
+ -13/L3_HERO_SHORTLIST.md:3. 1 line(s) in docs/art/audit_2026-08-13/L3_HER
+ O_SHORTLIST.md mention this date and no COMMITMENT: declaration accounts 
+ for it. Either add a declaration or the date is incidental. First line: *
+ *GENERATED** by `tools/art_review/shortlist_l3_heroes.py`\, 2026-08-13. -
+ - Generated from tracked sources by scripts/generate_commitment_calendar.
+ py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- L3_HERO_SHORTLIST.md (unparsed) -- unow
+ ned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:9334403e81b299cd@commitments.pdoom1
+DTSTAMP:20260813T000000Z
+DTSTART;VALUE=DATE:20260813
+DTEND;VALUE=DATE:20260814
+SUMMARY:[UNPARSED] needs a declaration -- NOMENCLATURE.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/art/NOMENCLATURE.
+ md:27. 2 line(s) in docs/art/NOMENCLATURE.md mention this date and no COM
+ MITMENT: declaration accounts for it. Either add a declaration or the dat
+ e is incidental. First line: | `shelf` | `S` | Right\, but not now. | Cor
+ rect work with no current home -- the wrong brief\, the wrong season\, or
+  a scene not yet written. Spends not -- Generated from tracked sources by
+  scripts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- NOMENCLATURE.md (unparsed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:7cd15c5536c4a8d0@commitments.pdoom1
 DTSTAMP:20260813T000000Z
 DTSTART;VALUE=DATE:20260813
@@ -694,6 +765,101 @@ ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- POSTMORTEM_2026-08-07_CAPTURE.md (unpar
  sed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:768cb105ad442fc0@commitments.pdoom1
+DTSTAMP:20260813T000000Z
+DTSTART;VALUE=DATE:20260813
+DTEND;VALUE=DATE:20260814
+SUMMARY:[UNPARSED] needs a declaration -- PROVENANCE_COMPLETENESS.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/art/audit_2026-08
+ -13/PROVENANCE_COMPLETENESS.md:3. 2 line(s) in docs/art/audit_2026-08-13/
+ PROVENANCE_COMPLETENESS.md mention this date and no COMMITMENT: declarati
+ on accounts for it. Either add a declaration or the date is incidental. F
+ irst line: Audit date 2026-08-13. Scope: the 1\,098 `.meta.json` sidecars
+  under -- Generated from tracked sources by scripts/generate_commitment_c
+ alendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- PROVENANCE_COMPLETENESS.md (unparsed) -
+ - unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:362bca7f12c0806b@commitments.pdoom1
+DTSTAMP:20260813T000000Z
+DTSTART;VALUE=DATE:20260813
+DTEND;VALUE=DATE:20260814
+SUMMARY:[UNPARSED] needs a declaration -- RETENTION_ANALYSIS.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/art/audit_2026-08
+ -13/RETENTION_ANALYSIS.md:1. 1 line(s) in docs/art/audit_2026-08-13/RETEN
+ TION_ANALYSIS.md mention this date and no COMMITMENT: declaration account
+ s for it. Either add a declaration or the date is incidental. First line:
+  # art_generated/ retention analysis -- 2026-08-13 -- Generated from trac
+ ked sources by scripts/generate_commitment_calendar.py\; regenerate to up
+ date.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- RETENTION_ANALYSIS.md (unparsed) -- uno
+ wned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:d461bcf21d525ac0@commitments.pdoom1
+DTSTAMP:20260813T000000Z
+DTSTART;VALUE=DATE:20260813
+DTEND;VALUE=DATE:20260814
+SUMMARY:[UNPARSED] needs a declaration -- ROLE_CREATIVE_DIRECTOR.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/content/ROLE_CREA
+ TIVE_DIRECTOR.md:4. 3 line(s) in docs/content/ROLE_CREATIVE_DIRECTOR.md m
+ ention this date and no COMMITMENT: declaration accounts for it. Either a
+ dd a declaration or the date is incidental. First line: > The header read
+  "DRAFT ... Not committed anywhere yet" until 2026-08-13\, which -- Gener
+ ated from tracked sources by scripts/generate_commitment_calendar.py\; re
+ generate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- ROLE_CREATIVE_DIRECTOR.md (unparsed) --
+  unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:08d66d9b47b25bbe@commitments.pdoom1
+DTSTAMP:20260813T000000Z
+DTSTART;VALUE=DATE:20260813
+DTEND;VALUE=DATE:20260814
+SUMMARY:[UNPARSED] needs a declaration -- apply_review.py
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/art_review/apply
+ _review.py:316. 1 line(s) in tools/art_review/apply_review.py mention thi
+ s date and no COMMITMENT: declaration accounts for it. Either add a decla
+ ration or the date is incidental. First line: # v2 called remix "iterate"
+ \; "shelf" is new in v3 (2026-08-13). NOT "hold" -- -- Generated from tra
+ cked sources by scripts/generate_commitment_calendar.py\; regenerate to u
+ pdate.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- apply_review.py (unparsed) -- unowned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
@@ -763,6 +929,76 @@ BEGIN:VALARM
 ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- coordination#35 (unparsed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:0532bcbe260dfa34@commitments.pdoom1
+DTSTAMP:20260813T000000Z
+DTSTART;VALUE=DATE:20260813
+DTEND;VALUE=DATE:20260814
+SUMMARY:[UNPARSED] needs a declaration -- scan_text_leak.py
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/art_review/scan_
+ text_leak.py:119. 4 line(s) in tools/art_review/scan_text_leak.py mention
+  this date and no COMMITMENT: declaration accounts for it. Either add a d
+ eclaration or the date is incidental. First line: Why this exists (2026-0
+ 8-13): load_targets() above walks review_state and -- Generated from trac
+ ked sources by scripts/generate_commitment_calendar.py\; regenerate to up
+ date.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- scan_text_leak.py (unparsed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:68d88c01d28fd79b@commitments.pdoom1
+DTSTAMP:20260813T000000Z
+DTSTART;VALUE=DATE:20260813
+DTEND;VALUE=DATE:20260814
+SUMMARY:[UNPARSED] needs a declaration -- serve_review.py
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/art_review/serve
+ _review.py:8. 8 line(s) in tools/art_review/serve_review.py mention this 
+ date and no COMMITMENT: declaration accounts for it. Either add a declara
+ tion or the date is incidental. First line: TWO AXES (v3\, 2026-08-13). A
+  VERDICT is the asset's fate -- exactly one\, exclusive. -- Generated fro
+ m tracked sources by scripts/generate_commitment_calendar.py\; regenerate
+  to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- serve_review.py (unparsed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:87aa5bb8efc23dd5@commitments.pdoom1
+DTSTAMP:20260813T000000Z
+DTSTART;VALUE=DATE:20260813
+DTEND;VALUE=DATE:20260814
+SUMMARY:[UNPARSED] needs a declaration -- shortlist_l3_heroes.py
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/art_review/short
+ list_l3_heroes.py:13. 4 line(s) in tools/art_review/shortlist_l3_heroes.p
+ y mention this date and no COMMITMENT: declaration accounts for it. Eithe
+ r add a declaration or the date is incidental. First line: The 140 L3 her
+ oes have ZERO verdicts (measured 2026-08-13). Presented flat they -- Gene
+ rated from tracked sources by scripts/generate_commitment_calendar.py\; r
+ egenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- shortlist_l3_heroes.py (unparsed) -- un
+ owned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
@@ -897,6 +1133,32 @@ TRIGGER:PT8H
 DESCRIPTION:P9\, the pack's OWN falsifier: if none of P1-P8 started and no
   issue cites this document\, stop producing printed packs (falsifier) -- 
  pdoom1-seat
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:a91312e7f15c724c@commitments.pdoom1
+DTSTAMP:20260814T000000Z
+DTSTART;VALUE=DATE:20260814
+DTEND;VALUE=DATE:20260815
+SUMMARY:[UNPARSED] needs a declaration -- SESSION_2026-08-14_first-mass-re
+ view.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/art/audit_2026-08
+ -13/SESSION_2026-08-14_first-mass-review.md:3. 1 line(s) in docs/art/audi
+ t_2026-08-13/SESSION_2026-08-14_first-mass-review.md mention this date an
+ d no COMMITMENT: declaration accounts for it. Either add a declaration or
+  the date is incidental. First line: **Recorded by `seat:pdoom`\, 2026-08
+ -14.** Every number below is re-derivable from -- Generated from tracked 
+ sources by scripts/generate_commitment_calendar.py\; regenerate to update
+ .
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- SESSION_2026-08-14_first-mass-review.md
+  (unparsed) -- unowned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT

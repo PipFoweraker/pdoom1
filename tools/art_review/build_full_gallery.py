@@ -136,8 +136,8 @@ KNOWN_SIZES = {64, 128, 256, 512, 768, 1024, 1536, 2048}
 # enough to load 9k of")
 THUMB_PREF = [512, 768, 1024, 256, 1536, 128, 2048, 64]
 GEN_STEM = re.compile(r"^(?P<base>.+?)(?:_(?P<var>v\d+))?_(?P<size>\d+)$")
-VERDICT_MIGRATE = {"maybe": "iterate", "reroll": "iterate"}
-VERDICTS = ("keep", "iterate", "discard")
+VERDICT_MIGRATE = {"maybe": "remix", "reroll": "remix", "iterate": "remix"}
+VERDICTS = ("keep", "remix", "shelf", "discard")
 
 
 def load_state():

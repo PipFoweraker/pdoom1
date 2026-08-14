@@ -311,9 +311,11 @@ MAX_PROMOTE_BYTES = 1000 * 1024
 
 DEFAULT_STATE = "tools/art_review/review_state.json"
 MANIFEST_DIR = "tools/assets/manifests"
-VERDICTS = ("keep", "iterate", "discard")
-# legacy -> v2; applied on read so pre-v2 state files still work.
-VERDICT_MIGRATE = {"maybe": "iterate", "reroll": "iterate"}
+VERDICTS = ("keep", "remix", "shelf", "discard")
+# legacy -> v3; applied on read so pre-v3 state files still work.
+# v2 called remix "iterate"; "shelf" is new in v3 (2026-08-13). NOT "hold" --
+# that name is taken by the PROMOTION status `held` further down this file.
+VERDICT_MIGRATE = {"maybe": "remix", "reroll": "remix", "iterate": "remix"}
 
 
 def migrate_verdict(raw):
@@ -886,11 +888,18 @@ def action_report(assets):
         groups[a.verdict].append(a)
     print("== review verdict report ==")
     print(
-        "counts: keep={} iterate={} discard={} (total {})".format(
-            len(groups["keep"]), len(groups["iterate"]), len(groups["discard"]), len(assets)
+        "counts: keep={} remix={} shelf={} discard={} (total {})".format(
+            len(groups["keep"]),
+            len(groups["remix"]),
+            len(groups["shelf"]),
+            len(groups["discard"]),
+            len(assets),
         )
     )
-    print("  keep    -> promote     iterate -> regenerate (reroll)     discard -> rethink brief")
+    print(
+        "  keep -> promote   remix -> regenerate   "
+        "shelf -> shelved with a return condition   discard -> rethink brief"
+    )
 
     # -- promotion gate: a keep that cannot move is a pipeline bug, and it
     # must fail HERE, at review time -- not silently at promote time
@@ -1053,10 +1062,10 @@ def action_promote(assets, dry_run):
 
 
 def action_reroll(assets, prompt_index, art_root, dry_run):
-    rerolls = [a for a in assets if a.verdict == "iterate"]
-    print("== regenerate (iterate) manifest ==")
+    rerolls = [a for a in assets if a.verdict == "remix"]
+    print("== regenerate (remix) manifest ==")
     if not rerolls:
-        print("no iterate verdicts -- nothing to emit.")
+        print("no remix verdicts -- nothing to emit.")
         return 0
     manifest = {
         "generated_at": _dt.datetime.now().isoformat(timespec="seconds"),

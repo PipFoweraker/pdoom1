@@ -13,7 +13,7 @@ Horizon: **2026-08-09** (the prose scan reports dates at or after this; roll it
 forward deliberately in `COMMITMENTS.md`, never automatically -- a clock-reading
 generator goes stale overnight and trains people to ignore the check).
 
-**48 declared, 4 release-train, 41 UNPARSED, 0 malformed.**
+**48 declared, 4 release-train, 52 UNPARSED, 0 malformed.**
 
 ## Declared commitments
 
@@ -122,8 +122,36 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-13 | `coordination#32` | 0 | Asset provenance is UNMET, not at-risk: the Manifund obligation has no capture mechanism in pdoom1 -- blocking party pdoom1, return date 2026-08-13 |
 | 2026-08-13 | `coordination#35` | 0 | Pip is out this evening through Rektango -- last synchronous window today. Post your asks ranked, or say you have none |
 | 2026-08-13 | `docs/CLAIM_AUDIT_2026-08-06.md` | 500 | audit against pdoom1's output for the week of 2026-08-13 finds a WRONG rate at or |
+| 2026-08-13 | `docs/CONTENT_DISTRIBUTION_SYSTEM.md` | 10 | > **SUPERSEDED, not merely "outdated in spirit", as of 2026-08-13.** Pip ruled |
 | 2026-08-13 | `docs/POSTMORTEM_2026-08-07_CAPTURE.md` | 754 | \| P3 \| Every published measurement command ships a control line proving it can return the other answer \| Re-run the claim audit on the week of **2026- |
+| 2026-08-13 | `docs/art/NOMENCLATURE.md` | 27 | \| `shelf` \| `S` \| Right, but not now. \| Correct work with no current home -- the wrong brief, the wrong season, or a scene not yet written. Spends not |
+| 2026-08-13 | `docs/art/NOMENCLATURE.md` | 51 | Events predate the log only for decisions made before **2026-08-13**; a replay |
+| 2026-08-13 | `docs/art/audit_2026-08-13/L3_HERO_SHORTLIST.md` | 3 | **GENERATED** by `tools/art_review/shortlist_l3_heroes.py`, 2026-08-13. |
+| 2026-08-13 | `docs/art/audit_2026-08-13/PROVENANCE_COMPLETENESS.md` | 3 | Audit date 2026-08-13. Scope: the 1,098 `.meta.json` sidecars under |
+| 2026-08-13 | `docs/art/audit_2026-08-13/PROVENANCE_COMPLETENESS.md` | 311 | **That hash still matches the file on disk today (measured 2026-08-13).** The |
+| 2026-08-13 | `docs/art/audit_2026-08-13/RETENTION_ANALYSIS.md` | 1 | # art_generated/ retention analysis -- 2026-08-13 |
+| 2026-08-13 | `docs/content/ROLE_CREATIVE_DIRECTOR.md` | 4 | > The header read "DRAFT ... Not committed anywhere yet" until 2026-08-13, which |
+| 2026-08-13 | `docs/content/ROLE_CREATIVE_DIRECTOR.md` | 13 | > **CORRECTED 2026-08-13, per the retirement prescribed in |
+| 2026-08-13 | `docs/content/ROLE_CREATIVE_DIRECTOR.md` | 17 | > 2026-08-13 (`pdoom1-website#249`): the game emits an artefact, the website |
+| 2026-08-13 | `tools/art_review/apply_review.py` | 316 | # v2 called remix "iterate"; "shelf" is new in v3 (2026-08-13). NOT "hold" -- |
+| 2026-08-13 | `tools/art_review/scan_text_leak.py` | 119 | Why this exists (2026-08-13): load_targets() above walks review_state and |
+| 2026-08-13 | `tools/art_review/scan_text_leak.py` | 151 | # A FAILED attempt. Two traps here, both hit on 2026-08-13: |
+| 2026-08-13 | `tools/art_review/scan_text_leak.py` | 178 | Why (2026-08-13): the ledger path only covers the 2026-08-07 art night. The |
+| 2026-08-13 | `tools/art_review/scan_text_leak.py` | 266 | Deliberately NOT cell-based. Two reasons, both measured 2026-08-13: |
+| 2026-08-13 | `tools/art_review/serve_review.py` | 8 | TWO AXES (v3, 2026-08-13). A VERDICT is the asset's fate -- exactly one, exclusive. |
+| 2026-08-13 | `tools/art_review/serve_review.py` | 96 | # -- verdict model v3 (2026-08-13) ------------------------------------------- |
+| 2026-08-13 | `tools/art_review/serve_review.py` | 146 | "2026-08-13. Key is S; H still works as an alias for the hour this was " |
+| 2026-08-13 | `tools/art_review/serve_review.py` | 495 | predating the log (everything before 2026-08-13) are not in it, so a replay |
+| 2026-08-13 | `tools/art_review/serve_review.py` | 535 | "the log (2026-08-13). The replay is a SUBSET; state file NOT " |
+| 2026-08-13 | `tools/art_review/serve_review.py` | 664 | "Events predate the log only for decisions made before **2026-08-13**; a replay", |
+| 2026-08-13 | `tools/art_review/serve_review.py` | 967 | Default smooth; body.px-crisp restores the sprite behaviour. (2026-08-13) */ |
+| 2026-08-13 | `tools/art_review/serve_review.py` | 1015 | and the reserved title space only read large. (2026-08-13) */ |
+| 2026-08-13 | `tools/art_review/shortlist_l3_heroes.py` | 13 | The 140 L3 heroes have ZERO verdicts (measured 2026-08-13). Presented flat they |
+| 2026-08-13 | `tools/art_review/shortlist_l3_heroes.py` | 235 | "**GENERATED** by `tools/art_review/shortlist_l3_heroes.py`, 2026-08-13.", |
+| 2026-08-13 | `tools/art_review/shortlist_l3_heroes.py` | 335 | "<title>L3 hero shortlist -- 2026-08-13</title>", |
+| 2026-08-13 | `tools/art_review/shortlist_l3_heroes.py` | 347 | "<p class='note'>Generated 2026-08-13. Ordered by contrast + detail density,", |
 | 2026-08-13 | `tools/check_class_cache.py` | 6 | WHY (2026-08-13, cost a first-time playtester's session): |
+| 2026-08-14 | `docs/art/audit_2026-08-13/SESSION_2026-08-14_first-mass-review.md` | 3 | **Recorded by `seat:pdoom`, 2026-08-14.** Every number below is re-derivable from |
 | 2026-08-14 | `tools/check_refusal_classification.py` | 7 | WHY (playtest 2026-08-14, Pip): |
 | 2026-08-15 | `pdoom1#1092` | 0 | art(sweep): events name physical things the office never shows -- install a security system, no cameras appear; sweep events for asset refs, then bulk |
 | 2026-08-16 | `docs/workshop-2/position.md` | 547 | **On 2026-08-16**, ask for three run IDs -- one per guard -- each showing the |

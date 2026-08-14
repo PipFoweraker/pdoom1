@@ -69,6 +69,22 @@ Declared with a `Layer:` line in a tool's module docstring; `--` = undeclared.
 | validate_historical_data.py | -- | Historical Data Validation Script | make; ci:data-validation.yml; ci:enhanced-release.yml |
 | verify_release_urls.py | -- | Verify release-feed download URLs actually resolve. | ci:enhanced-release.yml; tool:generate_release_metadata.py |
 
+## `scripts/lib/scores/`
+
+| Tool | Layer | Purpose | Invoked by |
+|---|---|---|---|
+| enhanced_leaderboard.py | -- | Enhanced Leaderboard Manager for P(Doom) v0.4.1+ | NONE FOUND |
+| local_store.py | -- | Local leaderboard storage for PDoom1. | NONE FOUND |
+
+## `scripts/lib/services/`
+
+| Tool | Layer | Purpose | Invoked by |
+|---|---|---|---|
+| data_paths.py | -- | Cross-platform data directory management for PDoom1. | NONE FOUND |
+| deterministic_rng.py | -- | Deterministic RNG System for P(Doom): Reproducible Strategic Gameplay | NONE FOUND |
+| leaderboard.py | -- | Privacy-Respecting Leaderboard Foundation for P(Doom) | NONE FOUND |
+| version.py | -- | Version management for P(Doom): Bureaucracy Strategy Game | NONE FOUND |
+
 ## `tools/`
 
 | Tool | Layer | Purpose | Invoked by |
@@ -106,7 +122,7 @@ Declared with a `Layer:` line in a tool's module docstring; `--` = undeclared.
 | Tool | Layer | Purpose | Invoked by |
 |---|---|---|---|
 | analyze_verdicts.py | -- | Analyze art triage exports (verdict JSONs) for BOTH art libraries. | human (docstring usage) |
-| apply_review.py | SWEEP | apply_review.py -- wire art-review verdicts into the P(Doom)1 asset pipeline. | test:test_art_promotion_pipeline.py; tool:build_full_gallery.py; tool:measure_taste.py; tool:slot_model.py |
+| apply_review.py | SWEEP | apply_review.py -- wire art-review verdicts into the P(Doom)1 asset pipeline. | test:test_art_promotion_pipeline.py; tool:build_full_gallery.py; tool:measure_taste.py; tool:serve_review.py; tool:slot_model.py |
 | apply_slot_picks.py | -- | apply_slot_picks.py -- fold a slot_picker.html export into the TRACKED | test:test_slot_picker.py; tool:build_slot_picker.py |
 | author_anchor_sockets.py | -- | Author godot/data/office/anchor_sockets.json -- Anchor Sockets V2 (#894 #900 #913). | tool:build_cat_sweep_sheet.py |
 | build.py | -- | Build the P(Doom)1 style-review tool: a self-contained, single-file HTML page | test:test_find_dead_code.py; tool:select_assets.py |
@@ -135,7 +151,7 @@ Declared with a `Layer:` line in a tool's module docstring; `--` = undeclared.
 | gen_quirk_icon_sheet.py | -- | Generate art_generated/quirk_icons_sheet.html -- quirk icon review sheet (issue #903). | human (docstring usage) |
 | gen_settings_grounds.py | -- | Warm-register settings-screen background candidates for P(Doom)1 (no API). | human (docstring usage) |
 | gen_size_probe_sheet.py | -- | gen_size_probe_sheet -- character size vanguard probe sheet (2026-07-26). | human (docstring usage) |
-| measure_taste.py | -- | measure_taste.py -- what the slot picks say about taste, measured. | human (docstring usage) |
+| measure_taste.py | -- | measure_taste.py -- what the slot picks say about taste, measured. | tool:shortlist_l3_heroes.py |
 | merge_gallery_export.py | -- | merge_gallery_export.py -- fold a full_gallery.html export back into | tool:build_full_gallery.py; tool:notes_brief.py |
 | notes_brief.py | -- | notes_brief.py -- turn the reviewer's notes into the brief for the next round. | tool:build_full_gallery.py |
 | qc_sprite_frames.py | -- | qc_sprite_frames -- PIL QC gate for pixellab character batches. | tool:build_worker_rebase_sheet.py |
@@ -143,7 +159,8 @@ Declared with a `Layer:` line in a tool's module docstring; `--` = undeclared.
 | review_style.py | -- | review_style -- ONE house style for all internal review/dev HTML tools. | tool:analyze_verdicts.py; tool:build_cat_angle_ab_sheet.py; tool:build_cat_refinement_sheet.py; tool:build_cat_sweep_sheet.py; tool:build_cat_west_walk_picks.py; tool:build_doom_strip_sheet.py; tool:build_prop_rebase_sheet.py; tool:build_slot_picker.py; tool:build_t6_diagonals_and_cats_sheet.py; tool:build_worker_rebase_sheet.py; tool:build_worker_round2_sheet.py; tool:gen_contact_sheet.py; tool:gen_hero_gallery.py; tool:gen_prop_grain_sheet.py; tool:gen_quirk_icon_sheet.py; tool:gen_size_probe_sheet.py |
 | scan_text_leak.py | -- | Measure text leakage in a generated art batch, with OCR, and record the result. | tool:build_share_set.py |
 | scan_white_flash.py | -- | Scan walk-clip frames for the "white flash under the cat" artifact. | tool:build_cat_refinement_sheet.py |
-| serve_review.py | -- | Local art-review app for P(Doom)1 -- ONE place to review ALL the art. | tool:build_slot_picker.py |
+| serve_review.py | -- | Local art-review app for P(Doom)1 -- ONE place to review ALL the art. | tool:build_slot_picker.py; tool:scan_text_leak.py |
+| shortlist_l3_heroes.py | -- | shortlist_l3_heroes.py -- turn 140 flat hero candidates into an ordered shortlist. | human (docstring usage) |
 | slot_model.py | -- | slot_model.py -- the ONE definition of "slot cluster" and "frame role". | test:test_slot_picker.py; tool:apply_slot_picks.py; tool:build_slot_picker.py; tool:measure_taste.py |
 | text_leak_scan.py | -- | text_leak_scan.py -- measure how often generated art leaks legible text. | human (docstring usage) |
 
@@ -176,10 +193,16 @@ Declared with a `Layer:` line in a tool's module docstring; `--` = undeclared.
 
 ## UNKNOWN -- no declaration, no usage hint, no discoverable caller
 
-11 tool(s) that nothing declares, documents, or calls. Each one is either
+17 tool(s) that nothing declares, documents, or calls. Each one is either
 a rot candidate or an undocumented dependency -- find out which (`tools/find_dead_code.py` lane).
 
 - `scripts/ascii_compliance_fixer.py`
+- `scripts/lib/scores/enhanced_leaderboard.py`
+- `scripts/lib/scores/local_store.py`
+- `scripts/lib/services/data_paths.py`
+- `scripts/lib/services/deterministic_rng.py`
+- `scripts/lib/services/leaderboard.py`
+- `scripts/lib/services/version.py`
 - `scripts/logging_system.py`
 - `scripts/monitor-sync.py`
 - `scripts/repo-status.py`
@@ -224,6 +247,6 @@ DISCUSSING CI); the rest are the hollow-runner shape -- read them.
 
 ## Not indexed: HTML tools
 
-27 `.html` tool(s) under `tools/` (browser-opened, no docstring to parse): `tools/art_review/doom_overlay_preview.html`, `tools/art_review/hero_gallery_template.html`, `tools/art_review/icon_pass_2026-07-21.html`, `tools/art_review/icon_pass_verdicts_2026-07-21.html`, `tools/art_review/palette.html`, `tools/art_review/palette_swatches.html`, `tools/art_review/scene_wave2_2026-07-21.html`, `tools/art_review/style_review.html`, `tools/assets/review_generated.html`, `tools/music/commission_sheets.html`, `tools/music/jukebox.html`, `tools/music/listening_room.html`, `tools/music/stem_board.html`, `tools/runsheet/CEREMONY-ALL-GATES-2026-07-31.html`, `tools/runsheet/SUNDAY-postmortem-2026-08-07.html`, `tools/runsheet/chronicle-2026-08-06_07.html`, `tools/runsheet/commitments-2026-08.html`, `tools/runsheet/copy-review-2026-08-09.html`, `tools/runsheet/fri-2026-07-31-EVENING-1620.html`, `tools/runsheet/fri-2026-07-31-GATES-1700.html`, `tools/runsheet/fri-2026-07-31-TO-MIDNIGHT-1733.html`, `tools/runsheet/fri-2026-07-31-league-day.html`, `tools/runsheet/playtest_card.html`, `tools/runsheet/wed-thu-2026-07-29.html`, `tools/social_composer.html`, `tools/ui_comparison.html`, `tools/ui_mockup/wireframe.html`.
+30 `.html` tool(s) under `tools/` (browser-opened, no docstring to parse): `tools/art_review/doom_overlay_preview.html`, `tools/art_review/hero_gallery_template.html`, `tools/art_review/icon_pass_2026-07-21.html`, `tools/art_review/icon_pass_verdicts_2026-07-21.html`, `tools/art_review/palette.html`, `tools/art_review/palette_swatches.html`, `tools/art_review/scene_wave2_2026-07-21.html`, `tools/art_review/style_review.html`, `tools/assets/review_generated.html`, `tools/music/commission_sheets.html`, `tools/music/jukebox.html`, `tools/music/listening_room.html`, `tools/music/stem_board.html`, `tools/runsheet/CEREMONY-ALL-GATES-2026-07-31.html`, `tools/runsheet/SUNDAY-postmortem-2026-08-07.html`, `tools/runsheet/chronicle-2026-08-06_07.html`, `tools/runsheet/commitments-2026-08.html`, `tools/runsheet/copy-review-2026-08-09.html`, `tools/runsheet/decisions-2026-08-10.html`, `tools/runsheet/fri-2026-07-31-EVENING-1620.html`, `tools/runsheet/fri-2026-07-31-GATES-1700.html`, `tools/runsheet/fri-2026-07-31-TO-MIDNIGHT-1733.html`, `tools/runsheet/fri-2026-07-31-league-day.html`, `tools/runsheet/playtest_card.html`, `tools/runsheet/sat-2026-08-08-release-status.html`, `tools/runsheet/wed-thu-2026-07-29.html`, `tools/runsheet/week-2026-08-10-plan.html`, `tools/social_composer.html`, `tools/ui_comparison.html`, `tools/ui_mockup/wireframe.html`.
 
-Total: 124 active tools (10 GENERATE, 5 OBSERVE, 8 PROVE, 1 SWEEP, 100 undeclared); 11 in UNKNOWN; 6 archived.
+Total: 132 active tools (10 GENERATE, 5 OBSERVE, 9 PROVE, 1 SWEEP, 107 undeclared); 17 in UNKNOWN; 6 archived.
