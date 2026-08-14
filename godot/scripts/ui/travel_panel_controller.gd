@@ -292,9 +292,11 @@ func _on_travel_option_selected(action_id: String, action_name: String, dialog: 
 	host.active_dialog = null
 	host.active_dialog_buttons = []
 
-	# Handle stub action
+	# Handle stub action. A click that can never land is the same silent-failure class as a
+	# refused one: during PLAN the old bare log_message() went into the hidden feed, so the
+	# button read as broken rather than as not-built-yet. report_rejection reaches the toast.
 	if action_id == "send_delegation":
-		host.log_message("[color=yellow][Issue #411] Delegation system coming soon![/color]")
+		host.report_rejection("Delegation is not built yet (issue #411) - nothing was queued.")
 		return
 
 	# For submit_paper and attend_conference, show dedicated dialogs
@@ -421,6 +423,10 @@ func _on_conference_trip_committed(conf_id: String, dialog: Control) -> void:
 
 	var trip: Dictionary = host.game_manager.attend_conference_trip(conf_id)
 	if not bool(trip.get("success", false)):
+		# NOT host.report_outcome: GameManager.attend_conference_trip already emits
+		# error_occurred on a refusal, which is the SAME door (present_error -> feed + PLAN
+		# toast). Reporting again here would raise the toast twice for one click. This line is
+		# the feed record only, which is why it is safe as a bare log_message.
 		host.log_message("[color=yellow]%s[/color]" % String(trip.get("message", "Cannot attend.")))
 		return
 
@@ -532,7 +538,10 @@ func _show_paper_submission_dialog():
 			lead.researcher_name = researchers[0].get("researcher_name", "Anonymous")
 			lead.skill_level = researchers[0].get("skill_level", 3)
 		var result = GameActions.submit_paper_to_conference(host.game_manager.state, conf_id, topic, research_amount, lead)
-		host.log_message("[color=cyan]%s[/color]" % result.get("message", "Paper submitted"))
+		# The delegate refuses on research OR on Attention ("Not enough Attention (1 operating
+		# hour required)"), and this used to report EVERY verdict as a cyan success line into
+		# the PLAN-hidden feed -- so a refused submission read as an accepted one that vanished.
+		host.report_outcome(result, "Paper")
 		dialog.queue_free()
 		host.active_dialog = null
 	)
@@ -645,10 +654,9 @@ func _show_conference_attendance_dialog():
 		# TODO: Multi-stage booking with traveler/class selection
 		var traveler = host.game_manager.state.researchers[0] if host.game_manager.state.researchers.size() > 0 else null
 		var result = GameActions.attend_conference_action(host.game_manager.state, conf_id, "economy", traveler)
-		if result.get("success", false):
-			host.log_message("[color=lime]%s[/color]" % result.get("message", "Attended conference"))
-		else:
-			host.log_message("[color=red]%s[/color]" % result.get("message", "Failed to attend"))
+		# Same door as hiring: the refusal ("Cannot afford: $X + 2 operating hours required")
+		# reached only the PLAN-hidden feed before, so an unaffordable trip was a dead button.
+		host.report_outcome(result, "Conference")
 		dialog.queue_free()
 		host.active_dialog = null
 	)

@@ -286,12 +286,14 @@ func test_a_refused_hiring_child_click_reaches_the_player_not_the_hidden_feed():
 	assert_eq(host.rejections.size(), 1,
 		"the refused offer is reported through the PLAN-visible door, not swallowed")
 	assert_true(String(host.rejections[0]).contains("Not enough Attention"),
-		"the message says WHY it was refused, got: %s" % host.rejections)
+		"the message says WHY it was refused, got: %s" % [host.rejections])
 	assert_true(String(host.rejections[0]).contains("1 needed"),
-		"and names the shortfall, got: %s" % host.rejections)
+		"and names the shortfall, got: %s" % [host.rejections])
+	# NOTE the wrapping array: `"%s" % some_array` spreads the array as the argument LIST, so an
+	# empty one raises "not enough arguments for format string" -- on the passing path.
 	assert_eq(host.feed_lines_containing("Not enough Attention").size(), 0,
 		"the panel no longer writes the refusal straight into the PLAN-hidden feed: %s"
-			% host.feed_lines_containing("Not enough Attention"))
+			% [host.feed_lines_containing("Not enough Attention")])
 
 
 func test_an_accepted_hiring_child_click_still_confirms_through_the_same_door():
@@ -347,7 +349,7 @@ func test_a_travel_click_that_cannot_do_anything_says_so():
 	assert_eq(host.rejections.size(), 1,
 		"a click that cannot land is refused where the player can see it")
 	assert_true(String(host.rejections[0]).contains("411"),
-		"the refusal still carries the tracking issue, got: %s" % host.rejections)
+		"the refusal still carries the tracking issue, got: %s" % [host.rejections])
 
 
 # --- The one backend-result door -------------------------------------------------------------

@@ -396,12 +396,18 @@ func _hiring_job_status(candidate_id: String) -> String:
 	return ""
 
 func _hiring_action_result(result: Dictionary, verb: String) -> void:
-	"""Log a hiring delegate's result, refresh the HUD (attention/money changed), and rebuild
-	the pipeline panel in place so new reveal / job state is visible immediately."""
-	var ok := bool(result.get("success", false))
-	var msg := String(result.get("message", ""))
-	var color := "cyan" if ok else "red"
-	host.log_message("[color=%s]%s: %s[/color]" % [color, verb, msg])
+	"""Present a hiring delegate's verdict, refresh the HUD (attention/money changed), and
+	rebuild the pipeline panel in place so new reveal / job state is visible immediately.
+
+	THE CHOKEPOINT: all six hiring child-click handlers (advertise / connections / interview /
+	onboard step / skip mentoring / send offer) land here, so the refusal surface is fixed
+	once instead of six times. It used to render a refusal as a red log_message(), i.e. into
+	WatchScreen's feed, which ScreenModeController hides for the whole of PLAN -- so a hiring
+	click refused for want of Attention produced NOTHING the player could see (playtest: 19
+	queued fundraisings, then two offers, and no card, no message). host.report_outcome routes
+	the same verdict through EventResultPresenter, which raises the PLAN toast as well as the
+	feed line. Same conditions, same early returns, same economy -- only the surface changed."""
+	host.report_outcome(result, verb)
 	host._on_game_state_updated(host.game_manager.get_game_state())
 	_show_hiring_submenu()
 

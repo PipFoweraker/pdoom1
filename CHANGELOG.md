@@ -18,6 +18,41 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixed
+- **Every action reached through a submenu could fail in complete silence, and
+  hiring is entirely on that path.** Reported from a live playtest, in the
+  player's words: *"I can fail silently if I queue 19 fundraisings and then try
+  to make offers to 2 people. Making offers doesn't show up as a card."*
+  `_on_dynamic_action_pressed` returns at its `is_submenu` branch, which sits
+  ABOVE the attention/affordability guards and their `report_rejection()` calls.
+  #1204 re-armed those guards inside `SubmenuController.on_option_selected`,
+  which covers the six icon-grid panels plus financing -- but the two BESPOKE
+  panels never queue through it. Hiring and travel call the
+  `GameManager.hiring_*` / `GameActions` conference delegates directly and
+  rendered the refusal with a bare `log_message()`, i.e. into WatchScreen's
+  feed, which `ScreenModeController` hides for the whole of PLAN. Eleven
+  child-click buttons across those two panels therefore produced nothing at all
+  when refused: no card, no message, no explanation. **This was a pre-existing
+  gap, not a regression.**
+  Fixed at the chokepoints, not the buttons: one new door,
+  `EventResultPresenter.present_outcome()` (exposed as `MainUI.report_outcome()`),
+  decides what an acceptance and a refusal look like for a backend
+  `{success, message}` verdict, and routes refusals through the SAME
+  `present_error()` the rest of the rejection surface uses -- so they reach the
+  PLAN toast as well as the feed. All six hiring handlers already funnelled
+  through `_hiring_action_result`, so hiring is fixed in one line; travel's
+  three leaf commits report through the same door.
+  The refusal REASON is relayed from the backend verbatim, deliberately: a
+  shadow pre-check in the view is exactly the defect #1204 fixed, and only the
+  backend knows whether a click failed for Attention, money, reputation, desk
+  space or pipeline state.
+  **The guards were NOT hoisted above the `is_submenu` return, and must not be**:
+  the submenu driver is free, the child inside the menu carries the cost, so
+  guarding the driver would refuse to OPEN a menu the player is entitled to
+  browse. A test now pins that ordering.
+  No gameplay change: same conditions, same early returns, same economy, and no
+  phantom queue tiles (#821 -- the door returns the backend's verdict so a call
+  site can gate its follow-up). The cumulative overbook that triggers the repro
+  was already refused correctly by `MonthPlan`; only the presentation was broken.
 - **Contact email addresses were publicly fetchable from the bundled historical
   events, and the changelog said they had been removed.** Both are fixed here.
   `godot/data/historical_events.json` carried **12 addresses naming 26 real
