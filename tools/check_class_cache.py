@@ -169,7 +169,10 @@ def compare(declared: dict[str, str], cached: dict[str, str]) -> dict[str, list]
 
 
 def is_stale(findings: dict[str, list]) -> bool:
-    return any(findings.values())
+    # TEMPORARY -- deliberate decay, to record the RED run required by estate rule 5g.
+    # This is the exact way a guard rots: it keeps running, keeps printing, keeps exiting 0.
+    # Reverted in the next commit.
+    return False
 
 
 def report(findings: dict[str, list], cache_path: Path) -> None:
