@@ -229,6 +229,57 @@ have split two adjacent headers. Sizes there are likewise NOT read from
 panel height is hand-authored and test-guarded against its contents -- a theme
 swap would push the content past a box no test run could have seen.
 
+### The diegetic register: the month review clipboard
+
+`MonthReviewPanel` (`scripts/ui/month_review_panel.gd`) is the first surface
+that is an OBJECT rather than a panel -- Pip, 2026-08-14: "the month review
+screen could come in, like, clipboard form or some other diegetic form", the
+same instinct as the 2026-08-12 "semi-diegetic" calendar ruling. Expect more of
+these; this is the register they should share.
+
+Diegetic here does NOT mean photorealistic. The rules that made it work:
+
+- **It is still the terminal register.** Every word on the sheet is set in
+  `TerminalTheme.mono_font()`, the same family as the WATCH feed and the plan
+  screen. A paper object typeset in a proportional face would have left the
+  world the rest of the UI implies.
+- **Paper stays DIM.** `PAPER_TINT` takes the sheet art down to office-light
+  manila. A scanned-document white next to this palette reads as a browser
+  window, not as a thing on a desk. Same for the board: `BOARD_TINT` takes
+  stained plywood down to furniture.
+- **A drop shadow is what makes it an object,** not the colour. The board
+  carries `shadow_size 26` at `Color(0,0,0,0.60)`; without it the panel reads
+  as a rectangle again whatever is painted on it. Corollary: never set
+  `clip_contents` on the panel itself to crop its surface art -- that clips the
+  panel's own stylebox and takes the shadow with it. Put the texture in a
+  clipping child (see `_add_surface`).
+- **Surface art goes in as a `TextureRect` ground, `KEEP_ASPECT_COVERED`, not
+  tiled.** Both surface textures carry a distinctive coffee ring; tiling a
+  512px square across a 1100px sheet prints the ring twice and announces the
+  texture as wallpaper.
+- **Ink is a separate palette from the dark-panel palette.** `INK_GOOD` /
+  `INK_BAD` are the printed renderings of main_ui's `_DELTA_GOOD` /
+  `_DELTA_BAD` -- same MEANING (favourable green, adverse red, doom
+  sign-inverted), remixed because colours tuned to survive a near-black panel
+  go washy on manila. If you build another paper surface, take the inks from
+  `MonthReviewPanel`, not from the HUD.
+- **Overlays on textured art must be translucent.** `PAPER_SHADE` (the
+  attention callout's wash) is `alpha 0.10`; an opaque box punched into the
+  sheet reads as a widget stuck on the paper rather than a rule printed on it.
+- **Keep the controls off the paper.** The forward-door button sits on the
+  BOARD below the sheet, which preserves its B2/B3 teal-on-dark primary chrome
+  -- teal ink on manila is unreadable.
+
+Type on this panel is +2..+4pt over the generic event dialog (body 16 -> 19,
+small 14 -> 17, button 16 -> 20) per Pip's 2026-08-14 note; the masthead is the
+declared exception at 18 -> 24. This is a per-panel bump, NOT a global sweep.
+
+Surface art currently used, both pre-existing and previously unreferenced:
+`res://assets/textures/surfaces/tex_plywood_stained_512.png` (board) and
+`res://assets/textures/surfaces/tex_grid_graphpaper_aged_512.png` (sheet).
+Both are single-const slots so a purpose-drawn clipboard swaps in without
+touching the layout.
+
 ---
 
 ## 4. Spacing & Layout
