@@ -1160,6 +1160,30 @@ DESCRIPTION:P9\, the pack's OWN falsifier: if none of P1-P8 started and no
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:47dce034849abece@commitments.pdoom1
+DTSTAMP:20260814T000000Z
+DTSTART;VALUE=DATE:20260814
+DTEND;VALUE=DATE:20260815
+SUMMARY:[UNPARSED] needs a declaration -- NEXT_ROUND_BRIEF.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/art/audit_2026-08
+ -13/NEXT_ROUND_BRIEF.md:1. 1 line(s) in docs/art/audit_2026-08-13/NEXT_RO
+ UND_BRIEF.md mention this date and no COMMITMENT: declaration accounts fo
+ r it. Either add a declaration or the date is incidental. First line: # N
+ ext-round brief -- what Pip said while judging\, 2026-08-14 -- Generated 
+ from tracked sources by scripts/generate_commitment_calendar.py\; regener
+ ate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- NEXT_ROUND_BRIEF.md (unparsed) -- unown
+ ed
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:a91312e7f15c724c@commitments.pdoom1
 DTSTAMP:20260814T000000Z
 DTSTART;VALUE=DATE:20260814
@@ -1287,6 +1311,30 @@ ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:Generation spend policy EXPIRES: $100 AUD/day unconstrained re
  verts to unset (expiry) -- pip
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:1633882a8a0ac266@commitments.pdoom1
+DTSTAMP:20260815T000000Z
+DTSTART;VALUE=DATE:20260815
+DTEND;VALUE=DATE:20260816
+SUMMARY:[UNPARSED] needs a declaration -- NEXT_ROUND_BRIEF.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/art/audit_2026-08
+ -13/NEXT_ROUND_BRIEF.md:83. 1 line(s) in docs/art/audit_2026-08-13/NEXT_R
+ OUND_BRIEF.md mention this date and no COMMITMENT: declaration accounts f
+ or it. Either add a declaration or the date is incidental. First line: - 
+ **Generation spend policy expires 2026-08-15.** -- Generated from tracked
+  sources by scripts/generate_commitment_calendar.py\; regenerate to updat
+ e.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- NEXT_ROUND_BRIEF.md (unparsed) -- unown
+ ed
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
