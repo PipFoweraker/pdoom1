@@ -153,6 +153,26 @@ repos:
         files: '^(docs/.*\.md|docs/calendar/github_snapshot\.json|scripts/generate_commitment_calendar\.py|tools/.*\.py|scripts/.*\.py|[^/]*\.md)$'
         pass_filenames: false
 
+      # Godot class cache vs the class_name declarations (2026-08-13 playtest incident).
+      # NOTE THE STAGE: post-merge / post-checkout, NOT pre-commit. This failure is a
+      # property of a long-lived WORKING COPY, not of a diff -- the machine that authors a
+      # new `class_name` always has a fresh cache, so a commit-time gate would be watching
+      # the one place that is never wrong. It goes stale at `git pull`, which is exactly
+      # when these stages fire.
+      # Warn-only by design: a merge cannot be undone, and a `git pull` should not block for
+      # the minutes a Godot --import takes. The REPAIR happens at launch (`make run`), which
+      # is where the cost is worth paying and where the failure would otherwise bite.
+      # Inert until installed -- this needs, once per checkout:
+      #   pre-commit install --hook-type post-merge --hook-type post-checkout
+      - id: class-cache-check
+        name: Godot class cache matches the class_name declarations
+        entry: python tools/check_class_cache.py
+        language: system
+        stages: [post-merge, post-checkout]
+        always_run: true
+        pass_filenames: false
+        verbose: true
+
       - id: scene-nav-check
         name: Scene navigation routes through SceneTransition
         entry: python tools/check_scene_nav.py

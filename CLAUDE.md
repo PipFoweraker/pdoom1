@@ -9,7 +9,10 @@ runtime -- the old Python bridge is gone). Python exists only for CI/tooling in
 `scripts/` and `tools/`. Windows dev machine; CI is Ubuntu.
 
 ## Run the game
-- `godot --path godot` (or `make run`). On Pip's machine Godot is
+- **`make run`, not a bare `godot --path godot`.** Same launch, plus the
+  stale-class-cache pre-flight (~30ms; see the Tests section). The bare command
+  is what was typed on 2026-08-13 and it launched a silently broken build in
+  front of a first-time playtester. On Pip's machine Godot is
   `C:/Program Files/Godot/Godot_v4.5.1-stable_win64.exe`.
 
 ## Tests -- two tiers, don't conflate them
@@ -41,6 +44,19 @@ runtime -- the old Python bridge is gone). Python exists only for CI/tooling in
   directly, run `godot --headless --path godot --import` first. Running headless
   Godot also floods stderr with SCRIPT ERROR class-cache lines on the first pass --
   expected noise, not a real failure.
+- **STALE cache is the worse half of that trap (2026-08-13, cost a playtest).**
+  Cold = absent, and it fails loudly. **Stale = present, plausible, and wrong
+  about exactly the file someone just added.** `godot/.godot/` is generated,
+  gitignored and PER-CHECKOUT, so a worktree that authors a new `class_name`
+  builds a correct cache and passes 1313 tests while the shared checkout, which
+  only pulled, keeps a cache that predates the file. Every dependent script then
+  hits `Parse Error: Identifier "X" not declared`. **The game still launches** --
+  background art, doom readout, phase stuck on "starting up", no action icons,
+  no upgrades, no commit-month, no music. It reads as "still loading".
+  **CI is structurally blind to this** (it always clones fresh).
+  Guard: `python tools/check_class_cache.py [--repair]`, ~30ms, no Godot launch;
+  `make run` and `make lint` now depend on it. Note `godot --headless --quit`
+  exits **0** through the whole cascade, so "it did not crash" proves nothing.
 - `make test` = fast gate; `make run` = game.
 
 ## `.import` / `.uid` files -- the staging trap
