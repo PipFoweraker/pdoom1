@@ -393,19 +393,19 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-08-03T21:19:32.113Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "file:art_generated/scene_art_wave2/v1/event_board_v3.webp": {
     "note": "",
     "tags": [],
     "updated_at": "2026-08-03T21:19:33.271Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "file:art_generated/scene_art_wave2/v1/event_board_v4.webp": {
     "note": "",
     "tags": [],
     "updated_at": "2026-08-03T21:19:33.831Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "file:art_generated/scene_art_wave2/v1/event_crisis_v1.webp": {
     "note": "",
@@ -423,7 +423,7 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-08-03T21:19:39.620Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "file:art_generated/scene_art_wave2/v1/event_crisis_v4.webp": {
     "note": "",
@@ -435,13 +435,13 @@
     "note": "make figures less obviously men?",
     "tags": [],
     "updated_at": "2026-08-03T21:20:59.488Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "file:art_generated/scene_art_wave2/v1/event_opportunity_v2.webp": {
     "note": "Try making fihgures more androgynous and less obvious, otherwise, good",
     "tags": [],
     "updated_at": "2026-08-03T21:21:00.098Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "file:art_generated/scene_art_wave2/v1/event_opportunity_v3.webp": {
     "note": "",
@@ -552,10 +552,10 @@
     "verdict": "keep"
   },
   "gen:action_icons_missing:acquire_startup:v1": {
-    "note": "",
+    "note": "poorl articulated design keeps leaning to weird beiuoldings interpolating into each other destructively",
     "tags": [],
-    "updated_at": "2026-07-25T02:30:31.606438+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:11:03.382583+00:00",
+    "verdict": "discard"
   },
   "gen:action_icons_missing:acquire_startup:v2": {
     "note": "",
@@ -564,10 +564,10 @@
     "verdict": "keep"
   },
   "gen:action_icons_missing:grant_proposal:v1": {
-    "note": "",
+    "note": "this does not reflect what things do in reality and is distressing to look at",
     "tags": [],
-    "updated_at": "2026-07-25T02:30:35.778352+00:00",
-    "verdict": "reroll"
+    "updated_at": "2026-08-14T12:11:26.597367+00:00",
+    "verdict": "discard"
   },
   "gen:action_icons_missing:grant_proposal:v2": {
     "note": "",
@@ -578,38 +578,38 @@
   "gen:action_icons_missing:lobby_government:v1": {
     "note": "briefcase needs to be colour and visually distinct from foreground",
     "tags": [],
-    "updated_at": "2026-07-25T02:30:58.397120+00:00",
-    "verdict": "reroll"
+    "updated_at": "2026-08-14T12:12:03.971001+00:00",
+    "verdict": "keep"
   },
   "gen:action_icons_missing:lobby_government:v2": {
-    "note": "",
+    "note": "not chosen -- set winner: lobby_government",
     "tags": [],
-    "updated_at": "2026-07-25T02:31:01.897931+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:12:04.002771+00:00",
+    "verdict": "discard"
   },
   "gen:action_icons_missing:network:v1": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:31:05.129038+00:00",
-    "verdict": "maybe"
-  },
-  "gen:action_icons_missing:network:v2": {
-    "note": "",
-    "tags": [],
-    "updated_at": "2026-07-25T02:31:06.284361+00:00",
+    "updated_at": "2026-08-14T12:12:04.988253+00:00",
     "verdict": "keep"
   },
-  "gen:action_icons_missing:open_source_release:v1": {
-    "note": "",
+  "gen:action_icons_missing:network:v2": {
+    "note": "not chosen -- set winner: network",
     "tags": [],
-    "updated_at": "2026-07-25T02:31:09.156381+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:12:05.021955+00:00",
+    "verdict": "discard"
+  },
+  "gen:action_icons_missing:open_source_release:v1": {
+    "note": "not chosen -- set winner: open_source_release",
+    "tags": [],
+    "updated_at": "2026-08-14T12:12:07.120470+00:00",
+    "verdict": "discard"
   },
   "gen:action_icons_missing:open_source_release:v2": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:31:09.718117+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:12:07.152962+00:00",
+    "verdict": "keep"
   },
   "gen:action_icons_missing:sabotage_competitor:v1": {
     "note": "",
@@ -626,14 +626,14 @@
   "gen:action_icons_missing:take_loan:v1": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:31:15.788034+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:12:08.722376+00:00",
+    "verdict": "keep"
   },
   "gen:action_icons_missing:take_loan:v2": {
-    "note": "",
+    "note": "not chosen -- set winner: take_loan",
     "tags": [],
-    "updated_at": "2026-07-25T02:31:16.348817+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:12:08.766311+00:00",
+    "verdict": "discard"
   },
   "gen:action_icons_missing:team_building:v1": {
     "note": "",
@@ -647,11 +647,335 @@
     "updated_at": "2026-07-25T02:31:31.893134+00:00",
     "verdict": "keep"
   },
+  "gen:an0807_l0_anchors:s01_r01_p01:v1": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-14T12:12:19.352637+00:00",
+    "verdict": "keep"
+  },
+  "gen:an0807_l0_anchors:s01_r01_p01:v2": {
+    "note": "not chosen -- set winner: s01_r01_p01",
+    "tags": [],
+    "updated_at": "2026-08-14T12:12:19.381438+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l0_anchors:s01_r01_p02:v1": {
+    "note": "not chosen -- set winner: s01_r01_p02",
+    "tags": [],
+    "updated_at": "2026-08-14T12:12:24.902539+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l0_anchors:s01_r01_p02:v2": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-14T12:12:24.931137+00:00",
+    "verdict": "keep"
+  },
+  "gen:an0807_l0_anchors:s01_r01_p03:v1": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-14T12:12:29.319276+00:00",
+    "verdict": "keep"
+  },
+  "gen:an0807_l0_anchors:s01_r01_p03:v2": {
+    "note": "not chosen -- set winner: s01_r01_p03",
+    "tags": [],
+    "updated_at": "2026-08-14T12:12:29.349926+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l0_anchors:s01_r01_p04:v1": {
+    "note": "not chosen -- set winner: s01_r01_p04",
+    "tags": [],
+    "updated_at": "2026-08-14T12:12:33.424491+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l0_anchors:s01_r01_p04:v2": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-14T12:12:33.453271+00:00",
+    "verdict": "keep"
+  },
+  "gen:an0807_l0_anchors:s01_r01_p05:v1": {
+    "note": "not chosen -- set winner: s01_r01_p05",
+    "tags": [],
+    "updated_at": "2026-08-14T12:12:38.822177+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l0_anchors:s01_r01_p05:v2": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-14T12:12:38.851664+00:00",
+    "verdict": "keep"
+  },
+  "gen:an0807_l0_anchors:s01_r01_p06:v1": {
+    "note": "not chosen -- set winner: s01_r01_p06",
+    "tags": [],
+    "updated_at": "2026-08-14T12:12:43.062494+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l0_anchors:s01_r01_p06:v2": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-14T12:12:43.090836+00:00",
+    "verdict": "keep"
+  },
+  "gen:an0807_l0_anchors:s01_r01_p07:v1": {
+    "note": "not chosen -- set winner: s01_r01_p07",
+    "tags": [],
+    "updated_at": "2026-08-14T12:12:54.066046+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l0_anchors:s01_r01_p07:v2": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-14T12:12:54.093832+00:00",
+    "verdict": "keep"
+  },
+  "gen:an0807_l0_anchors:s01_r01_p08:v1": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-14T12:12:58.635829+00:00",
+    "verdict": "keep"
+  },
+  "gen:an0807_l0_anchors:s01_r01_p08:v2": {
+    "note": "not chosen -- set winner: s01_r01_p08",
+    "tags": [],
+    "updated_at": "2026-08-14T12:12:58.669739+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l0_anchors:s01_r01_p09:v1": {
+    "note": "not chosen -- set winner: s01_r01_p09",
+    "tags": [],
+    "updated_at": "2026-08-14T12:13:05.882840+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l0_anchors:s01_r01_p09:v2": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-14T12:13:05.912668+00:00",
+    "verdict": "keep"
+  },
+  "gen:an0807_l0_anchors:s04_r01_p01:v1": {
+    "note": "not chosen -- set winner: s04_r01_p01",
+    "tags": [],
+    "updated_at": "2026-08-14T12:13:18.155235+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l0_anchors:s04_r01_p01:v2": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-14T12:13:18.184903+00:00",
+    "verdict": "keep"
+  },
+  "gen:an0807_l0_anchors:s04_r01_p02:v1": {
+    "note": "not chosen -- set winner: s04_r01_p02",
+    "tags": [],
+    "updated_at": "2026-08-14T12:13:23.574593+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l0_anchors:s04_r01_p02:v2": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-14T12:13:23.603169+00:00",
+    "verdict": "keep"
+  },
+  "gen:an0807_l0_anchors:s04_r01_p03:v1": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-14T12:13:30.856276+00:00",
+    "verdict": "keep"
+  },
+  "gen:an0807_l0_anchors:s04_r01_p03:v2": {
+    "note": "not chosen -- set winner: s04_r01_p03",
+    "tags": [],
+    "updated_at": "2026-08-14T12:13:30.884013+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l0_anchors:s04_r01_p04:v1": {
+    "note": "not chosen -- set winner: s04_r01_p04",
+    "tags": [],
+    "updated_at": "2026-08-14T12:13:34.772093+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l0_anchors:s04_r01_p04:v2": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-14T12:13:34.801954+00:00",
+    "verdict": "keep"
+  },
+  "gen:an0807_l0_anchors:s04_r01_p05:v1": {
+    "note": "not chosen -- set winner: s04_r01_p05",
+    "tags": [],
+    "updated_at": "2026-08-14T12:13:37.959615+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l0_anchors:s04_r01_p05:v2": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-14T12:13:37.987777+00:00",
+    "verdict": "keep"
+  },
+  "gen:an0807_l0_anchors:s04_r01_p06:v1": {
+    "note": "not chosen -- set winner: s04_r01_p06",
+    "tags": [],
+    "updated_at": "2026-08-14T12:13:41.294472+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l0_anchors:s04_r01_p06:v2": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-14T12:13:41.323868+00:00",
+    "verdict": "keep"
+  },
+  "gen:an0807_l0_anchors:s04_r01_p07:v1": {
+    "note": "not chosen -- set winner: s04_r01_p07",
+    "tags": [],
+    "updated_at": "2026-08-14T12:13:45.340291+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l0_anchors:s04_r01_p07:v2": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-14T12:13:45.368967+00:00",
+    "verdict": "keep"
+  },
+  "gen:an0807_l0_anchors:s04_r01_p08:v1": {
+    "note": "not chosen -- set winner: s04_r01_p08",
+    "tags": [],
+    "updated_at": "2026-08-14T12:13:48.299940+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l0_anchors:s04_r01_p08:v2": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-14T12:13:48.329006+00:00",
+    "verdict": "keep"
+  },
+  "gen:an0807_l0_anchors:s04_r01_p09:v1": {
+    "note": "not chosen -- set winner: s04_r01_p09",
+    "tags": [],
+    "updated_at": "2026-08-14T12:13:49.939633+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l0_anchors:s04_r01_p09:v2": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-14T12:13:49.971516+00:00",
+    "verdict": "keep"
+  },
+  "gen:an0807_l0_anchors:s07_r01_p01:v1": {
+    "note": "not chosen -- set winner: s07_r01_p01",
+    "tags": [],
+    "updated_at": "2026-08-14T12:14:14.108286+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l0_anchors:s07_r01_p01:v2": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-14T12:14:14.138008+00:00",
+    "verdict": "keep"
+  },
+  "gen:an0807_l0_anchors:s07_r01_p02:v1": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-14T12:14:19.249223+00:00",
+    "verdict": "keep"
+  },
+  "gen:an0807_l0_anchors:s07_r01_p02:v2": {
+    "note": "not chosen -- set winner: s07_r01_p02",
+    "tags": [],
+    "updated_at": "2026-08-14T12:14:19.285544+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l0_anchors:s07_r01_p03:v1": {
+    "note": "not chosen -- set winner: s07_r01_p03",
+    "tags": [],
+    "updated_at": "2026-08-14T12:14:24.527436+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l0_anchors:s07_r01_p03:v2": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-14T12:14:24.557442+00:00",
+    "verdict": "keep"
+  },
+  "gen:an0807_l0_anchors:s07_r01_p04:v1": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-14T12:14:29.250479+00:00",
+    "verdict": "keep"
+  },
+  "gen:an0807_l0_anchors:s07_r01_p04:v2": {
+    "note": "not chosen -- set winner: s07_r01_p04",
+    "tags": [],
+    "updated_at": "2026-08-14T12:14:29.278080+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l0_anchors:s07_r01_p05:v1": {
+    "note": "not chosen -- set winner: s07_r01_p05",
+    "tags": [],
+    "updated_at": "2026-08-14T12:14:35.850505+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l0_anchors:s07_r01_p05:v2": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-14T12:14:35.906344+00:00",
+    "verdict": "keep"
+  },
+  "gen:an0807_l0_anchors:s07_r01_p06:v1": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-14T12:14:55.216548+00:00",
+    "verdict": "keep"
+  },
+  "gen:an0807_l0_anchors:s07_r01_p06:v2": {
+    "note": "the approved needs to be the right way up, players can read up side down",
+    "tags": [],
+    "updated_at": "2026-08-14T12:14:55.246562+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l0_anchors:s07_r01_p07:v1": {
+    "note": "not chosen -- set winner: s07_r01_p07",
+    "tags": [],
+    "updated_at": "2026-08-14T12:14:57.776269+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l0_anchors:s07_r01_p07:v2": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-14T12:14:57.805677+00:00",
+    "verdict": "keep"
+  },
+  "gen:an0807_l0_anchors:s07_r01_p08:v1": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-14T12:15:58.747281+00:00",
+    "verdict": "keep"
+  },
+  "gen:an0807_l0_anchors:s07_r01_p08:v2": {
+    "note": "not chosen -- set winner: s07_r01_p08",
+    "tags": [],
+    "updated_at": "2026-08-14T12:15:58.775958+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l0_anchors:s07_r01_p09:v1": {
+    "note": "not chosen -- set winner: s07_r01_p09",
+    "tags": [],
+    "updated_at": "2026-08-14T12:16:02.591349+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l0_anchors:s07_r01_p09:v2": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-14T12:16:02.622007+00:00",
+    "verdict": "keep"
+  },
   "gen:an0807_l0_sheets:p01:v1": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-08-07T06:02:45.056Z",
-    "verdict": "iterate"
+    "updated_at": "2026-08-14T12:20:01.163520+00:00",
+    "verdict": "keep"
   },
   "gen:an0807_l0_sheets:p01:v2": {
     "note": "",
@@ -662,8 +986,8 @@
   "gen:an0807_l0_sheets:p02:v1": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-08-07T06:02:47.214Z",
-    "verdict": "iterate"
+    "updated_at": "2026-08-14T12:20:03.520908+00:00",
+    "verdict": "keep"
   },
   "gen:an0807_l0_sheets:p02:v2": {
     "note": "",
@@ -672,16 +996,16 @@
     "verdict": "keep"
   },
   "gen:an0807_l0_sheets:p03:v1": {
-    "note": "",
+    "note": "not chosen -- set winner: p03",
     "tags": [],
-    "updated_at": "2026-08-07T06:02:49.917Z",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:16:12.386313+00:00",
+    "verdict": "discard"
   },
   "gen:an0807_l0_sheets:p03:v2": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-08-07T06:02:51.544Z",
-    "verdict": "iterate"
+    "updated_at": "2026-08-14T12:16:12.416255+00:00",
+    "verdict": "keep"
   },
   "gen:an0807_l0_sheets:p04:v1": {
     "note": "",
@@ -746,14 +1070,14 @@
   "gen:an0807_l0_sheets:p09:v1": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-08-07T06:03:07.709Z",
-    "verdict": "iterate"
+    "updated_at": "2026-08-14T12:16:14.875895+00:00",
+    "verdict": "keep"
   },
   "gen:an0807_l0_sheets:p09:v2": {
-    "note": "",
+    "note": "not chosen -- set winner: p09",
     "tags": [],
-    "updated_at": "2026-08-07T06:03:08.105Z",
-    "verdict": "iterate"
+    "updated_at": "2026-08-14T12:16:14.906133+00:00",
+    "verdict": "discard"
   },
   "gen:an0807_l1_family:s01_f01:v1": {
     "note": "",
@@ -765,7 +1089,7 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-08-07T06:00:19.627Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "gen:an0807_l1_family:s01_f03:v1": {
     "note": "",
@@ -783,7 +1107,7 @@
     "note": "a bit too warm/ soft?",
     "tags": [],
     "updated_at": "2026-08-07T06:00:32.315Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "gen:an0807_l1_family:s01_f06:v1": {
     "note": "",
@@ -813,7 +1137,7 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-08-07T06:00:42.667Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "gen:an0807_l1_family:s01_f11:v1": {
     "note": "",
@@ -837,7 +1161,7 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-08-07T06:00:55.530Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "gen:an0807_l1_family:s02_f03:v1": {
     "note": "",
@@ -855,7 +1179,7 @@
     "note": "mmybe needs some other coulour elements as well, try with some different cats maybe",
     "tags": [],
     "updated_at": "2026-08-07T06:01:12.614Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "gen:an0807_l1_family:s02_f06:v1": {
     "note": "",
@@ -885,13 +1209,13 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-08-07T06:01:22.049Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "gen:an0807_l1_family:s02_f11:v1": {
     "note": "",
     "tags": [],
     "updated_at": "2026-08-07T06:01:23.957Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "gen:an0807_l1_family:s02_f12:v1": {
     "note": "",
@@ -933,13 +1257,13 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-08-07T06:05:02.920Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "gen:an0807_l1_family:s03_f07:v1": {
     "note": "",
     "tags": [],
     "updated_at": "2026-08-07T06:05:03.284Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "gen:an0807_l1_family:s03_f08:v1": {
     "note": "",
@@ -951,7 +1275,7 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-08-07T06:05:06.424Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "gen:an0807_l1_family:s03_f10:v1": {
     "note": "",
@@ -1083,7 +1407,7 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-08-07T06:05:28.436Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "gen:an0807_l1_family:s05_f08:v1": {
     "note": "",
@@ -1131,13 +1455,13 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-08-07T06:05:34.659Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "gen:an0807_l1_family:s06_f04:v1": {
     "note": "",
     "tags": [],
     "updated_at": "2026-08-07T06:05:36.430Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "gen:an0807_l1_family:s06_f05:v1": {
     "note": "",
@@ -1173,7 +1497,7 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-08-07T06:05:43.611Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "gen:an0807_l1_family:s06_f11:v1": {
     "note": "",
@@ -1185,7 +1509,7 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-08-07T06:05:46.837Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "gen:an0807_l1_family:s07_f01:v1": {
     "note": "",
@@ -1209,7 +1533,7 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-08-07T06:05:51.771Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "gen:an0807_l1_family:s07_f05:v1": {
     "note": "",
@@ -1311,7 +1635,7 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-08-07T06:06:09.277Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "gen:an0807_l1_family:s08_f10:v1": {
     "note": "",
@@ -1437,13 +1761,13 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-08-07T06:06:28.128Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "gen:an0807_l1_family:s10_f07:v1": {
     "note": "",
     "tags": [],
     "updated_at": "2026-08-07T06:06:29.651Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "gen:an0807_l1_family:s10_f08:v1": {
     "note": "",
@@ -1485,7 +1809,7 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-08-07T06:06:41.445Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "gen:an0807_l1_family:s11_f03:v1": {
     "note": "",
@@ -1515,13 +1839,13 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-08-07T06:06:45.853Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "gen:an0807_l1_family:s11_f08:v1": {
     "note": "maybe for graffiti overlays? set aside and think",
     "tags": [],
     "updated_at": "2026-08-07T06:07:00.106Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "gen:an0807_l1_family:s11_f09:v1": {
     "note": "",
@@ -1563,7 +1887,7 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-08-07T06:07:06.144Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "gen:an0807_l1_family:s12_f04:v1": {
     "note": "",
@@ -1599,7 +1923,7 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-08-07T06:07:11.748Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "gen:an0807_l1_family:s12_f10:v1": {
     "note": "",
@@ -1629,7 +1953,7 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-08-07T06:07:16.851Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "gen:an0807_l1_family:s13_f03:v1": {
     "note": "",
@@ -1643,6 +1967,12 @@
     "updated_at": "2026-08-07T06:07:17.727Z",
     "verdict": "keep"
   },
+  "gen:an0807_l1_family:s14_f12:v1": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-14T12:20:20.961025+00:00",
+    "verdict": "discard"
+  },
   "gen:an0807_l1_palette:s01_r01_p01:v1": {
     "note": "",
     "tags": [],
@@ -1653,7 +1983,7 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-08-07T05:56:37.295Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "gen:an0807_l1_palette:s01_r01_p03:v1": {
     "note": "",
@@ -1689,19 +2019,19 @@
     "note": "slightly too washed out, composition feels odd, msising chairs in front of desk. ",
     "tags": [],
     "updated_at": "2026-08-07T05:57:04.547Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "gen:an0807_l1_palette:s01_r01_p09:v1": {
     "note": "",
     "tags": [],
     "updated_at": "2026-08-07T05:57:08.039Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "gen:an0807_l1_palette:s05_r01_p01:v1": {
     "note": "",
     "tags": [],
     "updated_at": "2026-08-07T05:57:16.285Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "gen:an0807_l1_palette:s05_r01_p02:v1": {
     "note": "",
@@ -1737,7 +2067,7 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-08-07T05:57:23.990Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "gen:an0807_l1_palette:s05_r01_p08:v1": {
     "note": "",
@@ -1773,7 +2103,7 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-08-07T05:57:40.697Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "gen:an0807_l1_palette:s08_r01_p05:v1": {
     "note": "",
@@ -1797,7 +2127,7 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-08-07T05:57:46.579Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "gen:an0807_l1_palette:s08_r01_p09:v1": {
     "note": "",
@@ -1827,7 +2157,7 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-08-07T05:57:57.494Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "gen:an0807_l1_palette:s09_r01_p05:v1": {
     "note": "",
@@ -1839,7 +2169,7 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-08-07T05:57:59.652Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "gen:an0807_l1_palette:s09_r01_p07:v1": {
     "note": "",
@@ -1899,7 +2229,7 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-08-07T05:58:19.556Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "gen:an0807_l1_palette:s11_r01_p08:v1": {
     "note": "",
@@ -1935,7 +2265,7 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-08-07T05:58:25.581Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "gen:an0807_l1_palette:s13_r01_p05:v1": {
     "note": "",
@@ -1959,7 +2289,7 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-08-07T05:58:37.999Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "gen:an0807_l1_palette:s13_r01_p09:v1": {
     "note": "touch of green is nice",
@@ -1971,7 +2301,7 @@
     "note": "this feels slightly too unrealistic",
     "tags": [],
     "updated_at": "2026-08-07T05:59:03.137Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "gen:an0807_l1_palette:s16_r01_p02:v1": {
     "note": "",
@@ -1995,19 +2325,19 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-08-07T05:59:21.218Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "gen:an0807_l1_palette:s16_r01_p06:v1": {
     "note": "this composition feels weird",
     "tags": [],
     "updated_at": "2026-08-07T05:59:29.417Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "gen:an0807_l1_palette:s16_r01_p07:v1": {
     "note": "",
     "tags": [],
     "updated_at": "2026-08-07T05:59:31.808Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "gen:an0807_l1_palette:s16_r01_p08:v1": {
     "note": "",
@@ -2019,7 +2349,7 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-08-07T05:59:34.845Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "gen:an0807_l1_palette:s18_r01_p01:v1": {
     "note": "",
@@ -2043,7 +2373,7 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-08-07T05:59:40.614Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "gen:an0807_l1_palette:s18_r01_p05:v1": {
     "note": "",
@@ -2073,7 +2403,7 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-08-07T05:59:48.611Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "gen:an0807_l1_palette:s20_r01_p01:v1": {
     "note": "",
@@ -2103,7 +2433,7 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-08-07T06:00:00.498Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "gen:an0807_l1_palette:s20_r01_p06:v1": {
     "note": "",
@@ -2127,13 +2457,13 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-08-07T06:00:04.837Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "gen:an0807_l1_palette:s21_r01_p01:v1": {
     "note": "",
     "tags": [],
     "updated_at": "2026-08-07T06:00:06.464Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "gen:an0807_l1_palette:s21_r01_p02:v1": {
     "note": "",
@@ -2145,7 +2475,7 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-08-07T06:00:09.360Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "gen:an0807_l1_palette:s21_r01_p04:v1": {
     "note": "",
@@ -2175,7 +2505,7 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-08-07T06:00:16.087Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "gen:an0807_l1_palette:s21_r01_p09:v1": {
     "note": "",
@@ -2193,7 +2523,7 @@
     "note": "slightly too realistic / shiny?",
     "tags": [],
     "updated_at": "2026-08-07T05:55:38.402Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "gen:an0807_l1_probe:s04_r01_p01:v1": {
     "note": "Nice altar, good stylishness",
@@ -2205,7 +2535,7 @@
     "note": "slightyl too crisp",
     "tags": [],
     "updated_at": "2026-08-07T05:56:08.460Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "gen:an0807_l1_probe:s21_r01_p01:v1": {
     "note": "",
@@ -2217,6 +2547,444 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-08-07T05:56:21.745Z",
+    "verdict": "keep"
+  },
+  "gen:an0807_l3_hero_land:s01_r03_p09:v1": {
+    "note": "not chosen -- set winner: s01_r03_p09",
+    "tags": [],
+    "updated_at": "2026-08-14T12:21:11.568338+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l3_hero_land:s01_r03_p09:v2": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-14T12:21:11.597480+00:00",
+    "verdict": "keep"
+  },
+  "gen:an0807_l3_hero_land:s01_r03_p09:v3": {
+    "note": "not chosen -- set winner: s01_r03_p09",
+    "tags": [],
+    "updated_at": "2026-08-14T12:21:11.625223+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l3_hero_land:s01_r03_p09:v4": {
+    "note": "not chosen -- set winner: s01_r03_p09",
+    "tags": [],
+    "updated_at": "2026-08-14T12:21:11.656071+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l3_hero_land:s02_r03_p09:v1": {
+    "note": "not chosen -- set winner: s02_r03_p09",
+    "tags": [],
+    "updated_at": "2026-08-14T12:21:21.706482+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l3_hero_land:s02_r03_p09:v2": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-14T12:21:21.741942+00:00",
+    "verdict": "keep"
+  },
+  "gen:an0807_l3_hero_land:s02_r03_p09:v3": {
+    "note": "not chosen -- set winner: s02_r03_p09",
+    "tags": [],
+    "updated_at": "2026-08-14T12:21:21.772022+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l3_hero_land:s02_r03_p09:v4": {
+    "note": "not chosen -- set winner: s02_r03_p09",
+    "tags": [],
+    "updated_at": "2026-08-14T12:21:21.808490+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l3_hero_land:s02_r05_p04:v1": {
+    "note": "not chosen -- set winner: s02_r05_p04",
+    "tags": [],
+    "updated_at": "2026-08-14T12:21:32.700522+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l3_hero_land:s02_r05_p04:v2": {
+    "note": "not chosen -- set winner: s02_r05_p04",
+    "tags": [],
+    "updated_at": "2026-08-14T12:21:32.730510+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l3_hero_land:s02_r05_p04:v3": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-14T12:21:32.774359+00:00",
+    "verdict": "keep"
+  },
+  "gen:an0807_l3_hero_land:s02_r05_p04:v4": {
+    "note": "not chosen -- set winner: s02_r05_p04",
+    "tags": [],
+    "updated_at": "2026-08-14T12:21:32.805728+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l3_hero_land:s03_r01_p01:v1": {
+    "note": "not chosen -- set winner: s03_r01_p01",
+    "tags": [],
+    "updated_at": "2026-08-14T12:21:43.293371+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l3_hero_land:s03_r01_p01:v2": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-14T12:21:43.322165+00:00",
+    "verdict": "keep"
+  },
+  "gen:an0807_l3_hero_land:s03_r01_p01:v3": {
+    "note": "not chosen -- set winner: s03_r01_p01",
+    "tags": [],
+    "updated_at": "2026-08-14T12:21:43.350852+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l3_hero_land:s03_r01_p01:v4": {
+    "note": "not chosen -- set winner: s03_r01_p01",
+    "tags": [],
+    "updated_at": "2026-08-14T12:21:43.384322+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l3_hero_land:s03_r02_p02:v1": {
+    "note": "not chosen -- set winner: s03_r02_p02",
+    "tags": [],
+    "updated_at": "2026-08-14T12:21:51.405485+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l3_hero_land:s03_r02_p02:v2": {
+    "note": "not chosen -- set winner: s03_r02_p02",
+    "tags": [],
+    "updated_at": "2026-08-14T12:21:51.434493+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l3_hero_land:s03_r02_p02:v3": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-14T12:21:51.464328+00:00",
+    "verdict": "keep"
+  },
+  "gen:an0807_l3_hero_land:s03_r02_p02:v4": {
+    "note": "not chosen -- set winner: s03_r02_p02",
+    "tags": [],
+    "updated_at": "2026-08-14T12:21:51.496325+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l3_hero_land:s03_r04_p07:v1": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-14T12:21:59.216482+00:00",
+    "verdict": "keep"
+  },
+  "gen:an0807_l3_hero_land:s03_r04_p07:v2": {
+    "note": "not chosen -- set winner: s03_r04_p07",
+    "tags": [],
+    "updated_at": "2026-08-14T12:21:59.246383+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l3_hero_land:s03_r04_p07:v3": {
+    "note": "not chosen -- set winner: s03_r04_p07",
+    "tags": [],
+    "updated_at": "2026-08-14T12:21:59.275998+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l3_hero_land:s03_r04_p07:v4": {
+    "note": "not chosen -- set winner: s03_r04_p07",
+    "tags": [],
+    "updated_at": "2026-08-14T12:21:59.305814+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l3_hero_land:s04_r01_p01:v1": {
+    "note": "not chosen -- set winner: s04_r01_p01",
+    "tags": [],
+    "updated_at": "2026-08-14T12:22:07.585651+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l3_hero_land:s04_r01_p01:v2": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-14T12:22:07.617525+00:00",
+    "verdict": "keep"
+  },
+  "gen:an0807_l3_hero_land:s04_r01_p01:v3": {
+    "note": "not chosen -- set winner: s04_r01_p01",
+    "tags": [],
+    "updated_at": "2026-08-14T12:22:07.646273+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l3_hero_land:s04_r01_p01:v4": {
+    "note": "not chosen -- set winner: s04_r01_p01",
+    "tags": [],
+    "updated_at": "2026-08-14T12:22:07.677280+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l3_hero_land:s04_r10_p08:v1": {
+    "note": "not chosen -- set winner: s04_r10_p08",
+    "tags": [],
+    "updated_at": "2026-08-14T12:22:14.195799+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l3_hero_land:s04_r10_p08:v2": {
+    "note": "not chosen -- set winner: s04_r10_p08",
+    "tags": [],
+    "updated_at": "2026-08-14T12:22:14.224192+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l3_hero_land:s04_r10_p08:v3": {
+    "note": "not chosen -- set winner: s04_r10_p08",
+    "tags": [],
+    "updated_at": "2026-08-14T12:22:14.253212+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l3_hero_land:s04_r10_p08:v4": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-14T12:22:14.283372+00:00",
+    "verdict": "keep"
+  },
+  "gen:an0807_l3_hero_land:s05_r06_p06:v1": {
+    "note": "not chosen -- set winner: s05_r06_p06",
+    "tags": [],
+    "updated_at": "2026-08-14T12:22:20.703685+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l3_hero_land:s05_r06_p06:v2": {
+    "note": "not chosen -- set winner: s05_r06_p06",
+    "tags": [],
+    "updated_at": "2026-08-14T12:22:20.733724+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l3_hero_land:s05_r06_p06:v3": {
+    "note": "not chosen -- set winner: s05_r06_p06",
+    "tags": [],
+    "updated_at": "2026-08-14T12:22:20.765728+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l3_hero_land:s05_r06_p06:v4": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-14T12:22:20.797491+00:00",
+    "verdict": "keep"
+  },
+  "gen:an0807_l3_hero_land:s06_r01_p01:v1": {
+    "note": "not chosen -- set winner: s06_r01_p01",
+    "tags": [],
+    "updated_at": "2026-08-14T12:22:28.283831+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l3_hero_land:s06_r01_p01:v2": {
+    "note": "not chosen -- set winner: s06_r01_p01",
+    "tags": [],
+    "updated_at": "2026-08-14T12:22:28.315012+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l3_hero_land:s06_r01_p01:v3": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-14T12:22:28.342796+00:00",
+    "verdict": "keep"
+  },
+  "gen:an0807_l3_hero_land:s06_r01_p01:v4": {
+    "note": "not chosen -- set winner: s06_r01_p01",
+    "tags": [],
+    "updated_at": "2026-08-14T12:22:28.375696+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l3_hero_land:s06_r06_p06:v1": {
+    "note": "not chosen -- set winner: s06_r06_p06",
+    "tags": [],
+    "updated_at": "2026-08-14T12:22:48.231343+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l3_hero_land:s06_r06_p06:v2": {
+    "note": "Tricolour with the cup rings is amazing",
+    "tags": [],
+    "updated_at": "2026-08-14T12:22:48.260780+00:00",
+    "verdict": "keep"
+  },
+  "gen:an0807_l3_hero_land:s06_r06_p06:v3": {
+    "note": "not chosen -- set winner: s06_r06_p06",
+    "tags": [],
+    "updated_at": "2026-08-14T12:22:48.290072+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l3_hero_land:s06_r06_p06:v4": {
+    "note": "not chosen -- set winner: s06_r06_p06",
+    "tags": [],
+    "updated_at": "2026-08-14T12:22:48.319712+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l3_hero_land:s08_r01_p03:v1": {
+    "note": "not chosen -- set winner: s08_r01_p03",
+    "tags": [],
+    "updated_at": "2026-08-14T12:22:54.794835+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l3_hero_land:s08_r01_p03:v2": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-14T12:22:54.826391+00:00",
+    "verdict": "keep"
+  },
+  "gen:an0807_l3_hero_land:s08_r01_p03:v3": {
+    "note": "not chosen -- set winner: s08_r01_p03",
+    "tags": [],
+    "updated_at": "2026-08-14T12:22:54.857084+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l3_hero_land:s08_r01_p03:v4": {
+    "note": "not chosen -- set winner: s08_r01_p03",
+    "tags": [],
+    "updated_at": "2026-08-14T12:22:54.887276+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l3_hero_land:s08_r04_p07:v1": {
+    "note": "not chosen -- set winner: s08_r04_p07",
+    "tags": [],
+    "updated_at": "2026-08-14T12:23:01.750902+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l3_hero_land:s08_r04_p07:v2": {
+    "note": "not chosen -- set winner: s08_r04_p07",
+    "tags": [],
+    "updated_at": "2026-08-14T12:23:01.781721+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l3_hero_land:s08_r04_p07:v3": {
+    "note": "not chosen -- set winner: s08_r04_p07",
+    "tags": [],
+    "updated_at": "2026-08-14T12:23:01.811027+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l3_hero_land:s08_r04_p07:v4": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-14T12:23:01.842444+00:00",
+    "verdict": "keep"
+  },
+  "gen:an0807_l3_hero_land:s08_r05_p04:v1": {
+    "note": "not chosen -- set winner: s08_r05_p04",
+    "tags": [],
+    "updated_at": "2026-08-14T12:23:06.580963+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l3_hero_land:s08_r05_p04:v2": {
+    "note": "not chosen -- set winner: s08_r05_p04",
+    "tags": [],
+    "updated_at": "2026-08-14T12:23:06.611080+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l3_hero_land:s08_r05_p04:v3": {
+    "note": "not chosen -- set winner: s08_r05_p04",
+    "tags": [],
+    "updated_at": "2026-08-14T12:23:06.639897+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l3_hero_land:s08_r05_p04:v4": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-14T12:23:06.672150+00:00",
+    "verdict": "keep"
+  },
+  "gen:an0807_l3_hero_land:s09_r06_p06:v1": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-14T12:23:22.055980+00:00",
+    "verdict": "keep"
+  },
+  "gen:an0807_l3_hero_land:s09_r06_p06:v2": {
+    "note": "bad composion",
+    "tags": [],
+    "updated_at": "2026-08-14T12:23:22.088890+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l3_hero_land:s09_r06_p06:v3": {
+    "note": "not chosen -- set winner: s09_r06_p06",
+    "tags": [],
+    "updated_at": "2026-08-14T12:23:22.119434+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l3_hero_land:s09_r06_p06:v4": {
+    "note": "not chosen -- set winner: s09_r06_p06",
+    "tags": [],
+    "updated_at": "2026-08-14T12:23:22.157607+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l3_hero_land:s10_r06_p06:v1": {
+    "note": "not chosen -- set winner: s10_r06_p06",
+    "tags": [],
+    "updated_at": "2026-08-14T12:23:30.492550+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l3_hero_land:s10_r06_p06:v2": {
+    "note": "not chosen -- set winner: s10_r06_p06",
+    "tags": [],
+    "updated_at": "2026-08-14T12:23:30.524427+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l3_hero_land:s10_r06_p06:v3": {
+    "note": "not chosen -- set winner: s10_r06_p06",
+    "tags": [],
+    "updated_at": "2026-08-14T12:23:30.552488+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l3_hero_land:s10_r06_p06:v4": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-14T12:23:30.587045+00:00",
+    "verdict": "keep"
+  },
+  "gen:an0807_l3_hero_land:s10_r07_p03:v1": {
+    "note": "not chosen -- set winner: s10_r07_p03",
+    "tags": [],
+    "updated_at": "2026-08-14T12:23:48.906125+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l3_hero_land:s10_r07_p03:v2": {
+    "note": "i like the off-camera-ness of the pending weirdness",
+    "tags": [],
+    "updated_at": "2026-08-14T12:23:48.935632+00:00",
+    "verdict": "keep"
+  },
+  "gen:an0807_l3_hero_land:s10_r07_p03:v3": {
+    "note": "not chosen -- set winner: s10_r07_p03",
+    "tags": [],
+    "updated_at": "2026-08-14T12:23:48.967102+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l3_hero_land:s10_r07_p03:v4": {
+    "note": "not chosen -- set winner: s10_r07_p03",
+    "tags": [],
+    "updated_at": "2026-08-14T12:23:48.997364+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l3_hero_land:s11_r04_p07:v1": {
+    "note": "not chosen -- set winner: s11_r04_p07",
+    "tags": [],
+    "updated_at": "2026-08-14T12:23:56.973168+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l3_hero_land:s11_r04_p07:v2": {
+    "note": "not chosen -- set winner: s11_r04_p07",
+    "tags": [],
+    "updated_at": "2026-08-14T12:23:57.005971+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l3_hero_land:s11_r04_p07:v3": {
+    "note": "not chosen -- set winner: s11_r04_p07",
+    "tags": [],
+    "updated_at": "2026-08-14T12:23:57.037540+00:00",
+    "verdict": "discard"
+  },
+  "gen:an0807_l3_hero_land:s11_r04_p07:v4": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-14T12:23:57.069235+00:00",
+    "verdict": "keep"
+  },
+  "gen:an0807_l3_hero_land:s11_r06_p06:v3": {
+    "note": "good",
+    "tags": [],
+    "updated_at": "2026-08-14T12:24:07.705044+00:00",
     "verdict": "keep"
   },
   "gen:core_resource_icons:compute:v1": {
@@ -2276,14 +3044,14 @@
   "gen:crisp_sweep:cheerful_propaganda_atrium_graphic:v1": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-08-07T06:09:12.670Z",
-    "verdict": "iterate"
+    "updated_at": "2026-08-14T12:24:28.883237+00:00",
+    "verdict": "keep"
   },
   "gen:crisp_sweep:cheerful_propaganda_atrium_graphic:v2": {
-    "note": "",
+    "note": "not chosen -- set winner: cheerful_propaganda_atrium_graphic",
     "tags": [],
-    "updated_at": "2026-08-07T06:09:14.968Z",
-    "verdict": "iterate"
+    "updated_at": "2026-08-14T12:24:28.914100+00:00",
+    "verdict": "discard"
   },
   "gen:crisp_sweep:cheerful_propaganda_atrium_soft:v1": {
     "note": "",
@@ -2334,16 +3102,16 @@
     "verdict": "discard"
   },
   "gen:crisp_sweep:defeated_drone_coolant_crisp:v1": {
-    "note": "",
+    "note": "not chosen -- set winner: defeated_drone_coolant_crisp",
     "tags": [],
-    "updated_at": "2026-08-07T06:09:20.352Z",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:24:31.004335+00:00",
+    "verdict": "discard"
   },
   "gen:crisp_sweep:defeated_drone_coolant_crisp:v2": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-08-07T06:09:21.583Z",
-    "verdict": "iterate"
+    "updated_at": "2026-08-14T12:24:31.036775+00:00",
+    "verdict": "keep"
   },
   "gen:crisp_sweep:defeated_drone_coolant_graphic:v1": {
     "note": "",
@@ -2522,14 +3290,14 @@
   "gen:endgame_concepts:cheerful_propaganda_atrium:v1": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-08-07T06:03:29.294Z",
-    "verdict": "iterate"
+    "updated_at": "2026-08-14T12:24:32.203497+00:00",
+    "verdict": "keep"
   },
   "gen:endgame_concepts:cheerful_propaganda_atrium:v2": {
-    "note": "",
+    "note": "not chosen -- set winner: cheerful_propaganda_atrium",
     "tags": [],
-    "updated_at": "2026-08-03T21:06:23.232Z",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:24:32.236062+00:00",
+    "verdict": "discard"
   },
   "gen:endgame_concepts:chokehold_permit_counter:v1": {
     "note": "",
@@ -2652,16 +3420,16 @@
     "verdict": "discard"
   },
   "gen:endgame_concepts:remote_operators_room:v1": {
-    "note": "",
+    "note": "not chosen -- set winner: remote_operators_room",
     "tags": [],
-    "updated_at": "2026-08-03T21:06:36.610Z",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:24:32.732534+00:00",
+    "verdict": "discard"
   },
   "gen:endgame_concepts:remote_operators_room:v2": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-08-07T06:03:39.185Z",
-    "verdict": "iterate"
+    "updated_at": "2026-08-14T12:24:32.769496+00:00",
+    "verdict": "keep"
   },
   "gen:endgame_concepts:same_desire_two_field_strengths:v1": {
     "note": "",
@@ -2675,11 +3443,17 @@
     "updated_at": "2026-08-03T21:06:41.011Z",
     "verdict": "discard"
   },
-  "gen:endgame_concepts_gen2:attention_loud_vs_slow:v2": {
+  "gen:endgame_concepts_gen2:attention_loud_vs_slow:v1": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-08-03T20:58:52.935Z",
+    "updated_at": "2026-08-14T12:24:33.756001+00:00",
     "verdict": "keep"
+  },
+  "gen:endgame_concepts_gen2:attention_loud_vs_slow:v2": {
+    "note": "not chosen -- set winner: attention_loud_vs_slow",
+    "tags": [],
+    "updated_at": "2026-08-14T12:24:33.786787+00:00",
+    "verdict": "discard"
   },
   "gen:endgame_concepts_gen2:attention_stack_buried_desk:v1": {
     "note": "",
@@ -2693,95 +3467,209 @@
     "updated_at": "2026-08-03T20:58:54.100Z",
     "verdict": "keep"
   },
-  "gen:endgame_concepts_gen2:chokehold_permit_counter:v1": {
+  "gen:endgame_concepts_gen2:cheerful_propaganda_atrium:v1": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-08-03T20:59:01.635Z",
+    "updated_at": "2026-08-14T12:24:39.334801+00:00",
+    "verdict": "keep"
+  },
+  "gen:endgame_concepts_gen2:cheerful_propaganda_atrium:v2": {
+    "note": "not chosen -- set winner: cheerful_propaganda_atrium",
+    "tags": [],
+    "updated_at": "2026-08-14T12:24:39.367938+00:00",
+    "verdict": "discard"
+  },
+  "gen:endgame_concepts_gen2:cheerful_propaganda_atrium_face:v1": {
+    "note": "not chosen -- set winner: cheerful_propaganda_atrium_face",
+    "tags": [],
+    "updated_at": "2026-08-14T12:24:40.974336+00:00",
+    "verdict": "discard"
+  },
+  "gen:endgame_concepts_gen2:cheerful_propaganda_atrium_face:v2": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-14T12:24:41.005942+00:00",
+    "verdict": "keep"
+  },
+  "gen:endgame_concepts_gen2:chokehold_permit_counter:v1": {
+    "note": "not chosen -- set winner: chokehold_permit_counter",
+    "tags": [],
+    "updated_at": "2026-08-14T12:24:42.165561+00:00",
+    "verdict": "discard"
+  },
+  "gen:endgame_concepts_gen2:chokehold_permit_counter:v2": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-14T12:24:42.195385+00:00",
     "verdict": "keep"
   },
   "gen:endgame_concepts_gen2:chokehold_water_and_gigawatts:v1": {
+    "note": "not chosen -- set winner: chokehold_water_and_gigawatts",
+    "tags": [],
+    "updated_at": "2026-08-14T12:24:42.895185+00:00",
+    "verdict": "discard"
+  },
+  "gen:endgame_concepts_gen2:chokehold_water_and_gigawatts:v2": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-08-03T20:59:04.512Z",
+    "updated_at": "2026-08-14T12:24:42.925840+00:00",
+    "verdict": "keep"
+  },
+  "gen:endgame_concepts_gen2:crux_drone_arms_race:v1": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-14T12:24:43.420502+00:00",
     "verdict": "keep"
   },
   "gen:endgame_concepts_gen2:crux_drone_arms_race:v2": {
+    "note": "not chosen -- set winner: crux_drone_arms_race",
+    "tags": [],
+    "updated_at": "2026-08-14T12:24:43.451904+00:00",
+    "verdict": "discard"
+  },
+  "gen:endgame_concepts_gen2:defeated_drone_coolant:v1": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-08-03T20:59:05.566Z",
+    "updated_at": "2026-08-14T12:24:49.494849+00:00",
+    "verdict": "keep"
+  },
+  "gen:endgame_concepts_gen2:defeated_drone_coolant:v2": {
+    "note": "not chosen -- set winner: defeated_drone_coolant",
+    "tags": [],
+    "updated_at": "2026-08-14T12:24:49.536847+00:00",
+    "verdict": "discard"
+  },
+  "gen:endgame_concepts_gen2:economics_rung_shuttered_street:v1": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-14T12:24:51.240864+00:00",
     "verdict": "keep"
   },
   "gen:endgame_concepts_gen2:economics_rung_shuttered_street:v2": {
+    "note": "not chosen -- set winner: economics_rung_shuttered_street",
+    "tags": [],
+    "updated_at": "2026-08-14T12:24:51.269069+00:00",
+    "verdict": "discard"
+  },
+  "gen:endgame_concepts_gen2:field_ladder_three_rungs:v1": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-08-03T20:59:07.492Z",
+    "updated_at": "2026-08-14T12:24:51.727693+00:00",
     "verdict": "keep"
   },
   "gen:endgame_concepts_gen2:field_ladder_three_rungs:v2": {
+    "note": "not chosen -- set winner: field_ladder_three_rungs",
+    "tags": [],
+    "updated_at": "2026-08-14T12:24:51.756941+00:00",
+    "verdict": "discard"
+  },
+  "gen:endgame_concepts_gen2:field_leaks_at_every_angle:v1": {
+    "note": "not chosen -- set winner: field_leaks_at_every_angle",
+    "tags": [],
+    "updated_at": "2026-08-14T12:24:57.153631+00:00",
+    "verdict": "discard"
+  },
+  "gen:endgame_concepts_gen2:field_leaks_at_every_angle:v2": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-08-03T20:59:13.373Z",
+    "updated_at": "2026-08-14T12:24:57.186988+00:00",
     "verdict": "keep"
   },
   "gen:endgame_concepts_gen2:intro_bus_strangers_help:v1": {
+    "note": "not chosen -- set winner: intro_bus_strangers_help",
+    "tags": [],
+    "updated_at": "2026-08-14T12:24:58.340483+00:00",
+    "verdict": "discard"
+  },
+  "gen:endgame_concepts_gen2:intro_bus_strangers_help:v2": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-08-03T20:59:21.406Z",
+    "updated_at": "2026-08-14T12:24:58.370044+00:00",
+    "verdict": "keep"
+  },
+  "gen:endgame_concepts_gen2:orbital_datacenter_ring:v1": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-14T12:24:59.400311+00:00",
     "verdict": "keep"
   },
   "gen:endgame_concepts_gen2:orbital_datacenter_ring:v2": {
+    "note": "not chosen -- set winner: orbital_datacenter_ring",
+    "tags": [],
+    "updated_at": "2026-08-14T12:24:59.429443+00:00",
+    "verdict": "discard"
+  },
+  "gen:endgame_concepts_gen2:pacification_delivery_suburb:v1": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-08-03T20:59:28.895Z",
+    "updated_at": "2026-08-14T12:24:59.839673+00:00",
     "verdict": "keep"
   },
   "gen:endgame_concepts_gen2:pacification_delivery_suburb:v2": {
-    "note": "",
+    "note": "not chosen -- set winner: pacification_delivery_suburb",
     "tags": [],
-    "updated_at": "2026-08-03T20:59:33.920Z",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:24:59.868497+00:00",
+    "verdict": "discard"
   },
   "gen:endgame_concepts_gen2:remote_operators_room:v1": {
+    "note": "not chosen -- set winner: remote_operators_room",
+    "tags": [],
+    "updated_at": "2026-08-14T12:25:00.578422+00:00",
+    "verdict": "discard"
+  },
+  "gen:endgame_concepts_gen2:remote_operators_room:v2": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-08-03T20:59:35.760Z",
+    "updated_at": "2026-08-14T12:25:00.609574+00:00",
     "verdict": "keep"
   },
   "gen:endgame_concepts_gen2:runaway_delivery_loop:v1": {
+    "note": "not chosen -- set winner: runaway_delivery_loop",
+    "tags": [],
+    "updated_at": "2026-08-14T12:17:05.100252+00:00",
+    "verdict": "discard"
+  },
+  "gen:endgame_concepts_gen2:runaway_delivery_loop:v2": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-08-03T20:59:41.823Z",
+    "updated_at": "2026-08-14T12:17:05.130192+00:00",
     "verdict": "keep"
   },
   "gen:endgame_concepts_gen2:same_desire_two_field_strengths:v1": {
     "note": "this is getting better but we ssem toh ave massively overindexed on the bankers lamp as an art asset./ This probably meansd we need to generate a bunch more asset descriptions that *could* be in scenes so that llm's can chooose between different sets of objects to populate scenes with",
     "tags": [],
-    "updated_at": "2026-08-03T21:00:28.100Z",
-    "verdict": ""
+    "updated_at": "2026-08-14T12:17:10.506897+00:00",
+    "verdict": "discard"
+  },
+  "gen:endgame_concepts_gen2:same_desire_two_field_strengths:v2": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-14T12:17:10.537609+00:00",
+    "verdict": "keep"
   },
   "gen:env_scenes:env_bg_doom_abstract:v1": {
-    "note": "",
+    "note": "not chosen -- set winner: env_bg_doom_abstract",
     "tags": [],
-    "updated_at": "2026-07-25T02:31:56.474935+00:00",
-    "verdict": "reroll"
+    "updated_at": "2026-08-14T12:17:16.098240+00:00",
+    "verdict": "discard"
   },
   "gen:env_scenes:env_bg_doom_abstract:v2": {
-    "note": "",
+    "note": "not chosen -- set winner: env_bg_doom_abstract",
     "tags": [],
-    "updated_at": "2026-07-25T02:31:57.013741+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:17:16.129235+00:00",
+    "verdict": "discard"
   },
   "gen:env_scenes:env_bg_doom_abstract:v3": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:32:00.191032+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:17:16.161194+00:00",
+    "verdict": "keep"
   },
   "gen:env_scenes:env_bg_doom_abstract:v4": {
-    "note": "",
+    "note": "not chosen -- set winner: env_bg_doom_abstract",
     "tags": [],
-    "updated_at": "2026-07-25T02:32:00.616458+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:17:16.190274+00:00",
+    "verdict": "discard"
   },
   "gen:env_scenes:env_bg_office_calm:v1": {
     "note": "",
@@ -3074,254 +3962,254 @@
   "gen:game_icons:action_funding_grant_proposal:v1": {
     "note": "The yellow is a little unsubtle, this could maybe have the tick come down in intensity a little",
     "tags": [],
-    "updated_at": "2026-07-25T02:08:02.112168+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:05:58.175449+00:00",
+    "verdict": "keep"
   },
   "gen:game_icons:action_funding_grant_proposal:v2": {
     "note": "the background of this is inconsistnent",
     "tags": [],
-    "updated_at": "2026-07-25T02:08:07.676458+00:00",
-    "verdict": "reroll"
+    "updated_at": "2026-08-14T12:05:58.205624+00:00",
+    "verdict": "discard"
   },
   "gen:game_icons:action_funding_grant_proposal:v3": {
-    "note": "",
+    "note": "not chosen -- set winner: action_funding_grant_proposal",
     "tags": [],
-    "updated_at": "2026-07-25T02:07:42.653316+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:05:58.234492+00:00",
+    "verdict": "discard"
   },
   "gen:game_icons:action_funding_loan:v1": {
-    "note": "",
+    "note": "not chosen -- set winner: action_funding_loan",
     "tags": [],
-    "updated_at": "2026-07-25T02:09:21.382756+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:04:16.737537+00:00",
+    "verdict": "discard"
   },
   "gen:game_icons:action_funding_loan:v2": {
-    "note": "",
+    "note": "not chosen -- set winner: action_funding_loan",
     "tags": [],
-    "updated_at": "2026-07-25T01:53:52.053256+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:04:16.765341+00:00",
+    "verdict": "discard"
   },
   "gen:game_icons:action_funding_loan:v3": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:09:23.670076+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:04:16.794282+00:00",
+    "verdict": "keep"
   },
   "gen:game_icons:action_management_team_building:v1": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:09:30.295373+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:04:35.000820+00:00",
+    "verdict": "keep"
   },
   "gen:game_icons:action_management_team_building:v2": {
     "note": "Avoid cockleg problems, this is very funny though",
     "tags": [],
-    "updated_at": "2026-07-25T01:54:07.466625+00:00",
-    "verdict": "reroll"
+    "updated_at": "2026-08-14T12:04:35.030160+00:00",
+    "verdict": "discard"
   },
   "gen:game_icons:action_management_team_building:v3": {
-    "note": "",
+    "note": "not chosen -- set winner: action_management_team_building",
     "tags": [],
-    "updated_at": "2026-07-25T02:09:29.496541+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:04:35.058754+00:00",
+    "verdict": "discard"
   },
   "gen:game_icons:action_publicity_network:v1": {
-    "note": "",
+    "note": "not chosen -- set winner: action_publicity_network",
     "tags": [],
-    "updated_at": "2026-07-25T02:09:35.571741+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:04:38.514566+00:00",
+    "verdict": "discard"
   },
   "gen:game_icons:action_publicity_network:v2": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:09:36.272087+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:04:38.543499+00:00",
+    "verdict": "keep"
   },
   "gen:game_icons:action_publicity_network:v3": {
-    "note": "",
+    "note": "not chosen -- set winner: action_publicity_network",
     "tags": [],
-    "updated_at": "2026-07-25T02:09:37.004506+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:04:38.573393+00:00",
+    "verdict": "discard"
   },
   "gen:game_icons:action_publicity_open_source:v1": {
-    "note": "",
+    "note": "not chosen -- set winner: action_publicity_open_source",
     "tags": [],
-    "updated_at": "2026-07-25T02:09:43.203853+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:04:42.741729+00:00",
+    "verdict": "discard"
   },
   "gen:game_icons:action_publicity_open_source:v2": {
-    "note": "",
+    "note": "not chosen -- set winner: action_publicity_open_source",
     "tags": [],
-    "updated_at": "2026-07-25T02:09:42.491833+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:04:42.770258+00:00",
+    "verdict": "discard"
   },
   "gen:game_icons:action_publicity_open_source:v3": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:09:44.009854+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:04:42.802136+00:00",
+    "verdict": "keep"
   },
   "gen:game_icons:action_strategic_acquire_startup:v1": {
-    "note": "",
+    "note": "not chosen -- set winner: action_strategic_acquire_startup",
     "tags": [],
-    "updated_at": "2026-07-25T02:09:46.657766+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:04:45.667455+00:00",
+    "verdict": "discard"
   },
   "gen:game_icons:action_strategic_acquire_startup:v2": {
     "note": "too dark, brighten, decrease grain slightly",
     "tags": [],
-    "updated_at": "2026-07-25T02:09:54.320544+00:00",
-    "verdict": "reroll"
+    "updated_at": "2026-08-14T12:04:45.695754+00:00",
+    "verdict": "discard"
   },
   "gen:game_icons:action_strategic_acquire_startup:v3": {
     "note": "Brighten, increase contrast, consider lighting some of the windows gently",
     "tags": [],
-    "updated_at": "2026-07-25T02:10:06.549807+00:00",
-    "verdict": "reroll"
+    "updated_at": "2026-08-14T12:04:45.724991+00:00",
+    "verdict": "keep"
   },
   "gen:game_icons:action_strategic_lobby_government:v1": {
     "note": "different colour beifcase, try lighting some windows",
     "tags": [],
-    "updated_at": "2026-07-25T02:10:50.676445+00:00",
-    "verdict": "reroll"
+    "updated_at": "2026-08-14T12:05:07.768806+00:00",
+    "verdict": "discard"
   },
   "gen:game_icons:action_strategic_lobby_government:v2": {
-    "note": "",
+    "note": "at least 2 colour tones please",
     "tags": [],
-    "updated_at": "2026-07-25T02:10:44.509524+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:05:07.800268+00:00",
+    "verdict": "keep"
   },
   "gen:game_icons:action_strategic_lobby_government:v3": {
-    "note": "",
+    "note": "not chosen -- set winner: action_strategic_lobby_government",
     "tags": [],
-    "updated_at": "2026-07-25T02:10:46.285665+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:05:07.833507+00:00",
+    "verdict": "discard"
   },
   "gen:game_icons:action_strategic_sabotage:v1": {
     "note": "Needs a bit more lightness and colour, slightly increase contrast around interior edge of hood",
     "tags": [],
-    "updated_at": "2026-07-25T02:11:20.115753+00:00",
-    "verdict": "reroll"
+    "updated_at": "2026-08-14T12:05:11.977354+00:00",
+    "verdict": "discard"
   },
   "gen:game_icons:action_strategic_sabotage:v2": {
     "note": "slightly incrase contrast around lower edge of hood for better delineation withou revealing face",
     "tags": [],
-    "updated_at": "2026-07-25T02:11:37.170637+00:00",
-    "verdict": "reroll"
+    "updated_at": "2026-08-14T12:05:12.006794+00:00",
+    "verdict": "keep"
   },
   "gen:game_icons:action_strategic_sabotage:v3": {
-    "note": "",
+    "note": "not chosen -- set winner: action_strategic_sabotage",
     "tags": [],
-    "updated_at": "2026-07-25T02:10:56.024011+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:05:12.034383+00:00",
+    "verdict": "discard"
   },
   "gen:game_icons:doom_bg_critical:v1": {
-    "note": "",
+    "note": "not chosen -- set winner: doom_bg_critical",
     "tags": [],
-    "updated_at": "2026-07-25T02:11:44.825537+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:05:16.496822+00:00",
+    "verdict": "discard"
   },
   "gen:game_icons:doom_bg_critical:v2": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:11:45.818164+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:05:16.528103+00:00",
+    "verdict": "keep"
   },
   "gen:game_icons:doom_bg_critical:v3": {
     "note": "Not nuclear symbol. Experiment with new, geometric abstract represtation of doom escalation",
     "tags": [],
-    "updated_at": "2026-07-25T02:12:03.910216+00:00",
-    "verdict": "reroll"
+    "updated_at": "2026-08-14T12:05:16.557840+00:00",
+    "verdict": "discard"
   },
   "gen:game_icons:doom_bg_danger:v1": {
-    "note": "",
+    "note": "not chosen -- set winner: doom_bg_danger",
     "tags": [],
-    "updated_at": "2026-07-25T02:12:09.246648+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:05:18.503499+00:00",
+    "verdict": "discard"
   },
   "gen:game_icons:doom_bg_danger:v2": {
-    "note": "",
+    "note": "not chosen -- set winner: doom_bg_danger",
     "tags": [],
-    "updated_at": "2026-07-25T02:12:09.845213+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:05:18.534130+00:00",
+    "verdict": "discard"
   },
   "gen:game_icons:doom_bg_danger:v3": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:12:10.519979+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:05:18.564926+00:00",
+    "verdict": "keep"
   },
   "gen:game_icons:doom_bg_safe:v1": {
     "note": "Not a lock. try a more symbolic reprsentation in the abstract. Consider an alien culture's represetion of safe from boba principles.",
     "tags": [],
-    "updated_at": "2026-07-25T02:12:37.143845+00:00",
-    "verdict": "reroll"
+    "updated_at": "2026-08-14T12:05:24.507799+00:00",
+    "verdict": "discard"
   },
   "gen:game_icons:doom_bg_safe:v2": {
-    "note": "",
+    "note": "not chosen -- set winner: doom_bg_safe",
     "tags": [],
-    "updated_at": "2026-07-25T02:12:16.373601+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:05:24.537815+00:00",
+    "verdict": "discard"
   },
   "gen:game_icons:doom_bg_safe:v3": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:12:39.140731+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:05:24.569523+00:00",
+    "verdict": "keep"
   },
   "gen:game_icons:doom_bg_warning:v1": {
-    "note": "",
+    "note": "not chosen -- set winner: doom_bg_warning",
     "tags": [],
-    "updated_at": "2026-07-25T02:12:40.453855+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:05:27.466504+00:00",
+    "verdict": "discard"
   },
   "gen:game_icons:doom_bg_warning:v2": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:12:41.301791+00:00",
-    "verdict": "maybe"
-  },
-  "gen:game_icons:doom_bg_warning:v3": {
-    "note": "",
-    "tags": [],
-    "updated_at": "2026-07-25T02:12:43.357083+00:00",
+    "updated_at": "2026-08-14T12:05:27.495164+00:00",
     "verdict": "keep"
   },
-  "gen:game_icons:doom_glow_effect:v1": {
-    "note": "",
+  "gen:game_icons:doom_bg_warning:v3": {
+    "note": "not chosen -- set winner: doom_bg_warning",
     "tags": [],
-    "updated_at": "2026-07-25T02:13:01.694325+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:05:27.525649+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:doom_glow_effect:v1": {
+    "note": "not chosen -- set winner: doom_glow_effect",
+    "tags": [],
+    "updated_at": "2026-08-14T12:05:30.861601+00:00",
+    "verdict": "discard"
   },
   "gen:game_icons:doom_glow_effect:v2": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:12:48.321314+00:00",
-    "verdict": "reroll"
+    "updated_at": "2026-08-14T12:05:30.892070+00:00",
+    "verdict": "keep"
   },
   "gen:game_icons:doom_glow_effect:v3": {
     "note": "I'm not sure if these are meant to be glow effect samples for us to base things off or somehting else, but I feel like the doom glow effecst we have decided will be applied as mechanistic filters and so an LLM should revisit the necessity for these assets in particular",
     "tags": [],
-    "updated_at": "2026-07-25T02:13:39.032842+00:00",
-    "verdict": "reroll"
+    "updated_at": "2026-08-14T12:05:30.922328+00:00",
+    "verdict": "discard"
   },
   "gen:game_icons:doom_meter_frame:v1": {
     "note": "This might not need an icon, revert to instructions and confirm back to user if needed",
     "tags": [],
-    "updated_at": "2026-07-25T02:14:01.111278+00:00",
-    "verdict": "reroll"
+    "updated_at": "2026-08-14T12:05:32.478909+00:00",
+    "verdict": "keep"
   },
   "gen:game_icons:doom_meter_frame:v2": {
     "note": "I have no idea what this is for and will watch out for it",
     "tags": [],
-    "updated_at": "2026-07-25T02:13:48.411905+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:05:32.506765+00:00",
+    "verdict": "discard"
   },
   "gen:game_icons:doom_meter_frame:v3": {
     "note": "this ouroborous like flavour is intersting, explore it more with a few other variants?",
     "tags": [],
-    "updated_at": "2026-08-03T21:31:31.767Z",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:05:32.535228+00:00",
+    "verdict": "discard"
   },
   "gen:game_icons:icon_acquire_startup:v1": {
     "note": "This icon style is different and interesting, LLM, describe the prompts and so on to me that generated these?",
@@ -5520,178 +6408,178 @@
     "verdict": "keep"
   },
   "gen:hero_banners:banner_doom_rising:v1": {
-    "note": "",
+    "note": "not chosen -- set winner: banner_doom_rising",
     "tags": [],
-    "updated_at": "2026-07-25T02:27:33.759214+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:08:56.963908+00:00",
+    "verdict": "discard"
   },
   "gen:hero_banners:banner_doom_rising:v2": {
-    "note": "",
+    "note": "not chosen -- set winner: banner_doom_rising",
     "tags": [],
-    "updated_at": "2026-07-25T02:27:32.335530+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:08:56.995066+00:00",
+    "verdict": "discard"
   },
   "gen:hero_banners:banner_doom_rising:v3": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:27:32.919687+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:08:57.025436+00:00",
+    "verdict": "keep"
   },
   "gen:hero_banners:banner_title_hero:v1": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:27:44.893796+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:09:05.938507+00:00",
+    "verdict": "keep"
   },
   "gen:hero_banners:banner_title_hero:v2": {
-    "note": "",
+    "note": "not chosen -- set winner: banner_title_hero",
     "tags": [],
-    "updated_at": "2026-07-25T02:27:44.143085+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:09:05.969074+00:00",
+    "verdict": "discard"
   },
   "gen:hero_banners:banner_title_hero:v3": {
-    "note": "",
+    "note": "not chosen -- set winner: banner_title_hero",
     "tags": [],
-    "updated_at": "2026-07-25T02:27:45.928038+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:09:05.997940+00:00",
+    "verdict": "discard"
   },
   "gen:hero_banners:fanfare_strategic_moves:v1": {
-    "note": "",
+    "note": "not chosen -- set winner: fanfare_strategic_moves",
     "tags": [],
-    "updated_at": "2026-07-25T02:27:48.958873+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:09:07.481893+00:00",
+    "verdict": "discard"
   },
   "gen:hero_banners:fanfare_strategic_moves:v2": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:27:51.282085+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:09:07.511443+00:00",
+    "verdict": "keep"
   },
   "gen:hero_banners:fanfare_strategic_moves:v3": {
-    "note": "",
+    "note": "not chosen -- set winner: fanfare_strategic_moves",
     "tags": [],
-    "updated_at": "2026-07-25T02:27:50.678098+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:09:07.540019+00:00",
+    "verdict": "discard"
   },
   "gen:hero_banners:hero_cat_and_terminal:v1": {
-    "note": "",
+    "note": "not chosen -- set winner: hero_cat_and_terminal",
     "tags": [],
-    "updated_at": "2026-07-25T02:27:55.823149+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:09:08.887465+00:00",
+    "verdict": "discard"
   },
   "gen:hero_banners:hero_cat_and_terminal:v2": {
-    "note": "",
+    "note": "not chosen -- set winner: hero_cat_and_terminal",
     "tags": [],
-    "updated_at": "2026-07-25T02:27:56.512286+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:09:08.917609+00:00",
+    "verdict": "discard"
   },
   "gen:hero_banners:hero_cat_and_terminal:v3": {
-    "note": "",
+    "note": "not chosen -- set winner: hero_cat_and_terminal",
     "tags": [],
-    "updated_at": "2026-07-25T02:27:57.071097+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:09:08.945765+00:00",
+    "verdict": "discard"
   },
   "gen:hero_banners:hero_cat_and_terminal:v4": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:28:03.649201+00:00",
-    "verdict": "maybe"
-  },
-  "gen:hero_banners:hero_desk_doom_window:v1": {
-    "note": "",
-    "tags": [],
-    "updated_at": "2026-07-25T02:28:04.962462+00:00",
-    "verdict": "maybe"
-  },
-  "gen:hero_banners:hero_desk_doom_window:v2": {
-    "note": "",
-    "tags": [],
-    "updated_at": "2026-07-25T02:28:06.103464+00:00",
+    "updated_at": "2026-08-14T12:09:08.975869+00:00",
     "verdict": "keep"
   },
-  "gen:hero_banners:hero_desk_doom_window:v3": {
-    "note": "",
+  "gen:hero_banners:hero_desk_doom_window:v1": {
+    "note": "not chosen -- set winner: hero_desk_doom_window",
     "tags": [],
-    "updated_at": "2026-07-25T02:28:07.576151+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:09:33.946928+00:00",
+    "verdict": "discard"
+  },
+  "gen:hero_banners:hero_desk_doom_window:v2": {
+    "note": "not chosen -- set winner: hero_desk_doom_window",
+    "tags": [],
+    "updated_at": "2026-08-14T12:09:33.976244+00:00",
+    "verdict": "discard"
+  },
+  "gen:hero_banners:hero_desk_doom_window:v3": {
+    "note": "not chosen -- set winner: hero_desk_doom_window",
+    "tags": [],
+    "updated_at": "2026-08-14T12:09:34.004297+00:00",
+    "verdict": "discard"
   },
   "gen:hero_banners:hero_desk_doom_window:v4": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:28:08.887963+00:00",
-    "verdict": "maybe"
-  },
-  "gen:hero_banners:hero_doom_gradient_title:v1": {
-    "note": "",
-    "tags": [],
-    "updated_at": "2026-07-25T02:28:13.110393+00:00",
+    "updated_at": "2026-08-14T12:09:34.034881+00:00",
     "verdict": "keep"
   },
-  "gen:hero_banners:hero_doom_gradient_title:v2": {
-    "note": "",
+  "gen:hero_banners:hero_doom_gradient_title:v1": {
+    "note": "not chosen -- set winner: hero_doom_gradient_title",
     "tags": [],
-    "updated_at": "2026-07-25T02:28:15.372715+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:09:41.021382+00:00",
+    "verdict": "discard"
+  },
+  "gen:hero_banners:hero_doom_gradient_title:v2": {
+    "note": "not chosen -- set winner: hero_doom_gradient_title",
+    "tags": [],
+    "updated_at": "2026-08-14T12:09:41.051343+00:00",
+    "verdict": "discard"
   },
   "gen:hero_banners:hero_doom_gradient_title:v3": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:28:15.911500+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:09:41.080109+00:00",
+    "verdict": "keep"
   },
   "gen:hero_banners:hero_doom_gradient_title:v4": {
-    "note": "",
+    "note": "not chosen -- set winner: hero_doom_gradient_title",
     "tags": [],
-    "updated_at": "2026-07-25T02:28:16.701280+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:09:41.113021+00:00",
+    "verdict": "discard"
   },
   "gen:hero_banners:hero_doom_ladder_split:v1": {
-    "note": "",
+    "note": "not chosen -- set winner: hero_doom_ladder_split",
     "tags": [],
-    "updated_at": "2026-07-25T02:28:22.662162+00:00",
-    "verdict": "reroll"
+    "updated_at": "2026-08-14T12:09:50.477730+00:00",
+    "verdict": "discard"
   },
   "gen:hero_banners:hero_doom_ladder_split:v2": {
-    "note": "",
+    "note": "not chosen -- set winner: hero_doom_ladder_split",
     "tags": [],
-    "updated_at": "2026-07-25T02:28:24.442144+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:09:50.508105+00:00",
+    "verdict": "discard"
   },
   "gen:hero_banners:hero_doom_ladder_split:v3": {
-    "note": "",
+    "note": "not chosen -- set winner: hero_doom_ladder_split",
     "tags": [],
-    "updated_at": "2026-07-25T02:28:25.633219+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:09:50.536603+00:00",
+    "verdict": "discard"
   },
   "gen:hero_banners:hero_doom_ladder_split:v4": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:28:29.751360+00:00",
-    "verdict": "reroll"
+    "updated_at": "2026-08-14T12:09:50.569875+00:00",
+    "verdict": "keep"
   },
   "gen:hero_banners:hero_founder_silhouette:v1": {
     "note": "silhouette too boviously male, too obviously signalling Operator",
     "tags": [],
-    "updated_at": "2026-08-03T21:25:10.541Z",
-    "verdict": "iterate"
+    "updated_at": "2026-08-14T12:09:58.349883+00:00",
+    "verdict": "discard"
   },
   "gen:hero_banners:hero_founder_silhouette:v2": {
     "note": "silhouette too boviously male, too obviously signalling Operator",
     "tags": [],
-    "updated_at": "2026-08-03T21:25:10.939Z",
-    "verdict": "iterate"
+    "updated_at": "2026-08-14T12:09:58.379846+00:00",
+    "verdict": "discard"
   },
   "gen:hero_banners:hero_founder_silhouette:v3": {
     "note": "silhouette too boviously male, too obviously signalling Operator",
     "tags": [],
-    "updated_at": "2026-08-03T21:25:11.348Z",
-    "verdict": "iterate"
+    "updated_at": "2026-08-14T12:09:58.408737+00:00",
+    "verdict": "keep"
   },
   "gen:hero_banners:hero_founder_silhouette:v4": {
     "note": "silhouette too boviously male, too obviously signalling Operator",
     "tags": [],
-    "updated_at": "2026-08-03T21:25:11.926Z",
-    "verdict": "iterate"
+    "updated_at": "2026-08-14T12:09:58.439521+00:00",
+    "verdict": "discard"
   },
   "gen:hero_banners:hero_office_at_dusk:v1": {
     "note": "",
@@ -5720,140 +6608,140 @@
   "gen:hero_banners:hero_paperwork_saves_world:v1": {
     "note": "let's iterate on this iudea and go for something a bit less literal, maybe? try anorger 5 very diverse variants and we'll see where we end up",
     "tags": [],
-    "updated_at": "2026-08-03T21:25:50.485Z",
-    "verdict": "iterate"
+    "updated_at": "2026-08-14T12:09:59.911404+00:00",
+    "verdict": "keep"
   },
   "gen:hero_banners:hero_paperwork_saves_world:v2": {
-    "note": "",
+    "note": "not chosen -- set winner: hero_paperwork_saves_world",
     "tags": [],
-    "updated_at": "2026-08-03T21:25:51.902Z",
+    "updated_at": "2026-08-14T12:09:59.942858+00:00",
     "verdict": "discard"
   },
   "gen:hero_banners:hero_paperwork_saves_world:v3": {
-    "note": "",
+    "note": "not chosen -- set winner: hero_paperwork_saves_world",
     "tags": [],
-    "updated_at": "2026-08-03T21:25:52.248Z",
+    "updated_at": "2026-08-14T12:09:59.970914+00:00",
     "verdict": "discard"
   },
   "gen:hero_banners:hero_paperwork_saves_world:v4": {
-    "note": "",
+    "note": "not chosen -- set winner: hero_paperwork_saves_world",
     "tags": [],
-    "updated_at": "2026-08-03T21:25:53.120Z",
+    "updated_at": "2026-08-14T12:10:00.005422+00:00",
     "verdict": "discard"
   },
   "gen:hero_banners:hero_server_doom_altar:v1": {
     "note": "Let's try with one more androgynous operator? If this is late game they might have a cool cloak with a collar or a hood or something",
     "tags": [],
-    "updated_at": "2026-08-03T21:26:16.847Z",
-    "verdict": "iterate"
+    "updated_at": "2026-08-14T12:10:07.882416+00:00",
+    "verdict": "discard"
   },
   "gen:hero_banners:hero_server_doom_altar:v2": {
     "note": "andogynous operator please, otherwise, good, maybe give them a cape or cloak or be carrying equipment or san umbrella or protective gear or somesuch",
     "tags": [],
-    "updated_at": "2026-08-03T21:26:53.198Z",
-    "verdict": "iterate"
+    "updated_at": "2026-08-14T12:10:07.911152+00:00",
+    "verdict": "keep"
   },
   "gen:hero_banners:hero_server_doom_altar:v3": {
-    "note": "",
+    "note": "not chosen -- set winner: hero_server_doom_altar",
     "tags": [],
-    "updated_at": "2026-08-03T21:26:53.620Z",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:10:07.941745+00:00",
+    "verdict": "discard"
   },
   "gen:hero_banners:hero_server_doom_altar:v4": {
-    "note": "",
+    "note": "not chosen -- set winner: hero_server_doom_altar",
     "tags": [],
-    "updated_at": "2026-08-03T21:26:53.960Z",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:10:07.973670+00:00",
+    "verdict": "discard"
   },
   "gen:hero_banners:hero_whiteboard_war_room:v1": {
-    "note": "",
+    "note": "not chosen -- set winner: hero_whiteboard_war_room",
     "tags": [],
-    "updated_at": "2026-08-03T21:27:00.463Z",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:10:12.521353+00:00",
+    "verdict": "discard"
   },
   "gen:hero_banners:hero_whiteboard_war_room:v2": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-08-03T21:27:01.134Z",
-    "verdict": "iterate"
+    "updated_at": "2026-08-14T12:10:12.551149+00:00",
+    "verdict": "keep"
   },
   "gen:hero_banners:hero_whiteboard_war_room:v3": {
-    "note": "",
+    "note": "not chosen -- set winner: hero_whiteboard_war_room",
     "tags": [],
-    "updated_at": "2026-08-03T21:27:05.511Z",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:10:12.581915+00:00",
+    "verdict": "discard"
   },
   "gen:hero_banners:hero_whiteboard_war_room:v4": {
-    "note": "",
+    "note": "not chosen -- set winner: hero_whiteboard_war_room",
     "tags": [],
-    "updated_at": "2026-08-03T21:27:06.525Z",
-    "verdict": "iterate"
+    "updated_at": "2026-08-14T12:10:12.611720+00:00",
+    "verdict": "discard"
   },
   "gen:iconset_round2:gen_cat_doom_8bit:v1": {
-    "note": "",
+    "note": "not chosen -- set winner: gen_cat_doom_8bit",
     "tags": [],
-    "updated_at": "2026-07-25T02:32:36.305977+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:17:18.386914+00:00",
+    "verdict": "discard"
   },
   "gen:iconset_round2:gen_cat_doom_8bit:v2": {
-    "note": "",
+    "note": "not chosen -- set winner: gen_cat_doom_8bit",
     "tags": [],
-    "updated_at": "2026-07-25T02:32:38.837288+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:17:18.417129+00:00",
+    "verdict": "discard"
   },
   "gen:iconset_round2:gen_cat_doom_8bit:v3": {
-    "note": "",
+    "note": "not chosen -- set winner: gen_cat_doom_8bit",
     "tags": [],
-    "updated_at": "2026-07-25T02:32:27.945724+00:00",
-    "verdict": "reroll"
+    "updated_at": "2026-08-14T12:17:18.444739+00:00",
+    "verdict": "discard"
   },
   "gen:iconset_round2:gen_cat_doom_8bit:v4": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:32:38.106368+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:17:18.477259+00:00",
+    "verdict": "keep"
   },
   "gen:iconset_round2:gen_cat_evil:v1": {
-    "note": "",
+    "note": "not chosen -- set winner: gen_cat_evil",
     "tags": [],
-    "updated_at": "2026-07-25T02:32:48.679111+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:17:22.854210+00:00",
+    "verdict": "discard"
   },
   "gen:iconset_round2:gen_cat_evil:v2": {
-    "note": "",
+    "note": "not chosen -- set winner: gen_cat_evil",
     "tags": [],
-    "updated_at": "2026-07-25T02:32:49.569729+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:17:22.884449+00:00",
+    "verdict": "discard"
   },
   "gen:iconset_round2:gen_cat_evil:v3": {
     "note": "eyes too well defined",
     "tags": [],
-    "updated_at": "2026-07-25T02:32:55.936087+00:00",
-    "verdict": "reroll"
+    "updated_at": "2026-08-14T12:17:22.912203+00:00",
+    "verdict": "keep"
   },
   "gen:iconset_round2:gen_cat_evil:v4": {
     "note": "eyes have too mcuh definition, breaks immersion",
     "tags": [],
-    "updated_at": "2026-07-25T02:33:05.203901+00:00",
-    "verdict": "reroll"
+    "updated_at": "2026-08-14T12:17:22.941403+00:00",
+    "verdict": "discard"
   },
   "gen:iconset_round2:gen_cat_loaf:v1": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:33:08.132086+00:00",
-    "verdict": "maybe"
-  },
-  "gen:iconset_round2:gen_cat_loaf:v2": {
-    "note": "",
-    "tags": [],
-    "updated_at": "2026-07-25T02:33:10.402466+00:00",
+    "updated_at": "2026-08-14T12:17:24.862435+00:00",
     "verdict": "keep"
   },
-  "gen:iconset_round2:gen_cat_loaf:v3": {
-    "note": "",
+  "gen:iconset_round2:gen_cat_loaf:v2": {
+    "note": "not chosen -- set winner: gen_cat_loaf",
     "tags": [],
-    "updated_at": "2026-07-25T02:33:10.874961+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:17:24.891879+00:00",
+    "verdict": "discard"
+  },
+  "gen:iconset_round2:gen_cat_loaf:v3": {
+    "note": "not chosen -- set winner: gen_cat_loaf",
+    "tags": [],
+    "updated_at": "2026-08-14T12:17:24.920745+00:00",
+    "verdict": "discard"
   },
   "gen:iconset_round2:gen_cat_sitting:v1": {
     "note": "",
@@ -5874,88 +6762,88 @@
     "verdict": "keep"
   },
   "gen:iconset_round2:gen_dial_doom_arc:v1": {
-    "note": "",
+    "note": "not chosen -- set winner: gen_dial_doom_arc",
     "tags": [],
-    "updated_at": "2026-07-25T02:33:15.954224+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:17:26.049173+00:00",
+    "verdict": "discard"
   },
   "gen:iconset_round2:gen_dial_doom_arc:v2": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:33:16.802048+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:17:26.078952+00:00",
+    "verdict": "keep"
   },
   "gen:iconset_round2:gen_dial_doom_semi:v1": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:33:18.490651+00:00",
-    "verdict": "reroll"
+    "updated_at": "2026-08-14T12:17:29.023511+00:00",
+    "verdict": "keep"
   },
   "gen:iconset_round2:gen_dial_doom_semi:v2": {
-    "note": "",
+    "note": "not chosen -- set winner: gen_dial_doom_semi",
     "tags": [],
-    "updated_at": "2026-07-25T02:33:19.553808+00:00",
-    "verdict": "reroll"
+    "updated_at": "2026-08-14T12:17:29.050875+00:00",
+    "verdict": "discard"
   },
   "gen:iconset_round2:gen_seal_dod_formal:v1": {
-    "note": "",
+    "note": "not chosen -- set winner: gen_seal_dod_formal",
     "tags": [],
-    "updated_at": "2026-07-25T02:33:22.234522+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:17:30.340218+00:00",
+    "verdict": "discard"
   },
   "gen:iconset_round2:gen_seal_dod_formal:v2": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:33:24.442593+00:00",
-    "verdict": "reroll"
+    "updated_at": "2026-08-14T12:17:30.372117+00:00",
+    "verdict": "keep"
   },
   "gen:iconset_round2:gen_seal_dod_grunge:v1": {
-    "note": "",
+    "note": "not chosen -- set winner: gen_seal_dod_grunge",
     "tags": [],
-    "updated_at": "2026-07-25T02:33:27.902487+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:17:31.561495+00:00",
+    "verdict": "discard"
   },
   "gen:iconset_round2:gen_seal_dod_grunge:v2": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:33:29.370398+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:17:31.593655+00:00",
+    "verdict": "keep"
   },
   "gen:iconset_round2:gen_seal_dod_wax:v1": {
-    "note": "",
+    "note": "not chosen -- set winner: gen_seal_dod_wax",
     "tags": [],
-    "updated_at": "2026-07-25T02:33:32.024223+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:17:33.086476+00:00",
+    "verdict": "discard"
   },
   "gen:iconset_round2:gen_seal_dod_wax:v2": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:33:33.666120+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:17:33.114952+00:00",
+    "verdict": "keep"
   },
   "gen:iconset_round2:gen_type_pdoom:v1": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:33:41.425446+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:17:43.603245+00:00",
+    "verdict": "keep"
   },
   "gen:iconset_round2:gen_type_pdoom:v2": {
-    "note": "",
+    "note": "not chosen -- set winner: gen_type_pdoom",
     "tags": [],
-    "updated_at": "2026-07-25T02:33:50.824868+00:00",
-    "verdict": "reroll"
+    "updated_at": "2026-08-14T12:17:43.631932+00:00",
+    "verdict": "discard"
   },
   "gen:iconset_round2:gen_type_pdoom_inaction:v1": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:33:51.261506+00:00",
-    "verdict": "reroll"
+    "updated_at": "2026-08-14T12:17:48.769968+00:00",
+    "verdict": "keep"
   },
   "gen:iconset_round2:gen_type_pdoom_inaction:v2": {
-    "note": "",
+    "note": "not chosen -- set winner: gen_type_pdoom_inaction",
     "tags": [],
-    "updated_at": "2026-07-25T02:33:51.697046+00:00",
-    "verdict": "reroll"
+    "updated_at": "2026-08-14T12:17:48.800240+00:00",
+    "verdict": "discard"
   },
   "gen:iconset_round2:gen_type_pdoom_us:v1": {
     "note": "There is something emerging with an emergent P from a doom meter filling up becoming the P in p(Doom) here that is strongly attractive, excellent. Keep and use this as a basis for more re-rolls as an avolutionary step.",
@@ -5996,14 +6884,14 @@
   "gen:new_subjects:office_doom_high:v1": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-08-03T20:56:59.156Z",
-    "verdict": "iterate"
+    "updated_at": "2026-08-14T12:17:52.726480+00:00",
+    "verdict": "keep"
   },
   "gen:new_subjects:office_doom_high:v2": {
-    "note": "",
+    "note": "not chosen -- set winner: office_doom_high",
     "tags": [],
-    "updated_at": "2026-08-07T06:09:05.951Z",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:17:52.756467+00:00",
+    "verdict": "discard"
   },
   "gen:new_subjects:office_doom_low:v1": {
     "note": "",
@@ -6044,37 +6932,37 @@
   "gen:new_subjects:server_altar:v1": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-08-07T06:09:08.221Z",
-    "verdict": "iterate"
+    "updated_at": "2026-08-14T12:17:53.711358+00:00",
+    "verdict": "keep"
   },
   "gen:new_subjects:server_altar:v2": {
-    "note": "",
+    "note": "not chosen -- set winner: server_altar",
     "tags": [],
-    "updated_at": "2026-08-03T20:57:34.948Z",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:17:53.741280+00:00",
+    "verdict": "discard"
   },
   "gen:people_policy:people_none:v1": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-08-03T21:02:48.567Z",
-    "verdict": "iterate"
+    "updated_at": "2026-08-14T12:17:54.534428+00:00",
+    "verdict": "keep"
   },
   "gen:people_policy:people_none:v2": {
-    "note": "",
+    "note": "not chosen -- set winner: people_none",
     "tags": [],
-    "updated_at": "2026-08-03T21:02:44.607Z",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:17:54.569675+00:00",
+    "verdict": "discard"
   },
   "gen:people_policy:people_silhouette:v1": {
     "note": "Silhouettes look a little fake",
     "tags": [],
-    "updated_at": "2026-08-07T06:09:31.375Z",
-    "verdict": "iterate"
+    "updated_at": "2026-08-14T12:17:56.134967+00:00",
+    "verdict": "keep"
   },
   "gen:people_policy:people_silhouette:v2": {
-    "note": "",
+    "note": "not chosen -- set winner: people_silhouette",
     "tags": [],
-    "updated_at": "2026-08-03T21:03:01.556Z",
+    "updated_at": "2026-08-14T12:17:56.162888+00:00",
     "verdict": "discard"
   },
   "gen:people_policy:people_varied_group:v1": {
@@ -6090,160 +6978,160 @@
     "verdict": "discard"
   },
   "gen:researcher_portraits_pilot:poleA_authoritarian_pessimist:v1": {
-    "note": "",
+    "note": "not chosen -- set winner: poleA_authoritarian_pessimist",
     "tags": [],
-    "updated_at": "2026-07-25T02:35:17.052636+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:17:57.378525+00:00",
+    "verdict": "discard"
   },
   "gen:researcher_portraits_pilot:poleA_authoritarian_pessimist:v2": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:35:17.712634+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:17:57.411317+00:00",
+    "verdict": "keep"
   },
   "gen:researcher_portraits_pilot:poleA_burned_out_senior:v1": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:35:20.091357+00:00",
-    "verdict": "maybe"
-  },
-  "gen:researcher_portraits_pilot:poleA_burned_out_senior:v2": {
-    "note": "",
-    "tags": [],
-    "updated_at": "2026-07-25T02:35:19.319335+00:00",
+    "updated_at": "2026-08-14T12:17:57.845208+00:00",
     "verdict": "keep"
   },
-  "gen:researcher_portraits_pilot:poleA_capabilities_optimist:v1": {
-    "note": "",
+  "gen:researcher_portraits_pilot:poleA_burned_out_senior:v2": {
+    "note": "not chosen -- set winner: poleA_burned_out_senior",
     "tags": [],
-    "updated_at": "2026-07-25T02:35:22.071125+00:00",
-    "verdict": "reroll"
+    "updated_at": "2026-08-14T12:17:57.878845+00:00",
+    "verdict": "discard"
+  },
+  "gen:researcher_portraits_pilot:poleA_capabilities_optimist:v1": {
+    "note": "not chosen -- set winner: poleA_capabilities_optimist",
+    "tags": [],
+    "updated_at": "2026-08-14T12:17:59.255016+00:00",
+    "verdict": "discard"
   },
   "gen:researcher_portraits_pilot:poleA_capabilities_optimist:v2": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:35:22.502665+00:00",
-    "verdict": "reroll"
+    "updated_at": "2026-08-14T12:17:59.303353+00:00",
+    "verdict": "keep"
   },
   "gen:researcher_portraits_pilot:poleA_fresh_grad_believer:v1": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:35:24.170886+00:00",
-    "verdict": "reroll"
+    "updated_at": "2026-08-14T12:18:00.751568+00:00",
+    "verdict": "keep"
   },
   "gen:researcher_portraits_pilot:poleA_fresh_grad_believer:v2": {
-    "note": "",
+    "note": "not chosen -- set winner: poleA_fresh_grad_believer",
     "tags": [],
-    "updated_at": "2026-07-25T02:35:24.915298+00:00",
-    "verdict": "reroll"
+    "updated_at": "2026-08-14T12:18:00.785879+00:00",
+    "verdict": "discard"
   },
   "gen:researcher_portraits_pilot:poleA_moral_crusader:v1": {
-    "note": "",
+    "note": "not chosen -- set winner: poleA_moral_crusader",
     "tags": [],
-    "updated_at": "2026-07-25T02:35:29.792830+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:18:01.487056+00:00",
+    "verdict": "discard"
   },
   "gen:researcher_portraits_pilot:poleA_moral_crusader:v2": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:35:30.246331+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:18:01.516513+00:00",
+    "verdict": "keep"
   },
   "gen:researcher_portraits_pilot:poleA_people_pleaser:v1": {
-    "note": "",
+    "note": "not chosen -- set winner: poleA_people_pleaser",
     "tags": [],
-    "updated_at": "2026-07-25T02:35:33.476149+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:18:02.458338+00:00",
+    "verdict": "discard"
   },
   "gen:researcher_portraits_pilot:poleA_people_pleaser:v2": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:35:34.880116+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:18:02.492612+00:00",
+    "verdict": "keep"
   },
   "gen:researcher_portraits_pilot:poleB_authoritarian_pessimist:v1": {
-    "note": "",
+    "note": "not chosen -- set winner: poleB_authoritarian_pessimist",
     "tags": [],
-    "updated_at": "2026-07-25T02:35:38.176776+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:18:03.100271+00:00",
+    "verdict": "discard"
   },
   "gen:researcher_portraits_pilot:poleB_authoritarian_pessimist:v2": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:35:39.583918+00:00",
-    "verdict": "reroll"
+    "updated_at": "2026-08-14T12:18:03.129014+00:00",
+    "verdict": "keep"
   },
   "gen:researcher_portraits_pilot:poleB_burned_out_senior:v1": {
-    "note": "",
+    "note": "not chosen -- set winner: poleB_burned_out_senior",
     "tags": [],
-    "updated_at": "2026-07-25T02:35:40.770010+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:18:03.612022+00:00",
+    "verdict": "discard"
   },
   "gen:researcher_portraits_pilot:poleB_burned_out_senior:v2": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:35:44.597776+00:00",
-    "verdict": "reroll"
+    "updated_at": "2026-08-14T12:18:03.639281+00:00",
+    "verdict": "keep"
   },
   "gen:researcher_portraits_pilot:poleB_capabilities_optimist:v1": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:35:48.947234+00:00",
-    "verdict": "maybe"
-  },
-  "gen:researcher_portraits_pilot:poleB_capabilities_optimist:v2": {
-    "note": "",
-    "tags": [],
-    "updated_at": "2026-07-25T02:35:47.897517+00:00",
+    "updated_at": "2026-08-14T12:18:04.126344+00:00",
     "verdict": "keep"
   },
-  "gen:researcher_portraits_pilot:poleB_fresh_grad_believer:v1": {
-    "note": "",
+  "gen:researcher_portraits_pilot:poleB_capabilities_optimist:v2": {
+    "note": "not chosen -- set winner: poleB_capabilities_optimist",
     "tags": [],
-    "updated_at": "2026-07-25T02:35:51.929112+00:00",
-    "verdict": "reroll"
+    "updated_at": "2026-08-14T12:18:04.156548+00:00",
+    "verdict": "discard"
+  },
+  "gen:researcher_portraits_pilot:poleB_fresh_grad_believer:v1": {
+    "note": "not chosen -- set winner: poleB_fresh_grad_believer",
+    "tags": [],
+    "updated_at": "2026-08-14T12:18:05.600308+00:00",
+    "verdict": "discard"
   },
   "gen:researcher_portraits_pilot:poleB_fresh_grad_believer:v2": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:35:52.330164+00:00",
-    "verdict": "reroll"
+    "updated_at": "2026-08-14T12:18:05.628186+00:00",
+    "verdict": "keep"
   },
   "gen:researcher_portraits_pilot:poleB_moral_crusader:v1": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:35:53.921859+00:00",
-    "verdict": "reroll"
+    "updated_at": "2026-08-14T12:18:06.579648+00:00",
+    "verdict": "keep"
   },
   "gen:researcher_portraits_pilot:poleB_moral_crusader:v2": {
-    "note": "",
+    "note": "not chosen -- set winner: poleB_moral_crusader",
     "tags": [],
-    "updated_at": "2026-07-25T02:35:54.792959+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:18:06.609306+00:00",
+    "verdict": "discard"
   },
   "gen:researcher_portraits_pilot:poleB_people_pleaser:v1": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:35:58.582928+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:18:07.494041+00:00",
+    "verdict": "keep"
   },
   "gen:researcher_portraits_pilot:poleB_people_pleaser:v2": {
-    "note": "",
+    "note": "not chosen -- set winner: poleB_people_pleaser",
     "tags": [],
-    "updated_at": "2026-07-25T02:35:58.173903+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:18:07.524504+00:00",
+    "verdict": "discard"
   },
   "gen:round3_rerolls:acquire_startup_r3:v1": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:36:03.616708+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:18:09.091804+00:00",
+    "verdict": "keep"
   },
   "gen:round3_rerolls:acquire_startup_r3:v2": {
-    "note": "",
+    "note": "not chosen -- set winner: acquire_startup_r3",
     "tags": [],
-    "updated_at": "2026-07-25T02:36:04.682626+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:18:09.121044+00:00",
+    "verdict": "discard"
   },
   "gen:round3_rerolls:dossier_capabilities_optimist_a:v1": {
     "note": "",
@@ -6284,50 +7172,50 @@
   "gen:round3_rerolls:grant_proposal_r3:v1": {
     "note": "Entirely rebase instructions for this, reading LLM, and branch out into several variats so we can move away from cliche",
     "tags": [],
-    "updated_at": "2026-07-25T02:36:29.753648+00:00",
-    "verdict": "reroll"
+    "updated_at": "2026-08-14T12:18:12.156225+00:00",
+    "verdict": "discard"
   },
   "gen:round3_rerolls:grant_proposal_r3:v2": {
     "note": "Entirely rebase instructions for this, reading LLM, and branch out into several variats so we can move away from cliche",
     "tags": [],
-    "updated_at": "2026-07-25T02:36:33.429584+00:00",
-    "verdict": "reroll"
+    "updated_at": "2026-08-14T12:18:12.185277+00:00",
+    "verdict": "keep"
   },
   "gen:round3_rerolls:lobby_government_r3:v1": {
-    "note": "",
+    "note": "not chosen -- set winner: lobby_government_r3",
     "tags": [],
-    "updated_at": "2026-07-25T02:36:34.312551+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:18:13.310390+00:00",
+    "verdict": "discard"
   },
   "gen:round3_rerolls:lobby_government_r3:v2": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:36:35.599374+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:18:13.340713+00:00",
+    "verdict": "keep"
   },
   "gen:round3_rerolls:network_r3:v1": {
-    "note": "",
+    "note": "not chosen -- set winner: network_r3",
     "tags": [],
-    "updated_at": "2026-07-25T02:36:43.041852+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:18:14.250138+00:00",
+    "verdict": "discard"
   },
   "gen:round3_rerolls:network_r3:v2": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:36:44.203624+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:18:14.278649+00:00",
+    "verdict": "keep"
   },
   "gen:round3_rerolls:open_source_release_r3:v1": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:36:46.875478+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:18:15.187056+00:00",
+    "verdict": "keep"
   },
   "gen:round3_rerolls:open_source_release_r3:v2": {
-    "note": "",
+    "note": "not chosen -- set winner: open_source_release_r3",
     "tags": [],
-    "updated_at": "2026-07-25T02:36:47.476423+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:18:15.216519+00:00",
+    "verdict": "discard"
   },
   "gen:round3_rerolls:painterly_capabilities_optimist_a:v1": {
     "note": "",
@@ -6368,14 +7256,14 @@
   "gen:round3_rerolls:take_loan_r3:v1": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:36:56.140422+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:18:16.029238+00:00",
+    "verdict": "keep"
   },
   "gen:round3_rerolls:take_loan_r3:v2": {
-    "note": "",
+    "note": "not chosen -- set winner: take_loan_r3",
     "tags": [],
-    "updated_at": "2026-07-25T02:36:56.505478+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:18:16.058330+00:00",
+    "verdict": "discard"
   },
   "gen:round3_rerolls:team_building_r3:v1": {
     "note": "",
@@ -6428,44 +7316,44 @@
   "gen:screen_backgrounds:bg_defeat:v1": {
     "note": "All these seeem wildly incorrect, investgiate but I think this is just a misfiring of what we're after",
     "tags": [],
-    "updated_at": "2026-07-25T02:29:42.462628+00:00",
-    "verdict": "reroll"
+    "updated_at": "2026-08-14T12:11:31.291585+00:00",
+    "verdict": "keep"
   },
   "gen:screen_backgrounds:bg_main_grid:v1": {
     "note": "All these seeem wildly incorrect, investgiate but I think this is just a misfiring of what we're after",
     "tags": [],
-    "updated_at": "2026-07-25T02:29:43.035935+00:00",
-    "verdict": "reroll"
+    "updated_at": "2026-08-14T12:11:35.941578+00:00",
+    "verdict": "keep"
   },
   "gen:screen_backgrounds:bg_panel_texture:v1": {
     "note": "All these seeem wildly incorrect, investgiate but I think this is just a misfiring of what we're after",
     "tags": [],
-    "updated_at": "2026-07-25T02:29:43.352780+00:00",
-    "verdict": "reroll"
+    "updated_at": "2026-08-14T12:10:28.890193+00:00",
+    "verdict": "keep"
   },
   "gen:screen_backgrounds:bg_settings:v1": {
     "note": "All these seeem wildly incorrect, investgiate but I think this is just a misfiring of what we're after",
     "tags": [],
-    "updated_at": "2026-07-25T02:29:43.627667+00:00",
-    "verdict": "reroll"
+    "updated_at": "2026-08-14T12:10:25.226246+00:00",
+    "verdict": "keep"
   },
   "gen:screen_backgrounds:bg_tartan_stripe:v1": {
     "note": "All these seeem wildly incorrect, investgiate but I think this is just a misfiring of what we're after",
     "tags": [],
-    "updated_at": "2026-07-25T02:29:43.908880+00:00",
-    "verdict": "reroll"
+    "updated_at": "2026-08-14T12:11:33.770983+00:00",
+    "verdict": "keep"
   },
   "gen:screen_backgrounds:bg_victory:v1": {
     "note": "All these seeem wildly incorrect, investgiate but I think this is just a misfiring of what we're after",
     "tags": [],
-    "updated_at": "2026-07-25T02:29:44.168905+00:00",
-    "verdict": "reroll"
+    "updated_at": "2026-08-14T12:11:38.321349+00:00",
+    "verdict": "discard"
   },
   "gen:screen_backgrounds:bg_welcome_lab:v1": {
-    "note": "All these seeem wildly incorrect, investgiate but I think this is just a misfiring of what we're after",
+    "note": "this is cute but ?I don't know what for",
     "tags": [],
-    "updated_at": "2026-07-25T02:29:45.426460+00:00",
-    "verdict": "reroll"
+    "updated_at": "2026-08-14T12:19:52.715445+00:00",
+    "verdict": "remix"
   },
   "gen:screen_backgrounds:tex_bakelite_cracked:v1": {
     "note": "",
@@ -6600,22 +7488,22 @@
     "verdict": "keep"
   },
   "gen:terminal_textures:tex_cyan_border:v1": {
-    "note": "",
+    "note": "not chosen -- set winner: tex_cyan_border",
     "tags": [],
-    "updated_at": "2026-07-25T02:30:08.306414+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:10:37.640797+00:00",
+    "verdict": "discard"
   },
   "gen:terminal_textures:tex_cyan_border:v2": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:30:10.912270+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:10:37.670516+00:00",
+    "verdict": "keep"
   },
   "gen:terminal_textures:tex_cyan_border:v3": {
-    "note": "",
+    "note": "not chosen -- set winner: tex_cyan_border",
     "tags": [],
-    "updated_at": "2026-07-25T02:30:12.169834+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:10:37.702031+00:00",
+    "verdict": "discard"
   },
   "gen:terminal_textures:tex_cyan_ispf:v1": {
     "note": "",
@@ -6854,134 +7742,134 @@
   "gen:ui_icons:action_facility_build_lab:v1": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:16:11.985907+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:05:34.989160+00:00",
+    "verdict": "keep"
   },
   "gen:ui_icons:action_facility_build_lab:v2": {
-    "note": "",
+    "note": "not chosen -- set winner: action_facility_build_lab",
     "tags": [],
-    "updated_at": "2026-07-25T02:16:15.120174+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:05:35.021025+00:00",
+    "verdict": "discard"
   },
   "gen:ui_icons:action_facility_data_center:v1": {
-    "note": "",
+    "note": "not chosen -- set winner: action_facility_data_center",
     "tags": [],
-    "updated_at": "2026-07-25T02:16:15.975853+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:05:35.930257+00:00",
+    "verdict": "discard"
   },
   "gen:ui_icons:action_facility_data_center:v2": {
     "note": "This would be fine for a high spooky thing but a more realistic icon would be great.",
     "tags": [],
-    "updated_at": "2026-07-25T02:16:28.152097+00:00",
-    "verdict": "reroll"
+    "updated_at": "2026-08-14T12:05:35.958507+00:00",
+    "verdict": "keep"
   },
   "gen:ui_icons:action_facility_emergency_shutdown:v1": {
-    "note": "",
+    "note": "not chosen -- set winner: action_facility_emergency_shutdown",
     "tags": [],
-    "updated_at": "2026-07-25T02:16:29.646622+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:05:37.205700+00:00",
+    "verdict": "discard"
   },
   "gen:ui_icons:action_facility_emergency_shutdown:v2": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:16:30.602428+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:05:37.242865+00:00",
+    "verdict": "keep"
   },
   "gen:ui_icons:action_facility_expand_office:v1": {
-    "note": "",
+    "note": "not chosen -- set winner: action_facility_expand_office",
     "tags": [],
-    "updated_at": "2026-07-25T02:16:36.674122+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:05:40.500793+00:00",
+    "verdict": "discard"
   },
   "gen:ui_icons:action_facility_expand_office:v2": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:16:39.355258+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:05:40.532095+00:00",
+    "verdict": "keep"
   },
   "gen:ui_icons:action_facility_security_upgrade:v1": {
     "note": "Good, try a second colour for the camera. Meta note: I think we want to craete some style design rules about, like primary and secondary clour groupings in our icons for a next-generation coherence pass because we keep getting things that are individually good, subtly with mayn upsides, but need coherence in direction. We can extract this from pulling detailed analysis of the little features of images I like and striving for collapsing into coherence from there. This is otherwise an excellent image.",
     "tags": [],
-    "updated_at": "2026-07-25T02:17:48.320268+00:00",
-    "verdict": "reroll"
+    "updated_at": "2026-08-14T12:05:44.754962+00:00",
+    "verdict": "keep"
   },
   "gen:ui_icons:action_facility_security_upgrade:v2": {
-    "note": "",
+    "note": "not chosen -- set winner: action_facility_security_upgrade",
     "tags": [],
-    "updated_at": "2026-07-25T02:17:49.995932+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:05:44.782765+00:00",
+    "verdict": "discard"
   },
   "gen:ui_icons:action_facility_upgrade_compute:v1": {
-    "note": "",
+    "note": "not chosen -- set winner: action_facility_upgrade_compute",
     "tags": [],
-    "updated_at": "2026-07-25T02:17:53.143678+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:05:45.985462+00:00",
+    "verdict": "discard"
   },
   "gen:ui_icons:action_facility_upgrade_compute:v2": {
     "note": "a bit too simple, try with more depth and texture and richness, decrease arrow size by 15%",
     "tags": [],
-    "updated_at": "2026-07-25T02:18:09.187667+00:00",
-    "verdict": "reroll"
+    "updated_at": "2026-08-14T12:05:46.022749+00:00",
+    "verdict": "keep"
   },
   "gen:ui_icons:action_policy_audit_requirement:v1": {
     "note": "this fits a dull and washed out scheme, tag it as such asnd keep as back up or for a sample of tone review",
     "tags": [],
-    "updated_at": "2026-07-25T02:18:32.814202+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:05:47.100549+00:00",
+    "verdict": "keep"
   },
   "gen:ui_icons:action_policy_audit_requirement:v2": {
-    "note": "",
+    "note": "not chosen -- set winner: action_policy_audit_requirement",
     "tags": [],
-    "updated_at": "2026-07-25T02:18:14.690913+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:05:47.132001+00:00",
+    "verdict": "discard"
   },
   "gen:ui_icons:action_policy_capability_limit:v1": {
-    "note": "",
+    "note": "not chosen -- set winner: action_policy_capability_limit",
     "tags": [],
-    "updated_at": "2026-07-25T02:18:35.868815+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:05:48.522215+00:00",
+    "verdict": "discard"
   },
   "gen:ui_icons:action_policy_capability_limit:v2": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:18:37.550205+00:00",
-    "verdict": "reroll"
+    "updated_at": "2026-08-14T12:05:48.550708+00:00",
+    "verdict": "keep"
   },
   "gen:ui_icons:action_policy_ethics_board:v1": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:18:42.720935+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:05:49.389347+00:00",
+    "verdict": "keep"
   },
   "gen:ui_icons:action_policy_ethics_board:v2": {
-    "note": "",
+    "note": "not chosen -- set winner: action_policy_ethics_board",
     "tags": [],
-    "updated_at": "2026-07-25T02:18:41.249051+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:05:49.417291+00:00",
+    "verdict": "discard"
   },
   "gen:ui_icons:action_policy_international_cooperation:v1": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:18:45.753199+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:06:05.499802+00:00",
+    "verdict": "keep"
   },
   "gen:ui_icons:action_policy_international_cooperation:v2": {
-    "note": "",
+    "note": "not chosen -- set winner: action_policy_international_cooperation",
     "tags": [],
-    "updated_at": "2026-07-25T02:18:45.006686+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:06:05.531928+00:00",
+    "verdict": "discard"
   },
   "gen:ui_icons:action_policy_transparency:v1": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-08-03T21:31:45.379Z",
-    "verdict": "iterate"
+    "updated_at": "2026-08-14T12:07:53.182783+00:00",
+    "verdict": "keep"
   },
   "gen:ui_icons:action_policy_transparency:v2": {
-    "note": "",
+    "note": "not chosen -- set winner: action_policy_transparency",
     "tags": [],
-    "updated_at": "2026-07-25T02:18:51.359077+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:07:53.214742+00:00",
+    "verdict": "discard"
   },
   "gen:ui_icons:action_policy_whistleblower:v1": {
     "note": "",
@@ -6998,26 +7886,26 @@
   "gen:ui_icons:action_research_alignment:v1": {
     "note": "Make the arrow and bottom cog one colour and the upper cog a differnet colour to highlight difference",
     "tags": [],
-    "updated_at": "2026-07-25T02:19:14.203559+00:00",
-    "verdict": "reroll"
+    "updated_at": "2026-08-14T12:07:21.908070+00:00",
+    "verdict": "discard"
   },
   "gen:ui_icons:action_research_alignment:v2": {
     "note": "this will do for now, uninspired",
     "tags": [],
-    "updated_at": "2026-07-25T02:19:20.827997+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:07:21.937390+00:00",
+    "verdict": "keep"
   },
   "gen:ui_icons:action_research_capability_control:v1": {
-    "note": "",
+    "note": "not chosen -- set winner: action_research_capability_control",
     "tags": [],
-    "updated_at": "2026-07-25T02:19:25.780358+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:06:43.290717+00:00",
+    "verdict": "discard"
   },
   "gen:ui_icons:action_research_capability_control:v2": {
     "note": "try a represntation of a mechanical governor device or some other astute enginerring reference",
     "tags": [],
-    "updated_at": "2026-07-25T02:19:40.850327+00:00",
-    "verdict": "reroll"
+    "updated_at": "2026-08-14T12:06:43.319335+00:00",
+    "verdict": "keep"
   },
   "gen:ui_icons:action_research_formal_verification:v1": {
     "note": "",
@@ -7038,52 +7926,52 @@
     "verdict": "keep"
   },
   "gen:ui_icons:action_research_ml_fundamentals:v1": {
-    "note": "",
+    "note": "not chosen -- set winner: action_research_ml_fundamentals",
     "tags": [],
-    "updated_at": "2026-07-25T02:19:57.519472+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:06:44.615658+00:00",
+    "verdict": "discard"
   },
   "gen:ui_icons:action_research_ml_fundamentals:v2": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:19:58.521004+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:06:44.646230+00:00",
+    "verdict": "keep"
   },
   "gen:ui_icons:action_research_monitoring:v1": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:20:03.764145+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:06:46.743970+00:00",
+    "verdict": "keep"
   },
   "gen:ui_icons:action_research_monitoring:v2": {
-    "note": "",
+    "note": "not chosen -- set winner: action_research_monitoring",
     "tags": [],
-    "updated_at": "2026-07-25T02:20:03.228573+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:06:46.773125+00:00",
+    "verdict": "discard"
   },
   "gen:ui_icons:action_research_red_teaming:v1": {
     "note": "one red team one blue team, not chess",
     "tags": [],
-    "updated_at": "2026-07-25T02:20:13.912657+00:00",
-    "verdict": "reroll"
+    "updated_at": "2026-08-14T12:06:50.202006+00:00",
+    "verdict": "discard"
   },
   "gen:ui_icons:action_research_red_teaming:v2": {
     "note": "one red team one blue team, combat, not chess, can be engineers facing each other off",
     "tags": [],
-    "updated_at": "2026-07-25T02:20:27.237783+00:00",
-    "verdict": "reroll"
+    "updated_at": "2026-08-14T12:06:50.233327+00:00",
+    "verdict": "keep"
   },
   "gen:ui_icons:action_research_robustness:v1": {
     "note": "try incraesing saturation slightly and emboldening shield, otherwise, good",
     "tags": [],
-    "updated_at": "2026-07-25T02:20:47.339932+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:06:51.295572+00:00",
+    "verdict": "keep"
   },
   "gen:ui_icons:action_research_robustness:v2": {
     "note": "ok for now",
     "tags": [],
-    "updated_at": "2026-07-25T02:20:50.752773+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:06:51.332850+00:00",
+    "verdict": "discard"
   },
   "gen:ui_icons:button_action_disabled:v1": {
     "note": "",
@@ -7220,26 +8108,26 @@
   "gen:ui_icons:button_fire_normal:v1": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:21:21.420941+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:06:54.286425+00:00",
+    "verdict": "keep"
   },
   "gen:ui_icons:button_fire_normal:v2": {
-    "note": "",
+    "note": "not chosen -- set winner: button_fire_normal",
     "tags": [],
-    "updated_at": "2026-07-25T02:21:20.890321+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:06:54.316206+00:00",
+    "verdict": "discard"
   },
   "gen:ui_icons:button_hire_disabled:v1": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:21:37.900906+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:06:55.325332+00:00",
+    "verdict": "keep"
   },
   "gen:ui_icons:button_hire_disabled:v2": {
-    "note": "",
+    "note": "not chosen -- set winner: button_hire_disabled",
     "tags": [],
-    "updated_at": "2026-07-25T02:21:37.260339+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:06:55.356207+00:00",
+    "verdict": "discard"
   },
   "gen:ui_icons:button_hire_hover:v1": {
     "note": "",
@@ -7256,38 +8144,38 @@
   "gen:ui_icons:button_hire_normal:v1": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:21:44.163642+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:06:55.938215+00:00",
+    "verdict": "keep"
   },
   "gen:ui_icons:button_hire_normal:v2": {
-    "note": "",
+    "note": "not chosen -- set winner: button_hire_normal",
     "tags": [],
-    "updated_at": "2026-07-25T02:21:44.672034+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:06:55.966528+00:00",
+    "verdict": "discard"
   },
   "gen:ui_icons:button_upgrade_disabled:v1": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:21:49.213114+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:06:56.553128+00:00",
+    "verdict": "keep"
   },
   "gen:ui_icons:button_upgrade_disabled:v2": {
-    "note": "",
+    "note": "not chosen -- set winner: button_upgrade_disabled",
     "tags": [],
-    "updated_at": "2026-07-25T02:21:48.622625+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:06:56.584469+00:00",
+    "verdict": "discard"
   },
   "gen:ui_icons:button_upgrade_hover:v1": {
-    "note": "",
+    "note": "not chosen -- set winner: button_upgrade_hover",
     "tags": [],
-    "updated_at": "2026-07-25T02:21:51.696342+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:06:57.785223+00:00",
+    "verdict": "discard"
   },
   "gen:ui_icons:button_upgrade_hover:v2": {
     "note": "too bendy",
     "tags": [],
-    "updated_at": "2026-07-25T02:21:57.584592+00:00",
-    "verdict": "reroll"
+    "updated_at": "2026-08-14T12:06:57.817549+00:00",
+    "verdict": "keep"
   },
   "gen:ui_icons:button_upgrade_normal:v1": {
     "note": "",
@@ -7302,160 +8190,160 @@
     "verdict": "keep"
   },
   "gen:ui_icons:employee_role_auditor:v1": {
-    "note": "",
+    "note": "not chosen -- set winner: employee_role_auditor",
     "tags": [],
-    "updated_at": "2026-07-25T02:22:05.925931+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:06:59.103332+00:00",
+    "verdict": "discard"
   },
   "gen:ui_icons:employee_role_auditor:v2": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:22:06.725309+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:06:59.134110+00:00",
+    "verdict": "keep"
   },
   "gen:ui_icons:employee_role_bureaucrat:v1": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:22:09.401089+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:07:00.092531+00:00",
+    "verdict": "keep"
   },
   "gen:ui_icons:employee_role_bureaucrat:v2": {
-    "note": "",
+    "note": "not chosen -- set winner: employee_role_bureaucrat",
     "tags": [],
-    "updated_at": "2026-07-25T02:22:11.996473+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:07:00.145610+00:00",
+    "verdict": "discard"
   },
   "gen:ui_icons:employee_role_engineer:v1": {
     "note": "I think with role types we want a human as persona in the icon to emphssisse this is a role, this is true across all employee_role icons in this batchm, these will do as backups or paceholders",
     "tags": [],
-    "updated_at": "2026-07-25T02:22:48.716013+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:07:01.747881+00:00",
+    "verdict": "keep"
   },
   "gen:ui_icons:employee_role_engineer:v2": {
-    "note": "",
+    "note": "not chosen -- set winner: employee_role_engineer",
     "tags": [],
-    "updated_at": "2026-07-25T02:22:51.342534+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:07:01.779549+00:00",
+    "verdict": "discard"
   },
   "gen:ui_icons:employee_role_ethicist:v1": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:22:52.615277+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:07:02.392395+00:00",
+    "verdict": "keep"
   },
   "gen:ui_icons:employee_role_ethicist:v2": {
-    "note": "",
+    "note": "not chosen -- set winner: employee_role_ethicist",
     "tags": [],
-    "updated_at": "2026-07-25T02:22:53.109214+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:07:02.421368+00:00",
+    "verdict": "discard"
   },
   "gen:ui_icons:employee_role_manager:v1": {
-    "note": "",
+    "note": "not chosen -- set winner: employee_role_manager",
     "tags": [],
-    "updated_at": "2026-07-25T02:22:53.949597+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:07:02.912698+00:00",
+    "verdict": "discard"
   },
   "gen:ui_icons:employee_role_manager:v2": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:22:57.177507+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:07:02.941806+00:00",
+    "verdict": "keep"
   },
   "gen:ui_icons:employee_role_researcher:v1": {
     "note": "try with a more ML neural net image in the beacon",
     "tags": [],
-    "updated_at": "2026-07-25T02:23:10.108764+00:00",
-    "verdict": "reroll"
+    "updated_at": "2026-08-14T12:07:03.364898+00:00",
+    "verdict": "keep"
   },
   "gen:ui_icons:employee_role_researcher:v2": {
-    "note": "",
+    "note": "not chosen -- set winner: employee_role_researcher",
     "tags": [],
-    "updated_at": "2026-07-25T02:22:59.119461+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:07:03.397311+00:00",
+    "verdict": "discard"
   },
   "gen:ui_icons:employee_role_safety_specialist:v1": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:23:14.108600+00:00",
-    "verdict": "reroll"
+    "updated_at": "2026-08-14T12:07:05.603810+00:00",
+    "verdict": "keep"
   },
   "gen:ui_icons:employee_role_safety_specialist:v2": {
-    "note": "",
+    "note": "not chosen -- set winner: employee_role_safety_specialist",
     "tags": [],
-    "updated_at": "2026-07-25T02:23:15.203519+00:00",
-    "verdict": "reroll"
+    "updated_at": "2026-08-14T12:07:05.633133+00:00",
+    "verdict": "discard"
   },
   "gen:ui_icons:employee_role_security:v1": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:23:21.747198+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:07:06.760259+00:00",
+    "verdict": "keep"
   },
   "gen:ui_icons:employee_role_security:v2": {
     "note": "This being on a lanyard is amazing. Strong positive note. COnsider us using this in other employee_role icons. Consider propogating this up into design documents. Amazing. A++",
     "tags": [],
-    "updated_at": "2026-07-25T02:23:49.541607+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:07:06.788500+00:00",
+    "verdict": "discard"
   },
   "gen:ui_icons:employee_status_absent:v1": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:23:53.355141+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:07:07.221459+00:00",
+    "verdict": "keep"
   },
   "gen:ui_icons:employee_status_absent:v2": {
-    "note": "",
+    "note": "not chosen -- set winner: employee_status_absent",
     "tags": [],
-    "updated_at": "2026-07-25T02:23:54.034999+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:07:07.249840+00:00",
+    "verdict": "discard"
   },
   "gen:ui_icons:employee_status_active:v1": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:23:56.200410+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:07:07.688335+00:00",
+    "verdict": "keep"
   },
   "gen:ui_icons:employee_status_active:v2": {
-    "note": "",
+    "note": "not chosen -- set winner: employee_status_active",
     "tags": [],
-    "updated_at": "2026-07-25T02:23:56.758007+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:07:07.720488+00:00",
+    "verdict": "discard"
   },
   "gen:ui_icons:employee_status_burned_out:v1": {
     "note": "this si danerously close to a mtg symbol. think about better repersentaiton for emotinal burnout",
     "tags": [],
-    "updated_at": "2026-07-25T02:24:13.309277+00:00",
-    "verdict": "reroll"
+    "updated_at": "2026-08-14T12:07:08.311087+00:00",
+    "verdict": "keep"
   },
   "gen:ui_icons:employee_status_burned_out:v2": {
-    "note": "",
+    "note": "not chosen -- set winner: employee_status_burned_out",
     "tags": [],
-    "updated_at": "2026-07-25T02:24:16.423667+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:07:08.343315+00:00",
+    "verdict": "discard"
   },
   "gen:ui_icons:employee_status_compromised:v1": {
-    "note": "",
+    "note": "not chosen -- set winner: employee_status_compromised",
     "tags": [],
-    "updated_at": "2026-07-25T02:24:17.295522+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:07:08.887344+00:00",
+    "verdict": "discard"
   },
   "gen:ui_icons:employee_status_compromised:v2": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:24:18.687369+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:07:08.917681+00:00",
+    "verdict": "keep"
   },
   "gen:ui_icons:employee_status_excellent:v1": {
-    "note": "",
+    "note": "not chosen -- set winner: employee_status_excellent",
     "tags": [],
-    "updated_at": "2026-07-25T02:24:19.444022+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:07:09.440241+00:00",
+    "verdict": "discard"
   },
   "gen:ui_icons:employee_status_excellent:v2": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:24:20.169802+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:07:09.469949+00:00",
+    "verdict": "keep"
   },
   "gen:ui_icons:employee_status_investigating:v1": {
     "note": "",
@@ -7482,28 +8370,28 @@
     "verdict": "keep"
   },
   "gen:ui_icons:employee_status_training:v1": {
-    "note": "",
+    "note": "not chosen -- set winner: employee_status_training",
     "tags": [],
-    "updated_at": "2026-07-25T02:24:30.323088+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:07:09.934469+00:00",
+    "verdict": "discard"
   },
   "gen:ui_icons:employee_status_training:v2": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:24:30.955730+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:07:09.963451+00:00",
+    "verdict": "keep"
   },
   "gen:ui_icons:indicator_alert_error:v1": {
-    "note": "",
+    "note": "not chosen -- set winner: indicator_alert_error",
     "tags": [],
-    "updated_at": "2026-07-25T02:24:33.147695+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:07:10.703274+00:00",
+    "verdict": "discard"
   },
   "gen:ui_icons:indicator_alert_error:v2": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:24:35.616519+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:07:10.732861+00:00",
+    "verdict": "keep"
   },
   "gen:ui_icons:indicator_alert_info:v1": {
     "note": "",
@@ -7556,14 +8444,14 @@
   "gen:ui_icons:indicator_risk_low:v1": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:24:45.497637+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:07:56.118736+00:00",
+    "verdict": "keep"
   },
   "gen:ui_icons:indicator_risk_minimal:v1": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:24:44.733318+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:19:46.305207+00:00",
+    "verdict": "keep"
   },
   "gen:ui_icons:indicator_risk_moderate:v1": {
     "note": "",
@@ -7574,26 +8462,26 @@
   "gen:ui_icons:resource_action_points:v1": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:24:57.454763+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:07:27.175066+00:00",
+    "verdict": "keep"
   },
   "gen:ui_icons:resource_action_points:v2": {
-    "note": "",
+    "note": "not chosen -- set winner: resource_action_points",
     "tags": [],
-    "updated_at": "2026-07-25T02:24:59.890083+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:07:27.202948+00:00",
+    "verdict": "discard"
   },
   "gen:ui_icons:resource_compute:v1": {
-    "note": "",
+    "note": "not chosen -- set winner: resource_compute",
     "tags": [],
-    "updated_at": "2026-07-25T02:25:03.029596+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:07:28.639234+00:00",
+    "verdict": "discard"
   },
   "gen:ui_icons:resource_compute:v2": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:25:04.204526+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:07:28.675225+00:00",
+    "verdict": "keep"
   },
   "gen:ui_icons:resource_data:v1": {
     "note": "",
@@ -7602,28 +8490,28 @@
     "verdict": "keep"
   },
   "gen:ui_icons:resource_money:v1": {
-    "note": "",
+    "note": "not chosen -- set winner: resource_money",
     "tags": [],
-    "updated_at": "2026-07-25T02:25:08.541570+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:07:29.379772+00:00",
+    "verdict": "discard"
   },
   "gen:ui_icons:resource_money:v2": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:25:11.139518+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:07:29.407581+00:00",
+    "verdict": "keep"
   },
   "gen:ui_icons:resource_morale:v1": {
-    "note": "",
+    "note": "not chosen -- set winner: resource_morale",
     "tags": [],
-    "updated_at": "2026-07-25T02:25:11.657705+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:07:30.170104+00:00",
+    "verdict": "discard"
   },
   "gen:ui_icons:resource_morale:v2": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:25:12.364343+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:07:30.199763+00:00",
+    "verdict": "keep"
   },
   "gen:ui_icons:resource_power:v1": {
     "note": "",
@@ -7632,16 +8520,16 @@
     "verdict": "keep"
   },
   "gen:ui_icons:resource_reputation:v1": {
-    "note": "",
+    "note": "not chosen -- set winner: resource_reputation",
     "tags": [],
-    "updated_at": "2026-07-25T02:25:14.494598+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:07:30.935973+00:00",
+    "verdict": "discard"
   },
   "gen:ui_icons:resource_reputation:v2": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:25:15.724529+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:07:30.970568+00:00",
+    "verdict": "keep"
   },
   "gen:ui_icons:resource_research_points:v1": {
     "note": "",
@@ -7656,16 +8544,16 @@
     "verdict": "keep"
   },
   "gen:ui_icons:resource_safety_score:v1": {
-    "note": "",
+    "note": "not chosen -- set winner: resource_safety_score",
     "tags": [],
-    "updated_at": "2026-07-25T02:25:19.727513+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:07:31.604558+00:00",
+    "verdict": "discard"
   },
   "gen:ui_icons:resource_safety_score:v2": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:25:20.757401+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:07:31.633991+00:00",
+    "verdict": "keep"
   },
   "gen:ui_icons:resource_space:v1": {
     "note": "",
@@ -7674,40 +8562,40 @@
     "verdict": "keep"
   },
   "gen:ui_icons:ui_alerts_incidents:v1": {
-    "note": "",
+    "note": "not chosen -- set winner: ui_alerts_incidents",
     "tags": [],
-    "updated_at": "2026-07-25T02:25:22.845094+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:07:32.452991+00:00",
+    "verdict": "discard"
   },
   "gen:ui_icons:ui_alerts_incidents:v2": {
-    "note": "",
+    "note": "not chosen -- set winner: ui_alerts_incidents",
     "tags": [],
-    "updated_at": "2026-07-25T02:25:26.755065+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:07:32.483853+00:00",
+    "verdict": "discard"
   },
   "gen:ui_icons:ui_alerts_incidents:v3": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:25:27.324443+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:07:32.515080+00:00",
+    "verdict": "keep"
   },
   "gen:ui_icons:ui_budget_finance:v1": {
-    "note": "",
+    "note": "not chosen -- set winner: ui_budget_finance",
     "tags": [],
-    "updated_at": "2026-07-25T02:25:29.422368+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:07:33.277939+00:00",
+    "verdict": "discard"
   },
   "gen:ui_icons:ui_budget_finance:v2": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:25:30.199871+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:07:33.308181+00:00",
+    "verdict": "keep"
   },
   "gen:ui_icons:ui_budget_finance:v3": {
-    "note": "",
+    "note": "not chosen -- set winner: ui_budget_finance",
     "tags": [],
-    "updated_at": "2026-07-25T02:25:31.106763+00:00",
-    "verdict": "reroll"
+    "updated_at": "2026-08-14T12:07:33.337511+00:00",
+    "verdict": "discard"
   },
   "gen:ui_icons:ui_corner_bottom_left:v1": {
     "note": "",
@@ -7748,20 +8636,20 @@
   "gen:ui_icons:ui_governance_oversight:v1": {
     "note": "needs more colour differentiation, ask or increase scope of style guide for assistance",
     "tags": [],
-    "updated_at": "2026-07-25T02:25:54.862269+00:00",
-    "verdict": "reroll"
+    "updated_at": "2026-08-14T12:07:35.925546+00:00",
+    "verdict": "keep"
   },
   "gen:ui_icons:ui_governance_oversight:v2": {
     "note": "needs more colour differentiation, ask or increase scope of style guide for assistance",
     "tags": [],
-    "updated_at": "2026-07-25T02:26:01.529239+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:07:35.955886+00:00",
+    "verdict": "discard"
   },
   "gen:ui_icons:ui_governance_oversight:v3": {
-    "note": "",
+    "note": "not chosen -- set winner: ui_governance_oversight",
     "tags": [],
-    "updated_at": "2026-07-25T02:25:59.858211+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:07:35.984510+00:00",
+    "verdict": "discard"
   },
   "gen:ui_icons:ui_header_banner:v1": {
     "note": "",
@@ -7776,40 +8664,40 @@
     "verdict": "keep"
   },
   "gen:ui_icons:ui_home_hq:v1": {
-    "note": "",
+    "note": "not chosen -- set winner: ui_home_hq",
     "tags": [],
-    "updated_at": "2026-07-25T02:26:05.774243+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:07:37.019192+00:00",
+    "verdict": "discard"
   },
   "gen:ui_icons:ui_home_hq:v2": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:26:07.170467+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:07:37.049510+00:00",
+    "verdict": "keep"
   },
   "gen:ui_icons:ui_home_hq:v3": {
-    "note": "",
+    "note": "not chosen -- set winner: ui_home_hq",
     "tags": [],
-    "updated_at": "2026-07-25T02:26:11.034571+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:07:37.078140+00:00",
+    "verdict": "discard"
   },
   "gen:ui_icons:ui_infrastructure_facilities:v1": {
-    "note": "",
+    "note": "not chosen -- set winner: ui_infrastructure_facilities",
     "tags": [],
-    "updated_at": "2026-07-25T02:26:15.587074+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:07:43.677404+00:00",
+    "verdict": "discard"
   },
   "gen:ui_icons:ui_infrastructure_facilities:v2": {
-    "note": "",
+    "note": "not chosen -- set winner: ui_infrastructure_facilities",
     "tags": [],
-    "updated_at": "2026-07-25T02:26:14.255670+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:07:43.727504+00:00",
+    "verdict": "discard"
   },
   "gen:ui_icons:ui_infrastructure_facilities:v3": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:26:16.190033+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:07:43.757420+00:00",
+    "verdict": "keep"
   },
   "gen:ui_icons:ui_panel_frame:v1": {
     "note": "",
@@ -7842,76 +8730,76 @@
     "verdict": "keep"
   },
   "gen:ui_icons:ui_risk_meter_pdoom:v1": {
-    "note": "",
+    "note": "not chosen -- set winner: ui_risk_meter_pdoom",
     "tags": [],
-    "updated_at": "2026-07-25T02:26:26.138574+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:08:31.514646+00:00",
+    "verdict": "discard"
   },
   "gen:ui_icons:ui_risk_meter_pdoom:v2": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:26:28.134283+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:08:31.553894+00:00",
+    "verdict": "keep"
   },
   "gen:ui_icons:ui_risk_meter_pdoom:v3": {
-    "note": "",
+    "note": "not chosen -- set winner: ui_risk_meter_pdoom",
     "tags": [],
-    "updated_at": "2026-07-25T02:26:28.656318+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:08:31.584466+00:00",
+    "verdict": "discard"
   },
   "gen:ui_icons:ui_save_archive:v1": {
-    "note": "",
+    "note": "not chosen -- set winner: ui_save_archive",
     "tags": [],
-    "updated_at": "2026-07-25T02:26:33.905873+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:08:38.689529+00:00",
+    "verdict": "discard"
   },
   "gen:ui_icons:ui_save_archive:v2": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:26:34.573907+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:08:38.717351+00:00",
+    "verdict": "keep"
   },
   "gen:ui_icons:ui_save_archive:v3": {
-    "note": "",
+    "note": "not chosen -- set winner: ui_save_archive",
     "tags": [],
-    "updated_at": "2026-07-25T02:26:35.117267+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:08:38.746592+00:00",
+    "verdict": "discard"
   },
   "gen:ui_icons:ui_staff_management:v1": {
-    "note": "",
+    "note": "not chosen -- set winner: ui_staff_management",
     "tags": [],
-    "updated_at": "2026-07-25T02:26:37.313624+00:00",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:08:41.806713+00:00",
+    "verdict": "discard"
   },
   "gen:ui_icons:ui_staff_management:v2": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:26:37.861228+00:00",
-    "verdict": "maybe"
-  },
-  "gen:ui_icons:ui_staff_management:v3": {
-    "note": "",
-    "tags": [],
-    "updated_at": "2026-07-25T02:26:38.317414+00:00",
-    "verdict": "maybe"
-  },
-  "gen:ui_icons:ui_system_settings:v1": {
-    "note": "",
-    "tags": [],
-    "updated_at": "2026-07-25T02:26:41.898852+00:00",
+    "updated_at": "2026-08-14T12:08:41.838295+00:00",
     "verdict": "keep"
   },
-  "gen:ui_icons:ui_system_settings:v2": {
-    "note": "",
+  "gen:ui_icons:ui_staff_management:v3": {
+    "note": "not chosen -- set winner: ui_staff_management",
     "tags": [],
-    "updated_at": "2026-07-25T02:26:42.573237+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:08:41.873230+00:00",
+    "verdict": "discard"
+  },
+  "gen:ui_icons:ui_system_settings:v1": {
+    "note": "not chosen -- set winner: ui_system_settings",
+    "tags": [],
+    "updated_at": "2026-08-14T12:08:45.312246+00:00",
+    "verdict": "discard"
+  },
+  "gen:ui_icons:ui_system_settings:v2": {
+    "note": "not chosen -- set winner: ui_system_settings",
+    "tags": [],
+    "updated_at": "2026-08-14T12:08:45.340776+00:00",
+    "verdict": "discard"
   },
   "gen:ui_icons:ui_system_settings:v3": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-07-25T02:26:43.203560+00:00",
-    "verdict": "maybe"
+    "updated_at": "2026-08-14T12:08:45.374829+00:00",
+    "verdict": "keep"
   },
   "gen:wanasai_calls:atrium_face_absent:v1": {
     "note": "",
@@ -7940,20 +8828,26 @@
   "gen:wanasai_calls:atrium_face_smiling:v1": {
     "note": "Having a human face makes it weird, see what happens if we give the figure (a) a mask, so it could be human or robot, (b) a copy of (a) but mybe make one of the arms or the person be ambiguouss or hinting at possibly being robotis as well, (c) have the figure still be fairly non-human but with more religious overtones as well as (d) a version of (c) but with more state-propoganda overtines",
     "tags": [],
-    "updated_at": "2026-08-03T21:02:03.933Z",
-    "verdict": "iterate"
+    "updated_at": "2026-08-14T12:18:20.063659+00:00",
+    "verdict": "keep"
+  },
+  "gen:wanasai_calls:atrium_face_smiling:v2": {
+    "note": "not chosen -- set winner: atrium_face_smiling",
+    "tags": [],
+    "updated_at": "2026-08-14T12:18:20.092990+00:00",
+    "verdict": "discard"
   },
   "gen:wanasai_calls:intro_obscured_moderate:v1": {
-    "note": "",
+    "note": "not chosen -- set winner: intro_obscured_moderate",
     "tags": [],
-    "updated_at": "2026-08-03T21:02:17.892Z",
-    "verdict": "keep"
+    "updated_at": "2026-08-14T12:18:21.428482+00:00",
+    "verdict": "discard"
   },
   "gen:wanasai_calls:intro_obscured_moderate:v2": {
     "note": "",
     "tags": [],
-    "updated_at": "2026-08-03T21:02:23.302Z",
-    "verdict": "iterate"
+    "updated_at": "2026-08-14T12:18:21.459826+00:00",
+    "verdict": "keep"
   },
   "gen:wanasai_calls:intro_obscured_total:v1": {
     "note": "",
@@ -8001,7 +8895,7 @@
     "note": "This is a genreated inage of a cat, it's not an actual named cat like the others",
     "tags": [],
     "updated_at": "2026-08-03T21:18:36.051Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "px:cats_incoming/web-luna.jpg": {
     "note": "",
@@ -12243,13 +13137,13 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-07-25T02:53:42.257222+00:00",
-    "verdict": "reroll"
+    "verdict": "remix"
   },
   "px:iconset_2026-07-21/gen_cat_doom_48": {
     "note": "",
     "tags": [],
     "updated_at": "2026-07-25T02:53:42.573113+00:00",
-    "verdict": "reroll"
+    "verdict": "remix"
   },
   "px:iconset_2026-07-21/gen_cat_doom_512": {
     "note": "",
@@ -12261,7 +13155,7 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-07-25T02:53:37.689000+00:00",
-    "verdict": "maybe"
+    "verdict": "remix"
   },
   "px:iconset_2026-07-21/gen_cat_face_128": {
     "note": "",
@@ -12279,13 +13173,13 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-07-25T02:53:45.110586+00:00",
-    "verdict": "maybe"
+    "verdict": "remix"
   },
   "px:iconset_2026-07-21/gen_cat_face_48": {
     "note": "",
     "tags": [],
     "updated_at": "2026-07-25T02:53:45.510899+00:00",
-    "verdict": "maybe"
+    "verdict": "remix"
   },
   "px:iconset_2026-07-21/gen_cat_face_512": {
     "note": "",
@@ -12297,103 +13191,103 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-07-25T02:53:50.009829+00:00",
-    "verdict": "maybe"
+    "verdict": "remix"
   },
   "px:iconset_2026-07-21/gen_cat_loaf_128": {
     "note": "",
     "tags": [],
     "updated_at": "2026-07-25T02:53:52.240223+00:00",
-    "verdict": "reroll"
+    "verdict": "remix"
   },
   "px:iconset_2026-07-21/gen_cat_loaf_256": {
     "note": "",
     "tags": [],
     "updated_at": "2026-07-25T02:53:52.474456+00:00",
-    "verdict": "reroll"
+    "verdict": "remix"
   },
   "px:iconset_2026-07-21/gen_cat_loaf_32": {
     "note": "",
     "tags": [],
     "updated_at": "2026-07-25T02:53:52.707457+00:00",
-    "verdict": "reroll"
+    "verdict": "remix"
   },
   "px:iconset_2026-07-21/gen_cat_loaf_48": {
     "note": "",
     "tags": [],
     "updated_at": "2026-07-25T02:53:52.934904+00:00",
-    "verdict": "reroll"
+    "verdict": "remix"
   },
   "px:iconset_2026-07-21/gen_cat_loaf_512": {
     "note": "",
     "tags": [],
     "updated_at": "2026-07-25T02:53:53.123242+00:00",
-    "verdict": "reroll"
+    "verdict": "remix"
   },
   "px:iconset_2026-07-21/gen_cat_loaf_64": {
     "note": "",
     "tags": [],
     "updated_at": "2026-07-25T02:53:53.403298+00:00",
-    "verdict": "reroll"
+    "verdict": "remix"
   },
   "px:iconset_2026-07-21/gen_cat_sitting_128": {
     "note": "",
     "tags": [],
     "updated_at": "2026-07-25T02:53:54.640938+00:00",
-    "verdict": "reroll"
+    "verdict": "remix"
   },
   "px:iconset_2026-07-21/gen_cat_sitting_256": {
     "note": "",
     "tags": [],
     "updated_at": "2026-07-25T02:53:54.857548+00:00",
-    "verdict": "reroll"
+    "verdict": "remix"
   },
   "px:iconset_2026-07-21/gen_cat_sitting_32": {
     "note": "",
     "tags": [],
     "updated_at": "2026-07-25T02:53:55.063430+00:00",
-    "verdict": "reroll"
+    "verdict": "remix"
   },
   "px:iconset_2026-07-21/gen_cat_sitting_48": {
     "note": "",
     "tags": [],
     "updated_at": "2026-07-25T02:53:55.249222+00:00",
-    "verdict": "reroll"
+    "verdict": "remix"
   },
   "px:iconset_2026-07-21/gen_cat_sitting_512": {
     "note": "",
     "tags": [],
     "updated_at": "2026-07-25T02:53:55.444263+00:00",
-    "verdict": "reroll"
+    "verdict": "remix"
   },
   "px:iconset_2026-07-21/gen_cat_sitting_64": {
     "note": "",
     "tags": [],
     "updated_at": "2026-07-25T02:53:55.640443+00:00",
-    "verdict": "reroll"
+    "verdict": "remix"
   },
   "px:iconset_2026-07-21/gen_dial_clock_128": {
     "note": "",
     "tags": [],
     "updated_at": "2026-07-25T02:53:57.048317+00:00",
-    "verdict": "reroll"
+    "verdict": "remix"
   },
   "px:iconset_2026-07-21/gen_dial_clock_256": {
     "note": "",
     "tags": [],
     "updated_at": "2026-07-25T02:53:57.334670+00:00",
-    "verdict": "reroll"
+    "verdict": "remix"
   },
   "px:iconset_2026-07-21/gen_dial_clock_32": {
     "note": "",
     "tags": [],
     "updated_at": "2026-07-25T02:53:57.624754+00:00",
-    "verdict": "reroll"
+    "verdict": "remix"
   },
   "px:iconset_2026-07-21/gen_dial_clock_48": {
     "note": "",
     "tags": [],
     "updated_at": "2026-07-25T02:53:57.899192+00:00",
-    "verdict": "reroll"
+    "verdict": "remix"
   },
   "px:iconset_2026-07-21/gen_dial_clock_512": {
     "note": "",
@@ -12453,7 +13347,7 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-07-25T02:54:06.113477+00:00",
-    "verdict": "maybe"
+    "verdict": "remix"
   },
   "px:iconset_2026-07-21/gen_seal_check_32.png": {
     "note": "",
@@ -12489,7 +13383,7 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-07-25T02:54:08.663739+00:00",
-    "verdict": "maybe"
+    "verdict": "remix"
   },
   "px:iconset_2026-07-21/gen_seal_hourglass_32.png": {
     "note": "",
@@ -14139,7 +15033,7 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-08-03T21:21:10.626Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-16/era_ladder/e2_funded.png": {
     "note": "",
@@ -14151,7 +15045,7 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-08-03T21:21:12.333Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-16/era_ladder/e4_megacorp.png": {
     "note": "",
@@ -14217,13 +15111,13 @@
     "note": "this needsd to be a cat bed basked without a cat in it",
     "tags": [],
     "updated_at": "2026-08-03T21:21:41.816Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-16/props/cat_litter_box.png": {
     "note": "littler box without a cat in it",
     "tags": [],
     "updated_at": "2026-08-03T21:21:42.374Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-16/props/coffee_clean.png": {
     "note": "",
@@ -14697,13 +15591,13 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-08-03T21:22:54.705Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-16/sweep/cosmetics_overlays/lanyard_badge_4.png": {
     "note": "",
     "tags": [],
     "updated_at": "2026-08-03T21:22:55.892Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-16/sweep/environment/door_decent_1.png": {
     "note": "",
@@ -15069,13 +15963,13 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-08-03T21:23:25.154Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-16/sweep/props/kitchen_bench_decent_2.png": {
     "note": "",
     "tags": [],
     "updated_at": "2026-08-03T21:23:25.528Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-16/sweep/props/kitchen_bench_decent_3.png": {
     "note": "",
@@ -15213,31 +16107,31 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-08-03T21:23:44.631Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-16/sweep/props/server_cluster_mega_2.png": {
     "note": "",
     "tags": [],
     "updated_at": "2026-08-03T21:23:45.007Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-16/sweep/props/server_cluster_mega_3.png": {
     "note": "",
     "tags": [],
     "updated_at": "2026-08-03T21:23:45.351Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-16/sweep/props/server_cluster_mega_4.png": {
     "note": "",
     "tags": [],
     "updated_at": "2026-08-03T21:23:45.707Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-16/sweep/props/trash_can_1.png": {
     "note": "",
     "tags": [],
     "updated_at": "2026-08-03T21:23:46.476Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-16/sweep/props/trash_can_2.png": {
     "note": "",
@@ -15249,7 +16143,7 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-08-03T21:23:47.630Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-16/sweep/props/trash_can_4.png": {
     "note": "",
@@ -15297,7 +16191,7 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-08-03T21:23:54.188Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-16/sweep/ui_filler_map_object/icon_compute_4.png": {
     "note": "",
@@ -15885,7 +16779,7 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-08-03T21:32:10.983Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-17/reroll/founder/founder_2.png": {
     "note": "",
@@ -15903,7 +16797,7 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-08-03T21:32:19.996Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-17/reroll/icons/icon_compute_1.png": {
     "note": "",
@@ -16065,7 +16959,7 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-07-22T06:40:10.351307+00:00",
-    "verdict": "maybe"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-17/reroll/objects/filing_cabinet_4.png": {
     "note": "",
@@ -16137,7 +17031,7 @@
     "note": "needs chairs both sides or no chairs",
     "tags": [],
     "updated_at": "2026-07-22T06:39:43.650098+00:00",
-    "verdict": "reroll"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-17/reroll/objects/meeting_table_4": {
     "note": "",
@@ -16155,7 +17049,7 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-07-22T06:39:29.304697+00:00",
-    "verdict": "maybe"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-17/reroll/objects/monitor_mega_startup_3": {
     "note": "",
@@ -16173,7 +17067,7 @@
     "note": "this looks more like a medium or bad PC",
     "tags": [],
     "updated_at": "2026-07-22T06:39:17.570354+00:00",
-    "verdict": "maybe"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-17/reroll/objects/pc_mega_2": {
     "note": "noting orientation amybe as tag",
@@ -16197,7 +17091,7 @@
     "note": "weirdly wonky",
     "tags": [],
     "updated_at": "2026-07-22T06:38:52.848543+00:00",
-    "verdict": "reroll"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-17/reroll/objects/printer_2": {
     "note": "",
@@ -16215,7 +17109,7 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-07-22T06:38:44.229250+00:00",
-    "verdict": "maybe"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-17/reroll/objects/server_cluster_mega_1": {
     "note": "",
@@ -16227,7 +17121,7 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-07-22T06:38:40.074011+00:00",
-    "verdict": "maybe"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-17/reroll/objects/server_cluster_mega_3": {
     "note": "",
@@ -16245,7 +17139,7 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-07-22T06:38:33.894053+00:00",
-    "verdict": "maybe"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-17/reroll/objects/trash_recycling_2": {
     "note": "",
@@ -16257,7 +17151,7 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-07-22T06:38:31.922874+00:00",
-    "verdict": "reroll"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-17/reroll/objects/trash_recycling_4": {
     "note": "",
@@ -16287,7 +17181,7 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-07-22T06:38:26.041732+00:00",
-    "verdict": "reroll"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-17/reroll/tilesets/floor_carpet": {
     "note": "",
@@ -16299,7 +17193,7 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-07-22T06:38:03.838912+00:00",
-    "verdict": "reroll"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-17/reroll/tilesets/floor_lino": {
     "note": "",
@@ -16317,7 +17211,7 @@
     "note": "Can we try a mostly bare garage wall",
     "tags": [],
     "updated_at": "2026-07-22T06:38:18.505092+00:00",
-    "verdict": "reroll"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-17/reroll/windows/sky_clear_1": {
     "note": "",
@@ -16899,7 +17793,7 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-07-22T06:37:14.930240+00:00",
-    "verdict": "maybe"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-19/props/bookshelf_1": {
     "note": "",
@@ -16929,7 +17823,7 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-07-22T06:37:16.103316+00:00",
-    "verdict": "maybe"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-19/props/chair_mega_1": {
     "note": "",
@@ -17018,7 +17912,7 @@
     "note": "This looks very front-on, we want some logic in the game about where a fire extinguisher should go TODO",
     "tags": [],
     "updated_at": "2026-07-22T06:36:04.306822+00:00",
-    "verdict": "maybe"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-19/props/floor_lamp_1": {
     "note": "",
@@ -17060,25 +17954,25 @@
     "note": "this monitor is weirdly angled",
     "tags": [],
     "updated_at": "2026-07-22T06:35:35.833940+00:00",
-    "verdict": "reroll"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-19/props/monitor_dual_1": {
     "note": "Unsure on colours or if we are going with trnasparent screens or not?",
     "tags": [],
     "updated_at": "2026-07-22T06:46:03.962001+00:00",
-    "verdict": "maybe"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-19/props/monitor_mega_1": {
     "note": "I feel like transparent screens lets us add sneaky responsive UI elements in underneath cheaply",
     "tags": [],
     "updated_at": "2026-07-22T06:46:16.409511+00:00",
-    "verdict": "maybe"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-19/props/monitor_single_1": {
     "note": "I feel like transparent screens lets us add sneaky responsive UI elements in underneath cheaply",
     "tags": [],
     "updated_at": "2026-07-22T06:46:19.340643+00:00",
-    "verdict": "maybe"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-19/props/office_phone_1": {
     "note": "Amazing, candidate for future animation",
@@ -17090,7 +17984,7 @@
     "note": "The angle on this seems weird in terms of perspective, this might not map correctly but would be cool if it was eventually ugpraded into a many-directional asset",
     "tags": [],
     "updated_at": "2026-07-22T06:35:22.314102+00:00",
-    "verdict": "maybe"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-19/props/pc_scummy_1": {
     "note": "",
@@ -17126,19 +18020,19 @@
     "note": "Test deploy this and we'll see",
     "tags": [],
     "updated_at": "2026-07-22T06:34:39.950898+00:00",
-    "verdict": "maybe"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-19/props/recycling_bin_1": {
     "note": "This looks a little flat, and can really only be deplyoed against flat backgrounds",
     "tags": [],
     "updated_at": "2026-07-22T06:34:30.971680+00:00",
-    "verdict": "maybe"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-19/props/server_cluster_mega_1": {
     "note": "This has some transparent shadows and positioning that needs to be carefully aligned and thought about, we might review on deploy",
     "tags": [],
     "updated_at": "2026-07-22T06:34:13.471801+00:00",
-    "verdict": "maybe"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-19/props/server_rack_single_1": {
     "note": "",
@@ -17318,7 +18212,7 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-07-25T02:56:30.086220+00:00",
-    "verdict": "maybe"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-21-rerolls/cats/cat_purple_1_east.png": {
     "note": "",
@@ -17366,7 +18260,7 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-07-25T02:56:30.537367+00:00",
-    "verdict": "maybe"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-21-rerolls/cats/cat_purple_2_east.png": {
     "note": "",
@@ -28016,67 +28910,67 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-08-03T21:14:02.057Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-26_doom_overlays/wisp/curl/idle.png": {
     "note": "",
     "tags": [],
     "updated_at": "2026-08-03T21:14:02.211Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-26_doom_overlays/wisp/curl/loop/frame_000.png": {
     "note": "",
     "tags": [],
     "updated_at": "2026-08-03T21:14:02.379Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-26_doom_overlays/wisp/curl/loop/frame_001.png": {
     "note": "",
     "tags": [],
     "updated_at": "2026-08-03T21:14:02.526Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-26_doom_overlays/wisp/curl/loop/frame_002.png": {
     "note": "",
     "tags": [],
     "updated_at": "2026-08-03T21:14:02.662Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-26_doom_overlays/wisp/curl/loop/frame_003.png": {
     "note": "",
     "tags": [],
     "updated_at": "2026-08-03T21:14:02.801Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-26_doom_overlays/wisp/curl/loop/frame_004.png": {
     "note": "",
     "tags": [],
     "updated_at": "2026-08-03T21:14:02.931Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-26_doom_overlays/wisp/curl/loop/frame_005.png": {
     "note": "",
     "tags": [],
     "updated_at": "2026-08-03T21:14:03.073Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-26_doom_overlays/wisp/curl/loop/frame_006.png": {
     "note": "",
     "tags": [],
     "updated_at": "2026-08-03T21:14:03.221Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-26_doom_overlays/wisp/curl/loop/frame_007.png": {
     "note": "",
     "tags": [],
     "updated_at": "2026-08-03T21:14:03.369Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-26_doom_overlays/wisp/curl/loop/frame_008.png": {
     "note": "",
     "tags": [],
     "updated_at": "2026-08-03T21:14:03.567Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-26_doom_overlays/wisp/slim/idle.png": {
     "note": "",
@@ -28142,61 +29036,61 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-08-03T21:14:07.694Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-26_doom_overlays/wisp/tendrils/loop/frame_000.png": {
     "note": "",
     "tags": [],
     "updated_at": "2026-08-03T21:14:07.820Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-26_doom_overlays/wisp/tendrils/loop/frame_001.png": {
     "note": "",
     "tags": [],
     "updated_at": "2026-08-03T21:14:07.980Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-26_doom_overlays/wisp/tendrils/loop/frame_002.png": {
     "note": "",
     "tags": [],
     "updated_at": "2026-08-03T21:14:08.126Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-26_doom_overlays/wisp/tendrils/loop/frame_003.png": {
     "note": "",
     "tags": [],
     "updated_at": "2026-08-03T21:14:08.268Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-26_doom_overlays/wisp/tendrils/loop/frame_004.png": {
     "note": "",
     "tags": [],
     "updated_at": "2026-08-03T21:14:08.409Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-26_doom_overlays/wisp/tendrils/loop/frame_005.png": {
     "note": "",
     "tags": [],
     "updated_at": "2026-08-03T21:14:08.556Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-26_doom_overlays/wisp/tendrils/loop/frame_006.png": {
     "note": "",
     "tags": [],
     "updated_at": "2026-08-03T21:14:08.918Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-26_doom_overlays/wisp/tendrils/loop/frame_007.png": {
     "note": "",
     "tags": [],
     "updated_at": "2026-08-03T21:14:09.065Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-26_doom_overlays/wisp/tendrils/loop/frame_008.png": {
     "note": "",
     "tags": [],
     "updated_at": "2026-08-03T21:14:09.649Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-26_prop_grain_vanguard/dial/desk_dial_medium_r1.png": {
     "note": "",
@@ -28358,7 +29252,7 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-08-03T21:13:23.055Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-26_prop_grain_vanguard/native/water_cooler_decent_native_r1.png": {
     "note": "",
@@ -32114,7 +33008,7 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-08-03T21:07:32.642Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-27_prop_rebase/large_source/desk_front_decent_r1.png": {
     "note": "",
@@ -32210,13 +33104,13 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-08-03T21:08:29.833Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-27_prop_rebase/large_source/water_cooler_scummy_r1.png": {
     "note": "",
     "tags": [],
     "updated_at": "2026-08-03T21:08:32.141Z",
-    "verdict": "iterate"
+    "verdict": "remix"
   },
   "px:pixellab_2026-07-27_prop_rebase/large_source/water_cooler_scummy_r2.png": {
     "note": "",
@@ -34736,6 +35630,12 @@
     "note": "",
     "tags": [],
     "updated_at": "2026-07-25T02:56:20.074274+00:00",
+    "verdict": "keep"
+  },
+  "px:vignettes_2026-07-28/01_cat-in-the-alley": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-14T12:19:43.360707+00:00",
     "verdict": "keep"
   },
   "px:vignettes_2026-07-28/01_cat-in-the-alley.png": {

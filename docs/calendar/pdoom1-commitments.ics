@@ -1091,6 +1091,32 @@ DESCRIPTION:P9\, the pack's OWN falsifier: if none of P1-P8 started and no
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:a91312e7f15c724c@commitments.pdoom1
+DTSTAMP:20260814T000000Z
+DTSTART;VALUE=DATE:20260814
+DTEND;VALUE=DATE:20260815
+SUMMARY:[UNPARSED] needs a declaration -- SESSION_2026-08-14_first-mass-re
+ view.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/art/audit_2026-08
+ -13/SESSION_2026-08-14_first-mass-review.md:3. 1 line(s) in docs/art/audi
+ t_2026-08-13/SESSION_2026-08-14_first-mass-review.md mention this date an
+ d no COMMITMENT: declaration accounts for it. Either add a declaration or
+  the date is incidental. First line: **Recorded by `seat:pdoom`\, 2026-08
+ -14.** Every number below is re-derivable from -- Generated from tracked 
+ sources by scripts/generate_commitment_calendar.py\; regenerate to update
+ .
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- SESSION_2026-08-14_first-mass-review.md
+  (unparsed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:6366d7f9734808dc@commitments.pdoom1
 DTSTAMP:20260815T000000Z
 DTSTART;VALUE=DATE:20260815

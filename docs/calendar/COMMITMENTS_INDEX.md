@@ -13,7 +13,7 @@ Horizon: **2026-08-09** (the prose scan reports dates at or after this; roll it
 forward deliberately in `COMMITMENTS.md`, never automatically -- a clock-reading
 generator goes stale overnight and trains people to ignore the check).
 
-**48 declared, 4 release-train, 48 UNPARSED, 0 malformed.**
+**48 declared, 4 release-train, 49 UNPARSED, 0 malformed.**
 
 ## Declared commitments
 
@@ -148,6 +148,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-13 | `tools/art_review/shortlist_l3_heroes.py` | 235 | "**GENERATED** by `tools/art_review/shortlist_l3_heroes.py`, 2026-08-13.", |
 | 2026-08-13 | `tools/art_review/shortlist_l3_heroes.py` | 335 | "<title>L3 hero shortlist -- 2026-08-13</title>", |
 | 2026-08-13 | `tools/art_review/shortlist_l3_heroes.py` | 347 | "<p class='note'>Generated 2026-08-13. Ordered by contrast + detail density,", |
+| 2026-08-14 | `docs/art/audit_2026-08-13/SESSION_2026-08-14_first-mass-review.md` | 3 | **Recorded by `seat:pdoom`, 2026-08-14.** Every number below is re-derivable from |
 | 2026-08-15 | `pdoom1#1092` | 0 | art(sweep): events name physical things the office never shows -- install a security system, no cameras appear; sweep events for asset refs, then bulk |
 | 2026-08-16 | `docs/workshop-2/position.md` | 547 | **On 2026-08-16**, ask for three run IDs -- one per guard -- each showing the |
 | 2026-08-16 | `docs/workshop-2/position.md` | 647 | 2026-08-16. |

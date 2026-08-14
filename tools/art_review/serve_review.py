@@ -1239,10 +1239,7 @@ _TEMPLATE = r"""<!doctype html><html lang="en"><head><meta charset="utf-8">
       // is the friendly half, not the enforcing half.
       var hr=cell.querySelector('.shelfreason'), have=hr?hr.value.trim():'';
       if(!have){
-        var hq=window.prompt('Shelf -- what would bring this back?
-(a TRIGGER, not a date: "when there is a night-scene brief", "if the palette lane lands")
-
-A shelf with no return condition is just an abandonment with better manners, so this is required.','');
+        var hq=window.prompt('Shelf -- what would bring this back?\n(a TRIGGER, not a date: "when there is a night-scene brief", "if the palette lane lands")\n\nA shelf with no return condition is just an abandonment with better manners, so this is required.','');
         if(hq===null)return;                       // cancelled -> leave as-is
         have=hq.trim();
         if(!have){                                 // blank -> refuse, show the field
