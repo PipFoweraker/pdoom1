@@ -650,6 +650,28 @@ DESCRIPTION:needs a declaration -- CLAIM_AUDIT_2026-08-06.md (unparsed) --
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:b8d46314dfce5289@commitments.pdoom1
+DTSTAMP:20260813T000000Z
+DTSTART;VALUE=DATE:20260813
+DTEND;VALUE=DATE:20260814
+SUMMARY:[UNPARSED] needs a declaration -- CLAUDE.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: CLAUDE.md:14. 2 line(s
+ ) in CLAUDE.md mention this date and no COMMITMENT: declaration accounts 
+ for it. Either add a declaration or the date is incidental. First line: i
+ s what was typed on 2026-08-13 and it launched a silently broken build in
+  -- Generated from tracked sources by scripts/generate_commitment_calenda
+ r.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- CLAUDE.md (unparsed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:7cd15c5536c4a8d0@commitments.pdoom1
 DTSTAMP:20260813T000000Z
 DTSTART;VALUE=DATE:20260813
@@ -672,6 +694,29 @@ ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- POSTMORTEM_2026-08-07_CAPTURE.md (unpar
  sed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:22febdc8638a9de1@commitments.pdoom1
+DTSTAMP:20260813T000000Z
+DTSTART;VALUE=DATE:20260813
+DTEND;VALUE=DATE:20260814
+SUMMARY:[UNPARSED] needs a declaration -- check_class_cache.py
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/check_class_cach
+ e.py:6. 1 line(s) in tools/check_class_cache.py mention this date and no 
+ COMMITMENT: declaration accounts for it. Either add a declaration or the 
+ date is incidental. First line: WHY (2026-08-13\, cost a first-time playt
+ ester's session): -- Generated from tracked sources by scripts/generate_c
+ ommitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- check_class_cache.py (unparsed) -- unow
+ ned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
