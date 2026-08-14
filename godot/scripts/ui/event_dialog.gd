@@ -83,6 +83,56 @@ static func format_cost_summary(costs: Dictionary) -> String:
 	return " (%s)" % ", ".join(parts)
 
 
+static func window_attention_for_option(event: Dictionary, option: Dictionary) -> int:
+	"""Founder Attention this window will charge for THIS option, for display. 0 when nothing
+	is owed -- and 0 is also the honest answer whenever we cannot prove otherwise.
+
+	A window levies an Attention price that lives on the EVENT, not on the option's costs
+	(WindowResolver.attention_cost). The presenter is handed events from six emit sites and
+	only the two window paths carry it, so this reads the display stamp that
+	WindowResolver.present_for_dialog() leaves rather than re-deriving resolution policy --
+	an un-stamped event (plan-phase legacy popup, the synthetic month review) claims nothing.
+
+	Two options pay nothing and must not be surcharged: the free-out that resolves as IGNORE
+	(stamped by the resolver), and an option whose own costs still carry `attention` -- that
+	is an UN-stripped legacy event whose declared cost format_cost_summary already prints, so
+	adding to it would bill the player twice on the label for one charge."""
+	var cost := int(event.get(WindowResolver.DISPLAY_ATTENTION_KEY, 0))
+	if cost <= 0:
+		return 0
+	var costs = option.get("costs", {})
+	if costs is Dictionary and costs.has("attention"):
+		return 0
+	if String(option.get("id", "")) == String(event.get(WindowResolver.DISPLAY_FREE_OPTION_KEY, "")):
+		return 0
+	return cost
+
+
+static func costs_with_window_attention(event: Dictionary, option: Dictionary) -> Dictionary:
+	"""The option's costs as the player should SEE them: its own declared costs plus the
+	window's Attention price folded in. One merged dict feeds both the button face and the
+	tooltip, so the two can never disagree.
+
+	Money-then-Attention ordering is preserved by appending: format_cost_summary iterates
+	costs.keys() in insertion order, and core_events.json's header pins that order as load-
+	bearing for the cost-summary label.
+
+	NOT used for the affordability grey-out, deliberately. Window Attention is paid
+	reserve-FIRST (WindowResolver.resolve_chosen_option -> pay_from_reserve, falling back to
+	cannibalizing planned work), and the dialog's affordability loop reads state.attention,
+	which is get_available_attention() = total - spent - RESERVED. After a month commits,
+	GameManager reserves the whole remainder, so available is 0 while the reserve is full --
+	gating on it would grey out every window button in the game."""
+	var merged: Dictionary = {}
+	var costs = option.get("costs", {})
+	if costs is Dictionary:
+		merged = costs.duplicate()
+	var att := window_attention_for_option(event, option)
+	if att > 0:
+		merged["attention"] = att
+	return merged
+
+
 ## Teal of the bottom bar's END TURN button (scenes/main.tscn:378). The month loop's two
 ## forward doors must look like siblings -- see is_navigation_popup below.
 const PRIMARY_TEAL := Color(0.118, 0.765, 0.702, 1.0)
@@ -238,6 +288,11 @@ func _show_next_event() -> void:
 		var choice_id = option.get("id", "")
 		var choice_text = option.get("text", "")
 		var costs = option.get("costs", {})
+		# What the player is SHOWN: the option's own costs plus the window's Attention price,
+		# which is charged by WindowResolver and appears in no option's costs dict. `costs`
+		# stays raw below -- see costs_with_window_attention on why the grey-out must not use
+		# this (window Attention is paid reserve-first; the affordability pool is not).
+		var shown_costs := costs_with_window_attention(event, option)
 
 		var btn = Button.new()
 		btn.focus_mode = Control.FOCUS_NONE  # Don't grab focus - let MainUI handle keys
@@ -251,7 +306,7 @@ func _show_next_event() -> void:
 			btn.add_theme_color_override("font_color", PRIMARY_TEAL)
 			btn.add_theme_color_override("font_hover_color", Color(1, 1, 1, 1))
 		else:
-			btn.text = "%s%s%s" % [DialogKeys.prefix_for(button_index), choice_text, format_cost_summary(costs)]
+			btn.text = "%s%s%s" % [DialogKeys.prefix_for(button_index), choice_text, format_cost_summary(shown_costs)]
 			btn.custom_minimum_size = Vector2(500, 45)
 
 		# Add button border for better definition
@@ -317,10 +372,10 @@ func _show_next_event() -> void:
 		# player-facing tooltip. Both now route through the GameConfig
 		# number-format policy (docs/NUMBER_FORMATS.md).
 		var tooltip = ""
-		if not costs.is_empty():
+		if not shown_costs.is_empty():
 			tooltip += "Costs:\n"
-			for resource in costs.keys():
-				tooltip += "  %s\n" % GameConfig.format_resource(str(resource), costs[resource])
+			for resource in shown_costs.keys():
+				tooltip += "  %s\n" % GameConfig.format_resource(str(resource), shown_costs[resource])
 
 		var effects = option.get("effects", {})
 		if not effects.is_empty():

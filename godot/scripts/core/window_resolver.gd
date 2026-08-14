@@ -242,6 +242,51 @@ static func strip_attention(event: Dictionary) -> Dictionary:
 	return clone
 
 
+## Display-only keys stamped onto the dialog's copy of a window by present_for_dialog().
+## They exist so the PRESENTER never has to re-derive resolution policy -- see that function.
+const DISPLAY_ATTENTION_KEY := "_display_window_attention"
+const DISPLAY_FREE_OPTION_KEY := "_display_free_option_id"
+
+
+static func present_for_dialog(event: Dictionary) -> Dictionary:
+	"""The copy of a window the event_dialog should present: Attention stripped from the
+	options (strip_attention's job) AND the window's own Attention price stamped back on as
+	DISPLAY metadata.
+
+	Why the stamp exists at all. strip_attention's docstring already promised that "the
+	dialog's affordability display matches what resolution will actually charge" -- but it
+	only ever did the erasing half. The window levies attention_cost(event) of its own, and
+	nothing put that number anywhere the player could see it, so every popup with a priced
+	option read as cheaper than it was and the free-out read " (Free)". Playtest 2026-08-10,
+	Pip, on the stray cat: "Adopting the cat also costs attention, which is not advertised on
+	the screen." That is not a cat bug -- stray_cat carries no `window` block, so it takes
+	DEFAULT_ATTENTION_COST, exactly like every other un-annotated legacy popup.
+
+	Stamping rather than letting the presenter compute it is deliberate. The dialog is handed
+	events from SIX emit sites; only the two window paths strip, and a stripped event is
+	indistinguishable from an un-stripped one whose options simply never declared Attention.
+	The presenter therefore CANNOT tell from the dict alone whether a window charge is coming.
+	Stamping at the one seam that knows makes the un-stamped paths (plan-phase legacy events,
+	the synthetic month review) silently correct: no key, no claim.
+
+	DISPLAY_FREE_OPTION_KEY mirrors resolve_chosen_option's free-out test verbatim -- the
+	option that resolves as IGNORE pays no Attention, and on stray_cat that is `shoo_away`
+	(it is the first option with an empty costs dict). Deriving it here rather than in the UI
+	is what stops the label and the charge from drifting apart.
+
+	Windows carrying `option_verbs` (#789 hiring accept-prompts) stamp ZERO: their option TEXT
+	already names the price and the payment source ("Set them up now (2 Att from reserve)"),
+	so a generic suffix would print the number twice."""
+	var clone := strip_attention(event)
+	var cfg := window_config(event)
+	if cfg.has("option_verbs"):
+		clone[DISPLAY_ATTENTION_KEY] = 0
+	else:
+		clone[DISPLAY_ATTENTION_KEY] = attention_cost(event)
+	clone[DISPLAY_FREE_OPTION_KEY] = "" if EventTiers.is_unignorable(event) else ignore_option_id(event)
+	return clone
+
+
 static func _merge_option(result: Dictionary, opt_result: Dictionary) -> void:
 	if opt_result.get("message", "") != "":
 		result["message"] = opt_result["message"]

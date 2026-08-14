@@ -683,7 +683,7 @@ func surface_pending_events() -> void:
 		return
 	turn_phase_changed.emit("turn_start")
 	for event in state.pending_events:
-		event_triggered.emit(WindowResolver.strip_attention(event))
+		event_triggered.emit(WindowResolver.present_for_dialog(event))
 
 
 func end_month():
@@ -774,8 +774,10 @@ func _run_month_playback() -> void:
 				turn_phase_changed.emit("turn_start")
 				for w in month_controller.window_queue:
 					# AP pre-stripped so the dialog's cost display matches what window
-					# resolution actually charges (Attention, not AP).
-					event_triggered.emit(WindowResolver.strip_attention(w))
+					# resolution actually charges (Attention, not AP) -- and the window's
+					# OWN Attention price stamped on for display, which the strip alone
+					# never disclosed (playtest 2026-08-10, the stray cat).
+					event_triggered.emit(WindowResolver.present_for_dialog(w))
 				return  # playback resumes via resolve_event once answered
 			"month_open":
 				_finish_month_playback()
