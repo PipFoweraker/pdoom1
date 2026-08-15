@@ -5,12 +5,18 @@
 > `python scripts/generate_rulings.py`. The convention, and why it looks
 > like this, is argued in `docs/rulings/RULINGS_CONVENTION.md`.
 
-**2 ruling(s)** across **1 flavour(s)**. **191** prose ruling(s) not yet declared.
+**3 ruling(s)** across **2 flavour(s)**. **194** prose ruling(s) not yet declared.
 
 ## By flavour
 
 Recall by flavour is the point: before ruling on something, look for the
 flavour it belongs to and read what was already decided there.
+
+### `art-provenance` (only one so far)
+
+| date | ruling | mechanism | source |
+|---|---|---|---|
+| 2026-08-15 | Tier W (website disclosure) ships first and standalone; Tier G (in-game motifs and epoch marks) stays ruled-but-unbuilt | `docs/art/MOTIF_AND_WATERMARK_PROTOCOL.md` | `docs/rulings/LEDGER.md:12` |
 
 ### `estate-process`
 
@@ -39,6 +45,7 @@ is not.
 - `CHANGELOG.md:195` -- and the ruled promotions applied (#1137), against Pip's rulings of 2026-08-04.
 - `CHANGELOG.md:203` -- - **The last player-facing "AP" is gone**, and one number format is ruled across
 - `CLAUDE.md:195` -- quarterly pins to v0.15; league/content cadence is MONTHLY (ruled 2026-07-21).
+- `CLAUDE.md:223` -- `UNDECLARED`, never dropped. **Cross-repo by design** (ruled 2026-08-15):
 - `art_source/pixellab_2026-07-26_cat_sweep/MANIFEST.md:3` -- Execution of Pip's locked recipe (ruled 2026-07-26, "go cat sweep 8 dir now"):
 - `docs/CONTENT_DISTRIBUTION_SYSTEM.md:10` -- > **SUPERSEDED, not merely "outdated in spirit", as of 2026-08-13.** Pip ruled
 - `docs/GLOSSARY.md:272` -- Naming (ruled 2026-07-29, Pip): gates are written name-first with a 1-6
@@ -225,4 +232,6 @@ is not.
 - `tools/assets/check_provenance.py:4` -- Ruled by Pip 2026-08-11: the six unattributable assets are KEPT and recorded as
 - `tools/assets/manifests/new_subjects.json:115` -- "prompt_tail": "an almost perfectly flat-on frontal view of a wall of bureaucratic paperwork, shot square to the wall with minimal perspective so the picture plane and the wall plane are nearly parall
 - `tools/assets/provenance_unknown_pin.json:2` -- "_why": "Pinned unknown set. Ruled by Pip 2026-08-11: keep the unattributable assets, record them honestly, and let a mechanism force the question later rather than a document.",
+- `tools/rule.py:153` -- description="Capture a ruling, after showing what was already ruled in its flavour."
+- `tools/rule.py:159` -- ap.add_argument("--by", default="Pip", help="who ruled (default: Pip)")
 - `user_privacy.json:2` -- "_comment": "Machine-readable privacy posture record. Canonical doc: docs/PRIVACY_POSTURE.md (two-tier model, ruled 2026-07-26). The Godot build persists LIVE player choices in user://config.cfg; this

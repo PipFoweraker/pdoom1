@@ -13,7 +13,7 @@ Horizon: **2026-08-09** (the prose scan reports dates at or after this; roll it
 forward deliberately in `COMMITMENTS.md`, never automatically -- a clock-reading
 generator goes stale overnight and trains people to ignore the check).
 
-**49 declared, 4 release-train, 76 UNPARSED, 0 malformed.**
+**49 declared, 4 release-train, 78 UNPARSED, 0 malformed.**
 
 ## Declared commitments
 
@@ -21,7 +21,7 @@ generator goes stale overnight and trains people to ignore the check).
 |---|---|---|---|---|---|
 | 2026-08-10 | deadline | IP / trademark: take the five-point brief to Australian lawyers | pip | 14, 7, 2, 0 | `docs/calendar/COMMITMENTS.md:153` |
 | 2026-08-10 | task | Book the half-day audit-mechanics workshop, target window opens | pip | 2, 0 | `docs/calendar/COMMITMENTS.md:157` |
-| 2026-08-10 | task | Book the half-day audit-mechanics workshop, target window opens | pip | 2, 0 | `docs/rulings/RULINGS.md:80` |
+| 2026-08-10 | task | Book the half-day audit-mechanics workshop, target window opens | pip | 2, 0 | `docs/rulings/RULINGS.md:87` |
 | 2026-08-10 | task | Read the Workshop 2 minute (ten rulings R1-R10) | pip | 2, 0 | `docs/calendar/COMMITMENTS.md:155` |
 | 2026-08-13 | cadence | Thursday dev (the working half of the cadence) | pip | 0 | `docs/calendar/COMMITMENTS.md:172` |
 | 2026-08-13 | handoff | Answer coordination#32: can asset provenance be captured retroactively | pdoom1-seat | 3, 1, 0 | `docs/calendar/COMMITMENTS.md:159` |
@@ -114,11 +114,11 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-10 | `docs/PRIVACY_POSTURE.md` | 25 | **HOW the two names are published (measured, PR #1176, 2026-08-10).** Both names |
 | 2026-08-10 | `pdoom1#984` | 0 | Half-day workshop: audit mechanics deep-dive (next epoch) -- something amazing under the smell |
 | 2026-08-10 | `tools/check_self_merge_eligibility.py` | 18 | 2026-08-10 and, until this file existed, they **promised eligibility and checked |
-| 2026-08-11 | `docs/rulings/RULINGS.md` | 24 | Rulings with no `mechanism:`. Pip's doctrine (2026-08-11): what forces a |
-| 2026-08-11 | `docs/rulings/RULINGS.md` | 220 | - `tools/assets/backfill_provenance.py:30` -- ORIGIN VOCABULARY -- five values, ruled by Pip 2026-08-11 |
-| 2026-08-11 | `docs/rulings/RULINGS.md` | 224 | - `tools/assets/check_provenance.py:151` -- "_why": "Pinned unknown set. Ruled by Pip 2026-08-11: keep the " |
-| 2026-08-11 | `docs/rulings/RULINGS.md` | 225 | - `tools/assets/check_provenance.py:4` -- Ruled by Pip 2026-08-11: the six unattributable assets are KEPT and recorded as |
-| 2026-08-11 | `docs/rulings/RULINGS.md` | 227 | - `tools/assets/provenance_unknown_pin.json:2` -- "_why": "Pinned unknown set. Ruled by Pip 2026-08-11: keep the unattributable assets, record them ho |
+| 2026-08-11 | `docs/rulings/RULINGS.md` | 30 | Rulings with no `mechanism:`. Pip's doctrine (2026-08-11): what forces a |
+| 2026-08-11 | `docs/rulings/RULINGS.md` | 227 | - `tools/assets/backfill_provenance.py:30` -- ORIGIN VOCABULARY -- five values, ruled by Pip 2026-08-11 |
+| 2026-08-11 | `docs/rulings/RULINGS.md` | 231 | - `tools/assets/check_provenance.py:151` -- "_why": "Pinned unknown set. Ruled by Pip 2026-08-11: keep the " |
+| 2026-08-11 | `docs/rulings/RULINGS.md` | 232 | - `tools/assets/check_provenance.py:4` -- Ruled by Pip 2026-08-11: the six unattributable assets are KEPT and recorded as |
+| 2026-08-11 | `docs/rulings/RULINGS.md` | 234 | - `tools/assets/provenance_unknown_pin.json:2` -- "_why": "Pinned unknown set. Ruled by Pip 2026-08-11: keep the unattributable assets, record them ho |
 | 2026-08-11 | `docs/rulings/RULINGS_CONVENTION.md` | 53 | RULING: 2026-08-11 -- keep unattributable assets and record them as unknown -- flavour: art-provenance -- mechanism: tools/assets/check_provenance.py |
 | 2026-08-11 | `docs/rulings/RULINGS_CONVENTION.md` | 66 | Pip's doctrine, ruled 2026-08-11 and embodied in `check_provenance.py`: *what |
 | 2026-08-11 | `docs/rulings/RULINGS_CONVENTION.md` | 142 | {"source": "tools/assets/check_provenance.py:4", "text": "Ruled by Pip 2026-08-11: the six unattributable assets are KEPT ..."} |
@@ -127,7 +127,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-11 | `tools/assets/backfill_provenance.py` | 30 | ORIGIN VOCABULARY -- five values, ruled by Pip 2026-08-11 |
 | 2026-08-11 | `tools/assets/check_provenance.py` | 4 | Ruled by Pip 2026-08-11: the six unattributable assets are KEPT and recorded as |
 | 2026-08-11 | `tools/assets/check_provenance.py` | 151 | "_why": "Pinned unknown set. Ruled by Pip 2026-08-11: keep the " |
-| 2026-08-12 | `docs/rulings/RULINGS.md` | 186 | - `godot/scripts/core/capacity.gd:5` -- ## Ruled 2026-08-12 (coordination/DESIGN_2026-08-12_interrupt-resolution-variants.md, |
+| 2026-08-12 | `docs/rulings/RULINGS.md` | 193 | - `godot/scripts/core/capacity.gd:5` -- ## Ruled 2026-08-12 (coordination/DESIGN_2026-08-12_interrupt-resolution-variants.md, |
 | 2026-08-13 | `CLAUDE.md` | 14 | is what was typed on 2026-08-13 and it launched a silently broken build in |
 | 2026-08-13 | `CLAUDE.md` | 47 | - **STALE cache is the worse half of that trap (2026-08-13, cost a playtest).** |
 | 2026-08-13 | `coordination#32` | 0 | Asset provenance is UNMET, not at-risk: the Manifund obligation has no capture mechanism in pdoom1 -- blocking party pdoom1, return date 2026-08-13 |
@@ -145,7 +145,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-13 | `docs/content/ROLE_CREATIVE_DIRECTOR.md` | 4 | > The header read "DRAFT ... Not committed anywhere yet" until 2026-08-13, which |
 | 2026-08-13 | `docs/content/ROLE_CREATIVE_DIRECTOR.md` | 13 | > **CORRECTED 2026-08-13, per the retirement prescribed in |
 | 2026-08-13 | `docs/content/ROLE_CREATIVE_DIRECTOR.md` | 17 | > 2026-08-13 (`pdoom1-website#249`): the game emits an artefact, the website |
-| 2026-08-13 | `docs/rulings/RULINGS.md` | 43 | - `docs/CONTENT_DISTRIBUTION_SYSTEM.md:10` -- > **SUPERSEDED, not merely "outdated in spirit", as of 2026-08-13.** Pip ruled |
+| 2026-08-13 | `docs/rulings/RULINGS.md` | 50 | - `docs/CONTENT_DISTRIBUTION_SYSTEM.md:10` -- > **SUPERSEDED, not merely "outdated in spirit", as of 2026-08-13.** Pip ruled |
 | 2026-08-13 | `tools/art_review/apply_review.py` | 316 | # v2 called remix "iterate"; "shelf" is new in v3 (2026-08-13). NOT "hold" -- |
 | 2026-08-13 | `tools/art_review/scan_text_leak.py` | 119 | Why this exists (2026-08-13): load_targets() above walks review_state and |
 | 2026-08-13 | `tools/art_review/scan_text_leak.py` | 151 | # A FAILED attempt. Two traps here, both hit on 2026-08-13: |
@@ -175,6 +175,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-14 | `tools/art_review/serve_review.py` | 1371 | // all move to the archive together. (2026-08-14, Pip's ask.) |
 | 2026-08-14 | `tools/check_refusal_classification.py` | 7 | WHY (playtest 2026-08-14, Pip): |
 | 2026-08-14 | `tools/check_review_js.py` | 6 | On 2026-08-14 the art review gallery was completely dead -- no verdicts, no |
+| 2026-08-15 | `CLAUDE.md` | 223 | `UNDECLARED`, never dropped. **Cross-repo by design** (ruled 2026-08-15): |
 | 2026-08-15 | `docs/art/MOTIF_AND_WATERMARK_PROTOCOL.md` | 3 | > Status: **DRAFT, not adopted.** Written 2026-08-15 as a design card for Pip, and as the |
 | 2026-08-15 | `docs/art/MOTIF_AND_WATERMARK_PROTOCOL.md` | 17 | ## Scope split -- two tiers with different purposes (Pip, 2026-08-15) |
 | 2026-08-15 | `docs/art/MOTIF_AND_WATERMARK_PROTOCOL.md` | 45 | \| a vocabulary for recurring elements \| `element:<thing>` harvest tags, `docs/art/NOMENCLATURE.md` \| the SPEC exists. **The data does not** -- see "Me |
@@ -190,8 +191,11 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-15 | `docs/game-design/DESIGN_2026-08-15_causality-violation.md` | 539 | *Captured 2026-08-15 from Pip's dictation. Structure and marked proposals: agent. |
 | 2026-08-15 | `docs/rulings/LEDGER.md` | 10 | RULING: 2026-08-15 -- the ruling road is cross-repo from day one, federated: each repo scans itself and emits rulings.json, an aggregator reads them,  |
 | 2026-08-15 | `docs/rulings/LEDGER.md` | 11 | RULING: 2026-08-15 -- naming a mechanism is OPTIONAL on a ruling, and the generated index reports which rulings have none -- flavour: estate-process - |
-| 2026-08-15 | `docs/rulings/RULINGS.md` | 19 | \| 2026-08-15 \| the ruling road is cross-repo from day one, federated: each repo scans itself and emits rulings.json, an aggregator reads them, nothing |
-| 2026-08-15 | `docs/rulings/RULINGS.md` | 20 | \| 2026-08-15 \| naming a mechanism is OPTIONAL on a ruling, and the generated index reports which rulings have none \| `scripts/generate_rulings.py` \| ` |
+| 2026-08-15 | `docs/rulings/LEDGER.md` | 12 | RULING: 2026-08-15 -- Tier W (website disclosure) ships first and standalone; Tier G (in-game motifs and epoch marks) stays ruled-but-unbuilt -- flavo |
+| 2026-08-15 | `docs/rulings/RULINGS.md` | 19 | \| 2026-08-15 \| Tier W (website disclosure) ships first and standalone; Tier G (in-game motifs and epoch marks) stays ruled-but-unbuilt \| `docs/art/MOT |
+| 2026-08-15 | `docs/rulings/RULINGS.md` | 25 | \| 2026-08-15 \| the ruling road is cross-repo from day one, federated: each repo scans itself and emits rulings.json, an aggregator reads them, nothing |
+| 2026-08-15 | `docs/rulings/RULINGS.md` | 26 | \| 2026-08-15 \| naming a mechanism is OPTIONAL on a ruling, and the generated index reports which rulings have none \| `scripts/generate_rulings.py` \| ` |
+| 2026-08-15 | `docs/rulings/RULINGS.md` | 48 | - `CLAUDE.md:223` -- `UNDECLARED`, never dropped. **Cross-repo by design** (ruled 2026-08-15): |
 | 2026-08-15 | `docs/rulings/RULINGS_CONVENTION.md` | 9 | Rulings in this estate are already being captured -- measured 2026-08-15, more |
 | 2026-08-15 | `docs/rulings/RULINGS_CONVENTION.md` | 18 | 2. **Recall by flavour.** Pip, 2026-08-15: *"these will show up again in |
 | 2026-08-15 | `docs/rulings/RULINGS_CONVENTION.md` | 51 | RULING: 2026-08-15 -- the epoch counter starts at 1, no backfill over past waves -- flavour: art-lineage |
@@ -209,13 +213,14 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-15 | `tools/assets/check_credentials.py` | 86 | # on 2026-08-15. Matched longest-first: the credential is CBOR, so the term is not |
 | 2026-08-15 | `tools/assets/generate_images.py` | 341 | # Measured 2026-08-15: 29,030 bytes of signed provenance per image, |
 | 2026-08-15 | `tools/assets/run_art_night.py` | 738 | # unknown ancillary chunks on re-encode (measured 2026-08-15: 29,030 bytes, |
+| 2026-08-15 | `tools/rule.py` | 8 | Pip, 2026-08-15: a verbal ruling is worse than a script to capture it, "because |
 | 2026-08-16 | `docs/workshop-2/position.md` | 547 | **On 2026-08-16**, ask for three run IDs -- one per guard -- each showing the |
 | 2026-08-16 | `docs/workshop-2/position.md` | 647 | 2026-08-16. |
 | 2026-08-24 | `docs/design/LEAGUE_CUTOVER_PLAYBOOK.md` | 41 | at L4, and is pinned for reflective review on/after 2026-08-24. |
 | 2026-08-24 | `pdoom1#808` | 0 | Reflective review (on/after 2026-08-24): release/league cycle nomenclature + cadence |
 | 2026-08-24 | `pdoom1#811` | 0 | Workshop 3 (mechanics) -- Mon 07-27 W-3a / Tue 07-28 build / Wed 07-29 W-3b-W-4: crisp parts, brutal decisions |
-| 2026-08-31 | `docs/rulings/RULINGS.md` | 194 | - `godot/scripts/core/researcher.gd:131` -- # SEAM (ruled 2026-07-27, review-by 2026-08-31): AUDITS ground-truth reported vs actual. |
-| 2026-08-31 | `docs/rulings/RULINGS.md` | 197 | - `godot/scripts/core/turn_manager.gd:306` -- SEAM (ruled 2026-07-27, review-by 2026-08-31): AUDITS ground-truth reported vs actual. |
+| 2026-08-31 | `docs/rulings/RULINGS.md` | 201 | - `godot/scripts/core/researcher.gd:131` -- # SEAM (ruled 2026-07-27, review-by 2026-08-31): AUDITS ground-truth reported vs actual. |
+| 2026-08-31 | `docs/rulings/RULINGS.md` | 204 | - `godot/scripts/core/turn_manager.gd:306` -- SEAM (ruled 2026-07-27, review-by 2026-08-31): AUDITS ground-truth reported vs actual. |
 | 2026-08-31 | `pdoom1#984` | 0 | Half-day workshop: audit mechanics deep-dive (next epoch) -- something amazing under the smell |
 | 2026-09-04 | `coordination#48` | 0 | League cutover timing contract: pdoom1 can publish in 5m30s and cannot tell you when pdoom1.com will agree -- what do you need to pre-announce? |
 | 2026-09-04 | `docs/design/LEAGUE_CUTOVER_PLAYBOOK.md` | 705 | 2026-09-04 per `docs/ROADMAP.md`) runs without any phase in section 2 being |

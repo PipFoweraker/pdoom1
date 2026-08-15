@@ -9,3 +9,4 @@ write the line next to that file instead -- it is more use where it bites.
 
 RULING: 2026-08-15 -- the ruling road is cross-repo from day one, federated: each repo scans itself and emits rulings.json, an aggregator reads them, nothing writes back -- flavour: estate-process -- mechanism: scripts/generate_rulings.py
 RULING: 2026-08-15 -- naming a mechanism is OPTIONAL on a ruling, and the generated index reports which rulings have none -- flavour: estate-process -- mechanism: scripts/generate_rulings.py
+RULING: 2026-08-15 -- Tier W (website disclosure) ships first and standalone; Tier G (in-game motifs and epoch marks) stays ruled-but-unbuilt -- flavour: art-provenance -- mechanism: docs/art/MOTIF_AND_WATERMARK_PROTOCOL.md
