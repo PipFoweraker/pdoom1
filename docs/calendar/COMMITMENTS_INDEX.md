@@ -13,7 +13,7 @@ Horizon: **2026-08-09** (the prose scan reports dates at or after this; roll it
 forward deliberately in `COMMITMENTS.md`, never automatically -- a clock-reading
 generator goes stale overnight and trains people to ignore the check).
 
-**49 declared, 4 release-train, 78 UNPARSED, 0 malformed.**
+**49 declared, 4 release-train, 79 UNPARSED, 0 malformed.**
 
 ## Declared commitments
 
@@ -176,6 +176,10 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-14 | `tools/check_refusal_classification.py` | 7 | WHY (playtest 2026-08-14, Pip): |
 | 2026-08-14 | `tools/check_review_js.py` | 6 | On 2026-08-14 the art review gallery was completely dead -- no verdicts, no |
 | 2026-08-15 | `CLAUDE.md` | 223 | `UNDECLARED`, never dropped. **Cross-repo by design** (ruled 2026-08-15): |
+| 2026-08-15 | `docs/art/HARVEST_PASS_PROPOSAL.md` | 3 | > **Status: PROPOSED, nothing built.** Written 2026-08-15 for Pip to take to the |
+| 2026-08-15 | `docs/art/HARVEST_PASS_PROPOSAL.md` | 27 | Measured over `tools/art_review/review_state.json`, 2026-08-15 11:17 AEST. |
+| 2026-08-15 | `docs/art/HARVEST_PASS_PROPOSAL.md` | 29 | The batch-selection UI (b1287e8b, 2026-08-15 00:33) was built partly to fix this |
+| 2026-08-15 | `docs/art/HARVEST_PASS_PROPOSAL.md` | 34 | ## The diagnosis (Pip, 2026-08-15) |
 | 2026-08-15 | `docs/art/MOTIF_AND_WATERMARK_PROTOCOL.md` | 3 | > Status: **DRAFT, not adopted.** Written 2026-08-15 as a design card for Pip, and as the |
 | 2026-08-15 | `docs/art/MOTIF_AND_WATERMARK_PROTOCOL.md` | 17 | ## Scope split -- two tiers with different purposes (Pip, 2026-08-15) |
 | 2026-08-15 | `docs/art/MOTIF_AND_WATERMARK_PROTOCOL.md` | 45 | \| a vocabulary for recurring elements \| `element:<thing>` harvest tags, `docs/art/NOMENCLATURE.md` \| the SPEC exists. **The data does not** -- see "Me |

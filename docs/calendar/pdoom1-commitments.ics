@@ -1553,6 +1553,30 @@ DESCRIPTION:needs a declaration -- DESIGN_2026-08-15_causality-violation.m
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:2ece35cc1a0efb0c@commitments.pdoom1
+DTSTAMP:20260815T000000Z
+DTSTART;VALUE=DATE:20260815
+DTEND;VALUE=DATE:20260816
+SUMMARY:[UNPARSED] needs a declaration -- HARVEST_PASS_PROPOSAL.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/art/HARVEST_PASS_
+ PROPOSAL.md:3. 4 line(s) in docs/art/HARVEST_PASS_PROPOSAL.md mention thi
+ s date and no COMMITMENT: declaration accounts for it. Either add a decla
+ ration or the date is incidental. First line: > **Status: PROPOSED\, noth
+ ing built.** Written 2026-08-15 for Pip to take to the -- Generated from 
+ tracked sources by scripts/generate_commitment_calendar.py\; regenerate t
+ o update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- HARVEST_PASS_PROPOSAL.md (unparsed) -- 
+ unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:6cc9b33684babaa2@commitments.pdoom1
 DTSTAMP:20260815T000000Z
 DTSTART;VALUE=DATE:20260815
