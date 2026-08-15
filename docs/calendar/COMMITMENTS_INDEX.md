@@ -13,7 +13,7 @@ Horizon: **2026-08-09** (the prose scan reports dates at or after this; roll it
 forward deliberately in `COMMITMENTS.md`, never automatically -- a clock-reading
 generator goes stale overnight and trains people to ignore the check).
 
-**48 declared, 4 release-train, 59 UNPARSED, 0 malformed.**
+**48 declared, 4 release-train, 62 UNPARSED, 0 malformed.**
 
 ## Declared commitments
 
@@ -163,7 +163,11 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-14 | `tools/art_review/serve_review.py` | 1371 | // all move to the archive together. (2026-08-14, Pip's ask.) |
 | 2026-08-14 | `tools/check_refusal_classification.py` | 7 | WHY (playtest 2026-08-14, Pip): |
 | 2026-08-14 | `tools/check_review_js.py` | 6 | On 2026-08-14 the art review gallery was completely dead -- no verdicts, no |
+| 2026-08-15 | `docs/art/NOTE_2026-08-15_colour-as-identity.md` | 4 | > 2026-08-15, in the same memo that produced |
 | 2026-08-15 | `docs/art/audit_2026-08-13/NEXT_ROUND_BRIEF.md` | 83 | - **Generation spend policy expires 2026-08-15.** |
+| 2026-08-15 | `docs/game-design/DESIGN_2026-08-15_backlog-as-teacher.md` | 4 | > Pip on the morning of 2026-08-15 and written up the same day. It is the |
+| 2026-08-15 | `docs/game-design/DESIGN_2026-08-15_causality-violation.md` | 3 | - **Status:** DESIGN CAPTURED (Pip, dictated 2026-08-15 07:15). Structured here, |
+| 2026-08-15 | `docs/game-design/DESIGN_2026-08-15_causality-violation.md` | 539 | *Captured 2026-08-15 from Pip's dictation. Structure and marked proposals: agent. |
 | 2026-08-15 | `pdoom1#1092` | 0 | art(sweep): events name physical things the office never shows -- install a security system, no cameras appear; sweep events for asset refs, then bulk |
 | 2026-08-15 | `tools/art_review/serve_review.py` | 1585 | // Built 2026-08-15 from a measurement, not a preference: the first mass review |
 | 2026-08-16 | `docs/workshop-2/position.md` | 547 | **On 2026-08-16**, ask for three run IDs -- one per guard -- each showing the |

@@ -1337,6 +1337,56 @@ DESCRIPTION:Generation spend policy EXPIRES: $100 AUD/day unconstrained re
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:b9f972044f789e4f@commitments.pdoom1
+DTSTAMP:20260815T000000Z
+DTSTART;VALUE=DATE:20260815
+DTEND;VALUE=DATE:20260816
+SUMMARY:[UNPARSED] needs a declaration -- DESIGN_2026-08-15_backlog-as-tea
+ cher.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/game-design/DESIG
+ N_2026-08-15_backlog-as-teacher.md:4. 1 line(s) in docs/game-design/DESIG
+ N_2026-08-15_backlog-as-teacher.md mention this date and no COMMITMENT: d
+ eclaration accounts for it. Either add a declaration or the date is incid
+ ental. First line: > Pip on the morning of 2026-08-15 and written up the 
+ same day. It is the -- Generated from tracked sources by scripts/generate
+ _commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- DESIGN_2026-08-15_backlog-as-teacher.md
+  (unparsed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:b1e538c32a67a014@commitments.pdoom1
+DTSTAMP:20260815T000000Z
+DTSTART;VALUE=DATE:20260815
+DTEND;VALUE=DATE:20260816
+SUMMARY:[UNPARSED] needs a declaration -- DESIGN_2026-08-15_causality-viol
+ ation.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/game-design/DESIG
+ N_2026-08-15_causality-violation.md:3. 2 line(s) in docs/game-design/DESI
+ GN_2026-08-15_causality-violation.md mention this date and no COMMITMENT:
+  declaration accounts for it. Either add a declaration or the date is inc
+ idental. First line: - **Status:** DESIGN CAPTURED (Pip\, dictated 2026-0
+ 8-15 07:15). Structured here\, -- Generated from tracked sources by scrip
+ ts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- DESIGN_2026-08-15_causality-violation.m
+ d (unparsed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:1633882a8a0ac266@commitments.pdoom1
 DTSTAMP:20260815T000000Z
 DTSTART;VALUE=DATE:20260815
@@ -1358,6 +1408,30 @@ ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- NEXT_ROUND_BRIEF.md (unparsed) -- unown
  ed
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:055f9fb4de2a2a49@commitments.pdoom1
+DTSTAMP:20260815T000000Z
+DTSTART;VALUE=DATE:20260815
+DTEND;VALUE=DATE:20260816
+SUMMARY:[UNPARSED] needs a declaration -- NOTE_2026-08-15_colour-as-identi
+ ty.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/art/NOTE_2026-08-
+ 15_colour-as-identity.md:4. 1 line(s) in docs/art/NOTE_2026-08-15_colour-
+ as-identity.md mention this date and no COMMITMENT: declaration accounts 
+ for it. Either add a declaration or the date is incidental. First line: >
+  2026-08-15\, in the same memo that produced -- Generated from tracked so
+ urces by scripts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- NOTE_2026-08-15_colour-as-identity.md (
+ unparsed) -- unowned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
