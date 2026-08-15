@@ -3,7 +3,7 @@
   "repo": "pdoom1",
   "generated_from": "tracked files at HEAD",
   "convention": "docs/rulings/RULINGS_CONVENTION.md",
-  "count": 3,
+  "count": 5,
   "rulings": [
     {
       "id": "pdoom1:2026-08-15:4c94cd56",
@@ -37,6 +37,28 @@
       "supersedes": null,
       "superseded_by": null,
       "source": "docs/rulings/LEDGER.md:12"
+    },
+    {
+      "id": "pdoom1:2026-08-15:30e8f8cd",
+      "date": "2026-08-15",
+      "ruling": "flaw:<thing> joins the harvest vocabulary as the negative counterpart to element:, because the sweeps are mostly negative and prose cannot be counted",
+      "flavour": "art-review-vocabulary",
+      "by": "Pip",
+      "mechanism": "tools/art_review/serve_review.py HARVEST_DOC, emitted to docs/art/NOMENCLATURE.md",
+      "supersedes": null,
+      "superseded_by": null,
+      "source": "docs/rulings/LEDGER.md:13"
+    },
+    {
+      "id": "pdoom1:2026-08-15:c31aee76",
+      "date": "2026-08-15",
+      "ruling": "an embedded CA-signed C2PA credential outranks every provenance heuristic; it becomes evidence tier S and resolves an asset out of the unknown set",
+      "flavour": "art-provenance",
+      "by": "Pip",
+      "mechanism": "tools/assets/backfill_provenance.py credential_origin",
+      "supersedes": null,
+      "superseded_by": null,
+      "source": "docs/rulings/LEDGER.md:14"
     }
   ],
   "undeclared": [
@@ -621,6 +643,10 @@
       "text": "\"_unknown_is_not_a_guess\": \"`unknown` means no record exists. It is never inferred from image dimensions. 1024x1024 and 1536x1024 are OpenAI output sizes, which makes 'these are gpt-image' a plausible"
     },
     {
+      "source": "godot/data/asset_provenance.json:4102",
+      "text": "\"why\": \"Ruled by Pip 2026-08-15. A signed credential outranks every heuristic and is the only evidence that survives a file moving between repos. Applied narrowly because a full re-run would rewrite 2"
+    },
+    {
       "source": "godot/data/office/props_manifest.json:15",
       "text": "\"style_tags\": \"office quality tiers this art serves, from the canonical ladder [\\\"scummy\\\", \\\"decent\\\", \\\"premium\\\"] (ruled 2026-07-26; see docs/game-design/SEED_ASSET_REGISTRY_AND_VERDICTS.md). Tag o"
     },
@@ -769,15 +795,23 @@
       "text": "\"are different layers and must not be one letter apart. Ruled by Pip \""
     },
     {
-      "source": "tools/assets/backfill_provenance.py:138",
+      "source": "tools/art_review/serve_review.py:169",
+      "text": "\"to element: -- ruled by Pip 2026-08-15 because the sweeps are mostly \""
+    },
+    {
+      "source": "tools/assets/backfill_provenance.py:147",
       "text": "`art_prompts/*.yaml` is the RULED source of truth per ART_MASTERS_POLICY:"
     },
     {
-      "source": "tools/assets/backfill_provenance.py:30",
+      "source": "tools/assets/backfill_provenance.py:38",
       "text": "ORIGIN VOCABULARY -- five values, ruled by Pip 2026-08-11"
     },
     {
-      "source": "tools/assets/backfill_provenance.py:362",
+      "source": "tools/assets/backfill_provenance.py:473",
+      "text": "\"Ruled by Pip 2026-08-15. A signed credential outranks every heuristic and \""
+    },
+    {
+      "source": "tools/assets/backfill_provenance.py:568",
       "text": "\"'these are gpt-image' a plausible guess; coordination#32 ruled that an \""
     },
     {

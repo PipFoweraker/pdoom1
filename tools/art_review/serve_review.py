@@ -163,6 +163,18 @@ HARVEST_DOC = [
         "A component worth keeping when the image is not. Survives a discard.",
     ),
     (
+        "flaw:<thing>",
+        "flaw:blurry, flaw:scale, flaw:shiny",
+        "What went WRONG, named so it can be counted. The negative counterpart "
+        "to element: -- ruled by Pip 2026-08-15 because the sweeps are mostly "
+        "negative and element: had no opposite. Prose cannot answer 'how often "
+        "did small scale kill an asset?': `blurry` was written two ways in one "
+        "session and counted separately, 32 and 16, when it is one fact worth "
+        "48. A flaw tag is countable and groupable; a note is not. Harvest it "
+        "in a SECOND pass over already-decided assets, not while sweeping -- "
+        "see docs/art/HARVEST_PASS_PROPOSAL.md.",
+    ),
+    (
         "composition",
         "composition",
         "The arrangement works even if the render does not.",

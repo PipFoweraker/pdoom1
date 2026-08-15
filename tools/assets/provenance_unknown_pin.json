@@ -2,10 +2,6 @@
   "_why": "Pinned unknown set. Ruled by Pip 2026-08-11: keep the unattributable assets, record them honestly, and let a mechanism force the question later rather than a document.",
   "_fails_when": "an asset becomes unknown, or a pinned one is resolved or removed. Both directions are worth interrupting for.",
   "unknown": {
-    "images/backgrounds/office_scene.png": "4e97a076fed7692f5ec2a51bd5af6938cc00fd1526ec6aa13a04e3501b87b243",
-    "images/misc/cat_closeup.png": "8f0a4c56783b87e094d9e4dc6b314b369cb101ea8aad0e6a5ddbf64e0f71b913",
-    "images/misc/computer_1.png": "fb676ff5c322422463778d1297123ab4b671a3a7f9b6b36cb6d2b51ad77593a3",
-    "images/misc/computer_2.png": "03805931bbc32a58868ad4bc639a7e1234e41c1be8ad055832e12bff94efff6a",
     "images/office_cat.png": "c4942c4df25a1d0726cc173d1878a3b20632d82542b0be0f42efaa03d0cb3913",
     "ui/buttons/glowcat/cat_icon.svg": "1b97548645ea24f0fcd02d0ebb22accedf21ddec5d1b77dbce0a37aaa3b4e105"
   }

@@ -5,18 +5,25 @@
 > `python scripts/generate_rulings.py`. The convention, and why it looks
 > like this, is argued in `docs/rulings/RULINGS_CONVENTION.md`.
 
-**3 ruling(s)** across **2 flavour(s)**. **194** prose ruling(s) not yet declared.
+**5 ruling(s)** across **3 flavour(s)**. **197** prose ruling(s) not yet declared.
 
 ## By flavour
 
 Recall by flavour is the point: before ruling on something, look for the
 flavour it belongs to and read what was already decided there.
 
-### `art-provenance` (only one so far)
+### `art-provenance`
 
 | date | ruling | mechanism | source |
 |---|---|---|---|
 | 2026-08-15 | Tier W (website disclosure) ships first and standalone; Tier G (in-game motifs and epoch marks) stays ruled-but-unbuilt | `docs/art/MOTIF_AND_WATERMARK_PROTOCOL.md` | `docs/rulings/LEDGER.md:12` |
+| 2026-08-15 | an embedded CA-signed C2PA credential outranks every provenance heuristic; it becomes evidence tier S and resolves an asset out of the unknown set | `tools/assets/backfill_provenance.py credential_origin` | `docs/rulings/LEDGER.md:14` |
+
+### `art-review-vocabulary` (only one so far)
+
+| date | ruling | mechanism | source |
+|---|---|---|---|
+| 2026-08-15 | flaw:<thing> joins the harvest vocabulary as the negative counterpart to element:, because the sweeps are mostly negative and prose cannot be counted | `tools/art_review/serve_review.py HARVEST_DOC, emitted to docs/art/NOMENCLATURE.md` | `docs/rulings/LEDGER.md:13` |
 
 ### `estate-process`
 
@@ -186,6 +193,7 @@ is not.
 - `godot/assets/images/events/README.md:26` -- **They are GRANDFATHERED. Pip ruled 2026-08-03 that already-packed assets stay
 - `godot/autoload/game_config.gd:776` -- # ruled by Pip via PR #1096: "alpha-tools naming and wording settled") -----------------
 - `godot/data/asset_provenance.json:14` -- "_unknown_is_not_a_guess": "`unknown` means no record exists. It is never inferred from image dimensions. 1024x1024 and 1536x1024 are OpenAI output sizes, which makes 'these are gpt-image' a plausible
+- `godot/data/asset_provenance.json:4102` -- "why": "Ruled by Pip 2026-08-15. A signed credential outranks every heuristic and is the only evidence that survives a file moving between repos. Applied narrowly because a full re-run would rewrite 2
 - `godot/data/office/props_manifest.json:15` -- "style_tags": "office quality tiers this art serves, from the canonical ladder [\"scummy\", \"decent\", \"premium\"] (ruled 2026-07-26; see docs/game-design/SEED_ASSET_REGISTRY_AND_VERDICTS.md). Tag o
 - `godot/data/patch_notes.json:55` -- "WHY THE BOARD FORKED: the historical event deck was retimed to one turn = one month, and the ruled event promotions were applied. Different events now fire on the same seed, so an L4 run is not compa
 - `godot/scripts/core/build_info.gd:22` -- ## Alpha-tools era switch (#1079 fallout, ruled 2026-08-05). While this is true the ALPHA
@@ -223,9 +231,11 @@ is not.
 - `tools/art_review/qc_sprite_frames.py:4` -- Checks (per docs/art/PIXELLAB_OPERATIONS.md house rules, ruled 2026-07-26):
 - `tools/art_review/serve_review.py:106` -- # estate has already ruled is just "abandoned" wearing a nicer word
 - `tools/art_review/serve_review.py:145` -- "are different layers and must not be one letter apart. Ruled by Pip "
-- `tools/assets/backfill_provenance.py:138` -- `art_prompts/*.yaml` is the RULED source of truth per ART_MASTERS_POLICY:
-- `tools/assets/backfill_provenance.py:30` -- ORIGIN VOCABULARY -- five values, ruled by Pip 2026-08-11
-- `tools/assets/backfill_provenance.py:362` -- "'these are gpt-image' a plausible guess; coordination#32 ruled that an "
+- `tools/art_review/serve_review.py:169` -- "to element: -- ruled by Pip 2026-08-15 because the sweeps are mostly "
+- `tools/assets/backfill_provenance.py:147` -- `art_prompts/*.yaml` is the RULED source of truth per ART_MASTERS_POLICY:
+- `tools/assets/backfill_provenance.py:38` -- ORIGIN VOCABULARY -- five values, ruled by Pip 2026-08-11
+- `tools/assets/backfill_provenance.py:473` -- "Ruled by Pip 2026-08-15. A signed credential outranks every heuristic and "
+- `tools/assets/backfill_provenance.py:568` -- "'these are gpt-image' a plausible guess; coordination#32 ruled that an "
 - `tools/assets/check_credentials.py:30` -- permanently red over ~4,900 legacy files, and this estate has ruled on what
 - `tools/assets/check_provenance.py:11` -- red, and this estate has already ruled on what that is worth:
 - `tools/assets/check_provenance.py:151` -- "_why": "Pinned unknown set. Ruled by Pip 2026-08-11: keep the "

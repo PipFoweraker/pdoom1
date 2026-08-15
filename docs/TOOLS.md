@@ -177,7 +177,7 @@ Declared with a `Layer:` line in a tool's module docstring; `--` = undeclared.
 | backfill_provenance.py | -- | Backfill asset provenance for everything already packed into godot/assets/. | tool:check_provenance.py |
 | build_review_gallery.py | -- | Rebuild tools/assets/review_generated.html from whatever PNGs are on disk under | human (docstring usage) |
 | build_share_set.py | -- | Derive the ART SHARE SET from verdicts already applied -- no new review pass. | human (docstring usage) |
-| check_credentials.py | PROVE | Guard: shipped images must not silently lose their C2PA content credential. | pre-commit; test:test_check_credentials.py |
+| check_credentials.py | PROVE | Guard: shipped images must not silently lose their C2PA content credential. | pre-commit; test:test_check_credentials.py; tool:backfill_provenance.py |
 | check_provenance.py | -- | Guard: the provenance manifest and the pack must agree, and `unknown` must not grow. | tool:backfill_provenance.py |
 | extract_palette.py | -- | Extract a brand palette from an image (default: the P(Doom)1 hero background). | human (docstring usage) |
 | generate_images.py | -- | Generalized batch image generator for pdoom1 art assets. | test:test_check_credentials.py; tool:promote_assets.py |

@@ -340,7 +340,7 @@ DTSTART;VALUE=DATE:20260810
 DTEND;VALUE=DATE:20260811
 SUMMARY:[TASK] Book the half-day audit-mechanics workshop\, target window 
  opens
-DESCRIPTION:Owner: pip. Kind: task. Source: docs/rulings/RULINGS.md:87. pd
+DESCRIPTION:Owner: pip. Kind: task. Source: docs/rulings/RULINGS.md:94. pd
  oom1#984\, ruled 2026-07-27 18:11. Scheduled to precede the 2026-08-31 f 
  -- Generated from tracked sources by scripts/generate_commitment_calendar
  .py\; regenerate to update.
@@ -556,7 +556,7 @@ DTSTART;VALUE=DATE:20260811
 DTEND;VALUE=DATE:20260812
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:30. 5 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
+ d:37. 5 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
  TMENT: declaration accounts for it. Either add a declaration or the date 
  is incidental. First line: Rulings with no `mechanism:`. Pip's doctrine (
  2026-08-11): what forces a -- Generated from tracked sources by scripts/g
@@ -603,7 +603,7 @@ DTSTART;VALUE=DATE:20260811
 DTEND;VALUE=DATE:20260812
 SUMMARY:[UNPARSED] needs a declaration -- backfill_provenance.py
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/assets/backfill_
- provenance.py:5. 2 line(s) in tools/assets/backfill_provenance.py mention
+ provenance.py:5. 4 line(s) in tools/assets/backfill_provenance.py mention
   this date and no COMMITMENT: declaration accounts for it. Either add a d
  eclaration or the date is incidental. First line: `docs/design/ASSET_PROV
  ENANCE_SCOPE_2026-08-06.md`\, authorised by Pip 2026-08-11 -- Generated f
@@ -674,7 +674,7 @@ DTSTART;VALUE=DATE:20260812
 DTEND;VALUE=DATE:20260813
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:193. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:201. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `godot/scripts/core/capacity.gd:5` -- ## Ru
  led 2026-08-12 (coordination/DESIGN_2026-08-12_interrupt-resolution-varia
@@ -967,7 +967,7 @@ DTSTART;VALUE=DATE:20260813
 DTEND;VALUE=DATE:20260814
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:50. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
+ d:57. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
  TMENT: declaration accounts for it. Either add a declaration or the date 
  is incidental. First line: - `docs/CONTENT_DISTRIBUTION_SYSTEM.md:10` -- 
  > **SUPERSEDED\, not merely "outdated in spirit"\, as of 2026-08-13.** Pi
@@ -1430,7 +1430,7 @@ DTSTART;VALUE=DATE:20260814
 DTEND;VALUE=DATE:20260815
 SUMMARY:[UNPARSED] needs a declaration -- serve_review.py
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/art_review/serve
- _review.py:212. 2 line(s) in tools/art_review/serve_review.py mention thi
+ _review.py:224. 2 line(s) in tools/art_review/serve_review.py mention thi
  s date and no COMMITMENT: declaration accounts for it. Either add a decla
  ration or the date is incidental. First line: # block is FOR and what a d
  ecision here means. (2026-08-14\, Pip's ask.) -- Generated from tracked s
@@ -1583,7 +1583,7 @@ DTSTART;VALUE=DATE:20260815
 DTEND;VALUE=DATE:20260816
 SUMMARY:[UNPARSED] needs a declaration -- LEDGER.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/LEDGER.md
- :10. 3 line(s) in docs/rulings/LEDGER.md mention this date and no COMMITM
+ :10. 5 line(s) in docs/rulings/LEDGER.md mention this date and no COMMITM
  ENT: declaration accounts for it. Either add a declaration or the date is
   incidental. First line: RULING: 2026-08-15 -- the ruling road is cross-r
  epo from day one\, federated: each repo scans itself and emits rulings.js
@@ -1648,6 +1648,29 @@ DESCRIPTION:needs a declaration -- NEXT_ROUND_BRIEF.md (unparsed) -- unown
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:7092d787089f2a47@commitments.pdoom1
+DTSTAMP:20260815T000000Z
+DTSTART;VALUE=DATE:20260815
+DTEND;VALUE=DATE:20260816
+SUMMARY:[UNPARSED] needs a declaration -- NOMENCLATURE.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/art/NOMENCLATURE.
+ md:40. 1 line(s) in docs/art/NOMENCLATURE.md mention this date and no COM
+ MITMENT: declaration accounts for it. Either add a declaration or the dat
+ e is incidental. First line: | `flaw:<thing>` | `flaw:blurry\, flaw:scale
+ \, flaw:shiny` | What went WRONG\, named so it can be counted. The negati
+ ve counterpart to element: -- ruled -- Generated from tracked sources by 
+ scripts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- NOMENCLATURE.md (unparsed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:055f9fb4de2a2a49@commitments.pdoom1
 DTSTAMP:20260815T000000Z
 DTSTART;VALUE=DATE:20260815
@@ -1678,7 +1701,7 @@ DTSTART;VALUE=DATE:20260815
 DTEND;VALUE=DATE:20260816
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:19. 4 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
+ d:19. 9 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
  TMENT: declaration accounts for it. Either add a declaration or the date 
  is incidental. First line: | 2026-08-15 | Tier W (website disclosure) shi
  ps first and standalone\; Tier G (in-game motifs and epoch marks) stays r
@@ -1716,6 +1739,30 @@ ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- RULINGS_CONVENTION.md (unparsed) -- uno
  wned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:dba9f70c540edbdc@commitments.pdoom1
+DTSTAMP:20260815T000000Z
+DTSTART;VALUE=DATE:20260815
+DTEND;VALUE=DATE:20260816
+SUMMARY:[UNPARSED] needs a declaration -- backfill_provenance.py
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/assets/backfill_
+ provenance.py:31. 4 line(s) in tools/assets/backfill_provenance.py mentio
+ n this date and no COMMITMENT: declaration accounts for it. Either add a 
+ declaration or the date is incidental. First line: Tier S was added 2026-
+ 08-15 and is why this ran again. Four assets sat pinned as -- Generated f
+ rom tracked sources by scripts/generate_commitment_calendar.py\; regenera
+ te to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- backfill_provenance.py (unparsed) -- un
+ owned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
@@ -1862,12 +1909,11 @@ DTSTART;VALUE=DATE:20260815
 DTEND;VALUE=DATE:20260816
 SUMMARY:[UNPARSED] needs a declaration -- serve_review.py
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/art_review/serve
- _review.py:1585. 1 line(s) in tools/art_review/serve_review.py mention th
- is date and no COMMITMENT: declaration accounts for it. Either add a decl
- aration or the date is incidental. First line: // Built 2026-08-15 from a
-  measurement\, not a preference: the first mass review -- Generated from 
- tracked sources by scripts/generate_commitment_calendar.py\; regenerate t
- o update.
+ _review.py:169. 2 line(s) in tools/art_review/serve_review.py mention thi
+ s date and no COMMITMENT: declaration accounts for it. Either add a decla
+ ration or the date is incidental. First line: "to element: -- ruled by Pi
+ p 2026-08-15 because the sweeps are mostly " -- Generated from tracked so
+ urces by scripts/generate_commitment_calendar.py\; regenerate to update.
 CATEGORIES:UNPARSED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -2381,7 +2427,7 @@ DTSTART;VALUE=DATE:20260831
 DTEND;VALUE=DATE:20260901
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:201. 2 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:209. 2 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `godot/scripts/core/researcher.gd:131` -- #
   SEAM (ruled 2026-07-27\, review-by 2026-08-31): AUDITS ground-truth repo

@@ -1,7 +1,7 @@
 {
   "_schema": "asset_provenance/1.0",
   "_answers": "coordination#32",
-  "_generated_at": "2026-08-11T02:39:40+00:00",
+  "_generated_at": "2026-08-15T05:38:00.769750+00:00",
   "_written_by": "tools/assets/backfill_provenance.py",
   "_interim": "INTERIM. The ADR-0019 pull step does not exist yet; when it does it becomes the sole writer and this backfill is retired. Until then this is a second write site and can drift -- tools/assets/check_provenance.py fails loudly when it does.",
   "_origin_values": [
@@ -2240,10 +2240,10 @@
     "images/backgrounds/office_scene.png": {
       "sha256": "4e97a076fed7692f5ec2a51bd5af6938cc00fd1526ec6aa13a04e3501b87b243",
       "bytes": 2576583,
-      "origin": "unknown",
-      "origin_detail": "no record in art_source/, art_generated/, or the add-commit message. NOT inferred from dimensions.",
-      "evidence": "F:none",
-      "confidence": "none"
+      "origin": "generated_model",
+      "origin_detail": "embedded C2PA credential, 51257 bytes, asserting IPTC digitalSourceType=trainedAlgorithmicMedia. Signed and timestamped; verifiable independently of this repo.",
+      "evidence": "S:embedded-c2pa",
+      "confidence": "high"
     },
     "images/backgrounds/office_wide_dawn.webp": {
       "sha256": "8b68ae2f5a8754a6809ed21c9660ef063390aaf26a76b5af5945779ec0da2587",
@@ -2384,26 +2384,26 @@
     "images/misc/cat_closeup.png": {
       "sha256": "8f0a4c56783b87e094d9e4dc6b314b369cb101ea8aad0e6a5ddbf64e0f71b913",
       "bytes": 1881397,
-      "origin": "unknown",
-      "origin_detail": "no record in art_source/, art_generated/, or the add-commit message. NOT inferred from dimensions.",
-      "evidence": "F:none",
-      "confidence": "none"
+      "origin": "generated_model",
+      "origin_detail": "embedded C2PA credential, 64600 bytes, asserting IPTC digitalSourceType=trainedAlgorithmicMedia. Signed and timestamped; verifiable independently of this repo.",
+      "evidence": "S:embedded-c2pa",
+      "confidence": "high"
     },
     "images/misc/computer_1.png": {
       "sha256": "fb676ff5c322422463778d1297123ab4b671a3a7f9b6b36cb6d2b51ad77593a3",
       "bytes": 2011347,
-      "origin": "unknown",
-      "origin_detail": "no record in art_source/, art_generated/, or the add-commit message. NOT inferred from dimensions.",
-      "evidence": "F:none",
-      "confidence": "none"
+      "origin": "generated_model",
+      "origin_detail": "embedded C2PA credential, 51902 bytes, asserting IPTC digitalSourceType=trainedAlgorithmicMedia. Signed and timestamped; verifiable independently of this repo.",
+      "evidence": "S:embedded-c2pa",
+      "confidence": "high"
     },
     "images/misc/computer_2.png": {
       "sha256": "03805931bbc32a58868ad4bc639a7e1234e41c1be8ad055832e12bff94efff6a",
       "bytes": 2715393,
-      "origin": "unknown",
-      "origin_detail": "no record in art_source/, art_generated/, or the add-commit message. NOT inferred from dimensions.",
-      "evidence": "F:none",
-      "confidence": "none"
+      "origin": "generated_model",
+      "origin_detail": "embedded C2PA credential, 65051 bytes, asserting IPTC digitalSourceType=trainedAlgorithmicMedia. Signed and timestamped; verifiable independently of this repo.",
+      "evidence": "S:embedded-c2pa",
+      "confidence": "high"
     },
     "images/office_cat.png": {
       "sha256": "c4942c4df25a1d0726cc173d1878a3b20632d82542b0be0f42efaa03d0cb3913",
@@ -4093,5 +4093,13 @@
       "evidence": "F:none",
       "confidence": "none"
     }
-  }
+  },
+  "_amendments": [
+    {
+      "at": "2026-08-15T05:38:00.769750+00:00",
+      "by": "backfill_provenance.py --apply-credentials",
+      "what": "tier-S (embedded C2PA) upgrades for 4 asset(s)",
+      "why": "Ruled by Pip 2026-08-15. A signed credential outranks every heuristic and is the only evidence that survives a file moving between repos. Applied narrowly because a full re-run would rewrite 245 unrelated records into the LOCAL-ONLY tier D on this machine."
+    }
+  ]
 }
