@@ -1,0 +1,228 @@
+# Rulings index (GENERATED -- do not hand-edit)
+
+> Derived from `RULING:` declarations in tracked files by
+> `scripts/generate_rulings.py`. Regenerate with
+> `python scripts/generate_rulings.py`. The convention, and why it looks
+> like this, is argued in `docs/rulings/RULINGS_CONVENTION.md`.
+
+**2 ruling(s)** across **1 flavour(s)**. **191** prose ruling(s) not yet declared.
+
+## By flavour
+
+Recall by flavour is the point: before ruling on something, look for the
+flavour it belongs to and read what was already decided there.
+
+### `estate-process`
+
+| date | ruling | mechanism | source |
+|---|---|---|---|
+| 2026-08-15 | the ruling road is cross-repo from day one, federated: each repo scans itself and emits rulings.json, an aggregator reads them, nothing writes back | `scripts/generate_rulings.py` | `docs/rulings/LEDGER.md:10` |
+| 2026-08-15 | naming a mechanism is OPTIONAL on a ruling, and the generated index reports which rulings have none | `scripts/generate_rulings.py` | `docs/rulings/LEDGER.md:11` |
+
+## Nothing will re-ask these
+
+Rulings with no `mechanism:`. Pip's doctrine (2026-08-11): what forces a
+question to be resolved later is a MECHANISM, not a document. This section
+reports, it does not block -- naming a mechanism is optional by design, and
+an empty list here is not a goal.
+
+None -- every active ruling names something that will re-ask it.
+
+## UNDECLARED -- prose that reads like a ruling
+
+Found by heuristic scan. These are a WORK LIST, not rulings: each needs a
+`RULING:` line, or is a false positive to ignore. They are listed rather
+than dropped because an index that silently omits looks complete when it
+is not.
+
+- `CHANGELOG.md:164` -- was retimed to one-turn-one-month and the ruled promotions were applied (#1137),
+- `CHANGELOG.md:195` -- and the ruled promotions applied (#1137), against Pip's rulings of 2026-08-04.
+- `CHANGELOG.md:203` -- - **The last player-facing "AP" is gone**, and one number format is ruled across
+- `CLAUDE.md:195` -- quarterly pins to v0.15; league/content cadence is MONTHLY (ruled 2026-07-21).
+- `art_source/pixellab_2026-07-26_cat_sweep/MANIFEST.md:3` -- Execution of Pip's locked recipe (ruled 2026-07-26, "go cat sweep 8 dir now"):
+- `docs/CONTENT_DISTRIBUTION_SYSTEM.md:10` -- > **SUPERSEDED, not merely "outdated in spirit", as of 2026-08-13.** Pip ruled
+- `docs/GLOSSARY.md:272` -- Naming (ruled 2026-07-29, Pip): gates are written name-first with a 1-6
+- `docs/GLOSSARY.md:471` -- ## Observed inconsistency (flagged, not ruled)
+- `docs/HANDOVER_2026-08-06_EVENING.md:43` -- He ruled on it Tuesday and it was never built. B1 and B2 refer to the proposals in
+- `docs/ISSUE_MINING_2026-08-06.md:191` -- having ruled. W3 ruled. Any survivor is now ordinary work with a known spec,
+- `docs/ISSUE_MINING_2026-08-06.md:350` -- overlay and called it *"kind of cool"*, then correctly ruled it out of scope
+- `docs/ISSUE_MINING_2026-08-06.md:357` -- UI work; Pip ruled decomposition deferred until the game is out. These are
+- `docs/ISSUE_MINING_2026-08-06.md:412` -- touched); the #1037 identifier rename (its author already ruled "separate PR, or
+- `docs/ISSUE_TRIAGE_2026-08-06.md:182` -- F3 event injection. Pip ruled the fix is to REMOVE the debug event-trigger, not
+- `docs/ISSUE_TRIAGE_2026-08-06.md:73` -- historical patch notes and the dev overlay, both ruled legitimate by that
+- `docs/LEADERBOARD_WEBSITE_INTEGRATION.md:213` -- Pip ruled on 2026-08-08 that the board should carry **both** an Operator (the
+- `docs/NUMBER_FORMATS.md:91` -- 1. **Behaviour** -- the formatters produce the formats ruled above, for the exact
+- `docs/POSTMORTEM_2026-08-07_CAPTURE.md:330` -- Filed during the cycle as **#1165**, and ruled in `coordination#35` where
+- `docs/POSTMORTEM_SATURDAY_ITEMS_2026-08-08.md:52` -- ### Ruled by Pip, 2026-08-08 ~01:00
+- `docs/PRIVACY.md:5` -- > model ruled 2026-07-26: tier 1 identity data (leaderboard) = explicit
+- `docs/PRIVACY_POSTURE.md:3` -- **Ruled by Pip 2026-07-26** (identity-consent ruling + approved ping-decoupling,
+- `docs/SPOKEN_RULINGS_2026-08-02_playtest-and-cards.md:11` -- **The asks, crisply:** ship the alpha-tools wording as ruled (section 2); adopt the release manifest as the seed publication surface with `weekly-2026-w31` as canonical format (section 3); raise the f
+- `docs/TRIUMVIRATE_METABOLIC_CYCLE.md:352` -- 3. **Telemetry privacy posture -- RULED 2026-07-25** (was: undecided).
+- `docs/TRIUMVIRATE_METABOLIC_CYCLE.md:77` -- Direction discipline (already ruled, restated): pdoom1 never depends on
+- `docs/archive/2026-07-25-reconcile/PHASE3_DEPLOY_RECON.md:149` -- date-correct weekly generator contradicts the ruled MONTHLY cadence anyway).
+- `docs/archive/2026-07-25-reconcile/PHASE3_DEPLOY_RECON.md:25` -- MONTHLY league cadence ruled; each month = world-update pack + new baseline
+- `docs/art/ART_MASTERS_POLICY.md:1` -- # Art masters policy (RULED 2026-07-22)
+- `docs/art/ART_MASTERS_POLICY.md:12` -- RULED 2026-07-25). Chosen over MinIO-on-instance / external R2/B2 because it
+- `docs/art/ENDGAME_CONCEPT_REVIEW_2026-07-29.md:29` -- > **PROVISIONAL -- ruled by Pip, 2026-07-29.** Treat A1-A10 as **guidelines on
+- `docs/art/MOTIF_AND_WATERMARK_PROTOCOL.md:366` -- transport. Nothing to build until the schema is ruled.
+- `docs/art/MOTIF_AND_WATERMARK_PROTOCOL.md:410` -- It changes no assets and can run before any of this is ruled on.
+- `docs/art/NOTE_2026-08-15_colour-as-identity.md:3` -- > **Status: captured intent, nothing ruled.** Dictated by Pip on the morning of
+- `docs/art/NOTE_2026-08-15_colour-as-identity.md:65` -- These are already ruled elsewhere and any colour-identity system inherits them:
+- `docs/art/PROP_MANIFEST.md:32` -- | `style_tags` | office quality tiers this art serves, from the canonical ladder `"scummy"` / `"decent"` / `"premium"` (ruled 2026-07-26; `docs/game-design/SEED_ASSET_REGISTRY_AND_VERDICTS.md`). Tier-
+- `docs/art/SPRITE_GENERATION_PLAN.md:7` -- ## Design foundation (RULED 2026-07-16 -- see WORKSHOP_2_BACKLOG "Character sprite system")
+- `docs/art/audit_2026-08-13/PROVENANCE_COMPLETENESS.md:638` -- identical byte length is not ruled out.
+- `docs/art/audit_2026-08-13/RETENTION_ANALYSIS.md:251` -- byte in the tree** -- the biggest files are precisely the ones nobody has ruled on.
+- `docs/balance/DIAL5_ATTENTION_SCARCITY_PROPOSALS.md:101` -- - **C is orthogonal** -- a time multiplier that rides on top of whatever supply/demand shape you pick. Nearly free to ratify (direction already ruled), most gated on "wait for a month to complete" for
+- `docs/balance/DIAL5_ATTENTION_SCARCITY_PROPOSALS.md:109` -- **One-sentence rationale:** Keep the ruled ~20-decisions/month canon intact but make roughly half of it spoken-for (admin overhead + priced doors/approvals/audits), so the reserve you hold back become
+- `docs/balance/DIAL5_ATTENTION_SCARCITY_PROPOSALS.md:25` -- **Interactions.** Cleanest possible change (one constant). But it **collides with a ruled grain**: WORKSHOP_2_BACKLOG "L1 spec inputs" fixes the founder unit at *"decisions, ~20/month"*, and DESIGN_PH
+- `docs/balance/DIAL5_ATTENTION_SCARCITY_PROPOSALS.md:60` -- **Cost of being wrong.** If the ramp is too steep, the endgame is unplayable regardless of office quality (founder drowns before delegation can catch up); too shallow and scarcity never arrives, leavi
+- `docs/balance/L1_CALIBRATION_2026-07-14.md:136` -- - [ ]N `doom.momentum_enabled` -- **NEW -> 1.0** *(the ruled kill-switch: 0 = momentum contributes nothing)*
+- `docs/calendar/COMMITMENTS.md:157` -- COMMITMENT: 2026-08-10 -- Book the half-day audit-mechanics workshop, target window opens -- owner: pip -- kind: task -- note: pdoom1#984, ruled 2026-07-27 18:11. Scheduled to precede the 2026-08-31 f
+- `docs/calendar/github_snapshot.json:2237` -- "title": "Ladder eligibility must be visible BEFORE the run starts, not delivered at death (ruled by Pip 2026-08-07)",
+- `docs/content/ROLE_CREATIVE_DIRECTOR.md:16` -- > pipeline pushes to, not the home of the process"*. Pip ruled **`pull`** on
+- `docs/copy/MANIFUND_SUBMITTED_2026-07-29.md:181` -- Compatible with the ruled model (monthly Theme/Epoch, weekly Seed rotation
+- `docs/decision-cards/2026-08-02_pdoom-data-contract.md:130` -- - The future draw-down is already ruled: ADR-0016 monthly world-update packs
+- `docs/design/ASSET_PROVENANCE_SCOPE_2026-08-06.md:119` -- a very plausible guess. It is still a guess, and `coordination#32` already ruled
+- `docs/design/PHASE_GUARD_AUDIT_2026-08-06.md:10` -- This is **not** about #1134. PR #1143 (retire the feature) is the ruled fix for the
+- `docs/design/PHASE_GUARD_AUDIT_2026-08-06.md:109` -- All three are removed by **PR #1143**, which is the ruled fix. Nothing here duplicates that
+- `docs/design/UPDATER_DESIGN.md:55` -- auto pck-swap patcher (unbuilt). Ruled 2026-07-23: hash-in-manifest over
+- `docs/design/WORKSHOP_TRI_REPO_PREP_2026-08-06.md:552` -- | K8 | `coordination` | File **one issue per Block A item**, labelled `broadcast`, same day, per the agenda -- and note that A1 ruled without a transport (`pdoom1#1115`) is a specification, not a deli
+- `docs/game-design/ADR_DQ_AUDIT_2026-08-03.md:106` -- 3. **League cadence RULED monthly (2026-07-21)** (backlog:405-408) -- recorded
+- `docs/game-design/ADR_DQ_AUDIT_2026-08-03.md:110` -- model RULED** (backlog:171-177), **DQ-24 five demand categories RULED**
+- `docs/game-design/ADR_DQ_AUDIT_2026-08-03.md:112` -- (backlog:723-730), **two-screen PLAN/WATCH model RULED** (backlog:686+),
+- `docs/game-design/ADR_DQ_AUDIT_2026-08-03.md:113` -- **identity-decoupled-from-ability RULED** (backlog:789+) -- all live in
+- `docs/game-design/ADR_DQ_AUDIT_2026-08-03.md:126` -- lower: three "open" DQs are ruled or resolved in backlog prose the generator
+- `docs/game-design/ADR_DQ_AUDIT_2026-08-03.md:146` -- - DIAGNOSIS: ADR-0016 was ruled ~75% CANON ("otherwise I drift away from the
+- `docs/game-design/ADR_DQ_AUDIT_2026-08-03.md:179` -- ### Tension 3 -- Board legitimacy: three half-closed holes on one ladder, plus a ruled-monthly league running weekly
+- `docs/game-design/ADR_DQ_AUDIT_2026-08-03.md:18` -- > **Status: ANALYSIS ONLY.** Nothing here is ruled. Recommendations are marked
+- `docs/game-design/ADR_DQ_AUDIT_2026-08-03.md:207` -- stays open. What is missing is one ruled POLICY ("who appears on a board,
+- `docs/game-design/ADR_DQ_AUDIT_2026-08-03.md:222` -- sustained) is being spent at 4x the ruled cadence.
+- `docs/game-design/ADR_DQ_AUDIT_2026-08-03.md:322` -- | DQ-16 (conference subgame) | Shape ruled (ADR-0014 amendment a), shell shipped (#979) | Mark SHELL-EXECUTED; the remaining "yields" half is not a design question -- it is Tension 2's build dependenc
+- `docs/game-design/ADR_DQ_AUDIT_2026-08-03.md:341` -- midgame -- NOTE: the WS-3 endgame rulings already ruled its rung boundary
+- `docs/game-design/ADR_DQ_AUDIT_2026-08-03.md:350` -- - **Re-scope:** DQ-10 (inward SA) -- the *mechanism* half is ruled and built
+- `docs/game-design/ADR_DQ_AUDIT_2026-08-03.md:368` -- when a DQ gets ruled, write the keyword into the bold span (that IS the
+- `docs/game-design/ADR_DQ_AUDIT_2026-08-03.md:464` -- - Whether #758 (portrait variant determinism, DQ-15 ext) was ever ruled.
+- `docs/game-design/ADR_DQ_AUDIT_2026-08-03.md:74` -- | 0009 | Plan-months, two speeds, day tick | ACCEPTED | 07-12 | Plan-month layer live and compliant: `month_controller.gd:1-19` (day-tick playback, auto-pause-on-window, demand budget), no-banking res
+- `docs/game-design/ADR_DQ_AUDIT_2026-08-03.md:83` -- | 0018 | Render-only office doctrine | **DRAFT** (formal confirm at R3a) | 07-27 | The confirm HAPPENED: R3a/R4 ruled it and #968 merged (`WS3A_DAYLOG_2026-07-27.md:404-412`, ballots 7-8); the a(3)-li
+- `docs/game-design/BUILD_BRIEF_789_HIRING_STITCH.md:100` -- The stitch must not invent economy. It rides the ruled effort economy:
+- `docs/game-design/BUILD_BRIEF_789_HIRING_STITCH.md:106` -- exactly the ruled model, not a new sink.
+- `docs/game-design/BUILD_BRIEF_789_HIRING_STITCH.md:5` -- > decision points. Do not re-litigate ruled design -- cite it.
+- `docs/game-design/BUILD_BRIEF_789_HIRING_STITCH.md:98` -- ## 2. Mapping onto ADR-0011's ruled substrate
+- `docs/game-design/BUILD_BRIEF_HIRING_PIPELINE.md:5` -- > RULED (barrage)" + "DQ-24 taxonomy RULED" + "Character sprite system"; ADR-0011 (effort
+- `docs/game-design/BUILD_VS_LADDER_VERSION_SPLIT.md:6` -- - **Status:** DRAFT (for Pip review; recommend promoting to ADR-0018 once ruled)
+- `docs/game-design/DESIGN_2026-08-15_backlog-as-teacher.md:131` -- The strongest existing support for this thesis is a rule that was ruled for
+- `docs/game-design/DESIGN_2026-08-15_backlog-as-teacher.md:224` -- agrees with the ruled card-hand principle that the hand must show **more than
+- `docs/game-design/DESIGN_2026-08-15_backlog-as-teacher.md:241` -- 5. **Items must be allowed to fall out of view.** Already ruled diegetic --
+- `docs/game-design/DESIGN_2026-08-15_backlog-as-teacher.md:292` -- **Proposal (this seat, not ruled).** The cleanest way to hold all of this is a
+- `docs/game-design/DESIGN_2026-08-15_backlog-as-teacher.md:3` -- > **Status: design thesis, captured. Not an ADR, nothing ruled.** Dictated by
+- `docs/game-design/DESIGN_2026-08-15_causality-violation.md:395` -- with an icon. **His own earlier ruling says no.** On 2026-07-31 he ruled that
+- `docs/game-design/DESIGN_PHILOSOPHY.md:423` -- **The founder currency is named `Attention`** (ruled 2026-07-13): Pip's own canon
+- `docs/game-design/DESIGN_PHILOSOPHY.md:56` -- race enters the seed timeline. The two collisions ruled: 2017 run-start holds (fixed
+- `docs/game-design/DQ-21-INTERMEDIARY-SEMANTICS-STRAWMAN.md:150` -- - **Enters doom via ([x] R2-Q2 ruled: gate-only, no stream of its own):** positive
+- `docs/game-design/DQ-21-INTERMEDIARY-SEMANTICS-STRAWMAN.md:279` -- 3. **Trend-grade invariant ([x] R2-Q7 ruled, N=6):** doom rate MAY go negative on any turn;
+- `docs/game-design/DQ-21-INTERMEDIARY-SEMANTICS-STRAWMAN.md:491` -- - [x] **Q-FN-3** Resolved via rounds 2+4: dampers can push the *rate* negative; sacred-object chains (?2b) are the discrete *level* reductions; the R2-Q7 trend-grade invariant (now ruled, N=6) polices
+- `docs/game-design/ENDGAME_VIOLENCE_PROPOSAL.md:165` -- allocated by visibility/reputation/impact -- the same key as DQ-22's ruled
+- `docs/game-design/ENDGAME_VIOLENCE_PROPOSAL.md:202` -- unignorable (already ruled: "some events legally unignorable" with default
+- `docs/game-design/ENDGAME_VIOLENCE_PROPOSAL.md:252` -- mind-hacked, wireheaded -- **nobody grossly murdered on screen** (the ruled
+- `docs/game-design/ENDGAME_VIOLENCE_PROPOSAL.md:254` -- (a)-(d) discipline is INFERRED operationalization of the ruled guardrail;
+- `docs/game-design/ENDGAME_VIOLENCE_PROPOSAL.md:276` -- | 2 | midgame, DQ-22 aggro | adversarial | psyops, poach raids, leak-seeking (the ruled rival attack list) |
+- `docs/game-design/LEAGUE_WEEK_PLAYBOOK.md:114` -- - No Jira this week (ruled 2026-07-28). The playbook and runsheet are the
+- `docs/game-design/OFFICE_ECONOMY_PROPOSAL.md:92` -- already ruled ("as a CEO, I care about managing the first half dozen people or
+- `docs/game-design/RESEARCH_IDEA_PAPER_PIPELINE_GAP.md:175` -- The gap coincides exactly with the ADR-0011 workstream substrate the team already ruled to
+- `docs/game-design/RESEARCH_IDEA_PAPER_PIPELINE_GAP.md:190` -- ideas/lanes/workstreams are the ruled cure ("with ADR-0010, the constant policy is
+- `docs/game-design/RESEARCH_IDEA_PAPER_PIPELINE_GAP.md:252` -- Build the ruled design. A `Workstream` object = { idea/topic, assigned researchers,
+- `docs/game-design/RESEARCH_IDEA_PAPER_PIPELINE_GAP.md:287` -- re-litigate MODERATE -- it is already ruled (ADR-0011 ACCEPTED); it only needs scheduling.**
+- `docs/game-design/RESEARCH_STREAMS_PROPOSAL.md:58` -- the workstream substrate is already ruled (ADR-0011); the influence stocks are
+- `docs/game-design/RUNSHEET_2026-07-27_to_29.md:174` -- 4. **Early-game decisions scaffolding** -- data/action stubs for the ruled
+- `docs/game-design/RUNSHEET_2026-07-27_to_29.md:177` -- 5. **Tile-grid addressing** -- implement the ruled addressing scheme in the
+- `docs/game-design/RUNSHEET_2026-07-27_to_29.md:179` -- 6. **Office-view real-estate/camera** -- apply the ruled footprint/camera
+- `docs/game-design/RUNSHEET_2026-07-27_to_29.md:74` -- | 8 | Tile-grid addressing | one addressing scheme ruled for the office view (Tuesday lanes build against it) |
+- `docs/game-design/SEED_GOVERNANCE_BODIES_NAMES.md:4` -- > Nothing here is ruled. The structure half-page answers the "must boards be
+- `docs/game-design/TENSION_AUDIT_2026-07-23.md:16` -- > **Status.** ANALYSIS ONLY. Nothing here is ruled. No GitHub labels were changed
+- `docs/game-design/UPGRADES_ASSET_BRAINSTORM.md:4` -- > This is a BRAINSTORM, not ruled mechanics -- but it doubles as the art-generation target list.
+- `docs/game-design/VISION_ACCUMULATION_AND_EVOLUTION.md:335` -- | Attribution | emergent-community structures (NOT pre-built -- ruled 2026-07-21, DQ-34) | capture the run DNA + strategy signature so first-discovery stays computable later (4.1, 4.3) |
+- `docs/game-design/WORKSHOP_2_BACKLOG.md:219` -- *actions* -- separate currencies (ADR-0011 refined). Currency name RULED: **Attention**
+- `docs/game-design/WORKSHOP_2_BACKLOG.md:405` -- - **League cadence RULED (Pip 2026-07-21):** leagues and content ops are **monthly**
+- `docs/game-design/WORKSHOP_2_BACKLOG.md:449` -- rotation across keepers. Also RULED: board/council art must be menacing but VARIED
+- `docs/game-design/WORKSHOP_2_BACKLOG.md:470` -- - **POSITIONING RULED (Pip 2026-07-22, via grant-framing review):** the player is NOT
+- `docs/game-design/WORKSHOP_2_BACKLOG.md:484` -- - **Momentum:** dial-4 retune accepted as *interim*; momentum ruled a low-commitment
+- `docs/game-design/WORKSHOP_2_BACKLOG.md:486` -- - **Reputation reminder (Pip's open-Q5):** direction already ruled -- reputation is
+- `docs/game-design/WORKSHOP_2_BACKLOG.md:599` -- (dial-5 B + burnout ruling). Not new scope -- the concrete shape of what's already ruled.
+- `docs/game-design/WORKSHOP_2_BACKLOG.md:682` -- - **Nomenclature ruled:** a "turn" = a planning phase (currently a month); see
+- `docs/game-design/WORKSHOP_2_BUILD_LANES.md:178` -- inventing alternatives, and it gets ruled with real screens in hand.
+- `docs/game-design/WORKSHOP_3_PREP.md:130` -- - **Re-designing anything already ruled.** The workstream substrate is RULED
+- `docs/game-design/WORKSHOP_3_PREP.md:298` -- - Design already ruled directionally in that doc: advisor persona (Component 3)
+- `docs/game-design/WORKSHOP_3_PREP.md:343` -- - **DQ-24** (attention-demand taxonomy) is already RULED (5 demand categories ->
+- `docs/game-design/WORKSHOP_3_PREP.md:487` -- biggest design payoff but is already RULED (ADR-0011) -- it needs *scheduling
+- `docs/game-design/WORKSHOP_3_PREP.md:491` -- - Theme C's MODERATE/AMBITIOUS workstream build (already ruled; schedule it,
+- `docs/game-design/WORKSHOP_3_PREP.md:531` -- ADR-0011 already ruled it? Pip's call on whether MINIMAL-vs-MODERATE sequencing
+- `docs/game-design/WORKSHOP_3_PREP.md:60` -- the DECISIONS, not the INTERFACE. For every mechanic ruled in, ask: does it add
+- `docs/game-design/WORLD_AND_LORE.md:215` -- one frame. (Anonymity-preserving = inclusion; the silhouette does both jobs, as ruled.)
+- `docs/game-design/WS3A_DAYLOG_2026-07-27.md:18` -- ## Pre-0900 breakfast art-review block (Pip ruled 0645: art review while
+- `docs/game-design/WS3A_DAYLOG_2026-07-27.md:415` -- (Pip ruled 4-way ~1615, overriding the 2-way default, WITH a formal
+- `docs/game-design/WS3_ENDGAME_RULINGS_2026-07-29.md:104` -- | 8 | Which epoch | See Section 4 -- options, not yet ruled. |
+- `docs/game-design/WS3_ENDGAME_RULINGS_2026-07-29.md:303` -- - **Q8 epoch placement** -- options in the session response, not yet ruled.
+- `docs/game-design/WS3_FINISH_OR_DROP.md:157` -- lane (still ruled, not v1); (c) name the AP->Attention migration endpoint --
+- `docs/game-design/decisions/ADR-0011-effort-economy.md:110` -- **(c) FOUR-WAY founder hours ruled** (R4 ballot 4, ~1615), overriding the
+- `docs/game-design/decisions/ADR-0014-conferences-presence-location.md:82` -- **(a) Rhythm-break placeholder shape RULED.** Pip's ruling on ADR-0014's
+- `docs/game-design/decisions/ADR-0016-league-metabolism.md:81` -- - **Canon-ness ruled ~75%** -- bake deeply into config. Pip's reason: without the
+- `docs/game-design/decisions/ADR-0018-render-only-office-doctrine.md:161` -- Camera2D enters consideration only when a ruled office tier exceeds one
+- `docs/game-design/decisions/ADR-0019-pull-from-demand-asset-pipeline.md:193` -- magenta cat shipped deliberately, as policy. Auto-stripping is ruled OUT,
+- `docs/game-design/decisions/ADR-0019-pull-from-demand-asset-pipeline.md:231` -- RULED by Pip, 2026-08-03, when this was raised as the one assumption the ADR
+- `docs/playtest/PLAYTEST_EXTRACT_2026-07-31.md:6` -- - **Status:** EXTRACTED BY CLAUDE 2026-07-31, **not yet ruled on by Pip.** The
+- `docs/qa/PLAYTEST_READINESS_2026-07-15.md:88` -- (button overlap, text clipping, theme glitches) are not ruled out by this check.
+- `docs/release-body-v0.14.0-CORRECTED.md:35` -- and the ruled promotions applied (#1137), against Pip's rulings of 2026-08-04.
+- `docs/release-body-v0.14.0-CORRECTED.md:4` -- was retimed to one-turn-one-month and the ruled promotions were applied (#1137),
+- `docs/release-body-v0.14.0-CORRECTED.md:43` -- - **The last player-facing "AP" is gone**, and one number format is ruled across
+- `docs/strategy/IP_AND_OPENNESS_PREMORTEM.md:443` -- except keeping the data backbone clean (already ruled).
+- `docs/strategy/IP_AND_OPENNESS_PREMORTEM.md:87` -- community reads retraction as betrayal. Pip has already ruled against
+- `godot/assets/images/events/README.md:26` -- **They are GRANDFATHERED. Pip ruled 2026-08-03 that already-packed assets stay
+- `godot/autoload/game_config.gd:776` -- # ruled by Pip via PR #1096: "alpha-tools naming and wording settled") -----------------
+- `godot/data/asset_provenance.json:14` -- "_unknown_is_not_a_guess": "`unknown` means no record exists. It is never inferred from image dimensions. 1024x1024 and 1536x1024 are OpenAI output sizes, which makes 'these are gpt-image' a plausible
+- `godot/data/office/props_manifest.json:15` -- "style_tags": "office quality tiers this art serves, from the canonical ladder [\"scummy\", \"decent\", \"premium\"] (ruled 2026-07-26; see docs/game-design/SEED_ASSET_REGISTRY_AND_VERDICTS.md). Tag o
+- `godot/data/patch_notes.json:55` -- "WHY THE BOARD FORKED: the historical event deck was retimed to one turn = one month, and the ruled event promotions were applied. Different events now fire on the same seed, so an L4 run is not compa
+- `godot/scripts/core/build_info.gd:22` -- ## Alpha-tools era switch (#1079 fallout, ruled 2026-08-05). While this is true the ALPHA
+- `godot/scripts/core/build_info.gd:94` -- ## doom"). That consequence was flagged when #1079 merged and never ruled on; this is the
+- `godot/scripts/core/capacity.gd:5` -- ## Ruled 2026-08-12 (coordination/DESIGN_2026-08-12_interrupt-resolution-variants.md,
+- `godot/scripts/core/game_state.gd:194` -- # ground-truth reported vs actual in a later lane (ruled 2026-07-27, review-by
+- `godot/scripts/core/game_state.gd:38` -- ## COST ROUTING RULE -- ruled by Pip, 2026-07-27 (answers ADR-0010 R2 section 6
+- `godot/scripts/core/month_plan.gd:11` -- ## nothing anywhere reads `action_points` (ADR-0011 amendment (a), ruled 2026-07-27 11:37).
+- `godot/scripts/core/month_plan.gd:29` -- ## N2 used for typed reputation (ruled 2026-07-27). `attention_total`/`attention_spent`
+- `godot/scripts/core/month_plan.gd:39` -- ## FOUNDER-HOUR KINDS (4-way, ADR-0011 point 2 / Ballot 4 ruled 2026-07-27, REVIEW-BY
+- `godot/scripts/core/office.gd:58` -- ## menu size is: Pip ruled "3 offices to choose from", so the choice is fixed-width and
+- `godot/scripts/core/prop_catalogue.gd:141` -- scummy/decent/premium (ruled 2026-07-26). Empty for unmanifested ids."""
+- `godot/scripts/core/researcher.gd:131` -- # SEAM (ruled 2026-07-27, review-by 2026-08-31): AUDITS ground-truth reported vs actual.
+- `godot/scripts/core/researcher.gd:61` -- # "Hiring pipeline RULED" (A1/A2/A3); appetites/quirks per ADR-0011 section 8; pay-to-see
+- `godot/scripts/core/researcher.gd:69` -- # Hire lifecycle (WORKSHOP_2 "Hiring pipeline RULED"): pool -> offered -> employed ->
+- `godot/scripts/core/turn_manager.gd:306` -- SEAM (ruled 2026-07-27, review-by 2026-08-31): AUDITS ground-truth reported vs actual.
+- `godot/scripts/debug/debug_overlay.gd:15` -- ## reproduced it repeatably in a release build and ruled the feature out rather than
+- `godot/scripts/ui/cold_open_sequence.gd:43` -- # not copy: the strings are the ruled #801 copy, unchanged.
+- `godot/scripts/ui/office_floor/office_floor.gd:493` -- ## (no tinting hacks -- ruled 2026-07-26). "" or "decent" = shipped default art.
+- `godot/scripts/ui/office_floor/office_sandbox.gd:161` -- # (ruled 2026-07-26, see docs/game-design/SEED_ASSET_REGISTRY_AND_VERDICTS.md):
+- `godot/scripts/ui/office_floor/office_sandbox.gd:175` -- # The tier whose art stands in when a tier-variant is missing (ruled 2026-07-26).
+- `godot/tests/unit/test_cold_open_intro.gd:46` -- # Pip approved this string personally (#801 ruled copy). If this fails, someone edited
+- `godot/tests/unit/test_no_debug_event_injection.gd:9` -- ## the hard lock repeatably in a release build (2026-08-06) and ruled the feature out:
+- `godot/tests/unit/test_number_format_policy.gd:2` -- ## Locks the number-format policy ruled in #1087 (docs/NUMBER_FORMATS.md).
+- `godot/tests/unit/test_prop_manifest.gd:96` -- # style_tags restricted to the canonical quality-tier ladder (ruled 2026-07-26).
+- `public/releases/releases.json:12` -- "changelog": "Ladder epoch **L3 -> L4** -- this is a FORKING release. The historical event deck\nwas retimed to one-turn-one-month and the ruled promotions were applied (#1137),\nwhich changes which e
+- `scripts/generate_rulings.py:9` -- (`ruled by Pip`, `Pip ruled`, `ruled 2026-..`) scattered across .py docstrings,
+- `tests/test_art_promotion_pipeline.py:480` -- """Pip ruled 2026-08-03: "Keep both, you pick naming variant."
+- `tests/test_art_promotion_pipeline.py:74` -- second-pass fix routes where it was ruled to route."""
+- `tools/art_review/apply_review.py:562` -- # its 07-21 reroll). Pip ruled both ship, so the older batch carries a
+- `tools/art_review/apply_review.py:866` -- # Pip ruled 2026-08-03 that BOTH variants ship, so resolve collisions by
+- `tools/art_review/build_cull_sheet.py:107` -- # A null clearance means "not yet ruled on", which is not consent.
+- `tools/art_review/extract_pullquotes.py:227` -- # Per-platform clearance. null means "not yet ruled on"; a list
+- `tools/art_review/extract_pullquotes.py:30` -- Verbatim is the default and the stored text is never edited. Pip ruled this
+- `tools/art_review/qc_sprite_frames.py:4` -- Checks (per docs/art/PIXELLAB_OPERATIONS.md house rules, ruled 2026-07-26):
+- `tools/art_review/serve_review.py:106` -- # estate has already ruled is just "abandoned" wearing a nicer word
+- `tools/art_review/serve_review.py:145` -- "are different layers and must not be one letter apart. Ruled by Pip "
+- `tools/assets/backfill_provenance.py:138` -- `art_prompts/*.yaml` is the RULED source of truth per ART_MASTERS_POLICY:
+- `tools/assets/backfill_provenance.py:30` -- ORIGIN VOCABULARY -- five values, ruled by Pip 2026-08-11
+- `tools/assets/backfill_provenance.py:362` -- "'these are gpt-image' a plausible guess; coordination#32 ruled that an "
+- `tools/assets/check_credentials.py:30` -- permanently red over ~4,900 legacy files, and this estate has ruled on what
+- `tools/assets/check_provenance.py:11` -- red, and this estate has already ruled on what that is worth:
+- `tools/assets/check_provenance.py:151` -- "_why": "Pinned unknown set. Ruled by Pip 2026-08-11: keep the "
+- `tools/assets/check_provenance.py:4` -- Ruled by Pip 2026-08-11: the six unattributable assets are KEPT and recorded as
+- `tools/assets/manifests/new_subjects.json:115` -- "prompt_tail": "an almost perfectly flat-on frontal view of a wall of bureaucratic paperwork, shot square to the wall with minimal perspective so the picture plane and the wall plane are nearly parall
+- `tools/assets/provenance_unknown_pin.json:2` -- "_why": "Pinned unknown set. Ruled by Pip 2026-08-11: keep the unattributable assets, record them honestly, and let a mechanism force the question later rather than a document.",
+- `user_privacy.json:2` -- "_comment": "Machine-readable privacy posture record. Canonical doc: docs/PRIVACY_POSTURE.md (two-tier model, ruled 2026-07-26). The Godot build persists LIVE player choices in user://config.cfg; this

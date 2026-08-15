@@ -334,9 +334,24 @@ def generate_image(
         log(f"ERROR: {base_name} - {str(e)}", "error")
         return False, 0.0, None
 
-    # Decode and save master
+    # Write the master VERBATIM, do not re-encode it.
+    #
+    # The OpenAI response carries a signed C2PA credential in a `caBX` ancillary
+    # chunk, and PIL silently drops unknown ancillary chunks on re-encode.
+    # Measured 2026-08-15: 29,030 bytes of signed provenance per image,
+    # asserting IPTC digitalSourceType=trainedAlgorithmicMedia, claim generator
+    # "OpenAI Media Service API", chained to SSL.com C2PA ICA R1 with an RFC3161
+    # timestamp. An `img.save()` here is a silent deletion of all of it, and the
+    # loss is unrecoverable -- a master cannot be retro-signed.
+    #
+    # The signature covers these exact pixels, so ONLY the untouched master can
+    # carry it. The downscales below are legitimately unsigned; they get our own
+    # statement via the sidecar, pointing back at this master.
+    # Rationale and the probe: docs/art/MOTIF_AND_WATERMARK_PROTOCOL.md
+    master_path.write_bytes(img_bytes)
+
+    # Decoded copy, used for the derivatives only.
     img = Image.open(BytesIO(img_bytes)).convert("RGBA")
-    img.save(master_path)
 
     # Downscale to requested widths, preserving the master aspect ratio.
     for width in sizes:

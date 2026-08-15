@@ -49,6 +49,7 @@ Declared with a `Layer:` line in a tool's module docstring; `--` = undeclared.
 | generate_mechanics_docs.py | GENERATE | Generate mechanics documentation from game code. | ci:docs-sync.yml |
 | generate_release_manifest.py | GENERATE | Generate release_manifest.json -- the machine-readable release descriptor. | ci:enhanced-release.yml; test:test_generate_release_manifest.py |
 | generate_release_metadata.py | GENERATE | Generate release metadata for website integration. | pre-commit; ci:enhanced-release.yml; tool:generate_release_manifest.py |
+| generate_rulings.py | GENERATE | Generate the rulings index + the cross-repo rulings.json from RULING: declarations. | pre-commit; tool:check_credentials.py |
 | generate_tools_index.py | GENERATE | Generate docs/TOOLS.md -- the index of the dev tooling in scripts/ and tools/. | pre-commit; test:test_generate_tools_index.py |
 | health_automation.py | -- | Project Health Automation Suite - BLITZ MODE | human (docstring usage) |
 | health_tracker.py | -- | Project Health History Tracker & Dev Blog Integration | ci:enhanced-cicd-pipeline.yml |
@@ -175,12 +176,13 @@ Declared with a `Layer:` line in a tool's module docstring; `--` = undeclared.
 | backfill_provenance.py | -- | Backfill asset provenance for everything already packed into godot/assets/. | tool:check_provenance.py |
 | build_review_gallery.py | -- | Rebuild tools/assets/review_generated.html from whatever PNGs are on disk under | human (docstring usage) |
 | build_share_set.py | -- | Derive the ART SHARE SET from verdicts already applied -- no new review pass. | human (docstring usage) |
+| check_credentials.py | PROVE | Guard: shipped images must not silently lose their C2PA content credential. | pre-commit; test:test_check_credentials.py |
 | check_provenance.py | -- | Guard: the provenance manifest and the pack must agree, and `unknown` must not grow. | tool:backfill_provenance.py |
 | extract_palette.py | -- | Extract a brand palette from an image (default: the P(Doom)1 hero background). | human (docstring usage) |
-| generate_images.py | -- | Generalized batch image generator for pdoom1 art assets. | tool:promote_assets.py |
+| generate_images.py | -- | Generalized batch image generator for pdoom1 art assets. | test:test_check_credentials.py; tool:promote_assets.py |
 | promote_assets.py | -- | Asset promotion tool for pdoom1. | NONE FOUND |
 | render_latex_pdoom.py | -- | Local LaTeX-style typeset renders of the P(doom) logo studies. | NONE FOUND |
-| run_art_night.py | GENERATE | run_art_night.py -- level-structured, budget-capped, resumable art run. | human (Pip), once per wave (declared) |
+| run_art_night.py | GENERATE | run_art_night.py -- level-structured, budget-capped, resumable art run. | test:test_check_credentials.py |
 | select_assets.py | -- | Interactive asset selection tool for pdoom1. | tool:promote_assets.py |
 
 ## `tools/music/`
@@ -230,6 +232,7 @@ DISCUSSING CI); the rest are the hollow-runner shape -- read them.
 - `tools/art_review/notes_brief.py` -- docstring mentions pre-commit; no pre-commit hook calls it
 - `tools/art_review/scan_text_leak.py` -- docstring mentions CI; no workflow calls it
 - `tools/assets/build_share_set.py` -- docstring mentions CI; no workflow calls it
+- `tools/assets/check_credentials.py` -- docstring mentions CI; no workflow calls it
 - `tools/capture_cinematic.py` -- docstring mentions CI; no workflow calls it
 - `tools/check_class_cache.py` -- docstring mentions CI; no workflow calls it
 - `tools/commit.py` -- docstring mentions pre-commit; no pre-commit hook calls it
@@ -252,4 +255,4 @@ DISCUSSING CI); the rest are the hollow-runner shape -- read them.
 
 30 `.html` tool(s) under `tools/` (browser-opened, no docstring to parse): `tools/art_review/doom_overlay_preview.html`, `tools/art_review/hero_gallery_template.html`, `tools/art_review/icon_pass_2026-07-21.html`, `tools/art_review/icon_pass_verdicts_2026-07-21.html`, `tools/art_review/palette.html`, `tools/art_review/palette_swatches.html`, `tools/art_review/scene_wave2_2026-07-21.html`, `tools/art_review/style_review.html`, `tools/assets/review_generated.html`, `tools/music/commission_sheets.html`, `tools/music/jukebox.html`, `tools/music/listening_room.html`, `tools/music/stem_board.html`, `tools/runsheet/CEREMONY-ALL-GATES-2026-07-31.html`, `tools/runsheet/SUNDAY-postmortem-2026-08-07.html`, `tools/runsheet/chronicle-2026-08-06_07.html`, `tools/runsheet/commitments-2026-08.html`, `tools/runsheet/copy-review-2026-08-09.html`, `tools/runsheet/decisions-2026-08-10.html`, `tools/runsheet/fri-2026-07-31-EVENING-1620.html`, `tools/runsheet/fri-2026-07-31-GATES-1700.html`, `tools/runsheet/fri-2026-07-31-TO-MIDNIGHT-1733.html`, `tools/runsheet/fri-2026-07-31-league-day.html`, `tools/runsheet/playtest_card.html`, `tools/runsheet/sat-2026-08-08-release-status.html`, `tools/runsheet/wed-thu-2026-07-29.html`, `tools/runsheet/week-2026-08-10-plan.html`, `tools/social_composer.html`, `tools/ui_comparison.html`, `tools/ui_mockup/wireframe.html`.
 
-Total: 135 active tools (10 GENERATE, 5 OBSERVE, 9 PROVE, 1 SWEEP, 110 undeclared); 17 in UNKNOWN; 6 archived.
+Total: 137 active tools (11 GENERATE, 5 OBSERVE, 10 PROVE, 1 SWEEP, 110 undeclared); 17 in UNKNOWN; 6 archived.

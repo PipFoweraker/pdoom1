@@ -186,6 +186,28 @@ repos:
         pass_filenames: false
         verbose: true
 
+      # Rulings evaporate unless something gathers them. Same shape as the
+      # commitment calendar: a one-line RULING: declaration writable anywhere,
+      # a GENERATED index, and a --check that keeps it honest.
+      - id: rulings-index-check
+        name: Rulings index matches the RULING declarations
+        entry: python scripts/generate_rulings.py --check
+        language: system
+        files: '^(docs/rulings/.*|scripts/generate_rulings\.py)$'
+        pass_filenames: false
+
+      # Shipped images must not silently lose their signed C2PA credential. PIL
+      # drops unknown ancillary chunks on re-encode, so one Image.open(...).save()
+      # anywhere downstream deletes provenance irreversibly and invisibly -- the
+      # loss that cost ~1,600 masters before 2026-08-15. Fires only when a PNG
+      # under godot/assets/ or an image tool changes, so it stays cheap.
+      - id: credential-check
+        name: Shipped images keep their C2PA content credential
+        entry: python tools/assets/check_credentials.py
+        language: system
+        files: '^(godot/assets/.*\.png|tools/assets/(check_credentials|generate_images|run_art_night|build_share_set|promote_assets)\.py|tools/assets/credentialed_pin\.json)$'
+        pass_filenames: false
+
       - id: scene-nav-check
         name: Scene navigation routes through SceneTransition
         entry: python tools/check_scene_nav.py

@@ -732,8 +732,18 @@ def write_outputs(job, img_bytes, api_meta, run_meta, staging_dir=None):
     out_dir = Path(job["out_dir"])
     out_dir.mkdir(parents=True, exist_ok=True)
     master = Path(job["master_path"])
+
+    # Write the master VERBATIM, do not re-encode it. The OpenAI response carries
+    # a signed C2PA credential in a `caBX` ancillary chunk and PIL silently drops
+    # unknown ancillary chunks on re-encode (measured 2026-08-15: 29,030 bytes,
+    # IPTC digitalSourceType=trainedAlgorithmicMedia, SSL.com-chained, timestamped).
+    # The signature covers these exact pixels, so only the untouched master can
+    # carry it; the downscales below are legitimately unsigned.
+    # See docs/art/MOTIF_AND_WATERMARK_PROTOCOL.md
+    master.write_bytes(img_bytes)
+
+    # Decoded copy, used for the derivatives only.
     img = Image.open(BytesIO(img_bytes)).convert("RGBA")
-    img.save(master)
 
     master_w, master_h = (int(x) for x in job["size"].split("x"))
     for width in DOWNSCALES.get(job["size"], []):
