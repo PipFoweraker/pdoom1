@@ -31,6 +31,47 @@ The batch-selection UI (b1287e8b, 2026-08-15 00:33) was built partly to fix this
 because there is no room to type in that lane". The room now exists. The
 behaviour did not follow.
 
+## Pip said this out loud DURING the sweep, two days before describing it
+
+Added 2026-08-17, after the session audio was transcribed
+(`tools/transcribe.py`, local whisper, offline). The recording of the
+2026-08-14 sweep contains the multi-pass workflow being invented in real time:
+
+```
+12:33  I don't know what to do with these ones, so I'm just going to scroll past them.
+12:43  I'll come back and judge these later if we want.
+16:33  Interesting. Okay, I'm going to do another pass for winners, and then I'm
+       going to just export and try and figure out what the next process is.
+16:40  This has been kind of cool, though. I suppose I can just click and give
+       more opinions on...
+16:44  No, actually, let me do another pass, because I think without instructions,
+       I'm not sure where my limited attention is going to be best spent.
+```
+
+Two things this changes:
+
+1. **The need is evidenced, not inferred.** The proposal below was written from
+   a 0.03% tag rate and one remark. It is now backed by the reviewer narrating
+   the same conclusion mid-sweep, unprompted, before anyone analysed anything.
+
+2. **It adds a design constraint nobody had.** 16:44 gives the REASON: *"without
+   instructions, I'm not sure where my limited attention is going to be best
+   spent."* A pass is not just a filter -- **a pass needs a stated purpose**, or
+   the reviewer cannot tell what to look at. So the harvest pass should open by
+   declaring its own instruction ("you are looking for what to keep from these
+   discards"), not merely present a filtered grid. 12:33 is the same problem
+   with no pass available: scrolling past rather than deciding.
+
+Also captured, and not otherwise recorded anywhere:
+
+```
+0:05   Marking that as a keep is opposite of picking it as a winner.
+```
+
+That is friction in the verdict model itself -- `keep` and "winner of a set" are
+being conflated at the point of use. It appears in no note, no issue and no
+verdict. It is exactly the kind of thing that only exists in audio.
+
 ## The diagnosis (Pip, 2026-08-15)
 
 > "I want to harvest things after I've decided what I liked or disliked about

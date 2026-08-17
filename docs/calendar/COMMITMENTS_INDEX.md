@@ -13,7 +13,7 @@ Horizon: **2026-08-09** (the prose scan reports dates at or after this; roll it
 forward deliberately in `COMMITMENTS.md`, never automatically -- a clock-reading
 generator goes stale overnight and trains people to ignore the check).
 
-**49 declared, 4 release-train, 81 UNPARSED, 0 malformed.**
+**49 declared, 4 release-train, 86 UNPARSED, 0 malformed.**
 
 ## Declared commitments
 
@@ -166,6 +166,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-13 | `tools/art_review/shortlist_l3_heroes.py` | 335 | "<title>L3 hero shortlist -- 2026-08-13</title>", |
 | 2026-08-13 | `tools/art_review/shortlist_l3_heroes.py` | 347 | "<p class='note'>Generated 2026-08-13. Ordered by contrast + detail density,", |
 | 2026-08-13 | `tools/check_class_cache.py` | 6 | WHY (2026-08-13, cost a first-time playtester's session): |
+| 2026-08-14 | `docs/art/HARVEST_PASS_PROPOSAL.md` | 38 | 2026-08-14 sweep contains the multi-pass workflow being invented in real time: |
 | 2026-08-14 | `docs/art/audit_2026-08-13/NEXT_ROUND_BRIEF.md` | 1 | # Next-round brief -- what Pip said while judging, 2026-08-14 |
 | 2026-08-14 | `docs/art/audit_2026-08-13/SESSION_2026-08-14_first-mass-review.md` | 3 | **Recorded by `seat:pdoom`, 2026-08-14.** Every number below is re-derivable from |
 | 2026-08-14 | `docs/art/audit_2026-08-13/THE_REVISIONS_ARE_THE_STORY.md` | 3 | **Draft for Pip, 2026-08-14, by `seat:pdoom`.** Raw material for a blog post and |
@@ -177,11 +178,13 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-14 | `tools/art_review/serve_review.py` | 1383 | // all move to the archive together. (2026-08-14, Pip's ask.) |
 | 2026-08-14 | `tools/check_refusal_classification.py` | 7 | WHY (playtest 2026-08-14, Pip): |
 | 2026-08-14 | `tools/check_review_js.py` | 6 | On 2026-08-14 the art review gallery was completely dead -- no verdicts, no |
+| 2026-08-14 | `tools/transcribe.py` | 24 | session, and the 2026-08-14 one drifts into unrelated personal browsing after |
+| 2026-08-14 | `tools/transcribe.py` | 47 | 2026-08-14 recording covers 495 of 506 logged decisions, so nearly every |
 | 2026-08-15 | `CLAUDE.md` | 223 | `UNDECLARED`, never dropped. **Cross-repo by design** (ruled 2026-08-15): |
 | 2026-08-15 | `docs/art/HARVEST_PASS_PROPOSAL.md` | 3 | > **Status: PROPOSED, nothing built.** Written 2026-08-15 for Pip to take to the |
 | 2026-08-15 | `docs/art/HARVEST_PASS_PROPOSAL.md` | 27 | Measured over `tools/art_review/review_state.json`, 2026-08-15 11:17 AEST. |
 | 2026-08-15 | `docs/art/HARVEST_PASS_PROPOSAL.md` | 29 | The batch-selection UI (b1287e8b, 2026-08-15 00:33) was built partly to fix this |
-| 2026-08-15 | `docs/art/HARVEST_PASS_PROPOSAL.md` | 34 | ## The diagnosis (Pip, 2026-08-15) |
+| 2026-08-15 | `docs/art/HARVEST_PASS_PROPOSAL.md` | 75 | ## The diagnosis (Pip, 2026-08-15) |
 | 2026-08-15 | `docs/art/MOTIF_AND_WATERMARK_PROTOCOL.md` | 3 | > Status: **DRAFT, not adopted.** Written 2026-08-15 as a design card for Pip, and as the |
 | 2026-08-15 | `docs/art/MOTIF_AND_WATERMARK_PROTOCOL.md` | 17 | ## Scope split -- two tiers with different purposes (Pip, 2026-08-15) |
 | 2026-08-15 | `docs/art/MOTIF_AND_WATERMARK_PROTOCOL.md` | 45 | \| a vocabulary for recurring elements \| `element:<thing>` harvest tags, `docs/art/NOMENCLATURE.md` \| the SPEC exists. **The data does not** -- see "Me |
@@ -233,8 +236,12 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-15 | `tools/assets/generate_images.py` | 341 | # Measured 2026-08-15: 29,030 bytes of signed provenance per image, |
 | 2026-08-15 | `tools/assets/run_art_night.py` | 738 | # unknown ancillary chunks on re-encode (measured 2026-08-15: 29,030 bytes, |
 | 2026-08-15 | `tools/rule.py` | 8 | Pip, 2026-08-15: a verbal ruling is worse than a script to capture it, "because |
+| 2026-08-15 | `tools/transcribe.py` | 8 | On 2026-08-15 this seat wrote that 33 minutes of narrated art-review recording |
 | 2026-08-16 | `docs/workshop-2/position.md` | 547 | **On 2026-08-16**, ask for three run IDs -- one per guard -- each showing the |
 | 2026-08-16 | `docs/workshop-2/position.md` | 647 | 2026-08-16. |
+| 2026-08-17 | `docs/art/HARVEST_PASS_PROPOSAL.md` | 36 | Added 2026-08-17, after the session audio was transcribed |
+| 2026-08-17 | `tools/transcribe.py` | 10 | currently can" read it. Pip's reply, 2026-08-17: |
+| 2026-08-17 | `tools/transcribe.py` | 35 | MEASURED 2026-08-17 on Pip's desktop (CPU-only torch 2.13, no CUDA): |
 | 2026-08-24 | `docs/design/LEAGUE_CUTOVER_PLAYBOOK.md` | 41 | at L4, and is pinned for reflective review on/after 2026-08-24. |
 | 2026-08-24 | `pdoom1#808` | 0 | Reflective review (on/after 2026-08-24): release/league cycle nomenclature + cadence |
 | 2026-08-24 | `pdoom1#811` | 0 | Workshop 3 (mechanics) -- Mon 07-27 W-3a / Tue 07-28 build / Wed 07-29 W-3b-W-4: crisp parts, brutal decisions |

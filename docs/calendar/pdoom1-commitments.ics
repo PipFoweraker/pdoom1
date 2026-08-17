@@ -1304,6 +1304,30 @@ DESCRIPTION:P9\, the pack's OWN falsifier: if none of P1-P8 started and no
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:5b821bfb6b4dfbf2@commitments.pdoom1
+DTSTAMP:20260814T000000Z
+DTSTART;VALUE=DATE:20260814
+DTEND;VALUE=DATE:20260815
+SUMMARY:[UNPARSED] needs a declaration -- HARVEST_PASS_PROPOSAL.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/art/HARVEST_PASS_
+ PROPOSAL.md:38. 1 line(s) in docs/art/HARVEST_PASS_PROPOSAL.md mention th
+ is date and no COMMITMENT: declaration accounts for it. Either add a decl
+ aration or the date is incidental. First line: 2026-08-14 sweep contains 
+ the multi-pass workflow being invented in real time: -- Generated from tr
+ acked sources by scripts/generate_commitment_calendar.py\; regenerate to 
+ update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- HARVEST_PASS_PROPOSAL.md (unparsed) -- 
+ unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:47dce034849abece@commitments.pdoom1
 DTSTAMP:20260814T000000Z
 DTSTART;VALUE=DATE:20260814
@@ -1443,6 +1467,28 @@ BEGIN:VALARM
 ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- serve_review.py (unparsed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:075599451c857a22@commitments.pdoom1
+DTSTAMP:20260814T000000Z
+DTSTART;VALUE=DATE:20260814
+DTEND;VALUE=DATE:20260815
+SUMMARY:[UNPARSED] needs a declaration -- transcribe.py
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/transcribe.py:24
+ . 2 line(s) in tools/transcribe.py mention this date and no COMMITMENT: d
+ eclaration accounts for it. Either add a declaration or the date is incid
+ ental. First line: session\, and the 2026-08-14 one drifts into unrelated
+  personal browsing after -- Generated from tracked sources by scripts/gen
+ erate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- transcribe.py (unparsed) -- unowned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
@@ -1925,6 +1971,28 @@ DESCRIPTION:needs a declaration -- serve_review.py (unparsed) -- unowned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:914b434ab221eaf0@commitments.pdoom1
+DTSTAMP:20260815T000000Z
+DTSTART;VALUE=DATE:20260815
+DTEND;VALUE=DATE:20260816
+SUMMARY:[UNPARSED] needs a declaration -- transcribe.py
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/transcribe.py:8.
+  1 line(s) in tools/transcribe.py mention this date and no COMMITMENT: de
+ claration accounts for it. Either add a declaration or the date is incide
+ ntal. First line: On 2026-08-15 this seat wrote that 33 minutes of narrat
+ ed art-review recording -- Generated from tracked sources by scripts/gene
+ rate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- transcribe.py (unparsed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:dd0b5c8931b95ff7@commitments.pdoom1
 DTSTAMP:20260816T000000Z
 DTSTART;VALUE=DATE:20260816
@@ -1980,6 +2048,51 @@ BEGIN:VALARM
 ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- position.md (unparsed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:4ab937d1166b13ae@commitments.pdoom1
+DTSTAMP:20260817T000000Z
+DTSTART;VALUE=DATE:20260817
+DTEND;VALUE=DATE:20260818
+SUMMARY:[UNPARSED] needs a declaration -- HARVEST_PASS_PROPOSAL.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/art/HARVEST_PASS_
+ PROPOSAL.md:36. 1 line(s) in docs/art/HARVEST_PASS_PROPOSAL.md mention th
+ is date and no COMMITMENT: declaration accounts for it. Either add a decl
+ aration or the date is incidental. First line: Added 2026-08-17\, after t
+ he session audio was transcribed -- Generated from tracked sources by scr
+ ipts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- HARVEST_PASS_PROPOSAL.md (unparsed) -- 
+ unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:f78edd2fc4426033@commitments.pdoom1
+DTSTAMP:20260817T000000Z
+DTSTART;VALUE=DATE:20260817
+DTEND;VALUE=DATE:20260818
+SUMMARY:[UNPARSED] needs a declaration -- transcribe.py
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/transcribe.py:10
+ . 2 line(s) in tools/transcribe.py mention this date and no COMMITMENT: d
+ eclaration accounts for it. Either add a declaration or the date is incid
+ ental. First line: currently can" read it. Pip's reply\, 2026-08-17: -- G
+ enerated from tracked sources by scripts/generate_commitment_calendar.py\
+ ; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- transcribe.py (unparsed) -- unowned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
