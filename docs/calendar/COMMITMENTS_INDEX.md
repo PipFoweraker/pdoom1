@@ -13,7 +13,7 @@ Horizon: **2026-08-09** (the prose scan reports dates at or after this; roll it
 forward deliberately in `COMMITMENTS.md`, never automatically -- a clock-reading
 generator goes stale overnight and trains people to ignore the check).
 
-**49 declared, 4 release-train, 88 UNPARSED, 0 malformed.**
+**49 declared, 4 release-train, 89 UNPARSED, 0 malformed.**
 
 ## Declared commitments
 
@@ -105,7 +105,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-10 | `docs/LAPTOP_DEBIAN_SETUP.md` | 3 | **Status:** written 2026-08-10, before the machine arrived. The Linux isolation |
 | 2026-08-10 | `docs/LAPTOP_DEBIAN_SETUP.md` | 22 | **Where memos land today, measured 2026-08-10, not assumed:** |
 | 2026-08-10 | `docs/LAPTOP_DEBIAN_SETUP.md` | 62 | replicate through git. Measured on 2026-08-10: **2,713 entries, 2,704 carrying a |
-| 2026-08-10 | `docs/LAPTOP_DEBIAN_SETUP.md` | 134 | external player did, by accident, on 2026-08-10 (`Kaur, Chen & Lindqvist`, score |
+| 2026-08-10 | `docs/LAPTOP_DEBIAN_SETUP.md` | 157 | external player did, by accident, on 2026-08-10 (`Kaur, Chen & Lindqvist`, score |
 | 2026-08-10 | `docs/LEADERBOARD_WEBSITE_INTEGRATION.md` | 148 | \| `player_name` \| string \| **Misnamed: this carries the LAB name, and since 2026-08-10 the operator too, composed as `Lab -- Operator`.** Max 40 BYTES |
 | 2026-08-10 | `docs/LEADERBOARD_WEBSITE_INTEGRATION.md` | 175 | Confirmed again on 2026-08-10 by direct probe of the deployed API on a throwaway |
 | 2026-08-10 | `docs/LEADERBOARD_WEBSITE_INTEGRATION.md` | 183 | ### A split codepoint DESTROYS THE BOARD (measured 2026-08-10) |
@@ -239,6 +239,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-15 | `tools/transcribe.py` | 8 | On 2026-08-15 this seat wrote that 33 minutes of narrated art-review recording |
 | 2026-08-16 | `docs/workshop-2/position.md` | 547 | **On 2026-08-16**, ask for three run IDs -- one per guard -- each showing the |
 | 2026-08-16 | `docs/workshop-2/position.md` | 647 | 2026-08-16. |
+| 2026-08-17 | `docs/LAPTOP_DEBIAN_SETUP.md` | 113 | **Now also verified ON THIS MACHINE (2026-08-17), which is what this section |
 | 2026-08-17 | `docs/art/HARVEST_PASS_PROPOSAL.md` | 36 | Added 2026-08-17, after the session audio was transcribed |
 | 2026-08-17 | `docs/rulings/RULINGS.md` | 34 | \| 2026-08-17 \| published figures live in tooling, not prose: the line item is the atom and every rendering is a projection \| `tools/render_budget.py - |
 | 2026-08-17 | `tools/render_budget.py` | 12 | RULING: 2026-08-17 -- published figures live in tooling, not prose: the line item is the atom and every rendering is a projection -- flavour: estate-p |
