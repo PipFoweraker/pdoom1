@@ -763,6 +763,14 @@
       "text": "second-pass fix routes where it was ruled to route.\"\"\""
     },
     {
+      "source": "tools/art_review/CLEARANCE_SHEET_2026-08-15.md:273",
+      "text": "| artq-017 | A | B T | \"Avoid cockleg problems, this is very funny though\" | **Already ruled by Pip.** The calibration for this sheet |"
+    },
+    {
+      "source": "tools/art_review/CLEARANCE_SHEET_2026-08-15.md:325",
+      "text": "Totals: **12 A** (including `artq-017`, already ruled, and `artq-014`, blocked"
+    },
+    {
       "source": "tools/art_review/apply_review.py:562",
       "text": "# its 07-21 reroll). Pip ruled both ship, so the older batch carries a"
     },

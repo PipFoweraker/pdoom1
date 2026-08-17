@@ -5,7 +5,7 @@
 > `python scripts/generate_rulings.py`. The convention, and why it looks
 > like this, is argued in `docs/rulings/RULINGS_CONVENTION.md`.
 
-**5 ruling(s)** across **3 flavour(s)**. **197** prose ruling(s) not yet declared.
+**5 ruling(s)** across **3 flavour(s)**. **199** prose ruling(s) not yet declared.
 
 ## By flavour
 
@@ -223,6 +223,8 @@ is not.
 - `scripts/generate_rulings.py:9` -- (`ruled by Pip`, `Pip ruled`, `ruled 2026-..`) scattered across .py docstrings,
 - `tests/test_art_promotion_pipeline.py:480` -- """Pip ruled 2026-08-03: "Keep both, you pick naming variant."
 - `tests/test_art_promotion_pipeline.py:74` -- second-pass fix routes where it was ruled to route."""
+- `tools/art_review/CLEARANCE_SHEET_2026-08-15.md:273` -- | artq-017 | A | B T | "Avoid cockleg problems, this is very funny though" | **Already ruled by Pip.** The calibration for this sheet |
+- `tools/art_review/CLEARANCE_SHEET_2026-08-15.md:325` -- Totals: **12 A** (including `artq-017`, already ruled, and `artq-014`, blocked
 - `tools/art_review/apply_review.py:562` -- # its 07-21 reroll). Pip ruled both ship, so the older batch carries a
 - `tools/art_review/apply_review.py:866` -- # Pip ruled 2026-08-03 that BOTH variants ship, so resolve collisions by
 - `tools/art_review/build_cull_sheet.py:107` -- # A null clearance means "not yet ruled on", which is not consent.

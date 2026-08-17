@@ -189,11 +189,18 @@ repos:
       # Rulings evaporate unless something gathers them. Same shape as the
       # commitment calendar: a one-line RULING: declaration writable anywhere,
       # a GENERATED index, and a --check that keeps it honest.
+      # NOTE THE BREADTH, and why. A RULING: line can be written ANYWHERE -- that
+      # is the whole convention. The first version of this hook fired only on
+      # docs/rulings/**, which meant a ruling written where rulings are actually
+      # supposed to go (next to the code it governs) would never trigger the
+      # check. Caught 2026-08-17 when an incoming commit added two files under
+      # tools/art_review/ and left the index stale with no hook complaining.
+      # Same reasoning, same pattern as commitment-calendar-check above.
       - id: rulings-index-check
         name: Rulings index matches the RULING declarations
         entry: python scripts/generate_rulings.py --check
         language: system
-        files: '^(docs/rulings/.*|scripts/generate_rulings\.py)$'
+        files: '^(docs/.*\.md|tools/.*\.(py|md)|scripts/.*\.py|godot/.*\.gd|docs/rulings/.*|[^/]*\.md)$'
         pass_filenames: false
 
       # Shipped images must not silently lose their signed C2PA credential. PIL
