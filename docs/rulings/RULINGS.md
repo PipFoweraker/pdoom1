@@ -5,7 +5,7 @@
 > `python scripts/generate_rulings.py`. The convention, and why it looks
 > like this, is argued in `docs/rulings/RULINGS_CONVENTION.md`.
 
-**5 ruling(s)** across **3 flavour(s)**. **199** prose ruling(s) not yet declared.
+**6 ruling(s)** across **3 flavour(s)**. **199** prose ruling(s) not yet declared.
 
 ## By flavour
 
@@ -31,6 +31,7 @@ flavour it belongs to and read what was already decided there.
 |---|---|---|---|
 | 2026-08-15 | the ruling road is cross-repo from day one, federated: each repo scans itself and emits rulings.json, an aggregator reads them, nothing writes back | `scripts/generate_rulings.py` | `docs/rulings/LEDGER.md:10` |
 | 2026-08-15 | naming a mechanism is OPTIONAL on a ruling, and the generated index reports which rulings have none | `scripts/generate_rulings.py` | `docs/rulings/LEDGER.md:11` |
+| 2026-08-17 | published figures live in tooling, not prose: the line item is the atom and every rendering is a projection | `tools/render_budget.py --check` | `tools/render_budget.py:12` |
 
 ## Nothing will re-ask these
 

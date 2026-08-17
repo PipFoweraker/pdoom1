@@ -1,0 +1,135 @@
+{
+  "_README": "The funding budget as DATA, not prose. Every published rendering -- the Manifund update, a website page, a printed sheet -- is generated from this file by tools/render_budget.py. Change a number here and every rendering follows; change one in prose and the others silently disagree, which is the failure this file exists to prevent.",
+  "_why_this_shape": "Pip's ruling 2026-08-17: 'Let's put things in tooling, not prose, and then we can rebuild either and update them easily.' Same move already made for art pull-quotes and event atoms. The line item is the atom; the page is a projection.",
+  "published": {
+    "minimum_usd": 14500,
+    "goal_usd": 48000,
+    "closes": "2026-09-09",
+    "all_or_nothing": true,
+    "url": "https://manifund.org/projects/fund-development-of-pdoom1",
+    "_note": "These four are STABLE and may be typed into copy. The raised total and days-remaining are NOT -- they move daily and a stale number is worse than none. The renderer refuses to emit either."
+  },
+  "provenance_vocabulary": {
+    "measured": "backed by invoices or logged usage this seat can produce",
+    "own_labour": "Pip's own time at his own stated rate; not a quote, and not meant to be",
+    "needs_quote": "no rate has been obtained and none is invented here",
+    "needs_definition": "cannot be priced because the thing itself is not yet decided"
+  },
+  "line_items": [
+    {
+      "id": "hosting",
+      "label": "Hosting and infrastructure, 12 months",
+      "min_usd": 900,
+      "goal_usd": 1500,
+      "provenance": "needs_quote",
+      "basis": "No first-party invoice exists in any repo. The only written figures are Plausible cloud analytics at $9/month and an archived note reading DreamHost $5-15/month.",
+      "settled_by": "Twelve months of DreamHost and domain-registrar invoices, plus the current analytics plan."
+    },
+    {
+      "id": "generation",
+      "label": "Asset generation and tooling",
+      "min_usd": 1100,
+      "goal_usd": 2500,
+      "provenance": "measured",
+      "basis": "Image generation runs $0.06 to $0.36 per image by size and quality; July 2026 came to $15.78 across 62 logged images. The sprite pipeline carries a 2,000-generation monthly pool at about $12/month, near $0.006 a generation. Dollars are not the constraint here; review time is.",
+      "settled_by": null,
+      "softest_number": "The ~$12/month sprite subscription was read off third-party pricing rather than an invoice."
+    },
+    {
+      "id": "dataset",
+      "label": "Open dataset maintenance, 12 months",
+      "min_usd": 3000,
+      "goal_usd": 4000,
+      "provenance": "own_labour",
+      "basis": "Derived from the day rate below, not from a quote. Pip's labour priced as his labour.",
+      "settled_by": null
+    },
+    {
+      "id": "time",
+      "label": "Partial recovery of Pip's time",
+      "min_usd": 9000,
+      "goal_usd": 12000,
+      "provenance": "own_labour",
+      "basis": "One focused day a week for twelve months. $9,000 prices the day near $170, well under what his operations and governance work commands. Deliberate, and better noticed than not.",
+      "settled_by": null
+    },
+    {
+      "id": "developer",
+      "label": "Part-time gameplay developer, ~6 months",
+      "min_usd": null,
+      "goal_usd": 20000,
+      "provenance": "needs_quote",
+      "basis": "No developer has been engaged and no rate agreed. $20,000 over six months is a placeholder written to size the ask.",
+      "settled_by": "Two or three actual rate conversations with people who would plausibly do the work."
+    },
+    {
+      "id": "art",
+      "label": "Directed art pass, human illustrator",
+      "min_usd": null,
+      "goal_usd": 6000,
+      "provenance": "needs_quote",
+      "basis": "No illustrator has been engaged and no rate card obtained.",
+      "settled_by": "Quotes taken against the written brief and the slot count.",
+      "see_also": "art_measurement"
+    },
+    {
+      "id": "community",
+      "label": "Community support",
+      "min_usd": null,
+      "goal_usd": 2000,
+      "provenance": "needs_definition",
+      "basis": "Chat and forum hosting at this size is close to free, so this line is either moderation time, events, or nothing. Undecided, and pricing it before deciding would be inventing a number.",
+      "settled_by": "Deciding what it is."
+    }
+  ],
+  "art_measurement": {
+    "_why": "The art line is the one a funder will interrogate, because the art is the only public criticism the project has had. So it is priced against a measurement rather than a feeling -- and the measurement CUTS the number rather than inflating it.",
+    "session": "2026-08-14, 12:01:55 to 12:25:00",
+    "assets_judged": 468,
+    "discarded": 273,
+    "kept": 194,
+    "_kept_note": "Recomputed 2026-08-17 from review_log.jsonl over the session window 12:01:55-12:25:00, final-verdict-per-asset. 273 discard + 194 keep + 1 remix = 468, and 194 + 4 = 198 slots. Everything reconciles. Earlier drafts published 470/274/197 and 206/199/5; NONE of those sets is internally consistent -- 199+5=204, not 206. The 470 figure is window-boundary sensitive (two assets sit at the edge), so copy says 'about 470' where a round number reads better, and the slot figures are used exactly because they are what an illustrator would price against.",
+    "distinct_slots": 198,
+    "slots_with_survivor": 194,
+    "slots_with_nothing_kept": 4,
+    "_slot_note": "273 discards is NOT 273 things to draw. The session was a selection sweep: versions of the same slot competed and losers were discarded. Price 198 slots, not 273 discards. Publishing this correction lowers the ask, which is the point.",
+    "slot_breakdown": {
+      "interface_and_action_icons": 84,
+      "hero_banners_key_art_backgrounds": 53,
+      "researcher_portraits": 12
+    },
+    "hero_candidates_judged": 73,
+    "hero_kept": 19,
+    "division": {
+      "naive_per_slot_usd": 30,
+      "_naive_note": "$6,000 over 198 slots. Not a real commissioned-illustration rate, and the copy says so rather than pretending. The renderer recomputes this division and fails if it stops agreeing, so the figure cannot outlive the slot count.",
+      "hypothesis": "A style bible plus a directed pass over the ~53 hero and background slots, near $113 each, with the icon set regenerated against that direction rather than drawn by hand.",
+      "_hypothesis_status": "A hypothesis about what an illustrator would say. Not a plan anyone has agreed to. Precisely what a quote would settle."
+    },
+    "remixed": 1
+  },
+  "known_gaps": [
+    {
+      "id": "five-hundred",
+      "what": "The minimum-tier line items sum to $14,000 against a published minimum of $14,500.",
+      "size_usd": 500,
+      "explanation": "Rounding from the evening the figure was set, not a hidden line item.",
+      "handling": "Name it. A reader who adds the column and finds it short with no acknowledgement concludes the table was reverse-engineered from the ask; one who finds it already flagged concludes the opposite.",
+      "_computed": "The renderer RECOMPUTES this gap from line_items and refuses to publish if the stated size disagrees. It cannot go stale."
+    },
+    {
+      "id": "platform-cut",
+      "what": "Whether Manifund takes a platform fee is unknown and unasked.",
+      "size_usd": null,
+      "explanation": "If there is a fee, the gap above is larger than $500.",
+      "handling": "Better that Pip finds out than that a funder does. Read the platform rules; this does not require asking a person."
+    }
+  ],
+  "constraints": [
+    "NOBODY has been hired, commissioned, approached, quoted or engaged. Every figure is conditional. A single slip into past tense makes this a misrepresentation.",
+    "The game is free and source-available and stays that way. A pledge funds the work, not a licence, and not early access.",
+    "Do not type the raised total or days remaining. Link the page and let it resolve.",
+    "Do not identify the project's first backer, by name OR by description, until he has been asked.",
+    "p(Doom)1 is not finished. No copy may frame this as a launch, a 1.0, or a completed thing."
+  ]
+}

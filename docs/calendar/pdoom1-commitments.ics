@@ -340,7 +340,7 @@ DTSTART;VALUE=DATE:20260810
 DTEND;VALUE=DATE:20260811
 SUMMARY:[TASK] Book the half-day audit-mechanics workshop\, target window 
  opens
-DESCRIPTION:Owner: pip. Kind: task. Source: docs/rulings/RULINGS.md:94. pd
+DESCRIPTION:Owner: pip. Kind: task. Source: docs/rulings/RULINGS.md:95. pd
  oom1#984\, ruled 2026-07-27 18:11. Scheduled to precede the 2026-08-31 f 
  -- Generated from tracked sources by scripts/generate_commitment_calendar
  .py\; regenerate to update.
@@ -556,7 +556,7 @@ DTSTART;VALUE=DATE:20260811
 DTEND;VALUE=DATE:20260812
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:37. 5 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
+ d:38. 5 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
  TMENT: declaration accounts for it. Either add a declaration or the date 
  is incidental. First line: Rulings with no `mechanism:`. Pip's doctrine (
  2026-08-11): what forces a -- Generated from tracked sources by scripts/g
@@ -674,7 +674,7 @@ DTSTART;VALUE=DATE:20260812
 DTEND;VALUE=DATE:20260813
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:201. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:202. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `godot/scripts/core/capacity.gd:5` -- ## Ru
  led 2026-08-12 (coordination/DESIGN_2026-08-12_interrupt-resolution-varia
@@ -967,7 +967,7 @@ DTSTART;VALUE=DATE:20260813
 DTEND;VALUE=DATE:20260814
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:57. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
+ d:58. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
  TMENT: declaration accounts for it. Either add a declaration or the date 
  is incidental. First line: - `docs/CONTENT_DISTRIBUTION_SYSTEM.md:10` -- 
  > **SUPERSEDED\, not merely "outdated in spirit"\, as of 2026-08-13.** Pi
@@ -2074,6 +2074,52 @@ DESCRIPTION:needs a declaration -- HARVEST_PASS_PROPOSAL.md (unparsed) --
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:3e6bda60e8fd8ca6@commitments.pdoom1
+DTSTAMP:20260817T000000Z
+DTSTART;VALUE=DATE:20260817
+DTEND;VALUE=DATE:20260818
+SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
+ d:34. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
+ TMENT: declaration accounts for it. Either add a declaration or the date 
+ is incidental. First line: | 2026-08-17 | published figures live in tooli
+ ng\, not prose: the line item is the atom and every rendering is a projec
+ tion | `tools/render_budget.py - -- Generated from tracked sources by scr
+ ipts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- RULINGS.md (unparsed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:68633fcf260fc02c@commitments.pdoom1
+DTSTAMP:20260817T000000Z
+DTSTART;VALUE=DATE:20260817
+DTEND;VALUE=DATE:20260818
+SUMMARY:[UNPARSED] needs a declaration -- render_budget.py
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/render_budget.py
+ :12. 1 line(s) in tools/render_budget.py mention this date and no COMMITM
+ ENT: declaration accounts for it. Either add a declaration or the date is
+  incidental. First line: RULING: 2026-08-17 -- published figures live in 
+ tooling\, not prose: the line item is the atom and every rendering is a p
+ rojection -- flavour: estate-p -- Generated from tracked sources by scrip
+ ts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- render_budget.py (unparsed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:f78edd2fc4426033@commitments.pdoom1
 DTSTAMP:20260817T000000Z
 DTSTART;VALUE=DATE:20260817
@@ -2540,7 +2586,7 @@ DTSTART;VALUE=DATE:20260831
 DTEND;VALUE=DATE:20260901
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:209. 2 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:210. 2 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `godot/scripts/core/researcher.gd:131` -- #
   SEAM (ruled 2026-07-27\, review-by 2026-08-31): AUDITS ground-truth repo

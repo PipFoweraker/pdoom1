@@ -3,7 +3,7 @@
   "repo": "pdoom1",
   "generated_from": "tracked files at HEAD",
   "convention": "docs/rulings/RULINGS_CONVENTION.md",
-  "count": 5,
+  "count": 6,
   "rulings": [
     {
       "id": "pdoom1:2026-08-15:4c94cd56",
@@ -59,6 +59,17 @@
       "supersedes": null,
       "superseded_by": null,
       "source": "docs/rulings/LEDGER.md:14"
+    },
+    {
+      "id": "pdoom1:2026-08-17:1bc4eb6f",
+      "date": "2026-08-17",
+      "ruling": "published figures live in tooling, not prose: the line item is the atom and every rendering is a projection",
+      "flavour": "estate-process",
+      "by": "Pip",
+      "mechanism": "tools/render_budget.py --check",
+      "supersedes": null,
+      "superseded_by": null,
+      "source": "tools/render_budget.py:12"
     }
   ],
   "undeclared": [
