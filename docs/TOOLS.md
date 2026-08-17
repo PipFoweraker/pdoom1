@@ -100,7 +100,7 @@ Declared with a `Layer:` line in a tool's module docstring; `--` = undeclared.
 | rule.py | -- | Capture a ruling in one command, and show the precedent before you make it. | human (docstring usage) |
 | slim_repo.py | -- | Reclaim git + .pck weight -- the slack mapped by the 2026-07-25 archival pass (#861). | human (docstring usage) |
 | sync_version.py | PROVE | Stamp the canonical game version into every place that cannot self-read it. | pre-commit; ci:quality-checks.yml; tool:build_release.py; tool:check_ladder_bump.py |
-| transcribe.py | OBSERVE | Transcribe a recording to timestamped text, offline, and optionally join it to the review log. | human (docstring usage) |
+| transcribe.py | OBSERVE | Transcribe a recording to timestamped text, offline, and optionally join it to the review log. | tool:serve_review.py |
 | transcribe_recording.py | OBSERVE | Turn a recording into a transcript. | tool:playtest_report.py |
 | validate_assets.py | -- | validate_assets.py -- pre-release asset-import validation gate. | human (docstring usage) |
 | velocity_report.py | OBSERVE | Reconstruct how much TIME a git history actually cost -- six ways, side by side. | human (declared) |
@@ -150,7 +150,7 @@ Declared with a `Layer:` line in a tool's module docstring; `--` = undeclared.
 | review_style.py | -- | review_style -- ONE house style for all internal review/dev HTML tools. | tool:analyze_verdicts.py; tool:build_cat_angle_ab_sheet.py; tool:build_cat_refinement_sheet.py; tool:build_cat_sweep_sheet.py; tool:build_cat_west_walk_picks.py; tool:build_doom_strip_sheet.py; tool:build_prop_rebase_sheet.py; tool:build_slot_picker.py; tool:build_t6_diagonals_and_cats_sheet.py; tool:build_worker_rebase_sheet.py; tool:build_worker_round2_sheet.py; tool:gen_contact_sheet.py; tool:gen_hero_gallery.py; tool:gen_prop_grain_sheet.py; tool:gen_quirk_icon_sheet.py; tool:gen_size_probe_sheet.py |
 | scan_text_leak.py | -- | Measure text leakage in a generated art batch, with OCR, and record the result. | tool:build_share_set.py |
 | scan_white_flash.py | -- | Scan walk-clip frames for the "white flash under the cat" artifact. | tool:build_cat_refinement_sheet.py |
-| serve_review.py | -- | Local art-review app for P(Doom)1 -- ONE place to review ALL the art. | tool:build_slot_picker.py; tool:scan_text_leak.py; tool:check_review_js.py |
+| serve_review.py | -- | Local art-review app for P(Doom)1 -- ONE place to review ALL the art. | test:test_harvest_pass.py; tool:build_slot_picker.py; tool:scan_text_leak.py; tool:check_review_js.py |
 | shortlist_l3_heroes.py | -- | shortlist_l3_heroes.py -- turn 140 flat hero candidates into an ordered shortlist. | human (docstring usage) |
 | slot_model.py | -- | slot_model.py -- the ONE definition of "slot cluster" and "frame role". | test:test_slot_picker.py; tool:apply_slot_picks.py; tool:build_slot_picker.py; tool:measure_taste.py |
 | text_leak_scan.py | -- | text_leak_scan.py -- measure how often generated art leaks legible text. | human (docstring usage) |

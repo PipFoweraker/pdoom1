@@ -13,7 +13,7 @@ Horizon: **2026-08-09** (the prose scan reports dates at or after this; roll it
 forward deliberately in `COMMITMENTS.md`, never automatically -- a clock-reading
 generator goes stale overnight and trains people to ignore the check).
 
-**49 declared, 4 release-train, 88 UNPARSED, 0 malformed.**
+**49 declared, 4 release-train, 89 UNPARSED, 0 malformed.**
 
 ## Declared commitments
 
@@ -156,17 +156,17 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-13 | `tools/art_review/serve_review.py` | 8 | TWO AXES (v3, 2026-08-13). A VERDICT is the asset's fate -- exactly one, exclusive. |
 | 2026-08-13 | `tools/art_review/serve_review.py` | 96 | # -- verdict model v3 (2026-08-13) ------------------------------------------- |
 | 2026-08-13 | `tools/art_review/serve_review.py` | 146 | "2026-08-13. Key is S; H still works as an alias for the hour this was " |
-| 2026-08-13 | `tools/art_review/serve_review.py` | 551 | predating the log (everything before 2026-08-13) are not in it, so a replay |
-| 2026-08-13 | `tools/art_review/serve_review.py` | 591 | "the log (2026-08-13). The replay is a SUBSET; state file NOT " |
-| 2026-08-13 | `tools/art_review/serve_review.py` | 720 | "Events predate the log only for decisions made before **2026-08-13**; a replay", |
-| 2026-08-13 | `tools/art_review/serve_review.py` | 1028 | Default smooth; body.px-crisp restores the sprite behaviour. (2026-08-13) */ |
-| 2026-08-13 | `tools/art_review/serve_review.py` | 1076 | and the reserved title space only read large. (2026-08-13) */ |
+| 2026-08-13 | `tools/art_review/serve_review.py` | 672 | predating the log (everything before 2026-08-13) are not in it, so a replay |
+| 2026-08-13 | `tools/art_review/serve_review.py` | 712 | "the log (2026-08-13). The replay is a SUBSET; state file NOT " |
+| 2026-08-13 | `tools/art_review/serve_review.py` | 841 | "Events predate the log only for decisions made before **2026-08-13**; a replay", |
+| 2026-08-13 | `tools/art_review/serve_review.py` | 1151 | Default smooth; body.px-crisp restores the sprite behaviour. (2026-08-13) */ |
+| 2026-08-13 | `tools/art_review/serve_review.py` | 1199 | and the reserved title space only read large. (2026-08-13) */ |
 | 2026-08-13 | `tools/art_review/shortlist_l3_heroes.py` | 13 | The 140 L3 heroes have ZERO verdicts (measured 2026-08-13). Presented flat they |
 | 2026-08-13 | `tools/art_review/shortlist_l3_heroes.py` | 235 | "**GENERATED** by `tools/art_review/shortlist_l3_heroes.py`, 2026-08-13.", |
 | 2026-08-13 | `tools/art_review/shortlist_l3_heroes.py` | 335 | "<title>L3 hero shortlist -- 2026-08-13</title>", |
 | 2026-08-13 | `tools/art_review/shortlist_l3_heroes.py` | 347 | "<p class='note'>Generated 2026-08-13. Ordered by contrast + detail density,", |
 | 2026-08-13 | `tools/check_class_cache.py` | 6 | WHY (2026-08-13, cost a first-time playtester's session): |
-| 2026-08-14 | `docs/art/HARVEST_PASS_PROPOSAL.md` | 38 | 2026-08-14 sweep contains the multi-pass workflow being invented in real time: |
+| 2026-08-14 | `docs/art/HARVEST_PASS_PROPOSAL.md` | 49 | 2026-08-14 sweep contains the multi-pass workflow being invented in real time: |
 | 2026-08-14 | `docs/art/audit_2026-08-13/NEXT_ROUND_BRIEF.md` | 1 | # Next-round brief -- what Pip said while judging, 2026-08-14 |
 | 2026-08-14 | `docs/art/audit_2026-08-13/SESSION_2026-08-14_first-mass-review.md` | 3 | **Recorded by `seat:pdoom`, 2026-08-14.** Every number below is re-derivable from |
 | 2026-08-14 | `docs/art/audit_2026-08-13/THE_REVISIONS_ARE_THE_STORY.md` | 3 | **Draft for Pip, 2026-08-14, by `seat:pdoom`.** Raw material for a blog post and |
@@ -174,17 +174,19 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-14 | `docs/art/audit_2026-08-13/THE_REVISIONS_ARE_THE_STORY.md` | 69 | and the session ran on **2026-08-14**. **It was about four hours old when it first |
 | 2026-08-14 | `docs/art/audit_2026-08-13/THE_REVISIONS_ARE_THE_STORY.md` | 82 | Measured coverage as at 2026-08-14: **1,391 of 2,099 families decided (66.3%)**. |
 | 2026-08-14 | `docs/art/audit_2026-08-13/THE_REVISIONS_ARE_THE_STORY.md` | 119 | \| **review state, verdict, notes, revision history** \| **yes, as of 2026-08-14** \| |
-| 2026-08-14 | `tools/art_review/serve_review.py` | 224 | # block is FOR and what a decision here means. (2026-08-14, Pip's ask.) |
-| 2026-08-14 | `tools/art_review/serve_review.py` | 1383 | // all move to the archive together. (2026-08-14, Pip's ask.) |
+| 2026-08-14 | `tools/art_review/serve_review.py` | 202 | # WHY EACH PASS STATES A QUESTION rather than just filtering. From the 2026-08-14 |
+| 2026-08-14 | `tools/art_review/serve_review.py` | 331 | # block is FOR and what a decision here means. (2026-08-14, Pip's ask.) |
+| 2026-08-14 | `tools/art_review/serve_review.py` | 1548 | // all move to the archive together. (2026-08-14, Pip's ask.) |
+| 2026-08-14 | `tools/art_review/serve_review.py` | 1852 | // 2026-08-14 session audio, Pip at 16:44: "let me do another pass, because I |
 | 2026-08-14 | `tools/check_refusal_classification.py` | 7 | WHY (playtest 2026-08-14, Pip): |
 | 2026-08-14 | `tools/check_review_js.py` | 6 | On 2026-08-14 the art review gallery was completely dead -- no verdicts, no |
 | 2026-08-14 | `tools/transcribe.py` | 24 | session, and the 2026-08-14 one drifts into unrelated personal browsing after |
 | 2026-08-14 | `tools/transcribe.py` | 47 | 2026-08-14 recording covers 495 of 506 logged decisions, so nearly every |
 | 2026-08-15 | `CLAUDE.md` | 223 | `UNDECLARED`, never dropped. **Cross-repo by design** (ruled 2026-08-15): |
-| 2026-08-15 | `docs/art/HARVEST_PASS_PROPOSAL.md` | 3 | > **Status: PROPOSED, nothing built.** Written 2026-08-15 for Pip to take to the |
-| 2026-08-15 | `docs/art/HARVEST_PASS_PROPOSAL.md` | 27 | Measured over `tools/art_review/review_state.json`, 2026-08-15 11:17 AEST. |
-| 2026-08-15 | `docs/art/HARVEST_PASS_PROPOSAL.md` | 29 | The batch-selection UI (b1287e8b, 2026-08-15 00:33) was built partly to fix this |
-| 2026-08-15 | `docs/art/HARVEST_PASS_PROPOSAL.md` | 75 | ## The diagnosis (Pip, 2026-08-15) |
+| 2026-08-15 | `docs/art/HARVEST_PASS_PROPOSAL.md` | 4 | > and the evidence trail). Written 2026-08-15 as a proposal. Self-contained: |
+| 2026-08-15 | `docs/art/HARVEST_PASS_PROPOSAL.md` | 38 | Measured over `tools/art_review/review_state.json`, 2026-08-15 11:17 AEST. |
+| 2026-08-15 | `docs/art/HARVEST_PASS_PROPOSAL.md` | 40 | The batch-selection UI (b1287e8b, 2026-08-15 00:33) was built partly to fix this |
+| 2026-08-15 | `docs/art/HARVEST_PASS_PROPOSAL.md` | 86 | ## The diagnosis (Pip, 2026-08-15) |
 | 2026-08-15 | `docs/art/MOTIF_AND_WATERMARK_PROTOCOL.md` | 3 | > Status: **DRAFT, not adopted.** Written 2026-08-15 as a design card for Pip, and as the |
 | 2026-08-15 | `docs/art/MOTIF_AND_WATERMARK_PROTOCOL.md` | 17 | ## Scope split -- two tiers with different purposes (Pip, 2026-08-15) |
 | 2026-08-15 | `docs/art/MOTIF_AND_WATERMARK_PROTOCOL.md` | 45 | \| a vocabulary for recurring elements \| `element:<thing>` harvest tags, `docs/art/NOMENCLATURE.md` \| the SPEC exists. **The data does not** -- see "Me |
@@ -225,7 +227,8 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-15 | `scripts/generate_rulings.py` | 8 | Measured 2026-08-15: more than forty rulings already live in this tree as prose |
 | 2026-08-15 | `scripts/generate_rulings.py` | 14 | 2. recall by FLAVOUR -- Pip, 2026-08-15: "these will show up again in similar |
 | 2026-08-15 | `tools/art_review/serve_review.py` | 169 | "to element: -- ruled by Pip 2026-08-15 because the sweeps are mostly " |
-| 2026-08-15 | `tools/art_review/serve_review.py` | 1597 | // Built 2026-08-15 from a measurement, not a preference: the first mass review |
+| 2026-08-15 | `tools/art_review/serve_review.py` | 199 | # harvest always loses -- measured 2026-08-15, 2 harvest tags across 7,944 judged |
+| 2026-08-15 | `tools/art_review/serve_review.py` | 1763 | // Built 2026-08-15 from a measurement, not a preference: the first mass review |
 | 2026-08-15 | `tools/assets/backfill_provenance.py` | 31 | Tier S was added 2026-08-15 and is why this ran again. Four assets sat pinned as |
 | 2026-08-15 | `tools/assets/backfill_provenance.py` | 276 | # Pip 2026-08-15 after four assets pinned `unknown` since 2026-08-11 turned |
 | 2026-08-15 | `tools/assets/backfill_provenance.py` | 407 | Measured 2026-08-15: a full re-run on this machine would move 245 records |
@@ -239,8 +242,10 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-15 | `tools/transcribe.py` | 8 | On 2026-08-15 this seat wrote that 33 minutes of narrated art-review recording |
 | 2026-08-16 | `docs/workshop-2/position.md` | 547 | **On 2026-08-16**, ask for three run IDs -- one per guard -- each showing the |
 | 2026-08-16 | `docs/workshop-2/position.md` | 647 | 2026-08-16. |
-| 2026-08-17 | `docs/art/HARVEST_PASS_PROPOSAL.md` | 36 | Added 2026-08-17, after the session audio was transcribed |
+| 2026-08-17 | `docs/art/HARVEST_PASS_PROPOSAL.md` | 3 | > **Status: BUILT 2026-08-17** (ruled and built; this card is kept as the argument |
+| 2026-08-17 | `docs/art/HARVEST_PASS_PROPOSAL.md` | 47 | Added 2026-08-17, after the session audio was transcribed |
 | 2026-08-17 | `docs/rulings/RULINGS.md` | 34 | \| 2026-08-17 \| published figures live in tooling, not prose: the line item is the atom and every rendering is a projection \| `tools/render_budget.py - |
+| 2026-08-17 | `tools/check_review_js.py` | 80 | # instead. (Cost 2026-08-17: two new placeholders, one confusing failure.) |
 | 2026-08-17 | `tools/render_budget.py` | 12 | RULING: 2026-08-17 -- published figures live in tooling, not prose: the line item is the atom and every rendering is a projection -- flavour: estate-p |
 | 2026-08-17 | `tools/transcribe.py` | 10 | currently can" read it. Pip's reply, 2026-08-17: |
 | 2026-08-17 | `tools/transcribe.py` | 35 | MEASURED 2026-08-17 on Pip's desktop (CPU-only torch 2.13, no CUDA): |
