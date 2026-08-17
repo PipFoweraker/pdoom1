@@ -36,6 +36,45 @@ const DOOM_STATUS_BANDS := [
 const DOOM_STROKE_FLOOR := 0.22
 const DOOM_STROKE_BRIGHT := Color(0.90, 0.40, 0.85)
 
+# ---------------------------------------------------------------------------
+# FONT SCALE (#1224). ONE number, and it is not in this file.
+#
+# `theme/base_theme.tres`'s `default_font_size` is the SSOT. It is registered as
+# the project theme, so it is also the value every unoverridden Control in the
+# game already renders at -- the lever and the result are the same number, which
+# is the property that stops them drifting apart.
+#
+# The steps below are OFFSETS from it, not absolute sizes and not ratios. They
+# are offsets so that turning the one number moves the whole scale by the same
+# amount: ratios would have left `header` and `title` almost unmoved by Pip's
+# "+2 to +4 points universally", which is the ask this exists to serve. The
+# offsets reproduce the relationships the old hardcoded scale had (12/16/24/32).
+const FONT_STEPS := {
+	"small": -4,
+	"body": 0,
+	"header": 8,
+	"title": 16,
+}
+
+# Fallback used ONLY if the project theme is missing or declares no size. It is
+# Godot's own built-in default, i.e. exactly what the game rendered at before
+# this SSOT existed, so a failure here degrades to the old behaviour rather than
+# to something nobody has ever looked at.
+const FONT_SSOT_FALLBACK := 16
+
+## The one number. Read from the project theme so there is no second copy to
+## drift; `push_error` rather than a silent default if it is not there.
+func base_font_size() -> int:
+	var project_theme := ThemeDB.get_project_theme()
+	if project_theme == null or project_theme.default_font_size <= 0:
+		push_error(
+			"ThemeManager: no project theme default_font_size. The font-size "
+			+ "SSOT (gui/theme/custom -> theme/base_theme.tres) is not loaded; "
+			+ "falling back to Godot's built-in %d." % FONT_SSOT_FALLBACK
+		)
+		return FONT_SSOT_FALLBACK
+	return project_theme.default_font_size
+
 # Resource + staff readout colours, on dark panels.
 #
 # WHY THESE ARE `const` AND NOT IN ThemeData.colors: get_color() returns the ACTIVE
@@ -114,13 +153,17 @@ class ThemeData:
 		"category_funding": Color(0.3, 0.8, 0.7),       # Cyan - financial
 	}
 
-	# Fonts
-	var fonts: Dictionary = {
-		"title_size": 32,
-		"header_size": 24,
-		"body_size": 16,
-		"small_size": 12,
-	}
+	# NO `fonts` DICTIONARY HERE ANY MORE (#1224). It used to carry
+	# {title_size: 32, header_size: 24, body_size: 16, small_size: 12} and it had
+	# exactly one caller in the whole codebase, which asked for the wrong key and
+	# therefore always took a fallback -- so the scale had never scaled anything.
+	#
+	# It is not restored here for a reason already ruled on: #1155 kept the
+	# pause-menu font sizes OFF this class precisely because a THEME SWAP MUST
+	# NOT MOVE A SIZE A TEST HAS PINNED. Sizes that live on ThemeData are
+	# swappable by definition. The scale now lives in theme/base_theme.tres and
+	# is read by ThemeManager.get_font_size() below, which does not consult the
+	# active theme at all.
 
 	# Spacing
 	var spacing: Dictionary = {
@@ -216,8 +259,10 @@ func _initialize_default_themes():
 	retro.colors["panel"] = Color(0.05, 0.1, 0.05)
 	retro.colors["text"] = Color(0.0, 1.0, 0.0)
 	retro.colors["accent"] = Color(0.0, 0.8, 0.0)
-	retro.fonts["title_size"] = 36
-	retro.fonts["body_size"] = 18
+	# Retro used to bump title_size to 36 and body_size to 18. Both are gone with
+	# the fonts dictionary (#1224): picking "Retro Terminal" must not resize the
+	# game's text, and after the SSOT bump its 18 would have been a DOWNGRADE
+	# from the 19 everything else now gets.
 	themes["retro"] = retro
 
 	# High Contrast theme
@@ -277,10 +322,28 @@ func get_color(color_name: String) -> Color:
 	var theme = get_theme()
 	return theme.colors.get(color_name, Color.WHITE)
 
-## Get a font size from current theme
+## Get a font size from the SSOT. NOT from the current theme -- see the note
+## where ThemeData.fonts used to be.
+##
+## Accepts the bare token ("body"), which is the convention apply_label_style()
+## has always used. It also accepts the old "body_size" spelling, because the
+## two APIs disagreeing about who appends "_size" is exactly what produced the
+## one broken call site this function ever had.
+##
+## An unrecognised token is an ERROR, not a shrug. The previous version returned
+## a silent 16 for anything it did not know, which is how a caller asking for
+## "body" against a key named "body_size" went unnoticed from the day it was
+## written: it kept returning a plausible number.
 func get_font_size(size_name: String) -> int:
-	var theme = get_theme()
-	return theme.fonts.get(size_name, 16)
+	var token := size_name.trim_suffix("_size")
+	if not FONT_STEPS.has(token):
+		push_error(
+			"ThemeManager.get_font_size(%s): unknown size token. Known: %s. "
+			% [size_name, ", ".join(FONT_STEPS.keys())]
+			+ "Returning body size; fix the caller rather than the fallback."
+		)
+		return base_font_size()
+	return base_font_size() + FONT_STEPS[token]
 
 ## Get a spacing value from current theme
 func get_spacing(spacing_name: String) -> int:
@@ -415,7 +478,7 @@ func create_label(text: String, size_type: String = "body") -> Label:
 ## Apply label style to existing label
 func apply_label_style(label: Label, size_type: String = "body"):
 	var theme = get_theme()
-	var font_size = theme.fonts.get(size_type + "_size", theme.fonts["body_size"])
+	var font_size = get_font_size(size_type)
 
 	label.add_theme_color_override("font_color", theme.colors["text"])
 	label.add_theme_font_size_override("font_size", font_size)

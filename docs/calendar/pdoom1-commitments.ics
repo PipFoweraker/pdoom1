@@ -340,10 +340,10 @@ DTSTART;VALUE=DATE:20260810
 DTEND;VALUE=DATE:20260811
 SUMMARY:[TASK] Book the half-day audit-mechanics workshop\, target window 
  opens
-DESCRIPTION:Owner: pip. Kind: task. Source: docs/rulings/RULINGS.md:95. pd
- oom1#984\, ruled 2026-07-27 18:11. Scheduled to precede the 2026-08-31 f 
- -- Generated from tracked sources by scripts/generate_commitment_calendar
- .py\; regenerate to update.
+DESCRIPTION:Owner: pip. Kind: task. Source: docs/rulings/RULINGS.md:101. p
+ doom1#984\, ruled 2026-07-27 18:11. Scheduled to precede the 2026-08-31 f
+  -- Generated from tracked sources by scripts/generate_commitment_calenda
+ r.py\; regenerate to update.
 CATEGORIES:TASK
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -556,7 +556,7 @@ DTSTART;VALUE=DATE:20260811
 DTEND;VALUE=DATE:20260812
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:38. 5 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
+ d:44. 5 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
  TMENT: declaration accounts for it. Either add a declaration or the date 
  is incidental. First line: Rulings with no `mechanism:`. Pip's doctrine (
  2026-08-11): what forces a -- Generated from tracked sources by scripts/g
@@ -674,7 +674,7 @@ DTSTART;VALUE=DATE:20260812
 DTEND;VALUE=DATE:20260813
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:202. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:209. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `godot/scripts/core/capacity.gd:5` -- ## Ru
  led 2026-08-12 (coordination/DESIGN_2026-08-12_interrupt-resolution-varia
@@ -967,7 +967,7 @@ DTSTART;VALUE=DATE:20260813
 DTEND;VALUE=DATE:20260814
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:58. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
+ d:64. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
  TMENT: declaration accounts for it. Either add a declaration or the date 
  is incidental. First line: - `docs/CONTENT_DISTRIBUTION_SYSTEM.md:10` -- 
  > **SUPERSEDED\, not merely "outdated in spirit"\, as of 2026-08-13.** Pi
@@ -1399,6 +1399,29 @@ ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- THE_REVISIONS_ARE_THE_STORY.md (unparse
  d) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:dacd730c1ba95f62@commitments.pdoom1
+DTSTAMP:20260814T000000Z
+DTSTART;VALUE=DATE:20260814
+DTEND;VALUE=DATE:20260815
+SUMMARY:[UNPARSED] needs a declaration -- check_font_sizes.py
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/check_font_sizes
+ .py:12. 1 line(s) in tools/check_font_sizes.py mention this date and no C
+ OMMITMENT: declaration accounts for it. Either add a declaration or the d
+ ate is incidental. First line: Pip\, after the 2026-08-14 playtest: "the 
+ text can just all universally go up 2 -- Generated from tracked sources b
+ y scripts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- check_font_sizes.py (unparsed) -- unown
+ ed
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
@@ -2080,7 +2103,7 @@ DTSTART;VALUE=DATE:20260817
 DTEND;VALUE=DATE:20260818
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:34. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
+ d:34. 2 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
  TMENT: declaration accounts for it. Either add a declaration or the date 
  is incidental. First line: | 2026-08-17 | published figures live in tooli
  ng\, not prose: the line item is the atom and every rendering is a projec
@@ -2094,6 +2117,30 @@ BEGIN:VALARM
 ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- RULINGS.md (unparsed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:c0f482ec78f3f475@commitments.pdoom1
+DTSTAMP:20260817T000000Z
+DTSTART;VALUE=DATE:20260817
+DTEND;VALUE=DATE:20260818
+SUMMARY:[UNPARSED] needs a declaration -- check_font_sizes.py
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/check_font_sizes
+ .py:16. 2 line(s) in tools/check_font_sizes.py mention this date and no C
+ OMMITMENT: declaration accounts for it. Either add a declaration or the d
+ ate is incidental. First line: RULING: 2026-08-17 -- the game has ONE fon
+ t-size lever (theme/base_theme.tres default_font_size\, registered as the
+  project theme) and a raw size overr -- Generated from tracked sources by
+  scripts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- check_font_sizes.py (unparsed) -- unown
+ ed
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
@@ -2586,7 +2633,7 @@ DTSTART;VALUE=DATE:20260831
 DTEND;VALUE=DATE:20260901
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:210. 2 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:217. 2 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `godot/scripts/core/researcher.gd:131` -- #
   SEAM (ruled 2026-07-27\, review-by 2026-08-31): AUDITS ground-truth repo

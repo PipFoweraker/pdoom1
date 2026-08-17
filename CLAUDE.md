@@ -224,6 +224,19 @@ runtime -- the old Python bridge is gone). Python exists only for CI/tooling in
   each repo emits `rulings.json` (schema `pdoom.rulings/0.1`) and an aggregator
   reads them; nothing writes back. Convention argued in
   `docs/rulings/RULINGS_CONVENTION.md`.
+- `godot/theme/base_theme.tres` -- **the font-size SSOT (#1224). ONE number:
+  `default_font_size`.** Registered as `gui/theme/custom` in `project.godot`, the
+  bottom of Godot's theme lookup chain, so it reaches every unoverridden Control
+  including `main.tscn` (declares no theme) and code-built panels with no
+  `.tscn`. `menu_theme.tres` is STYLING only and must declare no font size --
+  one `Button/font_sizes/font_size = 16` line there used to block the lever on
+  all nine menu screens. Named steps (`small`/`body`/`header`/`title`) come from
+  `ThemeManager.get_font_size()`, which reads the SSOT and does NOT consult the
+  active theme (a theme swap must not move a size a test pinned -- #1155).
+  **An explicit override always beats a theme**, so a raw
+  `theme_override_font_sizes/*` or `add_theme_font_size_override()` is a
+  deviation; `python tools/check_font_sizes.py` counts what is left (280 at the
+  time of writing) and RATCHETS -- the count may fall, never rise.
 - `godot/scripts/core/` -- game logic (game_state, turn_manager, actions,
   doom_system, finance_engine, events, ...). Deterministic, testable.
 - `godot/scripts/ui/` -- screens/panels (`main_ui.gd` is the 3k-line monolith).
