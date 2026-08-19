@@ -2076,6 +2076,29 @@ DESCRIPTION:needs a declaration -- HARVEST_PASS_PROPOSAL.md (unparsed) --
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:fd503983cad121f8@commitments.pdoom1
+DTSTAMP:20260817T000000Z
+DTSTART;VALUE=DATE:20260817
+DTEND;VALUE=DATE:20260818
+SUMMARY:[UNPARSED] needs a declaration -- LAPTOP_DEBIAN_SETUP.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/LAPTOP_DEBIAN_SET
+ UP.md:113. 1 line(s) in docs/LAPTOP_DEBIAN_SETUP.md mention this date and
+  no COMMITMENT: declaration accounts for it. Either add a declaration or 
+ the date is incidental. First line: **Now also verified ON THIS MACHINE (
+ 2026-08-17)\, which is what this section -- Generated from tracked source
+ s by scripts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- LAPTOP_DEBIAN_SETUP.md (unparsed) -- un
+ owned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:3e6bda60e8fd8ca6@commitments.pdoom1
 DTSTAMP:20260817T000000Z
 DTSTART;VALUE=DATE:20260817

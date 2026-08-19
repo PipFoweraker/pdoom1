@@ -105,16 +105,39 @@ Better: **do not hand-roll it.** `scripts/run_godot_tests.py` already sets all
 three vars (`APPDATA`, `XDG_DATA_HOME`, `HOME`) to a per-checkout sandbox, so the
 supported entry point is already correct on Linux.
 
-**What is verified and what is not.** Verified: `.github/workflows/godot-tests.yml`
-runs `run_godot_tests.py` on `ubuntu-latest`, and `godot/tests/unit/test_userdata_isolation.gd::test_runner_supplied_a_sandbox`
-asserts `user://` resolves *inside* the declared sandbox. That test passing in CI
-proves the runner's Linux isolation works. **Not verified:** which variable did
-it, because the runner sets `XDG_DATA_HOME` and `HOME` together. Nobody on this
-project has run Godot on Linux by hand.
+**What is verified.** Verified: `.github/workflows/godot-tests.yml` runs
+`run_godot_tests.py` on `ubuntu-latest`, and
+`godot/tests/unit/test_userdata_isolation.gd::test_runner_supplied_a_sandbox`
+asserts `user://` resolves *inside* the declared sandbox.
 
-**Confirm on first run, before trusting any of the above** -- run the fast gate on
-the laptop and check that `test_runner_supplied_a_sandbox` reports a pass rather
-than the skip branch:
+**Now also verified ON THIS MACHINE (2026-08-17), which is what this section
+asked for.** Godot 4.5.1 at `/home/pip/.local/bin/godot`; the fast gate ran
+`1360 tests, 0 failures` in ~16s and `test_runner_supplied_a_sandbox` reported a
+**pass, not the skip branch**:
+
+```
+the runner declared a sandbox at /tmp/pdoom1-godot-userdata/efc8e9b003e0
+but user:// resolved to /tmp/pdoom1-godot-userdata/efc8e9b003e0/godot/app_userdata/P(Doom)
+```
+
+**And the open question is closed: `XDG_DATA_HOME` is the variable that does it.**
+This doc previously recorded that as unverifiable because the runner sets both
+together. Pointing the two at DIFFERENT sandboxes separates them, which is safe
+in both outcomes because neither is the real profile:
+
+```
+XDG_DATA_HOME=/tmp/pdoom1-probe-xdg HOME=/tmp/pdoom1-probe-home \
+  godot --headless --path godot --script res://<a script printing OS.get_user_data_dir()>
+
+  -> /tmp/pdoom1-probe-xdg/godot/app_userdata/P(Doom)
+```
+
+`XDG_DATA_HOME` wins outright. `HOME` is genuinely only the belt to its braces --
+still set both, because the reasoning above (Godot ignores a *relative*
+`XDG_DATA_HOME`) is unchanged and costs nothing.
+
+**Still confirm on any new machine, before trusting the above** -- run the fast
+gate and check that `test_runner_supplied_a_sandbox` passes rather than skips:
 
 ```
 python scripts/run_godot_tests.py --quick --ci-mode --min-tests 300
