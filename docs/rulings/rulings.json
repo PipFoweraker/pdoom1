@@ -821,15 +821,15 @@
       "text": "Checks (per docs/art/PIXELLAB_OPERATIONS.md house rules, ruled 2026-07-26):"
     },
     {
-      "source": "tools/art_review/serve_review.py:106",
+      "source": "tools/art_review/serve_review.py:142",
       "text": "# estate has already ruled is just \"abandoned\" wearing a nicer word"
     },
     {
-      "source": "tools/art_review/serve_review.py:145",
+      "source": "tools/art_review/serve_review.py:181",
       "text": "\"are different layers and must not be one letter apart. Ruled by Pip \""
     },
     {
-      "source": "tools/art_review/serve_review.py:169",
+      "source": "tools/art_review/serve_review.py:205",
       "text": "\"to element: -- ruled by Pip 2026-08-15 because the sweeps are mostly \""
     },
     {

@@ -1,0 +1,1184 @@
+{
+  "gen:action_icons_missing:acquire_startup:v2": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T11:20:04.569764+00:00",
+    "verdict": "keep"
+  },
+  "gen:core_resource_icons:compute:v1": {
+    "note": ":Logo should be prettyy abstract, theyse are all boring and too representative. At least compute has energy. Move-towards signals: truistworthiness, and-having-values (speaking generally), - a logo can have some mystery to it in order to express an idea behind the image",
+    "tags": [],
+    "updated_at": "2026-08-19T11:51:47.962153+00:00",
+    "verdict": "discard"
+  },
+  "gen:core_resource_icons:doom:v1": {
+    "note": "there seall suck because they're boring",
+    "tags": [],
+    "updated_at": "2026-08-19T11:48:39.658694+00:00",
+    "verdict": "discard"
+  },
+  "gen:core_resource_icons:logo:v1": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T11:49:05.765940+00:00",
+    "verdict": "keep"
+  },
+  "gen:core_resource_icons:money:v1": {
+    "note": "there seall suck because they're boring",
+    "tags": [],
+    "updated_at": "2026-08-19T11:48:39.668861+00:00",
+    "verdict": "discard"
+  },
+  "gen:core_resource_icons:paper:v1": {
+    "note": "there seall suck because they're boring",
+    "tags": [],
+    "updated_at": "2026-08-19T11:48:39.677703+00:00",
+    "verdict": "discard"
+  },
+  "gen:core_resource_icons:reputation:v1": {
+    "note": ":Logo should be prettyy abstract, theyse are all boring and too representative. At least compute has energy. Move-towards signals: truistworthiness, and-having-values (speaking generally), - a logo can have some mystery to it in order to express an idea behind the image",
+    "tags": [],
+    "updated_at": "2026-08-19T11:51:47.974919+00:00",
+    "verdict": "discard"
+  },
+  "gen:core_resource_icons:research:v1": {
+    "note": ":Logo should be prettyy abstract, theyse are all boring and too representative. At least compute has energy. Move-towards signals: truistworthiness, and-having-values (speaking generally), - a logo can have some mystery to it in order to express an idea behind the image",
+    "tags": [],
+    "updated_at": "2026-08-19T11:51:47.983914+00:00",
+    "verdict": "discard"
+  },
+  "gen:crisp_sweep:cheerful_propaganda_atrium_soft:v1": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T11:42:47.348222+00:00",
+    "verdict": "keep"
+  },
+  "gen:crisp_sweep:cheerful_propaganda_atrium_soft:v2": {
+    "note": "not chosen -- set winner: cheerful_propaganda_atrium_soft",
+    "tags": [],
+    "updated_at": "2026-08-19T11:42:47.358956+00:00",
+    "verdict": "discard"
+  },
+  "gen:crisp_sweep:chokehold_water_and_gigawatts_crisp:v1": {
+    "note": "not chosen -- set winner: chokehold_water_and_gigawatts_crisp",
+    "tags": [],
+    "updated_at": "2026-08-19T11:43:43.740603+00:00",
+    "verdict": "discard"
+  },
+  "gen:crisp_sweep:chokehold_water_and_gigawatts_crisp:v2": {
+    "note": "looks like things are getting a bit intense, heavy, ugly",
+    "tags": [],
+    "updated_at": "2026-08-19T11:43:43.753622+00:00",
+    "verdict": "keep"
+  },
+  "gen:crisp_sweep:chokehold_water_and_gigawatts_graphic:v1": {
+    "note": "too much lighting on pipes",
+    "tags": [],
+    "updated_at": "2026-08-19T11:46:19.200323+00:00",
+    "verdict": "discard"
+  },
+  "gen:crisp_sweep:chokehold_water_and_gigawatts_graphic:v2": {
+    "note": "lighting inconsistent, think about liighting soures",
+    "tags": [],
+    "updated_at": "2026-08-19T11:46:19.211732+00:00",
+    "verdict": "keep"
+  },
+  "gen:crisp_sweep:chokehold_water_and_gigawatts_soft:v1": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T11:47:36.852959+00:00",
+    "verdict": "keep"
+  },
+  "gen:crisp_sweep:defeated_drone_coolant_crisp:v2": {
+    "note": "looks more defeated",
+    "tags": [],
+    "updated_at": "2026-08-19T11:53:08.230354+00:00",
+    "verdict": "keep"
+  },
+  "gen:endgame_concepts:attention_loud_vs_slow:v1": {
+    "note": "not chosen -- set winner: attention_loud_vs_slow",
+    "tags": [],
+    "updated_at": "2026-08-19T11:18:26.332280+00:00",
+    "verdict": "discard"
+  },
+  "gen:endgame_concepts:attention_loud_vs_slow:v2": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T11:18:26.358289+00:00",
+    "verdict": "keep"
+  },
+  "gen:game_icons:action_funding_grant_proposal:v1": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T11:20:13.886921+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:action_funding_grant_proposal:v2": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T11:20:13.901308+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:action_funding_grant_proposal:v3": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T11:20:13.912151+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:action_funding_loan:v1": {
+    "note": "not chosen -- set winner: action_funding_loan",
+    "tags": [],
+    "updated_at": "2026-08-19T11:53:25.627341+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:action_funding_loan:v2": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T11:53:25.642214+00:00",
+    "verdict": "keep"
+  },
+  "gen:game_icons:action_funding_loan:v3": {
+    "note": "not chosen -- set winner: action_funding_loan",
+    "tags": [],
+    "updated_at": "2026-08-19T11:53:25.654536+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:action_management_team_building:v1": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T11:53:54.662025+00:00",
+    "verdict": "keep"
+  },
+  "gen:game_icons:action_management_team_building:v2": {
+    "note": "NO COCK LEG FOR FUCKS SAKE",
+    "tags": [],
+    "updated_at": "2026-08-19T11:53:54.677436+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:action_management_team_building:v3": {
+    "note": "not chosen -- set winner: action_management_team_building",
+    "tags": [],
+    "updated_at": "2026-08-19T11:53:54.688931+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:action_publicity_network:v1": {
+    "note": "bit of softness",
+    "tags": [],
+    "updated_at": "2026-08-19T11:54:08.019557+00:00",
+    "verdict": "keep"
+  },
+  "gen:game_icons:action_publicity_network:v2": {
+    "note": "not chosen -- set winner: action_publicity_network",
+    "tags": [],
+    "updated_at": "2026-08-19T11:54:08.031512+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:action_publicity_network:v3": {
+    "note": "not chosen -- set winner: action_publicity_network",
+    "tags": [],
+    "updated_at": "2026-08-19T11:54:08.045464+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:action_publicity_open_source:v1": {
+    "note": "not chosen -- set winner: action_publicity_open_source",
+    "tags": [],
+    "updated_at": "2026-08-19T11:54:57.525688+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:action_publicity_open_source:v2": {
+    "note": "not chosen -- set winner: action_publicity_open_source",
+    "tags": [],
+    "updated_at": "2026-08-19T11:54:57.536399+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:action_publicity_open_source:v3": {
+    "note": "it's got movement, which is good",
+    "tags": [],
+    "updated_at": "2026-08-19T11:54:57.548710+00:00",
+    "verdict": "keep"
+  },
+  "gen:game_icons:action_strategic_acquire_startup:v1": {
+    "note": "boring but good that the lwindows have lit upness to them",
+    "tags": [],
+    "updated_at": "2026-08-19T11:56:23.508017+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:action_strategic_acquire_startup:v2": {
+    "note": "boring",
+    "tags": [],
+    "updated_at": "2026-08-19T11:56:23.521053+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:action_strategic_acquire_startup:v3": {
+    "note": "the difference in height and stages have more interest but this could do with some light in window/s",
+    "tags": [],
+    "updated_at": "2026-08-19T11:56:23.535211+00:00",
+    "verdict": "keep"
+  },
+  "gen:game_icons:action_strategic_lobby_government:v1": {
+    "note": "POUT MORE THAN ONE FUCKINGCOLOUR GRDIENT IN SHIT ESPECIALLY LOGOS FOR HECKERY DOOS SAKE THIS IS THE THIRD TIME",
+    "tags": [],
+    "updated_at": "2026-08-19T11:57:26.530994+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:action_strategic_lobby_government:v2": {
+    "note": "not chosen -- set winner: action_strategic_lobby_government",
+    "tags": [],
+    "updated_at": "2026-08-19T11:57:26.545314+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:action_strategic_lobby_government:v3": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T11:57:26.557864+00:00",
+    "verdict": "keep"
+  },
+  "gen:game_icons:action_strategic_sabotage:v1": {
+    "note": "a bit more devious",
+    "tags": [],
+    "updated_at": "2026-08-19T11:59:33.888736+00:00",
+    "verdict": null
+  },
+  "gen:game_icons:action_strategic_sabotage:v2": {
+    "note": "take notes from the oter two, spawn 5 children, remix, try other variations also",
+    "tags": [],
+    "updated_at": "2026-08-19T11:59:52.717238+00:00",
+    "verdict": "remix"
+  },
+  "gen:game_icons:action_strategic_sabotage:v3": {
+    "note": "this one has superiosr colour",
+    "tags": [],
+    "updated_at": "2026-08-19T11:59:40.231721+00:00",
+    "verdict": null
+  },
+  "gen:game_icons:doom_bg_critical:v1": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T12:00:10.726605+00:00",
+    "verdict": "keep"
+  },
+  "gen:game_icons:doom_bg_critical:v2": {
+    "note": "not chosen -- set winner: doom_bg_critical",
+    "tags": [],
+    "updated_at": "2026-08-19T12:00:10.739991+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:doom_bg_critical:v3": {
+    "note": "not chosen -- set winner: doom_bg_critical",
+    "tags": [],
+    "updated_at": "2026-08-19T12:00:10.752824+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:doom_bg_danger:v1": {
+    "note": "not chosen -- set winner: doom_bg_danger",
+    "tags": [],
+    "updated_at": "2026-08-19T12:00:16.242041+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:doom_bg_danger:v2": {
+    "note": "not chosen -- set winner: doom_bg_danger",
+    "tags": [],
+    "updated_at": "2026-08-19T12:00:16.256797+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:doom_bg_danger:v3": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T12:00:16.269042+00:00",
+    "verdict": "keep"
+  },
+  "gen:game_icons:doom_bg_safe:v1": {
+    "note": "not chosen -- set winner: doom_bg_safe",
+    "tags": [],
+    "updated_at": "2026-08-19T12:00:34.161425+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:doom_bg_safe:v2": {
+    "note": "not chosen -- set winner: doom_bg_safe",
+    "tags": [],
+    "updated_at": "2026-08-19T12:00:34.175304+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:doom_bg_safe:v3": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T12:00:34.188185+00:00",
+    "verdict": "keep"
+  },
+  "gen:game_icons:doom_bg_warning:v1": {
+    "note": "not chosen -- set winner: doom_bg_warning",
+    "tags": [],
+    "updated_at": "2026-08-19T12:00:44.354204+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:doom_bg_warning:v2": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T12:00:44.367393+00:00",
+    "verdict": "keep"
+  },
+  "gen:game_icons:doom_bg_warning:v3": {
+    "note": "not chosen -- set winner: doom_bg_warning",
+    "tags": [],
+    "updated_at": "2026-08-19T12:00:44.381922+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:doom_glow_effect:v1": {
+    "note": "not chosen -- set winner: doom_glow_effect",
+    "tags": [],
+    "updated_at": "2026-08-19T12:01:13.025315+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:doom_glow_effect:v2": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T12:01:13.039315+00:00",
+    "verdict": "keep"
+  },
+  "gen:game_icons:doom_glow_effect:v3": {
+    "note": "not chosen -- set winner: doom_glow_effect",
+    "tags": [],
+    "updated_at": "2026-08-19T12:01:13.051272+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:doom_meter_frame:v1": {
+    "note": "not chosen -- set winner: doom_meter_frame",
+    "tags": [],
+    "updated_at": "2026-08-19T12:01:18.086917+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:doom_meter_frame:v2": {
+    "note": "not chosen -- set winner: doom_meter_frame",
+    "tags": [],
+    "updated_at": "2026-08-19T12:01:18.101203+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:doom_meter_frame:v3": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T12:01:18.113584+00:00",
+    "verdict": "keep"
+  },
+  "gen:game_icons:icon_acquire_startup:v1": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T12:01:37.016861+00:00",
+    "verdict": "keep"
+  },
+  "gen:game_icons:icon_acquire_startup:v2": {
+    "note": "not chosen -- set winner: icon_acquire_startup",
+    "tags": [],
+    "updated_at": "2026-08-19T12:01:37.030055+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:icon_acquire_startup:v3": {
+    "note": "not chosen -- set winner: icon_acquire_startup",
+    "tags": [],
+    "updated_at": "2026-08-19T12:01:37.044324+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:icon_acquire_startup:v4": {
+    "note": "not chosen -- set winner: icon_acquire_startup",
+    "tags": [],
+    "updated_at": "2026-08-19T12:01:37.056479+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:icon_action_points:v1": {
+    "note": "not chosen -- set winner: icon_action_points",
+    "tags": [],
+    "updated_at": "2026-08-19T12:02:14.531827+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:icon_action_points:v2": {
+    "note": "good because of shine and colour gradient as well",
+    "tags": [],
+    "updated_at": "2026-08-19T12:02:14.545192+00:00",
+    "verdict": "keep"
+  },
+  "gen:game_icons:icon_action_points:v3": {
+    "note": "not chosen -- set winner: icon_action_points",
+    "tags": [],
+    "updated_at": "2026-08-19T12:02:14.559110+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:icon_action_points:v4": {
+    "note": "not chosen -- set winner: icon_action_points",
+    "tags": [],
+    "updated_at": "2026-08-19T12:02:14.570893+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:icon_audit_safety:v1": {
+    "note": "not chosen -- set winner: icon_audit_safety",
+    "tags": [],
+    "updated_at": "2026-08-19T12:02:40.855150+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:icon_audit_safety:v2": {
+    "note": "not chosen -- set winner: icon_audit_safety",
+    "tags": [],
+    "updated_at": "2026-08-19T12:02:40.868990+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:icon_audit_safety:v3": {
+    "note": "not chosen -- set winner: icon_audit_safety",
+    "tags": [],
+    "updated_at": "2026-08-19T12:02:40.881335+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:icon_audit_safety:v4": {
+    "note": "fershser",
+    "tags": [],
+    "updated_at": "2026-08-19T12:02:40.894630+00:00",
+    "verdict": "keep"
+  },
+  "gen:game_icons:icon_buy_compute:v1": {
+    "note": "not chosen -- set winner: icon_buy_compute",
+    "tags": [],
+    "updated_at": "2026-08-19T12:03:07.113424+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:icon_buy_compute:v2": {
+    "note": "not chosen -- set winner: icon_buy_compute",
+    "tags": [],
+    "updated_at": "2026-08-19T12:03:07.127556+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:icon_buy_compute:v3": {
+    "note": "not chosen -- set winner: icon_buy_compute",
+    "tags": [],
+    "updated_at": "2026-08-19T12:03:07.139640+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:icon_buy_compute:v4": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T12:03:07.154070+00:00",
+    "verdict": "keep"
+  },
+  "gen:game_icons:icon_capability_research:v1": {
+    "note": "doesn't mean anything",
+    "tags": [],
+    "updated_at": "2026-08-19T12:04:10.156292+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:icon_capability_research:v2": {
+    "note": "close second",
+    "tags": [],
+    "updated_at": "2026-08-19T12:04:10.168158+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:icon_capability_research:v3": {
+    "note": "shows outside the brain linkages",
+    "tags": [],
+    "updated_at": "2026-08-19T12:04:10.181307+00:00",
+    "verdict": "keep"
+  },
+  "gen:game_icons:icon_capability_research:v4": {
+    "note": "too baby colurs",
+    "tags": [],
+    "updated_at": "2026-08-19T12:04:10.195508+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:icon_compute:v1": {
+    "note": "not chosen -- set winner: icon_compute",
+    "tags": [],
+    "updated_at": "2026-08-19T12:04:26.792890+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:icon_compute:v2": {
+    "note": "not chosen -- set winner: icon_compute",
+    "tags": [],
+    "updated_at": "2026-08-19T12:04:26.805851+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:icon_compute:v3": {
+    "note": "not chosen -- set winner: icon_compute",
+    "tags": [],
+    "updated_at": "2026-08-19T12:04:26.820013+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:icon_compute:v4": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T12:04:26.830922+00:00",
+    "verdict": "keep"
+  },
+  "gen:game_icons:icon_doom:v1": {
+    "note": "no ugly roboto face today please",
+    "tags": [],
+    "updated_at": "2026-08-19T12:04:39.928686+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:icon_doom:v2": {
+    "note": "no ugly roboto face today please",
+    "tags": [],
+    "updated_at": "2026-08-19T12:04:39.944499+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:icon_doom:v3": {
+    "note": "no ugly roboto face today please",
+    "tags": [],
+    "updated_at": "2026-08-19T12:04:39.956680+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:icon_doom:v4": {
+    "note": "no ugly roboto face today please",
+    "tags": [],
+    "updated_at": "2026-08-19T12:04:39.970914+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:icon_emergency_pivot:v1": {
+    "note": "not chosen -- set winner: icon_emergency_pivot",
+    "tags": [],
+    "updated_at": "2026-08-19T12:04:50.859755+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:icon_emergency_pivot:v2": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T12:04:50.874277+00:00",
+    "verdict": "keep"
+  },
+  "gen:game_icons:icon_emergency_pivot:v3": {
+    "note": "not chosen -- set winner: icon_emergency_pivot",
+    "tags": [],
+    "updated_at": "2026-08-19T12:04:50.887431+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:icon_emergency_pivot:v4": {
+    "note": "not chosen -- set winner: icon_emergency_pivot",
+    "tags": [],
+    "updated_at": "2026-08-19T12:04:50.900078+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:icon_financing:v1": {
+    "note": "not chosen -- set winner: icon_financing",
+    "tags": [],
+    "updated_at": "2026-08-19T12:05:17.281709+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:icon_financing:v2": {
+    "note": "not chosen -- set winner: icon_financing",
+    "tags": [],
+    "updated_at": "2026-08-19T12:05:17.293351+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:icon_financing:v3": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T12:05:17.306567+00:00",
+    "verdict": "keep"
+  },
+  "gen:game_icons:icon_financing:v4": {
+    "note": "not chosen -- set winner: icon_financing",
+    "tags": [],
+    "updated_at": "2026-08-19T12:05:17.321062+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:icon_fundraise:v1": {
+    "note": "not a good or coherent set, full discard",
+    "tags": [],
+    "updated_at": "2026-08-19T12:06:06.240422+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:icon_fundraise:v2": {
+    "note": "not a good or coherent set, full discard",
+    "tags": [],
+    "updated_at": "2026-08-19T12:06:06.253627+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:icon_fundraise:v3": {
+    "note": "not a good or coherent set, full discard",
+    "tags": [],
+    "updated_at": "2026-08-19T12:06:06.268660+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:icon_fundraise:v4": {
+    "note": "not a good or coherent set, full discard",
+    "tags": [],
+    "updated_at": "2026-08-19T12:06:06.281838+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:icon_governance:v1": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T12:14:19.716211+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:icon_governance:v2": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T12:14:19.733534+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:icon_governance:v3": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T12:14:19.746306+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:icon_governance:v4": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T12:14:19.760960+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:icon_hire_staff:v1": {
+    "note": "boring, masculne",
+    "tags": [],
+    "updated_at": "2026-08-19T12:06:59.963561+00:00",
+    "verdict": "keep"
+  },
+  "gen:game_icons:icon_hire_staff:v2": {
+    "note": "boring, masculne",
+    "tags": [],
+    "updated_at": "2026-08-19T12:06:59.976130+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:icon_hire_staff:v3": {
+    "note": "boring, masculne",
+    "tags": [],
+    "updated_at": "2026-08-19T12:06:59.987288+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:icon_hire_staff:v4": {
+    "note": "boring, masculne",
+    "tags": [],
+    "updated_at": "2026-08-19T12:07:00.002240+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:icon_lobby_government:v1": {
+    "note": "nothingness",
+    "tags": [],
+    "updated_at": "2026-08-19T12:07:17.237987+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:icon_lobby_government:v2": {
+    "note": "nothingness",
+    "tags": [],
+    "updated_at": "2026-08-19T12:07:17.248533+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:icon_lobby_government:v3": {
+    "note": "nothingness",
+    "tags": [],
+    "updated_at": "2026-08-19T12:07:17.261869+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:icon_lobby_government:v4": {
+    "note": "nothingness",
+    "tags": [],
+    "updated_at": "2026-08-19T12:07:17.277213+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:icon_media_campaign:v1": {
+    "note": "not chosen -- set winner: icon_media_campaign",
+    "tags": [],
+    "updated_at": "2026-08-19T12:07:45.984374+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:icon_media_campaign:v2": {
+    "note": "not chosen -- set winner: icon_media_campaign",
+    "tags": [],
+    "updated_at": "2026-08-19T12:07:45.997698+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:icon_media_campaign:v3": {
+    "note": "no glowing cats",
+    "tags": [],
+    "updated_at": "2026-08-19T12:11:10.792936+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:icon_media_campaign:v4": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T12:07:46.024035+00:00",
+    "verdict": "keep"
+  },
+  "gen:game_icons:icon_money:v1": {
+    "note": "not chosen -- set winner: icon_money",
+    "tags": [],
+    "updated_at": "2026-08-19T12:14:34.753482+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:icon_money:v2": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T12:14:34.767380+00:00",
+    "verdict": "keep"
+  },
+  "gen:game_icons:icon_money:v3": {
+    "note": "not chosen -- set winner: icon_money",
+    "tags": [],
+    "updated_at": "2026-08-19T12:14:34.782294+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:icon_money:v4": {
+    "note": "not chosen -- set winner: icon_money",
+    "tags": [],
+    "updated_at": "2026-08-19T12:14:34.794177+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:icon_morale:v1": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T12:14:39.807490+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:icon_morale:v2": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T12:14:39.822986+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:icon_morale:v3": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T12:14:39.838004+00:00",
+    "verdict": "discard"
+  },
+  "gen:game_icons:icon_morale:v4": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T12:14:39.851304+00:00",
+    "verdict": "discard"
+  },
+  "gen:researcher_portraits_pilot:poleA_authoritarian_pessimist:v1": {
+    "note": "not chosen -- set winner: poleA_authoritarian_pessimist",
+    "tags": [],
+    "updated_at": "2026-08-19T11:35:17.736974+00:00",
+    "verdict": "discard"
+  },
+  "gen:researcher_portraits_pilot:poleA_authoritarian_pessimist:v2": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T11:35:17.749012+00:00",
+    "verdict": "keep"
+  },
+  "gen:researcher_portraits_pilot:poleA_burned_out_senior:v1": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T11:36:02.605681+00:00",
+    "verdict": "keep"
+  },
+  "gen:researcher_portraits_pilot:poleA_burned_out_senior:v2": {
+    "note": "not chosen -- set winner: poleA_burned_out_senior",
+    "tags": [],
+    "updated_at": "2026-08-19T11:36:02.617322+00:00",
+    "verdict": "discard"
+  },
+  "gen:researcher_portraits_pilot:poleA_capabilities_optimist:v1": {
+    "note": "need less maerican eeth pls",
+    "tags": [],
+    "updated_at": "2026-08-19T11:36:32.755487+00:00",
+    "verdict": "remix"
+  },
+  "gen:researcher_portraits_pilot:poleA_capabilities_optimist:v2": {
+    "note": "need less maerican teeths pls",
+    "tags": [],
+    "updated_at": "2026-08-19T11:36:31.771542+00:00",
+    "verdict": "remix"
+  },
+  "gen:researcher_portraits_pilot:poleA_fresh_grad_believer:v1": {
+    "note": "too shiny faced, too young",
+    "tags": [],
+    "updated_at": "2026-08-19T11:37:36.668217+00:00",
+    "verdict": null
+  },
+  "gen:researcher_portraits_pilot:poleA_fresh_grad_believer:v2": {
+    "note": "too shiny, too young for a grad, even a fresh grad, should be ~20-21 min ",
+    "tags": [],
+    "updated_at": "2026-08-19T11:37:54.250027+00:00",
+    "verdict": "remix"
+  },
+  "gen:researcher_portraits_pilot:poleA_moral_crusader:v1": {
+    "note": "looks like thinker",
+    "tags": [],
+    "updated_at": "2026-08-19T11:38:57.251264+00:00",
+    "verdict": null
+  },
+  "gen:researcher_portraits_pilot:poleA_moral_crusader:v2": {
+    "note": "looks like action person",
+    "tags": [],
+    "updated_at": "2026-08-19T11:39:13.407370+00:00",
+    "verdict": "keep"
+  },
+  "gen:round3_rerolls_banners:banner_title_hero_r3:v1": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T12:09:06.980887+00:00",
+    "verdict": "keep"
+  },
+  "gen:round3_rerolls_banners:banner_title_hero_r3:v2": {
+    "note": "not chosen -- set winner: banner_title_hero_r3",
+    "tags": [],
+    "updated_at": "2026-08-19T12:09:06.993645+00:00",
+    "verdict": "discard"
+  },
+  "gen:round3_rerolls_banners:fanfare_strategic_moves_r3:v1": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T12:09:11.114564+00:00",
+    "verdict": "keep"
+  },
+  "gen:treatment_sweep:treat_print_poster:v2": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T12:09:46.418928+00:00",
+    "verdict": "keep"
+  },
+  "gen:wanasai_calls:atrium_face_absent:v1": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T11:21:47.575743+00:00",
+    "verdict": "keep"
+  },
+  "gen:wanasai_calls:atrium_face_absent:v2": {
+    "note": "If took away brown table ands chairs, might fit better, they seem incongruous",
+    "tags": [],
+    "updated_at": "2026-08-19T11:22:26.216180+00:00",
+    "verdict": "remix"
+  },
+  "gen:wanasai_calls:atrium_face_blank:v1": {
+    "note": "not chosen -- set winner: atrium_face_blank",
+    "tags": [],
+    "updated_at": "2026-08-19T11:30:42.850928+00:00",
+    "verdict": "discard"
+  },
+  "gen:wanasai_calls:atrium_face_blank:v2": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T11:30:42.864140+00:00",
+    "verdict": "keep"
+  },
+  "gen:wanasai_calls:atrium_face_smiling:v1": {
+    "note": "not chosen -- set winner: atrium_face_smiling",
+    "tags": [],
+    "updated_at": "2026-08-19T11:30:46.103503+00:00",
+    "verdict": "discard"
+  },
+  "gen:wanasai_calls:atrium_face_smiling:v2": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T11:30:46.115068+00:00",
+    "verdict": "keep"
+  },
+  "gen:wanasai_calls:intro_obscured_moderate:v1": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T11:30:34.825839+00:00",
+    "verdict": "keep"
+  },
+  "gen:wanasai_calls:intro_obscured_moderate:v2": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T11:30:33.667144+00:00",
+    "verdict": "remix"
+  },
+  "gen:wanasai_calls:intro_obscured_total:v1": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T11:34:09.834034+00:00",
+    "verdict": "keep"
+  },
+  "gen:wanasai_calls:intro_obscured_total:v2": {
+    "note": "not chosen -- set winner: intro_obscured_total",
+    "tags": [],
+    "updated_at": "2026-08-19T11:34:09.846540+00:00",
+    "verdict": "discard"
+  },
+  "px:pixellab_2026-07-17/reroll/cats/cat_eldritch_1": {
+    "note": "no glowing cats",
+    "tags": [],
+    "updated_at": "2026-08-19T12:11:10.803988+00:00",
+    "verdict": "discard"
+  },
+  "px:pixellab_2026-07-17/reroll/cats/cat_eldritch_2": {
+    "note": "no glowing cats",
+    "tags": [],
+    "updated_at": "2026-08-19T12:11:10.812933+00:00",
+    "verdict": "discard"
+  },
+  "px:pixellab_2026-07-17/reroll/cats/cat_eldritch_3": {
+    "note": "no glowing cats",
+    "tags": [],
+    "updated_at": "2026-08-19T12:11:10.822009+00:00",
+    "verdict": "discard"
+  },
+  "px:pixellab_2026-07-17/reroll/cats/cat_eldritch_4": {
+    "note": "no glowing cats",
+    "tags": [],
+    "updated_at": "2026-08-19T12:11:10.833851+00:00",
+    "verdict": "discard"
+  },
+  "px:pixellab_2026-07-17/reroll/cats/cat_purple_1": {
+    "note": "no glowing cats",
+    "tags": [],
+    "updated_at": "2026-08-19T12:11:10.845598+00:00",
+    "verdict": "discard"
+  },
+  "px:pixellab_2026-07-17/reroll/cats/cat_purple_2": {
+    "note": "no glowing cats",
+    "tags": [],
+    "updated_at": "2026-08-19T12:11:10.857507+00:00",
+    "verdict": "discard"
+  },
+  "px:pixellab_2026-07-17/reroll/cats/cat_purple_3": {
+    "note": "no glowing cats",
+    "tags": [],
+    "updated_at": "2026-08-19T12:11:10.869204+00:00",
+    "verdict": "discard"
+  },
+  "px:pixellab_2026-07-17/reroll/cats/cat_purple_4": {
+    "note": "no glowing cats",
+    "tags": [],
+    "updated_at": "2026-08-19T12:11:10.880374+00:00",
+    "verdict": "discard"
+  },
+  "px:pixellab_2026-07-17/reroll/characters/cast_eccentric_genius_1": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T12:11:28.503993+00:00",
+    "verdict": "keep"
+  },
+  "px:pixellab_2026-07-17/reroll/windows/sky_clear_1": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T12:11:40.663869+00:00",
+    "verdict": "keep"
+  },
+  "px:pixellab_2026-07-19/characters/worker_cardigan_older/rotations/east": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T12:12:02.256748+00:00",
+    "verdict": "keep"
+  },
+  "px:pixellab_2026-07-19/characters/worker_cardigan_older/rotations/north": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T12:12:02.287405+00:00",
+    "verdict": "keep"
+  },
+  "px:pixellab_2026-07-19/characters/worker_cardigan_older/rotations/north-east": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T12:12:02.268229+00:00",
+    "verdict": "keep"
+  },
+  "px:pixellab_2026-07-19/characters/worker_cardigan_older/rotations/north-west": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T12:12:02.277738+00:00",
+    "verdict": "keep"
+  },
+  "px:pixellab_2026-07-19/characters/worker_cardigan_older/rotations/south": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T12:12:02.318243+00:00",
+    "verdict": "keep"
+  },
+  "px:pixellab_2026-07-19/characters/worker_cardigan_older/rotations/south-east": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T12:12:02.298613+00:00",
+    "verdict": "keep"
+  },
+  "px:pixellab_2026-07-19/characters/worker_cardigan_older/rotations/south-west": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T12:12:02.308358+00:00",
+    "verdict": "keep"
+  },
+  "px:pixellab_2026-07-19/characters/worker_cardigan_older/rotations/west": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T12:12:02.506367+00:00",
+    "verdict": "keep"
+  },
+  "px:pixellab_2026-07-19/characters/worker_headphones_young/rotations/east": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T12:12:12.674291+00:00",
+    "verdict": "keep"
+  },
+  "px:pixellab_2026-07-19/characters/worker_headphones_young/rotations/north": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T12:12:12.704048+00:00",
+    "verdict": "keep"
+  },
+  "px:pixellab_2026-07-19/characters/worker_headphones_young/rotations/north-east": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T12:12:12.684318+00:00",
+    "verdict": "keep"
+  },
+  "px:pixellab_2026-07-19/characters/worker_headphones_young/rotations/north-west": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T12:12:12.693243+00:00",
+    "verdict": "keep"
+  },
+  "px:pixellab_2026-07-19/characters/worker_headphones_young/rotations/south": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T12:12:12.737003+00:00",
+    "verdict": "keep"
+  },
+  "px:pixellab_2026-07-19/characters/worker_headphones_young/rotations/south-east": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T12:12:12.715325+00:00",
+    "verdict": "keep"
+  },
+  "px:pixellab_2026-07-19/characters/worker_headphones_young/rotations/south-west": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T12:12:12.725559+00:00",
+    "verdict": "keep"
+  },
+  "px:pixellab_2026-07-19/characters/worker_headphones_young/rotations/west": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T12:12:12.746336+00:00",
+    "verdict": "keep"
+  },
+  "px:pixellab_2026-07-19/characters/worker_hoodie_m/rotations/east": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T12:12:20.485163+00:00",
+    "verdict": "keep"
+  },
+  "px:pixellab_2026-07-19/characters/worker_hoodie_m/rotations/north": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T12:12:20.515814+00:00",
+    "verdict": "keep"
+  },
+  "px:pixellab_2026-07-19/characters/worker_hoodie_m/rotations/north-east": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T12:12:20.494973+00:00",
+    "verdict": "keep"
+  },
+  "px:pixellab_2026-07-19/characters/worker_hoodie_m/rotations/north-west": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T12:12:20.505433+00:00",
+    "verdict": "keep"
+  },
+  "px:pixellab_2026-07-19/characters/worker_hoodie_m/rotations/south": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T12:12:20.546035+00:00",
+    "verdict": "keep"
+  },
+  "px:pixellab_2026-07-19/characters/worker_hoodie_m/rotations/south-east": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T12:12:20.526311+00:00",
+    "verdict": "keep"
+  },
+  "px:pixellab_2026-07-19/characters/worker_hoodie_m/rotations/south-west": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T12:12:20.535299+00:00",
+    "verdict": "keep"
+  },
+  "px:pixellab_2026-07-19/characters/worker_hoodie_m/rotations/west": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T12:12:20.558147+00:00",
+    "verdict": "keep"
+  },
+  "px:pixellab_2026-07-19/props/armchair_1": {
+    "note": "good",
+    "tags": [],
+    "updated_at": "2026-08-19T12:12:50.460986+00:00",
+    "verdict": "keep"
+  },
+  "px:pixellab_2026-07-19/props/bookshelf_1": {
+    "note": "not in style",
+    "tags": [],
+    "updated_at": "2026-08-19T12:13:48.744304+00:00",
+    "verdict": "discard"
+  },
+  "px:pixellab_2026-07-19/props/box_stack_1": {
+    "note": "good",
+    "tags": [],
+    "updated_at": "2026-08-19T12:12:50.473410+00:00",
+    "verdict": "keep"
+  },
+  "px:pixellab_2026-07-19/props/cardboard_box_1": {
+    "note": "good",
+    "tags": [],
+    "updated_at": "2026-08-19T12:12:50.484174+00:00",
+    "verdict": "keep"
+  },
+  "px:pixellab_2026-07-19/props/chair_decent_1": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T12:14:10.816965+00:00",
+    "verdict": "remix"
+  },
+  "px:pixellab_2026-07-19/props/chair_mega_1": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T12:14:10.827191+00:00",
+    "verdict": "remix"
+  },
+  "px:pixellab_2026-07-19/props/chair_scummy_1": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T12:14:10.837128+00:00",
+    "verdict": "remix"
+  },
+  "px:pixellab_2026-07-19/props/coat_rack_1": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T12:14:10.846609+00:00",
+    "verdict": "remix"
+  },
+  "px:pixellab_2026-07-19/props/coffee_machine_1": {
+    "note": "good",
+    "tags": [],
+    "updated_at": "2026-08-19T12:12:50.498425+00:00",
+    "verdict": "keep"
+  },
+  "px:pixellab_2026-07-19/props/corkboard_1": {
+    "note": "not in style",
+    "tags": [],
+    "updated_at": "2026-08-19T12:13:48.753840+00:00",
+    "verdict": "discard"
+  },
+  "px:pixellab_2026-07-19/props/couch_waiting_1": {
+    "note": "not in style",
+    "tags": [],
+    "updated_at": "2026-08-19T12:13:48.764945+00:00",
+    "verdict": "discard"
+  },
+  "px:pixellab_2026-07-19/props/desk_decent_1": {
+    "note": "not in style",
+    "tags": [],
+    "updated_at": "2026-08-19T12:13:48.774164+00:00",
+    "verdict": "discard"
+  },
+  "px:pixellab_2026-07-19/props/desk_lamp_1": {
+    "note": "",
+    "tags": [],
+    "updated_at": "2026-08-19T12:26:19.269348+00:00",
+    "verdict": "keep"
+  },
+  "px:pixellab_2026-07-19/props/desk_mega_1": {
+    "note": "not in style",
+    "tags": [],
+    "updated_at": "2026-08-19T12:26:19.287024+00:00",
+    "verdict": "discard"
+  },
+  "px:pixellab_2026-07-19/props/desk_scummy_1": {
+    "note": "not in style",
+    "tags": [],
+    "updated_at": "2026-08-19T12:26:19.303151+00:00",
+    "verdict": "discard"
+  }
+}

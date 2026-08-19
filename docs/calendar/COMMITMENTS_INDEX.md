@@ -13,7 +13,7 @@ Horizon: **2026-08-09** (the prose scan reports dates at or after this; roll it
 forward deliberately in `COMMITMENTS.md`, never automatically -- a clock-reading
 generator goes stale overnight and trains people to ignore the check).
 
-**49 declared, 4 release-train, 93 UNPARSED, 0 malformed.**
+**49 declared, 4 release-train, 96 UNPARSED, 0 malformed.**
 
 ## Declared commitments
 
@@ -154,13 +154,13 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-13 | `tools/art_review/scan_text_leak.py` | 178 | Why (2026-08-13): the ledger path only covers the 2026-08-07 art night. The |
 | 2026-08-13 | `tools/art_review/scan_text_leak.py` | 266 | Deliberately NOT cell-based. Two reasons, both measured 2026-08-13: |
 | 2026-08-13 | `tools/art_review/serve_review.py` | 8 | TWO AXES (v3, 2026-08-13). A VERDICT is the asset's fate -- exactly one, exclusive. |
-| 2026-08-13 | `tools/art_review/serve_review.py` | 96 | # -- verdict model v3 (2026-08-13) ------------------------------------------- |
-| 2026-08-13 | `tools/art_review/serve_review.py` | 146 | "2026-08-13. Key is S; H still works as an alias for the hour this was " |
-| 2026-08-13 | `tools/art_review/serve_review.py` | 672 | predating the log (everything before 2026-08-13) are not in it, so a replay |
-| 2026-08-13 | `tools/art_review/serve_review.py` | 712 | "the log (2026-08-13). The replay is a SUBSET; state file NOT " |
-| 2026-08-13 | `tools/art_review/serve_review.py` | 841 | "Events predate the log only for decisions made before **2026-08-13**; a replay", |
-| 2026-08-13 | `tools/art_review/serve_review.py` | 1151 | Default smooth; body.px-crisp restores the sprite behaviour. (2026-08-13) */ |
-| 2026-08-13 | `tools/art_review/serve_review.py` | 1199 | and the reserved title space only read large. (2026-08-13) */ |
+| 2026-08-13 | `tools/art_review/serve_review.py` | 132 | # -- verdict model v3 (2026-08-13) ------------------------------------------- |
+| 2026-08-13 | `tools/art_review/serve_review.py` | 182 | "2026-08-13. Key is S; H still works as an alias for the hour this was " |
+| 2026-08-13 | `tools/art_review/serve_review.py` | 712 | predating the log (everything before 2026-08-13) are not in it, so a replay |
+| 2026-08-13 | `tools/art_review/serve_review.py` | 752 | "the log (2026-08-13). The replay is a SUBSET; state file NOT " |
+| 2026-08-13 | `tools/art_review/serve_review.py` | 881 | "Events predate the log only for decisions made before **2026-08-13**; a replay", |
+| 2026-08-13 | `tools/art_review/serve_review.py` | 1193 | Default smooth; body.px-crisp restores the sprite behaviour. (2026-08-13) */ |
+| 2026-08-13 | `tools/art_review/serve_review.py` | 1241 | and the reserved title space only read large. (2026-08-13) */ |
 | 2026-08-13 | `tools/art_review/shortlist_l3_heroes.py` | 13 | The 140 L3 heroes have ZERO verdicts (measured 2026-08-13). Presented flat they |
 | 2026-08-13 | `tools/art_review/shortlist_l3_heroes.py` | 235 | "**GENERATED** by `tools/art_review/shortlist_l3_heroes.py`, 2026-08-13.", |
 | 2026-08-13 | `tools/art_review/shortlist_l3_heroes.py` | 335 | "<title>L3 hero shortlist -- 2026-08-13</title>", |
@@ -174,10 +174,10 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-14 | `docs/art/audit_2026-08-13/THE_REVISIONS_ARE_THE_STORY.md` | 69 | and the session ran on **2026-08-14**. **It was about four hours old when it first |
 | 2026-08-14 | `docs/art/audit_2026-08-13/THE_REVISIONS_ARE_THE_STORY.md` | 82 | Measured coverage as at 2026-08-14: **1,391 of 2,099 families decided (66.3%)**. |
 | 2026-08-14 | `docs/art/audit_2026-08-13/THE_REVISIONS_ARE_THE_STORY.md` | 119 | \| **review state, verdict, notes, revision history** \| **yes, as of 2026-08-14** \| |
-| 2026-08-14 | `tools/art_review/serve_review.py` | 202 | # WHY EACH PASS STATES A QUESTION rather than just filtering. From the 2026-08-14 |
-| 2026-08-14 | `tools/art_review/serve_review.py` | 331 | # block is FOR and what a decision here means. (2026-08-14, Pip's ask.) |
-| 2026-08-14 | `tools/art_review/serve_review.py` | 1548 | // all move to the archive together. (2026-08-14, Pip's ask.) |
-| 2026-08-14 | `tools/art_review/serve_review.py` | 1852 | // 2026-08-14 session audio, Pip at 16:44: "let me do another pass, because I |
+| 2026-08-14 | `tools/art_review/serve_review.py` | 238 | # WHY EACH PASS STATES A QUESTION rather than just filtering. From the 2026-08-14 |
+| 2026-08-14 | `tools/art_review/serve_review.py` | 367 | # block is FOR and what a decision here means. (2026-08-14, Pip's ask.) |
+| 2026-08-14 | `tools/art_review/serve_review.py` | 1590 | // all move to the archive together. (2026-08-14, Pip's ask.) |
+| 2026-08-14 | `tools/art_review/serve_review.py` | 1894 | // 2026-08-14 session audio, Pip at 16:44: "let me do another pass, because I |
 | 2026-08-14 | `tools/check_font_sizes.py` | 12 | Pip, after the 2026-08-14 playtest: "the text can just all universally go up 2 |
 | 2026-08-14 | `tools/check_refusal_classification.py` | 7 | WHY (playtest 2026-08-14, Pip): |
 | 2026-08-14 | `tools/check_review_js.py` | 6 | On 2026-08-14 the art review gallery was completely dead -- no verdicts, no |
@@ -214,7 +214,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-15 | `docs/rulings/RULINGS.md` | 33 | \| 2026-08-15 \| naming a mechanism is OPTIONAL on a ruling, and the generated index reports which rulings have none \| `scripts/generate_rulings.py` \| ` |
 | 2026-08-15 | `docs/rulings/RULINGS.md` | 62 | - `CLAUDE.md:223` -- `UNDECLARED`, never dropped. **Cross-repo by design** (ruled 2026-08-15): |
 | 2026-08-15 | `docs/rulings/RULINGS.md` | 204 | - `godot/data/asset_provenance.json:4102` -- "why": "Ruled by Pip 2026-08-15. A signed credential outranks every heuristic and is the only evidence th |
-| 2026-08-15 | `docs/rulings/RULINGS.md` | 244 | - `tools/art_review/serve_review.py:169` -- "to element: -- ruled by Pip 2026-08-15 because the sweeps are mostly " |
+| 2026-08-15 | `docs/rulings/RULINGS.md` | 244 | - `tools/art_review/serve_review.py:205` -- "to element: -- ruled by Pip 2026-08-15 because the sweeps are mostly " |
 | 2026-08-15 | `docs/rulings/RULINGS.md` | 247 | - `tools/assets/backfill_provenance.py:473` -- "Ruled by Pip 2026-08-15. A signed credential outranks every heuristic and " |
 | 2026-08-15 | `docs/rulings/RULINGS_CONVENTION.md` | 9 | Rulings in this estate are already being captured -- measured 2026-08-15, more |
 | 2026-08-15 | `docs/rulings/RULINGS_CONVENTION.md` | 18 | 2. **Recall by flavour.** Pip, 2026-08-15: *"these will show up again in |
@@ -227,9 +227,9 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-15 | `pdoom1#1092` | 0 | art(sweep): events name physical things the office never shows -- install a security system, no cameras appear; sweep events for asset refs, then bulk |
 | 2026-08-15 | `scripts/generate_rulings.py` | 8 | Measured 2026-08-15: more than forty rulings already live in this tree as prose |
 | 2026-08-15 | `scripts/generate_rulings.py` | 14 | 2. recall by FLAVOUR -- Pip, 2026-08-15: "these will show up again in similar |
-| 2026-08-15 | `tools/art_review/serve_review.py` | 169 | "to element: -- ruled by Pip 2026-08-15 because the sweeps are mostly " |
-| 2026-08-15 | `tools/art_review/serve_review.py` | 199 | # harvest always loses -- measured 2026-08-15, 2 harvest tags across 7,944 judged |
-| 2026-08-15 | `tools/art_review/serve_review.py` | 1763 | // Built 2026-08-15 from a measurement, not a preference: the first mass review |
+| 2026-08-15 | `tools/art_review/serve_review.py` | 205 | "to element: -- ruled by Pip 2026-08-15 because the sweeps are mostly " |
+| 2026-08-15 | `tools/art_review/serve_review.py` | 235 | # harvest always loses -- measured 2026-08-15, 2 harvest tags across 7,944 judged |
+| 2026-08-15 | `tools/art_review/serve_review.py` | 1805 | // Built 2026-08-15 from a measurement, not a preference: the first mass review |
 | 2026-08-15 | `tools/assets/backfill_provenance.py` | 31 | Tier S was added 2026-08-15 and is why this ran again. Four assets sat pinned as |
 | 2026-08-15 | `tools/assets/backfill_provenance.py` | 276 | # Pip 2026-08-15 after four assets pinned `unknown` since 2026-08-11 turned |
 | 2026-08-15 | `tools/assets/backfill_provenance.py` | 407 | Measured 2026-08-15: a full re-run on this machine would move 245 records |
@@ -255,6 +255,9 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-17 | `tools/transcribe.py` | 10 | currently can" read it. Pip's reply, 2026-08-17: |
 | 2026-08-17 | `tools/transcribe.py` | 35 | MEASURED 2026-08-17 on Pip's desktop (CPU-only torch 2.13, no CUDA): |
 | 2026-08-19 | `docs/playtest/REVIEW_2026-08-19_font-size-ssot.md` | 3 | **Merged:** `71d2fa76` on 2026-08-19. **Recording:** full session. |
+| 2026-08-19 | `tools/art_review/compare_reviewers.py` | 8 | On 2026-08-19 a second reviewer (Wanasai) judged art for the first time. Two |
+| 2026-08-19 | `tools/art_review/revert_action.py` | 12 | THE INCIDENT IT WAS WRITTEN FOR (2026-08-19) |
+| 2026-08-19 | `tools/art_review/serve_review.py` | 88 | # WHOSE TASTE THIS IS. Added 2026-08-19, when a second reviewer sat down. |
 | 2026-08-24 | `docs/design/LEAGUE_CUTOVER_PLAYBOOK.md` | 41 | at L4, and is pinned for reflective review on/after 2026-08-24. |
 | 2026-08-24 | `pdoom1#808` | 0 | Reflective review (on/after 2026-08-24): release/league cycle nomenclature + cadence |
 | 2026-08-24 | `pdoom1#811` | 0 | Workshop 3 (mechanics) -- Mon 07-27 W-3a / Tue 07-28 build / Wed 07-29 W-3b-W-4: crisp parts, brutal decisions |

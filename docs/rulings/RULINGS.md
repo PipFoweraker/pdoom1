@@ -239,9 +239,9 @@ is not.
 - `tools/art_review/extract_pullquotes.py:227` -- # Per-platform clearance. null means "not yet ruled on"; a list
 - `tools/art_review/extract_pullquotes.py:30` -- Verbatim is the default and the stored text is never edited. Pip ruled this
 - `tools/art_review/qc_sprite_frames.py:4` -- Checks (per docs/art/PIXELLAB_OPERATIONS.md house rules, ruled 2026-07-26):
-- `tools/art_review/serve_review.py:106` -- # estate has already ruled is just "abandoned" wearing a nicer word
-- `tools/art_review/serve_review.py:145` -- "are different layers and must not be one letter apart. Ruled by Pip "
-- `tools/art_review/serve_review.py:169` -- "to element: -- ruled by Pip 2026-08-15 because the sweeps are mostly "
+- `tools/art_review/serve_review.py:142` -- # estate has already ruled is just "abandoned" wearing a nicer word
+- `tools/art_review/serve_review.py:181` -- "are different layers and must not be one letter apart. Ruled by Pip "
+- `tools/art_review/serve_review.py:205` -- "to element: -- ruled by Pip 2026-08-15 because the sweeps are mostly "
 - `tools/assets/backfill_provenance.py:147` -- `art_prompts/*.yaml` is the RULED source of truth per ART_MASTERS_POLICY:
 - `tools/assets/backfill_provenance.py:38` -- ORIGIN VOCABULARY -- five values, ruled by Pip 2026-08-11
 - `tools/assets/backfill_provenance.py:473` -- "Ruled by Pip 2026-08-15. A signed credential outranks every heuristic and "

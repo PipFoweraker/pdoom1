@@ -1,0 +1,494 @@
+{
+  "a": "pip",
+  "b": "wanasai",
+  "params": {
+    "burst_seconds": 1.5,
+    "bulk_min_assets": 25
+  },
+  "counts": {
+    "a_total": 7944,
+    "b_total": 197,
+    "shared": 176,
+    "a_bulk_assets": 1869,
+    "b_bulk_assets": 1691,
+    "deliberate_shared": 153,
+    "a_actions": 218,
+    "b_actions": 127,
+    "a_largest_action": 323,
+    "b_largest_action": 1694
+  },
+  "keep_rate_all": {
+    "pip": 61,
+    "wanasai": 34
+  },
+  "keep_rate_deliberate": {
+    "pip": 67,
+    "wanasai": 35
+  },
+  "verdicts_deliberate": {
+    "pip": {
+      "keep": 102,
+      "discard": 49,
+      "remix": 2
+    },
+    "wanasai": {
+      "keep": 53,
+      "discard": 94,
+      "null": 2,
+      "remix": 4
+    }
+  },
+  "agreement_deliberate": {
+    "agreed": 80,
+    "of": 153,
+    "pct": 52
+  },
+  "matrix": [
+    {
+      "a": "keep",
+      "b": "discard",
+      "n": 57
+    },
+    {
+      "a": "keep",
+      "b": "keep",
+      "n": 42
+    },
+    {
+      "a": "discard",
+      "b": "discard",
+      "n": 37
+    },
+    {
+      "a": "discard",
+      "b": "keep",
+      "n": 10
+    },
+    {
+      "a": "keep",
+      "b": "remix",
+      "n": 3
+    },
+    {
+      "a": "discard",
+      "b": null,
+      "n": 2
+    },
+    {
+      "a": "remix",
+      "b": "keep",
+      "n": 1
+    },
+    {
+      "a": "remix",
+      "b": "remix",
+      "n": 1
+    }
+  ],
+  "b_rejects_a_keep": [
+    {
+      "asset": "gen:core_resource_icons:compute:v1",
+      "family": "core_resource_icons",
+      "a_note": "",
+      "b_note": ":Logo should be prettyy abstract, theyse are all boring and too representative. At least compute has energy. Move-towards signals: truistworthiness, and-having-values (speaking generally), - a logo can have some mystery to it in order to express an idea behind the image"
+    },
+    {
+      "asset": "gen:core_resource_icons:doom:v1",
+      "family": "core_resource_icons",
+      "a_note": "",
+      "b_note": "there seall suck because they're boring"
+    },
+    {
+      "asset": "gen:core_resource_icons:money:v1",
+      "family": "core_resource_icons",
+      "a_note": "",
+      "b_note": "there seall suck because they're boring"
+    },
+    {
+      "asset": "gen:core_resource_icons:paper:v1",
+      "family": "core_resource_icons",
+      "a_note": "",
+      "b_note": "there seall suck because they're boring"
+    },
+    {
+      "asset": "gen:core_resource_icons:reputation:v1",
+      "family": "core_resource_icons",
+      "a_note": "",
+      "b_note": ":Logo should be prettyy abstract, theyse are all boring and too representative. At least compute has energy. Move-towards signals: truistworthiness, and-having-values (speaking generally), - a logo can have some mystery to it in order to express an idea behind the image"
+    },
+    {
+      "asset": "gen:core_resource_icons:research:v1",
+      "family": "core_resource_icons",
+      "a_note": "",
+      "b_note": ":Logo should be prettyy abstract, theyse are all boring and too representative. At least compute has energy. Move-towards signals: truistworthiness, and-having-values (speaking generally), - a logo can have some mystery to it in order to express an idea behind the image"
+    },
+    {
+      "asset": "gen:crisp_sweep:chokehold_water_and_gigawatts_crisp:v1",
+      "family": "crisp_sweep",
+      "a_note": "",
+      "b_note": "not chosen -- set winner: chokehold_water_and_gigawatts_crisp"
+    },
+    {
+      "asset": "gen:crisp_sweep:chokehold_water_and_gigawatts_graphic:v1",
+      "family": "crisp_sweep",
+      "a_note": "",
+      "b_note": "too much lighting on pipes"
+    },
+    {
+      "asset": "gen:endgame_concepts:attention_loud_vs_slow:v1",
+      "family": "endgame_concepts",
+      "a_note": "",
+      "b_note": "not chosen -- set winner: attention_loud_vs_slow"
+    },
+    {
+      "asset": "gen:game_icons:action_funding_grant_proposal:v1",
+      "family": "game_icons",
+      "a_note": "The yellow is a little unsubtle, this could maybe have the tick come down in intensity a little",
+      "b_note": ""
+    },
+    {
+      "asset": "gen:game_icons:action_funding_loan:v3",
+      "family": "game_icons",
+      "a_note": "",
+      "b_note": "not chosen -- set winner: action_funding_loan"
+    },
+    {
+      "asset": "gen:game_icons:action_publicity_network:v2",
+      "family": "game_icons",
+      "a_note": "",
+      "b_note": "not chosen -- set winner: action_publicity_network"
+    },
+    {
+      "asset": "gen:game_icons:action_strategic_lobby_government:v2",
+      "family": "game_icons",
+      "a_note": "at least 2 colour tones please",
+      "b_note": "not chosen -- set winner: action_strategic_lobby_government"
+    },
+    {
+      "asset": "gen:game_icons:doom_bg_critical:v2",
+      "family": "game_icons",
+      "a_note": "",
+      "b_note": "not chosen -- set winner: doom_bg_critical"
+    },
+    {
+      "asset": "gen:game_icons:doom_meter_frame:v1",
+      "family": "game_icons",
+      "a_note": "This might not need an icon, revert to instructions and confirm back to user if needed",
+      "b_note": "not chosen -- set winner: doom_meter_frame"
+    },
+    {
+      "asset": "gen:game_icons:icon_acquire_startup:v2",
+      "family": "game_icons",
+      "a_note": "",
+      "b_note": "not chosen -- set winner: icon_acquire_startup"
+    },
+    {
+      "asset": "gen:game_icons:icon_acquire_startup:v3",
+      "family": "game_icons",
+      "a_note": "",
+      "b_note": "not chosen -- set winner: icon_acquire_startup"
+    },
+    {
+      "asset": "gen:game_icons:icon_acquire_startup:v4",
+      "family": "game_icons",
+      "a_note": "",
+      "b_note": "not chosen -- set winner: icon_acquire_startup"
+    },
+    {
+      "asset": "gen:game_icons:icon_action_points:v1",
+      "family": "game_icons",
+      "a_note": "",
+      "b_note": "not chosen -- set winner: icon_action_points"
+    },
+    {
+      "asset": "gen:game_icons:icon_action_points:v3",
+      "family": "game_icons",
+      "a_note": "",
+      "b_note": "not chosen -- set winner: icon_action_points"
+    },
+    {
+      "asset": "gen:game_icons:icon_action_points:v4",
+      "family": "game_icons",
+      "a_note": "",
+      "b_note": "not chosen -- set winner: icon_action_points"
+    },
+    {
+      "asset": "gen:game_icons:icon_audit_safety:v1",
+      "family": "game_icons",
+      "a_note": "",
+      "b_note": "not chosen -- set winner: icon_audit_safety"
+    },
+    {
+      "asset": "gen:game_icons:icon_audit_safety:v2",
+      "family": "game_icons",
+      "a_note": "",
+      "b_note": "not chosen -- set winner: icon_audit_safety"
+    },
+    {
+      "asset": "gen:game_icons:icon_audit_safety:v3",
+      "family": "game_icons",
+      "a_note": "",
+      "b_note": "not chosen -- set winner: icon_audit_safety"
+    },
+    {
+      "asset": "gen:game_icons:icon_buy_compute:v1",
+      "family": "game_icons",
+      "a_note": "",
+      "b_note": "not chosen -- set winner: icon_buy_compute"
+    },
+    {
+      "asset": "gen:game_icons:icon_buy_compute:v2",
+      "family": "game_icons",
+      "a_note": "",
+      "b_note": "not chosen -- set winner: icon_buy_compute"
+    },
+    {
+      "asset": "gen:game_icons:icon_buy_compute:v3",
+      "family": "game_icons",
+      "a_note": "",
+      "b_note": "not chosen -- set winner: icon_buy_compute"
+    },
+    {
+      "asset": "gen:game_icons:icon_capability_research:v1",
+      "family": "game_icons",
+      "a_note": "",
+      "b_note": "doesn't mean anything"
+    },
+    {
+      "asset": "gen:game_icons:icon_capability_research:v2",
+      "family": "game_icons",
+      "a_note": "",
+      "b_note": "close second"
+    },
+    {
+      "asset": "gen:game_icons:icon_capability_research:v4",
+      "family": "game_icons",
+      "a_note": "",
+      "b_note": "too baby colurs"
+    },
+    {
+      "asset": "gen:game_icons:icon_compute:v1",
+      "family": "game_icons",
+      "a_note": "",
+      "b_note": "not chosen -- set winner: icon_compute"
+    },
+    {
+      "asset": "gen:game_icons:icon_compute:v2",
+      "family": "game_icons",
+      "a_note": "",
+      "b_note": "not chosen -- set winner: icon_compute"
+    },
+    {
+      "asset": "gen:game_icons:icon_compute:v3",
+      "family": "game_icons",
+      "a_note": "",
+      "b_note": "not chosen -- set winner: icon_compute"
+    },
+    {
+      "asset": "gen:game_icons:icon_financing:v1",
+      "family": "game_icons",
+      "a_note": "",
+      "b_note": "not chosen -- set winner: icon_financing"
+    },
+    {
+      "asset": "gen:game_icons:icon_governance:v1",
+      "family": "game_icons",
+      "a_note": "",
+      "b_note": ""
+    },
+    {
+      "asset": "gen:game_icons:icon_governance:v2",
+      "family": "game_icons",
+      "a_note": "",
+      "b_note": ""
+    },
+    {
+      "asset": "gen:game_icons:icon_governance:v3",
+      "family": "game_icons",
+      "a_note": "",
+      "b_note": ""
+    },
+    {
+      "asset": "gen:game_icons:icon_governance:v4",
+      "family": "game_icons",
+      "a_note": "",
+      "b_note": ""
+    },
+    {
+      "asset": "gen:game_icons:icon_hire_staff:v2",
+      "family": "game_icons",
+      "a_note": "",
+      "b_note": "boring, masculne"
+    },
+    {
+      "asset": "gen:game_icons:icon_hire_staff:v3",
+      "family": "game_icons",
+      "a_note": "",
+      "b_note": "boring, masculne"
+    },
+    {
+      "asset": "gen:game_icons:icon_hire_staff:v4",
+      "family": "game_icons",
+      "a_note": "",
+      "b_note": "boring, masculne"
+    },
+    {
+      "asset": "gen:game_icons:icon_lobby_government:v1",
+      "family": "game_icons",
+      "a_note": "",
+      "b_note": "nothingness"
+    },
+    {
+      "asset": "gen:game_icons:icon_lobby_government:v2",
+      "family": "game_icons",
+      "a_note": "",
+      "b_note": "nothingness"
+    },
+    {
+      "asset": "gen:game_icons:icon_lobby_government:v3",
+      "family": "game_icons",
+      "a_note": "",
+      "b_note": "nothingness"
+    },
+    {
+      "asset": "gen:game_icons:icon_lobby_government:v4",
+      "family": "game_icons",
+      "a_note": "",
+      "b_note": "nothingness"
+    },
+    {
+      "asset": "gen:game_icons:icon_media_campaign:v1",
+      "family": "game_icons",
+      "a_note": "",
+      "b_note": "not chosen -- set winner: icon_media_campaign"
+    },
+    {
+      "asset": "gen:game_icons:icon_media_campaign:v2",
+      "family": "game_icons",
+      "a_note": "",
+      "b_note": "not chosen -- set winner: icon_media_campaign"
+    },
+    {
+      "asset": "gen:game_icons:icon_media_campaign:v3",
+      "family": "game_icons",
+      "a_note": "",
+      "b_note": "no glowing cats"
+    },
+    {
+      "asset": "gen:game_icons:icon_money:v1",
+      "family": "game_icons",
+      "a_note": "",
+      "b_note": "not chosen -- set winner: icon_money"
+    },
+    {
+      "asset": "gen:game_icons:icon_money:v3",
+      "family": "game_icons",
+      "a_note": "",
+      "b_note": "not chosen -- set winner: icon_money"
+    },
+    {
+      "asset": "gen:game_icons:icon_money:v4",
+      "family": "game_icons",
+      "a_note": "",
+      "b_note": "not chosen -- set winner: icon_money"
+    },
+    {
+      "asset": "gen:game_icons:icon_morale:v1",
+      "family": "game_icons",
+      "a_note": "",
+      "b_note": ""
+    },
+    {
+      "asset": "gen:game_icons:icon_morale:v2",
+      "family": "game_icons",
+      "a_note": "",
+      "b_note": ""
+    },
+    {
+      "asset": "gen:game_icons:icon_morale:v3",
+      "family": "game_icons",
+      "a_note": "",
+      "b_note": ""
+    },
+    {
+      "asset": "gen:game_icons:icon_morale:v4",
+      "family": "game_icons",
+      "a_note": "",
+      "b_note": ""
+    },
+    {
+      "asset": "gen:wanasai_calls:atrium_face_blank:v1",
+      "family": "wanasai_calls",
+      "a_note": "",
+      "b_note": "not chosen -- set winner: atrium_face_blank"
+    },
+    {
+      "asset": "gen:wanasai_calls:atrium_face_smiling:v1",
+      "family": "wanasai_calls",
+      "a_note": "Having a human face makes it weird, see what happens if we give the figure (a) a mask, so it could be human or robot, (b) a copy of (a) but mybe make one of the arms or the person be ambiguouss or hinting at possibly being robotis as well, (c) have the figure still be fairly non-human but with more religious overtones as well as (d) a version of (c) but with more state-propoganda overtines",
+      "b_note": "not chosen -- set winner: atrium_face_smiling"
+    }
+  ],
+  "b_keeps_a_discard": [
+    {
+      "asset": "gen:endgame_concepts:attention_loud_vs_slow:v2",
+      "family": "endgame_concepts",
+      "a_note": "",
+      "b_note": ""
+    },
+    {
+      "asset": "gen:game_icons:action_funding_loan:v2",
+      "family": "game_icons",
+      "a_note": "not chosen -- set winner: action_funding_loan",
+      "b_note": ""
+    },
+    {
+      "asset": "gen:game_icons:action_publicity_network:v1",
+      "family": "game_icons",
+      "a_note": "not chosen -- set winner: action_publicity_network",
+      "b_note": "bit of softness"
+    },
+    {
+      "asset": "gen:game_icons:action_strategic_lobby_government:v3",
+      "family": "game_icons",
+      "a_note": "not chosen -- set winner: action_strategic_lobby_government",
+      "b_note": ""
+    },
+    {
+      "asset": "gen:game_icons:doom_bg_critical:v1",
+      "family": "game_icons",
+      "a_note": "not chosen -- set winner: doom_bg_critical",
+      "b_note": ""
+    },
+    {
+      "asset": "gen:game_icons:doom_meter_frame:v3",
+      "family": "game_icons",
+      "a_note": "this ouroborous like flavour is intersting, explore it more with a few other variants?",
+      "b_note": ""
+    },
+    {
+      "asset": "gen:game_icons:icon_emergency_pivot:v2",
+      "family": "game_icons",
+      "a_note": "",
+      "b_note": ""
+    },
+    {
+      "asset": "gen:game_icons:icon_financing:v3",
+      "family": "game_icons",
+      "a_note": "",
+      "b_note": ""
+    },
+    {
+      "asset": "gen:wanasai_calls:atrium_face_smiling:v2",
+      "family": "wanasai_calls",
+      "a_note": "not chosen -- set winner: atrium_face_smiling",
+      "b_note": ""
+    },
+    {
+      "asset": "gen:wanasai_calls:intro_obscured_moderate:v1",
+      "family": "wanasai_calls",
+      "a_note": "not chosen -- set winner: intro_obscured_moderate",
+      "b_note": ""
+    }
+  ]
+}

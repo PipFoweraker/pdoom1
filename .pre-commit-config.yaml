@@ -20,7 +20,17 @@ repos:
         args: ['--maxkb=1000']
         # Music tracks are legitimately >1MB; committed game/tool audio is
         # deliberate (storage-is-cheap policy). Guard stays for everything else.
-        exclude: '^(godot/assets/audio/|tools/music/captures/game/).*\.(ogg|mp3|wav)$'
+        #
+        # Review decision logs are the SECOND legitimate class. They are
+        # append-only and are the source of truth for every verdict ever made --
+        # review_state.json is only a projection of them. They grow forever by
+        # design, and the alternative to committing them is losing the history
+        # the whole review system exists to keep. Wanasai's crossed 1MB on her
+        # first session (2026-08-19); Pip's was at 902KB the same day, so this
+        # was days from firing regardless. Text, diffable, compresses well.
+        exclude: >-
+          ^(godot/assets/audio/|tools/music/captures/game/).*\.(ogg|mp3|wav)$
+          |^tools/art_review/review_log.*\.jsonl$
       - id: check-case-conflict
       - id: check-merge-conflict
       - id: detect-private-key

@@ -1477,7 +1477,7 @@ DTSTART;VALUE=DATE:20260814
 DTEND;VALUE=DATE:20260815
 SUMMARY:[UNPARSED] needs a declaration -- serve_review.py
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/art_review/serve
- _review.py:202. 4 line(s) in tools/art_review/serve_review.py mention thi
+ _review.py:238. 4 line(s) in tools/art_review/serve_review.py mention thi
  s date and no COMMITMENT: declaration accounts for it. Either add a decla
  ration or the date is incidental. First line: # WHY EACH PASS STATES A QU
  ESTION rather than just filtering. From the 2026-08-14 -- Generated from 
@@ -1979,7 +1979,7 @@ DTSTART;VALUE=DATE:20260815
 DTEND;VALUE=DATE:20260816
 SUMMARY:[UNPARSED] needs a declaration -- serve_review.py
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/art_review/serve
- _review.py:169. 3 line(s) in tools/art_review/serve_review.py mention thi
+ _review.py:205. 3 line(s) in tools/art_review/serve_review.py mention thi
  s date and no COMMITMENT: declaration accounts for it. Either add a decla
  ration or the date is incidental. First line: "to element: -- ruled by Pi
  p 2026-08-15 because the sweeps are mostly " -- Generated from tracked so
@@ -2259,6 +2259,75 @@ ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- REVIEW_2026-08-19_font-size-ssot.md (un
  parsed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:f622d5baf5e4f5c3@commitments.pdoom1
+DTSTAMP:20260819T000000Z
+DTSTART;VALUE=DATE:20260819
+DTEND;VALUE=DATE:20260820
+SUMMARY:[UNPARSED] needs a declaration -- compare_reviewers.py
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/art_review/compa
+ re_reviewers.py:8. 1 line(s) in tools/art_review/compare_reviewers.py men
+ tion this date and no COMMITMENT: declaration accounts for it. Either add
+  a declaration or the date is incidental. First line: On 2026-08-19 a sec
+ ond reviewer (Wanasai) judged art for the first time. Two -- Generated fr
+ om tracked sources by scripts/generate_commitment_calendar.py\; regenerat
+ e to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- compare_reviewers.py (unparsed) -- unow
+ ned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:b3a56df24d1f8720@commitments.pdoom1
+DTSTAMP:20260819T000000Z
+DTSTART;VALUE=DATE:20260819
+DTEND;VALUE=DATE:20260820
+SUMMARY:[UNPARSED] needs a declaration -- revert_action.py
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/art_review/rever
+ t_action.py:12. 1 line(s) in tools/art_review/revert_action.py mention th
+ is date and no COMMITMENT: declaration accounts for it. Either add a decl
+ aration or the date is incidental. First line: THE INCIDENT IT WAS WRITTE
+ N FOR (2026-08-19) -- Generated from tracked sources by scripts/generate_
+ commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- revert_action.py (unparsed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:5733ba37da4aa717@commitments.pdoom1
+DTSTAMP:20260819T000000Z
+DTSTART;VALUE=DATE:20260819
+DTEND;VALUE=DATE:20260820
+SUMMARY:[UNPARSED] needs a declaration -- serve_review.py
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/art_review/serve
+ _review.py:88. 1 line(s) in tools/art_review/serve_review.py mention this
+  date and no COMMITMENT: declaration accounts for it. Either add a declar
+ ation or the date is incidental. First line: # WHOSE TASTE THIS IS. Added
+  2026-08-19\, when a second reviewer sat down. -- Generated from tracked 
+ sources by scripts/generate_commitment_calendar.py\; regenerate to update
+ .
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- serve_review.py (unparsed) -- unowned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT

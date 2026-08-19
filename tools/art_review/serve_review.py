@@ -85,6 +85,42 @@ STATE_PATH = HERE / "review_state.json"
 # Rebuild the projection at any time with:  python serve_review.py --replay-log
 LOG_PATH = HERE / "review_log.jsonl"
 
+# WHOSE TASTE THIS IS. Added 2026-08-19, when a second reviewer sat down.
+#
+# Until now the store had no concept of a reviewer, because there was only ever
+# one. That is fine right up until it is catastrophic: a second person's verdicts
+# landing in the same file do not look like contamination, they look like data.
+# Every claim derived from this store assumes ONE palate -- the measured
+# "keep rate is a stable parameter, 79% Friday / 76% Saturday" is meaningless the
+# moment two people share a file, and nothing would have gone red.
+#
+# So: a named reviewer gets their OWN state and log, and every event is stamped
+# `by`. The default (no --reviewer) keeps the historical unsuffixed filenames,
+# because renaming Pip's existing 2,700-event log to claim authorship it never
+# declared would be rewriting history rather than recording it.
+REVIEWER = "pip"
+DEFAULT_REVIEWER = "pip"
+
+
+def set_reviewer(name):
+    """Point the state + log at one reviewer's files. Call BEFORE serving."""
+    global REVIEWER, STATE_PATH, LOG_PATH
+    name = (str(name or "").strip() or DEFAULT_REVIEWER).lower()
+    safe = re.sub(r"[^a-z0-9_-]+", "-", name).strip("-") or DEFAULT_REVIEWER
+    REVIEWER = safe
+    # BOTH branches assign. An earlier version only reassigned in the non-default
+    # branch, so switching back to the default silently kept the previous
+    # reviewer's files -- the exact cross-contamination this function exists to
+    # prevent, hidden inside the prevention.
+    if safe == DEFAULT_REVIEWER:
+        STATE_PATH = HERE / "review_state.json"
+        LOG_PATH = HERE / "review_log.jsonl"
+    else:
+        STATE_PATH = HERE / f"review_state.{safe}.json"
+        LOG_PATH = HERE / f"review_log.{safe}.jsonl"
+    return REVIEWER
+
+
 # generated file names: "<id>[_vN]_<size>.png"; strip _<size>, then optional _vN
 _SIZE_RE = re.compile(r"^(.+?)_(\d+)\.png$")
 _VAR_RE = re.compile(r"^(.+)_v(\d+)$")
@@ -564,6 +600,10 @@ def append_log(event):
     event degrades history; raising here would lose the decision itself.
     """
     try:
+        # Stamped on the EVENT, not just implied by the filename. A log that
+        # carries its author survives being copied, merged or concatenated with
+        # another reviewer's; a filename does not.
+        event.setdefault("by", REVIEWER)
         with LOG_PATH.open("a", encoding="utf-8", newline="\n") as fh:
             fh.write(json.dumps(event, sort_keys=True) + "\n")
         return True
@@ -1043,9 +1083,11 @@ def render_page(art_root):
     nav = render_nav(sections)
     state = load_state()
     subtitle = (
+        f"Reviewing as {REVIEWER.upper()} -- your verdicts are recorded as yours, "
+        f"in {STATE_PATH.name}. "
         f"{total} assets across {len(sections)} sections "
         f"({gen_total} generated + {total - gen_total} pixellab). "
-        f"Verdicts, notes and tags auto-save to review_state.json on every edit."
+        f"Auto-saves on every edit."
     )
     return (
         _TEMPLATE.replace("{{SUBTITLE}}", esc(subtitle))
@@ -2066,7 +2108,20 @@ def main():
         action="store_true",
         help="rebuild state from review_log.jsonl and report the diff; does not serve",
     )
+    ap.add_argument(
+        "--reviewer",
+        default=DEFAULT_REVIEWER,
+        metavar="NAME",
+        help=(
+            "whose taste this session records. A name other than the default gets "
+            "its OWN review_state.<name>.json and review_log.<name>.jsonl, and every "
+            "event is stamped `by`. Use this whenever someone other than the usual "
+            "reviewer sits down -- two palates in one file is indistinguishable from "
+            "data and nothing will go red."
+        ),
+    )
     args = ap.parse_args()
+    set_reviewer(args.reviewer)
 
     if args.emit_nomenclature:
         emit_nomenclature()
@@ -2082,7 +2137,9 @@ def main():
     total = sum(len(s["cells"]) for s in sections)
     gen = sum(len(s["cells"]) for s in sections if s["group"] == GROUP_GEN)
     print(f"art root : {art_root}")
+    print(f"reviewer : {REVIEWER}" + ("" if REVIEWER != DEFAULT_REVIEWER else "   (default)"))
     print(f"state    : {STATE_PATH}")
+    print(f"log      : {LOG_PATH}")
     print(
         f"assets   : {total} cells in {len(sections)} sections ({gen} generated, {total - gen} pixellab)"
     )
