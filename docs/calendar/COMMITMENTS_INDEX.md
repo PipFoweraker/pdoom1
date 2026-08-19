@@ -13,7 +13,7 @@ Horizon: **2026-08-09** (the prose scan reports dates at or after this; roll it
 forward deliberately in `COMMITMENTS.md`, never automatically -- a clock-reading
 generator goes stale overnight and trains people to ignore the check).
 
-**49 declared, 4 release-train, 92 UNPARSED, 0 malformed.**
+**49 declared, 4 release-train, 93 UNPARSED, 0 malformed.**
 
 ## Declared commitments
 
@@ -254,6 +254,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-17 | `tools/render_budget.py` | 12 | RULING: 2026-08-17 -- published figures live in tooling, not prose: the line item is the atom and every rendering is a projection -- flavour: estate-p |
 | 2026-08-17 | `tools/transcribe.py` | 10 | currently can" read it. Pip's reply, 2026-08-17: |
 | 2026-08-17 | `tools/transcribe.py` | 35 | MEASURED 2026-08-17 on Pip's desktop (CPU-only torch 2.13, no CUDA): |
+| 2026-08-19 | `docs/playtest/REVIEW_2026-08-19_font-size-ssot.md` | 3 | **Merged:** `71d2fa76` on 2026-08-19. **Recording:** full session. |
 | 2026-08-24 | `docs/design/LEAGUE_CUTOVER_PLAYBOOK.md` | 41 | at L4, and is pinned for reflective review on/after 2026-08-24. |
 | 2026-08-24 | `pdoom1#808` | 0 | Reflective review (on/after 2026-08-24): release/league cycle nomenclature + cadence |
 | 2026-08-24 | `pdoom1#811` | 0 | Workshop 3 (mechanics) -- Mon 07-27 W-3a / Tue 07-28 build / Wed 07-29 W-3b-W-4: crisp parts, brutal decisions |

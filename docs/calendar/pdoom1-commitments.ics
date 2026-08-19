@@ -2237,6 +2237,31 @@ DESCRIPTION:needs a declaration -- transcribe.py (unparsed) -- unowned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:f058c46ed0fb2c89@commitments.pdoom1
+DTSTAMP:20260819T000000Z
+DTSTART;VALUE=DATE:20260819
+DTEND;VALUE=DATE:20260820
+SUMMARY:[UNPARSED] needs a declaration -- REVIEW_2026-08-19_font-size-ssot
+ .md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/playtest/REVIEW_2
+ 026-08-19_font-size-ssot.md:3. 1 line(s) in docs/playtest/REVIEW_2026-08-
+ 19_font-size-ssot.md mention this date and no COMMITMENT: declaration acc
+ ounts for it. Either add a declaration or the date is incidental. First l
+ ine: **Merged:** `71d2fa76` on 2026-08-19. **Recording:** full session. -
+ - Generated from tracked sources by scripts/generate_commitment_calendar.
+ py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- REVIEW_2026-08-19_font-size-ssot.md (un
+ parsed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:33f5c6ce922e5826@commitments.pdoom1
 DTSTAMP:20260820T000000Z
 DTSTART;VALUE=DATE:20260820
