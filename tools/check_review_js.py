@@ -58,6 +58,8 @@ PLACEHOLDERS = {
     "{{NAV}}": "",
     "{{BODY}}": "",
     "{{HELP}}": "",
+    "{{PASSES}}": "[]",
+    "{{TAGSINUSE}}": "{}",
 }
 
 
@@ -72,6 +74,18 @@ def extract_js(path):
         return None
     for key, val in PLACEHOLDERS.items():
         tmpl = tmpl.replace(key, val)
+    # An UNREGISTERED placeholder reaches node as a literal `{{X}}` and reports a
+    # bare "Unexpected token '{'" pointing at a line the author did not write --
+    # which reads like a JS bug and is actually a bookkeeping miss here. Name it
+    # instead. (Cost 2026-08-17: two new placeholders, one confusing failure.)
+    leftover = sorted(set(re.findall(r"\{\{[A-Z_]+\}\}", tmpl)))
+    if leftover:
+        raise SystemExit(
+            "check_review_js: unregistered template placeholder(s): "
+            + ", ".join(leftover)
+            + "\n  Add them to PLACEHOLDERS in tools/check_review_js.py with a value"
+            " that is syntactically valid where they appear (e.g. '[]' or '{}')."
+        )
     blocks = re.findall(r"<script[^>]*>(.*?)</script>", tmpl, re.S)
     return "\n".join(blocks)
 
