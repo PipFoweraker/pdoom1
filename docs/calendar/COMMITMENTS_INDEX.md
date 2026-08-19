@@ -254,6 +254,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-17 | `tools/render_budget.py` | 12 | RULING: 2026-08-17 -- published figures live in tooling, not prose: the line item is the atom and every rendering is a projection -- flavour: estate-p |
 | 2026-08-17 | `tools/transcribe.py` | 10 | currently can" read it. Pip's reply, 2026-08-17: |
 | 2026-08-17 | `tools/transcribe.py` | 35 | MEASURED 2026-08-17 on Pip's desktop (CPU-only torch 2.13, no CUDA): |
+| 2026-08-17 | `tools/transcribe.py` | 175 | # The figure printed here was 0.5-1.5x realtime until 2026-08-17, which was a |
 | 2026-08-19 | `docs/playtest/REVIEW_2026-08-19_font-size-ssot.md` | 3 | **Merged:** `71d2fa76` on 2026-08-19. **Recording:** full session. |
 | 2026-08-19 | `tools/art_review/compare_reviewers.py` | 8 | On 2026-08-19 a second reviewer (Wanasai) judged art for the first time. Two |
 | 2026-08-19 | `tools/art_review/revert_action.py` | 12 | THE INCIDENT IT WAS WRITTEN FOR (2026-08-19) |

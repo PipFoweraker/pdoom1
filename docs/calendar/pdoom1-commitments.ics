@@ -2221,7 +2221,7 @@ DTSTART;VALUE=DATE:20260817
 DTEND;VALUE=DATE:20260818
 SUMMARY:[UNPARSED] needs a declaration -- transcribe.py
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/transcribe.py:10
- . 2 line(s) in tools/transcribe.py mention this date and no COMMITMENT: d
+ . 3 line(s) in tools/transcribe.py mention this date and no COMMITMENT: d
  eclaration accounts for it. Either add a declaration or the date is incid
  ental. First line: currently can" read it. Pip's reply\, 2026-08-17: -- G
  enerated from tracked sources by scripts/generate_commitment_calendar.py\

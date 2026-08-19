@@ -171,7 +171,11 @@ def transcribe(audio: Path, model_name: str) -> dict:
         )
     print(f"loading model {model_name} (first run downloads to ~/.cache/whisper) ...")
     model = whisper.load_model(model_name)
-    print("transcribing -- on CPU this runs at roughly 0.5-1.5x realtime ...")
+    # Measured, not guessed: small.en did 21m10s of audio in 4m03s on this CPU.
+    # The figure printed here was 0.5-1.5x realtime until 2026-08-17, which was a
+    # guess and wrong by ~4x in the discouraging direction -- the kind of number
+    # that makes someone not bother running the tool.
+    print(f"transcribing with {model_name} -- CPU runs ~5x realtime, so this is minutes ...")
     return model.transcribe(str(audio), verbose=False, word_timestamps=False)
 
 
