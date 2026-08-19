@@ -49,6 +49,13 @@ window/stretch/aspect="expand"
 
 enabled=PackedStringArray()
 
+[gui]
+
+; The font-size SSOT (#1224). Bottom of the theme lookup chain, so it reaches
+; every Control in the game -- including main.tscn, which declares no theme of
+; its own, and the panels built in code with no .tscn at all.
+theme/custom="res://theme/base_theme.tres"
+
 [rendering]
 
 textures/vram_compression/import_etc2_astc=true

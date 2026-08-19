@@ -86,7 +86,6 @@ theme_override_constants/separation = 10
 [node name="Label" type="Label" parent="Panel/VBox/SettingsContainer/AudioSettings/MasterVolumeRow"]
 custom_minimum_size = Vector2(190, 0)
 layout_mode = 2
-theme_override_font_sizes/font_size = 18
 text = "Master Volume:"
 
 [node name="Slider" type="HSlider" parent="Panel/VBox/SettingsContainer/AudioSettings/MasterVolumeRow"]
@@ -99,7 +98,6 @@ value = 80.0
 [node name="ValueLabel" type="Label" parent="Panel/VBox/SettingsContainer/AudioSettings/MasterVolumeRow"]
 custom_minimum_size = Vector2(64, 0)
 layout_mode = 2
-theme_override_font_sizes/font_size = 18
 text = "80%"
 
 [node name="SFXVolumeRow" type="HBoxContainer" parent="Panel/VBox/SettingsContainer/AudioSettings"]
@@ -109,7 +107,6 @@ theme_override_constants/separation = 10
 [node name="Label" type="Label" parent="Panel/VBox/SettingsContainer/AudioSettings/SFXVolumeRow"]
 custom_minimum_size = Vector2(190, 0)
 layout_mode = 2
-theme_override_font_sizes/font_size = 18
 text = "SFX Volume:"
 
 [node name="Slider" type="HSlider" parent="Panel/VBox/SettingsContainer/AudioSettings/SFXVolumeRow"]
@@ -122,7 +119,6 @@ value = 80.0
 [node name="ValueLabel" type="Label" parent="Panel/VBox/SettingsContainer/AudioSettings/SFXVolumeRow"]
 custom_minimum_size = Vector2(64, 0)
 layout_mode = 2
-theme_override_font_sizes/font_size = 18
 text = "80%"
 
 [node name="MusicVolumeRow" type="HBoxContainer" parent="Panel/VBox/SettingsContainer/AudioSettings"]
@@ -132,7 +128,6 @@ theme_override_constants/separation = 10
 [node name="Label" type="Label" parent="Panel/VBox/SettingsContainer/AudioSettings/MusicVolumeRow"]
 custom_minimum_size = Vector2(190, 0)
 layout_mode = 2
-theme_override_font_sizes/font_size = 18
 text = "Music Volume:"
 
 [node name="Slider" type="HSlider" parent="Panel/VBox/SettingsContainer/AudioSettings/MusicVolumeRow"]
@@ -145,7 +140,6 @@ value = 80.0
 [node name="ValueLabel" type="Label" parent="Panel/VBox/SettingsContainer/AudioSettings/MusicVolumeRow"]
 custom_minimum_size = Vector2(64, 0)
 layout_mode = 2
-theme_override_font_sizes/font_size = 18
 text = "80%"
 
 [node name="MusicControls" type="VBoxContainer" parent="Panel/VBox/SettingsContainer"]

@@ -3,7 +3,7 @@
   "repo": "pdoom1",
   "generated_from": "tracked files at HEAD",
   "convention": "docs/rulings/RULINGS_CONVENTION.md",
-  "count": 6,
+  "count": 7,
   "rulings": [
     {
       "id": "pdoom1:2026-08-15:4c94cd56",
@@ -59,6 +59,17 @@
       "supersedes": null,
       "superseded_by": null,
       "source": "docs/rulings/LEDGER.md:14"
+    },
+    {
+      "id": "pdoom1:2026-08-17:b069586f",
+      "date": "2026-08-17",
+      "ruling": "the game has ONE font-size lever (theme/base_theme.tres default_font_size, registered as the project theme) and a raw size override is a deviation that has to earn its line",
+      "flavour": "ui-legibility",
+      "by": "Pip",
+      "mechanism": "tools/check_font_sizes.py",
+      "supersedes": null,
+      "superseded_by": null,
+      "source": "tools/check_font_sizes.py:16"
     },
     {
       "id": "pdoom1:2026-08-17:1bc4eb6f",
@@ -648,6 +659,10 @@
     {
       "source": "godot/autoload/game_config.gd:776",
       "text": "# ruled by Pip via PR #1096: \"alpha-tools naming and wording settled\") -----------------"
+    },
+    {
+      "source": "godot/autoload/theme_manager.gd:161",
+      "text": "# It is not restored here for a reason already ruled on: #1155 kept the"
     },
     {
       "source": "godot/data/asset_provenance.json:14",

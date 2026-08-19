@@ -164,7 +164,11 @@ func _build_notification_panel(data: Dictionary) -> PanelContainer:
 	var message_label = Label.new()
 	message_label.text = data["message"]
 	message_label.custom_minimum_size = Vector2(330, 0)
-	message_label.add_theme_font_size_override("font_size", ThemeManager.get_font_size("body"))
+	# No font-size override (#1224). This line used to read
+	# ThemeManager.get_font_size("body") against a key named "body_size", so it
+	# silently took a fallback and was the ONLY caller the font scale ever had.
+	# A plain Label now renders at the SSOT size on its own; restating it here
+	# would just be a second copy to drift.
 	message_label.add_theme_color_override("font_color", Color.WHITE)
 	message_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	message_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL

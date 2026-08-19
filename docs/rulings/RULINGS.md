@@ -5,7 +5,7 @@
 > `python scripts/generate_rulings.py`. The convention, and why it looks
 > like this, is argued in `docs/rulings/RULINGS_CONVENTION.md`.
 
-**6 ruling(s)** across **3 flavour(s)**. **199** prose ruling(s) not yet declared.
+**7 ruling(s)** across **4 flavour(s)**. **200** prose ruling(s) not yet declared.
 
 ## By flavour
 
@@ -32,6 +32,12 @@ flavour it belongs to and read what was already decided there.
 | 2026-08-15 | the ruling road is cross-repo from day one, federated: each repo scans itself and emits rulings.json, an aggregator reads them, nothing writes back | `scripts/generate_rulings.py` | `docs/rulings/LEDGER.md:10` |
 | 2026-08-15 | naming a mechanism is OPTIONAL on a ruling, and the generated index reports which rulings have none | `scripts/generate_rulings.py` | `docs/rulings/LEDGER.md:11` |
 | 2026-08-17 | published figures live in tooling, not prose: the line item is the atom and every rendering is a projection | `tools/render_budget.py --check` | `tools/render_budget.py:12` |
+
+### `ui-legibility` (only one so far)
+
+| date | ruling | mechanism | source |
+|---|---|---|---|
+| 2026-08-17 | the game has ONE font-size lever (theme/base_theme.tres default_font_size, registered as the project theme) and a raw size override is a deviation that has to earn its line | `tools/check_font_sizes.py` | `tools/check_font_sizes.py:16` |
 
 ## Nothing will re-ask these
 
@@ -193,6 +199,7 @@ is not.
 - `docs/strategy/IP_AND_OPENNESS_PREMORTEM.md:87` -- community reads retraction as betrayal. Pip has already ruled against
 - `godot/assets/images/events/README.md:26` -- **They are GRANDFATHERED. Pip ruled 2026-08-03 that already-packed assets stay
 - `godot/autoload/game_config.gd:776` -- # ruled by Pip via PR #1096: "alpha-tools naming and wording settled") -----------------
+- `godot/autoload/theme_manager.gd:161` -- # It is not restored here for a reason already ruled on: #1155 kept the
 - `godot/data/asset_provenance.json:14` -- "_unknown_is_not_a_guess": "`unknown` means no record exists. It is never inferred from image dimensions. 1024x1024 and 1536x1024 are OpenAI output sizes, which makes 'these are gpt-image' a plausible
 - `godot/data/asset_provenance.json:4102` -- "why": "Ruled by Pip 2026-08-15. A signed credential outranks every heuristic and is the only evidence that survives a file moving between repos. Applied narrowly because a full re-run would rewrite 2
 - `godot/data/office/props_manifest.json:15` -- "style_tags": "office quality tiers this art serves, from the canonical ladder [\"scummy\", \"decent\", \"premium\"] (ruled 2026-07-26; see docs/game-design/SEED_ASSET_REGISTRY_AND_VERDICTS.md). Tag o

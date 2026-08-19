@@ -84,7 +84,6 @@ theme_override_constants/separation = 10
 [node name="TitleLabel" type="Label" parent="TabManager/MainUI/TopBar"]
 layout_mode = 2
 text = "P(Doom)"
-theme_override_font_sizes/font_size = 18
 
 [node name="Sep1" type="Label" parent="TabManager/MainUI/TopBar"]
 layout_mode = 2
@@ -94,7 +93,6 @@ modulate = Color(0.4, 0.4, 0.5, 1)
 [node name="TurnLabel" type="Label" parent="TabManager/MainUI/TopBar"]
 layout_mode = 2
 text = "Turn 1 - Wed 5 Jul 2017"
-theme_override_font_sizes/font_size = 18
 theme_override_colors/font_color = Color(1, 0.72, 0.2, 1)
 theme_override_styles/normal = SubResource("StyleBoxFlat_TurnCounter")
 
@@ -238,7 +236,6 @@ layout_mode = 2
 layout_mode = 2
 text = "58.5%"
 horizontal_alignment = 1
-theme_override_font_sizes/font_size = 18
 theme_override_colors/font_color = Color(1.0, 0.3, 0.3, 1)
 
 [node name="DoomMeterZone" type="CenterContainer" parent="TabManager/MainUI/ContentArea/InstrumentColumn/CoreZone/RightZones"]
@@ -268,7 +265,6 @@ layout_mode = 2
 layout_mode = 2
 text = "Buy time -- survival is the score | Lose: P(Doom) = 100%"
 horizontal_alignment = 1
-theme_override_font_sizes/font_size = 16
 theme_override_colors/font_color = Color(0.7, 0.85, 0.7, 1)
 tooltip_text = "P(Doom) = Probability of catastrophic AI outcome.
 There is no victory condition. Your score is the number of months you survive.
@@ -374,7 +370,6 @@ size_flags_horizontal = 3
 text = "COMMIT THE MONTH >"
 tooltip_text = "Commit the queued plan and advance the month."
 disabled = true
-theme_override_font_sizes/font_size = 16
 theme_override_colors/font_color = Color(0.118, 0.765, 0.702, 1)
 theme_override_colors/font_disabled_color = Color(0.4, 0.4, 0.4, 1)
 

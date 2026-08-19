@@ -229,6 +229,15 @@ repos:
         files: '\.gd$'
         pass_filenames: true
 
+      - id: font-size-ssot-check
+        name: Raw font-size overrides have not risen above the ceiling
+        entry: python tools/check_font_sizes.py
+        language: system
+        # Whole-tree census, so it must not be given the changed-file list --
+        # a ratchet that only counts the files in one commit is not a ratchet.
+        files: '(\.tscn|\.gd|\.tres|project\.godot)$'
+        pass_filenames: false
+
       - id: version-sync-check
         name: version.txt + ladder_version.txt synced to derived copies
         entry: python tools/sync_version.py --check
