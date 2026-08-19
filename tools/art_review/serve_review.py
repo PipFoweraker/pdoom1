@@ -193,6 +193,113 @@ HARVEST_DOC = [
 ]
 
 
+# ---------------------------------------------------------------- harvest passes
+# THE SECOND PASS. A verdict sweep decides FATE; this decides what SURVIVES that
+# fate. They are separate passes because they compete for the same seconds and
+# harvest always loses -- measured 2026-08-15, 2 harvest tags across 7,944 judged
+# assets, with the vocabulary present the whole time.
+#
+# WHY EACH PASS STATES A QUESTION rather than just filtering. From the 2026-08-14
+# session audio (tools/transcribe.py), Pip mid-sweep at 16:44:
+#
+#   "let me do another pass, because I think without instructions, I'm not sure
+#    where my limited attention is going to be best spent."
+#
+# and at 12:33, with no pass available: "I don't know what to do with these ones,
+# so I'm just going to scroll past them." A filtered grid with no stated purpose
+# reproduces exactly that. So a pass is a QUESTION first, and the filter and the
+# tag palette are consequences of the question rather than settings to configure.
+#
+# Seed palettes are mined from Pip's own discard notes rather than invented --
+# `flaw:blurry` is `these feel blurry?` (x32) and `these seem too blurry?` (x16),
+# which is the whole argument for tags over prose: same fact, counted once.
+HARVEST_PASSES = [
+    {
+        "key": "flaw",
+        "question": "Why did these fail?",
+        "instruction": (
+            "You are naming what went WRONG, so it can be counted. One click per "
+            "reason. A discard whose reason is recorded teaches the next batch; "
+            "one without is just a deleted image."
+        ),
+        "filter": "discard",
+        "prefix": "flaw:",
+        "palette": [
+            "blurry",
+            "scale",
+            "shiny",
+            "grain",
+            "contrast",
+            "too-dark",
+            "composition",
+            "colour",
+            "legibility",
+            "off-brief",
+            "anatomy",
+        ],
+    },
+    {
+        "key": "element",
+        "question": "What is worth keeping from these?",
+        "instruction": (
+            "These images are dead. The parts of them need not be. Tag the "
+            "component you would want back -- it survives the discard and feeds "
+            "the next brief."
+        ),
+        "filter": "discard",
+        "prefix": "element:",
+        "palette": [
+            "corner",
+            "lamp",
+            "pose",
+            "lighting",
+            "silhouette",
+            "texture",
+            "background",
+            "colourway",
+            "prop",
+            "face",
+        ],
+    },
+    {
+        "key": "seed",
+        "question": "What ideas did these produce?",
+        "instruction": (
+            "Not a description of the image -- an idea the image GAVE you, which "
+            "outlives it. This feeds the next batch's queue spec."
+        ),
+        "filter": "decided",
+        "prefix": "seed:",
+        "palette": ["new-scene", "new-angle", "new-prop", "new-mood", "series"],
+    },
+    {
+        "key": "plain",
+        "question": "Which of these is about composition or palette?",
+        "instruction": (
+            "The two harvest tags that take no qualifier. Use when the ARRANGEMENT "
+            "works though the render does not, or when the colour relationship is "
+            "the keeper."
+        ),
+        "filter": "decided",
+        "prefix": "",
+        "palette": ["composition", "palette"],
+    },
+]
+
+
+def harvest_tags_in_use(state):
+    """Tags already applied, so the palette GROWS by use instead of being fixed.
+
+    First use of a term is typed; every use after that is a button. Without this
+    the palette is a guess made on one afternoon and frozen.
+    """
+    seen = {}
+    for entry in state.values():
+        for t in entry.get("tags") or []:
+            seen[t] = seen.get(t, 0) + 1
+    return seen
+
+
 def migrate_verdict(v):
     """Map a stored verdict onto the v3 model. keep/remix/discard/hold pass
     through; legacy maybe/reroll/iterate fold into remix; anything else -> None."""
@@ -513,6 +620,20 @@ def apply_patch(patch):
             entry["note"] = "" if patch["note"] is None else str(patch["note"])
         if "tags" in patch:
             entry["tags"] = normalize_tags(patch["tags"]) or []
+        # ADDITIVE tag ops, for the harvest pass. `tags` REPLACES, which is right
+        # for a single-asset edit and wrong for a batch: tagging 40 discards
+        # `flaw:blurry` must not wipe the `element:corner` someone put on one of
+        # them last week. Harvest is explicitly the axis where many tags coexist,
+        # so batch application unions rather than overwrites.
+        if "add_tags" in patch:
+            have = list(entry.get("tags") or [])
+            for t in normalize_tags(patch["add_tags"]) or []:
+                if t not in have:
+                    have.append(t)
+            entry["tags"] = have
+        if "remove_tags" in patch:
+            drop = set(normalize_tags(patch["remove_tags"]) or [])
+            entry["tags"] = [t for t in (entry.get("tags") or []) if t not in drop]
         entry["updated_at"] = now_iso()
         # drop an entry that carries no signal, to keep the file clean.
         # NOTE: dropping it from the projection does NOT erase it from the log --
@@ -932,6 +1053,8 @@ def render_page(art_root):
         .replace("{{BODY}}", body)
         .replace("{{HELP}}", render_help())
         .replace("{{SEED}}", json.dumps(state))
+        .replace("{{PASSES}}", json.dumps(HARVEST_PASSES))
+        .replace("{{TAGSINUSE}}", json.dumps(harvest_tags_in_use(state)))
     )
 
 
@@ -1106,6 +1229,36 @@ _TEMPLATE = r"""<!doctype html><html lang="en"><head><meta charset="utf-8">
   #selbar button:hover{color:var(--ink);border-color:var(--ink-faint)}
   #selbar button[data-bulk="keep"]:hover{border-color:var(--keep);color:var(--keep)}
   #selbar button[data-bulk="discard"]:hover{border-color:var(--discard);color:var(--discard)}
+  /* ---- harvest pass ----
+     Visually distinct from the verdict lane ON PURPOSE. A verdict is exclusive
+     and final; a harvest tag is additive and coexists. Making them look the same
+     invites treating them the same, which is how harvest lost for six months. */
+  .hvbar{display:none;margin:.2rem 0 1rem;border:1px solid var(--amber-deep);border-radius:8px;overflow:hidden}
+  body.harvest .hvbar{display:block}
+  .hvq{display:flex;flex-wrap:wrap;gap:.35rem;padding:.5rem .6rem;background:var(--panel-2);border-bottom:1px solid var(--line)}
+  .hvq button{font-family:ui-monospace,Consolas,monospace;font-size:.72rem;padding:.3rem .7rem;cursor:pointer;
+    background:transparent;color:var(--ink-dim);border:1px solid var(--line);border-radius:6px}
+  .hvq button.on{background:var(--amber);border-color:var(--amber);color:#20140a;font-weight:600}
+  .hvbody{padding:.6rem .7rem .7rem}
+  .hvinstr{font-size:.86rem;color:var(--ink-dim);margin:0 0 .55rem;max-width:78ch}
+  .hvinstr b{color:var(--ink)}
+  .hvpal{display:flex;flex-wrap:wrap;gap:.3rem;align-items:center}
+  .hvpal button{font-family:ui-monospace,Consolas,monospace;font-size:.72rem;padding:.26rem .6rem;cursor:pointer;
+    background:var(--field);color:var(--ink);border:1px solid var(--line);border-radius:20px}
+  .hvpal button:hover{border-color:var(--amber);color:var(--amber)}
+  .hvpal button .ct{color:var(--ink-faint);font-size:.62rem;margin-left:.25rem}
+  .hvpal input{font-family:ui-monospace,Consolas,monospace;font-size:.72rem;padding:.26rem .5rem;
+    background:var(--field);color:var(--ink);border:1px solid var(--line);border-radius:20px;width:11rem}
+  .hvhint{font-size:.7rem;color:var(--ink-faint);margin:.5rem 0 0;font-family:ui-monospace,Consolas,monospace}
+  /* tags shown on the cell, so harvest progress is visible while sweeping */
+  .tagrow{display:flex;flex-wrap:wrap;gap:.2rem;margin:.25rem .5rem 0}
+  .tagrow span{font-family:ui-monospace,Consolas,monospace;font-size:.6rem;padding:.08rem .34rem;border-radius:10px;
+    background:var(--panel-2);color:var(--ink-dim);border:1px solid var(--line)}
+  .tagrow span.flaw{color:var(--discard);border-color:var(--discard)}
+  .tagrow span.element{color:var(--keep);border-color:var(--keep)}
+  body.harvest .cell{outline:1px solid transparent}
+  body.harvest .cell.tagged{outline-color:var(--amber-deep)}
+
   /* filter chips */
   .filters{display:flex;gap:.35rem;flex-wrap:wrap;align-items:center;margin:.2rem 0 1rem}
   .filters .fbtn{font-family:ui-monospace,Consolas,monospace;font-size:.7rem;padding:.25rem .6rem;
@@ -1238,6 +1391,18 @@ _TEMPLATE = r"""<!doctype html><html lang="en"><head><meta charset="utf-8">
     <span style="flex:1"></span>
     <button type="button" class="fbtn" id="selvisible">select all shown</button>
     <button type="button" class="fbtn" id="selnone">clear selection</button>
+    <button type="button" class="fbtn" id="harvestbtn" title="Second pass: harvest what survives a verdict">[H] harvest pass</button>
+  </div>
+  <div class="hvbar" id="hvbar">
+    <div class="hvq" id="hvq">
+      <span style="font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint);align-self:center;margin-right:.2rem">asking</span>
+    </div>
+    <div class="hvbody">
+      <p class="hvinstr" id="hvinstr"></p>
+      <div class="hvpal" id="hvpal"></div>
+      <p class="hvhint">Select cells (click, shift-click for a run), then click a tag to apply it to the whole selection.
+      Tags ADD -- they never replace each other, and they never touch the verdict.</p>
+    </div>
   </div>
   {{BODY}}
   <details id="archive">
@@ -1431,6 +1596,7 @@ _TEMPLATE = r"""<!doctype html><html lang="en"><head><meta charset="utf-8">
     applyVerdict(cell,s.verdict||null);
     var note=cell.querySelector('.note'); if(note)note.value=s.note||'';
     var tags=cell.querySelector('.tags'); if(tags)tags.value=(s.tags||[]).join(', ');
+    if((s.tags||[]).length)cell._needsTagPaint=true;
     var hrf=cell.querySelector('.shelfreason'); if(hrf)hrf.value=s.shelf_reason||'';
     cell.querySelectorAll('.vbtn').forEach(function(btn){
       btn.addEventListener('click',function(){focusOn(cell,false);setVerdict(cell,btn.getAttribute('data-v'));});
@@ -1675,6 +1841,163 @@ _TEMPLATE = r"""<!doctype html><html lang="en"><head><meta charset="utf-8">
       });
       refreshLayout();updateSelBar();
     });
+  });
+
+  // ---- harvest pass ---------------------------------------------------------
+  // The SECOND pass. A verdict decides fate; this decides what survives it.
+  // Separate because they compete for the same seconds and harvest always loses:
+  // 2 tags across 7,944 judged assets, with the vocabulary available throughout.
+  //
+  // A pass is a QUESTION, not a filter with a tag panel bolted on. From the
+  // 2026-08-14 session audio, Pip at 16:44: "let me do another pass, because I
+  // think without instructions, I'm not sure where my limited attention is going
+  // to be best spent." Picking the question sets the filter and the palette.
+  var PASSES={{PASSES}}, TAGCOUNTS={{TAGSINUSE}};
+  var hvOn=false, curPass=null;
+  var hvbar=document.getElementById('hvbar'),hvq=document.getElementById('hvq'),
+      hvinstr=document.getElementById('hvinstr'),hvpal=document.getElementById('hvpal');
+
+  function cellTags(cell){var id=cell.getAttribute('data-asset');return (SEED[id]&&SEED[id].tags)||[];}
+
+  function paintTags(cell){
+    var tags=cellTags(cell);
+    var row=cell.querySelector('.tagrow');
+    if(!tags.length){ if(row)row.remove(); cell.classList.remove('tagged'); return; }
+    if(!row){
+      row=document.createElement('div');row.className='tagrow';
+      var cap=cell.querySelector('.cap');
+      if(cap&&cap.parentNode)cap.parentNode.insertBefore(row,cap);
+      else cell.appendChild(row);
+    }
+    row.innerHTML='';
+    tags.forEach(function(t){
+      var s=document.createElement('span');
+      s.textContent=t;
+      if(t.indexOf('flaw:')===0)s.className='flaw';
+      else if(t.indexOf('element:')===0)s.className='element';
+      row.appendChild(s);
+    });
+    cell.classList.add('tagged');
+  }
+
+  function passFilter(p){
+    // 'decided' means any fate at all -- harvest applies to keeps too, but the
+    // discards are where it MATTERS, so those passes name discard explicitly.
+    CELLS.forEach(function(cell){
+      var v=curVerdict(cell),show;
+      if(p.filter==='decided')show=!!v;
+      else show=(v===p.filter);
+      cell.classList.toggle('hidden',!show);
+    });
+    document.querySelectorAll('#filters .fbtn[data-f]').forEach(function(b){b.classList.remove('on');});
+  }
+
+  function renderPalette(p){
+    hvpal.innerHTML='';
+    var seen={};
+    function addBtn(label,full){
+      if(seen[full])return; seen[full]=1;
+      var b=document.createElement('button');
+      b.type='button';
+      var n=TAGCOUNTS[full]||0;
+      b.innerHTML=label+(n?'<span class="ct">'+n+'</span>':'');
+      b.setAttribute('data-tag',full);
+      hvpal.appendChild(b);
+    }
+    p.palette.forEach(function(t){addBtn(p.prefix+t,p.prefix+t);});
+    // grow by use: anything already applied with this prefix joins the palette,
+    // so a term typed once is a button forever after.
+    Object.keys(TAGCOUNTS).sort().forEach(function(t){
+      if(p.prefix&&t.indexOf(p.prefix)===0)addBtn(t,t);
+      else if(!p.prefix&&t.indexOf(':')<0)addBtn(t,t);
+    });
+    var inp=document.createElement('input');
+    inp.type='text';
+    inp.placeholder=(p.prefix||'tag')+'new...';
+    inp.id='hvnew';
+    inp.setAttribute('aria-label','New tag, then Enter');
+    hvpal.appendChild(inp);
+  }
+
+  function selectPass(key){
+    var p=null;
+    PASSES.forEach(function(x){if(x.key===key)p=x;});
+    if(!p)return;
+    curPass=p;
+    hvinstr.innerHTML='<b>'+p.question+'</b> '+p.instruction;
+    hvq.querySelectorAll('button').forEach(function(b){
+      b.classList.toggle('on',b.getAttribute('data-pass')===key);
+    });
+    renderPalette(p);
+    passFilter(p);
+  }
+
+  PASSES.forEach(function(p){
+    var b=document.createElement('button');
+    b.type='button';b.textContent=p.question;b.setAttribute('data-pass',p.key);
+    b.addEventListener('click',function(){selectPass(p.key);});
+    hvq.appendChild(b);
+  });
+
+  function applyTagToSelection(tag){
+    tag=(tag||'').trim();
+    if(!tag)return;
+    var cells=selectedCells();
+    if(!cells.length){saveMsg('select some cells first','err');return;}
+    cells.forEach(function(cell){
+      var id=cell.getAttribute('data-asset');
+      persist(id,{add_tags:[tag]});
+      // optimistic: SEED is corrected by the server response in persist()
+      var s=SEED[id]||(SEED[id]={});
+      s.tags=(s.tags||[]).slice();
+      if(s.tags.indexOf(tag)<0)s.tags.push(tag);
+      var f=cell.querySelector('.tags'); if(f)f.value=s.tags.join(', ');
+      paintTags(cell);
+    });
+    TAGCOUNTS[tag]=(TAGCOUNTS[tag]||0)+cells.length;
+    if(curPass)renderPalette(curPass);
+    saveMsg('tagged '+cells.length+' with '+tag,'ok');
+  }
+
+  hvpal.addEventListener('click',function(e){
+    var b=e.target.closest?e.target.closest('button[data-tag]'):null;
+    if(b)applyTagToSelection(b.getAttribute('data-tag'));
+  });
+  hvpal.addEventListener('keydown',function(e){
+    if(e.key!=='Enter')return;
+    var inp=e.target;
+    if(!inp||inp.id!=='hvnew')return;
+    var raw=inp.value.trim();
+    if(!raw)return;
+    // a bare word gets the pass prefix; a qualified one is taken as written, so
+    // you can still reach any tag from any pass without fighting the UI.
+    var tag=(curPass&&curPass.prefix&&raw.indexOf(':')<0)?curPass.prefix+raw:raw;
+    applyTagToSelection(tag);
+    inp.value='';
+  });
+
+  function setHarvest(on){
+    if(on&&!PASSES.length){saveMsg('no harvest passes configured','err');return;}
+    hvOn=!!on;
+    document.body.classList.toggle('harvest',hvOn);
+    var btn=document.getElementById('harvestbtn');
+    btn.classList.toggle('on',hvOn);
+    if(hvOn){ if(!curPass)selectPass(PASSES[0].key); else selectPass(curPass.key); }
+    else{ applyFilter('all'); }
+  }
+  document.getElementById('harvestbtn').addEventListener('click',function(){setHarvest(!hvOn);});
+
+  // Paint tags that were already on disk at load, so harvest progress is visible
+  // the moment the page opens rather than only on cells touched this session.
+  CELLS.forEach(function(cell){if(cell._needsTagPaint)paintTags(cell);});
+
+  document.addEventListener('keydown',function(e){
+    if(e.key!=='h'&&e.key!=='H')return;
+    var t=e.target,tn=t&&t.tagName;
+    if(tn==='INPUT'||tn==='TEXTAREA'||tn==='SELECT'||(t&&t.isContentEditable))return;
+    if(e.metaKey||e.ctrlKey||e.altKey)return;
+    e.preventDefault();
+    setHarvest(!hvOn);
   });
 
   // Filters. 'undecided' is the sweep default -- it is what "what is left" means.

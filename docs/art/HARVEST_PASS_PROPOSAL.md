@@ -1,7 +1,18 @@
 # Harvest as a second pass -- decision card
 
-> **Status: PROPOSED, nothing built.** Written 2026-08-15 for Pip to take to the
-> other seats before anything is flushed. Self-contained: assumes no session context.
+> **Status: BUILT 2026-08-17** (ruled and built; this card is kept as the argument
+> and the evidence trail). Written 2026-08-15 as a proposal. Self-contained:
+> assumes no session context.
+>
+> **What shipped:** a harvest mode in `tools/art_review/serve_review.py` --
+> press `H` or the `[H] harvest pass` chip. You pick a QUESTION first; the filter
+> and the tag palette follow from it. Tags apply to the whole selection, ADD
+> rather than replace, and never touch the verdict. Palette is seeded from the
+> mined notes below and grows by use. Tests: `tests/test_harvest_pass.py` (24).
+>
+> **Not built, still open:** `check:in-game` for the 268 "needs a manual eyeball"
+> notes (proposed, unruled), and the note-field keystroke logging described at the
+> bottom of this card.
 
 ## The ask in one line
 

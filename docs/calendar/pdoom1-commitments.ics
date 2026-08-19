@@ -1310,7 +1310,7 @@ DTSTART;VALUE=DATE:20260814
 DTEND;VALUE=DATE:20260815
 SUMMARY:[UNPARSED] needs a declaration -- HARVEST_PASS_PROPOSAL.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/art/HARVEST_PASS_
- PROPOSAL.md:38. 1 line(s) in docs/art/HARVEST_PASS_PROPOSAL.md mention th
+ PROPOSAL.md:49. 1 line(s) in docs/art/HARVEST_PASS_PROPOSAL.md mention th
  is date and no COMMITMENT: declaration accounts for it. Either add a decl
  aration or the date is incidental. First line: 2026-08-14 sweep contains 
  the multi-pass workflow being invented in real time: -- Generated from tr
@@ -1477,11 +1477,12 @@ DTSTART;VALUE=DATE:20260814
 DTEND;VALUE=DATE:20260815
 SUMMARY:[UNPARSED] needs a declaration -- serve_review.py
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/art_review/serve
- _review.py:224. 2 line(s) in tools/art_review/serve_review.py mention thi
+ _review.py:202. 4 line(s) in tools/art_review/serve_review.py mention thi
  s date and no COMMITMENT: declaration accounts for it. Either add a decla
- ration or the date is incidental. First line: # block is FOR and what a d
- ecision here means. (2026-08-14\, Pip's ask.) -- Generated from tracked s
- ources by scripts/generate_commitment_calendar.py\; regenerate to update.
+ ration or the date is incidental. First line: # WHY EACH PASS STATES A QU
+ ESTION rather than just filtering. From the 2026-08-14 -- Generated from 
+ tracked sources by scripts/generate_commitment_calendar.py\; regenerate t
+ o update.
 CATEGORIES:UNPARSED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -1628,12 +1629,12 @@ DTSTART;VALUE=DATE:20260815
 DTEND;VALUE=DATE:20260816
 SUMMARY:[UNPARSED] needs a declaration -- HARVEST_PASS_PROPOSAL.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/art/HARVEST_PASS_
- PROPOSAL.md:3. 4 line(s) in docs/art/HARVEST_PASS_PROPOSAL.md mention thi
+ PROPOSAL.md:4. 4 line(s) in docs/art/HARVEST_PASS_PROPOSAL.md mention thi
  s date and no COMMITMENT: declaration accounts for it. Either add a decla
- ration or the date is incidental. First line: > **Status: PROPOSED\, noth
- ing built.** Written 2026-08-15 for Pip to take to the -- Generated from 
- tracked sources by scripts/generate_commitment_calendar.py\; regenerate t
- o update.
+ ration or the date is incidental. First line: > and the evidence trail). 
+ Written 2026-08-15 as a proposal. Self-contained: -- Generated from track
+ ed sources by scripts/generate_commitment_calendar.py\; regenerate to upd
+ ate.
 CATEGORIES:UNPARSED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -1978,7 +1979,7 @@ DTSTART;VALUE=DATE:20260815
 DTEND;VALUE=DATE:20260816
 SUMMARY:[UNPARSED] needs a declaration -- serve_review.py
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/art_review/serve
- _review.py:169. 2 line(s) in tools/art_review/serve_review.py mention thi
+ _review.py:169. 3 line(s) in tools/art_review/serve_review.py mention thi
  s date and no COMMITMENT: declaration accounts for it. Either add a decla
  ration or the date is incidental. First line: "to element: -- ruled by Pi
  p 2026-08-15 because the sweeps are mostly " -- Generated from tracked so
@@ -2080,11 +2081,12 @@ DTSTART;VALUE=DATE:20260817
 DTEND;VALUE=DATE:20260818
 SUMMARY:[UNPARSED] needs a declaration -- HARVEST_PASS_PROPOSAL.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/art/HARVEST_PASS_
- PROPOSAL.md:36. 1 line(s) in docs/art/HARVEST_PASS_PROPOSAL.md mention th
- is date and no COMMITMENT: declaration accounts for it. Either add a decl
- aration or the date is incidental. First line: Added 2026-08-17\, after t
- he session audio was transcribed -- Generated from tracked sources by scr
- ipts/generate_commitment_calendar.py\; regenerate to update.
+ PROPOSAL.md:3. 2 line(s) in docs/art/HARVEST_PASS_PROPOSAL.md mention thi
+ s date and no COMMITMENT: declaration accounts for it. Either add a decla
+ ration or the date is incidental. First line: > **Status: BUILT 2026-08-1
+ 7** (ruled and built\; this card is kept as the argument -- Generated fro
+ m tracked sources by scripts/generate_commitment_calendar.py\; regenerate
+  to update.
 CATEGORIES:UNPARSED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -2141,6 +2143,29 @@ ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- check_font_sizes.py (unparsed) -- unown
  ed
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ad68e8929ce9f7b6@commitments.pdoom1
+DTSTAMP:20260817T000000Z
+DTSTART;VALUE=DATE:20260817
+DTEND;VALUE=DATE:20260818
+SUMMARY:[UNPARSED] needs a declaration -- check_review_js.py
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/check_review_js.
+ py:80. 1 line(s) in tools/check_review_js.py mention this date and no COM
+ MITMENT: declaration accounts for it. Either add a declaration or the dat
+ e is incidental. First line: # instead. (Cost 2026-08-17: two new placeho
+ lders\, one confusing failure.) -- Generated from tracked sources by scri
+ pts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- check_review_js.py (unparsed) -- unowne
+ d
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
