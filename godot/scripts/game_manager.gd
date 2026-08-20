@@ -804,10 +804,22 @@ func _finish_month_playback() -> void:
 	# INFORMATION." The Funds/Doom/Staff LEVEL line is gone -- the top bar owns funds, the doom
 	# meter owns doom, the roster owns staff. What the HUD cannot show is what MOVED over the
 	# month, so that is all this block prints, and only for stats that actually moved.
-	var body := "%s begins.\n\nAttention: %d fresh decisions this month (last month's unspent reserve evaporated -- no banking).%s%s" % [
-		label, attention_now,
-		_build_month_movement_section(_month_stat_snapshot, end_stats),
-		_build_rivals_review_section()]
+	#
+	# The two blocks are COLLECTED as rows and then formatted, rather than built straight to
+	# text, because the review now has two consumers: the feed record (text, below) and the
+	# clipboard presenter (MonthReviewPanel, which needs the parts separately so a delta can be
+	# coloured and right-aligned instead of living inside a sentence). Collect-then-format keeps
+	# one source for both -- the strings below are assembled from the SAME rows the panel draws,
+	# so the two can never drift. Collection also runs exactly ONCE per boundary: the rivals
+	# collector advances _rival_cap_snapshot, so calling it twice would report every rival flat.
+	var attention_line := "Attention: %d fresh decisions this month (last month's unspent reserve evaporated -- no banking)." % attention_now
+	var movement_rows := _collect_month_movement_rows(_month_stat_snapshot, end_stats)
+	var rival_rows := _collect_rivals_review_rows()
+	var closing_line := "Queue this month's actions, then press COMMIT THE MONTH to play the month out."
+	var body := "%s begins.\n\n%s%s%s" % [
+		label, attention_line,
+		_format_month_movement_section(movement_rows),
+		_format_rivals_review_section(rival_rows)]
 
 	var review := {
 		"id": MONTH_REVIEW_EVENT_ID,
@@ -816,11 +828,27 @@ func _finish_month_playback() -> void:
 		# commit (end_month() below, the EndTurnButton node); the BUTTON is labelled
 		# "COMMIT THE MONTH >". This popup is the most-repeated instruction in the game -- once a
 		# month, every month -- so it was also the most-repeated wrong one.
-		"description": "%s\n\nQueue this month's actions, then press COMMIT THE MONTH to play the month out." % body,
+		"description": "%s\n\n%s" % [body, closing_line],
 		"type": "popup",
 		"options": [
 			{"id": "begin_planning", "text": "Begin planning %s" % label, "costs": {}, "effects": {}}
 		],
+		# PRESENTATION PAYLOAD -- the same content as "description", handed over pre-split so the
+		# clipboard presenter can typeset it (MonthReviewPanel.build). Every string in here is
+		# already in "description"; nothing is computed for the panel that the text does not also
+		# say. A presenter that ignores this key still renders the full review from "description",
+		# which is what every non-review event dialog does.
+		"review": {
+			"heading": "Month Review",
+			"period": label,
+			"lede": "%s begins." % label,
+			"attention": attention_line,
+			"movement_title": "Last month's movement",
+			"movement": movement_rows,
+			"rivals_title": "Rivals this month",
+			"rivals": rival_rows,
+			"closing": closing_line,
+		},
 	}
 	# A10: the review is also the WATCH feed's permanent record, so dismissing the popup costs
 	# the player nothing and months can be compared by scrolling back. Emitted BEFORE the popup
@@ -853,30 +881,78 @@ func _build_month_movement_section(start_stats: Dictionary, end_stats: Dictionar
 	about how doom works; per-cause attribution stays behind the paid doom-breakdown instrument
 	(ADR-0001, spending-buys-sight). A start/end band comparison is world-state display, using
 	ThemeManager's canonical band labels -- the same non-color channel the HUD already uses."""
+	return _format_month_movement_section(_collect_month_movement_rows(start_stats, end_stats))
+
+
+func _collect_month_movement_rows(start_stats: Dictionary, end_stats: Dictionary) -> Array:
+	"""The movement block as ROWS rather than text -- see _finish_month_playback for why the
+	collect/format split exists. Each row carries the pieces the clipboard panel aligns into
+	columns (`stat` / `from` / `to` / `delta`) AND the exact `line` the feed record prints, so
+	the two renderings are the same content by construction.
+
+	`sign` is the DISPLAY sign only: -1 reads as an adverse move, +1 as a favourable one, 0 as
+	neither. It is what colours a delta; nothing downstream may treat it as a magnitude.
+	Doom follows the HUD's inversion (main_ui._render_delta_chip: doom rising is bad)."""
+	var rows: Array = []
 	if start_stats.is_empty() or end_stats.is_empty():
-		return ""
-	var lines: Array[String] = []
+		return rows
 
 	var money_start := float(start_stats.get("money", 0.0))
 	var money_end := float(end_stats.get("money", 0.0))
 	if not is_equal_approx(money_start, money_end):
 		var money_delta := money_end - money_start
-		lines.append("  Funds   %s -> %s   (%s%s)" % [
-			GameConfig.format_money(money_start), GameConfig.format_money(money_end),
-			"+" if money_delta > 0.0 else "-", GameConfig.format_money(abs(money_delta))])
+		var money_text := "%s%s" % [
+			"+" if money_delta > 0.0 else "-", GameConfig.format_money(abs(money_delta))]
+		rows.append({
+			"stat": "Funds",
+			"from": GameConfig.format_money(money_start),
+			"to": GameConfig.format_money(money_end),
+			"delta": money_text,
+			"sign": 1 if money_delta > 0.0 else -1,
+			"line": "  Funds   %s -> %s   (%s)" % [
+				GameConfig.format_money(money_start), GameConfig.format_money(money_end), money_text],
+		})
 
 	var staff_start := int(start_stats.get("staff", 0))
 	var staff_end := int(end_stats.get("staff", 0))
 	if staff_start != staff_end:
-		lines.append("  Staff   %d -> %d   (%s%d)" % [
-			staff_start, staff_end, "+" if staff_end > staff_start else "-", abs(staff_end - staff_start)])
+		var staff_text := "%s%d" % [
+			"+" if staff_end > staff_start else "-", abs(staff_end - staff_start)]
+		rows.append({
+			"stat": "Staff",
+			"from": str(staff_start),
+			"to": str(staff_end),
+			"delta": staff_text,
+			"sign": 1 if staff_end > staff_start else -1,
+			"line": "  Staff   %d -> %d   (%s)" % [staff_start, staff_end, staff_text],
+		})
 
-	var doom_move := _doom_band_movement(float(start_stats.get("doom", 0.0)), float(end_stats.get("doom", 0.0)))
+	var doom_start := float(start_stats.get("doom", 0.0))
+	var doom_end := float(end_stats.get("doom", 0.0))
+	var doom_move := _doom_band_movement(doom_start, doom_end)
 	if doom_move != "":
-		lines.append("  Doom    %s" % doom_move)
+		# ADR-0015: bands, never numbers. The panel gets the two BAND LABELS, which is exactly
+		# what the sentence already contains -- no percentage is added to the payload.
+		var crossed_up := ThemeManager.get_doom_band_index(doom_end) > ThemeManager.get_doom_band_index(doom_start)
+		rows.append({
+			"stat": "Doom",
+			"from": ThemeManager.get_doom_status_label(doom_start),
+			"to": ThemeManager.get_doom_status_label(doom_end),
+			"delta": "crossed up" if crossed_up else "eased down",
+			"sign": -1 if crossed_up else 1,
+			"line": "  Doom    %s" % doom_move,
+		})
 
-	if lines.is_empty():
+	return rows
+
+
+func _format_month_movement_section(rows: Array) -> String:
+	"""Rows -> the feed/description text. Byte-identical to what this block has always printed."""
+	if rows.is_empty():
 		return ""
+	var lines: Array[String] = []
+	for row in rows:
+		lines.append(String(row.get("line", "")))
 	return "\n\nLast month's movement:\n" + "\n".join(lines)
 
 
@@ -916,19 +992,55 @@ func _build_rivals_review_section() -> String:
 	rival, its focus, and a qualitative capability-drift read since last review. Returns ""
 	when nothing is visible so the review stays clean. Deadpan register, display-only (no
 	RNG, no sim reads that could move determinism)."""
+	return _format_rivals_review_section(_collect_rivals_review_rows())
+
+
+func _collect_rivals_review_rows() -> Array:
+	"""The rivals block as ROWS. NOT idempotent -- it advances _rival_cap_snapshot, so the next
+	call reports every rival flat. Call it once per month boundary and pass the rows around
+	(_finish_month_playback does); _build_rivals_review_section is the single-call text wrapper.
+
+	`heat` is a DISPLAY band for the qualitative drift label, not a number the player ever sees:
+	0 flat, 1 slipping, 2 rising, 3 climbing fast. It exists so the panel can weight a rival that
+	is running away from you differently from one standing still, without printing a magnitude
+	the review has never printed."""
+	var rows: Array = []
 	if state == null:
-		return ""
-	var lines: Array[String] = []
+		return rows
 	for rival in state.rival_labs:
 		if not rival.is_visible_to_player():
 			continue
 		var rid: String = rival.id
 		var prev: float = float(_rival_cap_snapshot.get(rid, rival.capability_progress))
-		var drift: String = RivalLabs.capability_drift_label(rival.capability_progress - prev)
+		var delta: float = rival.capability_progress - prev
+		var drift: String = RivalLabs.capability_drift_label(delta)
 		_rival_cap_snapshot[rid] = rival.capability_progress
-		lines.append("  %s (%s) -- %s" % [rival.get_visible_name(), rival.focus, drift])
-	if lines.is_empty():
+		# Thresholds mirror RivalLabs.capability_drift_label -- same cuts, so the band and the
+		# words can never disagree about which rival is moving.
+		var heat := 0
+		if delta > 8.0:
+			heat = 3
+		elif delta > 0.5:
+			heat = 2
+		elif delta < -0.5:
+			heat = 1
+		rows.append({
+			"name": rival.get_visible_name(),
+			"focus": String(rival.focus),
+			"drift": drift,
+			"heat": heat,
+			"line": "  %s (%s) -- %s" % [rival.get_visible_name(), rival.focus, drift],
+		})
+	return rows
+
+
+func _format_rivals_review_section(rows: Array) -> String:
+	"""Rows -> the feed/description text. Byte-identical to what this block has always printed."""
+	if rows.is_empty():
 		return ""
+	var lines: Array[String] = []
+	for row in rows:
+		lines.append(String(row.get("line", "")))
 	return "\n\nRivals this month:\n" + "\n".join(lines)
 
 
