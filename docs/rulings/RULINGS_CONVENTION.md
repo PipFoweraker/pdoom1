@@ -4,6 +4,40 @@
 > (`rulings.json`) are GENERATED from the declarations this file describes.
 > Regenerate with `python scripts/generate_rulings.py`.
 
+## This is an INDEX, not the only store (consolidated 2026-08-21)
+
+An audit on 2026-08-21 found five places rulings were being recorded, four of
+them older than this convention. Pip's instruction was to consolidate. What that
+meant in practice was **one index over five sources**, not one file:
+
+| kind | n | what it is | where it lives |
+|---|---:|---|---|
+| `declaration` | 10 | a `RULING:` line written next to what it governs | anywhere |
+| `adr` | 19 | a full architecture argument, summarised here | `docs/game-design/decisions/` |
+| `session` | 3 | a transcript or workshop ruling set, pointed at | `docs/SPOKEN_*`, `*RULINGS*` |
+| `card` | 3 | the input a ruling was made FROM | `docs/decision-cards/` |
+
+**Why the files were not merged.** They are genres, not rivals, and each carries
+something a one-line summary would delete:
+
+- An **ADR** is an argument. Context, Decision, Consequences, several pages. The
+  reasoning is what makes it re-checkable in a year; flattening it destroys the
+  only part that ages well. The index carries its `Status` and `Summary`
+  verbatim and points at the rest.
+- **`SPOKEN_RULINGS_*`** are **transcripts** -- evidence of what was said, one of
+  them explicitly stamped *"not yet re-read by him"*. Rewriting evidence into a
+  summary is the same error `check_provenance.py` refuses to make about asset
+  origins: asserting after the fact something the record never said.
+- A **decision card** is the input a ruling was made from. Indexing it as a
+  ruling would confuse the question with the answer.
+
+So: nothing was moved, nothing was rewritten, and every ruling in the estate is
+findable in one place for the first time. `--flavour architecture` now returns
+all 19 ADRs.
+
+**If you add a sixth kind of ruling document**, add it to `RULING_DOC_GLOBS` in
+`scripts/generate_rulings.py` rather than starting a sixth store.
+
 ## The problem this solves
 
 Rulings in this estate are already being captured -- measured 2026-08-15, more

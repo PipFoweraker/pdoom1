@@ -160,6 +160,132 @@ def parse_fields(tail: str) -> tuple[str, dict]:
     return ruling, fields
 
 
+# ---------------------------------------------------------------- other stores
+# CONSOLIDATION, ruled by Pip 2026-08-21.
+#
+# An audit on 2026-08-21 found FIVE places rulings were being recorded, four of
+# which predated this file. The instruction was to consolidate them into one.
+#
+# What is NOT done here, and why: the five are not competing stores, they are
+# GENRES, and merging the files would destroy what each genre carries.
+#   * an ADR is a full argument -- Context, Decision, Consequences. Nineteen of
+#     them, each several pages. Flattening one into a single line deletes the
+#     reasoning that makes it re-checkable later, which is the entire point of an
+#     ADR.
+#   * SPOKEN_RULINGS_* are TRANSCRIPTS. They are evidence of what was said, with
+#     a "not yet re-read by him" caveat on them. Rewriting evidence into a
+#     summary is the exact error `check_provenance.py` refuses to make about
+#     asset origins.
+#   * decision-cards are the INPUT a ruling was made from, not the ruling.
+#
+# So the record is consolidated and the sources are not: ONE index, five
+# sources, each ruling carrying the `kind` of thing it came from and a path back
+# to the full text. Nothing is moved, nothing is rewritten, and every ruling in
+# the estate becomes findable in one place for the first time.
+ADR_DIR = ROOT / "docs" / "game-design" / "decisions"
+ADR_TITLE = re.compile(r"^#\s*(ADR-\d+)\s*--\s*(.+?)\s*$", re.M)
+# Status and Summary WRAP in the source markdown -- a continuation line is
+# indented and does not start a new `- **Field:**`. Capturing only the first line
+# truncated ADR-0001's status mid-word ("... lead-time"), which is precisely the
+# half-right parse this file refuses to make of transcripts. Consume until the
+# next field or a blank line, then collapse the whitespace.
+ADR_FIELD = {
+    "status": re.compile(r"^-\s*\*\*Status:\*\*\s*(.+?)(?=\n-\s*\*\*|\n\n)", re.M | re.S),
+    "date": re.compile(r"^-\s*\*\*Date:\*\*\s*(\d{4}-\d{2}-\d{2})", re.M),
+    "summary": re.compile(r"^-\s*\*\*Summary:\*\*\s*(.+?)(?=\n-\s*\*\*|\n\n)", re.M | re.S),
+}
+
+
+def unwrap(text: str) -> str:
+    return re.sub(r"\s+", " ", text).strip()
+
+
+# Documents whose PURPOSE is recording rulings. Listed as sources rather than
+# parsed line-by-line: their internal structure varies per session, and a
+# half-right parse of a transcript is worse than an honest pointer to it.
+RULING_DOC_GLOBS = [
+    "docs/SPOKEN_RULINGS_*.md",
+    "docs/SPOKEN_COMMENTS_*.md",
+    "docs/game-design/*RULINGS*.md",
+    "docs/decision-cards/*",
+]
+DOC_DATE = re.compile(r"(\d{4}-\d{2}-\d{2})")
+
+
+def collect_adrs(repo: str) -> tuple[list[dict], list[str]]:
+    """Each ADR is one ruling, summarised, pointing at its own full argument."""
+    out, errors = [], []
+    if not ADR_DIR.is_dir():
+        return out, errors
+    for path in sorted(ADR_DIR.glob("ADR-0*.md")):
+        text = path.read_text(encoding="utf-8", errors="replace")
+        title = ADR_TITLE.search(text)
+        fields = {k: rx.search(text) for k, rx in ADR_FIELD.items()}
+        if not title or not all(fields.values()):
+            missing = [k for k, v in fields.items() if not v] + ([] if title else ["title"])
+            errors.append(f"{rel(path)}: ADR header incomplete, missing {missing}")
+            continue
+        adr_id, headline = title.group(1), title.group(2)
+        date = fields["date"].group(1)
+        status = unwrap(fields["status"].group(1))
+        summary = to_ascii(unwrap(fields["summary"].group(1)))
+        digest = hashlib.sha256(f"{adr_id}{summary}".encode("utf-8")).hexdigest()[:8]
+        out.append(
+            {
+                "id": f"{repo}:{date}:{digest}",
+                "date": date,
+                "ruling": to_ascii(f"{adr_id} -- {headline}"),
+                "summary": summary,
+                "flavour": "architecture",
+                "kind": "adr",
+                "status": to_ascii(status),
+                "by": "Pip",
+                "mechanism": None,
+                "supersedes": None,
+                "superseded_by": None,
+                "source": f"{rel(path)}:1",
+            }
+        )
+    return out, errors
+
+
+def collect_ruling_docs(repo: str) -> list[dict]:
+    """Ruling-purposed documents, pointed AT rather than parsed."""
+    out = []
+    seen = set()
+    for pattern in RULING_DOC_GLOBS:
+        for path in sorted(ROOT.glob(pattern)):
+            r = rel(path)
+            if r in seen or any(r.startswith(x) for x in SCAN_EXCLUDE):
+                continue
+            seen.add(r)
+            m = DOC_DATE.search(path.name)
+            date = m.group(1) if m else "0000-00-00"
+            kind = "card" if "/decision-cards/" in r else "session"
+            digest = hashlib.sha256(r.encode("utf-8")).hexdigest()[:8]
+            out.append(
+                {
+                    "id": f"{repo}:{date}:{digest}",
+                    "date": date,
+                    "ruling": to_ascii(path.stem.replace("_", " ")),
+                    "summary": (
+                        "Ruling-purposed document. Read it in full; it is not "
+                        "summarised here because a half-right parse of a "
+                        "transcript is worse than a pointer to it."
+                    ),
+                    "flavour": "session-record",
+                    "kind": kind,
+                    "status": "",
+                    "by": "Pip",
+                    "mechanism": None,
+                    "supersedes": None,
+                    "superseded_by": None,
+                    "source": f"{r}:1",
+                }
+            )
+    return out
+
+
 def collect() -> tuple[list[dict], list[dict], list[str]]:
     """Return (rulings, undeclared, errors). Deterministic: sorted by source."""
     rulings: list[dict] = []
@@ -202,7 +328,10 @@ def collect() -> tuple[list[dict], list[dict], list[str]]:
                         "id": f"{repo}:{date}:{digest}",
                         "date": date,
                         "ruling": to_ascii(ruling),
+                        "summary": "",
                         "flavour": fields.get("flavour", "UNFILED"),
+                        "kind": "declaration",
+                        "status": "",
                         "by": fields.get("by", "Pip"),
                         "mechanism": fields.get("mechanism") or None,
                         "supersedes": fields.get("supersedes") or None,
@@ -222,6 +351,13 @@ def collect() -> tuple[list[dict], list[dict], list[str]]:
                         "text": to_ascii(line.strip()[:200]).rstrip(),
                     }
                 )
+
+    # The other four stores. Added last so a hand-written declaration always
+    # wins a digest collision with a derived record.
+    adrs, adr_errors = collect_adrs(repo)
+    rulings.extend(adrs)
+    errors.extend(adr_errors)
+    rulings.extend(collect_ruling_docs(repo))
 
     # Resolve supersession both ways so a consumer never has to join it itself.
     by_id = {r["id"]: r for r in rulings}
@@ -253,6 +389,35 @@ def render_md(rulings: list[dict], undeclared: list[dict], errors: list[str]) ->
         "",
         f"**{len(rulings)} ruling(s)** across **{len(by_flavour)} flavour(s)**. "
         f"**{len(undeclared)}** prose ruling(s) not yet declared.",
+        "",
+        "## One index, five sources",
+        "",
+        "Consolidated 2026-08-21. The estate had five places rulings were recorded;",
+        "they are GENRES, not rivals, so the record is unified here while the sources",
+        "keep their form. An ADR is a full argument and a transcript is evidence --",
+        "flattening either into one line would delete what makes it worth having.",
+        "",
+        "| kind | n | what it is | where |",
+        "|---|---:|---|---|",
+    ]
+    kind_desc = {
+        "declaration": ("a `RULING:` line written next to what it governs", "anywhere"),
+        "adr": ("a full architecture argument, summarised here", "`docs/game-design/decisions/`"),
+        "session": (
+            "a transcript or workshop ruling set, pointed at",
+            "`docs/SPOKEN_*`, `*RULINGS*`",
+        ),
+        "card": ("the input a ruling was made from", "`docs/decision-cards/`"),
+    }
+    by_kind: dict[str, list[dict]] = defaultdict(list)
+    for r in rulings:
+        by_kind[r.get("kind", "declaration")].append(r)
+    for kind in ("declaration", "adr", "session", "card"):
+        if kind not in by_kind:
+            continue
+        what, where = kind_desc[kind]
+        out.append(f"| `{kind}` | {len(by_kind[kind])} | {what} | {where} |")
+    out += [
         "",
         "## By flavour",
         "",

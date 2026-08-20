@@ -5,12 +5,50 @@
 > `python scripts/generate_rulings.py`. The convention, and why it looks
 > like this, is argued in `docs/rulings/RULINGS_CONVENTION.md`.
 
-**10 ruling(s)** across **4 flavour(s)**. **214** prose ruling(s) not yet declared.
+**35 ruling(s)** across **6 flavour(s)**. **215** prose ruling(s) not yet declared.
+
+## One index, five sources
+
+Consolidated 2026-08-21. The estate had five places rulings were recorded;
+they are GENRES, not rivals, so the record is unified here while the sources
+keep their form. An ADR is a full argument and a transcript is evidence --
+flattening either into one line would delete what makes it worth having.
+
+| kind | n | what it is | where |
+|---|---:|---|---|
+| `declaration` | 10 | a `RULING:` line written next to what it governs | anywhere |
+| `adr` | 19 | a full architecture argument, summarised here | `docs/game-design/decisions/` |
+| `session` | 3 | a transcript or workshop ruling set, pointed at | `docs/SPOKEN_*`, `*RULINGS*` |
+| `card` | 3 | the input a ruling was made from | `docs/decision-cards/` |
 
 ## By flavour
 
 Recall by flavour is the point: before ruling on something, look for the
 flavour it belongs to and read what was already decided there.
+
+### `architecture`
+
+| date | ruling | mechanism | source |
+|---|---|---|---|
+| 2026-07-04 | ADR-0001 -- Situational Awareness as the primary sink ("spending buys sight") | -- none -- | `docs/game-design/decisions/ADR-0001-spending-buys-sight.md:1` |
+| 2026-07-04 | ADR-0002 -- Scoring: turns survived, lexicographic doom-integral tiebreak, flows only | -- none -- | `docs/game-design/decisions/ADR-0002-scoring-turns-survived.md:1` |
+| 2026-07-04 | ADR-0003 -- The Liability Ledger (two-sided): every mitigation is a loan | -- none -- | `docs/game-design/decisions/ADR-0003-liability-ledger.md:1` |
+| 2026-07-04 | ADR-0004 -- SA amended: channels with provenance, lead-time semantics, decision-flip test | -- none -- | `docs/game-design/decisions/ADR-0004-sa-channels-lead-time.md:1` |
+| 2026-07-04 | ADR-0005 -- Emergent doom waves: author causes, never outcomes; seed = RNG + schedule | -- none -- | `docs/game-design/decisions/ADR-0005-emergent-waves-seed-schedules.md:1` |
+| 2026-07-04 | ADR-0006 -- The replay string is the canonical run artifact; backend wiring order | -- none -- | `docs/game-design/decisions/ADR-0006-replay-artifact-backend.md:1` |
+| 2026-07-04 | ADR-0007 -- Alliances: the third client of Ledger + SA (treaty = shared liability + shared sight) | -- none -- | `docs/game-design/decisions/ADR-0007-alliances-third-client.md:1` |
+| 2026-07-04 | ADR-0008 -- Deferrals, folds, and rejections (the negative space of workshop #1) | -- none -- | `docs/game-design/decisions/ADR-0008-deferrals-and-rejections.md:1` |
+| 2026-07-12 | ADR-0009 -- Turn structure: plan-months, two decision speeds, day as resolution tick | -- none -- | `docs/game-design/decisions/ADR-0009-plan-months-two-speeds.md:1` |
+| 2026-07-12 | ADR-0010 -- Adoption routing (soft-with-teeth): doom bends where work is adopted | -- none -- | `docs/game-design/decisions/ADR-0010-adoption-routing.md:1` |
+| 2026-07-12 | ADR-0011 -- The effort economy: founder hours, staff lanes, manager compression | -- none -- | `docs/game-design/decisions/ADR-0011-effort-economy.md:1` |
+| 2026-07-12 | ADR-0012 -- Event response taxonomy: un-snoozable, deferrable, expiring | -- none -- | `docs/game-design/decisions/ADR-0012-event-response-taxonomy.md:1` |
+| 2026-07-12 | ADR-0013 -- Financing instruments & the cost-of-debt engine | -- none -- | `docs/game-design/decisions/ADR-0013-cost-of-debt-engine.md:1` |
+| 2026-07-12 | ADR-0014 -- Conferences, presence, and minimal location | -- none -- | `docs/game-design/decisions/ADR-0014-conferences-presence-location.md:1` |
+| 2026-07-13 | ADR-0015 -- No printed doom deltas: doom is computed from world state | -- none -- | `docs/game-design/decisions/ADR-0015-no-printed-doom-deltas.md:1` |
+| 2026-07-13 | ADR-0016 -- League metabolism: the game trails reality by one month | -- none -- | `docs/game-design/decisions/ADR-0016-league-metabolism.md:1` |
+| 2026-07-17 | ADR-0017 -- Anti-hollow test strategy (load-time smoke + property-based invariants) | -- none -- | `docs/game-design/decisions/ADR-0017-anti-hollow-test-strategy.md:1` |
+| 2026-07-27 | ADR-0018 -- Render-only office doctrine: no spatial fact becomes a gameplay input | -- none -- | `docs/game-design/decisions/ADR-0018-render-only-office-doctrine.md:1` |
+| 2026-08-03 | ADR-0019 -- Pull-from-demand asset pipeline: the pack is a function of declared demand | -- none -- | `docs/game-design/decisions/ADR-0019-pull-from-demand-asset-pipeline.md:1` |
 
 ### `art-provenance`
 
@@ -36,6 +74,17 @@ flavour it belongs to and read what was already decided there.
 | 2026-08-15 | naming a mechanism is OPTIONAL on a ruling, and the generated index reports which rulings have none | `scripts/generate_rulings.py` | `docs/rulings/LEDGER.md:11` |
 | 2026-08-17 | published figures live in tooling, not prose: the line item is the atom and every rendering is a projection | `tools/render_budget.py --check` | `tools/render_budget.py:12` |
 
+### `session-record`
+
+| date | ruling | mechanism | source |
+|---|---|---|---|
+| 2026-07-29 | WS3 ENDGAME RULINGS 2026-07-29 | -- none -- | `docs/game-design/WS3_ENDGAME_RULINGS_2026-07-29.md:1` |
+| 2026-07-31 | SPOKEN COMMENTS 2026-07-31 league-night | -- none -- | `docs/SPOKEN_COMMENTS_2026-07-31_league-night.md:1` |
+| 2026-08-01 | 2026-08-01 dev-powers-nomenclature | -- none -- | `docs/decision-cards/2026-08-01_dev-powers-nomenclature.html:1` |
+| 2026-08-01 | 2026-08-01 seed-authority | -- none -- | `docs/decision-cards/2026-08-01_seed-authority.html:1` |
+| 2026-08-02 | SPOKEN RULINGS 2026-08-02 playtest-and-cards | -- none -- | `docs/SPOKEN_RULINGS_2026-08-02_playtest-and-cards.md:1` |
+| 2026-08-02 | 2026-08-02 pdoom-data-contract | -- none -- | `docs/decision-cards/2026-08-02_pdoom-data-contract.md:1` |
+
 ### `ui-legibility` (only one so far)
 
 | date | ruling | mechanism | source |
@@ -49,7 +98,31 @@ question to be resolved later is a MECHANISM, not a document. This section
 reports, it does not block -- naming a mechanism is optional by design, and
 an empty list here is not a goal.
 
-None -- every active ruling names something that will re-ask it.
+- `pdoom1:2026-07-04:12de8fc2` -- ADR-0001 -- Situational Awareness as the primary sink ("spending buys sight") (`docs/game-design/decisions/ADR-0001-spending-buys-sight.md:1`)
+- `pdoom1:2026-07-04:ffa37090` -- ADR-0002 -- Scoring: turns survived, lexicographic doom-integral tiebreak, flows only (`docs/game-design/decisions/ADR-0002-scoring-turns-survived.md:1`)
+- `pdoom1:2026-07-04:ffbe9dcc` -- ADR-0003 -- The Liability Ledger (two-sided): every mitigation is a loan (`docs/game-design/decisions/ADR-0003-liability-ledger.md:1`)
+- `pdoom1:2026-07-04:7b17a204` -- ADR-0004 -- SA amended: channels with provenance, lead-time semantics, decision-flip test (`docs/game-design/decisions/ADR-0004-sa-channels-lead-time.md:1`)
+- `pdoom1:2026-07-04:7530dbcd` -- ADR-0005 -- Emergent doom waves: author causes, never outcomes; seed = RNG + schedule (`docs/game-design/decisions/ADR-0005-emergent-waves-seed-schedules.md:1`)
+- `pdoom1:2026-07-04:3f10ce2e` -- ADR-0006 -- The replay string is the canonical run artifact; backend wiring order (`docs/game-design/decisions/ADR-0006-replay-artifact-backend.md:1`)
+- `pdoom1:2026-07-04:c3c13f7a` -- ADR-0007 -- Alliances: the third client of Ledger + SA (treaty = shared liability + shared sight) (`docs/game-design/decisions/ADR-0007-alliances-third-client.md:1`)
+- `pdoom1:2026-07-04:d4bc649b` -- ADR-0008 -- Deferrals, folds, and rejections (the negative space of workshop #1) (`docs/game-design/decisions/ADR-0008-deferrals-and-rejections.md:1`)
+- `pdoom1:2026-07-12:61fc328b` -- ADR-0009 -- Turn structure: plan-months, two decision speeds, day as resolution tick (`docs/game-design/decisions/ADR-0009-plan-months-two-speeds.md:1`)
+- `pdoom1:2026-07-12:52b9ee21` -- ADR-0010 -- Adoption routing (soft-with-teeth): doom bends where work is adopted (`docs/game-design/decisions/ADR-0010-adoption-routing.md:1`)
+- `pdoom1:2026-07-12:48b249fb` -- ADR-0011 -- The effort economy: founder hours, staff lanes, manager compression (`docs/game-design/decisions/ADR-0011-effort-economy.md:1`)
+- `pdoom1:2026-07-12:2d44a688` -- ADR-0012 -- Event response taxonomy: un-snoozable, deferrable, expiring (`docs/game-design/decisions/ADR-0012-event-response-taxonomy.md:1`)
+- `pdoom1:2026-07-12:881c9a5d` -- ADR-0013 -- Financing instruments & the cost-of-debt engine (`docs/game-design/decisions/ADR-0013-cost-of-debt-engine.md:1`)
+- `pdoom1:2026-07-12:cc6e8c3e` -- ADR-0014 -- Conferences, presence, and minimal location (`docs/game-design/decisions/ADR-0014-conferences-presence-location.md:1`)
+- `pdoom1:2026-07-13:e5650a4c` -- ADR-0015 -- No printed doom deltas: doom is computed from world state (`docs/game-design/decisions/ADR-0015-no-printed-doom-deltas.md:1`)
+- `pdoom1:2026-07-13:914bdd09` -- ADR-0016 -- League metabolism: the game trails reality by one month (`docs/game-design/decisions/ADR-0016-league-metabolism.md:1`)
+- `pdoom1:2026-07-17:09d2b5eb` -- ADR-0017 -- Anti-hollow test strategy (load-time smoke + property-based invariants) (`docs/game-design/decisions/ADR-0017-anti-hollow-test-strategy.md:1`)
+- `pdoom1:2026-07-27:650d3819` -- ADR-0018 -- Render-only office doctrine: no spatial fact becomes a gameplay input (`docs/game-design/decisions/ADR-0018-render-only-office-doctrine.md:1`)
+- `pdoom1:2026-07-29:6893faf0` -- WS3 ENDGAME RULINGS 2026-07-29 (`docs/game-design/WS3_ENDGAME_RULINGS_2026-07-29.md:1`)
+- `pdoom1:2026-07-31:3ad565a5` -- SPOKEN COMMENTS 2026-07-31 league-night (`docs/SPOKEN_COMMENTS_2026-07-31_league-night.md:1`)
+- `pdoom1:2026-08-01:e138b8ef` -- 2026-08-01 dev-powers-nomenclature (`docs/decision-cards/2026-08-01_dev-powers-nomenclature.html:1`)
+- `pdoom1:2026-08-01:96a2a6f0` -- 2026-08-01 seed-authority (`docs/decision-cards/2026-08-01_seed-authority.html:1`)
+- `pdoom1:2026-08-02:6c6d32f9` -- SPOKEN RULINGS 2026-08-02 playtest-and-cards (`docs/SPOKEN_RULINGS_2026-08-02_playtest-and-cards.md:1`)
+- `pdoom1:2026-08-02:327d595d` -- 2026-08-02 pdoom-data-contract (`docs/decision-cards/2026-08-02_pdoom-data-contract.md:1`)
+- `pdoom1:2026-08-03:fb9eeed6` -- ADR-0019 -- Pull-from-demand asset pipeline: the pack is a function of declared demand (`docs/game-design/decisions/ADR-0019-pull-from-demand-asset-pipeline.md:1`)
 
 ## UNDECLARED -- prose that reads like a ruling
 
@@ -235,6 +308,7 @@ is not.
 - `godot/tests/unit/test_number_format_policy.gd:2` -- ## Locks the number-format policy ruled in #1087 (docs/NUMBER_FORMATS.md).
 - `godot/tests/unit/test_prop_manifest.gd:96` -- # style_tags restricted to the canonical quality-tier ladder (ruled 2026-07-26).
 - `public/releases/releases.json:12` -- "changelog": "Ladder epoch **L3 -> L4** -- this is a FORKING release. The historical event deck\nwas retimed to one-turn-one-month and the ruled promotions were applied (#1137),\nwhich changes which e
+- `scripts/generate_rulings.py:164` -- # CONSOLIDATION, ruled by Pip 2026-08-21.
 - `scripts/generate_rulings.py:9` -- (`ruled by Pip`, `Pip ruled`, `ruled 2026-..`) scattered across .py docstrings,
 - `tests/test_art_promotion_pipeline.py:480` -- """Pip ruled 2026-08-03: "Keep both, you pick naming variant."
 - `tests/test_art_promotion_pipeline.py:74` -- second-pass fix routes where it was ruled to route."""

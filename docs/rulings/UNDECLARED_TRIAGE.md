@@ -1,13 +1,13 @@
 # Undeclared ruling triage (GENERATED)
 
 > `tools/triage_undeclared_rulings.py`. A reading order, not a verdict.
-> 214 prose-scan hits, 10 declared rulings.
+> 215 prose-scan hits, 35 declared rulings.
 
 | category | n | share | action |
 |---|---:|---:|---|
-| candidate | 89 | 42% | **read these** |
-| mechanism | 55 | 26% | cheap wins -- the mechanism is already there |
-| reference | 59 | 28% | none -- the ruling exists elsewhere |
+| candidate | 89 | 41% | **read these** |
+| mechanism | 56 | 26% | cheap wins -- the mechanism is already there |
+| reference | 59 | 27% | none -- the ruling exists elsewhere |
 | noise | 11 | 5% | none -- false positive |
 
 ## candidate -- 89
@@ -191,7 +191,7 @@
 - `tools/assets/manifests/new_subjects.json:115`
   - "prompt_tail": "an almost perfectly flat-on frontal view of a wall of bureaucratic paperwork, shot square to the wall with minimal perspective so the
 
-## mechanism -- 55
+## mechanism -- 56
 
 - `godot/autoload/game_config.gd:776`
   - # ruled by Pip via PR #1096: "alpha-tools naming and wording settled") -----------------
@@ -245,6 +245,8 @@
   - ## Locks the number-format policy ruled in #1087 (docs/NUMBER_FORMATS.md).
 - `godot/tests/unit/test_prop_manifest.gd:96`
   - # style_tags restricted to the canonical quality-tier ladder (ruled 2026-07-26).
+- `scripts/generate_rulings.py:164`
+  - # CONSOLIDATION, ruled by Pip 2026-08-21.
 - `scripts/generate_rulings.py:9`
   - (`ruled by Pip`, `Pip ruled`, `ruled 2026-..`) scattered across .py docstrings,
 - `tests/test_art_promotion_pipeline.py:480`
