@@ -366,14 +366,30 @@ def classify(p, kind, state):
                 )
         return (f"file:art_generated/{rel.as_posix()}", p.name, None)
 
-    # px: reuse the existing state key spelling if one exists (600 legacy keys
-    # are extension-less); otherwise use the resolvable with-extension form.
+    # px: ONE spelling per file, and it is serve_review.py's.
+    #
+    # This used to fall back to the with-extension form while serve_review.py
+    # wrote the extension-less one, so the same image accumulated two keys.
+    # Measured 2026-08-20: 1,863 files carried both, created almost entirely by
+    # the 2026-08-14/15 sweeps -- and 1,439 of those were `keep` under BOTH
+    # spellings, which the promotion gate then reported as a file contesting its
+    # own destination. That is the whole of ORPHANS A4.
+    #
+    # The extension-less form is canonical because it is what serve_review.py
+    # writes (line ~522) and what apply_review.py resolves first. But it only
+    # RESOLVES for .png: apply_review tries `base` then `base + ".png"`, so a
+    # .jpg or .webp stripped of its extension would resolve to nothing. There
+    # are 4,457 png and 9 non-png under art_source/, so non-png keeps its
+    # extension and is excluded from the collapse for the same reason.
     rel = p.relative_to(ART_SRC).as_posix()
     sans = rel[: -len(p.suffix)]
-    for candidate in (f"px:{sans}", f"px:{rel}"):
+    canonical = f"px:{sans}" if p.suffix.lower() == ".png" else f"px:{rel}"
+    # An existing key in the other spelling still wins, so a store that has not
+    # been collapsed yet keeps showing the verdict it already holds.
+    for candidate in (canonical, f"px:{sans}", f"px:{rel}"):
         if candidate in state:
             return (candidate, p.name, None)
-    return (f"px:{rel}", p.name, None)
+    return (canonical, p.name, None)
 
 
 # Facet order is the order the filter bar shows them, coarsest first.

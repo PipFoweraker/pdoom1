@@ -340,7 +340,7 @@ DTSTART;VALUE=DATE:20260810
 DTEND;VALUE=DATE:20260811
 SUMMARY:[TASK] Book the half-day audit-mechanics workshop\, target window 
  opens
-DESCRIPTION:Owner: pip. Kind: task. Source: docs/rulings/RULINGS.md:104. p
+DESCRIPTION:Owner: pip. Kind: task. Source: docs/rulings/RULINGS.md:105. p
  doom1#984\, ruled 2026-07-27 18:11. Scheduled to precede the 2026-08-31 f
   -- Generated from tracked sources by scripts/generate_commitment_calenda
  r.py\; regenerate to update.
@@ -698,7 +698,7 @@ DTSTART;VALUE=DATE:20260812
 DTEND;VALUE=DATE:20260813
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:214. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:215. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `godot/scripts/core/capacity.gd:5` -- ## Ru
  led 2026-08-12 (coordination/DESIGN_2026-08-12_interrupt-resolution-varia
@@ -1352,6 +1352,30 @@ DESCRIPTION:P9\, the pack's OWN falsifier: if none of P1-P8 started and no
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:72d4b35be2295490@commitments.pdoom1
+DTSTAMP:20260814T000000Z
+DTSTART;VALUE=DATE:20260814
+DTEND;VALUE=DATE:20260815
+SUMMARY:[UNPARSED] needs a declaration -- A4_COLLAPSE_2026-08-20.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/art/A4_COLLAPSE_2
+ 026-08-20.md:33. 1 line(s) in docs/art/A4_COLLAPSE_2026-08-20.md mention 
+ this date and no COMMITMENT: declaration accounts for it. Either add a de
+ claration or the date is incidental. First line: them\, so the 2026-08-14
+ /15 sweeps left **1\,863 files carrying two verdicts each**. -- Generated
+  from tracked sources by scripts/generate_commitment_calendar.py\; regene
+ rate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- A4_COLLAPSE_2026-08-20.md (unparsed) --
+  unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:5b821bfb6b4dfbf2@commitments.pdoom1
 DTSTAMP:20260814T000000Z
 DTSTART;VALUE=DATE:20260814
@@ -1406,7 +1430,7 @@ DTSTART;VALUE=DATE:20260814
 DTEND;VALUE=DATE:20260815
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:231. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:232. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `godot/tests/unit/simulation/test_events.gd
  :50` -- ## THE RATCHET WAS DELIBERATELY LOOSENED -- 2026-08-14\, ruled by
@@ -1470,6 +1494,30 @@ ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- THE_REVISIONS_ARE_THE_STORY.md (unparse
  d) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:36d9174ccf8b86d2@commitments.pdoom1
+DTSTAMP:20260814T000000Z
+DTSTART;VALUE=DATE:20260814
+DTEND;VALUE=DATE:20260815
+SUMMARY:[UNPARSED] needs a declaration -- build_full_gallery.py
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/art_review/build
+ _full_gallery.py:374. 1 line(s) in tools/art_review/build_full_gallery.py
+  mention this date and no COMMITMENT: declaration accounts for it. Either
+  add a declaration or the date is incidental. First line: # the 2026-08-1
+ 4/15 sweeps -- and 1\,439 of those were `keep` under BOTH -- Generated fr
+ om tracked sources by scripts/generate_commitment_calendar.py\; regenerat
+ e to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- build_full_gallery.py (unparsed) -- uno
+ wned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
@@ -1539,6 +1587,30 @@ ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- check_review_js.py (unparsed) -- unowne
  d
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:d8d28d48824db9e0@commitments.pdoom1
+DTSTAMP:20260814T000000Z
+DTSTART;VALUE=DATE:20260814
+DTEND;VALUE=DATE:20260815
+SUMMARY:[UNPARSED] needs a declaration -- collapse_px_keys.py
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/art_review/colla
+ pse_px_keys.py:11. 1 line(s) in tools/art_review/collapse_px_keys.py ment
+ ion this date and no COMMITMENT: declaration accounts for it. Either add 
+ a declaration or the date is incidental. First line: `px:<dir>/<stem>.png
+ `. Both resolve to the same image. The 2026-08-14/15 sweeps -- Generated 
+ from tracked sources by scripts/generate_commitment_calendar.py\; regener
+ ate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- collapse_px_keys.py (unparsed) -- unown
+ ed
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
@@ -1619,6 +1691,30 @@ ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:Generation spend policy EXPIRES: $100 AUD/day unconstrained re
  verts to unset (expiry) -- pip
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:aa7476806cec8214@commitments.pdoom1
+DTSTAMP:20260815T000000Z
+DTSTART;VALUE=DATE:20260815
+DTEND;VALUE=DATE:20260816
+SUMMARY:[UNPARSED] needs a declaration -- A4_COLLAPSE_2026-08-20.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/art/A4_COLLAPSE_2
+ 026-08-20.md:44. 1 line(s) in docs/art/A4_COLLAPSE_2026-08-20.md mention 
+ this date and no COMMITMENT: declaration accounts for it. Either add a de
+ claration or the date is incidental. First line: mind between the 2026-08
+ -03 gallery sweep and the 2026-08-15 server sessions. In -- Generated fro
+ m tracked sources by scripts/generate_commitment_calendar.py\; regenerate
+  to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- A4_COLLAPSE_2026-08-20.md (unparsed) --
+  unowned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
@@ -1937,7 +2033,7 @@ DTSTART;VALUE=DATE:20260815
 DTEND;VALUE=DATE:20260816
 SUMMARY:[UNPARSED] needs a declaration -- build_full_gallery.py
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/art_review/build
- _full_gallery.py:783. 1 line(s) in tools/art_review/build_full_gallery.py
+ _full_gallery.py:799. 1 line(s) in tools/art_review/build_full_gallery.py
   mention this date and no COMMITMENT: declaration accounts for it. Either
   add a declaration or the date is incidental. First line: # led two separ
  ate readings to conclude. Measured 2026-08-15 and again on -- Generated f
@@ -2356,6 +2452,30 @@ DESCRIPTION:needs a declaration -- transcribe.py (unparsed) -- unowned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:aeb87ac5f48a110d@commitments.pdoom1
+DTSTAMP:20260819T000000Z
+DTSTART;VALUE=DATE:20260819
+DTEND;VALUE=DATE:20260820
+SUMMARY:[UNPARSED] needs a declaration -- A4_COLLAPSE_2026-08-20.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/art/A4_COLLAPSE_2
+ 026-08-20.md:71. 1 line(s) in docs/art/A4_COLLAPSE_2026-08-20.md mention 
+ this date and no COMMITMENT: declaration accounts for it. Either add a de
+ claration or the date is incidental. First line: ruling of 2026-08-19** -
+ - New-Bort is the working machine and the generated -- Generated from tra
+ cked sources by scripts/generate_commitment_calendar.py\; regenerate to u
+ pdate.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- A4_COLLAPSE_2026-08-20.md (unparsed) --
+  unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:13d9269457b4f42b@commitments.pdoom1
 DTSTAMP:20260819T000000Z
 DTSTART;VALUE=DATE:20260819
@@ -2410,7 +2530,7 @@ DTSTART;VALUE=DATE:20260819
 DTEND;VALUE=DATE:20260820
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:21. 7 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
+ d:21. 6 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
  TMENT: declaration accounts for it. Either add a declaration or the date 
  is incidental. First line: | 2026-08-19 | New-Bort is the working machine
   and hosts new archives and images\; the generated masters are NOT transf
@@ -2458,7 +2578,7 @@ DTSTART;VALUE=DATE:20260819
 DTEND;VALUE=DATE:20260820
 SUMMARY:[UNPARSED] needs a declaration -- build_full_gallery.py
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/art_review/build
- _full_gallery.py:784. 2 line(s) in tools/art_review/build_full_gallery.py
+ _full_gallery.py:800. 2 line(s) in tools/art_review/build_full_gallery.py
   mention this date and no COMMITMENT: declaration accounts for it. Either
   add a declaration or the date is incidental. First line: # 2026-08-19: Z
  ERO verdicts have been lost. The population is two things\, -- Generated 
@@ -2621,6 +2741,30 @@ DESCRIPTION:P3 falsifier: re-run the claim audit. A WRONG rate at or above
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:8c501af46d2edeeb@commitments.pdoom1
+DTSTAMP:20260820T000000Z
+DTSTART;VALUE=DATE:20260820
+DTEND;VALUE=DATE:20260821
+SUMMARY:[UNPARSED] needs a declaration -- A4_COLLAPSE_2026-08-20.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/art/A4_COLLAPSE_2
+ 026-08-20.md:3. 1 line(s) in docs/art/A4_COLLAPSE_2026-08-20.md mention t
+ his date and no COMMITMENT: declaration accounts for it. Either add a dec
+ laration or the date is incidental. First line: **2026-08-20\, `pdoom1` s
+ eat on New-Bort.** Ruled by Pip: canonicalise on the write -- Generated f
+ rom tracked sources by scripts/generate_commitment_calendar.py\; regenera
+ te to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- A4_COLLAPSE_2026-08-20.md (unparsed) --
+  unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:8f4f18e463c483cb@commitments.pdoom1
 DTSTAMP:20260820T000000Z
 DTSTART;VALUE=DATE:20260820
@@ -2666,6 +2810,29 @@ DESCRIPTION:needs a declaration -- MIGRATION_TO_NEW_PC.md (unparsed) -- un
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:043bb664f9e1e4ba@commitments.pdoom1
+DTSTAMP:20260820T000000Z
+DTSTART;VALUE=DATE:20260820
+DTEND;VALUE=DATE:20260821
+SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
+ d:88. 3 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
+ TMENT: declaration accounts for it. Either add a declaration or the date 
+ is incidental. First line: - `docs/art/A4_COLLAPSE_2026-08-20.md:3` -- **
+ 2026-08-20\, `pdoom1` seat on New-Bort.** Ruled by Pip: canonicalise on t
+ he write -- Generated from tracked sources by scripts/generate_commitment
+ _calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- RULINGS.md (unparsed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:5dc1133d8e87e032@commitments.pdoom1
 DTSTAMP:20260820T000000Z
 DTSTART;VALUE=DATE:20260820
@@ -2686,6 +2853,54 @@ ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- backfill_provenance.py (unparsed) -- un
  owned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:be458a89822c8453@commitments.pdoom1
+DTSTAMP:20260820T000000Z
+DTSTART;VALUE=DATE:20260820
+DTEND;VALUE=DATE:20260821
+SUMMARY:[UNPARSED] needs a declaration -- build_full_gallery.py
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/art_review/build
+ _full_gallery.py:373. 1 line(s) in tools/art_review/build_full_gallery.py
+  mention this date and no COMMITMENT: declaration accounts for it. Either
+  add a declaration or the date is incidental. First line: # Measured 2026
+ -08-20: 1\,863 files carried both\, created almost entirely by -- Generat
+ ed from tracked sources by scripts/generate_commitment_calendar.py\; rege
+ nerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- build_full_gallery.py (unparsed) -- uno
+ wned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:6874e251715fd14e@commitments.pdoom1
+DTSTAMP:20260820T000000Z
+DTSTART;VALUE=DATE:20260820
+DTEND;VALUE=DATE:20260821
+SUMMARY:[UNPARSED] needs a declaration -- collapse_px_keys.py
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/art_review/colla
+ pse_px_keys.py:4. 1 line(s) in tools/art_review/collapse_px_keys.py menti
+ on this date and no COMMITMENT: declaration accounts for it. Either add a
+  declaration or the date is incidental. First line: ORPHANS A4. Ruled by 
+ Pip 2026-08-20: canonicalise on the write path AND collapse -- Generated 
+ from tracked sources by scripts/generate_commitment_calendar.py\; regener
+ ate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- collapse_px_keys.py (unparsed) -- unown
+ ed
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
@@ -3102,7 +3317,7 @@ DTSTART;VALUE=DATE:20260831
 DTEND;VALUE=DATE:20260901
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:222. 2 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:223. 2 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `godot/scripts/core/researcher.gd:131` -- #
   SEAM (ruled 2026-07-27\, review-by 2026-08-31): AUDITS ground-truth repo
