@@ -2770,7 +2770,7 @@ DTSTAMP:20260820T000000Z
 DTSTART;VALUE=DATE:20260820
 DTEND;VALUE=DATE:20260821
 SUMMARY:[UNPARSED] needs a declaration -- CREDITS.md
-DESCRIPTION:Owner: unowned. Kind: unparsed. Source: CREDITS.md:21. 3 line(
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: CREDITS.md:21. 4 line(
  s) in CREDITS.md mention this date and no COMMITMENT: declaration account
  s for it. Either add a declaration or the date is incidental. First line:
   > **Diff `godot/data/credits.json` before committing** -- on 2026-08-20 

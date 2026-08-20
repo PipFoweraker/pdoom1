@@ -25,7 +25,7 @@ P(Doom)1 -- a turn-based AI-safety strategy game.
 
 ## Game
 
-- **Design, direction, and development:** Pip Foweraker  *(adjust name form as preferred)*
+- **Design, direction, and development:** Pip Foweraker -- pipfoweraker.com
 - **Engine:** [Godot Engine](https://godotengine.org) 4.5.1 (MIT License)
 
 ## Cats
@@ -106,7 +106,10 @@ The full lineage is documented in `docs/audio/REFERENCE_TRACKS.md`.
 
 ### Notes for Pip (resolve before any public/shipped credits use)
 
-- [ ] Confirm your preferred credited name/handle (used "Pip Foweraker" above).
+- [x] **Confirmed 2026-08-20.** Credited as "Pip Foweraker", with pipfoweraker.com
+      as plain text. Ruled after the aside that used to sit on that line shipped
+      to the credits screen: the placeholder-drop only matches [bracket] markers,
+      so an italic parenthetical passed straight through.
 - [ ] Fill your friend's name/handle for the original tracks -- or "prefers
       anonymity" if that is their wish. Confirm the rights note in writing
       (the music brief says you hold full rights; STEM_CATALOGUE.md suggests

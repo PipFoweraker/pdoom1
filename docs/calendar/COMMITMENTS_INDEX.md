@@ -289,7 +289,8 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-19 | `tools/assets/check_provenance.py` | 204 | Replays the 2026-08-19 false positive exactly: a blob committed with LF, a |
 | 2026-08-20 | `CREDITS.md` | 21 | > **Diff `godot/data/credits.json` before committing** -- on 2026-08-20 an |
 | 2026-08-20 | `CREDITS.md` | 56 | 2026-08-20, on his account of that conversation rather than a linkable artifact. |
-| 2026-08-20 | `CREDITS.md` | 120 | - [x] **Cats: RESOLVED 2026-08-20.** Each contributor's credit form was agreed |
+| 2026-08-20 | `CREDITS.md` | 109 | - [x] **Confirmed 2026-08-20.** Credited as "Pip Foweraker", with pipfoweraker.com |
+| 2026-08-20 | `CREDITS.md` | 123 | - [x] **Cats: RESOLVED 2026-08-20.** Each contributor's credit form was agreed |
 | 2026-08-20 | `docs/MIGRATION_TO_NEW_PC.md` | 3 | > Measured 2026-08-20 on the current machine. Sizes and file counts are real |
 | 2026-08-20 | `docs/MIGRATION_TO_NEW_PC.md` | 39 | \| `tools/print_doc.py` \| **SumatraPDF** (strongly preferred) \| The ONLY silent print path. Without it the tool falls back to Acrobat (steals focus) an |
 | 2026-08-20 | `docs/art/A4_COLLAPSE_2026-08-20.md` | 3 | **2026-08-20, `pdoom1` seat on New-Bort.** Ruled by Pip: canonicalise on the write |
