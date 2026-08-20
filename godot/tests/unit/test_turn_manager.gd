@@ -22,6 +22,26 @@ func after_each():
 	# Restore the historical event deck cleared in before_each (#534)
 	if EventService:
 		EventService.transformed_events = _saved_historical_events
+	# Drop the risk-event definition cache in case a test pinned a severity cell
+	# (_pin_risk_cell_to) -- the cache is static, so a mutation would otherwise
+	# leak into every later test in the run.
+	GameEvents.reload_definitions()
+
+
+func _pin_risk_cell_to(pool: String, severity: String, event_id: String) -> void:
+	"""Reduce one pool/severity cell of the (static, cached) risk-event table to the
+	single event under test. The 2026-08 content pass populated every non-minor cell
+	with a second event, so get_risk_event_for_pool's rng draw no longer guarantees
+	WHICH event fires -- a test asserting one event's semantics must pin the draw.
+	after_each() reloads the definitions, so the mutation cannot outlive the test."""
+	var cells := GameEvents.get_risk_events()
+	assert_true(cells.has(pool), "pin: unknown risk pool %s" % pool)
+	var cell: Array = cells[pool][severity]
+	for event in cell:
+		if event.get("id", "") == event_id:
+			cells[pool][severity] = [event]
+			return
+	fail_test("pin: event %s not found in %s/%s" % [event_id, pool, severity])
 
 func test_start_turn_increments_turn_counter():
 	# Test that start_turn increases turn number
@@ -421,6 +441,7 @@ func test_insider_threat_key_resignation_removes_a_researcher():
 	state.researchers[1].loyalty = 10
 	var before := state.researchers.size()
 
+	_pin_risk_cell_to("insider_threat", "moderate", "risk_insider_moderate_1")
 	state.risk_system.pools["insider_threat"] = 55.0  # guaranteed moderate-tier trigger
 
 	var results: Array = []
@@ -447,6 +468,7 @@ func test_insider_threat_key_resignation_safe_with_no_researchers():
 	assert_eq(state.researchers.size(), 0, "Start empty")
 	var initial_reputation = state.reputation
 
+	_pin_risk_cell_to("insider_threat", "moderate", "risk_insider_moderate_1")
 	state.risk_system.pools["insider_threat"] = 55.0
 
 	var results: Array = []
