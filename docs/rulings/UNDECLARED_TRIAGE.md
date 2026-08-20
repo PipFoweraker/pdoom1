@@ -1,16 +1,16 @@
 # Undeclared ruling triage (GENERATED)
 
 > `tools/triage_undeclared_rulings.py`. A reading order, not a verdict.
-> 207 prose-scan hits, 10 declared rulings.
+> 214 prose-scan hits, 10 declared rulings.
 
 | category | n | share | action |
 |---|---:|---:|---|
-| candidate | 88 | 43% | **read these** |
-| mechanism | 51 | 25% | cheap wins -- the mechanism is already there |
-| reference | 59 | 29% | none -- the ruling exists elsewhere |
-| noise | 9 | 4% | none -- false positive |
+| candidate | 89 | 42% | **read these** |
+| mechanism | 55 | 26% | cheap wins -- the mechanism is already there |
+| reference | 59 | 28% | none -- the ruling exists elsewhere |
+| noise | 11 | 5% | none -- false positive |
 
-## candidate -- 88
+## candidate -- 89
 
 - `CHANGELOG.md:164`
   - was retimed to one-turn-one-month and the ruled promotions were applied (#1137),
@@ -40,6 +40,8 @@
   - date-correct weekly generator contradicts the ruled MONTHLY cadence anyway).
 - `docs/archive/2026-07-25-reconcile/PHASE3_DEPLOY_RECON.md:25`
   - MONTHLY league cadence ruled; each month = world-update pack + new baseline
+- `docs/art/A4_COLLAPSE_2026-08-20.md:3`
+  - **2026-08-20, `pdoom1` seat on New-Bort.** Ruled by Pip: canonicalise on the write
 - `docs/art/MOTIF_AND_WATERMARK_PROTOCOL.md:366`
   - transport. Nothing to build until the schema is ruled.
 - `docs/art/MOTIF_AND_WATERMARK_PROTOCOL.md:410`
@@ -189,7 +191,7 @@
 - `tools/assets/manifests/new_subjects.json:115`
   - "prompt_tail": "an almost perfectly flat-on frontal view of a wall of bureaucratic paperwork, shot square to the wall with minimal perspective so the
 
-## mechanism -- 51
+## mechanism -- 55
 
 - `godot/autoload/game_config.gd:776`
   - # ruled by Pip via PR #1096: "alpha-tools naming and wording settled") -----------------
@@ -255,6 +257,8 @@
   - # Pip ruled 2026-08-03 that BOTH variants ship, so resolve collisions by
 - `tools/art_review/build_cull_sheet.py:107`
   - # A null clearance means "not yet ruled on", which is not consent.
+- `tools/art_review/collapse_px_keys.py:4`
+  - ORPHANS A4. Ruled by Pip 2026-08-20: canonicalise on the write path AND collapse
 - `tools/art_review/extract_pullquotes.py:227`
   - # Per-platform clearance. null means "not yet ruled on"; a list
 - `tools/art_review/extract_pullquotes.py:30`
@@ -293,6 +297,12 @@
   - description="Capture a ruling, after showing what was already ruled in its flavour."
 - `tools/rule.py:159`
   - ap.add_argument("--by", default="Pip", help="who ruled (default: Pip)")
+- `tools/triage_undeclared_rulings.py:15`
+  - ruling, a doc explaining that something was ruled elsewhere, a tool's docstring
+- `tools/triage_undeclared_rulings.py:58`
+  - (r"\bruled by \w+,?\s+\d{4}-\d{2}-\d{2}", "cites 'ruled by X, DATE'"),
+- `tools/triage_undeclared_rulings.py:61`
+  - (r"\balready ruled\b|\bwas ruled\b|\bhas ruled\b|\bhe ruled\b|\bshe ruled\b", "past tense"),
 
 ## reference -- 59
 
@@ -408,8 +418,8 @@
   - | artq-017 | A | B T | "Avoid cockleg problems, this is very funny though" | **Already ruled by Pip.** The calibration for this sheet |
 - `tools/art_review/CLEARANCE_SHEET_2026-08-15.md:325`
   - Totals: **12 A** (including `artq-017`, already ruled, and `artq-014`, blocked
-- `tools/art_review/ORPHANS_2026-08-15.md:47`
-  - ## RULED 2026-08-19 by Pip -- A1 answered, A2 follows from it, A3 and A4 still open
+- `tools/art_review/ORPHANS_2026-08-15.md:65`
+  - **A4: RULED 2026-08-20 and DONE.** Canonicalise on the write path and collapse the
 - `tools/assets/provenance_unknown_pin.json:2`
   - "_why": "Pinned unknown set. Ruled by Pip 2026-08-11: keep the unattributable assets, record them honestly, and let a mechanism force the question lat
 - `user_privacy.json:2`
