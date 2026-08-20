@@ -5,7 +5,7 @@
 > `python scripts/generate_rulings.py`. The convention, and why it looks
 > like this, is argued in `docs/rulings/RULINGS_CONVENTION.md`.
 
-**10 ruling(s)** across **4 flavour(s)**. **209** prose ruling(s) not yet declared.
+**10 ruling(s)** across **4 flavour(s)**. **214** prose ruling(s) not yet declared.
 
 ## By flavour
 
@@ -266,4 +266,9 @@ is not.
 - `tools/assets/provenance_unknown_pin.json:2` -- "_why": "Pinned unknown set. Ruled by Pip 2026-08-11: keep the unattributable assets, record them honestly, and let a mechanism force the question later rather than a document.",
 - `tools/rule.py:153` -- description="Capture a ruling, after showing what was already ruled in its flavour."
 - `tools/rule.py:159` -- ap.add_argument("--by", default="Pip", help="who ruled (default: Pip)")
+- `tools/triage_undeclared_rulings.py:15` -- ruling, a doc explaining that something was ruled elsewhere, a tool's docstring
+- `tools/triage_undeclared_rulings.py:21` -- ("ruled out", "ruled the day", "flagged, not ruled")
+- `tools/triage_undeclared_rulings.py:52` -- (r"\bnot ruled\b|\bunruled\b|\bnothing ruled\b", "explicitly says it is NOT ruled"),
+- `tools/triage_undeclared_rulings.py:58` -- (r"\bruled by \w+,?\s+\d{4}-\d{2}-\d{2}", "cites 'ruled by X, DATE'"),
+- `tools/triage_undeclared_rulings.py:61` -- (r"\balready ruled\b|\bwas ruled\b|\bhas ruled\b|\bhe ruled\b|\bshe ruled\b", "past tense"),
 - `user_privacy.json:2` -- "_comment": "Machine-readable privacy posture record. Canonical doc: docs/PRIVACY_POSTURE.md (two-tier model, ruled 2026-07-26). The Godot build persists LIVE player choices in user://config.cfg; this

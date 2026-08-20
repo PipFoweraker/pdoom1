@@ -950,6 +950,26 @@
       "text": "ap.add_argument(\"--by\", default=\"Pip\", help=\"who ruled (default: Pip)\")"
     },
     {
+      "source": "tools/triage_undeclared_rulings.py:15",
+      "text": "ruling, a doc explaining that something was ruled elsewhere, a tool's docstring"
+    },
+    {
+      "source": "tools/triage_undeclared_rulings.py:21",
+      "text": "(\"ruled out\", \"ruled the day\", \"flagged, not ruled\")"
+    },
+    {
+      "source": "tools/triage_undeclared_rulings.py:52",
+      "text": "(r\"\\bnot ruled\\b|\\bunruled\\b|\\bnothing ruled\\b\", \"explicitly says it is NOT ruled\"),"
+    },
+    {
+      "source": "tools/triage_undeclared_rulings.py:58",
+      "text": "(r\"\\bruled by \\w+,?\\s+\\d{4}-\\d{2}-\\d{2}\", \"cites 'ruled by X, DATE'\"),"
+    },
+    {
+      "source": "tools/triage_undeclared_rulings.py:61",
+      "text": "(r\"\\balready ruled\\b|\\bwas ruled\\b|\\bhas ruled\\b|\\bhe ruled\\b|\\bshe ruled\\b\", \"past tense\"),"
+    },
+    {
       "source": "user_privacy.json:2",
       "text": "\"_comment\": \"Machine-readable privacy posture record. Canonical doc: docs/PRIVACY_POSTURE.md (two-tier model, ruled 2026-07-26). The Godot build persists LIVE player choices in user://config.cfg; this"
     }
