@@ -2621,6 +2621,28 @@ DESCRIPTION:P3 falsifier: re-run the claim audit. A WRONG rate at or above
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:8f4f18e463c483cb@commitments.pdoom1
+DTSTAMP:20260820T000000Z
+DTSTART;VALUE=DATE:20260820
+DTEND;VALUE=DATE:20260821
+SUMMARY:[UNPARSED] needs a declaration -- CREDITS.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: CREDITS.md:46. 2 line(
+ s) in CREDITS.md mention this date and no COMMITMENT: declaration account
+ s for it. Either add a declaration or the date is incidental. First line:
+  2026-08-20\, on his account of that conversation rather than a linkable 
+ artifact. -- Generated from tracked sources by scripts/generate_commitmen
+ t_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- CREDITS.md (unparsed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:f6e6dac0e9f84f7d@commitments.pdoom1
 DTSTAMP:20260820T000000Z
 DTSTART;VALUE=DATE:20260820

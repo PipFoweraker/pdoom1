@@ -13,7 +13,7 @@ Horizon: **2026-08-09** (the prose scan reports dates at or after this; roll it
 forward deliberately in `COMMITMENTS.md`, never automatically -- a clock-reading
 generator goes stale overnight and trains people to ignore the check).
 
-**49 declared, 4 release-train, 108 UNPARSED, 0 malformed.**
+**49 declared, 4 release-train, 109 UNPARSED, 0 malformed.**
 
 ## Declared commitments
 
@@ -282,6 +282,8 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-19 | `tools/assets/check_provenance.py` | 47 | WHY IT HASHES THE GIT BLOB AND NOT THE FILE ON DISK (2026-08-19) |
 | 2026-08-19 | `tools/assets/check_provenance.py` | 65 | RULING: 2026-08-19 -- the provenance guard compares against the git blob, not the working tree, and runs in pre-commit and CI; a guard wired to nothin |
 | 2026-08-19 | `tools/assets/check_provenance.py` | 165 | Replays the 2026-08-19 false positive exactly: a blob committed with LF, a |
+| 2026-08-20 | `CREDITS.md` | 46 | 2026-08-20, on his account of that conversation rather than a linkable artifact. |
+| 2026-08-20 | `CREDITS.md` | 110 | - [x] **Cats: RESOLVED 2026-08-20.** Each contributor's credit form was agreed |
 | 2026-08-20 | `docs/MIGRATION_TO_NEW_PC.md` | 3 | > Measured 2026-08-20 on the current machine. Sizes and file counts are real |
 | 2026-08-20 | `docs/MIGRATION_TO_NEW_PC.md` | 39 | \| `tools/print_doc.py` \| **SumatraPDF** (strongly preferred) \| The ONLY silent print path. Without it the tool falls back to Acrobat (steals focus) an |
 | 2026-08-20 | `tools/print_doc.py` | 199 | # Acrobat's own /t switch, BEFORE the shell verb. Measured 2026-08-20 on |
