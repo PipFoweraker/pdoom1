@@ -2598,6 +2598,29 @@ DESCRIPTION:P3 falsifier: re-run the claim audit. A WRONG rate at or above
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:f6e6dac0e9f84f7d@commitments.pdoom1
+DTSTAMP:20260820T000000Z
+DTSTART;VALUE=DATE:20260820
+DTEND;VALUE=DATE:20260821
+SUMMARY:[UNPARSED] needs a declaration -- MIGRATION_TO_NEW_PC.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/MIGRATION_TO_NEW_
+ PC.md:3. 2 line(s) in docs/MIGRATION_TO_NEW_PC.md mention this date and n
+ o COMMITMENT: declaration accounts for it. Either add a declaration or th
+ e date is incidental. First line: > Measured 2026-08-20 on the current ma
+ chine. Sizes and file counts are real -- Generated from tracked sources b
+ y scripts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- MIGRATION_TO_NEW_PC.md (unparsed) -- un
+ owned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:c1d052c7b50e541d@commitments.pdoom1
 DTSTAMP:20260820T000000Z
 DTSTART;VALUE=DATE:20260820
