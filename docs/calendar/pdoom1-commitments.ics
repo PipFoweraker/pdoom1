@@ -2598,6 +2598,28 @@ DESCRIPTION:P3 falsifier: re-run the claim audit. A WRONG rate at or above
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:c1d052c7b50e541d@commitments.pdoom1
+DTSTAMP:20260820T000000Z
+DTSTART;VALUE=DATE:20260820
+DTEND;VALUE=DATE:20260821
+SUMMARY:[UNPARSED] needs a declaration -- print_doc.py
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/print_doc.py:199
+ . 1 line(s) in tools/print_doc.py mention this date and no COMMITMENT: de
+ claration accounts for it. Either add a declaration or the date is incide
+ ntal. First line: # Acrobat's own /t switch\, BEFORE the shell verb. Meas
+ ured 2026-08-20 on -- Generated from tracked sources by scripts/generate_
+ commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- print_doc.py (unparsed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:0f78578a726228f9@commitments.pdoom1
 DTSTAMP:20260821T000000Z
 DTSTART;VALUE=DATE:20260821

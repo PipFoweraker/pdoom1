@@ -13,7 +13,7 @@ Horizon: **2026-08-09** (the prose scan reports dates at or after this; roll it
 forward deliberately in `COMMITMENTS.md`, never automatically -- a clock-reading
 generator goes stale overnight and trains people to ignore the check).
 
-**49 declared, 4 release-train, 105 UNPARSED, 0 malformed.**
+**49 declared, 4 release-train, 106 UNPARSED, 0 malformed.**
 
 ## Declared commitments
 
@@ -281,6 +281,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-19 | `tools/assets/check_provenance.py` | 47 | WHY IT HASHES THE GIT BLOB AND NOT THE FILE ON DISK (2026-08-19) |
 | 2026-08-19 | `tools/assets/check_provenance.py` | 65 | RULING: 2026-08-19 -- the provenance guard compares against the git blob, not the working tree, and runs in pre-commit and CI; a guard wired to nothin |
 | 2026-08-19 | `tools/assets/check_provenance.py` | 165 | Replays the 2026-08-19 false positive exactly: a blob committed with LF, a |
+| 2026-08-20 | `tools/print_doc.py` | 199 | # Acrobat's own /t switch, BEFORE the shell verb. Measured 2026-08-20 on |
 | 2026-08-24 | `docs/design/LEAGUE_CUTOVER_PLAYBOOK.md` | 41 | at L4, and is pinned for reflective review on/after 2026-08-24. |
 | 2026-08-24 | `pdoom1#808` | 0 | Reflective review (on/after 2026-08-24): release/league cycle nomenclature + cadence |
 | 2026-08-24 | `pdoom1#811` | 0 | Workshop 3 (mechanics) -- Mon 07-27 W-3a / Tue 07-28 build / Wed 07-29 W-3b-W-4: crisp parts, brutal decisions |

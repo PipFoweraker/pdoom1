@@ -148,6 +148,40 @@ def find_silent_printer() -> Path | None:
     return Path(found) if found else None
 
 
+ACROBATS = [
+    Path(r"C:\Program Files (x86)\Adobe\Acrobat Reader DC\Reader\AcroRd32.exe"),
+    Path(r"C:\Program Files\Adobe\Acrobat DC\Acrobat\Acrobat.exe"),
+    Path(r"C:\Program Files (x86)\Adobe\Acrobat DC\Acrobat\Acrobat.exe"),
+]
+
+
+def find_acrobat() -> Path | None:
+    for cand in ACROBATS:
+        if cand.exists():
+            return cand
+    found = shutil.which("AcroRd32")
+    return Path(found) if found else None
+
+
+def default_printer_name() -> str | None:
+    """Acrobat's /t REQUIRES a printer name -- there is no print-to-default form."""
+    ps = (
+        "(Get-CimInstance Win32_Printer -Filter 'Default=True' "
+        "| Select-Object -ExpandProperty Name)"
+    )
+    try:
+        res = subprocess.run(
+            ["powershell", "-NoProfile", "-NonInteractive", "-Command", ps],
+            capture_output=True,
+            text=True,
+            timeout=45,
+        )
+        name = res.stdout.strip().splitlines()
+        return name[0].strip() if name else None
+    except (OSError, subprocess.SubprocessError):
+        return None
+
+
 def send_to_printer(pdf: Path, printer: str | None) -> None:
     sumatra = find_silent_printer()
     if sumatra:
@@ -162,8 +196,29 @@ def send_to_printer(pdf: Path, printer: str | None) -> None:
             )
         return
 
-    print("[warn] SumatraPDF not found -- falling back to the shell print verb.")
-    print("       That opens whatever owns .pdf (often Acrobat) and WILL steal focus.")
+    # Acrobat's own /t switch, BEFORE the shell verb. Measured 2026-08-20 on
+    # Pip's machine: `Start-Process -Verb Print` on a PDF returns exit 0, raises
+    # nothing, and prints NOTHING -- empty queue, JobCountSinceLastReset stays 0.
+    # Five documents were reported sent and none existed. The returncode check
+    # below cannot catch that, because the failure IS a clean exit.
+    #
+    # `AcroRd32.exe /n /t <file> <printer>` spools properly and exits. It steals
+    # focus briefly, which is why SumatraPDF stays the preferred path.
+    acro = find_acrobat()
+    if acro:
+        target = printer or default_printer_name()
+        if target:
+            cmd = [str(acro), "/n", "/t", str(pdf.resolve()), target]
+            subprocess.run(cmd, capture_output=True, text=True, timeout=180)
+            # Acrobat's exit code is not a reliable success signal either, so the
+            # honest report is "handed to the spooler" -- verify with
+            # Get-PrintJob if it matters.
+            print("[print] handed to %s via Acrobat. Verify with:" % target)
+            print('        Get-PrintJob -PrinterName "%s"' % target)
+            return
+
+    print("[warn] neither SumatraPDF nor Acrobat found -- falling back to the shell verb.")
+    print("       MEASURED UNRELIABLE on Pip's machine: it can exit 0 and print nothing.")
     if printer:
         ps = (
             'Start-Process -FilePath "%s" -Verb PrintTo -ArgumentList "%s" -PassThru | Out-Null'
