@@ -5,7 +5,7 @@
 > `python scripts/generate_rulings.py`. The convention, and why it looks
 > like this, is argued in `docs/rulings/RULINGS_CONVENTION.md`.
 
-**10 ruling(s)** across **4 flavour(s)**. **207** prose ruling(s) not yet declared.
+**10 ruling(s)** across **4 flavour(s)**. **209** prose ruling(s) not yet declared.
 
 ## By flavour
 
@@ -18,7 +18,7 @@ flavour it belongs to and read what was already decided there.
 |---|---|---|---|
 | 2026-08-15 | Tier W (website disclosure) ships first and standalone; Tier G (in-game motifs and epoch marks) stays ruled-but-unbuilt | `docs/art/MOTIF_AND_WATERMARK_PROTOCOL.md` | `docs/rulings/LEDGER.md:12` |
 | 2026-08-15 | an embedded CA-signed C2PA credential outranks every provenance heuristic; it becomes evidence tier S and resolves an asset out of the unknown set | `tools/assets/backfill_provenance.py credential_origin` | `docs/rulings/LEDGER.md:14` |
-| 2026-08-19 | New-Bort is the working machine and hosts new archives and images; the generated masters are NOT transferred to it but coordinated on an external drive or the upstream system, so a verdict whose art is absent is the designed steady state and orphan keys are never pruned | `this reporting line, and tools/art_review/ORPHANS_2026-08-15.md A1/A2` | `tools/art_review/build_full_gallery.py:792` |
+| 2026-08-19 | New-Bort is the working machine and hosts new archives and images; the generated masters are NOT transferred to it but coordinated on an external drive or the upstream system, so a verdict whose art is absent is the designed steady state and orphan keys are never pruned | `this reporting line, and tools/art_review/ORPHANS_2026-08-15.md A1/A2` | `tools/art_review/build_full_gallery.py:808` |
 | 2026-08-19 | every asset record names its author as well as its origin, with a named agent only where a source already in the repo names one and `unattributed` everywhere else, never inferred | `backfill_provenance.py --apply-authors, and classify() stamping it on a full re-run` | `tools/assets/backfill_provenance.py:555` |
 | 2026-08-19 | the provenance guard compares against the git blob, not the working tree, and runs in pre-commit and CI; a guard wired to nothing is a document | `.pre-commit-config.yaml provenance-check + quality-checks.yml, both running --self-test first` | `tools/assets/check_provenance.py:65` |
 
@@ -85,6 +85,7 @@ is not.
 - `docs/TRIUMVIRATE_METABOLIC_CYCLE.md:77` -- Direction discipline (already ruled, restated): pdoom1 never depends on
 - `docs/archive/2026-07-25-reconcile/PHASE3_DEPLOY_RECON.md:149` -- date-correct weekly generator contradicts the ruled MONTHLY cadence anyway).
 - `docs/archive/2026-07-25-reconcile/PHASE3_DEPLOY_RECON.md:25` -- MONTHLY league cadence ruled; each month = world-update pack + new baseline
+- `docs/art/A4_COLLAPSE_2026-08-20.md:3` -- **2026-08-20, `pdoom1` seat on New-Bort.** Ruled by Pip: canonicalise on the write
 - `docs/art/ART_MASTERS_POLICY.md:1` -- # Art masters policy (RULED 2026-07-22)
 - `docs/art/ART_MASTERS_POLICY.md:12` -- RULED 2026-07-25). Chosen over MinIO-on-instance / external R2/B2 because it
 - `docs/art/ENDGAME_CONCEPT_REVIEW_2026-07-29.md:29` -- > **PROVISIONAL -- ruled by Pip, 2026-07-29.** Treat A1-A10 as **guidelines on
@@ -239,10 +240,11 @@ is not.
 - `tests/test_art_promotion_pipeline.py:74` -- second-pass fix routes where it was ruled to route."""
 - `tools/art_review/CLEARANCE_SHEET_2026-08-15.md:273` -- | artq-017 | A | B T | "Avoid cockleg problems, this is very funny though" | **Already ruled by Pip.** The calibration for this sheet |
 - `tools/art_review/CLEARANCE_SHEET_2026-08-15.md:325` -- Totals: **12 A** (including `artq-017`, already ruled, and `artq-014`, blocked
-- `tools/art_review/ORPHANS_2026-08-15.md:47` -- ## RULED 2026-08-19 by Pip -- A1 answered, A2 follows from it, A3 and A4 still open
+- `tools/art_review/ORPHANS_2026-08-15.md:65` -- **A4: RULED 2026-08-20 and DONE.** Canonicalise on the write path and collapse the
 - `tools/art_review/apply_review.py:562` -- # its 07-21 reroll). Pip ruled both ship, so the older batch carries a
 - `tools/art_review/apply_review.py:866` -- # Pip ruled 2026-08-03 that BOTH variants ship, so resolve collisions by
 - `tools/art_review/build_cull_sheet.py:107` -- # A null clearance means "not yet ruled on", which is not consent.
+- `tools/art_review/collapse_px_keys.py:4` -- ORPHANS A4. Ruled by Pip 2026-08-20: canonicalise on the write path AND collapse
 - `tools/art_review/extract_pullquotes.py:227` -- # Per-platform clearance. null means "not yet ruled on"; a list
 - `tools/art_review/extract_pullquotes.py:30` -- Verbatim is the default and the stored text is never edited. Pip ruled this
 - `tools/art_review/qc_sprite_frames.py:4` -- Checks (per docs/art/PIXELLAB_OPERATIONS.md house rules, ruled 2026-07-26):

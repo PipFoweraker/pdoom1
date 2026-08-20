@@ -133,6 +133,7 @@ Declared with a `Layer:` line in a tool's module docstring; `--` = undeclared.
 | build_worker_rebase_sheet.py | -- | build_worker_rebase_sheet -- worker re-base at the 64px standard (2026-07-26). | human (docstring usage) |
 | build_worker_round2_sheet.py | -- | build_worker_round2_sheet -- 2026-07-27 worker reroll + fresh worker (A+B). | human (docstring usage) |
 | butt_dot_stamp.py | -- | Stamp the anatomical dot onto butt-flash frames (issue #913 follow-up). | tool:build_cat_refinement_sheet.py |
+| collapse_px_keys.py | -- | One-shot: collapse the two `px:` key spellings onto one, per reviewer store. | human (docstring usage) |
 | compare_reviewers.py | OBSERVE | Diff two reviewers' verdicts, honestly. | human (docstring usage) |
 | export_picks.py | -- | export_picks.py -- turn the gallery review state into a picks file the | human (docstring usage) |
 | extract_pullquotes.py | -- | Derive the pull-quote atoms from review_log.jsonl. | tool:build_cull_sheet.py |
@@ -153,7 +154,7 @@ Declared with a `Layer:` line in a tool's module docstring; `--` = undeclared.
 | review_style.py | -- | review_style -- ONE house style for all internal review/dev HTML tools. | tool:analyze_verdicts.py; tool:build_cat_angle_ab_sheet.py; tool:build_cat_refinement_sheet.py; tool:build_cat_sweep_sheet.py; tool:build_cat_west_walk_picks.py; tool:build_doom_strip_sheet.py; tool:build_prop_rebase_sheet.py; tool:build_slot_picker.py; tool:build_t6_diagonals_and_cats_sheet.py; tool:build_worker_rebase_sheet.py; tool:build_worker_round2_sheet.py; tool:gen_contact_sheet.py; tool:gen_hero_gallery.py; tool:gen_prop_grain_sheet.py; tool:gen_quirk_icon_sheet.py; tool:gen_size_probe_sheet.py |
 | scan_text_leak.py | -- | Measure text leakage in a generated art batch, with OCR, and record the result. | tool:build_share_set.py |
 | scan_white_flash.py | -- | Scan walk-clip frames for the "white flash under the cat" artifact. | tool:build_cat_refinement_sheet.py |
-| serve_review.py | -- | Local art-review app for P(Doom)1 -- ONE place to review ALL the art. | test:test_harvest_pass.py; tool:build_slot_picker.py; tool:revert_action.py; tool:scan_text_leak.py; tool:check_review_js.py |
+| serve_review.py | -- | Local art-review app for P(Doom)1 -- ONE place to review ALL the art. | test:test_harvest_pass.py; tool:build_full_gallery.py; tool:build_slot_picker.py; tool:revert_action.py; tool:scan_text_leak.py; tool:check_review_js.py |
 | shortlist_l3_heroes.py | -- | shortlist_l3_heroes.py -- turn 140 flat hero candidates into an ordered shortlist. | human (docstring usage) |
 | slot_model.py | -- | slot_model.py -- the ONE definition of "slot cluster" and "frame role". | test:test_slot_picker.py; tool:apply_slot_picks.py; tool:build_slot_picker.py; tool:measure_taste.py |
 | text_leak_scan.py | -- | text_leak_scan.py -- measure how often generated art leaks legible text. | human (docstring usage) |
@@ -240,4 +241,4 @@ DISCUSSING CI); the rest are the hollow-runner shape -- read them.
 
 27 `.html` tool(s) under `tools/` (browser-opened, no docstring to parse): `tools/art_review/doom_overlay_preview.html`, `tools/art_review/hero_gallery_template.html`, `tools/art_review/icon_pass_2026-07-21.html`, `tools/art_review/icon_pass_verdicts_2026-07-21.html`, `tools/art_review/palette.html`, `tools/art_review/palette_swatches.html`, `tools/art_review/scene_wave2_2026-07-21.html`, `tools/art_review/style_review.html`, `tools/assets/review_generated.html`, `tools/music/commission_sheets.html`, `tools/music/jukebox.html`, `tools/music/listening_room.html`, `tools/music/stem_board.html`, `tools/runsheet/CEREMONY-ALL-GATES-2026-07-31.html`, `tools/runsheet/SUNDAY-postmortem-2026-08-07.html`, `tools/runsheet/chronicle-2026-08-06_07.html`, `tools/runsheet/commitments-2026-08.html`, `tools/runsheet/copy-review-2026-08-09.html`, `tools/runsheet/fri-2026-07-31-EVENING-1620.html`, `tools/runsheet/fri-2026-07-31-GATES-1700.html`, `tools/runsheet/fri-2026-07-31-TO-MIDNIGHT-1733.html`, `tools/runsheet/fri-2026-07-31-league-day.html`, `tools/runsheet/playtest_card.html`, `tools/runsheet/wed-thu-2026-07-29.html`, `tools/social_composer.html`, `tools/ui_comparison.html`, `tools/ui_mockup/wireframe.html`.
 
-Total: 137 active tools (11 GENERATE, 7 OBSERVE, 11 PROVE, 1 SWEEP, 107 undeclared); 11 in UNKNOWN; 6 archived.
+Total: 138 active tools (11 GENERATE, 7 OBSERVE, 11 PROVE, 1 SWEEP, 108 undeclared); 11 in UNKNOWN; 6 archived.

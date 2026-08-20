@@ -91,7 +91,7 @@
       "mechanism": "this reporting line, and tools/art_review/ORPHANS_2026-08-15.md A1/A2",
       "supersedes": null,
       "superseded_by": null,
-      "source": "tools/art_review/build_full_gallery.py:792"
+      "source": "tools/art_review/build_full_gallery.py:808"
     },
     {
       "id": "pdoom1:2026-08-19:3c0d9775",
@@ -224,6 +224,10 @@
     {
       "source": "docs/archive/2026-07-25-reconcile/PHASE3_DEPLOY_RECON.md:25",
       "text": "MONTHLY league cadence ruled; each month = world-update pack + new baseline"
+    },
+    {
+      "source": "docs/art/A4_COLLAPSE_2026-08-20.md:3",
+      "text": "**2026-08-20, `pdoom1` seat on New-Bort.** Ruled by Pip: canonicalise on the write"
     },
     {
       "source": "docs/art/ART_MASTERS_POLICY.md:1",
@@ -842,8 +846,8 @@
       "text": "Totals: **12 A** (including `artq-017`, already ruled, and `artq-014`, blocked"
     },
     {
-      "source": "tools/art_review/ORPHANS_2026-08-15.md:47",
-      "text": "## RULED 2026-08-19 by Pip -- A1 answered, A2 follows from it, A3 and A4 still open"
+      "source": "tools/art_review/ORPHANS_2026-08-15.md:65",
+      "text": "**A4: RULED 2026-08-20 and DONE.** Canonicalise on the write path and collapse the"
     },
     {
       "source": "tools/art_review/apply_review.py:562",
@@ -856,6 +860,10 @@
     {
       "source": "tools/art_review/build_cull_sheet.py:107",
       "text": "# A null clearance means \"not yet ruled on\", which is not consent."
+    },
+    {
+      "source": "tools/art_review/collapse_px_keys.py:4",
+      "text": "ORPHANS A4. Ruled by Pip 2026-08-20: canonicalise on the write path AND collapse"
     },
     {
       "source": "tools/art_review/extract_pullquotes.py:227",
