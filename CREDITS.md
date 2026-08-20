@@ -12,6 +12,16 @@ P(Doom)1 -- a turn-based AI-safety strategy game.
 > can resolve. The generator DROPS any entry still carrying a placeholder, so an
 > unresolved TODO can never reach a player's screen -- it just silently does not
 > appear. Resolving one is what makes it ship.
+>
+> **EVERY SECTION HERE IS PLAYER-FACING.** Prose you write in a section body is
+> rendered as a credits-screen note, not kept as a maintenance comment -- so
+> ADR-0002 applies throughout (the Music section spells this out, and a test
+> scans `godot/data/credits.json` for banned wording). Notes to yourself belong
+> in the commit message or in "Notes for Pip" at the bottom, never in a section.
+> **Diff `godot/data/credits.json` before committing** -- on 2026-08-20 an
+> internal remark about this file having been wrong was one `generate` away from
+> appearing on the credits screen, caught by reading that diff and by nothing
+> else.
 
 ## Game
 

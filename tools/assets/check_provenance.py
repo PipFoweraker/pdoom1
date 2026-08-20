@@ -93,6 +93,45 @@ MEDIA_EXT = ART_EXT | AUDIO_EXT
 # these in the ART set is the Manifund trigger.
 NON_MODEL = {"authored_code", "photo", "procedural_render"}
 
+CREDIT_SOURCE = "CREDITS.md"
+PHOTO_ASSET_DIR = "cats/simple/"
+
+
+def credit_forms(repo: Path) -> dict[str, str]:
+    """pack-relative asset path -> the credit form CREDITS.md says to use.
+
+    Deliberately a small independent reader rather than an import of
+    backfill_provenance.credit_forms(): a checker that shares its parser with the
+    writer it checks cannot catch a parser bug, only a data bug. Clause 2 of the
+    check rule (#1075) -- do not derive what to look for from the system under
+    test.
+
+    Cells still carrying a [Pip to fill] / [Pip to confirm] placeholder mean no
+    credit form has been chosen, and are omitted so they read as unattributed --
+    matching what generate_credits.py does with the same markers.
+    """
+    out: dict[str, str] = {}
+    src = repo / CREDIT_SOURCE
+    if not src.is_file():
+        return out
+    in_cats = False
+    for line in src.read_text(encoding="utf-8").splitlines():
+        if line.startswith("## "):
+            in_cats = line.strip().lower() == "## cats"
+            continue
+        if not in_cats or not line.startswith("|"):
+            continue
+        cells = [c.strip() for c in line.strip().strip("|").split("|")]
+        if len(cells) < 3 or cells[2].lower() in ("asset", "---"):
+            continue
+        if set(cells[0]) <= set("-: "):
+            continue
+        who, asset = cells[1], cells[2]
+        if "[Pip to" in who or not asset:
+            continue
+        out[PHOTO_ASSET_DIR + asset] = who
+    return out
+
 
 def sha256(p: Path) -> str:
     h = hashlib.sha256()
@@ -238,8 +277,31 @@ def self_test() -> int:
         if not untracked_absent:
             failures.append("new.bin: untracked file resolved to a blob")
 
+        # --- the credit-withdrawal case, pinned so it cannot decay ---------
+        # The point of the credit check is that removing someone from CREDITS.md
+        # removes them everywhere. Prove the reader sees a withdrawal, and that
+        # a placeholder reads as unattributed rather than as a name.
+        credits_md = repo / "CREDITS.md"
+        credits_md.write_text(
+            "# c\n\n## Cats\n\n| Cat | Photo by | Asset |\n|---|---|---|\n"
+            "| A | Alex | a.jpg |\n| B | [Pip to confirm -- withdrew] | b.jpg |\n",
+            encoding="utf-8",
+        )
+        forms = credit_forms(repo)
+        credited_ok = forms.get("cats/simple/a.jpg") == "Alex"
+        withdrawn_ok = "cats/simple/b.jpg" not in forms
+        if not credited_ok:
+            failures.append("credit reader did not read a plain credited row")
+        if not withdrawn_ok:
+            failures.append(
+                "a withdrawn/placeholder credit was read as a name -- the "
+                "manifest would keep shipping someone who asked to be removed"
+            )
+
         verdicts = [
             ("CRLF working copy vs LF blob", eol_ok, "no drift"),
+            ("credited row read from CREDITS.md", credited_ok, "name"),
+            ("withdrawn credit (placeholder)", withdrawn_ok, "unattributed"),
             ("unchanged binary", same_ok, "no drift"),
             ("genuinely edited file", changed_caught, "drift"),
             ("untracked file", untracked_absent, "no blob, falls back to disk"),
@@ -337,6 +399,35 @@ def main() -> int:
                 f"      ({len(untracked)} of the files compared are untracked "
                 "and were read from disk.)"
             )
+
+    # --- credit drift: the manifest must agree with the credits SSOT -------
+    # CREDITS.md is the source of truth for who is credited; this manifest only
+    # mirrors it. The mirror existed for one day and was already wrong -- it
+    # carried "Office (default/mascot)" for web-doom-cat.jpg, a value CREDITS.md
+    # had resolved to "Pip" eight days earlier.
+    #
+    # This is the check that makes WITHDRAWAL reliable. Consent can be taken
+    # back, and if it is, one edit to CREDITS.md has to be enough. Without this,
+    # removing someone from the credits leaves their name sitting in a manifest
+    # that ships inside the .pck -- "we removed you" that is not true, which is
+    # worse than never having credited them.
+    credits = credit_forms(REPO)
+    credit_drift = []
+    for rel, rec in assets.items():
+        want = credits.get(rel, "unattributed")
+        got = rec.get("author", "unattributed")
+        if got != want:
+            credit_drift.append((rel, got, want))
+    if credit_drift:
+        problems += 1
+        print(
+            f"\nFAIL: {len(credit_drift)} asset(s) disagree with {CREDIT_SOURCE} "
+            "about who is credited."
+        )
+        print("      CREDITS.md is the SSOT. Re-run:")
+        print("        python tools/assets/backfill_provenance.py --apply-authors --write")
+        for rel, got, want in credit_drift[:20]:
+            print(f"        {rel}\n          manifest {got!r} != credits {want!r}")
 
     # --- the ratchet: the unknown set must be exactly what was pinned ------
     unknown = {rel: rec["sha256"] for rel, rec in assets.items() if rec.get("origin") == "unknown"}
