@@ -3282,6 +3282,29 @@ DESCRIPTION:P6 falsifier: read git reflog in the main checkout. Any agent-
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:3552f41cd5eb0487@commitments.pdoom1
+DTSTAMP:20260821T000000Z
+DTSTART;VALUE=DATE:20260821
+DTEND;VALUE=DATE:20260822
+SUMMARY:[UNPARSED] needs a declaration -- PLAYTEST_2026-08-21_WANASAI.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/PLAYTEST_2026-08-
+ 21_WANASAI.md:1. 1 line(s) in docs/PLAYTEST_2026-08-21_WANASAI.md mention
+  this date and no COMMITMENT: declaration accounts for it. Either add a d
+ eclaration or the date is incidental. First line: # Playtest sheet -- 202
+ 6-08-21\, Wanasai\, first session -- Generated from tracked sources by sc
+ ripts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- PLAYTEST_2026-08-21_WANASAI.md (unparse
+ d) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:a4dfc91c4df5de99@commitments.pdoom1
 DTSTAMP:20260821T000000Z
 DTSTART;VALUE=DATE:20260821

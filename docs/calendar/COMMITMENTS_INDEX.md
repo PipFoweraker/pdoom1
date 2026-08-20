@@ -13,7 +13,7 @@ Horizon: **2026-08-09** (the prose scan reports dates at or after this; roll it
 forward deliberately in `COMMITMENTS.md`, never automatically -- a clock-reading
 generator goes stale overnight and trains people to ignore the check).
 
-**50 declared, 4 release-train, 131 UNPARSED, 0 malformed.**
+**50 declared, 4 release-train, 132 UNPARSED, 0 malformed.**
 
 ## Declared commitments
 
@@ -319,6 +319,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-20 | `tools/art_review/collapse_px_keys.py` | 4 | ORPHANS A4. Ruled by Pip 2026-08-20: canonicalise on the write path AND collapse |
 | 2026-08-20 | `tools/assets/backfill_provenance.py` | 496 | # WHERE A CONTRIBUTOR'S NAME COMES FROM (2026-08-20) |
 | 2026-08-20 | `tools/print_doc.py` | 199 | # Acrobat's own /t switch, BEFORE the shell verb. Measured 2026-08-20 on |
+| 2026-08-21 | `docs/PLAYTEST_2026-08-21_WANASAI.md` | 1 | # Playtest sheet -- 2026-08-21, Wanasai, first session |
 | 2026-08-21 | `docs/rulings/RULINGS.md` | 12 | Consolidated 2026-08-21. The estate had five places rulings were recorded; |
 | 2026-08-21 | `docs/rulings/RULINGS.md` | 311 | - `scripts/generate_rulings.py:164` -- # CONSOLIDATION, ruled by Pip 2026-08-21. |
 | 2026-08-21 | `docs/rulings/RULINGS_CONVENTION.md` | 7 | ## This is an INDEX, not the only store (consolidated 2026-08-21) |
