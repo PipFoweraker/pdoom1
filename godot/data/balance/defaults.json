@@ -106,7 +106,11 @@
 			"action_sabotage_panic": 5.0,
 			"action_opensource_alarm": 0.6,
 			"action_opensource_diffusion": 0.0,
-			"action_conference_alarm": 0.6
+			"action_conference_alarm": 0.6,
+			"_event_description": "event_* price the RUNTIME-GENERATED pdoom-data event options (event_service.gd _generate_options), which built their effects in code and so never went through the content migration that stripped literal doom deltas from res://data. Each is anchored to the action_* price for the analogous founder move rather than being a new dial. Relief is routed ONLY to safety_absorption, never global_alarm: these options recur on up to 2 events every turn, and a repeated input into a decaying stock settles at input/(1-decay), which reproduces the -6 doom/turn exploit this replaced. The overhang clamp max(0, frontier-absorption) bounds absorption structurally. event_shock_panic is the doom->panic conversion for impacts the pdoom-data variable map launders into 'doom' (vibey_doom/stress/burnout_risk/safety): 1/(W_panic/(1-panic_decay)) = 1.5, which keeps the INTEGRATED doom identical.",
+			"event_safety_absorb": 4.0,
+			"event_frontier_gain": 60.0,
+			"event_shock_panic": 1.5
 		}
 	},
 	"salaries": {
