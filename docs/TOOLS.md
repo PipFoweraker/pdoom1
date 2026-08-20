@@ -167,7 +167,7 @@ Declared with a `Layer:` line in a tool's module docstring; `--` = undeclared.
 | build_review_gallery.py | -- | Rebuild tools/assets/review_generated.html from whatever PNGs are on disk under | human (docstring usage) |
 | build_share_set.py | -- | Derive the ART SHARE SET from verdicts already applied -- no new review pass. | human (docstring usage) |
 | check_credentials.py | PROVE | Guard: shipped images must not silently lose their C2PA content credential. | pre-commit; test:test_check_credentials.py; tool:backfill_provenance.py |
-| check_provenance.py | -- | Guard: the provenance manifest and the pack must agree, and `unknown` must not grow. | pre-commit; tool:backfill_provenance.py |
+| check_provenance.py | -- | Guard: the provenance manifest and the pack must agree, and `unknown` must not grow. | pre-commit; ci:quality-checks.yml; tool:backfill_provenance.py |
 | extract_palette.py | -- | Extract a brand palette from an image (default: the P(Doom)1 hero background). | human (docstring usage) |
 | generate_images.py | -- | Generalized batch image generator for pdoom1 art assets. | test:test_check_credentials.py; tool:promote_assets.py |
 | promote_assets.py | -- | Asset promotion tool for pdoom1. | NONE FOUND |
@@ -217,7 +217,6 @@ DISCUSSING CI); the rest are the hollow-runner shape -- read them.
 - `tools/art_review/scan_text_leak.py` -- docstring mentions CI; no workflow calls it
 - `tools/assets/build_share_set.py` -- docstring mentions CI; no workflow calls it
 - `tools/assets/check_credentials.py` -- docstring mentions CI; no workflow calls it
-- `tools/assets/check_provenance.py` -- docstring mentions CI; no workflow calls it
 - `tools/capture_cinematic.py` -- docstring mentions CI; no workflow calls it
 - `tools/check_class_cache.py` -- docstring mentions CI; no workflow calls it
 - `tools/check_font_sizes.py` -- docstring mentions CI; no workflow calls it
