@@ -3088,6 +3088,99 @@ DESCRIPTION:P6 falsifier: read git reflog in the main checkout. Any agent-
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:7cd66540006de577@commitments.pdoom1
+DTSTAMP:20260821T000000Z
+DTSTART;VALUE=DATE:20260821
+DTEND;VALUE=DATE:20260822
+SUMMARY:[UNPARSED] needs a declaration -- PDOOM_DATA_CONTRACT_BRIEF.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/PDOOM_DATA_CONTRA
+ CT_BRIEF.md:14. 1 line(s) in docs/PDOOM_DATA_CONTRACT_BRIEF.md mention th
+ is date and no COMMITMENT: declaration accounts for it. Either add a decl
+ aration or the date is incidental. First line: untracked from 2026-07-25 
+ to 2026-08-21 and already contained one struck-through -- Generated from 
+ tracked sources by scripts/generate_commitment_calendar.py\; regenerate t
+ o update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- PDOOM_DATA_CONTRACT_BRIEF.md (unparsed)
+  -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:3552f41cd5eb0487@commitments.pdoom1
+DTSTAMP:20260821T000000Z
+DTSTART;VALUE=DATE:20260821
+DTEND;VALUE=DATE:20260822
+SUMMARY:[UNPARSED] needs a declaration -- PLAYTEST_2026-08-21_WANASAI.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/PLAYTEST_2026-08-
+ 21_WANASAI.md:1. 1 line(s) in docs/PLAYTEST_2026-08-21_WANASAI.md mention
+  this date and no COMMITMENT: declaration accounts for it. Either add a d
+ eclaration or the date is incidental. First line: # Playtest sheet -- 202
+ 6-08-21\, Wanasai\, first session -- Generated from tracked sources by sc
+ ripts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- PLAYTEST_2026-08-21_WANASAI.md (unparse
+ d) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:dd580132135e5dc0@commitments.pdoom1
+DTSTAMP:20260821T000000Z
+DTSTART;VALUE=DATE:20260821
+DTEND;VALUE=DATE:20260822
+SUMMARY:[UNPARSED] needs a declaration -- check_ladder_bump.py
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/check_ladder_bum
+ p.py:327. 2 line(s) in tools/check_ladder_bump.py mention this date and n
+ o COMMITMENT: declaration accounts for it. Either add a declaration or th
+ e date is incidental. First line: THE HOLE THIS CLOSES (measured 2026-08-
+ 21). Direction 1 below accepts any -- Generated from tracked sources by s
+ cripts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- check_ladder_bump.py (unparsed) -- unow
+ ned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:1f1ca8efe061828d@commitments.pdoom1
+DTSTAMP:20260821T000000Z
+DTSTART;VALUE=DATE:20260821
+DTEND;VALUE=DATE:20260822
+SUMMARY:[UNPARSED] needs a declaration -- run_godot_tests.py
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: scripts/run_godot_test
+ s.py:120. 1 line(s) in scripts/run_godot_tests.py mention this date and n
+ o COMMITMENT: declaration accounts for it. Either add a declaration or th
+ e date is incidental. First line: # raises FileNotFoundError -- measured 
+ 2026-08-21: 'godot' -> WinError 2 while -- Generated from tracked sources
+  by scripts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- run_godot_tests.py (unparsed) -- unowne
+ d
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:d1a889291109778a@commitments.pdoom1
 DTSTAMP:20260824T000000Z
 DTSTART;VALUE=DATE:20260824

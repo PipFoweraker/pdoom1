@@ -315,6 +315,57 @@ def declaration(rng: Range) -> str | None:
     return None
 
 
+def declaration_verdict(decl: str) -> str:
+    """The verdict word of a declaration: 'none', 'bump' or 'n/a' (lowercased)."""
+    m = DECLARATION_RE.search(decl or "")
+    return m.group(1).lower() if m else ""
+
+
+def owed_bumps(head: str = "HEAD") -> list[str]:
+    """Commits since the last epoch cut that declared `bump` no cut has paid.
+
+    THE HOLE THIS CLOSES (measured 2026-08-21). Direction 1 below accepts any
+    declaration and prints it. It never read the verdict, so
+    `Ladder-Impact: bump -- epoch cut deferred to Pip at merge` was mechanically
+    indistinguishable from `Ladder-Impact: none`: both green, both silent.
+
+    That is not a hypothetical. 6b65338b (#1233, doom-stream routing) and
+    56d46c40 (#1230, 28 new events) both declared `bump` and both deliberately
+    left `ladder_version.txt` alone, because forking the ladder on every
+    gameplay PR is wrong -- the cut belongs to the release. Correct workflow;
+    the defect is that the resulting DEBT was recorded nowhere a machine could
+    read. ladder_version.txt sat at 4 for fourteen days and 81 commits and
+    nothing anywhere said an epoch cut was outstanding.
+
+    So this is a QUERY, not a blocker: deferring stays legal, forgetting does
+    not. Run it at release time (and it is what answers the P1 falsifier in
+    docs/POSTMORTEM_2026-08-07_CAPTURE.md).
+    """
+    # An uncommitted bump counts as paid. run() already folds working-tree
+    # changes into its file list; if --owed did not, then bumping the file and
+    # immediately re-running the check would still shout DEBT -- which is how a
+    # gate teaches people to ignore it.
+    if head == "HEAD" and _git(["diff", "--name-only", "HEAD", "--", LADDER_FILE]).strip():
+        print("[check_ladder_bump] ladder_version.txt is modified in the working tree")
+        print("  -- treating the debt as paid pending commit.")
+        return []
+
+    last_cut = _git(["log", "-1", "--format=%H", head, "--", LADDER_FILE]).strip()
+    rev_range = f"{last_cut}..{head}" if last_cut else head
+    try:
+        shas = _git(["log", "--format=%H", rev_range]).split()
+    except subprocess.CalledProcessError:
+        return []
+    debts: list[str] = []
+    for sha in shas:
+        body = _git(["log", "-1", "--format=%B", sha])
+        decl = find_declaration(body)
+        if decl and declaration_verdict(decl) == "bump":
+            subject = _git(["log", "-1", "--format=%s", sha]).strip()
+            debts.append(f"{sha[:8]}  {subject}\n      {decl}")
+    return debts
+
+
 # ---------------------------------------------------------------------------
 
 
@@ -345,6 +396,16 @@ def run(base: str, head: str) -> list[str]:
                 "  a line to a commit message or the PR body saying why not:\n"
                 "      Ladder-Impact: none -- <one line of reasoning>\n"
                 "  Gameplay-surface files in this diff:\n" + _bullets(gameplay)
+            )
+        elif declaration_verdict(decl) == "bump":
+            # Legal, and deliberately not a failure -- see owed_bumps(). But it
+            # is a DEBT, and until 2026-08-21 it printed identically to `none`.
+            print(
+                f"[check_ladder_bump] declared: {decl}\n"
+                "  NOTE: this declares an epoch cut is OWED and does not make one.\n"
+                "  That is allowed (the cut belongs to the release, not to this PR),\n"
+                "  but the debt must be paid before the next build ships. Check with:\n"
+                "      python tools/check_ladder_bump.py --owed"
             )
         else:
             print(f"[check_ladder_bump] declared: {decl}")
@@ -492,10 +553,34 @@ def main() -> int:
         action="store_true",
         help="replay the historical acceptance cases (#1178) and verify red/green",
     )
+    parser.add_argument(
+        "--owed",
+        action="store_true",
+        help="list commits since the last epoch cut that declared a bump nobody paid",
+    )
     args = parser.parse_args()
 
     if args.self_test:
         return self_test()
+
+    if args.owed:
+        debts = owed_bumps(args.head)
+        if not debts:
+            print("[check_ladder_bump] no ladder debt: no commit since the last epoch")
+            print("  cut declares `Ladder-Impact: bump`.")
+            return 0
+        print(
+            f"[check_ladder_bump] LADDER DEBT: {len(debts)} commit(s) since the last\n"
+            "  epoch cut declared a bump that has not been paid. Shipping a build on\n"
+            "  the current epoch puts materially different play on one board key.\n"
+        )
+        for d in debts:
+            print(f"    {d}")
+        print(
+            "\n  Pay it by bumping ladder_version.txt and running:\n"
+            "      python tools/sync_version.py"
+        )
+        return 1
 
     findings = run(args.base, args.head)
     for f in findings:

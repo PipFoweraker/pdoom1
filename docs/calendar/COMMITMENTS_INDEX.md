@@ -13,7 +13,7 @@ Horizon: **2026-08-09** (the prose scan reports dates at or after this; roll it
 forward deliberately in `COMMITMENTS.md`, never automatically -- a clock-reading
 generator goes stale overnight and trains people to ignore the check).
 
-**49 declared, 4 release-train, 119 UNPARSED, 0 malformed.**
+**49 declared, 4 release-train, 123 UNPARSED, 0 malformed.**
 
 ## Declared commitments
 
@@ -301,6 +301,11 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-20 | `tools/art_review/collapse_px_keys.py` | 4 | ORPHANS A4. Ruled by Pip 2026-08-20: canonicalise on the write path AND collapse |
 | 2026-08-20 | `tools/assets/backfill_provenance.py` | 496 | # WHERE A CONTRIBUTOR'S NAME COMES FROM (2026-08-20) |
 | 2026-08-20 | `tools/print_doc.py` | 199 | # Acrobat's own /t switch, BEFORE the shell verb. Measured 2026-08-20 on |
+| 2026-08-21 | `docs/PDOOM_DATA_CONTRACT_BRIEF.md` | 14 | untracked from 2026-07-25 to 2026-08-21 and already contained one struck-through |
+| 2026-08-21 | `docs/PLAYTEST_2026-08-21_WANASAI.md` | 1 | # Playtest sheet -- 2026-08-21, Wanasai, first session |
+| 2026-08-21 | `scripts/run_godot_tests.py` | 120 | # raises FileNotFoundError -- measured 2026-08-21: 'godot' -> WinError 2 while |
+| 2026-08-21 | `tools/check_ladder_bump.py` | 327 | THE HOLE THIS CLOSES (measured 2026-08-21). Direction 1 below accepts any |
+| 2026-08-21 | `tools/check_ladder_bump.py` | 402 | # is a DEBT, and until 2026-08-21 it printed identically to `none`. |
 | 2026-08-24 | `docs/design/LEAGUE_CUTOVER_PLAYBOOK.md` | 41 | at L4, and is pinned for reflective review on/after 2026-08-24. |
 | 2026-08-24 | `pdoom1#808` | 0 | Reflective review (on/after 2026-08-24): release/league cycle nomenclature + cadence |
 | 2026-08-24 | `pdoom1#811` | 0 | Workshop 3 (mechanics) -- Mon 07-27 W-3a / Tue 07-28 build / Wed 07-29 W-3b-W-4: crisp parts, brutal decisions |
