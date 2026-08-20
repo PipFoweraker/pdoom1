@@ -794,6 +794,10 @@
       "text": "# The tier whose art stands in when a tier-variant is missing (ruled 2026-07-26)."
     },
     {
+      "source": "godot/tests/unit/simulation/test_events.gd:50",
+      "text": "## THE RATCHET WAS DELIBERATELY LOOSENED -- 2026-08-14, ruled by Pip, for content velocity."
+    },
+    {
       "source": "godot/tests/unit/test_cold_open_intro.gd:46",
       "text": "# Pip approved this string personally (#801 ruled copy). If this fails, someone edited"
     },

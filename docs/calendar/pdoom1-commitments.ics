@@ -1400,6 +1400,29 @@ DESCRIPTION:needs a declaration -- NEXT_ROUND_BRIEF.md (unparsed) -- unown
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:6a7a9da0cd25336f@commitments.pdoom1
+DTSTAMP:20260814T000000Z
+DTSTART;VALUE=DATE:20260814
+DTEND;VALUE=DATE:20260815
+SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
+ d:230. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ ITMENT: declaration accounts for it. Either add a declaration or the date
+  is incidental. First line: - `godot/tests/unit/simulation/test_events.gd
+ :50` -- ## THE RATCHET WAS DELIBERATELY LOOSENED -- 2026-08-14\, ruled by
+  Pip\, for content velocity. -- Generated from tracked sources by scripts
+ /generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- RULINGS.md (unparsed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:a91312e7f15c724c@commitments.pdoom1
 DTSTAMP:20260814T000000Z
 DTSTART;VALUE=DATE:20260814

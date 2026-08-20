@@ -5,7 +5,7 @@
 > `python scripts/generate_rulings.py`. The convention, and why it looks
 > like this, is argued in `docs/rulings/RULINGS_CONVENTION.md`.
 
-**10 ruling(s)** across **4 flavour(s)**. **205** prose ruling(s) not yet declared.
+**10 ruling(s)** across **4 flavour(s)**. **206** prose ruling(s) not yet declared.
 
 ## By flavour
 
@@ -227,6 +227,7 @@ is not.
 - `godot/scripts/ui/office_floor/office_floor.gd:493` -- ## (no tinting hacks -- ruled 2026-07-26). "" or "decent" = shipped default art.
 - `godot/scripts/ui/office_floor/office_sandbox.gd:161` -- # (ruled 2026-07-26, see docs/game-design/SEED_ASSET_REGISTRY_AND_VERDICTS.md):
 - `godot/scripts/ui/office_floor/office_sandbox.gd:175` -- # The tier whose art stands in when a tier-variant is missing (ruled 2026-07-26).
+- `godot/tests/unit/simulation/test_events.gd:50` -- ## THE RATCHET WAS DELIBERATELY LOOSENED -- 2026-08-14, ruled by Pip, for content velocity.
 - `godot/tests/unit/test_cold_open_intro.gd:46` -- # Pip approved this string personally (#801 ruled copy). If this fails, someone edited
 - `godot/tests/unit/test_no_debug_event_injection.gd:9` -- ## the hard lock repeatably in a release build (2026-08-06) and ruled the feature out:
 - `godot/tests/unit/test_number_format_policy.gd:2` -- ## Locks the number-format policy ruled in #1087 (docs/NUMBER_FORMATS.md).

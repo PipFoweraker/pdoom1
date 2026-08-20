@@ -13,7 +13,7 @@ Horizon: **2026-08-09** (the prose scan reports dates at or after this; roll it
 forward deliberately in `COMMITMENTS.md`, never automatically -- a clock-reading
 generator goes stale overnight and trains people to ignore the check).
 
-**49 declared, 4 release-train, 107 UNPARSED, 0 malformed.**
+**49 declared, 4 release-train, 108 UNPARSED, 0 malformed.**
 
 ## Declared commitments
 
@@ -116,11 +116,11 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-10 | `tools/check_self_merge_eligibility.py` | 18 | 2026-08-10 and, until this file existed, they **promised eligibility and checked |
 | 2026-08-11 | `docs/GUARD_AUDIT_2026-08-19.md` | 7 | 2026-08-11 as *"a mechanism, not a document"*, appeared in **no** pre-commit hook, |
 | 2026-08-11 | `docs/rulings/RULINGS.md` | 47 | Rulings with no `mechanism:`. Pip's doctrine (2026-08-11): what forces a |
-| 2026-08-11 | `docs/rulings/RULINGS.md` | 251 | - `tools/assets/backfill_provenance.py:38` -- ORIGIN VOCABULARY -- five values, ruled by Pip 2026-08-11 |
-| 2026-08-11 | `docs/rulings/RULINGS.md` | 253 | - `tools/assets/backfill_provenance.py:511` -- # The five values ruled by Pip 2026-08-11, as a constant rather than a literal |
-| 2026-08-11 | `docs/rulings/RULINGS.md` | 258 | - `tools/assets/check_provenance.py:348` -- "_why": "Pinned unknown set. Ruled by Pip 2026-08-11: keep the " |
-| 2026-08-11 | `docs/rulings/RULINGS.md` | 259 | - `tools/assets/check_provenance.py:4` -- Ruled by Pip 2026-08-11: the six unattributable assets are KEPT and recorded as |
-| 2026-08-11 | `docs/rulings/RULINGS.md` | 262 | - `tools/assets/provenance_unknown_pin.json:2` -- "_why": "Pinned unknown set. Ruled by Pip 2026-08-11: keep the unattributable assets, record them ho |
+| 2026-08-11 | `docs/rulings/RULINGS.md` | 252 | - `tools/assets/backfill_provenance.py:38` -- ORIGIN VOCABULARY -- five values, ruled by Pip 2026-08-11 |
+| 2026-08-11 | `docs/rulings/RULINGS.md` | 254 | - `tools/assets/backfill_provenance.py:511` -- # The five values ruled by Pip 2026-08-11, as a constant rather than a literal |
+| 2026-08-11 | `docs/rulings/RULINGS.md` | 259 | - `tools/assets/check_provenance.py:348` -- "_why": "Pinned unknown set. Ruled by Pip 2026-08-11: keep the " |
+| 2026-08-11 | `docs/rulings/RULINGS.md` | 260 | - `tools/assets/check_provenance.py:4` -- Ruled by Pip 2026-08-11: the six unattributable assets are KEPT and recorded as |
+| 2026-08-11 | `docs/rulings/RULINGS.md` | 263 | - `tools/assets/provenance_unknown_pin.json:2` -- "_why": "Pinned unknown set. Ruled by Pip 2026-08-11: keep the unattributable assets, record them ho |
 | 2026-08-11 | `docs/rulings/RULINGS_CONVENTION.md` | 53 | RULING: 2026-08-11 -- keep unattributable assets and record them as unknown -- flavour: art-provenance -- mechanism: tools/assets/check_provenance.py |
 | 2026-08-11 | `docs/rulings/RULINGS_CONVENTION.md` | 66 | Pip's doctrine, ruled 2026-08-11 and embodied in `check_provenance.py`: *what |
 | 2026-08-11 | `docs/rulings/RULINGS_CONVENTION.md` | 142 | {"source": "tools/assets/check_provenance.py:4", "text": "Ruled by Pip 2026-08-11: the six unattributable assets are KEPT ..."} |
@@ -178,6 +178,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-14 | `docs/art/audit_2026-08-13/THE_REVISIONS_ARE_THE_STORY.md` | 69 | and the session ran on **2026-08-14**. **It was about four hours old when it first |
 | 2026-08-14 | `docs/art/audit_2026-08-13/THE_REVISIONS_ARE_THE_STORY.md` | 82 | Measured coverage as at 2026-08-14: **1,391 of 2,099 families decided (66.3%)**. |
 | 2026-08-14 | `docs/art/audit_2026-08-13/THE_REVISIONS_ARE_THE_STORY.md` | 119 | \| **review state, verdict, notes, revision history** \| **yes, as of 2026-08-14** \| |
+| 2026-08-14 | `docs/rulings/RULINGS.md` | 230 | - `godot/tests/unit/simulation/test_events.gd:50` -- ## THE RATCHET WAS DELIBERATELY LOOSENED -- 2026-08-14, ruled by Pip, for content velocity. |
 | 2026-08-14 | `tools/art_review/serve_review.py` | 238 | # WHY EACH PASS STATES A QUESTION rather than just filtering. From the 2026-08-14 |
 | 2026-08-14 | `tools/art_review/serve_review.py` | 367 | # block is FOR and what a decision here means. (2026-08-14, Pip's ask.) |
 | 2026-08-14 | `tools/art_review/serve_review.py` | 1590 | // all move to the archive together. (2026-08-14, Pip's ask.) |
@@ -219,8 +220,8 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-15 | `docs/rulings/RULINGS.md` | 36 | \| 2026-08-15 \| naming a mechanism is OPTIONAL on a ruling, and the generated index reports which rulings have none \| `scripts/generate_rulings.py` \| ` |
 | 2026-08-15 | `docs/rulings/RULINGS.md` | 65 | - `CLAUDE.md:223` -- `UNDECLARED`, never dropped. **Cross-repo by design** (ruled 2026-08-15): |
 | 2026-08-15 | `docs/rulings/RULINGS.md` | 207 | - `godot/data/asset_provenance.json:5132` -- "why": "Ruled by Pip 2026-08-15. A signed credential outranks every heuristic and is the only evidence th |
-| 2026-08-15 | `docs/rulings/RULINGS.md` | 249 | - `tools/art_review/serve_review.py:205` -- "to element: -- ruled by Pip 2026-08-15 because the sweeps are mostly " |
-| 2026-08-15 | `docs/rulings/RULINGS.md` | 252 | - `tools/assets/backfill_provenance.py:479` -- "Ruled by Pip 2026-08-15. A signed credential outranks every heuristic and " |
+| 2026-08-15 | `docs/rulings/RULINGS.md` | 250 | - `tools/art_review/serve_review.py:205` -- "to element: -- ruled by Pip 2026-08-15 because the sweeps are mostly " |
+| 2026-08-15 | `docs/rulings/RULINGS.md` | 253 | - `tools/assets/backfill_provenance.py:479` -- "Ruled by Pip 2026-08-15. A signed credential outranks every heuristic and " |
 | 2026-08-15 | `docs/rulings/RULINGS_CONVENTION.md` | 9 | Rulings in this estate are already being captured -- measured 2026-08-15, more |
 | 2026-08-15 | `docs/rulings/RULINGS_CONVENTION.md` | 18 | 2. **Recall by flavour.** Pip, 2026-08-15: *"these will show up again in |
 | 2026-08-15 | `docs/rulings/RULINGS_CONVENTION.md` | 51 | RULING: 2026-08-15 -- the epoch counter starts at 1, no backfill over past waves -- flavour: art-lineage |
@@ -268,8 +269,8 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-19 | `docs/rulings/RULINGS.md` | 22 | \| 2026-08-19 \| every asset record names its author as well as its origin, with a named agent only where a source already in the repo names one and `un |
 | 2026-08-19 | `docs/rulings/RULINGS.md` | 23 | \| 2026-08-19 \| the provenance guard compares against the git blob, not the working tree, and runs in pre-commit and CI; a guard wired to nothing is a  |
 | 2026-08-19 | `docs/rulings/RULINGS.md` | 208 | - `godot/data/asset_provenance.json:5138` -- "why": "Ruled by Pip 2026-08-19 (D2). ADR-0019 has no provenance field and this manifest answered only WH |
-| 2026-08-19 | `docs/rulings/RULINGS.md` | 240 | - `tools/art_review/ORPHANS_2026-08-15.md:47` -- ## RULED 2026-08-19 by Pip -- A1 answered, A2 follows from it, A3 and A4 still open |
-| 2026-08-19 | `docs/rulings/RULINGS.md` | 254 | - `tools/assets/backfill_provenance.py:614` -- "Ruled by Pip 2026-08-19 (D2). ADR-0019 has no provenance field and this " |
+| 2026-08-19 | `docs/rulings/RULINGS.md` | 241 | - `tools/art_review/ORPHANS_2026-08-15.md:47` -- ## RULED 2026-08-19 by Pip -- A1 answered, A2 follows from it, A3 and A4 still open |
+| 2026-08-19 | `docs/rulings/RULINGS.md` | 255 | - `tools/assets/backfill_provenance.py:614` -- "Ruled by Pip 2026-08-19 (D2). ADR-0019 has no provenance field and this " |
 | 2026-08-19 | `tools/art_review/build_full_gallery.py` | 784 | # 2026-08-19: ZERO verdicts have been lost. The population is two things, |
 | 2026-08-19 | `tools/art_review/build_full_gallery.py` | 792 | # RULING: 2026-08-19 -- New-Bort is the working machine and hosts new archives and images; the generated masters are NOT transferred to it but coordin |
 | 2026-08-19 | `tools/art_review/compare_reviewers.py` | 8 | On 2026-08-19 a second reviewer (Wanasai) judged art for the first time. Two |
