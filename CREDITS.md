@@ -41,11 +41,13 @@ WITHOUT a credit line rather than printing the marker.
 | Missy | Spicy | web-missy.jpg |
 | Nigel | Nicki T. | web-nigel.jpg |
 
-Credit names are transcribed verbatim from
-`art_source/cats_incoming/INVENTORY.md` (the "Custodian" field), which is the
-only record this repo holds. Nobody has confirmed these are the forms the
-contributors want to be credited under -- see the Pip checklist below. Change the
-name HERE and the game picks it up on the next generate.
+Credit names are the forms each contributor agreed to, settled with each of them
+in the group chat where the photos were volunteered -- confirmed by Pip
+2026-08-20, on his account of that conversation rather than a linkable artifact.
+`art_source/cats_incoming/INVENTORY.md`'s "Custodian" field, still the only
+record this repo holds, is therefore a transcription of an agreed credit line
+and not internal metadata reused as one. Change the name HERE and the game picks
+it up on the next generate.
 
 ## Music
 
@@ -105,12 +107,11 @@ The full lineage is documented in `docs/audio/REFERENCE_TRACKS.md`.
 - [ ] Fill the art-pipeline attributions (owned by the art lane, not this session).
 - [x] In-game credits screen: BUILT. Welcome menu -> `Credits`, generated from
       this file. Cats get the top section.
-- [ ] **Cats: confirm each contributor's preferred credit form.** The eight names
-      above are transcribed from INVENTORY.md's "Custodian" field, which was
-      internal metadata, not a stated credit preference. Ask each contributor how
-      they want to appear (full name / first name / handle / "prefers
-      anonymity"), then edit the table. Until then the game ships the inventory
-      form.
+- [x] **Cats: RESOLVED 2026-08-20.** Each contributor's credit form was agreed
+      with them in the group chat where the photos were volunteered -- confirmed
+      by Pip. The "Custodian" field was therefore never merely internal
+      metadata; it recorded a form each person had chosen. The eight rows above
+      stand as shipped.
 - [x] **Doom Cat: RESOLVED 2026-08-07.** Contributed by Pip. The inventory's
       "Office (default/mascot)" custodian field was internal metadata, not an
       absence of a contributor.
