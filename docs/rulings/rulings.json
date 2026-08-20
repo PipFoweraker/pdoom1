@@ -3,7 +3,7 @@
   "repo": "pdoom1",
   "generated_from": "tracked files at HEAD",
   "convention": "docs/rulings/RULINGS_CONVENTION.md",
-  "count": 7,
+  "count": 10,
   "rulings": [
     {
       "id": "pdoom1:2026-08-15:4c94cd56",
@@ -81,6 +81,39 @@
       "supersedes": null,
       "superseded_by": null,
       "source": "tools/render_budget.py:12"
+    },
+    {
+      "id": "pdoom1:2026-08-19:715e3160",
+      "date": "2026-08-19",
+      "ruling": "New-Bort is the working machine and hosts new archives and images; the generated masters are NOT transferred to it but coordinated on an external drive or the upstream system, so a verdict whose art is absent is the designed steady state and orphan keys are never pruned",
+      "flavour": "art-provenance",
+      "by": "Pip",
+      "mechanism": "this reporting line, and tools/art_review/ORPHANS_2026-08-15.md A1/A2",
+      "supersedes": null,
+      "superseded_by": null,
+      "source": "tools/art_review/build_full_gallery.py:792"
+    },
+    {
+      "id": "pdoom1:2026-08-19:3c0d9775",
+      "date": "2026-08-19",
+      "ruling": "every asset record names its author as well as its origin, with a named agent only where a source already in the repo names one and `unattributed` everywhere else, never inferred",
+      "flavour": "art-provenance",
+      "by": "Pip",
+      "mechanism": "backfill_provenance.py --apply-authors, and classify() stamping it on a full re-run",
+      "supersedes": null,
+      "superseded_by": null,
+      "source": "tools/assets/backfill_provenance.py:508"
+    },
+    {
+      "id": "pdoom1:2026-08-19:38a0eeec",
+      "date": "2026-08-19",
+      "ruling": "the provenance guard compares against the git blob, not the working tree, and runs in pre-commit and CI; a guard wired to nothing is a document",
+      "flavour": "art-provenance",
+      "by": "Pip",
+      "mechanism": ".pre-commit-config.yaml provenance-check + quality-checks.yml, both running --self-test first",
+      "supersedes": null,
+      "superseded_by": null,
+      "source": "tools/assets/check_provenance.py:65"
     }
   ],
   "undeclared": [
@@ -669,8 +702,12 @@
       "text": "\"_unknown_is_not_a_guess\": \"`unknown` means no record exists. It is never inferred from image dimensions. 1024x1024 and 1536x1024 are OpenAI output sizes, which makes 'these are gpt-image' a plausible"
     },
     {
-      "source": "godot/data/asset_provenance.json:4102",
+      "source": "godot/data/asset_provenance.json:5132",
       "text": "\"why\": \"Ruled by Pip 2026-08-15. A signed credential outranks every heuristic and is the only evidence that survives a file moving between repos. Applied narrowly because a full re-run would rewrite 2"
+    },
+    {
+      "source": "godot/data/asset_provenance.json:5138",
+      "text": "\"why\": \"Ruled by Pip 2026-08-19 (D2). ADR-0019 has no provenance field and this manifest answered only WHAT made an asset, never WHO is owed credit for it. A human contributor is in prospect, which ma"
     },
     {
       "source": "godot/data/office/props_manifest.json:15",
@@ -797,6 +834,10 @@
       "text": "Totals: **12 A** (including `artq-017`, already ruled, and `artq-014`, blocked"
     },
     {
+      "source": "tools/art_review/ORPHANS_2026-08-15.md:47",
+      "text": "## RULED 2026-08-19 by Pip -- A1 answered, A2 follows from it, A3 and A4 still open"
+    },
+    {
       "source": "tools/art_review/apply_review.py:562",
       "text": "# its 07-21 reroll). Pip ruled both ship, so the older batch carries a"
     },
@@ -841,11 +882,19 @@
       "text": "ORIGIN VOCABULARY -- five values, ruled by Pip 2026-08-11"
     },
     {
-      "source": "tools/assets/backfill_provenance.py:473",
+      "source": "tools/assets/backfill_provenance.py:479",
       "text": "\"Ruled by Pip 2026-08-15. A signed credential outranks every heuristic and \""
     },
     {
-      "source": "tools/assets/backfill_provenance.py:568",
+      "source": "tools/assets/backfill_provenance.py:511",
+      "text": "# The five values ruled by Pip 2026-08-11, as a constant rather than a literal"
+    },
+    {
+      "source": "tools/assets/backfill_provenance.py:614",
+      "text": "\"Ruled by Pip 2026-08-19 (D2). ADR-0019 has no provenance field and this \""
+    },
+    {
+      "source": "tools/assets/backfill_provenance.py:792",
       "text": "\"'these are gpt-image' a plausible guess; coordination#32 ruled that an \""
     },
     {
@@ -857,12 +906,16 @@
       "text": "red, and this estate has already ruled on what that is worth:"
     },
     {
-      "source": "tools/assets/check_provenance.py:151",
+      "source": "tools/assets/check_provenance.py:348",
       "text": "\"_why\": \"Pinned unknown set. Ruled by Pip 2026-08-11: keep the \""
     },
     {
       "source": "tools/assets/check_provenance.py:4",
       "text": "Ruled by Pip 2026-08-11: the six unattributable assets are KEPT and recorded as"
+    },
+    {
+      "source": "tools/assets/check_provenance.py:60",
+      "text": "this estate has already ruled carries no information."
     },
     {
       "source": "tools/assets/manifests/new_subjects.json:115",

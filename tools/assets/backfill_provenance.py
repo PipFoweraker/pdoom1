@@ -268,6 +268,12 @@ def classify(p: Path, lib: dict[str, list[Path]]) -> dict:
         "origin_detail": None,
         "evidence": None,
         "confidence": None,
+        # Authorship is looked up, never derived from where the file was found.
+        # Only CUSTODIANS carries a named agent, so every other asset stays
+        # honestly unattributed through a full re-run too -- otherwise --write
+        # would silently undo what --apply-authors recorded.
+        "author": CUSTODIANS.get(rel_pack, "unattributed"),
+        "author_evidence": CUSTODIAN_SOURCE if rel_pack in CUSTODIANS else "",
     }
 
     # Tier S FIRST -- an embedded, CA-signed C2PA credential outranks every
@@ -483,6 +489,192 @@ def apply_credentials_only(write: bool) -> None:
     print(f"\nwrote {OUT.relative_to(REPO).as_posix()}")
 
 
+# Named custodians for the eight contributor cat photographs, transcribed from
+# art_source/cats_incoming/INVENTORY.md. This is the ONLY place in the pack where
+# a human agent is named in a source this repo already holds, which is why D2 can
+# be discharged with evidence rather than with a guess.
+CUSTODIANS = {
+    "cats/simple/web-arwen-chuck.jpg": "Matilda",
+    "cats/simple/web-arwen.jpg": "Matilda",
+    "cats/simple/web-chucky.jpg": "Nicki T.",
+    "cats/simple/web-doom-cat.jpg": "Office (default/mascot)",
+    "cats/simple/web-luna.jpg": "Nicki T.",
+    "cats/simple/web-mando.jpg": "Nicki T.",
+    "cats/simple/web-missy.jpg": "Spicy",
+    "cats/simple/web-nigel.jpg": "Nicki T.",
+}
+CUSTODIAN_SOURCE = "art_source/cats_incoming/INVENTORY.md"
+
+# RULING: 2026-08-19 -- every asset record names its author as well as its origin, with a named agent only where a source already in the repo names one and `unattributed` everywhere else, never inferred -- flavour: art-provenance -- mechanism: backfill_provenance.py --apply-authors, and classify() stamping it on a full re-run
+SCHEMA = "asset_provenance/1.1"
+
+# The five values ruled by Pip 2026-08-11, as a constant rather than a literal
+# repeated in the emitted document -- --record validates against the same list
+# the manifest publishes, so a sixth value cannot enter through the side door.
+ORIGIN_VALUES = [
+    "generated_model",
+    "authored_code",
+    "procedural_render",
+    "photo",
+    "unknown",
+]
+
+AUTHOR_SEMANTICS = (
+    "`author` names the AGENT credited for the asset, which `origin` does not: "
+    "origin says what kind of process made it, author says who is owed "
+    "attribution for it. `unattributed` means no agent is recorded and is NEVER "
+    "inferred -- not from the batch, not from who ran the generator, not from "
+    "who committed the file. Added 2026-08-19 (D2) because a human contributor "
+    "is in prospect and attribution is a duty to a person, not a disclosure to a "
+    "funder. The eight `photo` records carry named custodians from "
+    f"{CUSTODIAN_SOURCE}; everything else is honestly unattributed until someone "
+    "records an agent."
+)
+
+
+def blob_bytes(rel: str) -> bytes | None:
+    """Bytes of godot/assets/<rel> as git stores them (index first).
+
+    Matches check_provenance.py, which compares against the blob rather than the
+    working tree -- a manifest hash taken from a CRLF working copy would read as
+    permanent drift on every other checkout.
+    """
+    proc = subprocess.run(
+        ["git", "show", f":godot/assets/{rel}"],
+        cwd=str(REPO),
+        capture_output=True,
+    )
+    return proc.stdout if proc.returncode == 0 else None
+
+
+def _load_manifest() -> dict:
+    if not OUT.exists():
+        sys.exit(f"no manifest at {OUT} -- run a full --write first")
+    return json.loads(OUT.read_text(encoding="utf-8"))
+
+
+def _write_manifest(doc: dict, what: str, why: str, by: str) -> None:
+    doc["_generated_at"] = datetime.now(timezone.utc).isoformat()
+    doc.setdefault("_amendments", []).append(
+        {"at": doc["_generated_at"], "by": by, "what": what, "why": why}
+    )
+    OUT.write_text(
+        json.dumps(doc, indent=2, ensure_ascii=True) + "\n", encoding="utf-8", newline=""
+    )
+    print(f"\nwrote {OUT.relative_to(REPO).as_posix()}")
+
+
+def apply_authors_only(write: bool) -> None:
+    """Add `author` / `author_evidence` to every record, changing nothing else.
+
+    Narrow for the same reason --apply-credentials is narrow: a full --write on
+    this machine would rewrite 245 records into the LOCAL-ONLY tier D. Authorship
+    is orthogonal to the evidence tier, so it can be laid on top without
+    disturbing a single origin, evidence or hash.
+    """
+    doc = _load_manifest()
+    assets = doc["assets"]
+    named, blank, already = 0, 0, 0
+    for rel, rec in assets.items():
+        if "author" in rec:
+            already += 1
+            continue
+        who = CUSTODIANS.get(rel)
+        if who:
+            rec["author"] = who
+            rec["author_evidence"] = CUSTODIAN_SOURCE
+            named += 1
+        else:
+            rec["author"] = "unattributed"
+            rec["author_evidence"] = ""
+            blank += 1
+
+    print(f"scanned {len(assets)} manifest records")
+    print(f"  named author      {named}")
+    print(f"  unattributed      {blank}")
+    print(f"  already stamped   {already}")
+    for rel in sorted(CUSTODIANS):
+        if rel in assets:
+            print(f"    {rel}  ->  {assets[rel].get('author')}")
+
+    if not write:
+        print("\nDRY RUN -- nothing written")
+        return
+    if not (named or blank):
+        print("\nnothing to write")
+        return
+    doc["_schema"] = SCHEMA
+    doc["_author_values"] = ["<a named agent>", "unattributed"]
+    doc["_author_is_not_a_guess"] = AUTHOR_SEMANTICS
+    _write_manifest(
+        doc,
+        what=f"added author/author_evidence to {named + blank} record(s); "
+        f"{named} named from {CUSTODIAN_SOURCE}",
+        why=(
+            "Ruled by Pip 2026-08-19 (D2). ADR-0019 has no provenance field and this "
+            "manifest answered only WHAT made an asset, never WHO is owed credit for "
+            "it. A human contributor is in prospect, which makes the missing field "
+            "load-bearing for attribution and not only for the Manifund obligation. "
+            "Applied narrowly: a full re-run would rewrite 245 unrelated records into "
+            "the LOCAL-ONLY tier D on this machine."
+        ),
+        by="backfill_provenance.py --apply-authors",
+    )
+    doc["_schema"] = SCHEMA
+
+
+def record_one(args) -> None:
+    """Record ONE evidenced asset that shipped ahead of the pull step.
+
+    This exists because the gap is structural and will recur: until ADR-0019's
+    pull step is the sole writer, an asset can land in godot/assets/ through any
+    normal feature commit and nothing writes its provenance. That happened on
+    2026-08-12 (`ab85ed0b`, #1196) one day after the guard landed, and nobody saw
+    it because the guard was wired to nothing. Report-never-guess still applies:
+    every field here is supplied by a human who read the evidence, and the
+    evidence string is mandatory.
+    """
+    rel = args.record
+    doc = _load_manifest()
+    assets = doc["assets"]
+    if rel in assets and not args.replace:
+        sys.exit(f"{rel} already has a record -- pass --replace to overwrite it")
+    p = PACK / rel
+    if not p.exists():
+        sys.exit(f"no such packed file: {p}")
+
+    data = blob_bytes(rel)
+    source = "git blob"
+    if data is None:
+        data = p.read_bytes()
+        source = "working tree (untracked)"
+
+    rec = {
+        "sha256": hashlib.sha256(data).hexdigest(),
+        "bytes": len(data),
+        "origin": args.origin,
+        "origin_detail": args.detail,
+        "evidence": args.evidence,
+        "confidence": args.confidence,
+        "author": args.author,
+        "author_evidence": args.author_evidence,
+    }
+    print(f"{rel}  (hashed from {source})")
+    for k, v in rec.items():
+        print(f"  {k:<16} {v}")
+    if not args.write:
+        print("\nDRY RUN -- nothing written")
+        return
+    assets[rel] = rec
+    doc["assets"] = dict(sorted(assets.items()))
+    _write_manifest(
+        doc,
+        what=f"recorded 1 asset: {rel} ({args.origin}, {args.evidence})",
+        why=args.why,
+        by="backfill_provenance.py --record",
+    )
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--write", action="store_true", help="write the manifest")
@@ -505,12 +697,48 @@ def main() -> None:
         "at a synced copy of the full art_generated/ from the machine "
         "that generated it -- tier D depends on files that are NOT in git.",
     )
+    ap.add_argument(
+        "--apply-authors",
+        action="store_true",
+        help=(
+            "add author/author_evidence to every record and bump the schema to "
+            f"{SCHEMA}, leaving origin, evidence and hashes untouched."
+        ),
+    )
+    ap.add_argument(
+        "--record",
+        metavar="REL",
+        help=(
+            "record ONE packed file that shipped ahead of the pull step, e.g. "
+            "images/backgrounds/foo.webp. Requires --origin, --evidence, "
+            "--detail and --why."
+        ),
+    )
+    ap.add_argument("--origin", choices=sorted(ORIGIN_VALUES), help="with --record")
+    ap.add_argument("--evidence", help="with --record, e.g. C:git-commit-message")
+    ap.add_argument("--detail", default="", help="with --record: origin_detail")
+    ap.add_argument("--why", default="", help="with --record: the amendment reason")
+    ap.add_argument("--confidence", default="medium", choices=["high", "medium", "none"])
+    ap.add_argument("--author", default="unattributed", help="with --record")
+    ap.add_argument("--author-evidence", default="", help="with --record")
+    ap.add_argument(
+        "--replace", action="store_true", help="with --record: overwrite an existing entry"
+    )
     args = ap.parse_args()
     if not args.write:
         args.dry_run = True
 
     if not PACK.is_dir():
         sys.exit(f"no pack directory at {PACK}")
+
+    if args.record:
+        missing = [f for f in ("origin", "evidence", "detail", "why") if not getattr(args, f)]
+        if missing:
+            sys.exit("--record needs " + ", ".join("--" + m for m in missing))
+        return record_one(args)
+
+    if args.apply_authors:
+        return apply_authors_only(write=args.write)
 
     if args.apply_credentials:
         return apply_credentials_only(write=args.write)
@@ -545,7 +773,7 @@ def main() -> None:
         print(f"  {u}")
 
     doc = {
-        "_schema": "asset_provenance/1.0",
+        "_schema": SCHEMA,
         "_answers": "coordination#32",
         "_generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "_written_by": "tools/assets/backfill_provenance.py",
@@ -555,13 +783,9 @@ def main() -> None:
             "is a second write site and can drift -- tools/assets/check_provenance.py "
             "fails loudly when it does."
         ),
-        "_origin_values": [
-            "generated_model",
-            "authored_code",
-            "procedural_render",
-            "photo",
-            "unknown",
-        ],
+        "_origin_values": list(ORIGIN_VALUES),
+        "_author_values": ["<a named agent>", "unattributed"],
+        "_author_is_not_a_guess": AUTHOR_SEMANTICS,
         "_unknown_is_not_a_guess": (
             "`unknown` means no record exists. It is never inferred from image "
             "dimensions. 1024x1024 and 1536x1024 are OpenAI output sizes, which makes "

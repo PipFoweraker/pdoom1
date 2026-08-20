@@ -779,9 +779,27 @@ def main():
         f"{n_matched} with an existing verdict, built in {dt:.1f}s"
     )
     if orphans:
+        # NOT "deleted/renamed", which is what this line used to say and what it
+        # led two separate readings to conclude. Measured 2026-08-15 and again on
+        # 2026-08-19: ZERO verdicts have been lost. The population is two things,
+        # and neither is attrition:
+        #
+        #   px:   the same present file counted twice under two key spellings
+        #         (with and without the extension). The file is right there.
+        #   gen:  art that is deliberately NOT on this machine -- see the RULING
+        #         below. Its verdict is the durable half and it is in git.
+        #
+        # RULING: 2026-08-19 -- New-Bort is the working machine and hosts new archives and images; the generated masters are NOT transferred to it but coordinated on an external drive or the upstream system, so a verdict whose art is absent is the designed steady state and orphan keys are never pruned -- flavour: art-provenance -- mechanism: this reporting line, and tools/art_review/ORPHANS_2026-08-15.md A1/A2
+        #
+        # So the count is reported as INFORMATION, never as loss. Anyone quoting
+        # it as attrition is overstating it by the whole px: population.
+        px = sum(1 for k in orphans if k.startswith("px:"))
+        gen = len(orphans) - px
         print(
-            f"[!] {len(orphans)} review_state keys matched no file on disk "
-            f"(deleted/renamed assets); first few: {orphans[:5]}"
+            f"[i] {len(orphans)} review_state keys name no file HERE: "
+            f"{gen} gen: (masters hosted off this machine by ruling), "
+            f"{px} px: (duplicate key spelling, file present). "
+            "No verdict is lost; nothing is pruned."
         )
     if args.open:
         webbrowser.open(OUT.as_uri())
