@@ -139,6 +139,32 @@ godot/, scripts/, docs/, tests/, archive/, ...
 
 **Goal:** Clean, focused repository ready for public website integration.
 
+## Added 2026-08-20 -- the pygame-era leaderboards and three stray files
+
+`legacy-data/leaderboards-pygame/` -- **140 files, all from the pygame era, none
+of them valid JSON.** They are Python `str(dict)` output written to a `.json`
+extension: single-quoted keys, so no JSON parser in any language reads them.
+Nothing in `godot/`, `tools/` or `scripts/` referenced the path; the live board
+is `user://leaderboards/`, in the player's user data, and is untouched by this.
+
+Moving them was already proposed in
+`docs/archive/dev-sessions-pre-workshop1/cleanup/REPOSITORY_CLEANUP_V0.10.2.md`
+(*"`leaderboards/` -> move to user data directory?"*) and never actioned.
+
+Also archived, same shape, no readers found:
+
+- `legacy-data/settings.schema.json` (was `assets/schemas/`) -- a schema that is
+  not valid JSON; an identical archived twin already existed
+- `legacy-data/website-version.json` (was `docs/shared/`) -- dated 2025-09-15
+- `tools/pylint_errors.json` -- 93 bytes of stray tool output, deleted rather
+  than archived; an archived twin already existed
+
+**Why it was worth doing:** 148 of 322 JSON files in this repo did not parse, and
+that is the largest single blocker to running the full pre-commit suite in CI --
+a gate that is red on arrival carries no information. After this move,
+`check-json` passes on the whole live tree. See `docs/GUARD_AUDIT_2026-08-19.md`
+remedy R2.
+
 ## Maintenance
 
 Archives are **frozen** - no new code added. Only documentation updates.
