@@ -5,6 +5,14 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+  # Forcible on any branch, added 2026-08-19. A PR that touches
+  # .github/workflows/ gets its pull_request-triggered runs suppressed, so
+  # PR #1238 -- the one WIRING a new gate into this file -- could not run the
+  # gate it was adding, and there was no way to ask for it: every other
+  # workflow here had workflow_dispatch and this one did not. A quality gate
+  # you cannot invoke on demand is only as good as the events that happen to
+  # fire it.
+  workflow_dispatch:
 
 jobs:
   quality-checks:
@@ -67,6 +75,21 @@ jobs:
         echo " does not exist. See godot/scripts/core/refusal.gd; playtest 2026-08-14.)"
         python tools/check_refusal_classification.py --self-test
         python tools/check_refusal_classification.py
+
+    - name: Asset Provenance Check -- self-test, then the audit
+      run: |
+        echo "Enforcing: every packed asset has a provenance record, the record matches"
+        echo "the bytes, and the unknown set is exactly what was pinned (coordination#32)."
+        echo ""
+        echo "The self-test runs FIRST and on every build because this guard shipped on"
+        echo "2026-08-11 wired to nothing, and one day later #1196 shipped a packed asset"
+        echo "with no provenance entry -- caught only when someone ran it by hand on"
+        echo "2026-08-19. It also pins the fix from that day: the comparison is against"
+        echo "the git blob, not the working tree, so a checkout that predates"
+        echo "'*.svg text eol=lf' does not report six phantom drifts."
+        python tools/assets/check_provenance.py --self-test
+        echo ""
+        python tools/assets/check_provenance.py
 
     - name: Import Cleanup Check
       run: |
