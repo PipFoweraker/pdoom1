@@ -225,6 +225,20 @@ repos:
         files: '^(godot/assets/.*\.png|tools/assets/(check_credentials|generate_images|run_art_night|build_share_set|promote_assets)\.py|tools/assets/credentialed_pin\.json)$'
         pass_filenames: false
 
+      # The provenance manifest and the pack must agree. This guard existed from
+      # 2026-08-11 and was wired to NOTHING until 2026-08-19 -- so on 2026-08-12
+      # `ab85ed0b` (#1196) shipped a packed asset with no provenance entry, the
+      # guard's own third direction, and it went unseen for a week. The lesson is
+      # the one this repo keeps relearning: a mechanism nobody runs is a document.
+      # Cheap (one git cat-file over 511 files) and fires only when the pack, the
+      # manifest, the pin or the two tools change.
+      - id: provenance-check
+        name: Packed assets and the provenance manifest agree
+        entry: python tools/assets/check_provenance.py
+        language: system
+        files: '^(godot/assets/.*|godot/data/asset_provenance\.json|tools/assets/(check_provenance|backfill_provenance)\.py|tools/assets/provenance_unknown_pin\.json)$'
+        pass_filenames: false
+
       - id: scene-nav-check
         name: Scene navigation routes through SceneTransition
         entry: python tools/check_scene_nav.py
