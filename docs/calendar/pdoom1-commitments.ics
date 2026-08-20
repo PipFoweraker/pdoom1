@@ -698,7 +698,7 @@ DTSTART;VALUE=DATE:20260812
 DTEND;VALUE=DATE:20260813
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:213. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:214. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `godot/scripts/core/capacity.gd:5` -- ## Ru
  led 2026-08-12 (coordination/DESIGN_2026-08-12_interrupt-resolution-varia
@@ -721,7 +721,7 @@ DTSTART;VALUE=DATE:20260812
 DTEND;VALUE=DATE:20260813
 SUMMARY:[UNPARSED] needs a declaration -- backfill_provenance.py
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/assets/backfill_
- provenance.py:632. 1 line(s) in tools/assets/backfill_provenance.py menti
+ provenance.py:691. 1 line(s) in tools/assets/backfill_provenance.py menti
  on this date and no COMMITMENT: declaration accounts for it. Either add a
   declaration or the date is incidental. First line: 2026-08-12 (`ab85ed0b
  `\, #1196) one day after the guard landed\, and nobody saw -- Generated f
@@ -1406,7 +1406,7 @@ DTSTART;VALUE=DATE:20260814
 DTEND;VALUE=DATE:20260815
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:230. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:231. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `godot/tests/unit/simulation/test_events.gd
  :50` -- ## THE RATCHET WAS DELIBERATELY LOOSENED -- 2026-08-14\, ruled by
@@ -2410,7 +2410,7 @@ DTSTART;VALUE=DATE:20260819
 DTEND;VALUE=DATE:20260820
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:21. 6 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
+ d:21. 7 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
  TMENT: declaration accounts for it. Either add a declaration or the date 
  is incidental. First line: | 2026-08-19 | New-Bort is the working machine
   and hosts new archives and images\; the generated masters are NOT transf
@@ -2433,7 +2433,7 @@ DTSTART;VALUE=DATE:20260819
 DTEND;VALUE=DATE:20260820
 SUMMARY:[UNPARSED] needs a declaration -- backfill_provenance.py
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/assets/backfill_
- provenance.py:508. 3 line(s) in tools/assets/backfill_provenance.py menti
+ provenance.py:555. 3 line(s) in tools/assets/backfill_provenance.py menti
  on this date and no COMMITMENT: declaration accounts for it. Either add a
   declaration or the date is incidental. First line: # RULING: 2026-08-19 
  -- every asset record names its author as well as its origin\, with a nam
@@ -2626,12 +2626,12 @@ DTSTAMP:20260820T000000Z
 DTSTART;VALUE=DATE:20260820
 DTEND;VALUE=DATE:20260821
 SUMMARY:[UNPARSED] needs a declaration -- CREDITS.md
-DESCRIPTION:Owner: unowned. Kind: unparsed. Source: CREDITS.md:46. 2 line(
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: CREDITS.md:21. 3 line(
  s) in CREDITS.md mention this date and no COMMITMENT: declaration account
  s for it. Either add a declaration or the date is incidental. First line:
-  2026-08-20\, on his account of that conversation rather than a linkable 
- artifact. -- Generated from tracked sources by scripts/generate_commitmen
- t_calendar.py\; regenerate to update.
+  > **Diff `godot/data/credits.json` before committing** -- on 2026-08-20 
+ an -- Generated from tracked sources by scripts/generate_commitment_calen
+ dar.py\; regenerate to update.
 CATEGORIES:UNPARSED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -2662,6 +2662,29 @@ BEGIN:VALARM
 ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- MIGRATION_TO_NEW_PC.md (unparsed) -- un
+ owned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:5dc1133d8e87e032@commitments.pdoom1
+DTSTAMP:20260820T000000Z
+DTSTART;VALUE=DATE:20260820
+DTEND;VALUE=DATE:20260821
+SUMMARY:[UNPARSED] needs a declaration -- backfill_provenance.py
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/assets/backfill_
+ provenance.py:496. 1 line(s) in tools/assets/backfill_provenance.py menti
+ on this date and no COMMITMENT: declaration accounts for it. Either add a
+  declaration or the date is incidental. First line: # WHERE A CONTRIBUTOR
+ 'S NAME COMES FROM (2026-08-20) -- Generated from tracked sources by scri
+ pts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- backfill_provenance.py (unparsed) -- un
  owned
 END:VALARM
 END:VEVENT
@@ -3079,7 +3102,7 @@ DTSTART;VALUE=DATE:20260831
 DTEND;VALUE=DATE:20260901
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:221. 2 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:222. 2 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `godot/scripts/core/researcher.gd:131` -- #
   SEAM (ruled 2026-07-27\, review-by 2026-08-31): AUDITS ground-truth repo

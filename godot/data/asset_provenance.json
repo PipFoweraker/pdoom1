@@ -1,7 +1,7 @@
 {
   "_schema": "asset_provenance/1.1",
   "_answers": "coordination#32",
-  "_generated_at": "2026-08-19T02:23:06.385677+00:00",
+  "_generated_at": "2026-08-20T07:28:45.817851+00:00",
   "_written_by": "tools/assets/backfill_provenance.py",
   "_interim": "INTERIM. The ADR-0019 pull step does not exist yet; when it does it becomes the sole writer and this backfill is retired. Until then this is a second write site and can drift -- tools/assets/check_provenance.py fails loudly when it does.",
   "_origin_values": [
@@ -151,7 +151,7 @@
       "evidence": "E:hand-inspection",
       "confidence": "high",
       "author": "Matilda",
-      "author_evidence": "art_source/cats_incoming/INVENTORY.md"
+      "author_evidence": "CREDITS.md"
     },
     "cats/simple/web-arwen.jpg": {
       "sha256": "cb6370c6a243566fd55c06378d92b842d4b544b7e37af0d62bba2e392b96812c",
@@ -161,7 +161,7 @@
       "evidence": "E:hand-inspection",
       "confidence": "high",
       "author": "Matilda",
-      "author_evidence": "art_source/cats_incoming/INVENTORY.md"
+      "author_evidence": "CREDITS.md"
     },
     "cats/simple/web-chucky.jpg": {
       "sha256": "61ee33fb4a222b40a4aa492c6ee22ad939e9bf7be76f0948f111157839f67666",
@@ -171,7 +171,7 @@
       "evidence": "E:hand-inspection",
       "confidence": "high",
       "author": "Nicki T.",
-      "author_evidence": "art_source/cats_incoming/INVENTORY.md"
+      "author_evidence": "CREDITS.md"
     },
     "cats/simple/web-doom-cat.jpg": {
       "sha256": "46abdca9d899018774224b03148ca44b4243ce03cf7385d122b44ae49738d675",
@@ -180,8 +180,8 @@
       "origin_detail": "contributor cat photograph, used with the owner's explicit permission (confirmed by Pip 2026-08-06)",
       "evidence": "E:hand-inspection",
       "confidence": "high",
-      "author": "Office (default/mascot)",
-      "author_evidence": "art_source/cats_incoming/INVENTORY.md"
+      "author": "Pip",
+      "author_evidence": "CREDITS.md"
     },
     "cats/simple/web-luna.jpg": {
       "sha256": "718bd3d2766c8f229ca6b9f9f3b7aef67b2ebfe2ea154e3bba4daf31ce500127",
@@ -191,7 +191,7 @@
       "evidence": "E:hand-inspection",
       "confidence": "high",
       "author": "Nicki T.",
-      "author_evidence": "art_source/cats_incoming/INVENTORY.md"
+      "author_evidence": "CREDITS.md"
     },
     "cats/simple/web-mando.jpg": {
       "sha256": "114842eb1c2d825080faa3b27446b49a3da3d3f59544c2a8e4fb02f8f435cf83",
@@ -201,7 +201,7 @@
       "evidence": "E:hand-inspection",
       "confidence": "high",
       "author": "Nicki T.",
-      "author_evidence": "art_source/cats_incoming/INVENTORY.md"
+      "author_evidence": "CREDITS.md"
     },
     "cats/simple/web-missy.jpg": {
       "sha256": "33f7188c017d32a6bd75af7ceee8b3cc0d7f3670860eaa33f19808a5c5f2ccb8",
@@ -211,7 +211,7 @@
       "evidence": "E:hand-inspection",
       "confidence": "high",
       "author": "Spicy",
-      "author_evidence": "art_source/cats_incoming/INVENTORY.md"
+      "author_evidence": "CREDITS.md"
     },
     "cats/simple/web-nigel.jpg": {
       "sha256": "b20dc9f8727ad62506641c88ee88470d35c90901303d386d1e3ef05aa264824f",
@@ -221,7 +221,7 @@
       "evidence": "E:hand-inspection",
       "confidence": "high",
       "author": "Nicki T.",
-      "author_evidence": "art_source/cats_incoming/INVENTORY.md"
+      "author_evidence": "CREDITS.md"
     },
     "icons/actions/action_funding_grant_proposal_64.png": {
       "sha256": "929ebe57a768cfdc2aac6e91b063395d98e2c6b6aac6ec59d565b93941a6bd85",
@@ -5142,11 +5142,17 @@
       "by": "backfill_provenance.py --record",
       "what": "recorded 1 asset: images/backgrounds/intro_bus_strangers_help.webp (generated_model, C:git-commit-message)",
       "why": "Shipped in ab85ed0b (#1196) on 2026-08-12, one day after the guard landed, through a normal feature commit that no provenance writer sees. Found 2026-08-19 by running check_provenance.py by hand, which is when it emerged that the guard was wired to no hook and no workflow. Origin read from the commit body, which names the source batch and the render; not inferred from the file."
+    },
+    {
+      "at": "2026-08-20T07:28:45.817851+00:00",
+      "by": "backfill_provenance.py --apply-authors",
+      "what": "added author/author_evidence to 8 record(s); 8 named from CREDITS.md",
+      "why": "Ruled by Pip 2026-08-19 (D2). ADR-0019 has no provenance field and this manifest answered only WHAT made an asset, never WHO is owed credit for it. A human contributor is in prospect, which makes the missing field load-bearing for attribution and not only for the Manifund obligation. Applied narrowly: a full re-run would rewrite 245 unrelated records into the LOCAL-ONLY tier D on this machine."
     }
   ],
   "_author_values": [
     "<a named agent>",
     "unattributed"
   ],
-  "_author_is_not_a_guess": "`author` names the AGENT credited for the asset, which `origin` does not: origin says what kind of process made it, author says who is owed attribution for it. `unattributed` means no agent is recorded and is NEVER inferred -- not from the batch, not from who ran the generator, not from who committed the file. Added 2026-08-19 (D2) because a human contributor is in prospect and attribution is a duty to a person, not a disclosure to a funder. The eight `photo` records carry named custodians from art_source/cats_incoming/INVENTORY.md; everything else is honestly unattributed until someone records an agent."
+  "_author_is_not_a_guess": "`author` names the AGENT credited for the asset, which `origin` does not: origin says what kind of process made it, author says who is owed attribution for it. `unattributed` means no agent is recorded and is NEVER inferred -- not from the batch, not from who ran the generator, not from who committed the file. Added 2026-08-19 (D2) because a human contributor is in prospect and attribution is a duty to a person, not a disclosure to a funder. The eight `photo` records carry named custodians from CREDITS.md (the credits SSOT); everything else is honestly unattributed until someone records an agent."
 }

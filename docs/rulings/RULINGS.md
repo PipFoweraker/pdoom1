@@ -5,7 +5,7 @@
 > `python scripts/generate_rulings.py`. The convention, and why it looks
 > like this, is argued in `docs/rulings/RULINGS_CONVENTION.md`.
 
-**10 ruling(s)** across **4 flavour(s)**. **206** prose ruling(s) not yet declared.
+**10 ruling(s)** across **4 flavour(s)**. **207** prose ruling(s) not yet declared.
 
 ## By flavour
 
@@ -19,7 +19,7 @@ flavour it belongs to and read what was already decided there.
 | 2026-08-15 | Tier W (website disclosure) ships first and standalone; Tier G (in-game motifs and epoch marks) stays ruled-but-unbuilt | `docs/art/MOTIF_AND_WATERMARK_PROTOCOL.md` | `docs/rulings/LEDGER.md:12` |
 | 2026-08-15 | an embedded CA-signed C2PA credential outranks every provenance heuristic; it becomes evidence tier S and resolves an asset out of the unknown set | `tools/assets/backfill_provenance.py credential_origin` | `docs/rulings/LEDGER.md:14` |
 | 2026-08-19 | New-Bort is the working machine and hosts new archives and images; the generated masters are NOT transferred to it but coordinated on an external drive or the upstream system, so a verdict whose art is absent is the designed steady state and orphan keys are never pruned | `this reporting line, and tools/art_review/ORPHANS_2026-08-15.md A1/A2` | `tools/art_review/build_full_gallery.py:792` |
-| 2026-08-19 | every asset record names its author as well as its origin, with a named agent only where a source already in the repo names one and `unattributed` everywhere else, never inferred | `backfill_provenance.py --apply-authors, and classify() stamping it on a full re-run` | `tools/assets/backfill_provenance.py:508` |
+| 2026-08-19 | every asset record names its author as well as its origin, with a named agent only where a source already in the repo names one and `unattributed` everywhere else, never inferred | `backfill_provenance.py --apply-authors, and classify() stamping it on a full re-run` | `tools/assets/backfill_provenance.py:555` |
 | 2026-08-19 | the provenance guard compares against the git blob, not the working tree, and runs in pre-commit and CI; a guard wired to nothing is a document | `.pre-commit-config.yaml provenance-check + quality-checks.yml, both running --self-test first` | `tools/assets/check_provenance.py:65` |
 
 ### `art-review-vocabulary` (only one so far)
@@ -206,6 +206,7 @@ is not.
 - `godot/data/asset_provenance.json:14` -- "_unknown_is_not_a_guess": "`unknown` means no record exists. It is never inferred from image dimensions. 1024x1024 and 1536x1024 are OpenAI output sizes, which makes 'these are gpt-image' a plausible
 - `godot/data/asset_provenance.json:5132` -- "why": "Ruled by Pip 2026-08-15. A signed credential outranks every heuristic and is the only evidence that survives a file moving between repos. Applied narrowly because a full re-run would rewrite 2
 - `godot/data/asset_provenance.json:5138` -- "why": "Ruled by Pip 2026-08-19 (D2). ADR-0019 has no provenance field and this manifest answered only WHAT made an asset, never WHO is owed credit for it. A human contributor is in prospect, which ma
+- `godot/data/asset_provenance.json:5150` -- "why": "Ruled by Pip 2026-08-19 (D2). ADR-0019 has no provenance field and this manifest answered only WHAT made an asset, never WHO is owed credit for it. A human contributor is in prospect, which ma
 - `godot/data/office/props_manifest.json:15` -- "style_tags": "office quality tiers this art serves, from the canonical ladder [\"scummy\", \"decent\", \"premium\"] (ruled 2026-07-26; see docs/game-design/SEED_ASSET_REGISTRY_AND_VERDICTS.md). Tag o
 - `godot/data/patch_notes.json:55` -- "WHY THE BOARD FORKED: the historical event deck was retimed to one turn = one month, and the ruled event promotions were applied. Different events now fire on the same seed, so an L4 run is not compa
 - `godot/scripts/core/build_info.gd:22` -- ## Alpha-tools era switch (#1079 fallout, ruled 2026-08-05). While this is true the ALPHA
@@ -251,13 +252,13 @@ is not.
 - `tools/assets/backfill_provenance.py:147` -- `art_prompts/*.yaml` is the RULED source of truth per ART_MASTERS_POLICY:
 - `tools/assets/backfill_provenance.py:38` -- ORIGIN VOCABULARY -- five values, ruled by Pip 2026-08-11
 - `tools/assets/backfill_provenance.py:479` -- "Ruled by Pip 2026-08-15. A signed credential outranks every heuristic and "
-- `tools/assets/backfill_provenance.py:511` -- # The five values ruled by Pip 2026-08-11, as a constant rather than a literal
-- `tools/assets/backfill_provenance.py:614` -- "Ruled by Pip 2026-08-19 (D2). ADR-0019 has no provenance field and this "
-- `tools/assets/backfill_provenance.py:792` -- "'these are gpt-image' a plausible guess; coordination#32 ruled that an "
+- `tools/assets/backfill_provenance.py:558` -- # The five values ruled by Pip 2026-08-11, as a constant rather than a literal
+- `tools/assets/backfill_provenance.py:673` -- "Ruled by Pip 2026-08-19 (D2). ADR-0019 has no provenance field and this "
+- `tools/assets/backfill_provenance.py:851` -- "'these are gpt-image' a plausible guess; coordination#32 ruled that an "
 - `tools/assets/check_credentials.py:30` -- permanently red over ~4,900 legacy files, and this estate has ruled on what
 - `tools/assets/check_provenance.py:11` -- red, and this estate has already ruled on what that is worth:
-- `tools/assets/check_provenance.py:348` -- "_why": "Pinned unknown set. Ruled by Pip 2026-08-11: keep the "
 - `tools/assets/check_provenance.py:4` -- Ruled by Pip 2026-08-11: the six unattributable assets are KEPT and recorded as
+- `tools/assets/check_provenance.py:439` -- "_why": "Pinned unknown set. Ruled by Pip 2026-08-11: keep the "
 - `tools/assets/check_provenance.py:60` -- this estate has already ruled carries no information.
 - `tools/assets/manifests/new_subjects.json:115` -- "prompt_tail": "an almost perfectly flat-on frontal view of a wall of bureaucratic paperwork, shot square to the wall with minimal perspective so the picture plane and the wall plane are nearly parall
 - `tools/assets/provenance_unknown_pin.json:2` -- "_why": "Pinned unknown set. Ruled by Pip 2026-08-11: keep the unattributable assets, record them honestly, and let a mechanism force the question later rather than a document.",

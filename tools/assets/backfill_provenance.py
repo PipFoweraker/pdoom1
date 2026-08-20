@@ -269,11 +269,11 @@ def classify(p: Path, lib: dict[str, list[Path]]) -> dict:
         "evidence": None,
         "confidence": None,
         # Authorship is looked up, never derived from where the file was found.
-        # Only CUSTODIANS carries a named agent, so every other asset stays
+        # Only CREDITS.md names an agent, so every other asset stays
         # honestly unattributed through a full re-run too -- otherwise --write
         # would silently undo what --apply-authors recorded.
-        "author": CUSTODIANS.get(rel_pack, "unattributed"),
-        "author_evidence": CUSTODIAN_SOURCE if rel_pack in CUSTODIANS else "",
+        "author": credit_forms().get(rel_pack, "unattributed"),
+        "author_evidence": CREDIT_SOURCE if rel_pack in credit_forms() else "",
     }
 
     # Tier S FIRST -- an embedded, CA-signed C2PA credential outranks every
@@ -493,17 +493,64 @@ def apply_credentials_only(write: bool) -> None:
 # art_source/cats_incoming/INVENTORY.md. This is the ONLY place in the pack where
 # a human agent is named in a source this repo already holds, which is why D2 can
 # be discharged with evidence rather than with a guess.
-CUSTODIANS = {
-    "cats/simple/web-arwen-chuck.jpg": "Matilda",
-    "cats/simple/web-arwen.jpg": "Matilda",
-    "cats/simple/web-chucky.jpg": "Nicki T.",
-    "cats/simple/web-doom-cat.jpg": "Office (default/mascot)",
-    "cats/simple/web-luna.jpg": "Nicki T.",
-    "cats/simple/web-mando.jpg": "Nicki T.",
-    "cats/simple/web-missy.jpg": "Spicy",
-    "cats/simple/web-nigel.jpg": "Nicki T.",
-}
-CUSTODIAN_SOURCE = "art_source/cats_incoming/INVENTORY.md"
+# WHERE A CONTRIBUTOR'S NAME COMES FROM (2026-08-20)
+# ---------------------------------------------------
+# CREDITS.md is the SSOT for the in-game credits screen: scripts/generate_credits.py
+# derives godot/data/credits.json from it and a pre-commit --check blocks a stale
+# copy. This file READS that table rather than keeping its own copy.
+#
+# It used to keep a copy, transcribed from art_source/cats_incoming/INVENTORY.md,
+# and the copy was already wrong when it was written: it carried
+# "Office (default/mascot)" for web-doom-cat.jpg, a value CREDITS.md had resolved
+# to "Pip" eight days earlier. A hand-maintained second copy of a fact that has an
+# SSOT drifts, and it drifted before it shipped.
+#
+# It matters more than tidiness because consent is withdrawable. If a contributor
+# asks to be removed, one edit to CREDITS.md must be enough; two places to
+# remember is the difference between "we removed you" and "we mostly removed you",
+# and the second is worse than never having credited them.
+#
+# A cell still carrying a [Pip to fill] / [Pip to confirm] placeholder means no
+# credit form has been chosen. generate_credits.py DROPS those so they can never
+# reach a player's screen; this reads them the same way and records
+# `unattributed` rather than the marker text.
+CREDIT_SOURCE = "CREDITS.md"
+PHOTO_ASSET_DIR = "cats/simple/"
+_CREDITS_CACHE: dict[str, str] | None = None
+
+
+def credit_forms() -> dict[str, str]:
+    """pack-relative asset path -> the credit form CREDITS.md says to use.
+
+    Parses the `## Cats` table only: | Cat | Photo by | Asset |. Assets whose
+    credit cell still holds a placeholder are omitted, so the caller records them
+    as unattributed exactly as the credits generator drops them.
+    """
+    global _CREDITS_CACHE
+    if _CREDITS_CACHE is not None:
+        return _CREDITS_CACHE
+    out: dict[str, str] = {}
+    src = REPO / CREDIT_SOURCE
+    if src.is_file():
+        in_cats = False
+        for line in src.read_text(encoding="utf-8").splitlines():
+            if line.startswith("## "):
+                in_cats = line.strip().lower() == "## cats"
+                continue
+            if not in_cats or not line.startswith("|"):
+                continue
+            cells = [c.strip() for c in line.strip().strip("|").split("|")]
+            if len(cells) < 3 or cells[2].lower() in ("asset", "---"):
+                continue
+            if set(cells[0]) <= set("-: "):
+                continue
+            who, asset = cells[1], cells[2]
+            if "[Pip to" in who or not asset:
+                continue
+            out[PHOTO_ASSET_DIR + asset] = who
+    _CREDITS_CACHE = out
+    return out
+
 
 # RULING: 2026-08-19 -- every asset record names its author as well as its origin, with a named agent only where a source already in the repo names one and `unattributed` everywhere else, never inferred -- flavour: art-provenance -- mechanism: backfill_provenance.py --apply-authors, and classify() stamping it on a full re-run
 SCHEMA = "asset_provenance/1.1"
@@ -527,7 +574,8 @@ AUTHOR_SEMANTICS = (
     "who committed the file. Added 2026-08-19 (D2) because a human contributor "
     "is in prospect and attribution is a duty to a person, not a disclosure to a "
     "funder. The eight `photo` records carry named custodians from "
-    f"{CUSTODIAN_SOURCE}; everything else is honestly unattributed until someone "
+    f"{CREDIT_SOURCE} (the credits SSOT); everything else is honestly unattributed "
+    "until someone "
     "records an agent."
 )
 
@@ -574,26 +622,37 @@ def apply_authors_only(write: bool) -> None:
     """
     doc = _load_manifest()
     assets = doc["assets"]
-    named, blank, already = 0, 0, 0
+    named, blank, already, refreshed = 0, 0, 0, []
     for rel, rec in assets.items():
-        if "author" in rec:
+        who = credit_forms().get(rel)
+        want_author = who or "unattributed"
+        want_evidence = CREDIT_SOURCE if who else ""
+        if rec.get("author") == want_author and rec.get("author_evidence") == want_evidence:
             already += 1
             continue
-        who = CUSTODIANS.get(rel)
+        # A record that already has an author but DISAGREES with the SSOT is
+        # refreshed rather than skipped. Skipping is what let a stale
+        # "Office (default/mascot)" survive a resolution CREDITS.md had already
+        # made -- and it is the case that matters for withdrawal: if a
+        # contributor is removed from CREDITS.md, this must follow.
+        if "author" in rec and rec.get("author") != want_author:
+            refreshed.append((rel, rec.get("author"), want_author))
+        rec["author"] = want_author
+        rec["author_evidence"] = want_evidence
         if who:
-            rec["author"] = who
-            rec["author_evidence"] = CUSTODIAN_SOURCE
             named += 1
         else:
-            rec["author"] = "unattributed"
-            rec["author_evidence"] = ""
+            blank += 1
             blank += 1
 
     print(f"scanned {len(assets)} manifest records")
     print(f"  named author      {named}")
     print(f"  unattributed      {blank}")
-    print(f"  already stamped   {already}")
-    for rel in sorted(CUSTODIANS):
+    print(f"  already correct   {already}")
+    for rel, before, after in refreshed:
+        print(f"    REFRESHED {rel}")
+        print(f"      {before!r} -> {after!r}  (CREDITS.md is the SSOT)")
+    for rel in sorted(credit_forms()):
         if rel in assets:
             print(f"    {rel}  ->  {assets[rel].get('author')}")
 
@@ -609,7 +668,7 @@ def apply_authors_only(write: bool) -> None:
     _write_manifest(
         doc,
         what=f"added author/author_evidence to {named + blank} record(s); "
-        f"{named} named from {CUSTODIAN_SOURCE}",
+        f"{named} named from {CREDIT_SOURCE}",
         why=(
             "Ruled by Pip 2026-08-19 (D2). ADR-0019 has no provenance field and this "
             "manifest answered only WHAT made an asset, never WHO is owed credit for "

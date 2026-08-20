@@ -102,7 +102,7 @@
       "mechanism": "backfill_provenance.py --apply-authors, and classify() stamping it on a full re-run",
       "supersedes": null,
       "superseded_by": null,
-      "source": "tools/assets/backfill_provenance.py:508"
+      "source": "tools/assets/backfill_provenance.py:555"
     },
     {
       "id": "pdoom1:2026-08-19:38a0eeec",
@@ -710,6 +710,10 @@
       "text": "\"why\": \"Ruled by Pip 2026-08-19 (D2). ADR-0019 has no provenance field and this manifest answered only WHAT made an asset, never WHO is owed credit for it. A human contributor is in prospect, which ma"
     },
     {
+      "source": "godot/data/asset_provenance.json:5150",
+      "text": "\"why\": \"Ruled by Pip 2026-08-19 (D2). ADR-0019 has no provenance field and this manifest answered only WHAT made an asset, never WHO is owed credit for it. A human contributor is in prospect, which ma"
+    },
+    {
       "source": "godot/data/office/props_manifest.json:15",
       "text": "\"style_tags\": \"office quality tiers this art serves, from the canonical ladder [\\\"scummy\\\", \\\"decent\\\", \\\"premium\\\"] (ruled 2026-07-26; see docs/game-design/SEED_ASSET_REGISTRY_AND_VERDICTS.md). Tag o"
     },
@@ -890,15 +894,15 @@
       "text": "\"Ruled by Pip 2026-08-15. A signed credential outranks every heuristic and \""
     },
     {
-      "source": "tools/assets/backfill_provenance.py:511",
+      "source": "tools/assets/backfill_provenance.py:558",
       "text": "# The five values ruled by Pip 2026-08-11, as a constant rather than a literal"
     },
     {
-      "source": "tools/assets/backfill_provenance.py:614",
+      "source": "tools/assets/backfill_provenance.py:673",
       "text": "\"Ruled by Pip 2026-08-19 (D2). ADR-0019 has no provenance field and this \""
     },
     {
-      "source": "tools/assets/backfill_provenance.py:792",
+      "source": "tools/assets/backfill_provenance.py:851",
       "text": "\"'these are gpt-image' a plausible guess; coordination#32 ruled that an \""
     },
     {
@@ -910,12 +914,12 @@
       "text": "red, and this estate has already ruled on what that is worth:"
     },
     {
-      "source": "tools/assets/check_provenance.py:348",
-      "text": "\"_why\": \"Pinned unknown set. Ruled by Pip 2026-08-11: keep the \""
-    },
-    {
       "source": "tools/assets/check_provenance.py:4",
       "text": "Ruled by Pip 2026-08-11: the six unattributable assets are KEPT and recorded as"
+    },
+    {
+      "source": "tools/assets/check_provenance.py:439",
+      "text": "\"_why\": \"Pinned unknown set. Ruled by Pip 2026-08-11: keep the \""
     },
     {
       "source": "tools/assets/check_provenance.py:60",
