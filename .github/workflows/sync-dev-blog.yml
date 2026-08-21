@@ -88,12 +88,35 @@ jobs:
             fi
           done
 
-          # Always update the index for navigation
-          echo "CLIPBOARD Updating blog index"
-          cp dev-blog/index.json website/public/blog/
-
-          # Generate website-specific navigation (if needed)
-          echo "COMPASS Generating website navigation"
+          # DO NOT copy dev-blog/index.json over the website's index.
+          #
+          # It used to, and on 2026-08-22 -- the first time this workflow ever
+          # succeeded -- that destroyed the live blog index. The two files are
+          # different artifacts that happen to share a name:
+          #
+          #   pdoom1  dev-blog/index.json         key "entries", fields nested
+          #                                       under "frontmatter", covers
+          #                                       dev-blog/entries/ only
+          #   website public/blog/index.json      key "posts", flat fields,
+          #                                       covers EVERY post in the
+          #                                       website repo, and is generated
+          #                                       by that repo's own
+          #                                       scripts/build-blog-index.py
+          #
+          # public/blog/index.html reads data.posts. Handed an "entries"-shaped
+          # file it renders nothing, and the five 2026 posts that live only in
+          # the website repo were de-listed. Restored in pdoom1-website
+          # aac31292; see pdoom1 issue #1260.
+          #
+          # This repo CANNOT produce a correct index for the website, because it
+          # cannot see the website's posts. The website derives its own index
+          # from front matter -- "editing index.json by hand is no longer a
+          # thing" (build-blog-index.py) -- and its generate-feeds.yml runs
+          # `build-blog-index.py --check` on any change to public/blog/, so a
+          # synced .md is picked up by the repo that owns the index.
+          #
+          # Sync CONTENT, never a derived index.
+          echo "CLIPBOARD Index NOT copied -- the website generates its own (issue #1260)"
           # Future: Create website-specific navigation from index.json
 
       - name: Commit and push to website
