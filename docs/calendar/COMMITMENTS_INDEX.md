@@ -13,7 +13,7 @@ Horizon: **2026-08-09** (the prose scan reports dates at or after this; roll it
 forward deliberately in `COMMITMENTS.md`, never automatically -- a clock-reading
 generator goes stale overnight and trains people to ignore the check).
 
-**51 declared, 4 release-train, 140 UNPARSED, 0 malformed.**
+**51 declared, 4 release-train, 141 UNPARSED, 0 malformed.**
 
 ## Declared commitments
 
@@ -335,6 +335,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-21 | `docs/rulings/RULINGS_CONVENTION.md` | 7 | ## This is an INDEX, not the only store (consolidated 2026-08-21) |
 | 2026-08-21 | `docs/rulings/RULINGS_CONVENTION.md` | 9 | An audit on 2026-08-21 found five places rulings were being recorded, four of |
 | 2026-08-21 | `docs/rulings/UNDECLARED_TRIAGE.md` | 249 | - # CONSOLIDATION, ruled by Pip 2026-08-21. |
+| 2026-08-21 | `scripts/check_no_emoji.py` | 166 | Measured 2026-08-21 (#1163): godot/data/historical_events.json carried |
 | 2026-08-21 | `scripts/generate_rulings.py` | 164 | # CONSOLIDATION, ruled by Pip 2026-08-21. |
 | 2026-08-21 | `scripts/generate_rulings.py` | 166 | # An audit on 2026-08-21 found FIVE places rulings were being recorded, four of |
 | 2026-08-21 | `scripts/generate_rulings.py` | 395 | "Consolidated 2026-08-21. The estate had five places rulings were recorded;", |

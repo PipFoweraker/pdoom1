@@ -3513,6 +3513,28 @@ DESCRIPTION:needs a declaration -- check_ladder_bump.py (unparsed) -- unow
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:83a079f8ffbed6fe@commitments.pdoom1
+DTSTAMP:20260821T000000Z
+DTSTART;VALUE=DATE:20260821
+DTEND;VALUE=DATE:20260822
+SUMMARY:[UNPARSED] needs a declaration -- check_no_emoji.py
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: scripts/check_no_emoji
+ .py:166. 1 line(s) in scripts/check_no_emoji.py mention this date and no 
+ COMMITMENT: declaration accounts for it. Either add a declaration or the 
+ date is incidental. First line: Measured 2026-08-21 (#1163): godot/data/h
+ istorical_events.json carried -- Generated from tracked sources by script
+ s/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- check_no_emoji.py (unparsed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:16ef210459c39ade@commitments.pdoom1
 DTSTAMP:20260821T000000Z
 DTSTART;VALUE=DATE:20260821

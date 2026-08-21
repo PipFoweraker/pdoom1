@@ -1019,7 +1019,7 @@
   },
   "uk_ai_safety_to_security_2025": {
     "id": "uk_ai_safety_to_security_2025",
-    "title": "UK AI Safety Institute \u00e2\u2020\u2019 AI Security Institute",
+    "title": "UK AI Safety Institute -> AI Security Institute",
     "year": 2025,
     "category": "institutional_decay",
     "description": "UK government rebrands AI Safety Institute as 'AI Security Institute', shifting from ethical AI concerns to cyber threat focus",
@@ -1062,7 +1062,7 @@
   },
   "us_aisi_to_caisi_2025": {
     "id": "us_aisi_to_caisi_2025",
-    "title": "US AISI \u00e2\u2020\u2019 Center for AI Standards and Innovation",
+    "title": "US AISI -> Center for AI Standards and Innovation",
     "year": 2025,
     "category": "institutional_decay",
     "description": "Trump administration renames US AI Safety Institute to focus on 'pro-growth AI policies' over safety, scraps Paris Summit attendance",
