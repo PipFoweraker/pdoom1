@@ -277,7 +277,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-17 | `tools/render_budget.py` | 12 | RULING: 2026-08-17 -- published figures live in tooling, not prose: the line item is the atom and every rendering is a projection -- flavour: estate-p |
 | 2026-08-17 | `tools/transcribe.py` | 10 | currently can" read it. Pip's reply, 2026-08-17: |
 | 2026-08-17 | `tools/transcribe.py` | 35 | MEASURED 2026-08-17 on Pip's desktop (CPU-only torch 2.13, no CUDA): |
-| 2026-08-17 | `tools/transcribe.py` | 175 | # The figure printed here was 0.5-1.5x realtime until 2026-08-17, which was a |
+| 2026-08-17 | `tools/transcribe.py` | 192 | # The figure printed here was 0.5-1.5x realtime until 2026-08-17, which was a |
 | 2026-08-19 | `docs/GUARD_AUDIT_2026-08-19.md` | 1 | # Guard audit, 2026-08-19: which gates actually run, and where |
 | 2026-08-19 | `docs/GUARD_AUDIT_2026-08-19.md` | 29 | **This is not hypothetical. It was New-Bort until 2026-08-19.** `pre-commit` was |
 | 2026-08-19 | `docs/art/A4_COLLAPSE_2026-08-20.md` | 71 | ruling of 2026-08-19** -- New-Bort is the working machine and the generated |

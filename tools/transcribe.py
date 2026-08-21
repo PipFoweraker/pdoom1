@@ -66,13 +66,30 @@ import argparse
 import datetime as dt
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
-REVIEW_LOG = REPO / "tools" / "art_review" / "review_log.jsonl"
+ART_REVIEW = REPO / "tools" / "art_review"
+
+
+def review_log_for(reviewer: str | None) -> Path:
+    """Whose decisions to align against.
+
+    The default reviewer keeps the historical unsuffixed filename; anyone else
+    has their own. Hardcoding the default would silently align a GUEST's speech
+    against the OWNER's decisions -- every segment would find a match, the output
+    would look complete, and every attribution in it would be wrong. That is the
+    failure this whole estate keeps paying for, so the reviewer is explicit.
+    """
+    if not reviewer or reviewer.lower() == "pip":
+        return ART_REVIEW / "review_log.jsonl"
+    safe = re.sub(r"[^a-z0-9_-]+", "-", reviewer.lower()).strip("-")
+    return ART_REVIEW / f"review_log.{safe}.jsonl"
+
 
 AUDIO_SUFFIXES = {".wav", ".mp3", ".m4a", ".flac", ".ogg", ".opus"}
 
@@ -195,17 +212,17 @@ def recording_epoch(recording_start: str, utc_offset_hours: float, window_start:
     return start.timestamp() + window_start
 
 
-def load_review_events(base_epoch: float) -> list[tuple[float, dict]]:
+def load_review_events(base_epoch: float, log_path: Path) -> list[tuple[float, dict]]:
     """Review-log events as (seconds-into-the-window, event).
 
     Log timestamps are ISO with an explicit UTC offset; where one is missing,
     UTC is assumed, because that is what the review server writes.
     """
-    if not REVIEW_LOG.exists():
-        print(f"  NOTE: {REVIEW_LOG} absent -- no alignment")
+    if not log_path.exists():
+        print(f"  NOTE: {log_path} absent -- no alignment")
         return []
     out = []
-    for line in REVIEW_LOG.read_text(encoding="utf-8").splitlines():
+    for line in log_path.read_text(encoding="utf-8").splitlines():
         line = line.strip()
         if not line:
             continue
@@ -302,7 +319,14 @@ def main() -> int:
     ap.add_argument("--model", default="small.en", help="whisper model (default: small.en)")
     ap.add_argument("--out-dir", type=Path, help="default: alongside the source")
     ap.add_argument("--keep-audio", action="store_true", help="keep the extracted wav")
-    ap.add_argument("--align-log", action="store_true", help="join to review_log.jsonl")
+    ap.add_argument("--align-log", action="store_true", help="join to a reviewer's decision log")
+    ap.add_argument(
+        "--reviewer",
+        help=(
+            "WHOSE decisions to align against (default: pip). Get this wrong and every "
+            "segment still finds a match -- the output looks complete and is wrong."
+        ),
+    )
     ap.add_argument(
         "--recording-start", help="local start of the SOURCE, ISO e.g. 2026-08-14T22:03:05"
     )
@@ -335,7 +359,9 @@ def main() -> int:
         if not args.recording_start:
             sys.exit("--align-log needs --recording-start (local ISO time of the SOURCE file)")
         base = recording_epoch(args.recording_start, args.utc_offset, window[0] if window else 0.0)
-        events = load_review_events(base)
+        log_path = review_log_for(args.reviewer)
+        print(f"  aligning against {log_path.name}")
+        events = load_review_events(base, log_path)
         aligned = []
         for s in segments:
             hits = [e for rel, e in events if s["start"] <= rel <= s["end"]]
