@@ -61,7 +61,7 @@ Declared with a `Layer:` line in a tool's module docstring; `--` = undeclared.
 | pre_version_bump.py | -- | Pre-Version Bump Quality Checks for P(Doom) | human (docstring usage) |
 | project_health.py | -- | P(Doom) Project Health Dashboard - BLITZ MODE IMPLEMENTATION | make; ci:enhanced-cicd-pipeline.yml; ci:quality-checks.yml |
 | repo-status.py | -- | P(Doom) Ecosystem Repository Status Dashboard | NONE FOUND |
-| run_godot_tests.py | PROVE | Run Godot GUT (Godot Unit Test) tests from command line. | make; ci:godot-tests.yml; test:test_find_dead_code.py; test:test_generate_tools_index.py; test:test_run_godot_tests_outcomes.py |
+| run_godot_tests.py | PROVE | Run Godot GUT (Godot Unit Test) tests from command line. | make; ci:godot-tests.yml; test:test_find_dead_code.py; test:test_generate_tools_index.py; test:test_run_godot_tests_outcomes.py; tool:check_agent_env.py |
 | setup-token.py | -- | GitHub Token Setup Helper for VS Code Users | NONE FOUND |
 | sync_website_docs.py | -- | Sync documentation from pdoom1 repo to website export format. | ci:docs-sync.yml |
 | test_before_push.py | -- | Test Before Push - Local Development Workflow | human (docstring usage) |
@@ -75,8 +75,9 @@ Declared with a `Layer:` line in a tool's module docstring; `--` = undeclared.
 | Tool | Layer | Purpose | Invoked by |
 |---|---|---|---|
 | archive_masters.py | -- | Sync the local art-masters cache to off-site object storage (DreamObjects). | tool:slim_repo.py |
-| build_release.py | PROVE | build_release.py -- export a P(Doom) build FROM A VERIFIED-CLEAN STATE. | ci:enhanced-release.yml; test:test_build_all_platforms.py; test:test_build_release_paths.py; tool:build_all_platforms.py; tool:find_dead_code.py |
+| build_release.py | PROVE | build_release.py -- export a P(Doom) build FROM A VERIFIED-CLEAN STATE. | ci:enhanced-release.yml; test:test_build_all_platforms.py; test:test_build_release_paths.py; tool:build_all_platforms.py; tool:check_agent_env.py; tool:find_dead_code.py |
 | capture_cinematic.py | -- | Cinematic capture harness for P(Doom)1 -- deterministic scene footage -> mp4/gif. | test:test_find_dead_code.py; tool:find_dead_code.py |
+| check_agent_env.py | PROVE | Guard: is CLAUDE.md still describing THIS machine? | make |
 | check_class_cache.py | PROVE | check_class_cache.py -- catch a STALE global script class cache before it eats a playtest. | pre-commit; make; test:test_check_class_cache.py |
 | check_font_sizes.py | PROVE | check_font_sizes.py -- count what the font-size SSOT still cannot reach. | pre-commit |
 | check_ladder_bump.py | PROVE | Guard: did this diff need a ladder_version bump (or get one it did not need)? | ci:quality-checks.yml; test:test_check_ladder_bump.py; test:test_check_self_merge_eligibility.py; tool:sync_version.py |
@@ -242,4 +243,4 @@ DISCUSSING CI); the rest are the hollow-runner shape -- read them.
 
 27 `.html` tool(s) under `tools/` (browser-opened, no docstring to parse): `tools/art_review/doom_overlay_preview.html`, `tools/art_review/hero_gallery_template.html`, `tools/art_review/icon_pass_2026-07-21.html`, `tools/art_review/icon_pass_verdicts_2026-07-21.html`, `tools/art_review/palette.html`, `tools/art_review/palette_swatches.html`, `tools/art_review/scene_wave2_2026-07-21.html`, `tools/art_review/style_review.html`, `tools/assets/review_generated.html`, `tools/music/commission_sheets.html`, `tools/music/jukebox.html`, `tools/music/listening_room.html`, `tools/music/stem_board.html`, `tools/runsheet/CEREMONY-ALL-GATES-2026-07-31.html`, `tools/runsheet/SUNDAY-postmortem-2026-08-07.html`, `tools/runsheet/chronicle-2026-08-06_07.html`, `tools/runsheet/commitments-2026-08.html`, `tools/runsheet/copy-review-2026-08-09.html`, `tools/runsheet/fri-2026-07-31-EVENING-1620.html`, `tools/runsheet/fri-2026-07-31-GATES-1700.html`, `tools/runsheet/fri-2026-07-31-TO-MIDNIGHT-1733.html`, `tools/runsheet/fri-2026-07-31-league-day.html`, `tools/runsheet/playtest_card.html`, `tools/runsheet/wed-thu-2026-07-29.html`, `tools/social_composer.html`, `tools/ui_comparison.html`, `tools/ui_mockup/wireframe.html`.
 
-Total: 139 active tools (11 GENERATE, 8 OBSERVE, 11 PROVE, 1 SWEEP, 108 undeclared); 11 in UNKNOWN; 6 archived.
+Total: 140 active tools (11 GENERATE, 8 OBSERVE, 12 PROVE, 1 SWEEP, 108 undeclared); 11 in UNKNOWN; 6 archived.

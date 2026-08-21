@@ -13,7 +13,7 @@ Horizon: **2026-08-09** (the prose scan reports dates at or after this; roll it
 forward deliberately in `COMMITMENTS.md`, never automatically -- a clock-reading
 generator goes stale overnight and trains people to ignore the check).
 
-**52 declared, 4 release-train, 143 UNPARSED, 0 malformed.**
+**52 declared, 4 release-train, 146 UNPARSED, 0 malformed.**
 
 ## Declared commitments
 
@@ -143,8 +143,8 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-12 | `docs/rulings/RULINGS.md` | 291 | - `godot/scripts/core/capacity.gd:5` -- ## Ruled 2026-08-12 (coordination/DESIGN_2026-08-12_interrupt-resolution-variants.md, |
 | 2026-08-12 | `docs/rulings/UNDECLARED_TRIAGE.md` | 205 | - ## Ruled 2026-08-12 (coordination/DESIGN_2026-08-12_interrupt-resolution-variants.md, |
 | 2026-08-12 | `tools/assets/backfill_provenance.py` | 691 | 2026-08-12 (`ab85ed0b`, #1196) one day after the guard landed, and nobody saw |
-| 2026-08-13 | `CLAUDE.md` | 14 | is what was typed on 2026-08-13 and it launched a silently broken build in |
-| 2026-08-13 | `CLAUDE.md` | 47 | - **STALE cache is the worse half of that trap (2026-08-13, cost a playtest).** |
+| 2026-08-13 | `CLAUDE.md` | 12 | - **Never a bare `godot --path godot`.** That is what was typed on 2026-08-13 |
+| 2026-08-13 | `CLAUDE.md` | 67 | - **STALE cache is the worse half of that trap (2026-08-13, cost a playtest).** |
 | 2026-08-13 | `coordination#32` | 0 | Asset provenance is UNMET, not at-risk: the Manifund obligation has no capture mechanism in pdoom1 -- blocking party pdoom1, return date 2026-08-13 |
 | 2026-08-13 | `coordination#35` | 0 | Pip is out this evening through Rektango -- last synchronous window today. Post your asks ranked, or say you have none |
 | 2026-08-13 | `docs/CLAIM_AUDIT_2026-08-06.md` | 500 | audit against pdoom1's output for the week of 2026-08-13 finds a WRONG rate at or |
@@ -183,6 +183,9 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-13 | `tools/art_review/shortlist_l3_heroes.py` | 235 | "**GENERATED** by `tools/art_review/shortlist_l3_heroes.py`, 2026-08-13.", |
 | 2026-08-13 | `tools/art_review/shortlist_l3_heroes.py` | 335 | "<title>L3 hero shortlist -- 2026-08-13</title>", |
 | 2026-08-13 | `tools/art_review/shortlist_l3_heroes.py` | 347 | "<p class='note'>Generated 2026-08-13. Ordered by contrast + detail density,", |
+| 2026-08-13 | `tools/check_agent_env.py` | 29 | The near-miss: `CLAUDE.md` itself records the 2026-08-13 incident where a stale |
+| 2026-08-13 | `tools/check_agent_env.py` | 300 | reaches for the bare command -- which is the 2026-08-13 failure verbatim. |
+| 2026-08-13 | `tools/check_agent_env.py` | 328 | "the 2026-08-13 broken-build playtest", |
 | 2026-08-13 | `tools/check_class_cache.py` | 6 | WHY (2026-08-13, cost a first-time playtester's session): |
 | 2026-08-14 | `docs/art/A4_COLLAPSE_2026-08-20.md` | 33 | them, so the 2026-08-14/15 sweeps left **1,863 files carrying two verdicts each**. |
 | 2026-08-14 | `docs/art/HARVEST_PASS_PROPOSAL.md` | 49 | 2026-08-14 sweep contains the multi-pass workflow being invented in real time: |
@@ -206,7 +209,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-14 | `tools/check_review_js.py` | 6 | On 2026-08-14 the art review gallery was completely dead -- no verdicts, no |
 | 2026-08-14 | `tools/transcribe.py` | 24 | session, and the 2026-08-14 one drifts into unrelated personal browsing after |
 | 2026-08-14 | `tools/transcribe.py` | 70 | 2026-08-14 recording covers 495 of 506 logged decisions, so nearly every |
-| 2026-08-15 | `CLAUDE.md` | 223 | `UNDECLARED`, never dropped. **Cross-repo by design** (ruled 2026-08-15): |
+| 2026-08-15 | `CLAUDE.md` | 254 | `UNDECLARED`, never dropped. **Cross-repo by design** (ruled 2026-08-15): |
 | 2026-08-15 | `docs/GUARD_AUDIT_2026-08-19.md` | 38 | \| `tools/assets/check_credentials.py` \| signed C2PA credentials on shipped images \| Guards a loss its own docstring calls "invisible and irreversible" |
 | 2026-08-15 | `docs/art/A4_COLLAPSE_2026-08-20.md` | 44 | mind between the 2026-08-03 gallery sweep and the 2026-08-15 server sessions. In |
 | 2026-08-15 | `docs/art/HARVEST_PASS_PROPOSAL.md` | 4 | > and the evidence trail). Written 2026-08-15 as a proposal. Self-contained: |
@@ -237,7 +240,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-15 | `docs/rulings/RULINGS.md` | 67 | \| 2026-08-15 \| flaw:<thing> joins the harvest vocabulary as the negative counterpart to element:, because the sweeps are mostly negative and prose can |
 | 2026-08-15 | `docs/rulings/RULINGS.md` | 73 | \| 2026-08-15 \| the ruling road is cross-repo from day one, federated: each repo scans itself and emits rulings.json, an aggregator reads them, nothing |
 | 2026-08-15 | `docs/rulings/RULINGS.md` | 74 | \| 2026-08-15 \| naming a mechanism is OPTIONAL on a ruling, and the generated index reports which rulings have none \| `scripts/generate_rulings.py` \| ` |
-| 2026-08-15 | `docs/rulings/RULINGS.md` | 138 | - `CLAUDE.md:223` -- `UNDECLARED`, never dropped. **Cross-repo by design** (ruled 2026-08-15): |
+| 2026-08-15 | `docs/rulings/RULINGS.md` | 138 | - `CLAUDE.md:254` -- `UNDECLARED`, never dropped. **Cross-repo by design** (ruled 2026-08-15): |
 | 2026-08-15 | `docs/rulings/RULINGS.md` | 284 | - `godot/data/asset_provenance.json:5132` -- "why": "Ruled by Pip 2026-08-15. A signed credential outranks every heuristic and is the only evidence th |
 | 2026-08-15 | `docs/rulings/RULINGS.md` | 330 | - `tools/art_review/serve_review.py:205` -- "to element: -- ruled by Pip 2026-08-15 because the sweeps are mostly " |
 | 2026-08-15 | `docs/rulings/RULINGS.md` | 333 | - `tools/assets/backfill_provenance.py:479` -- "Ruled by Pip 2026-08-15. A signed credential outranks every heuristic and " |
@@ -326,6 +329,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-20 | `tools/art_review/collapse_px_keys.py` | 4 | ORPHANS A4. Ruled by Pip 2026-08-20: canonicalise on the write path AND collapse |
 | 2026-08-20 | `tools/assets/backfill_provenance.py` | 496 | # WHERE A CONTRIBUTOR'S NAME COMES FROM (2026-08-20) |
 | 2026-08-20 | `tools/print_doc.py` | 199 | # Acrobat's own /t switch, BEFORE the shell verb. Measured 2026-08-20 on |
+| 2026-08-21 | `CLAUDE.md` | 36 | 2026-08-21 (#1259). |
 | 2026-08-21 | `docs/CLAIM_AUDIT_2026-08-21.md` | 14 | overdue** when this ran (2026-08-21, ~10:15-11:00 AEST). |
 | 2026-08-21 | `docs/CLAIM_AUDIT_2026-08-21.md` | 29 | 2026-08-21. Commit subjects are the headline surface this repo actually |
 | 2026-08-21 | `docs/CLAIM_AUDIT_2026-08-21.md` | 247 | Run 2026-08-21 ~10:15-11:00 AEST by the pdoom1 seat (Claude Opus 5) at Pip's |
@@ -347,6 +351,9 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-21 | `scripts/generate_rulings.py` | 166 | # An audit on 2026-08-21 found FIVE places rulings were being recorded, four of |
 | 2026-08-21 | `scripts/generate_rulings.py` | 395 | "Consolidated 2026-08-21. The estate had five places rulings were recorded;", |
 | 2026-08-21 | `scripts/run_godot_tests.py` | 120 | # raises FileNotFoundError -- measured 2026-08-21: 'godot' -> WinError 2 while |
+| 2026-08-21 | `tools/check_agent_env.py` | 13 | On 2026-08-21, preparing a build for a first-time playtester in a ~70 minute |
+| 2026-08-21 | `tools/check_agent_env.py` | 32 | That cost a playtest. A cold `make run` on 2026-08-21 would have produced the |
+| 2026-08-21 | `tools/check_agent_env.py` | 444 | print("claim in it is not a documentation bug -- on 2026-08-21 it nearly handed a") |
 | 2026-08-21 | `tools/check_ladder_bump.py` | 327 | THE HOLE THIS CLOSES (measured 2026-08-21). Direction 1 below accepts any |
 | 2026-08-21 | `tools/check_ladder_bump.py` | 402 | # is a DEBT, and until 2026-08-21 it printed identically to `none`. |
 | 2026-08-21 | `tools/reset_player_state.py` | 158 | Until 2026-08-21 this function skipped any destination that already existed |

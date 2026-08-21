@@ -921,12 +921,12 @@ DTSTAMP:20260813T000000Z
 DTSTART;VALUE=DATE:20260813
 DTEND;VALUE=DATE:20260814
 SUMMARY:[UNPARSED] needs a declaration -- CLAUDE.md
-DESCRIPTION:Owner: unowned. Kind: unparsed. Source: CLAUDE.md:14. 2 line(s
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: CLAUDE.md:12. 2 line(s
  ) in CLAUDE.md mention this date and no COMMITMENT: declaration accounts 
- for it. Either add a declaration or the date is incidental. First line: i
- s what was typed on 2026-08-13 and it launched a silently broken build in
-  -- Generated from tracked sources by scripts/generate_commitment_calenda
- r.py\; regenerate to update.
+ for it. Either add a declaration or the date is incidental. First line: -
+  **Never a bare `godot --path godot`.** That is what was typed on 2026-08
+ -13 -- Generated from tracked sources by scripts/generate_commitment_cale
+ ndar.py\; regenerate to update.
 CATEGORIES:UNPARSED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -1221,6 +1221,29 @@ BEGIN:VALARM
 ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- apply_review.py (unparsed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:fb3bb03d1bebe4d9@commitments.pdoom1
+DTSTAMP:20260813T000000Z
+DTSTART;VALUE=DATE:20260813
+DTEND;VALUE=DATE:20260814
+SUMMARY:[UNPARSED] needs a declaration -- check_agent_env.py
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/check_agent_env.
+ py:29. 3 line(s) in tools/check_agent_env.py mention this date and no COM
+ MITMENT: declaration accounts for it. Either add a declaration or the dat
+ e is incidental. First line: The near-miss: `CLAUDE.md` itself records th
+ e 2026-08-13 incident where a stale -- Generated from tracked sources by 
+ scripts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- check_agent_env.py (unparsed) -- unowne
+ d
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
@@ -1892,7 +1915,7 @@ DTSTAMP:20260815T000000Z
 DTSTART;VALUE=DATE:20260815
 DTEND;VALUE=DATE:20260816
 SUMMARY:[UNPARSED] needs a declaration -- CLAUDE.md
-DESCRIPTION:Owner: unowned. Kind: unparsed. Source: CLAUDE.md:223. 1 line(
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: CLAUDE.md:254. 1 line(
  s) in CLAUDE.md mention this date and no COMMITMENT: declaration accounts
   for it. Either add a declaration or the date is incidental. First line: 
  `UNDECLARED`\, never dropped. **Cross-repo by design** (ruled 2026-08-15)
@@ -3375,6 +3398,27 @@ DESCRIPTION:needs a declaration -- CLAIM_AUDIT_2026-08-21.md (unparsed) --
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:d459532d5e73e676@commitments.pdoom1
+DTSTAMP:20260821T000000Z
+DTSTART;VALUE=DATE:20260821
+DTEND;VALUE=DATE:20260822
+SUMMARY:[UNPARSED] needs a declaration -- CLAUDE.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: CLAUDE.md:36. 1 line(s
+ ) in CLAUDE.md mention this date and no COMMITMENT: declaration accounts 
+ for it. Either add a declaration or the date is incidental. First line: 2
+ 026-08-21 (#1259). -- Generated from tracked sources by scripts/generate_
+ commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- CLAUDE.md (unparsed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:29b404c5097488e1@commitments.pdoom1
 DTSTAMP:20260821T000000Z
 DTSTART;VALUE=DATE:20260821
@@ -3536,6 +3580,29 @@ ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- UNDECLARED_TRIAGE.md (unparsed) -- unow
  ned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:0bc465dcef5b451f@commitments.pdoom1
+DTSTAMP:20260821T000000Z
+DTSTART;VALUE=DATE:20260821
+DTEND;VALUE=DATE:20260822
+SUMMARY:[UNPARSED] needs a declaration -- check_agent_env.py
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/check_agent_env.
+ py:13. 3 line(s) in tools/check_agent_env.py mention this date and no COM
+ MITMENT: declaration accounts for it. Either add a declaration or the dat
+ e is incidental. First line: On 2026-08-21\, preparing a build for a firs
+ t-time playtester in a ~70 minute -- Generated from tracked sources by sc
+ ripts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- check_agent_env.py (unparsed) -- unowne
+ d
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
