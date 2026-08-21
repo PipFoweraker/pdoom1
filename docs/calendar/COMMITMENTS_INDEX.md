@@ -37,17 +37,17 @@ generator goes stale overnight and trains people to ignore the check).
 | 2026-08-20 | falsifier | P3 falsifier: re-run the claim audit. A WRONG rate at or above 9 per cent means the control-line rule did not take | pdoom1-seat | 1, 0 | `docs/POSTMORTEM_2026-08-07_CAPTURE.md:780` |
 | 2026-08-21 | cadence | Friday push -- an ordinary patch day, epoch-breaking changes only if player experience demands it | pip | 0 | `docs/calendar/COMMITMENTS.md:174` |
 | 2026-08-21 | cadence | Rektango 17:30 -- the weekly anchor, a hard stop | pip | 0 | `docs/calendar/COMMITMENTS.md:176` |
-| 2026-08-21 | falsifier | P1 falsifier: if the ladder-bump check has fired zero times and no ladder-owed change merged unbumped, delete it rather than keep a green ornament | pdoom1-seat | 1, 0 | `docs/POSTMORTEM_2026-08-07_CAPTURE.md:782` |
-| 2026-08-21 | falsifier | P2 falsifier: if no push-triggered run touched only godot/data or godot JSON paths, the path-filter change bought nothing | pdoom1-seat | 1, 0 | `docs/POSTMORTEM_2026-08-07_CAPTURE.md:784` |
-| 2026-08-21 | falsifier | P4 falsifier: more than two false alarms from zero-result-reads-are-errors means it is mis-tuned and narrows to art tooling | pdoom1-seat | 1, 0 | `docs/POSTMORTEM_2026-08-07_CAPTURE.md:786` |
-| 2026-08-21 | falsifier | P6 falsifier: read git reflog in the main checkout. Any agent-attributable reset or checkout -- means the worktree rule was written and not operated | pdoom1-seat | 1, 0 | `docs/POSTMORTEM_2026-08-07_CAPTURE.md:788` |
+| 2026-08-21 | falsifier | P1 falsifier: if the ladder-bump check has fired zero times and no ladder-owed change merged unbumped, delete it rather than keep a green ornament | pdoom1-seat | 1, 0 | `docs/POSTMORTEM_2026-08-07_CAPTURE.md:849` |
+| 2026-08-21 | falsifier | P2 falsifier: if no push-triggered run touched only godot/data or godot JSON paths, the path-filter change bought nothing | pdoom1-seat | 1, 0 | `docs/POSTMORTEM_2026-08-07_CAPTURE.md:851` |
+| 2026-08-21 | falsifier | P4 falsifier: more than two false alarms from zero-result-reads-are-errors means it is mis-tuned and narrows to art tooling | pdoom1-seat | 1, 0 | `docs/POSTMORTEM_2026-08-07_CAPTURE.md:853` |
+| 2026-08-21 | falsifier | P6 falsifier: read git reflog in the main checkout. Any agent-attributable reset or checkout -- means the worktree rule was written and not operated | pdoom1-seat | 1, 0 | `docs/POSTMORTEM_2026-08-07_CAPTURE.md:855` |
 | 2026-08-24 | review | Reflective review: release / league cycle | pip | 14, 3, 0 | `docs/calendar/COMMITMENTS.md:180` |
 | 2026-08-27 | cadence | Thursday dev (the working half of the cadence) | pip | 0 | `docs/calendar/COMMITMENTS.md:172` |
 | 2026-08-28 | cadence | Friday push -- an ordinary patch day, epoch-breaking changes only if player experience demands it | pip | 0 | `docs/calendar/COMMITMENTS.md:174` |
 | 2026-08-28 | cadence | Rektango 17:30 -- the weekly anchor, a hard stop | pip | 0 | `docs/calendar/COMMITMENTS.md:176` |
 | 2026-08-31 | review | Exploit-finder review-by | pdoom1-seat | 14, 3, 0 | `docs/calendar/COMMITMENTS.md:184` |
 | 2026-08-31 | review | Formal 4-way founder-hours review | pip | 14, 3, 0 | `docs/calendar/COMMITMENTS.md:182` |
-| 2026-09-01 | falsifier | P5 falsifier: if the parse-before-write gate has rejected nothing, the raw-string fix was sufficient alone and the gate is cost without benefit | pdoom1-seat | 1, 0 | `docs/POSTMORTEM_2026-08-07_CAPTURE.md:790` |
+| 2026-09-01 | falsifier | P5 falsifier: if the parse-before-write gate has rejected nothing, the raw-string fix was sufficient alone and the gate is cost without benefit | pdoom1-seat | 1, 0 | `docs/POSTMORTEM_2026-08-07_CAPTURE.md:857` |
 | 2026-09-03 | cadence | Thursday dev (the working half of the cadence) | pip | 0 | `docs/calendar/COMMITMENTS.md:172` |
 | 2026-09-04 | cadence | Friday push -- an ordinary patch day, epoch-breaking changes only if player experience demands it | pip | 0 | `docs/calendar/COMMITMENTS.md:174` |
 | 2026-09-04 | cadence | Rektango 17:30 -- the weekly anchor, a hard stop | pip | 0 | `docs/calendar/COMMITMENTS.md:176` |
@@ -93,7 +93,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-09 | `coordination#47` | 0 | WORKSHOP 2 OPEN: the weekend deployment postmortem -- pdoom-data chairs, Phase 1 seals due 11:00 AEST, Pip absent by design |
 | 2026-08-09 | `coordination#49` | 0 | pdoom-data seat: six items for the MONDAY print stack -- the history rewrite is DEFERRED by Pip pending a rule, the rest are yes/no |
 | 2026-08-09 | `coordination#50` | 0 | Does a print stack/queue exist? Pip wants queue + revise + supersession + collection-on-receipt -- and thinks a watched folder unlocks working remotel |
-| 2026-08-09 | `docs/POSTMORTEM_2026-08-07_CAPTURE.md` | 844 | *Written 2026-08-07 for reading on Sunday 2026-08-09. Every command in this |
+| 2026-08-09 | `docs/POSTMORTEM_2026-08-07_CAPTURE.md` | 911 | *Written 2026-08-07 for reading on Sunday 2026-08-09. Every command in this |
 | 2026-08-09 | `docs/RELEASE_NOTES_GUARD.md` | 65 | RN005 is the disclosure escape checked in the other direction, added 2026-08-09 |
 | 2026-08-09 | `docs/design/LEAGUE_CUTOVER_PLAYBOOK.md` | 6 | because Pip asked, 2026-08-09: |
 | 2026-08-09 | `docs/game-design/BUILD_VS_LADDER_VERSION_SPLIT.md` | 325 | ### 4.2a AS BUILT (2026-08-09, issue #1178) -- and where this section was wrong |
