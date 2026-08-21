@@ -13,7 +13,7 @@ Horizon: **2026-08-09** (the prose scan reports dates at or after this; roll it
 forward deliberately in `COMMITMENTS.md`, never automatically -- a clock-reading
 generator goes stale overnight and trains people to ignore the check).
 
-**52 declared, 4 release-train, 141 UNPARSED, 0 malformed.**
+**51 declared, 4 release-train, 141 UNPARSED, 0 malformed.**
 
 ## Declared commitments
 
@@ -21,7 +21,7 @@ generator goes stale overnight and trains people to ignore the check).
 |---|---|---|---|---|---|
 | 2026-08-10 | deadline | IP / trademark: take the five-point brief to Australian lawyers | pip | 14, 7, 2, 0 | `docs/calendar/COMMITMENTS.md:153` |
 | 2026-08-10 | task | Book the half-day audit-mechanics workshop, target window opens | pip | 2, 0 | `docs/calendar/COMMITMENTS.md:157` |
-| 2026-08-10 | task | Book the half-day audit-mechanics workshop, target window opens | pip | 2, 0 | `docs/rulings/RULINGS.md:181` |
+| 2026-08-10 | task | Book the half-day audit-mechanics workshop, target window opens | pip | 2, 0 | `docs/rulings/RULINGS.md:178` |
 | 2026-08-10 | task | Book the half-day audit-mechanics workshop, target window opens | pip | 2, 0 | `docs/rulings/UNDECLARED_TRIAGE.md:350` |
 | 2026-08-10 | task | Read the Workshop 2 minute (ten rulings R1-R10) | pip | 2, 0 | `docs/calendar/COMMITMENTS.md:155` |
 | 2026-08-13 | cadence | Thursday dev (the working half of the cadence) | pip | 0 | `docs/calendar/COMMITMENTS.md:172` |
@@ -37,17 +37,17 @@ generator goes stale overnight and trains people to ignore the check).
 | 2026-08-20 | falsifier | P3 falsifier: re-run the claim audit. A WRONG rate at or above 9 per cent means the control-line rule did not take | pdoom1-seat | 1, 0 | `docs/POSTMORTEM_2026-08-07_CAPTURE.md:780` |
 | 2026-08-21 | cadence | Friday push -- an ordinary patch day, epoch-breaking changes only if player experience demands it | pip | 0 | `docs/calendar/COMMITMENTS.md:174` |
 | 2026-08-21 | cadence | Rektango 17:30 -- the weekly anchor, a hard stop | pip | 0 | `docs/calendar/COMMITMENTS.md:176` |
-| 2026-08-21 | falsifier | P1 falsifier: if the ladder-bump check has fired zero times and no ladder-owed change merged unbumped, delete it rather than keep a green ornament | pdoom1-seat | 1, 0 | `docs/POSTMORTEM_2026-08-07_CAPTURE.md:782` |
-| 2026-08-21 | falsifier | P2 falsifier: if no push-triggered run touched only godot/data or godot JSON paths, the path-filter change bought nothing | pdoom1-seat | 1, 0 | `docs/POSTMORTEM_2026-08-07_CAPTURE.md:784` |
-| 2026-08-21 | falsifier | P4 falsifier: more than two false alarms from zero-result-reads-are-errors means it is mis-tuned and narrows to art tooling | pdoom1-seat | 1, 0 | `docs/POSTMORTEM_2026-08-07_CAPTURE.md:786` |
-| 2026-08-21 | falsifier | P6 falsifier: read git reflog in the main checkout. Any agent-attributable reset or checkout -- means the worktree rule was written and not operated | pdoom1-seat | 1, 0 | `docs/POSTMORTEM_2026-08-07_CAPTURE.md:788` |
+| 2026-08-21 | falsifier | P1 falsifier: if the ladder-bump check has fired zero times and no ladder-owed change merged unbumped, delete it rather than keep a green ornament | pdoom1-seat | 1, 0 | `docs/POSTMORTEM_2026-08-07_CAPTURE.md:849` |
+| 2026-08-21 | falsifier | P2 falsifier: if no push-triggered run touched only godot/data or godot JSON paths, the path-filter change bought nothing | pdoom1-seat | 1, 0 | `docs/POSTMORTEM_2026-08-07_CAPTURE.md:851` |
+| 2026-08-21 | falsifier | P4 falsifier: more than two false alarms from zero-result-reads-are-errors means it is mis-tuned and narrows to art tooling | pdoom1-seat | 1, 0 | `docs/POSTMORTEM_2026-08-07_CAPTURE.md:853` |
+| 2026-08-21 | falsifier | P6 falsifier: read git reflog in the main checkout. Any agent-attributable reset or checkout -- means the worktree rule was written and not operated | pdoom1-seat | 1, 0 | `docs/POSTMORTEM_2026-08-07_CAPTURE.md:855` |
 | 2026-08-24 | review | Reflective review: release / league cycle | pip | 14, 3, 0 | `docs/calendar/COMMITMENTS.md:180` |
 | 2026-08-27 | cadence | Thursday dev (the working half of the cadence) | pip | 0 | `docs/calendar/COMMITMENTS.md:172` |
 | 2026-08-28 | cadence | Friday push -- an ordinary patch day, epoch-breaking changes only if player experience demands it | pip | 0 | `docs/calendar/COMMITMENTS.md:174` |
 | 2026-08-28 | cadence | Rektango 17:30 -- the weekly anchor, a hard stop | pip | 0 | `docs/calendar/COMMITMENTS.md:176` |
 | 2026-08-31 | review | Exploit-finder review-by | pdoom1-seat | 14, 3, 0 | `docs/calendar/COMMITMENTS.md:184` |
 | 2026-08-31 | review | Formal 4-way founder-hours review | pip | 14, 3, 0 | `docs/calendar/COMMITMENTS.md:182` |
-| 2026-09-01 | falsifier | P5 falsifier: if the parse-before-write gate has rejected nothing, the raw-string fix was sufficient alone and the gate is cost without benefit | pdoom1-seat | 1, 0 | `docs/POSTMORTEM_2026-08-07_CAPTURE.md:790` |
+| 2026-09-01 | falsifier | P5 falsifier: if the parse-before-write gate has rejected nothing, the raw-string fix was sufficient alone and the gate is cost without benefit | pdoom1-seat | 1, 0 | `docs/POSTMORTEM_2026-08-07_CAPTURE.md:857` |
 | 2026-09-03 | cadence | Thursday dev (the working half of the cadence) | pip | 0 | `docs/calendar/COMMITMENTS.md:172` |
 | 2026-09-04 | cadence | Friday push -- an ordinary patch day, epoch-breaking changes only if player experience demands it | pip | 0 | `docs/calendar/COMMITMENTS.md:174` |
 | 2026-09-04 | cadence | Rektango 17:30 -- the weekly anchor, a hard stop | pip | 0 | `docs/calendar/COMMITMENTS.md:176` |
@@ -73,7 +73,6 @@ generator goes stale overnight and trains people to ignore the check).
 | 2026-10-23 | expiry | gpt-image-1 retires; the art pipeline's default model needs migrating | pdoom1-seat | 7, 1, 0 | `docs/calendar/COMMITMENTS.md:188` |
 | 2026-11-06 | release | Release train: v0.17 ships -- The World Shoots Back (prov.) | pip | 7, 1, 0 | `docs/ROADMAP.md (Monthly Themes table)` |
 | 2026-12-04 | release | Release train: v0.18 ships -- (unnamed) | pip | 7, 1, 0 | `docs/ROADMAP.md (Monthly Themes table)` |
-| 2026-12-19 | review | Read the 49 archived pygame-era dev-blog entries end to end and write the retrospective post: what the pygame era actually cost, what survived the port to Godot, and what the agent-written progress reports got wrong about their own importance | pip | 14, 3, 0 | `docs/DEV_BLOG_DECISION_2026-08-21.md:174` |
 | 2027-07-27 | review | ADR-0018 render-only office doctrine: standing review | pdoom1-seat | 14, 3, 0 | `docs/calendar/COMMITMENTS.md:190` |
 
 ## UNPARSED -- a date in the written record with no declaration
@@ -94,7 +93,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-09 | `coordination#47` | 0 | WORKSHOP 2 OPEN: the weekend deployment postmortem -- pdoom-data chairs, Phase 1 seals due 11:00 AEST, Pip absent by design |
 | 2026-08-09 | `coordination#49` | 0 | pdoom-data seat: six items for the MONDAY print stack -- the history rewrite is DEFERRED by Pip pending a rule, the rest are yes/no |
 | 2026-08-09 | `coordination#50` | 0 | Does a print stack/queue exist? Pip wants queue + revise + supersession + collection-on-receipt -- and thinks a watched folder unlocks working remotel |
-| 2026-08-09 | `docs/POSTMORTEM_2026-08-07_CAPTURE.md` | 844 | *Written 2026-08-07 for reading on Sunday 2026-08-09. Every command in this |
+| 2026-08-09 | `docs/POSTMORTEM_2026-08-07_CAPTURE.md` | 911 | *Written 2026-08-07 for reading on Sunday 2026-08-09. Every command in this |
 | 2026-08-09 | `docs/RELEASE_NOTES_GUARD.md` | 65 | RN005 is the disclosure escape checked in the other direction, added 2026-08-09 |
 | 2026-08-09 | `docs/design/LEAGUE_CUTOVER_PLAYBOOK.md` | 6 | because Pip asked, 2026-08-09: |
 | 2026-08-09 | `docs/game-design/BUILD_VS_LADDER_VERSION_SPLIT.md` | 325 | ### 4.2a AS BUILT (2026-08-09, issue #1178) -- and where this section was wrong |
@@ -119,11 +118,11 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-10 | `tools/check_self_merge_eligibility.py` | 18 | 2026-08-10 and, until this file existed, they **promised eligibility and checked |
 | 2026-08-11 | `docs/GUARD_AUDIT_2026-08-19.md` | 7 | 2026-08-11 as *"a mechanism, not a document"*, appeared in **no** pre-commit hook, |
 | 2026-08-11 | `docs/rulings/RULINGS.md` | 96 | Rulings with no `mechanism:`. Pip's doctrine (2026-08-11): what forces a |
-| 2026-08-11 | `docs/rulings/RULINGS.md` | 332 | - `tools/assets/backfill_provenance.py:38` -- ORIGIN VOCABULARY -- five values, ruled by Pip 2026-08-11 |
-| 2026-08-11 | `docs/rulings/RULINGS.md` | 334 | - `tools/assets/backfill_provenance.py:558` -- # The five values ruled by Pip 2026-08-11, as a constant rather than a literal |
-| 2026-08-11 | `docs/rulings/RULINGS.md` | 339 | - `tools/assets/check_provenance.py:4` -- Ruled by Pip 2026-08-11: the six unattributable assets are KEPT and recorded as |
-| 2026-08-11 | `docs/rulings/RULINGS.md` | 340 | - `tools/assets/check_provenance.py:439` -- "_why": "Pinned unknown set. Ruled by Pip 2026-08-11: keep the " |
-| 2026-08-11 | `docs/rulings/RULINGS.md` | 343 | - `tools/assets/provenance_unknown_pin.json:2` -- "_why": "Pinned unknown set. Ruled by Pip 2026-08-11: keep the unattributable assets, record them ho |
+| 2026-08-11 | `docs/rulings/RULINGS.md` | 329 | - `tools/assets/backfill_provenance.py:38` -- ORIGIN VOCABULARY -- five values, ruled by Pip 2026-08-11 |
+| 2026-08-11 | `docs/rulings/RULINGS.md` | 331 | - `tools/assets/backfill_provenance.py:558` -- # The five values ruled by Pip 2026-08-11, as a constant rather than a literal |
+| 2026-08-11 | `docs/rulings/RULINGS.md` | 336 | - `tools/assets/check_provenance.py:4` -- Ruled by Pip 2026-08-11: the six unattributable assets are KEPT and recorded as |
+| 2026-08-11 | `docs/rulings/RULINGS.md` | 337 | - `tools/assets/check_provenance.py:439` -- "_why": "Pinned unknown set. Ruled by Pip 2026-08-11: keep the " |
+| 2026-08-11 | `docs/rulings/RULINGS.md` | 340 | - `tools/assets/provenance_unknown_pin.json:2` -- "_why": "Pinned unknown set. Ruled by Pip 2026-08-11: keep the unattributable assets, record them ho |
 | 2026-08-11 | `docs/rulings/RULINGS_CONVENTION.md` | 87 | RULING: 2026-08-11 -- keep unattributable assets and record them as unknown -- flavour: art-provenance -- mechanism: tools/assets/check_provenance.py |
 | 2026-08-11 | `docs/rulings/RULINGS_CONVENTION.md` | 100 | Pip's doctrine, ruled 2026-08-11 and embodied in `check_provenance.py`: *what |
 | 2026-08-11 | `docs/rulings/RULINGS_CONVENTION.md` | 176 | {"source": "tools/assets/check_provenance.py:4", "text": "Ruled by Pip 2026-08-11: the six unattributable assets are KEPT ..."} |
@@ -140,7 +139,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-11 | `tools/assets/backfill_provenance.py` | 558 | # The five values ruled by Pip 2026-08-11, as a constant rather than a literal |
 | 2026-08-11 | `tools/assets/check_provenance.py` | 4 | Ruled by Pip 2026-08-11: the six unattributable assets are KEPT and recorded as |
 | 2026-08-11 | `tools/assets/check_provenance.py` | 439 | "_why": "Pinned unknown set. Ruled by Pip 2026-08-11: keep the " |
-| 2026-08-12 | `docs/rulings/RULINGS.md` | 291 | - `godot/scripts/core/capacity.gd:5` -- ## Ruled 2026-08-12 (coordination/DESIGN_2026-08-12_interrupt-resolution-variants.md, |
+| 2026-08-12 | `docs/rulings/RULINGS.md` | 288 | - `godot/scripts/core/capacity.gd:5` -- ## Ruled 2026-08-12 (coordination/DESIGN_2026-08-12_interrupt-resolution-variants.md, |
 | 2026-08-12 | `docs/rulings/UNDECLARED_TRIAGE.md` | 205 | - ## Ruled 2026-08-12 (coordination/DESIGN_2026-08-12_interrupt-resolution-variants.md, |
 | 2026-08-12 | `tools/assets/backfill_provenance.py` | 691 | 2026-08-12 (`ab85ed0b`, #1196) one day after the guard landed, and nobody saw |
 | 2026-08-13 | `CLAUDE.md` | 14 | is what was typed on 2026-08-13 and it launched a silently broken build in |
@@ -193,7 +192,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-14 | `docs/art/audit_2026-08-13/THE_REVISIONS_ARE_THE_STORY.md` | 69 | and the session ran on **2026-08-14**. **It was about four hours old when it first |
 | 2026-08-14 | `docs/art/audit_2026-08-13/THE_REVISIONS_ARE_THE_STORY.md` | 82 | Measured coverage as at 2026-08-14: **1,391 of 2,099 families decided (66.3%)**. |
 | 2026-08-14 | `docs/art/audit_2026-08-13/THE_REVISIONS_ARE_THE_STORY.md` | 119 | \| **review state, verdict, notes, revision history** \| **yes, as of 2026-08-14** \| |
-| 2026-08-14 | `docs/rulings/RULINGS.md` | 308 | - `godot/tests/unit/simulation/test_events.gd:50` -- ## THE RATCHET WAS DELIBERATELY LOOSENED -- 2026-08-14, ruled by Pip, for content velocity. |
+| 2026-08-14 | `docs/rulings/RULINGS.md` | 305 | - `godot/tests/unit/simulation/test_events.gd:50` -- ## THE RATCHET WAS DELIBERATELY LOOSENED -- 2026-08-14, ruled by Pip, for content velocity. |
 | 2026-08-14 | `docs/rulings/UNDECLARED_TRIAGE.md` | 239 | - ## THE RATCHET WAS DELIBERATELY LOOSENED -- 2026-08-14, ruled by Pip, for content velocity. |
 | 2026-08-14 | `tools/art_review/build_full_gallery.py` | 374 | # the 2026-08-14/15 sweeps -- and 1,439 of those were `keep` under BOTH |
 | 2026-08-14 | `tools/art_review/collapse_px_keys.py` | 11 | `px:<dir>/<stem>.png`. Both resolve to the same image. The 2026-08-14/15 sweeps |
@@ -238,9 +237,9 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-15 | `docs/rulings/RULINGS.md` | 73 | \| 2026-08-15 \| the ruling road is cross-repo from day one, federated: each repo scans itself and emits rulings.json, an aggregator reads them, nothing |
 | 2026-08-15 | `docs/rulings/RULINGS.md` | 74 | \| 2026-08-15 \| naming a mechanism is OPTIONAL on a ruling, and the generated index reports which rulings have none \| `scripts/generate_rulings.py` \| ` |
 | 2026-08-15 | `docs/rulings/RULINGS.md` | 138 | - `CLAUDE.md:223` -- `UNDECLARED`, never dropped. **Cross-repo by design** (ruled 2026-08-15): |
-| 2026-08-15 | `docs/rulings/RULINGS.md` | 284 | - `godot/data/asset_provenance.json:5132` -- "why": "Ruled by Pip 2026-08-15. A signed credential outranks every heuristic and is the only evidence th |
-| 2026-08-15 | `docs/rulings/RULINGS.md` | 330 | - `tools/art_review/serve_review.py:205` -- "to element: -- ruled by Pip 2026-08-15 because the sweeps are mostly " |
-| 2026-08-15 | `docs/rulings/RULINGS.md` | 333 | - `tools/assets/backfill_provenance.py:479` -- "Ruled by Pip 2026-08-15. A signed credential outranks every heuristic and " |
+| 2026-08-15 | `docs/rulings/RULINGS.md` | 281 | - `godot/data/asset_provenance.json:5132` -- "why": "Ruled by Pip 2026-08-15. A signed credential outranks every heuristic and is the only evidence th |
+| 2026-08-15 | `docs/rulings/RULINGS.md` | 327 | - `tools/art_review/serve_review.py:205` -- "to element: -- ruled by Pip 2026-08-15 because the sweeps are mostly " |
+| 2026-08-15 | `docs/rulings/RULINGS.md` | 330 | - `tools/assets/backfill_provenance.py:479` -- "Ruled by Pip 2026-08-15. A signed credential outranks every heuristic and " |
 | 2026-08-15 | `docs/rulings/RULINGS_CONVENTION.md` | 43 | Rulings in this estate are already being captured -- measured 2026-08-15, more |
 | 2026-08-15 | `docs/rulings/RULINGS_CONVENTION.md` | 52 | 2. **Recall by flavour.** Pip, 2026-08-15: *"these will show up again in |
 | 2026-08-15 | `docs/rulings/RULINGS_CONVENTION.md` | 85 | RULING: 2026-08-15 -- the epoch counter starts at 1, no backfill over past waves -- flavour: art-lineage |
@@ -291,9 +290,9 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-19 | `docs/rulings/RULINGS.md` | 59 | \| 2026-08-19 \| New-Bort is the working machine and hosts new archives and images; the generated masters are NOT transferred to it but coordinated on a |
 | 2026-08-19 | `docs/rulings/RULINGS.md` | 60 | \| 2026-08-19 \| every asset record names its author as well as its origin, with a named agent only where a source already in the repo names one and `un |
 | 2026-08-19 | `docs/rulings/RULINGS.md` | 61 | \| 2026-08-19 \| the provenance guard compares against the git blob, not the working tree, and runs in pre-commit and CI; a guard wired to nothing is a  |
-| 2026-08-19 | `docs/rulings/RULINGS.md` | 285 | - `godot/data/asset_provenance.json:5138` -- "why": "Ruled by Pip 2026-08-19 (D2). ADR-0019 has no provenance field and this manifest answered only WH |
-| 2026-08-19 | `docs/rulings/RULINGS.md` | 286 | - `godot/data/asset_provenance.json:5150` -- "why": "Ruled by Pip 2026-08-19 (D2). ADR-0019 has no provenance field and this manifest answered only WH |
-| 2026-08-19 | `docs/rulings/RULINGS.md` | 335 | - `tools/assets/backfill_provenance.py:673` -- "Ruled by Pip 2026-08-19 (D2). ADR-0019 has no provenance field and this " |
+| 2026-08-19 | `docs/rulings/RULINGS.md` | 282 | - `godot/data/asset_provenance.json:5138` -- "why": "Ruled by Pip 2026-08-19 (D2). ADR-0019 has no provenance field and this manifest answered only WH |
+| 2026-08-19 | `docs/rulings/RULINGS.md` | 283 | - `godot/data/asset_provenance.json:5150` -- "why": "Ruled by Pip 2026-08-19 (D2). ADR-0019 has no provenance field and this manifest answered only WH |
+| 2026-08-19 | `docs/rulings/RULINGS.md` | 332 | - `tools/assets/backfill_provenance.py:673` -- "Ruled by Pip 2026-08-19 (D2). ADR-0019 has no provenance field and this " |
 | 2026-08-19 | `docs/rulings/UNDECLARED_TRIAGE.md` | 285 | - "Ruled by Pip 2026-08-19 (D2). ADR-0019 has no provenance field and this " |
 | 2026-08-19 | `docs/rulings/UNDECLARED_TRIAGE.md` | 414 | - "why": "Ruled by Pip 2026-08-19 (D2). ADR-0019 has no provenance field and this manifest answered only WHAT made an asset, never WHO is owed credit  |
 | 2026-08-19 | `docs/rulings/UNDECLARED_TRIAGE.md` | 416 | - "why": "Ruled by Pip 2026-08-19 (D2). ADR-0019 has no provenance field and this manifest answered only WHAT made an asset, never WHO is owed credit  |
@@ -316,9 +315,9 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-20 | `docs/MIGRATION_TO_NEW_PC.md` | 3 | > Measured 2026-08-20 on the current machine. Sizes and file counts are real |
 | 2026-08-20 | `docs/MIGRATION_TO_NEW_PC.md` | 39 | \| `tools/print_doc.py` \| **SumatraPDF** (strongly preferred) \| The ONLY silent print path. Without it the tool falls back to Acrobat (steals focus) an |
 | 2026-08-20 | `docs/art/A4_COLLAPSE_2026-08-20.md` | 3 | **2026-08-20, `pdoom1` seat on New-Bort.** Ruled by Pip: canonicalise on the write |
-| 2026-08-20 | `docs/rulings/RULINGS.md` | 164 | - `docs/art/A4_COLLAPSE_2026-08-20.md:3` -- **2026-08-20, `pdoom1` seat on New-Bort.** Ruled by Pip: canonicalise on the write |
-| 2026-08-20 | `docs/rulings/RULINGS.md` | 320 | - `tools/art_review/ORPHANS_2026-08-15.md:65` -- **A4: RULED 2026-08-20 and DONE.** Canonicalise on the write path and collapse the |
-| 2026-08-20 | `docs/rulings/RULINGS.md` | 324 | - `tools/art_review/collapse_px_keys.py:4` -- ORPHANS A4. Ruled by Pip 2026-08-20: canonicalise on the write path AND collapse |
+| 2026-08-20 | `docs/rulings/RULINGS.md` | 161 | - `docs/art/A4_COLLAPSE_2026-08-20.md:3` -- **2026-08-20, `pdoom1` seat on New-Bort.** Ruled by Pip: canonicalise on the write |
+| 2026-08-20 | `docs/rulings/RULINGS.md` | 317 | - `tools/art_review/ORPHANS_2026-08-15.md:65` -- **A4: RULED 2026-08-20 and DONE.** Canonicalise on the write path and collapse the |
+| 2026-08-20 | `docs/rulings/RULINGS.md` | 321 | - `tools/art_review/collapse_px_keys.py:4` -- ORPHANS A4. Ruled by Pip 2026-08-20: canonicalise on the write path AND collapse |
 | 2026-08-20 | `docs/rulings/UNDECLARED_TRIAGE.md` | 44 | - **2026-08-20, `pdoom1` seat on New-Bort.** Ruled by Pip: canonicalise on the write |
 | 2026-08-20 | `docs/rulings/UNDECLARED_TRIAGE.md` | 263 | - ORPHANS A4. Ruled by Pip 2026-08-20: canonicalise on the write path AND collapse |
 | 2026-08-20 | `docs/rulings/UNDECLARED_TRIAGE.md` | 424 | - **A4: RULED 2026-08-20 and DONE.** Canonicalise on the write path and collapse the |
@@ -329,30 +328,26 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-21 | `docs/CLAIM_AUDIT_2026-08-21.md` | 14 | overdue** when this ran (2026-08-21, ~10:15-11:00 AEST). |
 | 2026-08-21 | `docs/CLAIM_AUDIT_2026-08-21.md` | 29 | 2026-08-21. Commit subjects are the headline surface this repo actually |
 | 2026-08-21 | `docs/CLAIM_AUDIT_2026-08-21.md` | 247 | Run 2026-08-21 ~10:15-11:00 AEST by the pdoom1 seat (Claude Opus 5) at Pip's |
-| 2026-08-21 | `docs/DEV_BLOG_DECISION_2026-08-21.md` | 3 | Written 2026-08-21 for Pip. **One decision is needed; everything else follows |
-| 2026-08-21 | `docs/DEV_BLOG_DECISION_2026-08-21.md` | 92 | Pip, 2026-08-21: |
-| 2026-08-21 | `docs/DEV_BLOG_DECISION_2026-08-21.md` | 153 | ## DECIDED, 2026-08-21 |
-| 2026-08-21 | `docs/LEDGER_ROW_PROTOCOL_2026-08-21.md` | 1 | # Ledger row: protocol, etiquette, procedure -- as at 2026-08-21 |
-| 2026-08-21 | `docs/LEDGER_ROW_PROTOCOL_2026-08-21.md` | 158 | 2026-08-21**, and name the artifact for each. Do not backdate the `blessed` |
-| 2026-08-21 | `docs/LEDGER_ROW_PROTOCOL_2026-08-21.md` | 174 | `api.pdoom1.com`. Diagnosed 2026-08-21: DNS resolves to `208.113.200.215`, but |
 | 2026-08-21 | `docs/PDOOM_DATA_CONTRACT_BRIEF.md` | 14 | untracked from 2026-07-25 to 2026-08-21 and already contained one struck-through |
 | 2026-08-21 | `docs/PLAYTEST_2026-08-21_WANASAI.md` | 1 | # Playtest sheet -- 2026-08-21, Wanasai, first session |
 | 2026-08-21 | `docs/rulings/RULINGS.md` | 12 | Consolidated 2026-08-21. The estate had five places rulings were recorded; |
-| 2026-08-21 | `docs/rulings/RULINGS.md` | 314 | - `scripts/generate_rulings.py:164` -- # CONSOLIDATION, ruled by Pip 2026-08-21. |
+| 2026-08-21 | `docs/rulings/RULINGS.md` | 311 | - `scripts/generate_rulings.py:164` -- # CONSOLIDATION, ruled by Pip 2026-08-21. |
 | 2026-08-21 | `docs/rulings/RULINGS_CONVENTION.md` | 7 | ## This is an INDEX, not the only store (consolidated 2026-08-21) |
 | 2026-08-21 | `docs/rulings/RULINGS_CONVENTION.md` | 9 | An audit on 2026-08-21 found five places rulings were being recorded, four of |
 | 2026-08-21 | `docs/rulings/UNDECLARED_TRIAGE.md` | 249 | - # CONSOLIDATION, ruled by Pip 2026-08-21. |
+| 2026-08-21 | `scripts/check_no_emoji.py` | 166 | Measured 2026-08-21 (#1163): godot/data/historical_events.json carried |
 | 2026-08-21 | `scripts/generate_rulings.py` | 164 | # CONSOLIDATION, ruled by Pip 2026-08-21. |
 | 2026-08-21 | `scripts/generate_rulings.py` | 166 | # An audit on 2026-08-21 found FIVE places rulings were being recorded, four of |
 | 2026-08-21 | `scripts/generate_rulings.py` | 395 | "Consolidated 2026-08-21. The estate had five places rulings were recorded;", |
 | 2026-08-21 | `scripts/run_godot_tests.py` | 120 | # raises FileNotFoundError -- measured 2026-08-21: 'godot' -> WinError 2 while |
 | 2026-08-21 | `tools/check_ladder_bump.py` | 327 | THE HOLE THIS CLOSES (measured 2026-08-21). Direction 1 below accepts any |
 | 2026-08-21 | `tools/check_ladder_bump.py` | 402 | # is a DEBT, and until 2026-08-21 it printed identically to `none`. |
+| 2026-08-21 | `tools/reset_player_state.py` | 158 | Until 2026-08-21 this function skipped any destination that already existed |
 | 2026-08-24 | `docs/design/LEAGUE_CUTOVER_PLAYBOOK.md` | 41 | at L4, and is pinned for reflective review on/after 2026-08-24. |
 | 2026-08-24 | `pdoom1#808` | 0 | Reflective review (on/after 2026-08-24): release/league cycle nomenclature + cadence |
 | 2026-08-24 | `pdoom1#811` | 0 | Workshop 3 (mechanics) -- Mon 07-27 W-3a / Tue 07-28 build / Wed 07-29 W-3b-W-4: crisp parts, brutal decisions |
-| 2026-08-31 | `docs/rulings/RULINGS.md` | 299 | - `godot/scripts/core/researcher.gd:131` -- # SEAM (ruled 2026-07-27, review-by 2026-08-31): AUDITS ground-truth reported vs actual. |
-| 2026-08-31 | `docs/rulings/RULINGS.md` | 302 | - `godot/scripts/core/turn_manager.gd:306` -- SEAM (ruled 2026-07-27, review-by 2026-08-31): AUDITS ground-truth reported vs actual. |
+| 2026-08-31 | `docs/rulings/RULINGS.md` | 296 | - `godot/scripts/core/researcher.gd:131` -- # SEAM (ruled 2026-07-27, review-by 2026-08-31): AUDITS ground-truth reported vs actual. |
+| 2026-08-31 | `docs/rulings/RULINGS.md` | 299 | - `godot/scripts/core/turn_manager.gd:306` -- SEAM (ruled 2026-07-27, review-by 2026-08-31): AUDITS ground-truth reported vs actual. |
 | 2026-08-31 | `docs/rulings/UNDECLARED_TRIAGE.md` | 221 | - # SEAM (ruled 2026-07-27, review-by 2026-08-31): AUDITS ground-truth reported vs actual. |
 | 2026-08-31 | `docs/rulings/UNDECLARED_TRIAGE.md` | 227 | - SEAM (ruled 2026-07-27, review-by 2026-08-31): AUDITS ground-truth reported vs actual. |
 | 2026-08-31 | `pdoom1#984` | 0 | Half-day workshop: audit mechanics deep-dive (next epoch) -- something amazing under the smell |

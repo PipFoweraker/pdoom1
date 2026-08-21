@@ -62,7 +62,7 @@ DTSTART;VALUE=DATE:20260809
 DTEND;VALUE=DATE:20260810
 SUMMARY:[UNPARSED] needs a declaration -- POSTMORTEM_2026-08-07_CAPTURE.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/POSTMORTEM_2026-0
- 8-07_CAPTURE.md:844. 1 line(s) in docs/POSTMORTEM_2026-08-07_CAPTURE.md m
+ 8-07_CAPTURE.md:911. 1 line(s) in docs/POSTMORTEM_2026-08-07_CAPTURE.md m
  ention this date and no COMMITMENT: declaration accounts for it. Either a
  dd a declaration or the date is incidental. First line: *Written 2026-08-
  07 for reading on Sunday 2026-08-09. Every command in this -- Generated f
@@ -3242,7 +3242,7 @@ SUMMARY:[FALSIFIER] P1 falsifier: if the ladder-bump check has fired zero
  times and no ladder-owed change merged unbumped\, delete it rather than k
  eep a green ornament
 DESCRIPTION:Owner: pdoom1-seat. Kind: falsifier. Source: docs/POSTMORTEM_2
- 026-08-07_CAPTURE.md:782. -- Generated from tracked sources by scripts/ge
+ 026-08-07_CAPTURE.md:849. -- Generated from tracked sources by scripts/ge
  nerate_commitment_calendar.py\; regenerate to update.
 CATEGORIES:FALSIFIER
 TRANSP:TRANSPARENT
@@ -3271,7 +3271,7 @@ DTEND;VALUE=DATE:20260822
 SUMMARY:[FALSIFIER] P2 falsifier: if no push-triggered run touched only go
  dot/data or godot JSON paths\, the path-filter change bought nothing
 DESCRIPTION:Owner: pdoom1-seat. Kind: falsifier. Source: docs/POSTMORTEM_2
- 026-08-07_CAPTURE.md:784. -- Generated from tracked sources by scripts/ge
+ 026-08-07_CAPTURE.md:851. -- Generated from tracked sources by scripts/ge
  nerate_commitment_calendar.py\; regenerate to update.
 CATEGORIES:FALSIFIER
 TRANSP:TRANSPARENT
@@ -3300,7 +3300,7 @@ DTEND;VALUE=DATE:20260822
 SUMMARY:[FALSIFIER] P4 falsifier: more than two false alarms from zero-res
  ult-reads-are-errors means it is mis-tuned and narrows to art tooling
 DESCRIPTION:Owner: pdoom1-seat. Kind: falsifier. Source: docs/POSTMORTEM_2
- 026-08-07_CAPTURE.md:786. -- Generated from tracked sources by scripts/ge
+ 026-08-07_CAPTURE.md:853. -- Generated from tracked sources by scripts/ge
  nerate_commitment_calendar.py\; regenerate to update.
 CATEGORIES:FALSIFIER
 TRANSP:TRANSPARENT
@@ -3330,7 +3330,7 @@ SUMMARY:[FALSIFIER] P6 falsifier: read git reflog in the main checkout. An
  y agent-attributable reset or checkout -- means the worktree rule was wri
  tten and not operated
 DESCRIPTION:Owner: pdoom1-seat. Kind: falsifier. Source: docs/POSTMORTEM_2
- 026-08-07_CAPTURE.md:788. -- Generated from tracked sources by scripts/ge
+ 026-08-07_CAPTURE.md:855. -- Generated from tracked sources by scripts/ge
  nerate_commitment_calendar.py\; regenerate to update.
 CATEGORIES:FALSIFIER
 TRANSP:TRANSPARENT
@@ -3562,6 +3562,28 @@ DESCRIPTION:needs a declaration -- check_ladder_bump.py (unparsed) -- unow
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:83a079f8ffbed6fe@commitments.pdoom1
+DTSTAMP:20260821T000000Z
+DTSTART;VALUE=DATE:20260821
+DTEND;VALUE=DATE:20260822
+SUMMARY:[UNPARSED] needs a declaration -- check_no_emoji.py
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: scripts/check_no_emoji
+ .py:166. 1 line(s) in scripts/check_no_emoji.py mention this date and no 
+ COMMITMENT: declaration accounts for it. Either add a declaration or the 
+ date is incidental. First line: Measured 2026-08-21 (#1163): godot/data/h
+ istorical_events.json carried -- Generated from tracked sources by script
+ s/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- check_no_emoji.py (unparsed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:16ef210459c39ade@commitments.pdoom1
 DTSTAMP:20260821T000000Z
 DTSTART;VALUE=DATE:20260821
@@ -3582,6 +3604,29 @@ ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- generate_rulings.py (unparsed) -- unown
  ed
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:799f207d75fe960f@commitments.pdoom1
+DTSTAMP:20260821T000000Z
+DTSTART;VALUE=DATE:20260821
+DTEND;VALUE=DATE:20260822
+SUMMARY:[UNPARSED] needs a declaration -- reset_player_state.py
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/reset_player_sta
+ te.py:158. 1 line(s) in tools/reset_player_state.py mention this date and
+  no COMMITMENT: declaration accounts for it. Either add a declaration or 
+ the date is incidental. First line: Until 2026-08-21 this function skippe
+ d any destination that already existed -- Generated from tracked sources 
+ by scripts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- reset_player_state.py (unparsed) -- uno
+ wned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
@@ -3908,7 +3953,7 @@ SUMMARY:[FALSIFIER] P5 falsifier: if the parse-before-write gate has rejec
  ted nothing\, the raw-string fix was sufficient alone and the gate is cos
  t without benefit
 DESCRIPTION:Owner: pdoom1-seat. Kind: falsifier. Source: docs/POSTMORTEM_2
- 026-08-07_CAPTURE.md:790. -- Generated from tracked sources by scripts/ge
+ 026-08-07_CAPTURE.md:857. -- Generated from tracked sources by scripts/ge
  nerate_commitment_calendar.py\; regenerate to update.
 CATEGORIES:FALSIFIER
 TRANSP:TRANSPARENT
