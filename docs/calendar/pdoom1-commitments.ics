@@ -340,10 +340,37 @@ DTSTART;VALUE=DATE:20260810
 DTEND;VALUE=DATE:20260811
 SUMMARY:[TASK] Book the half-day audit-mechanics workshop\, target window 
  opens
-DESCRIPTION:Owner: pip. Kind: task. Source: docs/rulings/RULINGS.md:105. p
+DESCRIPTION:Owner: pip. Kind: task. Source: docs/rulings/RULINGS.md:178. p
  doom1#984\, ruled 2026-07-27 18:11. Scheduled to precede the 2026-08-31 f
   -- Generated from tracked sources by scripts/generate_commitment_calenda
  r.py\; regenerate to update.
+CATEGORIES:TASK
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT40H
+DESCRIPTION:Book the half-day audit-mechanics workshop\, target window ope
+ ns (task) -- pip
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:Book the half-day audit-mechanics workshop\, target window ope
+ ns (task) -- pip
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ab8482c561964a81@commitments.pdoom1
+DTSTAMP:20260810T000000Z
+DTSTART;VALUE=DATE:20260810
+DTEND;VALUE=DATE:20260811
+SUMMARY:[TASK] Book the half-day audit-mechanics workshop\, target window 
+ opens
+DESCRIPTION:Owner: pip. Kind: task. Source: docs/rulings/UNDECLARED_TRIAGE
+ .md:350. pdoom1#984\, ruled 2026- -- Generated from tracked sources by sc
+ ripts/generate_commitment_calendar.py\; regenerate to update.
 CATEGORIES:TASK
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -580,7 +607,7 @@ DTSTART;VALUE=DATE:20260811
 DTEND;VALUE=DATE:20260812
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:47. 6 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
+ d:96. 6 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
  TMENT: declaration accounts for it. Either add a declaration or the date 
  is incidental. First line: Rulings with no `mechanism:`. Pip's doctrine (
  2026-08-11): what forces a -- Generated from tracked sources by scripts/g
@@ -602,7 +629,7 @@ DTSTART;VALUE=DATE:20260811
 DTEND;VALUE=DATE:20260812
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS_CONVENTION.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS_C
- ONVENTION.md:53. 3 line(s) in docs/rulings/RULINGS_CONVENTION.md mention 
+ ONVENTION.md:87. 3 line(s) in docs/rulings/RULINGS_CONVENTION.md mention 
  this date and no COMMITMENT: declaration accounts for it. Either add a de
  claration or the date is incidental. First line: RULING: 2026-08-11 -- ke
  ep unattributable assets and record them as unknown -- flavour: art-prove
@@ -618,6 +645,29 @@ ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- RULINGS_CONVENTION.md (unparsed) -- uno
  wned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:da475d8f11a763c4@commitments.pdoom1
+DTSTAMP:20260811T000000Z
+DTSTART;VALUE=DATE:20260811
+DTEND;VALUE=DATE:20260812
+SUMMARY:[UNPARSED] needs a declaration -- UNDECLARED_TRIAGE.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/UNDECLARE
+ D_TRIAGE.md:279. 5 line(s) in docs/rulings/UNDECLARED_TRIAGE.md mention t
+ his date and no COMMITMENT: declaration accounts for it. Either add a dec
+ laration or the date is incidental. First line: - ORIGIN VOCABULARY -- fi
+ ve values\, ruled by Pip 2026-08-11 -- Generated from tracked sources by 
+ scripts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- UNDECLARED_TRIAGE.md (unparsed) -- unow
+ ned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
@@ -675,7 +725,7 @@ DTSTART;VALUE=DATE:20260811
 DTEND;VALUE=DATE:20260812
 SUMMARY:[UNPARSED] needs a declaration -- generate_rulings.py
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: scripts/generate_rulin
- gs.py:284. 1 line(s) in scripts/generate_rulings.py mention this date and
+ gs.py:449. 1 line(s) in scripts/generate_rulings.py mention this date and
   no COMMITMENT: declaration accounts for it. Either add a declaration or 
  the date is incidental. First line: "Rulings with no `mechanism:`. Pip's 
  doctrine (2026-08-11): what forces a"\, -- Generated from tracked sources
@@ -698,7 +748,7 @@ DTSTART;VALUE=DATE:20260812
 DTEND;VALUE=DATE:20260813
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:215. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:288. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `godot/scripts/core/capacity.gd:5` -- ## Ru
  led 2026-08-12 (coordination/DESIGN_2026-08-12_interrupt-resolution-varia
@@ -712,6 +762,30 @@ BEGIN:VALARM
 ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- RULINGS.md (unparsed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:68a2f9376f2c688c@commitments.pdoom1
+DTSTAMP:20260812T000000Z
+DTSTART;VALUE=DATE:20260812
+DTEND;VALUE=DATE:20260813
+SUMMARY:[UNPARSED] needs a declaration -- UNDECLARED_TRIAGE.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/UNDECLARE
+ D_TRIAGE.md:205. 1 line(s) in docs/rulings/UNDECLARED_TRIAGE.md mention t
+ his date and no COMMITMENT: declaration accounts for it. Either add a dec
+ laration or the date is incidental. First line: - ## Ruled 2026-08-12 (co
+ ordination/DESIGN_2026-08-12_interrupt-resolution-variants.md\, -- Genera
+ ted from tracked sources by scripts/generate_commitment_calendar.py\; reg
+ enerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- UNDECLARED_TRIAGE.md (unparsed) -- unow
+ ned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
@@ -1015,12 +1089,12 @@ DTSTART;VALUE=DATE:20260813
 DTEND;VALUE=DATE:20260814
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:67. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
- TMENT: declaration accounts for it. Either add a declaration or the date 
- is incidental. First line: - `docs/CONTENT_DISTRIBUTION_SYSTEM.md:10` -- 
- > **SUPERSEDED\, not merely "outdated in spirit"\, as of 2026-08-13.** Pi
- p ruled -- Generated from tracked sources by scripts/generate_commitment_
- calendar.py\; regenerate to update.
+ d:140. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ ITMENT: declaration accounts for it. Either add a declaration or the date
+  is incidental. First line: - `docs/CONTENT_DISTRIBUTION_SYSTEM.md:10` --
+  > **SUPERSEDED\, not merely "outdated in spirit"\, as of 2026-08-13.** P
+ ip ruled -- Generated from tracked sources by scripts/generate_commitment
+ _calendar.py\; regenerate to update.
 CATEGORIES:UNPARSED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -1053,6 +1127,30 @@ ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- THE_REVISIONS_ARE_THE_STORY.md (unparse
  d) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:21391c8e56447229@commitments.pdoom1
+DTSTAMP:20260813T000000Z
+DTSTART;VALUE=DATE:20260813
+DTEND;VALUE=DATE:20260814
+SUMMARY:[UNPARSED] needs a declaration -- UNDECLARED_TRIAGE.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/UNDECLARE
+ D_TRIAGE.md:20. 1 line(s) in docs/rulings/UNDECLARED_TRIAGE.md mention th
+ is date and no COMMITMENT: declaration accounts for it. Either add a decl
+ aration or the date is incidental. First line: - > **SUPERSEDED\, not mer
+ ely "outdated in spirit"\, as of 2026-08-13.** Pip ruled -- Generated fro
+ m tracked sources by scripts/generate_commitment_calendar.py\; regenerate
+  to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- UNDECLARED_TRIAGE.md (unparsed) -- unow
+ ned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
@@ -1430,7 +1528,7 @@ DTSTART;VALUE=DATE:20260814
 DTEND;VALUE=DATE:20260815
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:232. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:305. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `godot/tests/unit/simulation/test_events.gd
  :50` -- ## THE RATCHET WAS DELIBERATELY LOOSENED -- 2026-08-14\, ruled by
@@ -1494,6 +1592,30 @@ ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- THE_REVISIONS_ARE_THE_STORY.md (unparse
  d) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:470151b981b4b4ab@commitments.pdoom1
+DTSTAMP:20260814T000000Z
+DTSTART;VALUE=DATE:20260814
+DTEND;VALUE=DATE:20260815
+SUMMARY:[UNPARSED] needs a declaration -- UNDECLARED_TRIAGE.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/UNDECLARE
+ D_TRIAGE.md:239. 1 line(s) in docs/rulings/UNDECLARED_TRIAGE.md mention t
+ his date and no COMMITMENT: declaration accounts for it. Either add a dec
+ laration or the date is incidental. First line: - ## THE RATCHET WAS DELI
+ BERATELY LOOSENED -- 2026-08-14\, ruled by Pip\, for content velocity. --
+  Generated from tracked sources by scripts/generate_commitment_calendar.p
+ y\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- UNDECLARED_TRIAGE.md (unparsed) -- unow
+ ned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
@@ -1962,7 +2084,7 @@ DTSTART;VALUE=DATE:20260815
 DTEND;VALUE=DATE:20260816
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:19. 9 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
+ d:57. 9 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
  TMENT: declaration accounts for it. Either add a declaration or the date 
  is incidental. First line: | 2026-08-15 | Tier W (website disclosure) shi
  ps first and standalone\; Tier G (in-game motifs and epoch marks) stays r
@@ -1985,12 +2107,12 @@ DTSTART;VALUE=DATE:20260815
 DTEND;VALUE=DATE:20260816
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS_CONVENTION.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS_C
- ONVENTION.md:9. 8 line(s) in docs/rulings/RULINGS_CONVENTION.md mention t
- his date and no COMMITMENT: declaration accounts for it. Either add a dec
- laration or the date is incidental. First line: Rulings in this estate ar
- e already being captured -- measured 2026-08-15\, more -- Generated from 
- tracked sources by scripts/generate_commitment_calendar.py\; regenerate t
- o update.
+ ONVENTION.md:43. 8 line(s) in docs/rulings/RULINGS_CONVENTION.md mention 
+ this date and no COMMITMENT: declaration accounts for it. Either add a de
+ claration or the date is incidental. First line: Rulings in this estate a
+ re already being captured -- measured 2026-08-15\, more -- Generated from
+  tracked sources by scripts/generate_commitment_calendar.py\; regenerate 
+ to update.
 CATEGORIES:UNPARSED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -2000,6 +2122,30 @@ ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- RULINGS_CONVENTION.md (unparsed) -- uno
  wned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:67d6919308669cf1@commitments.pdoom1
+DTSTAMP:20260815T000000Z
+DTSTART;VALUE=DATE:20260815
+DTEND;VALUE=DATE:20260816
+SUMMARY:[UNPARSED] needs a declaration -- UNDECLARED_TRIAGE.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/UNDECLARE
+ D_TRIAGE.md:275. 3 line(s) in docs/rulings/UNDECLARED_TRIAGE.md mention t
+ his date and no COMMITMENT: declaration accounts for it. Either add a dec
+ laration or the date is incidental. First line: - "to element: -- ruled b
+ y Pip 2026-08-15 because the sweeps are mostly " -- Generated from tracke
+ d sources by scripts/generate_commitment_calendar.py\; regenerate to upda
+ te.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- UNDECLARED_TRIAGE.md (unparsed) -- unow
+ ned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
@@ -2343,7 +2489,7 @@ DTSTART;VALUE=DATE:20260817
 DTEND;VALUE=DATE:20260818
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:37. 2 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
+ d:75. 2 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
  TMENT: declaration accounts for it. Either add a declaration or the date 
  is incidental. First line: | 2026-08-17 | published figures live in tooli
  ng\, not prose: the line item is the atom and every rendering is a projec
@@ -2530,7 +2676,7 @@ DTSTART;VALUE=DATE:20260819
 DTEND;VALUE=DATE:20260820
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:21. 6 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
+ d:59. 6 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
  TMENT: declaration accounts for it. Either add a declaration or the date 
  is incidental. First line: | 2026-08-19 | New-Bort is the working machine
   and hosts new archives and images\; the generated masters are NOT transf
@@ -2544,6 +2690,30 @@ BEGIN:VALARM
 ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- RULINGS.md (unparsed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:bd48ef78751031bd@commitments.pdoom1
+DTSTAMP:20260819T000000Z
+DTSTART;VALUE=DATE:20260819
+DTEND;VALUE=DATE:20260820
+SUMMARY:[UNPARSED] needs a declaration -- UNDECLARED_TRIAGE.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/UNDECLARE
+ D_TRIAGE.md:285. 3 line(s) in docs/rulings/UNDECLARED_TRIAGE.md mention t
+ his date and no COMMITMENT: declaration accounts for it. Either add a dec
+ laration or the date is incidental. First line: - "Ruled by Pip 2026-08-1
+ 9 (D2). ADR-0019 has no provenance field and this " -- Generated from tra
+ cked sources by scripts/generate_commitment_calendar.py\; regenerate to u
+ pdate.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- UNDECLARED_TRIAGE.md (unparsed) -- unow
+ ned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
@@ -2816,12 +2986,12 @@ DTSTART;VALUE=DATE:20260820
 DTEND;VALUE=DATE:20260821
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:88. 3 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
- TMENT: declaration accounts for it. Either add a declaration or the date 
- is incidental. First line: - `docs/art/A4_COLLAPSE_2026-08-20.md:3` -- **
- 2026-08-20\, `pdoom1` seat on New-Bort.** Ruled by Pip: canonicalise on t
- he write -- Generated from tracked sources by scripts/generate_commitment
- _calendar.py\; regenerate to update.
+ d:161. 3 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ ITMENT: declaration accounts for it. Either add a declaration or the date
+  is incidental. First line: - `docs/art/A4_COLLAPSE_2026-08-20.md:3` -- *
+ *2026-08-20\, `pdoom1` seat on New-Bort.** Ruled by Pip: canonicalise on 
+ the write -- Generated from tracked sources by scripts/generate_commitmen
+ t_calendar.py\; regenerate to update.
 CATEGORIES:UNPARSED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -2830,6 +3000,30 @@ BEGIN:VALARM
 ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- RULINGS.md (unparsed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:1059c06ca83bcefc@commitments.pdoom1
+DTSTAMP:20260820T000000Z
+DTSTART;VALUE=DATE:20260820
+DTEND;VALUE=DATE:20260821
+SUMMARY:[UNPARSED] needs a declaration -- UNDECLARED_TRIAGE.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/UNDECLARE
+ D_TRIAGE.md:44. 3 line(s) in docs/rulings/UNDECLARED_TRIAGE.md mention th
+ is date and no COMMITMENT: declaration accounts for it. Either add a decl
+ aration or the date is incidental. First line: - **2026-08-20\, `pdoom1` 
+ seat on New-Bort.** Ruled by Pip: canonicalise on the write -- Generated 
+ from tracked sources by scripts/generate_commitment_calendar.py\; regener
+ ate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- UNDECLARED_TRIAGE.md (unparsed) -- unow
+ ned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
@@ -3088,30 +3282,6 @@ DESCRIPTION:P6 falsifier: read git reflog in the main checkout. Any agent-
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
-UID:7cd66540006de577@commitments.pdoom1
-DTSTAMP:20260821T000000Z
-DTSTART;VALUE=DATE:20260821
-DTEND;VALUE=DATE:20260822
-SUMMARY:[UNPARSED] needs a declaration -- PDOOM_DATA_CONTRACT_BRIEF.md
-DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/PDOOM_DATA_CONTRA
- CT_BRIEF.md:14. 1 line(s) in docs/PDOOM_DATA_CONTRACT_BRIEF.md mention th
- is date and no COMMITMENT: declaration accounts for it. Either add a decl
- aration or the date is incidental. First line: untracked from 2026-07-25 
- to 2026-08-21 and already contained one struck-through -- Generated from 
- tracked sources by scripts/generate_commitment_calendar.py\; regenerate t
- o update.
-CATEGORIES:UNPARSED
-TRANSP:TRANSPARENT
-SEQUENCE:0
-STATUS:CONFIRMED
-BEGIN:VALARM
-ACTION:DISPLAY
-TRIGGER:PT8H
-DESCRIPTION:needs a declaration -- PDOOM_DATA_CONTRACT_BRIEF.md (unparsed)
-  -- unowned
-END:VALARM
-END:VEVENT
-BEGIN:VEVENT
 UID:3552f41cd5eb0487@commitments.pdoom1
 DTSTAMP:20260821T000000Z
 DTSTART;VALUE=DATE:20260821
@@ -3135,17 +3305,17 @@ DESCRIPTION:needs a declaration -- PLAYTEST_2026-08-21_WANASAI.md (unparse
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
-UID:dd580132135e5dc0@commitments.pdoom1
+UID:a4dfc91c4df5de99@commitments.pdoom1
 DTSTAMP:20260821T000000Z
 DTSTART;VALUE=DATE:20260821
 DTEND;VALUE=DATE:20260822
-SUMMARY:[UNPARSED] needs a declaration -- check_ladder_bump.py
-DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/check_ladder_bum
- p.py:327. 2 line(s) in tools/check_ladder_bump.py mention this date and n
- o COMMITMENT: declaration accounts for it. Either add a declaration or th
- e date is incidental. First line: THE HOLE THIS CLOSES (measured 2026-08-
- 21). Direction 1 below accepts any -- Generated from tracked sources by s
- cripts/generate_commitment_calendar.py\; regenerate to update.
+SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
+ d:12. 2 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
+ TMENT: declaration accounts for it. Either add a declaration or the date 
+ is incidental. First line: Consolidated 2026-08-21. The estate had five p
+ laces rulings were recorded\; -- Generated from tracked sources by script
+ s/generate_commitment_calendar.py\; regenerate to update.
 CATEGORIES:UNPARSED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -3153,22 +3323,67 @@ STATUS:CONFIRMED
 BEGIN:VALARM
 ACTION:DISPLAY
 TRIGGER:PT8H
-DESCRIPTION:needs a declaration -- check_ladder_bump.py (unparsed) -- unow
+DESCRIPTION:needs a declaration -- RULINGS.md (unparsed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ae84a5c3ab650056@commitments.pdoom1
+DTSTAMP:20260821T000000Z
+DTSTART;VALUE=DATE:20260821
+DTEND;VALUE=DATE:20260822
+SUMMARY:[UNPARSED] needs a declaration -- RULINGS_CONVENTION.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS_C
+ ONVENTION.md:7. 2 line(s) in docs/rulings/RULINGS_CONVENTION.md mention t
+ his date and no COMMITMENT: declaration accounts for it. Either add a dec
+ laration or the date is incidental. First line: ## This is an INDEX\, not
+  the only store (consolidated 2026-08-21) -- Generated from tracked sourc
+ es by scripts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- RULINGS_CONVENTION.md (unparsed) -- uno
+ wned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:17b1e2308cbf86bc@commitments.pdoom1
+DTSTAMP:20260821T000000Z
+DTSTART;VALUE=DATE:20260821
+DTEND;VALUE=DATE:20260822
+SUMMARY:[UNPARSED] needs a declaration -- UNDECLARED_TRIAGE.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/UNDECLARE
+ D_TRIAGE.md:249. 1 line(s) in docs/rulings/UNDECLARED_TRIAGE.md mention t
+ his date and no COMMITMENT: declaration accounts for it. Either add a dec
+ laration or the date is incidental. First line: - # CONSOLIDATION\, ruled
+  by Pip 2026-08-21. -- Generated from tracked sources by scripts/generate
+ _commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- UNDECLARED_TRIAGE.md (unparsed) -- unow
  ned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
-UID:1f1ca8efe061828d@commitments.pdoom1
+UID:16ef210459c39ade@commitments.pdoom1
 DTSTAMP:20260821T000000Z
 DTSTART;VALUE=DATE:20260821
 DTEND;VALUE=DATE:20260822
-SUMMARY:[UNPARSED] needs a declaration -- run_godot_tests.py
-DESCRIPTION:Owner: unowned. Kind: unparsed. Source: scripts/run_godot_test
- s.py:120. 1 line(s) in scripts/run_godot_tests.py mention this date and n
- o COMMITMENT: declaration accounts for it. Either add a declaration or th
- e date is incidental. First line: # raises FileNotFoundError -- measured 
- 2026-08-21: 'godot' -> WinError 2 while -- Generated from tracked sources
-  by scripts/generate_commitment_calendar.py\; regenerate to update.
+SUMMARY:[UNPARSED] needs a declaration -- generate_rulings.py
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: scripts/generate_rulin
+ gs.py:164. 3 line(s) in scripts/generate_rulings.py mention this date and
+  no COMMITMENT: declaration accounts for it. Either add a declaration or 
+ the date is incidental. First line: # CONSOLIDATION\, ruled by Pip 2026-0
+ 8-21. -- Generated from tracked sources by scripts/generate_commitment_ca
+ lendar.py\; regenerate to update.
 CATEGORIES:UNPARSED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -3176,8 +3391,8 @@ STATUS:CONFIRMED
 BEGIN:VALARM
 ACTION:DISPLAY
 TRIGGER:PT8H
-DESCRIPTION:needs a declaration -- run_godot_tests.py (unparsed) -- unowne
- d
+DESCRIPTION:needs a declaration -- generate_rulings.py (unparsed) -- unown
+ ed
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
@@ -3410,7 +3625,7 @@ DTSTART;VALUE=DATE:20260831
 DTEND;VALUE=DATE:20260901
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:223. 2 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:296. 2 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `godot/scripts/core/researcher.gd:131` -- #
   SEAM (ruled 2026-07-27\, review-by 2026-08-31): AUDITS ground-truth repo
@@ -3424,6 +3639,30 @@ BEGIN:VALARM
 ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- RULINGS.md (unparsed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:1f955fc0869db35d@commitments.pdoom1
+DTSTAMP:20260831T000000Z
+DTSTART;VALUE=DATE:20260831
+DTEND;VALUE=DATE:20260901
+SUMMARY:[UNPARSED] needs a declaration -- UNDECLARED_TRIAGE.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/UNDECLARE
+ D_TRIAGE.md:221. 2 line(s) in docs/rulings/UNDECLARED_TRIAGE.md mention t
+ his date and no COMMITMENT: declaration accounts for it. Either add a dec
+ laration or the date is incidental. First line: - # SEAM (ruled 2026-07-2
+ 7\, review-by 2026-08-31): AUDITS ground-truth reported vs actual. -- Gen
+ erated from tracked sources by scripts/generate_commitment_calendar.py\; 
+ regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- UNDECLARED_TRIAGE.md (unparsed) -- unow
+ ned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
