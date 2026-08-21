@@ -5,7 +5,7 @@
 > `python scripts/generate_rulings.py`. The convention, and why it looks
 > like this, is argued in `docs/rulings/RULINGS_CONVENTION.md`.
 
-**35 ruling(s)** across **6 flavour(s)**. **215** prose ruling(s) not yet declared.
+**35 ruling(s)** across **6 flavour(s)**. **218** prose ruling(s) not yet declared.
 
 ## One index, five sources
 
@@ -138,6 +138,7 @@ is not.
 - `CLAUDE.md:223` -- `UNDECLARED`, never dropped. **Cross-repo by design** (ruled 2026-08-15):
 - `art_source/pixellab_2026-07-26_cat_sweep/MANIFEST.md:3` -- Execution of Pip's locked recipe (ruled 2026-07-26, "go cat sweep 8 dir now"):
 - `docs/CONTENT_DISTRIBUTION_SYSTEM.md:10` -- > **SUPERSEDED, not merely "outdated in spirit", as of 2026-08-13.** Pip ruled
+- `docs/DEV_BLOG_DECISION_2026-08-21.md:155` -- Pip ruled **option A**: archive the pygame-era entries, keep the 2026-07-22 post.
 - `docs/GLOSSARY.md:272` -- Naming (ruled 2026-07-29, Pip): gates are written name-first with a 1-6
 - `docs/GLOSSARY.md:471` -- ## Observed inconsistency (flagged, not ruled)
 - `docs/HANDOVER_2026-08-06_EVENING.md:43` -- He ruled on it Tuesday and it was never built. B1 and B2 refer to the proposals in
@@ -148,6 +149,8 @@ is not.
 - `docs/ISSUE_TRIAGE_2026-08-06.md:182` -- F3 event injection. Pip ruled the fix is to REMOVE the debug event-trigger, not
 - `docs/ISSUE_TRIAGE_2026-08-06.md:73` -- historical patch notes and the dev overlay, both ruled legitimate by that
 - `docs/LEADERBOARD_WEBSITE_INTEGRATION.md:213` -- Pip ruled on 2026-08-08 that the board should carry **both** an Operator (the
+- `docs/LEDGER_ROW_PROTOCOL_2026-08-21.md:25` -- ## Amendment 1 -- ROLL, NOT BLESS-IN-PLACE (ruled 2026-07-31)
+- `docs/LEDGER_ROW_PROTOCOL_2026-08-21.md:50` -- thing being ruled out.
 - `docs/NUMBER_FORMATS.md:91` -- 1. **Behaviour** -- the formatters produce the formats ruled above, for the exact
 - `docs/POSTMORTEM_2026-08-07_CAPTURE.md:330` -- Filed during the cycle as **#1165**, and ruled in `coordination#35` where
 - `docs/POSTMORTEM_SATURDAY_ITEMS_2026-08-08.md:52` -- ### Ruled by Pip, 2026-08-08 ~01:00
