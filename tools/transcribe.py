@@ -39,6 +39,29 @@ docstring said 0.5-1.5x realtime; that was a guess and it was wrong by about
 4x in the pessimistic direction. Drop to `base.en` on the laptop only if it is
 actually slow there -- measure before assuming.
 
+DO NOT REACH FOR A BIGGER MODEL WHEN A TRANSCRIPT READS BADLY
+--------------------------------------------------------------
+This tool has NO voice-activity detection, and the estate has already measured
+what that costs. `coordination/PROTOCOL_UPDATE_2026-08-10_transcription-vad.md`,
+on a real memo with a 58-second verified-silent stretch:
+
+    with `large-v3 --beam 5` and no VAD, the instruction "merge PR295"
+    transcribed as "merge PR 219. 5" -- not dropped, REWRITTEN into a plausible,
+    differently-numbered, still-actionable instruction. `small.en` got it right.
+
+    "a stronger language model fills dead air more convincingly. Model size is
+     not monotonic in trustworthiness."
+
+So `small.en` is the default here deliberately, and an earlier version of this
+seat's advice -- "switch to medium.en if the room track reads rough" -- was
+backwards and is withdrawn.
+
+For anything with real silence in it (room mics, long pauses), prefer
+`coordination/tools/capture/capture_transcribe.py`, which runs faster-whisper
+with VAD on by default. See
+`coordination/PROTOCOL_UPDATE_2026-08-21_two-transcription-tools.md` for the
+open question of whether this tool should keep transcribing at all.
+
 THE JOIN IS THE POINT
 ---------------------
 Audio alone is a transcript. Audio plus `--align-log` is a record of what was
