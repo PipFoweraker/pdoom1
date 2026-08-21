@@ -13,7 +13,7 @@ Horizon: **2026-08-09** (the prose scan reports dates at or after this; roll it
 forward deliberately in `COMMITMENTS.md`, never automatically -- a clock-reading
 generator goes stale overnight and trains people to ignore the check).
 
-**51 declared, 4 release-train, 139 UNPARSED, 0 malformed.**
+**51 declared, 4 release-train, 140 UNPARSED, 0 malformed.**
 
 ## Declared commitments
 
@@ -341,6 +341,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-21 | `scripts/run_godot_tests.py` | 120 | # raises FileNotFoundError -- measured 2026-08-21: 'godot' -> WinError 2 while |
 | 2026-08-21 | `tools/check_ladder_bump.py` | 327 | THE HOLE THIS CLOSES (measured 2026-08-21). Direction 1 below accepts any |
 | 2026-08-21 | `tools/check_ladder_bump.py` | 402 | # is a DEBT, and until 2026-08-21 it printed identically to `none`. |
+| 2026-08-21 | `tools/reset_player_state.py` | 158 | Until 2026-08-21 this function skipped any destination that already existed |
 | 2026-08-24 | `docs/design/LEAGUE_CUTOVER_PLAYBOOK.md` | 41 | at L4, and is pinned for reflective review on/after 2026-08-24. |
 | 2026-08-24 | `pdoom1#808` | 0 | Reflective review (on/after 2026-08-24): release/league cycle nomenclature + cadence |
 | 2026-08-24 | `pdoom1#811` | 0 | Workshop 3 (mechanics) -- Mon 07-27 W-3a / Tue 07-28 build / Wed 07-29 W-3b-W-4: crisp parts, brutal decisions |
