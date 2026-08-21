@@ -3536,6 +3536,29 @@ DESCRIPTION:needs a declaration -- generate_rulings.py (unparsed) -- unown
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:799f207d75fe960f@commitments.pdoom1
+DTSTAMP:20260821T000000Z
+DTSTART;VALUE=DATE:20260821
+DTEND;VALUE=DATE:20260822
+SUMMARY:[UNPARSED] needs a declaration -- reset_player_state.py
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/reset_player_sta
+ te.py:158. 1 line(s) in tools/reset_player_state.py mention this date and
+  no COMMITMENT: declaration accounts for it. Either add a declaration or 
+ the date is incidental. First line: Until 2026-08-21 this function skippe
+ d any destination that already existed -- Generated from tracked sources 
+ by scripts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- reset_player_state.py (unparsed) -- uno
+ wned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:1f1ca8efe061828d@commitments.pdoom1
 DTSTAMP:20260821T000000Z
 DTSTART;VALUE=DATE:20260821
