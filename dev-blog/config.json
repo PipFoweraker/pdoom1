@@ -1,7 +1,7 @@
 {
   "blog": {
     "title": "P(Doom) Development Blog",
-    "description": "Development progress updates for the P(Doom) pygame strategy game",
+    "description": "Development notes for P(Doom)1, the Godot AI-safety strategy game. Entries from the retired pygame era are archived under dev-blog/archive/.",
     "base_url": "/dev-blog",
     "author": "P(Doom) Development Team",
     "language": "en"

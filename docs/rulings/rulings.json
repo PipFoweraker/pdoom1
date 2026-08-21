@@ -526,6 +526,10 @@
       "text": "> **SUPERSEDED, not merely \"outdated in spirit\", as of 2026-08-13.** Pip ruled"
     },
     {
+      "source": "docs/DEV_BLOG_DECISION_2026-08-21.md:155",
+      "text": "Pip ruled **option A**: archive the pygame-era entries, keep the 2026-07-22 post."
+    },
+    {
       "source": "docs/GLOSSARY.md:272",
       "text": "Naming (ruled 2026-07-29, Pip): gates are written name-first with a 1-6"
     },
@@ -564,6 +568,14 @@
     {
       "source": "docs/LEADERBOARD_WEBSITE_INTEGRATION.md:213",
       "text": "Pip ruled on 2026-08-08 that the board should carry **both** an Operator (the"
+    },
+    {
+      "source": "docs/LEDGER_ROW_PROTOCOL_2026-08-21.md:25",
+      "text": "## Amendment 1 -- ROLL, NOT BLESS-IN-PLACE (ruled 2026-07-31)"
+    },
+    {
+      "source": "docs/LEDGER_ROW_PROTOCOL_2026-08-21.md:50",
+      "text": "thing being ruled out."
     },
     {
       "source": "docs/NUMBER_FORMATS.md:91",

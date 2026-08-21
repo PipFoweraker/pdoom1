@@ -340,7 +340,7 @@ DTSTART;VALUE=DATE:20260810
 DTEND;VALUE=DATE:20260811
 SUMMARY:[TASK] Book the half-day audit-mechanics workshop\, target window 
  opens
-DESCRIPTION:Owner: pip. Kind: task. Source: docs/rulings/RULINGS.md:178. p
+DESCRIPTION:Owner: pip. Kind: task. Source: docs/rulings/RULINGS.md:181. p
  doom1#984\, ruled 2026-07-27 18:11. Scheduled to precede the 2026-08-31 f
   -- Generated from tracked sources by scripts/generate_commitment_calenda
  r.py\; regenerate to update.
@@ -748,7 +748,7 @@ DTSTART;VALUE=DATE:20260812
 DTEND;VALUE=DATE:20260813
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:288. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:291. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `godot/scripts/core/capacity.gd:5` -- ## Ru
  led 2026-08-12 (coordination/DESIGN_2026-08-12_interrupt-resolution-varia
@@ -1575,7 +1575,7 @@ DTSTART;VALUE=DATE:20260814
 DTEND;VALUE=DATE:20260815
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:305. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:308. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `godot/tests/unit/simulation/test_events.gd
  :50` -- ## THE RATCHET WAS DELIBERATELY LOOSENED -- 2026-08-14\, ruled by
@@ -3056,7 +3056,7 @@ DTSTART;VALUE=DATE:20260820
 DTEND;VALUE=DATE:20260821
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:161. 3 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:164. 3 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `docs/art/A4_COLLAPSE_2026-08-20.md:3` -- *
  *2026-08-20\, `pdoom1` seat on New-Bort.** Ruled by Pip: canonicalise on 
@@ -3372,6 +3372,55 @@ ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- CLAIM_AUDIT_2026-08-21.md (unparsed) --
   unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:29b404c5097488e1@commitments.pdoom1
+DTSTAMP:20260821T000000Z
+DTSTART;VALUE=DATE:20260821
+DTEND;VALUE=DATE:20260822
+SUMMARY:[UNPARSED] needs a declaration -- DEV_BLOG_DECISION_2026-08-21.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/DEV_BLOG_DECISION
+ _2026-08-21.md:3. 3 line(s) in docs/DEV_BLOG_DECISION_2026-08-21.md menti
+ on this date and no COMMITMENT: declaration accounts for it. Either add a
+  declaration or the date is incidental. First line: Written 2026-08-21 fo
+ r Pip. **One decision is needed\; everything else follows -- Generated fr
+ om tracked sources by scripts/generate_commitment_calendar.py\; regenerat
+ e to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- DEV_BLOG_DECISION_2026-08-21.md (unpars
+ ed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:4e1f21f9077551a5@commitments.pdoom1
+DTSTAMP:20260821T000000Z
+DTSTART;VALUE=DATE:20260821
+DTEND;VALUE=DATE:20260822
+SUMMARY:[UNPARSED] needs a declaration -- LEDGER_ROW_PROTOCOL_2026-08-21.m
+ d
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/LEDGER_ROW_PROTOC
+ OL_2026-08-21.md:1. 3 line(s) in docs/LEDGER_ROW_PROTOCOL_2026-08-21.md m
+ ention this date and no COMMITMENT: declaration accounts for it. Either a
+ dd a declaration or the date is incidental. First line: # Ledger row: pro
+ tocol\, etiquette\, procedure -- as at 2026-08-21 -- Generated from track
+ ed sources by scripts/generate_commitment_calendar.py\; regenerate to upd
+ ate.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- LEDGER_ROW_PROTOCOL_2026-08-21.md (unpa
+ rsed) -- unowned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
@@ -3788,7 +3837,7 @@ DTSTART;VALUE=DATE:20260831
 DTEND;VALUE=DATE:20260901
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:296. 2 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:299. 2 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `godot/scripts/core/researcher.gd:131` -- #
   SEAM (ruled 2026-07-27\, review-by 2026-08-31): AUDITS ground-truth repo
@@ -4657,6 +4706,49 @@ BEGIN:VALARM
 ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:Release train: v0.18 ships -- (unnamed) (release) -- pip
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:33f008ff962128d7@commitments.pdoom1
+DTSTAMP:20261219T000000Z
+DTSTART;VALUE=DATE:20261219
+DTEND;VALUE=DATE:20261220
+SUMMARY:[REVIEW] Read the 49 archived pygame-era dev-blog entries end to e
+ nd and write the retrospective post: what the pygame era actually cost\, 
+ what survived the port to Godot\, and what the agent-written progress rep
+ orts got wrong about their own importance
+DESCRIPTION:Owner: pip. Kind: review. Source: docs/DEV_BLOG_DECISION_2026-
+ 08-21.md:174. archived 2026-08-21 per Pip's ask\; the value is in reading
+  them as one sequence\, which nobody has ever done. -- Generated from tra
+ cked sources by scripts/generate_commitment_calendar.py\; regenerate to u
+ pdate.
+CATEGORIES:REVIEW
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT328H
+DESCRIPTION:Read the 49 archived pygame-era dev-blog entries end to end an
+ d write the retrospective post: what the pygame era actually cost\, what 
+ survived the port to Godot\, and what the agent-written progress reports 
+ got wrong about their own importance (review) -- pip
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT64H
+DESCRIPTION:Read the 49 archived pygame-era dev-blog entries end to end an
+ d write the retrospective post: what the pygame era actually cost\, what 
+ survived the port to Godot\, and what the agent-written progress reports 
+ got wrong about their own importance (review) -- pip
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:Read the 49 archived pygame-era dev-blog entries end to end an
+ d write the retrospective post: what the pygame era actually cost\, what 
+ survived the port to Godot\, and what the agent-written progress reports 
+ got wrong about their own importance (review) -- pip
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
