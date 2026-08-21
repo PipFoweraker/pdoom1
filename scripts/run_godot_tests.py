@@ -109,11 +109,27 @@ def _isolated_env():
 ISOLATED_ENV = _isolated_env()
 
 # Godot executable paths (try to find Godot)
+#
+# PDOOM1_GODOT wins when set, because the hardcoded list below is a guess about
+# one machine and it went stale: after the PC migration Godot lived at
+# D:/Local_Code/_tools/Godot/, not in Program Files, and this runner reported
+# "Could not find Godot executable" with no way to tell it otherwise.
+#
+# The bare "godot" entry is NOT a working fallback on Windows. subprocess calls
+# CreateProcess, which does not apply PATHEXT, so an extensionless shim on PATH
+# raises FileNotFoundError -- measured 2026-08-21: 'godot' -> WinError 2 while
+# 'godot.bat' -> 0. It stays only because it does work on Linux/macOS.
 GODOT_PATHS = [
-    "C:/Program Files/Godot/Godot_v4.5.1-stable_win64.exe",
-    "godot",  # System PATH
-    "/usr/bin/godot",
-    "/usr/local/bin/godot",
+    p
+    for p in (
+        os.environ.get("PDOOM1_GODOT"),
+        "C:/Program Files/Godot/Godot_v4.5.1-stable_win64.exe",
+        "godot",  # System PATH (POSIX only -- see note above)
+        "godot.bat",  # Windows PATH shim
+        "/usr/bin/godot",
+        "/usr/local/bin/godot",
+    )
+    if p
 ]
 
 # Mode -> (res:// dir, human name). Fast unit gate is tests/unit NON-recursive;
