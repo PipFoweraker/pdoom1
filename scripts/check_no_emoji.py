@@ -25,6 +25,7 @@ Usage:
     python scripts/check_no_emoji.py          # scan the tree, exit 1 on violations
 """
 
+import json
 import re
 import sys
 from pathlib import Path
@@ -151,15 +152,85 @@ def scan_tscn_authored_ascii(base: Path, suffix: str, exclude: set):
                     yield rel, ln, col, ord(ch)
 
 
+def scan_json_decoded_ascii(base: Path):
+    r"""Yield (relpath, line, col, cp) for non-ASCII in a JSON file's DECODED values.
+
+    WHY THIS EXISTS, AND WHY scan_ascii IS NOT ENOUGH
+    -------------------------------------------------
+    scan_ascii reads the file text and rejects any codepoint above U+007F. That
+    is exactly right for .gd, where the source and the string are the same thing.
+    It is blind on .json, because JSON escapes non-ASCII as \uXXXX -- six ASCII
+    characters. A file can therefore be byte-for-byte pure ASCII while every
+    string a player reads is not.
+
+    Measured 2026-08-21 (#1163): godot/data/historical_events.json carried
+    "UK AI Safety Institute \u00e2\u2020\u2019 AI Security Institute" and one
+    sibling. Those three codepoints are U+00E2 U+2020 U+2019 -- the cp1252 misread
+    of UTF-8 E2 86 92, i.e. a mangled U+2192 RIGHTWARDS ARROW. Two titles shipped
+    to players as mojibake for weeks, and THIS SCRIPT PRINTED
+    "OK: godot .gd/.json are pure ASCII" on every run, because at the byte level
+    they were.
+
+    The line/col reported is the line the offending escape appears on in the
+    source file, found by searching for the literal escape, so the message points
+    somewhere a human can edit. Where that fails the value path is reported at
+    line 0, which is honest about not knowing rather than guessing a location.
+    """
+    for p in _iter(base, ".json"):
+        rel = _rel(p)
+        try:
+            text = p.read_text(encoding="utf-8")
+            doc = json.loads(text)
+        except (UnicodeDecodeError, OSError, ValueError):
+            # A JSON file that will not parse is a different guard's problem; this
+            # one must not swallow it, but it also must not claim a finding it
+            # cannot substantiate.
+            continue
+
+        lines = text.splitlines()
+
+        def locate(ch):
+            needle = "\\u%04x" % ord(ch)  # the 6-char escape, not the character
+            for ln, line in enumerate(lines, 1):
+                col = line.lower().find(needle.lower())
+                if col >= 0:
+                    return ln, col + 1
+            return 0, 0
+
+        def walk(node):
+            if isinstance(node, dict):
+                for k, v in node.items():
+                    walk(k)
+                    walk(v)
+            elif isinstance(node, list):
+                for v in node:
+                    walk(v)
+            elif isinstance(node, str):
+                for ch in node:
+                    if ord(ch) > 0x7F:
+                        ln, col = locate(ch)
+                        yield_target.append((rel, ln, col, ord(ch)))
+
+        yield_target = []
+        walk(doc)
+        for item in yield_target:
+            yield item
+
+
 def main() -> int:
     violations = []
     violations += list(scan_ascii(GODOT, ".gd", skip_addons=True))
     violations += list(scan_ascii(GODOT / "data", ".json", skip_addons=False))
+    # The escaped half: pure-ASCII bytes can still decode to non-ASCII strings.
+    violations += list(scan_json_decoded_ascii(GODOT / "data"))
     violations += list(scan_emoji(GODOT, ".tscn", TSCN_EXCLUDE))
     violations += list(scan_tscn_authored_ascii(GODOT, ".tscn", TSCN_EXCLUDE))
 
     if not violations:
-        print("[no-emoji] OK: godot .gd/.json are pure ASCII, .tscn are emoji-free")
+        print(
+            "[no-emoji] OK: godot .gd/.json are pure ASCII in bytes and in "
+            "decoded JSON values; .tscn are emoji-free"
+        )
         return 0
 
     print("[no-emoji] BLOCKING: non-ASCII / emoji found (issue #744):")
