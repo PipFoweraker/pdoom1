@@ -1,24 +1,30 @@
 # Playtest sheet -- 2026-08-21, Wanasai, first session
 
-**Window:** ~0620-0700, she leaves ~0700. **Capture:** OBS.
+**Capture:** OBS. **Superseded once already** -- the first version of this sheet
+pointed at the v0.14.1 binary because Godot was not installed on this machine at
+0550. It is installed now, so she gets the real thing.
 
-**Build: the published v0.14.1 release binary.** NOT current `main`.
-Godot is not installed on this machine (see "What went wrong" below), so
-running from source was not available in the window. She is playing what a real
-player downloads today, which is a defensible playtest target in its own right
--- but it is 81 commits behind `main` and does NOT include the doom-sink fix
-(#1233) or the 28 new events (#1230).
+**Build: the v0.14.2 release candidate**, cut from `01d40168` on branch
+`release/v0.14.2-L5`. This is the build we intend to ship tonight, including the
+doom-sink fix (#1233) and the 28 new events (#1230).
 
-Her score will post to **`(weekly-2026-w32, L4)`** -- the seed pinned inside
-that build. `main` says `w33`. Neither is the board we are forking to today, so
-her run cannot dirty the new board.
+**This session IS the release-build playtest.** `build_release.py` proved the
+pack is fresh, which proves the right BITS shipped -- it does not prove the game
+runs. Nobody has launched this binary. Play -> lose -> leaderboard on a real
+machine is the ship gate, and it has not been passed. If she hits a launch
+blocker, the tag does not go out.
+
+Her score posts to **`(weekly-2026-w33, L5)`** -- the board this release opens.
+That is NOT a throwaway: it is the board the league will run on. If you would
+rather her first fumbling run not be entry #1 on the new board, decline the
+upload prompt.
 
 ---
 
 ## LAUNCH -- the absolute path
 
 ```
-D:\Local_Code\_builds\pdoom1-v0.14.1\PDoom.exe
+D:\Local_Code\pdoom1\builds\windows_desktop\PDoom.exe
 ```
 
 Double-click it. **Windows SmartScreen will warn** ("Windows protected your
@@ -28,8 +34,12 @@ first 60 seconds on a security dialog -- that is not the confusion we are trying
 to measure.
 
 Verified present at that path: `PDoom.exe` (PE32+ x86-64, 96.6 MB),
-`PDoom.pck` (61.0 MB), `steam_api64.dll`, `libgodotsteam...dll`. All four must
+`PDoom.pck` (62.9 MB), `steam_api64.dll`, `libgodotsteam...dll`. All four must
 stay in the same folder.
+
+Fallback if it will not start: `D:\Local_Code\_builds\pdoom1-v0.14.1\PDoom.exe`
+is the last published release and is known to be a valid binary. Falling back is
+itself a finding -- record it.
 
 ---
 
@@ -77,12 +87,19 @@ watch the recording afterwards.
 
 ## Timeline
 
-| Time | What |
+Relative to sitting down, not clock time -- the original 0620 slot has already
+moved once.
+
+| Offset | What |
 |---|---|
-| 0620 | OBS rolling, mic confirmed, SmartScreen already cleared. Hand over the mouse. |
-| 0620-0650 | She plays. Observer silent, taking timestamped notes. |
-| 0650-0658 | Debrief (below). Recording still rolling. |
-| 0658 | Stop capture. Thank her properly. |
+| T-5 min | OBS rolling, mic confirmed, SmartScreen already cleared. Hand over the mouse. |
+| T+0 to T+30 | She plays. Observer silent, taking timestamped notes. |
+| T+30 to T+38 | Debrief (below). Recording still rolling. |
+| T+38 | Stop capture. Thank her properly. |
+
+Thirty minutes of play is enough. #1210 is about the first ten turns; if she is
+still in them at T+30, that is the finding and there is no need to hurry her out
+of it.
 
 ---
 
@@ -91,9 +108,8 @@ watch the recording afterwards.
 These are open issues. Watch whether they bite; do not raise them. If she never
 notices one, that is a finding too.
 
-Caveat: several of these were filed against `main`, and she is on v0.14.1. A
-finding here is still real (players are on v0.14.1); an ABSENCE proves nothing
-about `main`, and vice versa.
+These were filed against `main` and she is now ON that code, so both a hit and a
+clean miss are real evidence about what ships tonight.
 
 | # | Issue | What to watch for |
 |---|---|---|
@@ -132,8 +148,8 @@ Do not ask "did you like it". It buys nothing and she will be polite.
 - OBS file path: `______________________________`
 - File findings as issues the same morning, while the recording is fresh, and
   link each to its timestamp. A finding without a timestamp is an opinion.
-- Tag every issue with `found-on: v0.14.1` -- otherwise a fix lands on `main`
-  and nobody can tell whether it was already fixed there.
+- Tag every issue `found-on: v0.14.2-rc (01d40168)`. This is a pre-tag build, so
+  a finding here can still be fixed BEFORE the release rather than after it.
 - Repeats from #1202 or #1210 are worth more than novel findings: a repeat means
   the earlier fix did not take.
 - She is an art reviewer with 197 verdicts in this repo, so she has seen the
@@ -144,16 +160,26 @@ Do not ask "did you like it". It buys nothing and she will be polite.
 
 ## What went wrong getting here (for the record)
 
+All RESOLVED as of 0800; kept because the cause is still in `CLAUDE.md`.
+
 At 0550 the class-cache guard reported every `class_name` MISSING in this
-checkout. Repairing it needs Godot, and **Godot is not installed on this
-machine** -- not at `C:/Program Files/Godot/` where `CLAUDE.md` says it is, and
-nowhere on C: or D: within four directory levels. `godot/.godot/` has never
-existed here. `make run` cannot work on this box.
+checkout, and **Godot was not installed on this machine at all** -- not at
+`C:/Program Files/Godot/` where `CLAUDE.md` says it is, and nowhere on C: or D:
+within four directory levels. `godot/.godot/` had never existed here. A bare
+`make run` would have handed a first-time playtester the 2026-08-13 failure a
+second time: background art, doom readout, phase stuck on "starting up", no
+actions, which reads as "still loading".
 
 `CLAUDE.md` still carries the old PC's paths throughout (`C:/Program
 Files/Godot/...`, `C:/Users/Pip/AppData/...`, `G:/tmp/...`); this machine is
 `D:\Local_Code`, user `gday`. `docs/MIGRATION_TO_NEW_PC.md` exists, so the
-migration happened and the agent cheat-sheet was never updated to match.
+migration happened and the agent cheat-sheet was never updated to match. **Until
+that is fixed the next agent repeats this.**
+
+Fixed by: installing Godot 4.5.1 to `D:/Local_Code/_tools/Godot/` plus export
+templates; a `PDOOM1_GODOT` override in `run_godot_tests.py` (its bare `godot`
+PATH entry can never resolve on Windows -- `subprocess` uses `CreateProcess`,
+which ignores PATHEXT).
 
 **Consequence beyond this session: `tools/build_release.py` cannot run here
 either** (it needs Godot plus export templates), so today's v0.14.2 build is

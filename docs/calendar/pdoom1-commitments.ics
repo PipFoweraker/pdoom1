@@ -893,6 +893,29 @@ DESCRIPTION:needs a declaration -- CLAIM_AUDIT_2026-08-06.md (unparsed) --
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:09c090c9a21f755c@commitments.pdoom1
+DTSTAMP:20260813T000000Z
+DTSTART;VALUE=DATE:20260813
+DTEND;VALUE=DATE:20260814
+SUMMARY:[UNPARSED] needs a declaration -- CLAIM_AUDIT_2026-08-21.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/CLAIM_AUDIT_2026-
+ 08-21.md:1. 3 line(s) in docs/CLAIM_AUDIT_2026-08-21.md mention this date
+  and no COMMITMENT: declaration accounts for it. Either add a declaration
+  or the date is incidental. First line: # Claim audit -- pdoom1's own out
+ put\, week of 2026-08-13 -- Generated from tracked sources by scripts/gen
+ erate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- CLAIM_AUDIT_2026-08-21.md (unparsed) --
+  unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:b8d46314dfce5289@commitments.pdoom1
 DTSTAMP:20260813T000000Z
 DTSTART;VALUE=DATE:20260813
@@ -983,6 +1006,30 @@ BEGIN:VALARM
 ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- NOMENCLATURE.md (unparsed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:f15d637398fbbe6a@commitments.pdoom1
+DTSTAMP:20260813T000000Z
+DTSTART;VALUE=DATE:20260813
+DTEND;VALUE=DATE:20260814
+SUMMARY:[UNPARSED] needs a declaration -- PLAYTEST_2026-08-21_WANASAI.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/PLAYTEST_2026-08-
+ 21_WANASAI.md:169. 1 line(s) in docs/PLAYTEST_2026-08-21_WANASAI.md menti
+ on this date and no COMMITMENT: declaration accounts for it. Either add a
+  declaration or the date is incidental. First line: `make run` would have
+  handed a first-time playtester the 2026-08-13 failure a -- Generated fro
+ m tracked sources by scripts/generate_commitment_calendar.py\; regenerate
+  to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- PLAYTEST_2026-08-21_WANASAI.md (unparse
+ d) -- unowned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
@@ -2935,6 +2982,29 @@ DESCRIPTION:needs a declaration -- A4_COLLAPSE_2026-08-20.md (unparsed) --
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:07b8e6847a6f431b@commitments.pdoom1
+DTSTAMP:20260820T000000Z
+DTSTART;VALUE=DATE:20260820
+DTEND;VALUE=DATE:20260821
+SUMMARY:[UNPARSED] needs a declaration -- CLAIM_AUDIT_2026-08-21.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/CLAIM_AUDIT_2026-
+ 08-21.md:12. 1 line(s) in docs/CLAIM_AUDIT_2026-08-21.md mention this dat
+ e and no COMMITMENT: declaration accounts for it. Either add a declaratio
+ n or the date is incidental. First line: Declared in the commitment calen
+ dar as a `falsifier` dated 2026-08-20\, owner -- Generated from tracked s
+ ources by scripts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- CLAIM_AUDIT_2026-08-21.md (unparsed) --
+  unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:8f4f18e463c483cb@commitments.pdoom1
 DTSTAMP:20260820T000000Z
 DTSTART;VALUE=DATE:20260820
@@ -3282,6 +3352,53 @@ DESCRIPTION:P6 falsifier: read git reflog in the main checkout. Any agent-
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:3efb8388724bb765@commitments.pdoom1
+DTSTAMP:20260821T000000Z
+DTSTART;VALUE=DATE:20260821
+DTEND;VALUE=DATE:20260822
+SUMMARY:[UNPARSED] needs a declaration -- CLAIM_AUDIT_2026-08-21.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/CLAIM_AUDIT_2026-
+ 08-21.md:14. 3 line(s) in docs/CLAIM_AUDIT_2026-08-21.md mention this dat
+ e and no COMMITMENT: declaration accounts for it. Either add a declaratio
+ n or the date is incidental. First line: overdue** when this ran (2026-08
+ -21\, ~10:15-11:00 AEST). -- Generated from tracked sources by scripts/ge
+ nerate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- CLAIM_AUDIT_2026-08-21.md (unparsed) --
+  unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:7cd66540006de577@commitments.pdoom1
+DTSTAMP:20260821T000000Z
+DTSTART;VALUE=DATE:20260821
+DTEND;VALUE=DATE:20260822
+SUMMARY:[UNPARSED] needs a declaration -- PDOOM_DATA_CONTRACT_BRIEF.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/PDOOM_DATA_CONTRA
+ CT_BRIEF.md:14. 1 line(s) in docs/PDOOM_DATA_CONTRACT_BRIEF.md mention th
+ is date and no COMMITMENT: declaration accounts for it. Either add a decl
+ aration or the date is incidental. First line: untracked from 2026-07-25 
+ to 2026-08-21 and already contained one struck-through -- Generated from 
+ tracked sources by scripts/generate_commitment_calendar.py\; regenerate t
+ o update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- PDOOM_DATA_CONTRACT_BRIEF.md (unparsed)
+  -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:3552f41cd5eb0487@commitments.pdoom1
 DTSTAMP:20260821T000000Z
 DTSTART;VALUE=DATE:20260821
@@ -3373,6 +3490,29 @@ DESCRIPTION:needs a declaration -- UNDECLARED_TRIAGE.md (unparsed) -- unow
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:dd580132135e5dc0@commitments.pdoom1
+DTSTAMP:20260821T000000Z
+DTSTART;VALUE=DATE:20260821
+DTEND;VALUE=DATE:20260822
+SUMMARY:[UNPARSED] needs a declaration -- check_ladder_bump.py
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/check_ladder_bum
+ p.py:327. 2 line(s) in tools/check_ladder_bump.py mention this date and n
+ o COMMITMENT: declaration accounts for it. Either add a declaration or th
+ e date is incidental. First line: THE HOLE THIS CLOSES (measured 2026-08-
+ 21). Direction 1 below accepts any -- Generated from tracked sources by s
+ cripts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- check_ladder_bump.py (unparsed) -- unow
+ ned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:16ef210459c39ade@commitments.pdoom1
 DTSTAMP:20260821T000000Z
 DTSTART;VALUE=DATE:20260821
@@ -3393,6 +3533,29 @@ ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- generate_rulings.py (unparsed) -- unown
  ed
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:1f1ca8efe061828d@commitments.pdoom1
+DTSTAMP:20260821T000000Z
+DTSTART;VALUE=DATE:20260821
+DTEND;VALUE=DATE:20260822
+SUMMARY:[UNPARSED] needs a declaration -- run_godot_tests.py
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: scripts/run_godot_test
+ s.py:120. 1 line(s) in scripts/run_godot_tests.py mention this date and n
+ o COMMITMENT: declaration accounts for it. Either add a declaration or th
+ e date is incidental. First line: # raises FileNotFoundError -- measured 
+ 2026-08-21: 'godot' -> WinError 2 while -- Generated from tracked sources
+  by scripts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- run_godot_tests.py (unparsed) -- unowne
+ d
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
@@ -4067,6 +4230,37 @@ ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:Rektango 17:30 -- the weekly anchor\, a hard stop (cadence) --
   pip
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:993e36f8edd9cbfc@commitments.pdoom1
+DTSTAMP:20260918T000000Z
+DTSTART;VALUE=DATE:20260918
+DTEND;VALUE=DATE:20260919
+SUMMARY:[FALSIFIER] Extend this claim audit to prose documents and PR bodi
+ es to reach n comparable to 68\, or retire the percentage and keep only t
+ he origin-of-the-number test
+DESCRIPTION:Owner: pdoom1-seat. Kind: falsifier. Source: docs/CLAIM_AUDIT_
+ 2026-08-21.md:253. the 2026-08-21 run was n=7 and could not decide P3 eit
+ her way. -- Generated from tracked sources by scripts/generate_commitment
+ _calendar.py\; regenerate to update.
+CATEGORIES:FALSIFIER
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT16H
+DESCRIPTION:Extend this claim audit to prose documents and PR bodies to re
+ ach n comparable to 68\, or retire the percentage and keep only the origi
+ n-of-the-number test (falsifier) -- pdoom1-seat
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:Extend this claim audit to prose documents and PR bodies to re
+ ach n comparable to 68\, or retire the percentage and keep only the origi
+ n-of-the-number test (falsifier) -- pdoom1-seat
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT

@@ -13,7 +13,7 @@ Horizon: **2026-08-09** (the prose scan reports dates at or after this; roll it
 forward deliberately in `COMMITMENTS.md`, never automatically -- a clock-reading
 generator goes stale overnight and trains people to ignore the check).
 
-**50 declared, 4 release-train, 132 UNPARSED, 0 malformed.**
+**51 declared, 4 release-train, 139 UNPARSED, 0 malformed.**
 
 ## Declared commitments
 
@@ -59,6 +59,7 @@ generator goes stale overnight and trains people to ignore the check).
 | 2026-09-17 | cadence | Thursday dev (the working half of the cadence) | pip | 0 | `docs/calendar/COMMITMENTS.md:172` |
 | 2026-09-18 | cadence | Friday push -- an ordinary patch day, epoch-breaking changes only if player experience demands it | pip | 0 | `docs/calendar/COMMITMENTS.md:174` |
 | 2026-09-18 | cadence | Rektango 17:30 -- the weekly anchor, a hard stop | pip | 0 | `docs/calendar/COMMITMENTS.md:176` |
+| 2026-09-18 | falsifier | Extend this claim audit to prose documents and PR bodies to reach n comparable to 68, or retire the percentage and keep only the origin-of-the-number test | pdoom1-seat | 1, 0 | `docs/CLAIM_AUDIT_2026-08-21.md:253` |
 | 2026-09-24 | cadence | Thursday dev (the working half of the cadence) | pip | 0 | `docs/calendar/COMMITMENTS.md:172` |
 | 2026-09-25 | cadence | Friday push -- an ordinary patch day, epoch-breaking changes only if player experience demands it | pip | 0 | `docs/calendar/COMMITMENTS.md:174` |
 | 2026-09-25 | cadence | Rektango 17:30 -- the weekly anchor, a hard stop | pip | 0 | `docs/calendar/COMMITMENTS.md:176` |
@@ -146,7 +147,11 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-13 | `coordination#32` | 0 | Asset provenance is UNMET, not at-risk: the Manifund obligation has no capture mechanism in pdoom1 -- blocking party pdoom1, return date 2026-08-13 |
 | 2026-08-13 | `coordination#35` | 0 | Pip is out this evening through Rektango -- last synchronous window today. Post your asks ranked, or say you have none |
 | 2026-08-13 | `docs/CLAIM_AUDIT_2026-08-06.md` | 500 | audit against pdoom1's output for the week of 2026-08-13 finds a WRONG rate at or |
+| 2026-08-13 | `docs/CLAIM_AUDIT_2026-08-21.md` | 1 | # Claim audit -- pdoom1's own output, week of 2026-08-13 |
+| 2026-08-13 | `docs/CLAIM_AUDIT_2026-08-21.md` | 8 | > **2026-08-13**. A WRONG rate at or above today's 9 per cent means the rule did |
+| 2026-08-13 | `docs/CLAIM_AUDIT_2026-08-21.md` | 28 | **Corpus.** The 58 commits merged to `origin/main` between 2026-08-13 and |
 | 2026-08-13 | `docs/CONTENT_DISTRIBUTION_SYSTEM.md` | 10 | > **SUPERSEDED, not merely "outdated in spirit", as of 2026-08-13.** Pip ruled |
+| 2026-08-13 | `docs/PLAYTEST_2026-08-21_WANASAI.md` | 169 | `make run` would have handed a first-time playtester the 2026-08-13 failure a |
 | 2026-08-13 | `docs/POSTMORTEM_2026-08-07_CAPTURE.md` | 754 | \| P3 \| Every published measurement command ships a control line proving it can return the other answer \| Re-run the claim audit on the week of **2026- |
 | 2026-08-13 | `docs/art/NOMENCLATURE.md` | 27 | \| `shelf` \| `S` \| Right, but not now. \| Correct work with no current home -- the wrong brief, the wrong season, or a scene not yet written. Spends not |
 | 2026-08-13 | `docs/art/NOMENCLATURE.md` | 52 | Events predate the log only for decisions made before **2026-08-13**; a replay |
@@ -306,6 +311,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-20 | `CREDITS.md` | 56 | 2026-08-20, on his account of that conversation rather than a linkable artifact. |
 | 2026-08-20 | `CREDITS.md` | 109 | - [x] **Confirmed 2026-08-20.** Credited as "Pip Foweraker", with pipfoweraker.com |
 | 2026-08-20 | `CREDITS.md` | 123 | - [x] **Cats: RESOLVED 2026-08-20.** Each contributor's credit form was agreed |
+| 2026-08-20 | `docs/CLAIM_AUDIT_2026-08-21.md` | 12 | Declared in the commitment calendar as a `falsifier` dated 2026-08-20, owner |
 | 2026-08-20 | `docs/MIGRATION_TO_NEW_PC.md` | 3 | > Measured 2026-08-20 on the current machine. Sizes and file counts are real |
 | 2026-08-20 | `docs/MIGRATION_TO_NEW_PC.md` | 39 | \| `tools/print_doc.py` \| **SumatraPDF** (strongly preferred) \| The ONLY silent print path. Without it the tool falls back to Acrobat (steals focus) an |
 | 2026-08-20 | `docs/art/A4_COLLAPSE_2026-08-20.md` | 3 | **2026-08-20, `pdoom1` seat on New-Bort.** Ruled by Pip: canonicalise on the write |
@@ -319,6 +325,10 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-20 | `tools/art_review/collapse_px_keys.py` | 4 | ORPHANS A4. Ruled by Pip 2026-08-20: canonicalise on the write path AND collapse |
 | 2026-08-20 | `tools/assets/backfill_provenance.py` | 496 | # WHERE A CONTRIBUTOR'S NAME COMES FROM (2026-08-20) |
 | 2026-08-20 | `tools/print_doc.py` | 199 | # Acrobat's own /t switch, BEFORE the shell verb. Measured 2026-08-20 on |
+| 2026-08-21 | `docs/CLAIM_AUDIT_2026-08-21.md` | 14 | overdue** when this ran (2026-08-21, ~10:15-11:00 AEST). |
+| 2026-08-21 | `docs/CLAIM_AUDIT_2026-08-21.md` | 29 | 2026-08-21. Commit subjects are the headline surface this repo actually |
+| 2026-08-21 | `docs/CLAIM_AUDIT_2026-08-21.md` | 247 | Run 2026-08-21 ~10:15-11:00 AEST by the pdoom1 seat (Claude Opus 5) at Pip's |
+| 2026-08-21 | `docs/PDOOM_DATA_CONTRACT_BRIEF.md` | 14 | untracked from 2026-07-25 to 2026-08-21 and already contained one struck-through |
 | 2026-08-21 | `docs/PLAYTEST_2026-08-21_WANASAI.md` | 1 | # Playtest sheet -- 2026-08-21, Wanasai, first session |
 | 2026-08-21 | `docs/rulings/RULINGS.md` | 12 | Consolidated 2026-08-21. The estate had five places rulings were recorded; |
 | 2026-08-21 | `docs/rulings/RULINGS.md` | 311 | - `scripts/generate_rulings.py:164` -- # CONSOLIDATION, ruled by Pip 2026-08-21. |
@@ -328,6 +338,9 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-21 | `scripts/generate_rulings.py` | 164 | # CONSOLIDATION, ruled by Pip 2026-08-21. |
 | 2026-08-21 | `scripts/generate_rulings.py` | 166 | # An audit on 2026-08-21 found FIVE places rulings were being recorded, four of |
 | 2026-08-21 | `scripts/generate_rulings.py` | 395 | "Consolidated 2026-08-21. The estate had five places rulings were recorded;", |
+| 2026-08-21 | `scripts/run_godot_tests.py` | 120 | # raises FileNotFoundError -- measured 2026-08-21: 'godot' -> WinError 2 while |
+| 2026-08-21 | `tools/check_ladder_bump.py` | 327 | THE HOLE THIS CLOSES (measured 2026-08-21). Direction 1 below accepts any |
+| 2026-08-21 | `tools/check_ladder_bump.py` | 402 | # is a DEBT, and until 2026-08-21 it printed identically to `none`. |
 | 2026-08-24 | `docs/design/LEAGUE_CUTOVER_PLAYBOOK.md` | 41 | at L4, and is pinned for reflective review on/after 2026-08-24. |
 | 2026-08-24 | `pdoom1#808` | 0 | Reflective review (on/after 2026-08-24): release/league cycle nomenclature + cadence |
 | 2026-08-24 | `pdoom1#811` | 0 | Workshop 3 (mechanics) -- Mon 07-27 W-3a / Tue 07-28 build / Wed 07-29 W-3b-W-4: crisp parts, brutal decisions |

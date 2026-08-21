@@ -45,10 +45,20 @@ const MUSIC_TIER_BY_BAND := [0, 1, 1, 2, 2, 3, 4]
 ## menu") and the only candidate with a recorded positive verdict from him
 ## (tools/music/jukebox_notes2.json, "menu": "Transitioning to something like
 ## this is exceptional ... the attention-demands are diminished"). It is already
-## wired, imported and shipping as the MENU bed, so this costs no new asset.
-## CONSEQUENCE, deliberate: menu and calm-gameplay now share a bed, so launching
-## a run no longer changes the music. The run's musical arc is unchanged -- doom
-## still escalates through M1..M4 -- only the calm floor got calmer.
+## wired, imported and shipping as tier 0, so this costs no new asset.
+##
+## SUPERSEDED IN PART, 2026-08-21. This block used to end: "CONSEQUENCE,
+## deliberate: menu and calm-gameplay now share a bed, so launching a run no
+## longer changes the music." That is no longer true and the sentence is
+## replaced rather than deleted, because the 08-01 reasoning above still governs
+## TIER 0 and only the MENU half was reversed.
+## Pip, 2026-08-21: "let's make Out of Distribution the default track at main
+## menu and main menus, so people will notice it switching to the game tune when
+## they start" / "it's the one i like the most". The inaudible-launch property
+## was the cost of sharing a bed; he now wants the launch audible, so MENU moved
+## to out_of_distribution_trudge.ogg (see music_library) and tier 0 stayed put.
+## The run's musical arc is unchanged -- doom still escalates through M1..M4 --
+## and the calm floor is still checkpoint_saved.ogg.
 ## unit_tests_passing.ogg stays in the repo for the rework; restoring it is this
 ## one line.
 const MUSIC_TIER_STEMS := [
@@ -116,10 +126,15 @@ var _manual_pick_path: String = ""
 # Music tracks organized by context
 var music_library = {
 	MusicContext.MENU: [
-		# "Checkpoint saved" -- the respite cue (round-2 commission).
-		# Composed-audio only now; the last placeholder (PDOOMN ST1) and the
-		# 0.7 s beeyoowee UI blip are both out of the music rotation.
-		"res://assets/audio/music/checkpoint_saved.ogg"
+		# "Out of distribution" -- the papers-please trudge. Pip 2026-08-21:
+		# "let's make Out of Distribution the default track at main menu and
+		# main menus, so people will notice it switching to the game tune when
+		# they start" / "it's the one i like the most".
+		# This DELIBERATELY re-separates menu from gameplay: see the CONSEQUENCE
+		# note above MUSIC_TIER_STEMS. Starting a run is audible again.
+		# It is also the DEFEAT bed, so menu and game-over now share a track --
+		# accepted, because there is no spare composed bed to move DEFEAT to.
+		"res://assets/audio/music/out_of_distribution_trudge.ogg"
 	],
 	MusicContext.GAMEPLAY: [
 		# Legacy-playlist fallback (used only if the adaptive build fails):
@@ -509,8 +524,10 @@ func debug_force_tier(tier: int):
 ## Flat catalogue of every bed the game can play, for the overlay's one dropdown.
 ## Entries: {"label": String, "kind": "tier"|"track", "tier": int, "path": String}.
 ## Tiers come first (they are the adaptive score); the standalone context beds follow,
-## deduplicated against the tier stems -- checkpoint_saved.ogg is BOTH the MENU bed and
-## tier 0, and listing it twice would read as two different tracks.
+## deduplicated -- a bed used by two contexts would otherwise read as two different
+## tracks. Since 2026-08-21 the duplicate pair is MENU and DEFEAT (both
+## out_of_distribution_trudge.ogg); before that it was MENU and tier 0. The dedup is
+## generic, so which pair collides does not matter to this function.
 func audition_catalogue() -> Array:
 	var out: Array = []
 	var seen: Dictionary = {}
