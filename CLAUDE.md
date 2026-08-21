@@ -9,11 +9,31 @@ runtime -- the old Python bridge is gone). Python exists only for CI/tooling in
 `scripts/` and `tools/`. Windows dev machine; CI is Ubuntu.
 
 ## Run the game
-- **`make run`, not a bare `godot --path godot`.** Same launch, plus the
-  stale-class-cache pre-flight (~30ms; see the Tests section). The bare command
-  is what was typed on 2026-08-13 and it launched a silently broken build in
-  front of a first-time playtester. On Pip's machine Godot is
-  `C:/Program Files/Godot/Godot_v4.5.1-stable_win64.exe`.
+- **Never a bare `godot --path godot`.** That is what was typed on 2026-08-13
+  and it launched a silently broken build in front of a first-time playtester.
+  What matters is the **stale-class-cache pre-flight** (~30ms; see the Tests
+  section) running FIRST -- `make run` is one way to get it, not the point.
+- **`make` is NOT installed on this machine** (nor `mingw32-make`/`gmake`), so
+  `make run` fails with "command not found" and the tempting fallback is exactly
+  the broken command above. Use the two-step form, which is what `make run`
+  does anyway:
+
+      python tools/check_class_cache.py --repair
+      godot --path godot
+
+  Every `make X` in this file has the same shape -- read the target in
+  `Makefile` and run its lines directly. `python tools/check_agent_env.py`
+  fails if `make` reappears or disappears, so this note cannot silently rot.
+- On this machine Godot 4.5.1 is at
+  `D:/Local_Code/_tools/Godot/Godot_v4.5.1-stable_win64.exe` (console variant
+  alongside it), with `godot` / `godot.bat` shims on PATH. **Do not hardcode
+  that path** -- set `PDOOM1_GODOT` and let the tools resolve it;
+  `scripts/run_godot_tests.py` honours it. Its bare `godot` PATH entry cannot
+  work on Windows: `subprocess` calls `CreateProcess`, which ignores PATHEXT
+  (measured -- `'godot'` -> WinError 2, `'godot.bat'` -> 0), which is why the
+  `.bat` shim exists. `python tools/check_agent_env.py` verifies this and the
+  other environment claims below; it exists because they were ALL false on
+  2026-08-21 (#1259).
 
 ## Tests -- two tiers, don't conflate them
 - **Fast gate (this is what you run for scoped changes):**
@@ -115,16 +135,23 @@ runtime -- the old Python bridge is gone). Python exists only for CI/tooling in
 - **Every `godot --headless` run on this machine writes into
   `C:/Users/Pip/AppData/Roaming/Godot/app_userdata/P(Doom)/`.** The user data dir
   derives from `config/name` in `project.godot`, NOT from the worktree path, so
-  all worktrees share ONE profile. `scripts/run_godot_tests.py` inherits the
-  parent `APPDATA`.
+  all worktrees share ONE profile. **`scripts/run_godot_tests.py` no longer
+  inherits the parent `APPDATA`** -- since the 2026-08-07 incident it
+  self-isolates via `_isolated_env()` into a temp sandbox keyed by a hash of the
+  checkout path, so the test runner is safe by default and concurrent worktrees
+  do not collide. Manual isolation is still required for a BARE
+  `godot --headless` invocation, which is what the next bullet is about.
 - **What it cost:** a test run wrote **1,330 files** into that profile,
   **destroyed the 50-entry 2026-07-31 league board** (recovered from a backup),
   mutated `config.cfg`/`keybinds.cfg`/`theme.cfg`, and injected 23 synthetic rows
   into the LIVE `(weekly-2026-w32, L4)` board during a release playtest -- which
   then corrupted the evidence being used to diagnose a separate ship blocker.
   Filed as **#1070 on 2026-07-31 and left open for seven days** before it went off.
-- **Do this, every Godot invocation:**
-  `APPDATA=C:/Users/Pip/AppData/Local/Temp/claude/godot-iso-<lane> godot --headless ...`
+- **Do this, every BARE Godot invocation** (not needed for `run_godot_tests.py`):
+  `APPDATA="$LOCALAPPDATA/Temp/claude/godot-iso-<lane>" godot --headless ...`
+  Derive it from `%LOCALAPPDATA%`; do NOT hardcode a username. The old form named
+  `C:/Users/Pip/...`, which is unwritable on this machine (the account is `gday`)
+  -- a hardcoded home directory is exactly the claim that rotted (#1259).
   (PowerShell: set `$env:APPDATA` first.) **`XDG_DATA_HOME` does NOT work on
   Windows** -- proven, no effect. Verify by printing `OS.get_user_data_dir()` once
   and confirming it is not under `AppData/Roaming`.
@@ -171,7 +198,11 @@ runtime -- the old Python bridge is gone). Python exists only for CI/tooling in
   week initially edited the wrong checkout. Absolute paths from prompts go
   stale after worktree switches.
 - **Art over 1MB never goes in git** (no --no-verify, no cap raises):
-  docs/art/ART_MASTERS_POLICY.md. Masters staging: G:/tmp/pdoom1-art-masters/.
+  docs/art/ART_MASTERS_POLICY.md. **Masters staging is UNSET on this machine** --
+  the old `G:/tmp/pdoom1-art-masters/` was on the retired dev box and there is no
+  `G:` drive here. Put oversized masters anywhere OUTSIDE the repo, say where in
+  the PR, and push to the DreamObjects bucket (`tools/archive_masters.py --push`),
+  which is the durable location the policy actually names.
 - **Release tiers**: issues carry ship:tonight / ship:hotpatch-48h /
   ship:next-release labels; unlabeled = backlog. Monthly release train
   (docs/ROADMAP.md); release-branch model in issue #775.
@@ -274,8 +305,9 @@ genuine one-off exception `# scene-nav-allow`. Full story: `docs/LEADERBOARD_CRA
   cycles in v0.11.0).
 - **Godot packs the ENTIRE `godot/` tree into the `.pck` (referenced or not).**
   Keep retired/source assets OUTSIDE `godot/` (`art_source/` for <=1MB art kept
-  in git; masters archive `G:/tmp/pdoom1-art-masters/` for >1MB per
-  `docs/art/ART_MASTERS_POLICY.md`). Before moving/removing ANY asset,
+  in git; masters >1MB go to the DreamObjects bucket per
+  `docs/art/ART_MASTERS_POLICY.md` -- there is no local staging dir on this
+  machine). Before moving/removing ANY asset,
   `grep -rn` its `uid://` AND `res://` path across `godot/` -- scenes/resources
   reference by UID, not path, so a blind move silently breaks refs (issue #787:
   ~488MB of unreferenced hi-res icon variants were bloating the `.pck`).

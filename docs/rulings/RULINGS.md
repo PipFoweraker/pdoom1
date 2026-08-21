@@ -134,8 +134,8 @@ is not.
 - `CHANGELOG.md:164` -- was retimed to one-turn-one-month and the ruled promotions were applied (#1137),
 - `CHANGELOG.md:195` -- and the ruled promotions applied (#1137), against Pip's rulings of 2026-08-04.
 - `CHANGELOG.md:203` -- - **The last player-facing "AP" is gone**, and one number format is ruled across
-- `CLAUDE.md:195` -- quarterly pins to v0.15; league/content cadence is MONTHLY (ruled 2026-07-21).
-- `CLAUDE.md:223` -- `UNDECLARED`, never dropped. **Cross-repo by design** (ruled 2026-08-15):
+- `CLAUDE.md:226` -- quarterly pins to v0.15; league/content cadence is MONTHLY (ruled 2026-07-21).
+- `CLAUDE.md:254` -- `UNDECLARED`, never dropped. **Cross-repo by design** (ruled 2026-08-15):
 - `art_source/pixellab_2026-07-26_cat_sweep/MANIFEST.md:3` -- Execution of Pip's locked recipe (ruled 2026-07-26, "go cat sweep 8 dir now"):
 - `docs/CONTENT_DISTRIBUTION_SYSTEM.md:10` -- > **SUPERSEDED, not merely "outdated in spirit", as of 2026-08-13.** Pip ruled
 - `docs/DEV_BLOG_DECISION_2026-08-21.md:155` -- Pip ruled **option A**: archive the pygame-era entries, keep the 2026-07-22 post.
