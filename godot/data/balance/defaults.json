@@ -1,289 +1,448 @@
 {
-	"_description": "Central gameplay tunables (L9, issue #621). These are the shipped defaults -- identical to the pre-L9 inline literals, so this file is behavior-neutral until a sweep varies it. Tune by editing here or by dropping a user://balance_overrides.json with the same shape (deep-merged on top). Consumers pass the same values as call-site fallbacks, so a missing file degrades safely.",
-	"events": {
-		"_description": "Event pacing. first_event_turn/max_new_events_per_turn are the pre-L1 day-tick throttle (#568) -- kept for the resolution tick. The MONTH plan layer (ADR-0009/workshop#3) governs decision load via the window DEMAND budget below, not an information budget: only 'window'-tier events demand a decision. Tiers per genre live on the event definitions (delivery_tier: ambient|feed|window).",
-		"first_event_turn": 2,
-		"max_new_events_per_turn": 2,
-		"default_delivery_tier": "feed",
-		"window_demand_budget": 3,
-		"window_demand_budget_endgame": 6,
-		"endgame_turn": 200,
-		"unanswered_window_rep_penalty": 2.0,
-		"default_event_class": "deferrable"
-	},
-	"attention": {
-		"_description": "Founder currency (workshop#3 addendum #5 / ADR-0011): ~N decisions per PLAN MONTH; admin is painful overhead spent here. Staff spend a SEPARATE per-person 'actions' currency -- there is no global pool, and as of T2 (2026-07-28) no legacy AP pool either: Attention is the ONLY founder currency. Unspent reserve evaporates at month end (ADR-0009 S4 -- no banking). planning_share splits the monthly grant into PLANNING vs OPERATING founder hours (the 2-way T3-rung floor); the remainder goes to operating. TUNING DIAL, HAND-SET, NOT SWEPT: planning hours bound how many strategic cards a month can hold, operating hours bound presence work (response windows, hiring loop, travel, interviews). Overflow is asymmetric -- operating may eat planning hours, planning may never eat operating. Re-price after the first playtest (review-by 2026-08-31).",
-		"per_month": 20,
-		"planning_share": 0.6
-	},
-	"papers": {
-		"_description": "Paper-decision pacing (#630 stopgap): at most max_decisions_per_turn paper accept/reject decisions surface per turn; clustered decision_turns otherwise flood a click-through wall. Surplus stays UNDER_REVIEW and resolves on later turns (never dropped). 0 = unlimited (pre-#630). Superseded by ADR-0009/0012/0014 response windows. research_per_paper/reputation_per_paper drive the auto-publish step (turn_manager._step_publish_papers) AND the Research/Papers HUD tooltips (main_ui) -- single source so the tooltip cannot drift from the mechanic.",
-		"max_decisions_per_turn": 3,
-		"research_per_paper": 100.0,
-		"reputation_per_paper": 5.0
-	},
-	"compute": {
-		"_description": "Compute economy. per_researcher_per_turn: compute a managed, productive researcher burns each turn (turn_manager._step_researcher_productivity). Also drives the Compute HUD tooltip (main_ui) -- single source.",
-		"per_researcher_per_turn": 1.0
-	},
-	"ledger": {
-		"_description": "Liability Ledger (ADR-0003): factory magnitudes, fuses, interest; the doom/rep teeth for unpayable bills; secret-exposure chance (BL-2). GOTCHA: interest_rate values are COPIED INTO SAVED ENTRIES, and Godot's JSON parse is not correctly-rounded for every decimal -- pick rates that survive print->parse exactly (probe-verified: 0.008/0.0025/0.001/0.02 ok; 0.009/0.015/0.045 NOT) or save/load deep-equality and post-load determinism break.",
-		"doom_per_unpaid_1000": 0.9,
-		"rep_per_unpaid_1000": 2.0,
-		"max_doom_per_bill": 10.0,
-		"max_rep_per_bill": 10.0,
-		"rollover_fuse_ticks": 8,
-		"exposure_chance_per_turn": 0.007,
-		"loan": { "principal_multiplier": 1.2, "fuse_turns": 77, "interest_rate": 0.008 },
-		"funding_strings": { "principal_multiplier": 0.10, "fuse_turns": 88, "interest_rate": 0.0025 },
-		"desperation_payroll": { "severity_base": 1200.0, "severity_spread": 800.0, "fuse_turns": 55, "interest_rate": 0.008 },
-		"staff_rider": { "principal": 1200.0, "fuse_turns": 88, "interest_rate": 0.001 },
-		"blackmail": { "principal_multiplier": 1.5, "fuse_turns": 22, "interest_rate": 0.02 },
-		"expose": { "rep_per_1000": 2.5, "governance_multiplier": 0.5 },
-		"promise": {
-			"_description": "fix/promise-currency (Option B): appetite promises cost a FUTURE OBLIGATION IN THEIR OWN DOMAIN, never raw reputation. The old reputation-currency principal vs a starting rep of 50 (death at rep<=0) was an instant-death trap. Magnitudes are small/survivable; interest 0.0 (obligations, not compounding mortality levers). first_authorship->papers, compute_budget->compute, mission/mentorship->governance. feat/quirk-skeleton: billing now branches on COVERED vs SHORTFALL -- a covered promise credits the named promisee kept_loyalty_credit loyalty; a shortfall costs them broken_loyalty_hit (loyalty already has poach teeth). Money-settlement rules unchanged.",
-			"first_authorship": { "principal": 1.0, "fuse_turns": 10, "interest_rate": 0.0 },
-			"compute_budget": { "principal": 20.0, "fuse_turns": 8, "interest_rate": 0.0 },
-			"mission_charter": { "principal": 6.0, "fuse_turns": 12, "interest_rate": 0.0 },
-			"mentorship": { "principal": 4.0, "fuse_turns": 10, "interest_rate": 0.0 },
-			"kept_loyalty_credit": 3,
-			"broken_loyalty_hit": 8
-		},
-		"resentment_debt": { "principal": 1500.0, "fuse_turns": 6, "interest_rate": 0.02 }
-	},
-	"hiring": {
-		"_description": "Hiring pipeline (BUILD_BRIEF_HIRING_PIPELINE Phase B): source -> interview -> offer -> onboard. Every stage is Attention-gated and duration-bearing (ADR-0009). advertise = money + slow multi-month trickle; connections = a reputation favor for one fast pre-vetted lead (success scales with standing). offer.* is the hidden self-worth range; onboarding.* gates a new hire's productivity. NOTE (#789): onboarding step Attention (laptop/systems/meet_people/mentoring) is tuned in HiringPipeline.ONBOARD_ATTENTION (hiring_pipeline.gd), which SUPERSEDES laptop_attention/mentoring_attention below; visa_attention and the *_money keys remain live here.",
-		"advertise": { "cost_money": 8000.0, "cost_attention": 3, "campaign_months": 3, "per_month_min": 0, "per_month_max": 2, "reputation_gain": 1.0 },
-		"connections": { "cost_reputation": 6.0, "cost_attention": 2, "duration_ticks": 2, "rep_for_certainty": 80.0, "min_success": 0.05, "max_success": 0.95, "prevet_skill_min": 5, "prevet_skill_max": 8 },
-		"interview": { "cost_attention": 2, "duration_ticks": 3, "reveal_step": 1 },
-		"offer": { "cost_attention": 1, "duration_ticks": 2, "base_tolerance": 0.15, "money_appetite_weight": 0.5, "promise_discount": 0.20, "reject_scale": 2.0, "resentment_loyalty_penalty": 15, "read_spread": 0.06, "recruiter_min_skill": 4 },
-		"onboarding": { "foreign_modulo": 4, "laptop_money": 3000.0, "laptop_attention": 1, "visa_money": 5000.0, "visa_attention": 2, "mentoring_money": 0.0, "mentoring_attention": 2, "unproductive_multiplier": 0.4, "skimped_multiplier": 0.85, "attrition_risk": 0.15 }
-	},
-	"doom": {
-		"_description": "Doom momentum + per-source coefficients (doom_system.gd) and player-facing status cutoffs. Momentum is a low-commitment SWITCH (#638 ruling): momentum_enabled 0/1 kills the contribution, momentum_weight scales it; internal accumulators keep ticking while disabled so mid-run toggles behave.",
-		"momentum_enabled": 1.0,
-		"momentum_weight": 1.0,
-		"momentum_accumulation_rate": 0.05,
-		"momentum_decay_rate": 0.92,
-		"momentum_cap": 2.0,
-		"velocity_carry": 0.7,
-		"velocity_gain": 0.3,
-		"base_per_turn": 0.06,
-		"legacy_capability_per_researcher": 0.15,
-		"legacy_safety_per_researcher": 0.18,
-		"researcher": {
-			"safety_base": -0.28,
-			"capabilities_base": 0.15,
-			"interpretability_base": -0.24,
-			"alignment_base": -0.25
-		},
-		"unproductive_per_staff": 0.025,
-		"streams": {
-			"_description": "ADR-0015 nine-stream coefficients (doom_system.gd). doom_rate = sum of named streams read from the DQ-21 world-state intermediaries. These are the freely-tuned pricing layer; the stream FUNCTION is structure. W_* weight a stream's intermediary; *_gain set how fast an intermediary accumulates per day tick; *_decay fade the social stocks. Priced by the 72-run L1 sweep to reproduce the calibration headline (DOOM_STREAMS_v1.md).",
-			"W_frontier": 0.000039,
-			"W_general": 0.0005,
-			"W_compute": 0.0,
-			"W_panic": 0.02,
-			"W_alarm": 0.02,
-			"cap_frontier_gain": 60.0,
-			"safety_absorb_gain": 8.0,
-			"alarm_gain": 0.05,
-			"diffusion_gain": 0.00006,
-			"alarm_decay": 0.985,
-			"panic_decay": 0.97,
-			"leak_panic_scale": 0.02,
-			"W_quirk_doom": 0.35,
-			"action_safety_absorb": 4.0,
-			"action_safety_alarm": 0.03,
-			"action_paper_alarm": 3.0,
-			"action_audit_absorb": 1.0,
-			"action_desperation_absorb": 0.0,
-			"action_lobby_pressure": 0.5,
-			"action_lobby_alarm": 0.5,
-			"action_warning_alarm": 0.6,
-			"action_acquire_frontier": 60.0,
-			"action_sabotage_frontier": 200.0,
-			"action_sabotage_panic": 5.0,
-			"action_opensource_alarm": 0.6,
-			"action_opensource_diffusion": 0.0,
-			"action_conference_alarm": 0.6,
-			"_event_description": "event_* price the RUNTIME-GENERATED pdoom-data event options (event_service.gd _generate_options), which built their effects in code and so never went through the content migration that stripped literal doom deltas from res://data. Each is anchored to the action_* price for the analogous founder move rather than being a new dial. Relief is routed ONLY to safety_absorption, never global_alarm: these options recur on up to 2 events every turn, and a repeated input into a decaying stock settles at input/(1-decay), which reproduces the -6 doom/turn exploit this replaced. The overhang clamp max(0, frontier-absorption) bounds absorption structurally. event_shock_panic is the doom->panic conversion for impacts the pdoom-data variable map launders into 'doom' (vibey_doom/stress/burnout_risk/safety): 1/(W_panic/(1-panic_decay)) = 1.5, which keeps the INTEGRATED doom identical.",
-			"event_safety_absorb": 4.0,
-			"event_frontier_gain": 60.0,
-			"event_shock_panic": 1.5
-		}
-	},
-	"salaries": {
-		"_description": "Annual salary bases. The /260 workday divisor is a TIME constant and stays in code until the L0 Clock lands (Clock seam wiring is an L9 follow-up).",
-		"manager_annual": 60000.0,
-		"legacy_staff_annual": 60000.0
-	},
-	"starting_resources": {
-		"_description": "GameState.reset() starting values (scenarios still override on top).",
-		"money": 245000.0,
-		"compute": 100.0,
-		"research": 0.0,
-		"papers": 0.0,
-		"reputation": 50.0,
-		"doom": 20.0,
-		"stationery": 100.0,
-		"governance": 50.0,
-		"hype": 0.0
-	},
-	"workstreams": {
-		"_description": "ADR-0011 s3/s4 workstream substrate (workstream.gd + the turn_manager accrual hook). turns_per_month re-denominates the per-MONTH quotes below onto the workday tick. effort_per_turn_scale converts one researcher's effective productivity into effort units. compute_starved_effort_multiplier is what an assigned researcher gets done when the fleet cannot cover their workstream's compute_intensity that tick (they are not idle, just slower). FIRST PASS -- priced by hand, not by sweep; re-price after the first assignment playtest (review-by 2026-08-31).",
-		"turns_per_month": 22,
-		"effort_per_turn_scale": 1.0,
-		"compute_starved_effort_multiplier": 0.5,
-		"self_direction": {
-			"_description": "Unassigned staff self-direct on their agenda (ADR-0011 s3: idle staff don't exist). effort_multiplier is the tax for nobody steering: unsteered work is real work, just less of it lands where it was needed. optimism_min/optimism_span set the OVER-CLAIM band for self-reported progress -- deterministic per person (Researcher.self_report_optimism, seeded off their stable key, never rng). FIRST-PASS GENTLE by ruling (2026-07-27): an audit should surface a nagging discrepancy, not a fraud. Audits ground-truth reported vs actual in a later lane; nothing consumes the reported figure yet.",
-			"effort_multiplier": 0.8,
-			"optimism_min": 1.05,
-			"optimism_span": 0.3
-		}
-	},
-	"rivals": {
-		"_description": "Rival lab coefficients (rivals.gd). ADR-0015: rivals no longer emit doom literals -- capability_overhang_doom_per_progress and per_tick_doom_scale (the pre-L1 shim) are RETIRED (Legacy #7/#12). Rival capability_progress IS the actor's frontier_capability slice, converted by the DoomSystem overhang stream; panic_per_capability_action feeds global_panic when a rival makes a reckless capability move.",
-		"panic_per_capability_action": 0.05,
-		"discovery": { "base_chance": 0.15, "chance_per_rep_above_threshold": 0.005 }
-	},
-	"risk": {
-		"_description": "Risk-pool trigger thresholds (risk_pool.gd). Trigger probability is pool/100 * trigger_scale_per_tick: the pool/100 reading was sized for the strategic turn, so the scale re-denominates it to the day-tick cadence (T9/#638; ~0.045 = 1/22 ticks-per-month, i.e. pool 30 => ~30%/month). Threshold crossings (50/75/100) remain guaranteed one-shots.",
-		"trigger_scale_per_tick": 0.045,
-		"min_pool_for_events": 5.0,
-		"thresholds": { "moderate": 50.0, "severe": 75.0, "catastrophic": 100.0 }
-	},
-	"difficulty": {
-		"_description": "Difficulty modifiers applied by game_manager._apply_difficulty_settings (indices: 0=easy, 1=standard, 2=hard). Replaces the dormant data/events/balancing/difficulty.json (deleted this lane).",
-		"easy": { "money_multiplier": 1.5, "attention_per_month": 24 },
-		"standard": { "money_multiplier": 1.0, "attention_per_month": 20 },
-		"hard": { "money_multiplier": 0.75, "attention_per_month": 16 }
-	},
-	"scouting": {
-		"_description": "Scouting action stubs (#811 item 1): read / meetups / shitpost. FIRST-PASS magnitudes -- deliberately small, and every one of them is actually applied and named in the action's message (no silent promises). hype feeds FinanceEngine pricing (vc_equity gates on min_hype 25), so ~7 shitposts opens that door.",
-		"read": { "research_gain": 3.0 },
-		"meetups": { "reputation_gain": 1.5 },
-		"shitpost": { "hype_gain": 4.0, "reputation_cost": 1.0 }
-	},
-	"financing": {
-		"_description": "Cost-of-debt pricing engine + financing instruments (ADR-0013, lane L5/#616). FinanceEngine.price() computes terms from org_type + counterparty + typed reputation + current leverage; generate_offers() mints 2-3 concurrent STANDING offers with an expiry (ADR-0012 -- expiry mints no ledger entry). Engine: godot/scripts/core/finance_engine.gd. GOTCHA: computed interest rates are snapped to 0.001 (JSON save-safe, probe-verified against the real full-precision save path) and principals to whole units before entering a Ledger.Entry, so minted offers survive save/load (calibration open-Q #2). Baseline continuity: bank_loan at default context reproduces the calibrated ledger.loan terms (rate 0.008, ~77-tick fuse, 1.2x balloon); the sweep's take_loan path is UNCHANGED (routes Ledger.loan directly), so this block is additive and does not move the L1 medians.",
-		"ticks_per_month": 22.0,
-		"offer_ttl_turns": 44,
-		"leverage_scale": 120000.0,
-		"rate_floor": 0.002,
-		"rate_ceiling": 0.05,
-		"rep_rate_relief": 0.004,
-		"lease_deposit_rep_relief": 0.25,
-		"lease_deposit_jitter": 0.0,
-		"leverage_rate_penalty": 0.004,
-		"org_factors": {
-			"_description": "Multiply the base interest (ADR-0013: org type is the pricing engine's biggest input). >1 = worse cost of capital; <1 = cheaper. for_profit borrows cheapest (equity as collateral); independent/solo pays a premium.",
-			"nonprofit": 1.0,
-			"for_profit": 0.9,
-			"academic": 1.05,
-			"independent": 1.15
-		},
-		"counterparty_factors": {
-			"_description": "Who you owe changes what it costs (ADR-0013 major input; ADR-0007 counterparty dread). philanthropist = 0.0 => a gift, not a debt. shadow (desperation) = the punitive last resort.",
-			"bank": 1.0,
-			"vc": 0.85,
-			"government": 0.75,
-			"foundation": 0.8,
-			"philanthropist": 0.0,
-			"shadow": 2.2
-		},
-		"offer_tiers": {
-			"_description": "Reputation-gated menu quality (ADR-0013: better standing => better menus). The instrument's rep_channel picks safety- or finance-rep; that value selects the highest threshold it clears; counts[tier] caps concurrent offers.",
-			"thresholds": [0, 30, 60],
-			"counts": [2, 3, 3]
-		},
-		"instruments": {
-			"bank_loan": {
-				"name": "Bank term loan",
-				"factory": "loan",
-				"counterparty": "bank",
-				"rep_channel": "finance",
-				"principal_min": 30000,
-				"principal_max": 80000,
-				"principal_multiplier": 1.2,
-				"term_months": 3.5,
-				"base_rate": 0.008,
-				"non_cash": {},
-				"availability": { "min_rep": 15, "max_leverage": 3.0, "org_types": [] }
-			},
-			"credit_line": {
-				"name": "Revolving credit line",
-				"factory": "loan",
-				"counterparty": "bank",
-				"rep_channel": "finance",
-				"principal_min": 60000,
-				"principal_max": 160000,
-				"principal_multiplier": 1.15,
-				"term_months": 4.0,
-				"base_rate": 0.010,
-				"non_cash": {},
-				"availability": { "min_rep": 45, "max_leverage": 1.5, "org_types": [] }
-			},
-			"vc_equity": {
-				"name": "VC equity round",
-				"factory": "equity",
-				"counterparty": "vc",
-				"rep_channel": "finance",
-				"principal_min": 120000,
-				"principal_max": 400000,
-				"principal_multiplier": 1.0,
-				"term_months": 0.0,
-				"base_rate": 0.0,
-				"non_cash": { "equity_dilution": 0.12, "board_seat": true },
-				"availability": { "min_rep": 30, "min_hype": 25, "max_leverage": 5.0, "org_types": ["for_profit"] }
-			},
-			"grant_strings": {
-				"name": "Directed grant (agenda strings)",
-				"factory": "funding_strings",
-				"counterparty": "government",
-				"rep_channel": "safety",
-				"principal_min": 25000,
-				"principal_max": 70000,
-				"principal_multiplier": 0.10,
-				"term_months": 4.0,
-				"base_rate": 0.0025,
-				"non_cash": { "agenda_narrowing": true },
-				"availability": { "min_rep": 25, "org_types": [] }
-			},
-			"philanthropy": {
-				"name": "Philanthropic gift",
-				"factory": "philanthropy",
-				"counterparty": "philanthropist",
-				"rep_channel": "safety",
-				"principal_min": 15000,
-				"principal_max": 45000,
-				"principal_multiplier": 1.0,
-				"term_months": 0.0,
-				"base_rate": 0.0,
-				"appearance_chance": 0.35,
-				"non_cash": {},
-				"availability": { "min_rep": 30, "org_types": [] }
-			},
-			"desperation": {
-				"name": "Desperation payroll lever",
-				"factory": "desperation_payroll",
-				"counterparty": "shadow",
-				"rep_channel": "finance",
-				"principal_min": 0,
-				"principal_max": 0,
-				"principal_multiplier": 1.0,
-				"term_months": 2.5,
-				"base_rate": 0.008,
-				"non_cash": { "secret": true },
-				"availability": { "min_rep": 0, "org_types": [] }
-			}
-		}
-	},
-	"upgrades": {
-		"_description": "Issue #970: coefficients for the six upgrades that used to print effect claims with zero backing code. Wired into actions.gd (capability_research) and doom_system.gd (_advance_intermediaries).",
-		"upgrade_computer": { "research_bonus": 1.0 },
-		"hpc_cluster": { "research_multiplier": 0.25 },
-		"research_automation": { "compute_scale": 0.02 },
-		"secure_cloud": { "frontier_dampen": 0.15 }
-	}
+  "_description": "Central gameplay tunables (L9, issue #621). These are the shipped defaults -- identical to the pre-L9 inline literals, so this file is behavior-neutral until a sweep varies it. Tune by editing here or by dropping a user://balance_overrides.json with the same shape (deep-merged on top). Consumers pass the same values as call-site fallbacks, so a missing file degrades safely.",
+  "events": {
+    "_description": "Event pacing. first_event_turn/max_new_events_per_turn are the pre-L1 day-tick throttle (#568) -- kept for the resolution tick. The MONTH plan layer (ADR-0009/workshop#3) governs decision load via the window DEMAND budget below, not an information budget: only 'window'-tier events demand a decision. Tiers per genre live on the event definitions (delivery_tier: ambient|feed|window).",
+    "first_event_turn": 2,
+    "max_new_events_per_turn": 2,
+    "default_delivery_tier": "feed",
+    "window_demand_budget": 3,
+    "window_demand_budget_endgame": 6,
+    "endgame_turn": 200,
+    "unanswered_window_rep_penalty": 2.0,
+    "default_event_class": "deferrable",
+    "retention": {
+      "loyalty_gain": 20,
+      "salary_raise_pct": 0.15
+    }
+  },
+  "attention": {
+    "_description": "Founder currency (workshop#3 addendum #5 / ADR-0011): ~N decisions per PLAN MONTH; admin is painful overhead spent here. Staff spend a SEPARATE per-person 'actions' currency -- there is no global pool, and as of T2 (2026-07-28) no legacy AP pool either: Attention is the ONLY founder currency. Unspent reserve evaporates at month end (ADR-0009 S4 -- no banking). planning_share splits the monthly grant into PLANNING vs OPERATING founder hours (the 2-way T3-rung floor); the remainder goes to operating. TUNING DIAL, HAND-SET, NOT SWEPT: planning hours bound how many strategic cards a month can hold, operating hours bound presence work (response windows, hiring loop, travel, interviews). Overflow is asymmetric -- operating may eat planning hours, planning may never eat operating. Re-price after the first playtest (review-by 2026-08-31).",
+    "per_month": 20,
+    "planning_share": 0.6
+  },
+  "papers": {
+    "_description": "Paper-decision pacing (#630 stopgap): at most max_decisions_per_turn paper accept/reject decisions surface per turn; clustered decision_turns otherwise flood a click-through wall. Surplus stays UNDER_REVIEW and resolves on later turns (never dropped). 0 = unlimited (pre-#630). Superseded by ADR-0009/0012/0014 response windows. research_per_paper/reputation_per_paper drive the auto-publish step (turn_manager._step_publish_papers) AND the Research/Papers HUD tooltips (main_ui) -- single source so the tooltip cannot drift from the mechanic.",
+    "max_decisions_per_turn": 3,
+    "research_per_paper": 100.0,
+    "reputation_per_paper": 5.0
+  },
+  "compute": {
+    "_description": "Compute economy. per_researcher_per_turn: compute a managed, productive researcher burns each turn (turn_manager._step_researcher_productivity). Also drives the Compute HUD tooltip (main_ui) -- single source.",
+    "per_researcher_per_turn": 1.0
+  },
+  "ledger": {
+    "_description": "Liability Ledger (ADR-0003): factory magnitudes, fuses, interest; the doom/rep teeth for unpayable bills; secret-exposure chance (BL-2). GOTCHA: interest_rate values are COPIED INTO SAVED ENTRIES, and Godot's JSON parse is not correctly-rounded for every decimal -- pick rates that survive print->parse exactly (probe-verified: 0.008/0.0025/0.001/0.02 ok; 0.009/0.015/0.045 NOT) or save/load deep-equality and post-load determinism break.",
+    "doom_per_unpaid_1000": 0.9,
+    "rep_per_unpaid_1000": 2.0,
+    "max_doom_per_bill": 10.0,
+    "max_rep_per_bill": 10.0,
+    "rollover_fuse_ticks": 8,
+    "exposure_chance_per_turn": 0.007,
+    "loan": {
+      "principal_multiplier": 1.2,
+      "fuse_turns": 77,
+      "interest_rate": 0.008
+    },
+    "funding_strings": {
+      "principal_multiplier": 0.1,
+      "fuse_turns": 88,
+      "interest_rate": 0.0025
+    },
+    "desperation_payroll": {
+      "severity_base": 1200.0,
+      "severity_spread": 800.0,
+      "fuse_turns": 55,
+      "interest_rate": 0.008
+    },
+    "staff_rider": {
+      "principal": 1200.0,
+      "fuse_turns": 88,
+      "interest_rate": 0.001
+    },
+    "blackmail": {
+      "principal_multiplier": 1.5,
+      "fuse_turns": 22,
+      "interest_rate": 0.02
+    },
+    "expose": {
+      "rep_per_1000": 2.5,
+      "governance_multiplier": 0.5
+    },
+    "promise": {
+      "_description": "fix/promise-currency (Option B): appetite promises cost a FUTURE OBLIGATION IN THEIR OWN DOMAIN, never raw reputation. The old reputation-currency principal vs a starting rep of 50 (death at rep<=0) was an instant-death trap. Magnitudes are small/survivable; interest 0.0 (obligations, not compounding mortality levers). first_authorship->papers, compute_budget->compute, mission/mentorship->governance. feat/quirk-skeleton: billing now branches on COVERED vs SHORTFALL -- a covered promise credits the named promisee kept_loyalty_credit loyalty; a shortfall costs them broken_loyalty_hit (loyalty already has poach teeth). Money-settlement rules unchanged.",
+      "first_authorship": {
+        "principal": 1.0,
+        "fuse_turns": 10,
+        "interest_rate": 0.0
+      },
+      "compute_budget": {
+        "principal": 20.0,
+        "fuse_turns": 8,
+        "interest_rate": 0.0
+      },
+      "mission_charter": {
+        "principal": 6.0,
+        "fuse_turns": 12,
+        "interest_rate": 0.0
+      },
+      "mentorship": {
+        "principal": 4.0,
+        "fuse_turns": 10,
+        "interest_rate": 0.0
+      },
+      "kept_loyalty_credit": 3,
+      "broken_loyalty_hit": 8
+    },
+    "resentment_debt": {
+      "principal": 1500.0,
+      "fuse_turns": 6,
+      "interest_rate": 0.02
+    }
+  },
+  "hiring": {
+    "_description": "Hiring pipeline (BUILD_BRIEF_HIRING_PIPELINE Phase B): source -> interview -> offer -> onboard. Every stage is Attention-gated and duration-bearing (ADR-0009). advertise = money + slow multi-month trickle; connections = a reputation favor for one fast pre-vetted lead (success scales with standing). offer.* is the hidden self-worth range; onboarding.* gates a new hire's productivity. NOTE (#789): onboarding step Attention (laptop/systems/meet_people/mentoring) is tuned in HiringPipeline.ONBOARD_ATTENTION (hiring_pipeline.gd), which SUPERSEDES laptop_attention/mentoring_attention below; visa_attention and the *_money keys remain live here.",
+    "advertise": {
+      "cost_money": 8000.0,
+      "cost_attention": 3,
+      "campaign_months": 3,
+      "per_month_min": 0,
+      "per_month_max": 2,
+      "reputation_gain": 1.0
+    },
+    "connections": {
+      "cost_reputation": 6.0,
+      "cost_attention": 2,
+      "duration_ticks": 2,
+      "rep_for_certainty": 80.0,
+      "min_success": 0.05,
+      "max_success": 0.95,
+      "prevet_skill_min": 5,
+      "prevet_skill_max": 8
+    },
+    "interview": {
+      "cost_attention": 2,
+      "duration_ticks": 3,
+      "reveal_step": 1
+    },
+    "offer": {
+      "cost_attention": 1,
+      "duration_ticks": 2,
+      "base_tolerance": 0.15,
+      "money_appetite_weight": 0.5,
+      "promise_discount": 0.2,
+      "reject_scale": 2.0,
+      "resentment_loyalty_penalty": 15,
+      "read_spread": 0.06,
+      "recruiter_min_skill": 4
+    },
+    "onboarding": {
+      "foreign_modulo": 4,
+      "laptop_money": 3000.0,
+      "laptop_attention": 1,
+      "visa_money": 5000.0,
+      "visa_attention": 2,
+      "mentoring_money": 0.0,
+      "mentoring_attention": 2,
+      "unproductive_multiplier": 0.4,
+      "skimped_multiplier": 0.85,
+      "attrition_risk": 0.15
+    }
+  },
+  "doom": {
+    "_description": "Doom momentum + per-source coefficients (doom_system.gd) and player-facing status cutoffs. Momentum is a low-commitment SWITCH (#638 ruling): momentum_enabled 0/1 kills the contribution, momentum_weight scales it; internal accumulators keep ticking while disabled so mid-run toggles behave.",
+    "momentum_enabled": 1.0,
+    "momentum_weight": 1.0,
+    "momentum_accumulation_rate": 0.05,
+    "momentum_decay_rate": 0.92,
+    "momentum_cap": 2.0,
+    "velocity_carry": 0.7,
+    "velocity_gain": 0.3,
+    "base_per_turn": 0.06,
+    "legacy_capability_per_researcher": 0.15,
+    "legacy_safety_per_researcher": 0.18,
+    "researcher": {
+      "safety_base": -0.28,
+      "capabilities_base": 0.15,
+      "interpretability_base": -0.24,
+      "alignment_base": -0.25
+    },
+    "unproductive_per_staff": 0.025,
+    "streams": {
+      "_description": "ADR-0015 nine-stream coefficients (doom_system.gd). doom_rate = sum of named streams read from the DQ-21 world-state intermediaries. These are the freely-tuned pricing layer; the stream FUNCTION is structure. W_* weight a stream's intermediary; *_gain set how fast an intermediary accumulates per day tick; *_decay fade the social stocks. Priced by the 72-run L1 sweep to reproduce the calibration headline (DOOM_STREAMS_v1.md).",
+      "W_frontier": 3.9e-05,
+      "W_general": 0.0005,
+      "W_compute": 0.0,
+      "W_panic": 0.02,
+      "W_alarm": 0.02,
+      "cap_frontier_gain": 60.0,
+      "safety_absorb_gain": 8.0,
+      "alarm_gain": 0.05,
+      "diffusion_gain": 6e-05,
+      "alarm_decay": 0.985,
+      "panic_decay": 0.97,
+      "leak_panic_scale": 0.02,
+      "W_quirk_doom": 0.35,
+      "action_safety_absorb": 4.0,
+      "action_safety_alarm": 0.03,
+      "action_paper_alarm": 3.0,
+      "action_audit_absorb": 1.0,
+      "action_desperation_absorb": 0.0,
+      "action_lobby_pressure": 0.5,
+      "action_lobby_alarm": 0.5,
+      "action_warning_alarm": 0.6,
+      "action_acquire_frontier": 60.0,
+      "action_sabotage_frontier": 200.0,
+      "action_sabotage_panic": 5.0,
+      "action_opensource_alarm": 0.6,
+      "action_opensource_diffusion": 0.0,
+      "action_conference_alarm": 0.6,
+      "_event_description": "event_* price the RUNTIME-GENERATED pdoom-data event options (event_service.gd _generate_options), which built their effects in code and so never went through the content migration that stripped literal doom deltas from res://data. Each is anchored to the action_* price for the analogous founder move rather than being a new dial. Relief is routed ONLY to safety_absorption, never global_alarm: these options recur on up to 2 events every turn, and a repeated input into a decaying stock settles at input/(1-decay), which reproduces the -6 doom/turn exploit this replaced. The overhang clamp max(0, frontier-absorption) bounds absorption structurally. event_shock_panic is the doom->panic conversion for impacts the pdoom-data variable map launders into 'doom' (vibey_doom/stress/burnout_risk/safety): 1/(W_panic/(1-panic_decay)) = 1.5, which keeps the INTEGRATED doom identical.",
+      "event_safety_absorb": 4.0,
+      "event_frontier_gain": 60.0,
+      "event_shock_panic": 1.5
+    }
+  },
+  "salaries": {
+    "_description": "Annual salary bases. The /260 workday divisor is a TIME constant and stays in code until the L0 Clock lands (Clock seam wiring is an L9 follow-up).",
+    "manager_annual": 60000.0,
+    "legacy_staff_annual": 60000.0
+  },
+  "starting_resources": {
+    "_description": "GameState.reset() starting values (scenarios still override on top).",
+    "money": 245000.0,
+    "compute": 100.0,
+    "research": 0.0,
+    "papers": 0.0,
+    "reputation": 50.0,
+    "doom": 20.0,
+    "stationery": 100.0,
+    "governance": 50.0,
+    "hype": 0.0
+  },
+  "workstreams": {
+    "_description": "ADR-0011 s3/s4 workstream substrate (workstream.gd + the turn_manager accrual hook). turns_per_month re-denominates the per-MONTH quotes below onto the workday tick. effort_per_turn_scale converts one researcher's effective productivity into effort units. compute_starved_effort_multiplier is what an assigned researcher gets done when the fleet cannot cover their workstream's compute_intensity that tick (they are not idle, just slower). FIRST PASS -- priced by hand, not by sweep; re-price after the first assignment playtest (review-by 2026-08-31).",
+    "turns_per_month": 22,
+    "effort_per_turn_scale": 1.0,
+    "compute_starved_effort_multiplier": 0.5,
+    "self_direction": {
+      "_description": "Unassigned staff self-direct on their agenda (ADR-0011 s3: idle staff don't exist). effort_multiplier is the tax for nobody steering: unsteered work is real work, just less of it lands where it was needed. optimism_min/optimism_span set the OVER-CLAIM band for self-reported progress -- deterministic per person (Researcher.self_report_optimism, seeded off their stable key, never rng). FIRST-PASS GENTLE by ruling (2026-07-27): an audit should surface a nagging discrepancy, not a fraud. Audits ground-truth reported vs actual in a later lane; nothing consumes the reported figure yet.",
+      "effort_multiplier": 0.8,
+      "optimism_min": 1.05,
+      "optimism_span": 0.3
+    }
+  },
+  "rivals": {
+    "_description": "Rival lab coefficients (rivals.gd). ADR-0015: rivals no longer emit doom literals -- capability_overhang_doom_per_progress and per_tick_doom_scale (the pre-L1 shim) are RETIRED (Legacy #7/#12). Rival capability_progress IS the actor's frontier_capability slice, converted by the DoomSystem overhang stream; panic_per_capability_action feeds global_panic when a rival makes a reckless capability move.",
+    "panic_per_capability_action": 0.05,
+    "discovery": {
+      "base_chance": 0.15,
+      "chance_per_rep_above_threshold": 0.005
+    }
+  },
+  "risk": {
+    "_description": "Risk-pool trigger thresholds (risk_pool.gd). Trigger probability is pool/100 * trigger_scale_per_tick: the pool/100 reading was sized for the strategic turn, so the scale re-denominates it to the day-tick cadence (T9/#638; ~0.045 = 1/22 ticks-per-month, i.e. pool 30 => ~30%/month). Threshold crossings (50/75/100) remain guaranteed one-shots.",
+    "trigger_scale_per_tick": 0.045,
+    "min_pool_for_events": 5.0,
+    "thresholds": {
+      "moderate": 50.0,
+      "severe": 75.0,
+      "catastrophic": 100.0
+    }
+  },
+  "difficulty": {
+    "_description": "Difficulty modifiers applied by game_manager._apply_difficulty_settings (indices: 0=easy, 1=standard, 2=hard). Replaces the dormant data/events/balancing/difficulty.json (deleted this lane).",
+    "easy": {
+      "money_multiplier": 1.5,
+      "attention_per_month": 24
+    },
+    "standard": {
+      "money_multiplier": 1.0,
+      "attention_per_month": 20
+    },
+    "hard": {
+      "money_multiplier": 0.75,
+      "attention_per_month": 16
+    }
+  },
+  "scouting": {
+    "_description": "Scouting action stubs (#811 item 1): read / meetups / shitpost. FIRST-PASS magnitudes -- deliberately small, and every one of them is actually applied and named in the action's message (no silent promises). hype feeds FinanceEngine pricing (vc_equity gates on min_hype 25), so ~7 shitposts opens that door.",
+    "read": {
+      "research_gain": 3.0
+    },
+    "meetups": {
+      "reputation_gain": 1.5
+    },
+    "shitpost": {
+      "hype_gain": 4.0,
+      "reputation_cost": 1.0
+    }
+  },
+  "financing": {
+    "_description": "Cost-of-debt pricing engine + financing instruments (ADR-0013, lane L5/#616). FinanceEngine.price() computes terms from org_type + counterparty + typed reputation + current leverage; generate_offers() mints 2-3 concurrent STANDING offers with an expiry (ADR-0012 -- expiry mints no ledger entry). Engine: godot/scripts/core/finance_engine.gd. GOTCHA: computed interest rates are snapped to 0.001 (JSON save-safe, probe-verified against the real full-precision save path) and principals to whole units before entering a Ledger.Entry, so minted offers survive save/load (calibration open-Q #2). Baseline continuity: bank_loan at default context reproduces the calibrated ledger.loan terms (rate 0.008, ~77-tick fuse, 1.2x balloon); the sweep's take_loan path is UNCHANGED (routes Ledger.loan directly), so this block is additive and does not move the L1 medians.",
+    "ticks_per_month": 22.0,
+    "offer_ttl_turns": 44,
+    "leverage_scale": 120000.0,
+    "rate_floor": 0.002,
+    "rate_ceiling": 0.05,
+    "rep_rate_relief": 0.004,
+    "lease_deposit_rep_relief": 0.25,
+    "lease_deposit_jitter": 0.0,
+    "leverage_rate_penalty": 0.004,
+    "org_factors": {
+      "_description": "Multiply the base interest (ADR-0013: org type is the pricing engine's biggest input). >1 = worse cost of capital; <1 = cheaper. for_profit borrows cheapest (equity as collateral); independent/solo pays a premium.",
+      "nonprofit": 1.0,
+      "for_profit": 0.9,
+      "academic": 1.05,
+      "independent": 1.15
+    },
+    "counterparty_factors": {
+      "_description": "Who you owe changes what it costs (ADR-0013 major input; ADR-0007 counterparty dread). philanthropist = 0.0 => a gift, not a debt. shadow (desperation) = the punitive last resort.",
+      "bank": 1.0,
+      "vc": 0.85,
+      "government": 0.75,
+      "foundation": 0.8,
+      "philanthropist": 0.0,
+      "shadow": 2.2
+    },
+    "offer_tiers": {
+      "_description": "Reputation-gated menu quality (ADR-0013: better standing => better menus). The instrument's rep_channel picks safety- or finance-rep; that value selects the highest threshold it clears; counts[tier] caps concurrent offers.",
+      "thresholds": [
+        0,
+        30,
+        60
+      ],
+      "counts": [
+        2,
+        3,
+        3
+      ]
+    },
+    "instruments": {
+      "bank_loan": {
+        "name": "Bank term loan",
+        "factory": "loan",
+        "counterparty": "bank",
+        "rep_channel": "finance",
+        "principal_min": 30000,
+        "principal_max": 80000,
+        "principal_multiplier": 1.2,
+        "term_months": 3.5,
+        "base_rate": 0.008,
+        "non_cash": {},
+        "availability": {
+          "min_rep": 15,
+          "max_leverage": 3.0,
+          "org_types": []
+        }
+      },
+      "credit_line": {
+        "name": "Revolving credit line",
+        "factory": "loan",
+        "counterparty": "bank",
+        "rep_channel": "finance",
+        "principal_min": 60000,
+        "principal_max": 160000,
+        "principal_multiplier": 1.15,
+        "term_months": 4.0,
+        "base_rate": 0.01,
+        "non_cash": {},
+        "availability": {
+          "min_rep": 45,
+          "max_leverage": 1.5,
+          "org_types": []
+        }
+      },
+      "vc_equity": {
+        "name": "VC equity round",
+        "factory": "equity",
+        "counterparty": "vc",
+        "rep_channel": "finance",
+        "principal_min": 120000,
+        "principal_max": 400000,
+        "principal_multiplier": 1.0,
+        "term_months": 0.0,
+        "base_rate": 0.0,
+        "non_cash": {
+          "equity_dilution": 0.12,
+          "board_seat": true
+        },
+        "availability": {
+          "min_rep": 30,
+          "min_hype": 25,
+          "max_leverage": 5.0,
+          "org_types": [
+            "for_profit"
+          ]
+        }
+      },
+      "grant_strings": {
+        "name": "Directed grant (agenda strings)",
+        "factory": "funding_strings",
+        "counterparty": "government",
+        "rep_channel": "safety",
+        "principal_min": 25000,
+        "principal_max": 70000,
+        "principal_multiplier": 0.1,
+        "term_months": 4.0,
+        "base_rate": 0.0025,
+        "non_cash": {
+          "agenda_narrowing": true
+        },
+        "availability": {
+          "min_rep": 25,
+          "org_types": []
+        }
+      },
+      "philanthropy": {
+        "name": "Philanthropic gift",
+        "factory": "philanthropy",
+        "counterparty": "philanthropist",
+        "rep_channel": "safety",
+        "principal_min": 15000,
+        "principal_max": 45000,
+        "principal_multiplier": 1.0,
+        "term_months": 0.0,
+        "base_rate": 0.0,
+        "appearance_chance": 0.35,
+        "non_cash": {},
+        "availability": {
+          "min_rep": 30,
+          "org_types": []
+        }
+      },
+      "desperation": {
+        "name": "Desperation payroll lever",
+        "factory": "desperation_payroll",
+        "counterparty": "shadow",
+        "rep_channel": "finance",
+        "principal_min": 0,
+        "principal_max": 0,
+        "principal_multiplier": 1.0,
+        "term_months": 2.5,
+        "base_rate": 0.008,
+        "non_cash": {
+          "secret": true
+        },
+        "availability": {
+          "min_rep": 0,
+          "org_types": []
+        }
+      }
+    }
+  },
+  "upgrades": {
+    "_description": "Issue #970: coefficients for the six upgrades that used to print effect claims with zero backing code. Wired into actions.gd (capability_research) and doom_system.gd (_advance_intermediaries).",
+    "upgrade_computer": {
+      "research_bonus": 1.0
+    },
+    "hpc_cluster": {
+      "research_multiplier": 0.25
+    },
+    "research_automation": {
+      "compute_scale": 0.02
+    },
+    "secure_cloud": {
+      "frontier_dampen": 0.15
+    }
+  }
 }
