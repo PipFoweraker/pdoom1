@@ -296,7 +296,7 @@ is not.
 - `godot/scripts/core/month_plan.gd:39` -- ## FOUNDER-HOUR KINDS (4-way, ADR-0011 point 2 / Ballot 4 ruled 2026-07-27, REVIEW-BY
 - `godot/scripts/core/office.gd:58` -- ## menu size is: Pip ruled "3 offices to choose from", so the choice is fixed-width and
 - `godot/scripts/core/prop_catalogue.gd:141` -- scummy/decent/premium (ruled 2026-07-26). Empty for unmanifested ids."""
-- `godot/scripts/core/researcher.gd:131` -- # SEAM (ruled 2026-07-27, review-by 2026-08-31): AUDITS ground-truth reported vs actual.
+- `godot/scripts/core/researcher.gd:150` -- # SEAM (ruled 2026-07-27, review-by 2026-08-31): AUDITS ground-truth reported vs actual.
 - `godot/scripts/core/researcher.gd:61` -- # "Hiring pipeline RULED" (A1/A2/A3); appetites/quirks per ADR-0011 section 8; pay-to-see
 - `godot/scripts/core/researcher.gd:69` -- # Hire lifecycle (WORKSHOP_2 "Hiring pipeline RULED"): pool -> offered -> employed ->
 - `godot/scripts/core/turn_manager.gd:306` -- SEAM (ruled 2026-07-27, review-by 2026-08-31): AUDITS ground-truth reported vs actual.
