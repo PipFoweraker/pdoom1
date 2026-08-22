@@ -29,6 +29,24 @@ const PASS_ACTION_ID := "pass"
 # alias exists because action defs are content (scenario packs, historical timeline, saved
 # mods) and content lags a code migration. Nothing WRITES it.
 
+
+## #1247: acquisition creates PEOPLE, not counters.
+##
+## Deliberately routed through GameState.add_researcher(), the same seam the
+## hiring pipeline uses, so acquired staff are indistinguishable from hired staff
+## everywhere downstream: they hold a desk, appear on the roster, accrue burnout,
+## can be fired, and count toward the management-capacity warnings. The legacy
+## per-role counters stay in lockstep inside add_researcher(), so doom_system and
+## the stationery bill see no change.
+##
+## Seeded RNG only -- state.rng -- so an acquisition stays replay-deterministic.
+static func _acquire_staff(state, spec: String, count: int) -> void:
+	for _i in range(count):
+		var r := Researcher.new(spec)
+		r.generate_random(state.rng)
+		r.specialization = spec  # generate_random may reroll the lane
+		state.add_researcher(r)
+
 static func attention_cost(action: Dictionary) -> int:
 	"""Founder Attention an action costs to queue. 0 when free or when `action` is empty."""
 	var costs: Dictionary = action.get("costs", {})
@@ -380,8 +398,15 @@ static func execute_action(action_id: String, state: GameState) -> Dictionary:
 			result["message"] = String(r_onb.get("message", ""))
 
 		"hire_compute_engineer":
-			state.compute_engineers += 1
-			result["message"] = "Hired compute engineer (+1 compute staff)"
+			# #1247: creates a PERSON, not an integer. add_researcher() keeps
+			# compute_engineers in lockstep, so doom_system and the stationery bill
+			# are unaffected -- but the hire now appears on the roster, occupies a
+			# desk, can burn out, and contributes research at its role's rate.
+			var ce := Researcher.new("compute_engineer")
+			ce.generate_random(state.rng)
+			ce.specialization = "compute_engineer"  # generate_random may reroll the lane
+			state.add_researcher(ce)
+			result["message"] = "Hired %s, compute engineer (+1 staff)" % ce.researcher_name
 
 		"hire_manager":
 			state.managers += 1
@@ -716,17 +741,23 @@ static func execute_action(action_id: String, state: GameState) -> Dictionary:
 			# Record RNG outcome for verification
 			VerificationTracker.record_rng_outcome("acquire_startup_type", float(staff_type), state.turn)
 
+			# #1247: an acquisition brings PEOPLE. This used to increment integers, so
+			# the acquired staff half-existed -- they drew a stationery bill and moved
+			# doom totals, but occupied no desks, had no productivity, could not be
+			# managed or fired, and never triggered the 8/9/10-employee warnings.
+			# Found by Pip playing v0.14.2: "my employee screen tells me I have 2
+			# engineers but they don't load into the sim."
 			match staff_type:
 				0:
-					state.safety_researchers += 2
+					_acquire_staff(state, "safety", 2)
 					result["message"] = "Acquired safety-focused startup (+2 safety researchers, +30 compute)"
 				1:
-					state.capability_researchers += 2
+					_acquire_staff(state, "capabilities", 2)
 					# ADR-0015: capability acquisition raises the PLAYER frontier (overhang converts it).
 					state.frontier_capability["player"] = float(state.frontier_capability.get("player", 0.0)) + Balance.num("doom.streams.action_acquire_frontier", 60.0)
 					result["message"] = "Acquired capability startup (+2 cap researchers, +30 compute, +frontier)"
 				2:
-					state.compute_engineers += 2
+					_acquire_staff(state, "compute_engineer", 2)
 					result["message"] = "Acquired compute startup (+2 compute engineers, +30 compute)"
 			state.add_resources({"compute": 30})
 
@@ -774,10 +805,21 @@ static func execute_action(action_id: String, state: GameState) -> Dictionary:
 			# Record RNG outcome for verification
 			VerificationTracker.record_rng_outcome("emergency_pivot_count", float(pivot_roll), state.turn)
 
-			var converted = min(state.capability_researchers, pivot_roll)
+			# #1247: convert PEOPLE, not counters. Moving the integers left the actual
+			# Researcher objects on their old lane, so a "converted" capabilities
+			# researcher went on producing capabilities research and capabilities doom
+			# while the counters claimed otherwise -- the same object/counter split
+			# this issue is about, in a second place.
+			var caps: Array = []
+			for r in state.researchers:
+				if r.specialization == "capabilities":
+					caps.append(r)
+			var converted = min(caps.size(), pivot_roll)
 			if converted > 0:
-				state.capability_researchers -= converted
-				state.safety_researchers += converted
+				for i in range(converted):
+					caps[i].specialization = "safety"
+					state.capability_researchers = max(0, state.capability_researchers - 1)
+					state.safety_researchers += 1
 				result["message"] = "Emergency pivot! Converted %d researchers to safety" % converted
 			else:
 				result["success"] = false

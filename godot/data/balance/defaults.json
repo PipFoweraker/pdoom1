@@ -2,6 +2,11 @@
 	"_description": "Central gameplay tunables (L9, issue #621). These are the shipped defaults -- identical to the pre-L9 inline literals, so this file is behavior-neutral until a sweep varies it. Tune by editing here or by dropping a user://balance_overrides.json with the same shape (deep-merged on top). Consumers pass the same values as call-site fallbacks, so a missing file degrades safely.",
 	"events": {
 		"_description": "Event pacing. first_event_turn/max_new_events_per_turn are the pre-L1 day-tick throttle (#568) -- kept for the resolution tick. The MONTH plan layer (ADR-0009/workshop#3) governs decision load via the window DEMAND budget below, not an information budget: only 'window'-tier events demand a decision. Tiers per genre live on the event definitions (delivery_tier: ambient|feed|window).",
+		"retention": {
+			"_description": "Rival-retention counter-offers (#1225 item 4). A counter keeps the person a rival would otherwise take: loyalty up (loyalty IS poaching resistance) and current_salary up, which bills through normal payroll forever.",
+			"loyalty_gain": 20,
+			"salary_raise_pct": 0.15
+		},
 		"first_event_turn": 2,
 		"max_new_events_per_turn": 2,
 		"default_delivery_tier": "feed",

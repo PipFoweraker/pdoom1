@@ -186,6 +186,28 @@ const SPECIALIZATIONS = {
 		"description": "Ensures AI goals align with human values",
 		"negative_event_reduction": 0.10,  # -10% chance of bad events
 		"base_cost": 65000
+	},
+	# Ruled by Pip 2026-08-22 (#1247): "real STAFF, but they might not eg produce
+	# as much research?" Compute engineers were an INTEGER, not a person -- see
+	# the block on GameState.get_total_staff(). They are people now, and this row
+	# is what "not identical staff" means in the sim rather than in a tooltip.
+	#
+	# research_speed_modifier 0.35: they keep the lab's infrastructure running,
+	# they do not write papers. NOT a balance proposal -- it is the first nonzero
+	# number they have ever had. Before this they produced NOTHING: no research,
+	# no compute, no doom effect of their own, while still drawing a stationery
+	# bill (turn_manager.gd) and counting toward doom totals (doom_system.gd).
+	# `hire_compute_engineer` was an action that cost money and delivered a
+	# stationery bill, which is the shape issue #595 is about.
+	#
+	# What a compute engineer should POSITIVELY do -- reduce compute upkeep, raise
+	# effective capacity, gate an infrastructure action -- is the open design
+	# question this ruling opens, and it is deliberately NOT answered here.
+	"compute_engineer": {
+		"name": "Compute Engineer",
+		"description": "Maintains and optimizes compute infrastructure",
+		"research_speed_modifier": 0.35,
+		"base_cost": 55000
 	}
 }
 
