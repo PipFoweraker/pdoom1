@@ -123,6 +123,11 @@ func advertise(state) -> Dictionary:
 		"months_remaining": Balance.inum("hiring.advertise.campaign_months", 3),
 		"per_month_min": Balance.inum("hiring.advertise.per_month_min", 0),
 		"per_month_max": Balance.inum("hiring.advertise.per_month_max", 2),
+		# #1225 item 3: the campaign has to be able to report on itself. `spent` is what
+		# this campaign cost so the closing line can name the money; `total_added` is how
+		# many people it actually produced, which is the number the player never had.
+		"spent": cost_money,
+		"total_added": 0,
 	})
 	return {"success": true, "message": "Launched a hiring ad campaign (candidates trickle in over the coming months)."}
 
@@ -801,14 +806,38 @@ func _tick_campaigns(state) -> void:
 		var lo := int(camp.get("per_month_min", 0))
 		var hi := int(camp.get("per_month_max", 2))
 		var n: int = state.rng.randi_range(lo, hi)
+		var added := 0
+		var discarded := 0
 		for i in range(n):
 			var c := _spawn_candidate(state, false)
 			if _add_sourced_candidate(state, c):
+				added += 1
 				last_events.append({"kind": "advertise_hit", "candidate": c.researcher_name})
+			else:
+				# Pool at MAX_CANDIDATES. This discard was previously silent (#961); the
+				# summary below now carries it. NOTE the rng is still consumed either way
+				# -- _spawn_candidate runs before the cap is tested -- so surfacing this
+				# does not move the RNG stream and cannot fork a board key.
+				discarded += 1
+		camp["total_added"] = int(camp.get("total_added", 0)) + added
 		var rem := int(camp.get("months_remaining", 0)) - 1
 		if rem > 0:
 			camp["months_remaining"] = rem
 			still.append(camp)
+		# ONE summary per campaign per month, emitted whether or not anybody turned up.
+		# #1225 item 3: a zero-yield month used to emit NOTHING, which is indistinguishable
+		# from the campaign having quietly ended. The player paid for three months of
+		# something and could not tell month 2 from no campaign at all.
+		last_events.append({
+			"kind": "advertise_month",
+			"drawn": n,
+			"added": added,
+			"discarded": discarded,
+			"months_remaining": maxi(rem, 0),
+			"ended": rem <= 0,
+			"total_added": int(camp.get("total_added", 0)),
+			"spent": float(camp.get("spent", 0.0)),
+		})
 	campaigns = still
 
 
@@ -961,6 +990,12 @@ func from_dict(data: Dictionary) -> void:
 			c["months_remaining"] = int(c.get("months_remaining", 0))
 			c["per_month_min"] = int(c.get("per_month_min", 0))
 			c["per_month_max"] = int(c.get("per_month_max", 0))
+			# #1225 item 3. JSON has no int type, so these come back as floats and the
+			# closing line would render "0.0 applicants" without the coercion. Defaults
+			# keep a pre-#1225 save loadable: an in-flight campaign from an older save
+			# reports what it produced FROM NOW ON rather than refusing to load.
+			c["total_added"] = int(c.get("total_added", 0))
+			c["spent"] = float(c.get("spent", 0.0))
 			campaigns.append(c)
 	jobs = []
 	for job in data.get("jobs", []):

@@ -5,7 +5,7 @@
 > `python scripts/generate_rulings.py`. The convention, and why it looks
 > like this, is argued in `docs/rulings/RULINGS_CONVENTION.md`.
 
-**36 ruling(s)** across **7 flavour(s)**. **222** prose ruling(s) not yet declared.
+**37 ruling(s)** across **8 flavour(s)**. **222** prose ruling(s) not yet declared.
 
 ## One index, five sources
 
@@ -16,7 +16,7 @@ flattening either into one line would delete what makes it worth having.
 
 | kind | n | what it is | where |
 |---|---:|---|---|
-| `declaration` | 11 | a `RULING:` line written next to what it governs | anywhere |
+| `declaration` | 12 | a `RULING:` line written next to what it governs | anywhere |
 | `adr` | 19 | a full architecture argument, summarised here | `docs/game-design/decisions/` |
 | `session` | 3 | a transcript or workshop ruling set, pointed at | `docs/SPOKEN_*`, `*RULINGS*` |
 | `card` | 3 | the input a ruling was made from | `docs/decision-cards/` |
@@ -79,6 +79,12 @@ flavour it belongs to and read what was already decided there.
 | date | ruling | mechanism | source |
 |---|---|---|---|
 | 2026-08-23 | ladder debt is paid when it is incurred, not deferred to build time, so a fresh epoch never inherits a forked board key | `tools/check_ladder_bump.py --owed` | `tools/check_ladder_bump.py:38` |
+
+### `mechanical-inertness` (only one so far)
+
+| date | ruling | mechanism | source |
+|---|---|---|---|
+| 2026-08-22 | a mechanic that charges the player and does nothing observable gets an unsubtle placeholder consequence NOW rather than waiting for a balanced one; players need to suffer, and balance comes later | `this test file, and the fix-by dates on the inertness issues` | `godot/tests/unit/test_ad_campaign_is_visible.gd:11` |
 
 ### `session-record`
 
