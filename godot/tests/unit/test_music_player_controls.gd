@@ -506,3 +506,57 @@ func test_pause_menu_refreshes_the_readout_on_every_open() -> void:
 		"reopening after a doom swing must show the NEW track, not the cached line")
 	assert_string_contains(menu.music_controls._status.text, "Treacherous turn",
 		"and name the track the run has actually escalated to")
+
+## ---- #1249: "nudging the conductor" -----------------------------------------
+##
+## Pip, 2026-08-21: "I would probably like the game to tell me it's switching
+## tracks if I select another one and it doesn't start within, like, half a
+## second. Make it diegetic -- 'nudging the conductor....'"
+##
+## Two causes, one symptom: CROSSFADE_DURATION is 2s and starts at -80 dB, so a
+## pick is inaudible for ~0.5s by design; AND a pick made during a crossfade was
+## dropped with only a print() to show for it.
+
+func test_nudge_line_takes_precedence_over_now_playing():
+	# While a switch is in flight, "now playing: <old track>" is a false answer.
+	MusicManager._conductor_nudging = true
+	assert_eq(MusicManager.player_status_line(), "Nudging the conductor....",
+		"an in-flight switch says so, in Pip's words")
+	MusicManager._conductor_nudging = false
+
+func test_no_nudge_when_nothing_is_pending():
+	MusicManager._conductor_nudging = false
+	assert_ne(MusicManager.player_status_line(), "Nudging the conductor....",
+		"a settled player never nudges the conductor")
+
+func test_status_line_stays_a_pure_state_to_string_map():
+	# The nudge is a FLAG, not a clock read. If this ever needs a real timer to
+	# pass, player_status_line() has stopped being unit-testable.
+	MusicManager._conductor_nudging = true
+	var a := MusicManager.player_status_line()
+	var b := MusicManager.player_status_line()
+	assert_eq(a, b, "same state -> same string, with no time dependence")
+	MusicManager._conductor_nudging = false
+
+func test_a_pick_during_a_crossfade_is_queued_not_dropped():
+	# The defect underneath the cosmetic one. Crossfades last 2s, so any second
+	# pick inside that window used to vanish.
+	MusicManager.is_crossfading = true
+	MusicManager._queued_stream = null
+	var stream := AudioStreamWAV.new()
+	MusicManager._crossfade_to_track(stream)
+	assert_eq(MusicManager._queued_stream, stream,
+		"a pick made mid-crossfade is held, not discarded")
+	MusicManager.is_crossfading = false
+	MusicManager._queued_stream = null
+
+func test_only_the_newest_queued_pick_survives():
+	# Four clicks in two seconds means "play the fourth", not a queue of four.
+	MusicManager.is_crossfading = true
+	var first := AudioStreamWAV.new()
+	var second := AudioStreamWAV.new()
+	MusicManager._crossfade_to_track(first)
+	MusicManager._crossfade_to_track(second)
+	assert_eq(MusicManager._queued_stream, second, "the latest pick wins")
+	MusicManager.is_crossfading = false
+	MusicManager._queued_stream = null

@@ -150,6 +150,26 @@ func _surface_hiring_tick_events(events: Array) -> Array:
 	for e in events:
 		if not (e is Dictionary):
 			continue
+		# #1225 item 2: offer_rejected had ZERO consumers anywhere in the codebase. The
+		# pipeline built the event at hiring_pipeline.gd and appended it to last_events,
+		# and nothing read it -- so a player who spent 1 Attention and waited two workdays
+		# for a decision was told nothing at all. Same shape as #1219, but on the
+		# RESOLUTION path rather than the queue path, so fixing that one would not have
+		# surfaced this.
+		if String(e.get("kind", "")) == "offer_rejected":
+			var declined := String(e.get("candidate", "?"))
+			var reject_event := {
+				"id": "hiring_offer_rejected",
+				"name": "Offer declined: %s" % declined,
+				"delivery_tier": EventTiers.TIER_FEED,
+				"source_id": "hiring",
+				"message": String(e.get("message", "%s declined the offer." % declined)),
+				"toast": true,
+			}
+			var reject_item := {"event": reject_event, "source_id": EventTiers.source_id_of(reject_event)}
+			feed_log.append(reject_item)
+			out.append(reject_item)
+			continue
 		if String(e.get("kind", "")) != "interview_done":
 			continue
 		var who := String(e.get("candidate", "?"))

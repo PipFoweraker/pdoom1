@@ -117,6 +117,25 @@ var quirk: String = ""                     # rare quirk rider ("" = none)
 var quirk_known: bool = false              # true once an exposure event surfaces the quirk
 var loyalty_risk: float = 0.0              # 0..1 hidden flight predisposition (NOT live loyalty)
 
+# --- Offer memory (#1225 item 2) ---------------------------------------------
+# A rejection used to leave NO MARK. `_resolve_offer` returned the candidate to
+# CANDIDATE_IN_POOL unchanged -- same self_worth_floor, same appetites, no
+# recollection -- and grep for already_offered / offers_made / offer_count across
+# godot/**/*.gd returned zero hits.
+#
+# The consequence was an exploit, not a wart. Rejection probability is
+# clampf(shortfall_frac * 2.0, 0, 1), so ANY offer with shortfall_frac < 0.5 was
+# a GUARANTEED eventual hire: re-send the identical lowball every 2 workdays at
+# 1 Attention until the roll lands, then take the resentful_accept. The
+# negotiation read, the self-worth floor and the resentment debt are all real
+# mechanics, and retry defeated all three.
+#
+# `highest_rejected_offer` is what they have already turned down. It is a MEMORY,
+# not a new floor: self_worth_floor() is untouched, and a genuinely better offer
+# still resolves exactly as before.
+var highest_rejected_offer: float = 0.0
+var offers_rejected: int = 0
+
 # ============================================================================
 # DIRECTION -- FOCUS TOPIC + SELF-DIRECTED WORK (ADR-0011 s3, lane T1 / issue #613)
 # The topic this person is pointed at. -1 = UNSET, in which case their lane picks for
@@ -813,6 +832,10 @@ func to_dict() -> Dictionary:
 		"loyalty": loyalty,
 		"burnout": burnout,
 		"turns_employed": turns_employed,
+		# #1225 item 2: offer memory. Absent on older saves -> loads as "never
+		# rejected", which is exactly the pre-fix behaviour for an in-flight game.
+		"highest_rejected_offer": highest_rejected_offer,
+		"offers_rejected": offers_rejected,
 		"jet_lag_turns": jet_lag_turns,
 		"jet_lag_severity": jet_lag_severity,
 		# ADR-0010 B7/B8 per-person typed rep -- NEW KEY ONLY, snapped like appetites.
@@ -857,6 +880,8 @@ func from_dict(data: Dictionary):
 	loyalty = int(data.get("loyalty", 50))
 	burnout = float(data.get("burnout", 0.0))
 	turns_employed = int(data.get("turns_employed", 0))
+	highest_rejected_offer = float(data.get("highest_rejected_offer", 0.0))
+	offers_rejected = int(data.get("offers_rejected", 0))
 	jet_lag_turns = int(data.get("jet_lag_turns", 0))
 	jet_lag_severity = float(data.get("jet_lag_severity", 0.0))
 	# ADR-0010 B7/B8: absent on pre-typing saves -> everyone loads at zero standing.

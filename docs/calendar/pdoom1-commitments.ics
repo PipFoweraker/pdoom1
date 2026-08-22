@@ -1598,7 +1598,7 @@ DTSTART;VALUE=DATE:20260814
 DTEND;VALUE=DATE:20260815
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:310. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:314. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `godot/tests/unit/simulation/test_events.gd
  :50` -- ## THE RATCHET WAS DELIBERATELY LOOSENED -- 2026-08-14\, ruled by
@@ -3726,7 +3726,7 @@ DTSTART;VALUE=DATE:20260822
 DTEND;VALUE=DATE:20260823
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:300. 2 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:301. 2 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `godot/scripts/core/researcher.gd:171` -- #
   Ruled by Pip 2026-08-22 (#1247): "real STAFF\, but they might not eg pro
@@ -3740,6 +3740,30 @@ BEGIN:VALARM
 ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- RULINGS.md (unparsed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:05b625e62be13e2c@commitments.pdoom1
+DTSTAMP:20260822T000000Z
+DTSTART;VALUE=DATE:20260822
+DTEND;VALUE=DATE:20260823
+SUMMARY:[UNPARSED] needs a declaration -- scan_closed_issue_debt.py
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/scan_closed_issu
+ e_debt.py:8. 4 line(s) in tools/scan_closed_issue_debt.py mention this da
+ te and no COMMITMENT: declaration accounts for it. Either add a declarati
+ on or the date is incidental. First line: Pip\, 2026-08-22\, on discoveri
+ ng that #775 was closed COMPLETED with one of its -- Generated from track
+ ed sources by scripts/generate_commitment_calendar.py\; regenerate to upd
+ ate.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- scan_closed_issue_debt.py (unparsed) --
+  unowned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
@@ -3972,7 +3996,7 @@ DTSTART;VALUE=DATE:20260831
 DTEND;VALUE=DATE:20260901
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:299. 2 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:300. 3 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `godot/scripts/core/researcher.gd:131` -- #
   SEAM (ruled 2026-07-27\, review-by 2026-08-31): AUDITS ground-truth repo

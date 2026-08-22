@@ -85,26 +85,89 @@ static func classify(state) -> Dictionary:
 			if state.ledger and (state.ledger.death_attribution as Array).size() > 0:
 				root = "ledger"
 
-	return {"surface": surface, "root_cause": root, "chain": chain_summary(state)}
+	var split: Dictionary = chain_split(state)
+	return {
+		"surface": surface,
+		"root_cause": root,
+		# UNFILTERED, unchanged: the manual sweep drivers read this.
+		"chain": chain_summary(state),
+		# Recency-split, for any surface that shows a player a CAUSE (#1248).
+		"chain_proximate": split["proximate"],
+		"chain_earlier": split["earlier"],
+	}
+
+
+## One cause entry as its display line. Extracted so chain_summary() and
+## chain_split() cannot drift into formatting the same event two ways.
+static func _cause_line(c: Dictionary) -> String:
+	var fx: Dictionary = c.get("effects", {})
+	var parts: Array = []
+	for key in fx.keys():
+		# *_level / *_due keys are watermark LEVELS, not deltas -- print without a sign.
+		var k := str(key)
+		if k.ends_with("_level") or k.ends_with("_due"):
+			parts.append("%s %.1f" % [_short_key(k), float(fx[key])])
+		else:
+			parts.append("%s %+.1f" % [_short_key(k), float(fx[key])])
+	var fx_txt := (" (%s)" % ", ".join(parts)) if parts.size() > 0 else ""
+	return "t%d %s %s%s" % [int(c.get("turn", -1)), str(c.get("kind", "?")), str(c.get("source", "?")), fx_txt]
+
+
+## Split the causal trail into what is PROXIMATE to the death and what is history.
+##
+## WHY (issue #1248). The game-over screen printed the WHOLE cause_log under the
+## heading CAUSE OF DEATH. In a run that ended on turn 130 that meant showing:
+##
+##     t80 funding_starvation payroll (cash@ 248.0, bills 670.3)
+##     t87 rep_collapse reputation (rep@ 5.0)
+##
+## The player finished that run with $1,189,765. They did not die of the t80 cash
+## crisis; they SURVIVED it and recovered by three orders of magnitude. The screen
+## told them something false about their own run, at the exact moment they were
+## looking for an explanation.
+##
+## Both guards to prevent that already existed in this file and neither was
+## reachable from the panel: RECENT_WINDOW ("a default RECENT_WINDOW+ turns before
+## death is history, not cause") and the fact that funding_starvation and
+## rep_collapse are cascade WATERMARKS, explicitly "not damage". classify() used
+## RECENT_WINDOW for its own ledger verdict; chain_summary() never did.
+##
+## funding_starvation makes it worse: it is one-shot-per-episode and RESETS on
+## recovery (turn_manager.gd), but the cause_log entry it wrote is permanent.
+## Recovering from a cash crisis clears the flag and leaves the tombstone.
+##
+## Returns {proximate: Array, earlier: Array}, both oldest-first. `proximate` is
+## what may honestly sit under CAUSE OF DEATH; `earlier` is the run's history and
+## belongs under its own heading. Neither is dropped -- the t80/t87 trail IS
+## interesting, it is just not the cause.
+static func chain_split(state) -> Dictionary:
+	var proximate: Array = []
+	var earlier: Array = []
+	var death_turn := int(state.turn)
+	for c in state.cause_log:
+		var turn := int(c.get("turn", -1))
+		# turn < 0 means the cause carries no turn stamp. Treat it as proximate:
+		# an unstamped cause cannot be shown to be old, and quietly demoting it to
+		# history would hide a real one.
+		var is_recent: bool = turn < 0 or (death_turn - turn) <= RECENT_WINDOW
+		if is_recent:
+			proximate.append(_cause_line(c))
+		else:
+			earlier.append(_cause_line(c))
+	return {"proximate": proximate, "earlier": earlier}
 
 
 static func chain_summary(state, max_entries: int = 8) -> Array:
 	"""Compact turn-stamped causal trail for reports, oldest first, e.g.
 	't3 ledger_exposure payroll_coinflip (rep -32.1, gov -4711)'. Truncates the
-	middle when the log is long -- first and last causes carry the chain."""
+	middle when the log is long -- first and last causes carry the chain.
+
+	UNFILTERED on purpose: the manual sweep drivers (tests/manual/) analyse whole
+	runs and want every cause. The game-over PANEL uses chain_split() instead --
+	see #1248."""
 	var lines: Array = []
 	for c in state.cause_log:
-		var fx: Dictionary = c.get("effects", {})
-		var parts: Array = []
-		for key in fx.keys():
-			# *_level / *_due keys are watermark LEVELS, not deltas -- print without a sign.
-			var k := str(key)
-			if k.ends_with("_level") or k.ends_with("_due"):
-				parts.append("%s %.1f" % [_short_key(k), float(fx[key])])
-			else:
-				parts.append("%s %+.1f" % [_short_key(k), float(fx[key])])
-		var fx_txt := (" (%s)" % ", ".join(parts)) if parts.size() > 0 else ""
-		lines.append("t%d %s %s%s" % [int(c.get("turn", -1)), str(c.get("kind", "?")), str(c.get("source", "?")), fx_txt])
+		lines.append(_cause_line(c))
 	if lines.size() > max_entries:
 		var head := lines.slice(0, max_entries - 3)
 		var tail := lines.slice(lines.size() - 2)

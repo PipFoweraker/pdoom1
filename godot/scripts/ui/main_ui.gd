@@ -1192,7 +1192,26 @@ func _on_game_state_updated(state: Dictionary):
 	if reserved_att > 0:
 		ap_text = "[color=%s]Attention: %d (%d free, %d reserved)[/color]  %s" % [ap_color_name, total_att, remaining_att, reserved_att, blob_display]
 	elif committed_att > 0:
-		ap_text = "[color=%s]Attention: %d (%d free, %d queued)[/color]  %s" % [ap_color_name, total_att, remaining_att, committed_att, blob_display]
+		# #1223: "committed", NOT "queued". This reads month_plan.attention_spent --
+		# the local is even called committed_att -- and that number has TWO disjoint
+		# sets of writers, only one of which mints an Action Queue tile.
+		# GameManager.select_action() debits AND appends to queued_actions (a tile
+		# appears); MonthPlan.spend_attention() debits and deliberately mints nothing,
+		# which is the primitive every hiring action uses so the subsystem can own its
+		# own job list.
+		#
+		# So the header said "8 queued" six inches above a widget saying "No actions
+		# queued yet", and both were right about their own number. Pip's 2026-08-14
+		# playtest, one frame, three surfaces, three sources, no arbitration.
+		#
+		# This is the issue's option 1b -- stop the header claiming the queue holds
+		# something it does not. It also survives the post-commit case (issue item 2):
+		# reset_mirror() empties the widget at commit while attention_spent persists to
+		# begin_month(), so "queued" was false there too, and "committed" is true in
+		# both. Rendering in-flight hiring AS TILES is the larger half Pip wants
+		# (#1041: "wants both") and is deliberately not attempted here -- see #1044
+		# and #794, which are heading for the same widget.
+		ap_text = "[color=%s]Attention: %d (%d free, %d committed)[/color]  %s" % [ap_color_name, total_att, remaining_att, committed_att, blob_display]
 	else:
 		ap_text = "[color=%s]Attention: %d[/color]  %s" % [ap_color_name, total_att, blob_display]
 
