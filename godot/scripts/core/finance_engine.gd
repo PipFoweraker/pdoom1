@@ -337,7 +337,7 @@ static func accept_offer(offer: Dictionary, state) -> Dictionary:
 			state.add_resources({"money": principal})
 			result["money_delta"] = principal
 			entries.append(Ledger.Entry.new("loan:" + cp, "money", repayment, fuse, rate, false, Ledger.Side.PAYABLE, cp))
-			result["message"] = "Accepted %s: +$%d now; ~$%d bills in %d ticks" % [offer.get("name", "loan"), int(principal), int(repayment), fuse]
+			result["message"] = "Accepted %s: +$%d now; ~$%d bills in %d days" % [offer.get("name", "loan"), int(principal), int(repayment), fuse]
 		"funding_strings":
 			state.add_resources({"money": principal})
 			result["money_delta"] = principal

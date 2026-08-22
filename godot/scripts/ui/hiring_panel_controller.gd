@@ -619,7 +619,18 @@ func update_inflight_display(state: Dictionary) -> void:
 				total = max(1, remaining)
 				title = kind
 		var done: int = clampi(total - remaining, 0, total)
-		rows.append({"title": title, "done": done, "total": total, "unit": "ticks"})
+		# #1223: "days", not "ticks". A tick IS a workday -- clock.gd:5 ("One turn =
+		# one WORKDAY"), TURNS_PER_WEEK = 5 -- and the rest of the game already says
+		# so: conference_trip.gd "Back from %s after %d days", conference_vignette.gd
+		# "%d days away", screen_mode.gd "day %d". The travel surfaces made the right
+		# call and hiring did not. Nothing here is hidden (the durations are declared
+		# in Balance and the UI reads the same keys) -- it was illegible, which is a
+		# different defect from #1218's hidden costs.
+		#
+		# The neighbouring onboarding row keeps "steps" on purpose: those are
+		# checklist items, not time, and printing both as "days" would make a
+		# checklist look like a clock.
+		rows.append({"title": title, "done": done, "total": total, "unit": "days"})
 
 	# Onboarding hires (checklist, not tick-timed). #789 hard checklist: laptop +
 	# systems + meet people [+ visa]. Legacy/direct hires default onboarded=true, so
