@@ -3,7 +3,7 @@
   "repo": "pdoom1",
   "generated_from": "tracked files at HEAD",
   "convention": "docs/rulings/RULINGS_CONVENTION.md",
-  "count": 36,
+  "count": 37,
   "rulings": [
     {
       "id": "pdoom1:2026-07-04:12de8fc2",
@@ -494,6 +494,20 @@
       "supersedes": null,
       "superseded_by": null,
       "source": "tools/assets/check_provenance.py:65"
+    },
+    {
+      "id": "pdoom1:2026-08-22:8130f800",
+      "date": "2026-08-22",
+      "ruling": "a mechanic that charges the player and does nothing observable gets an unsubtle placeholder consequence NOW rather than waiting for a balanced one; players need to suffer, and balance comes later",
+      "summary": "",
+      "flavour": "mechanical-inertness",
+      "kind": "declaration",
+      "status": "",
+      "by": "Pip",
+      "mechanism": "this test file, and the fix-by dates on the inertness issues",
+      "supersedes": null,
+      "superseded_by": null,
+      "source": "godot/tests/unit/test_ad_campaign_is_visible.gd:11"
     },
     {
       "id": "pdoom1:2026-08-23:40cd814d",

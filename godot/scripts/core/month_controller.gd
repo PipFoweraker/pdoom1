@@ -448,20 +448,79 @@ func _surface_hiring_notifications(events: Array) -> void:
 	established readable/no-decision channel; not a new channel). Ad campaigns trickling a
 	candidate in used to be silent; the player now learns the campaign paid off. Batched: one
 	feed line per month, pluralized, so several arrivals don't spam the feed."""
-	var ad_hits := 0
+	var months: Array = []
 	for e in events:
-		if e is Dictionary and String(e.get("kind", "")) == "advertise_hit":
-			ad_hits += 1
-	if ad_hits <= 0:
-		return
-	var msg := "An applicant responded to your ad campaign." if ad_hits == 1 \
-		else "%d applicants responded to your ad campaign." % ad_hits
-	var feed_event := {
-		"id": "hiring_ad_response",
-		"name": "Ad campaign response",
-		"delivery_tier": EventTiers.TIER_FEED,
-		"source_id": "hiring",
-		"message": msg,
-		"count": ad_hits,
-	}
-	feed_log.append({"event": feed_event, "source_id": EventTiers.source_id_of(feed_event)})
+		if e is Dictionary and String(e.get("kind", "")) == "advertise_month":
+			months.append(e)
+	# Stream-neutral with no live campaign: _tick_campaigns returns early and emits no
+	# summary, so nothing reaches the feed.
+	for m in months:
+		var feed_event := {
+			"id": "hiring_ad_response",
+			"name": "Ad campaign",
+			"delivery_tier": EventTiers.TIER_FEED,
+			"source_id": "hiring",
+			"message": ad_campaign_message(m),
+			"count": int(m.get("added", 0)),
+		}
+		feed_log.append({"event": feed_event, "source_id": EventTiers.source_id_of(feed_event)})
+
+
+static func ad_campaign_message(m: Dictionary) -> String:
+	"""One month of one ad campaign, in words. Static and pure so a test can pin every
+	branch without standing up a MonthController.
+
+	#1225 item 3, and Pip's 2026-08-23 ruling on mechanical inertness: 'I'd rather have a
+	bad thing in there now, unsubtle, rather than no thing... players need to suffer.' A
+	month that produced nobody SAYS so. The campaign has a mean yield of 3 over three
+	months and a 1-in-27 chance of returning literally nothing, and until now the player
+	could not distinguish that outcome from the campaign having ended."""
+	var added := int(m.get("added", 0))
+	var discarded := int(m.get("discarded", 0))
+	var rem := int(m.get("months_remaining", 0))
+	var ended: bool = bool(m.get("ended", false))
+	var total := int(m.get("total_added", 0))
+	var spent := float(m.get("spent", 0.0))
+
+	var parts: Array = []
+	if added == 1:
+		parts.append("An applicant responded to your ad campaign.")
+	elif added > 1:
+		parts.append("%d applicants responded to your ad campaign." % added)
+	else:
+		parts.append("Your ad campaign ran all month and nobody applied.")
+
+	# The at-cap discard (#961 rules this must never be silent). It is reported here
+	# because this is the only place that knows it happened.
+	if discarded == 1:
+		parts.append("One more was turned away -- your shortlist is full.")
+	elif discarded > 1:
+		parts.append("%d more were turned away -- your shortlist is full." % discarded)
+
+	if ended:
+		if total <= 0:
+			# The 1-in-27. Name the money; this is the line that is supposed to hurt.
+			parts.append("The campaign is over. It produced nobody, and it cost $%s." % _thousands(spent))
+		elif total == 1:
+			parts.append("The campaign is over. One person came of it, for $%s." % _thousands(spent))
+		else:
+			parts.append("The campaign is over. %d people came of it, for $%s." % [total, _thousands(spent)])
+	elif rem == 1:
+		parts.append("One month of the campaign remains.")
+	else:
+		parts.append("%d months of the campaign remain." % rem)
+
+	return " ".join(parts)
+
+
+static func _thousands(v: float) -> String:
+	"""8000.0 -> '8,000'. Money in a feed line reads as money, not as a bare float."""
+	var s := str(int(round(v)))
+	var out := ""
+	var c := 0
+	for i in range(s.length() - 1, -1, -1):
+		out = s[i] + out
+		c += 1
+		if c % 3 == 0 and i > 0:
+			out = "," + out
+	return out
