@@ -102,7 +102,7 @@
 			"action_safety_alarm": 0.03,
 			"action_paper_alarm": 3.0,
 			"action_audit_absorb": 1.0,
-			"action_desperation_absorb": 0.0,
+			"action_desperation_absorb": 25.0,
 			"action_lobby_pressure": 0.5,
 			"action_lobby_alarm": 0.5,
 			"action_warning_alarm": 0.6,
