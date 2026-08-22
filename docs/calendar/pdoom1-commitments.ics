@@ -3951,7 +3951,7 @@ SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
  d:299. 2 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
-  is incidental. First line: - `godot/scripts/core/researcher.gd:131` -- #
+  is incidental. First line: - `godot/scripts/core/researcher.gd:150` -- #
   SEAM (ruled 2026-07-27\, review-by 2026-08-31): AUDITS ground-truth repo
  rted vs actual. -- Generated from tracked sources by scripts/generate_com
  mitment_calendar.py\; regenerate to update.
