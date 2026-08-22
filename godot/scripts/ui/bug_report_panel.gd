@@ -22,6 +22,71 @@ extends Control
 
 var bug_reporter: BugReporter
 
+# #1281 transport state. The report is kept after saving so the send-it-onward
+# buttons have something to act on; the panel used to discard it at the door.
+var _last_report: Dictionary = {}
+var _last_report_path: String = ""
+var _send_actions: HBoxContainer = null
+
+
+## The row of exits shown AFTER a save: copy, open the tracker, open the folder.
+## Built in code rather than in the .tscn so this lands as one reviewable file
+## and cannot desync from the script that drives it.
+func _show_send_actions() -> void:
+	if _send_actions != null and is_instance_valid(_send_actions):
+		_send_actions.visible = true
+		return
+	var vbox := confirmation_label.get_parent()
+	if vbox == null:
+		return
+	_send_actions = HBoxContainer.new()
+	_send_actions.name = "SendActions"
+	_send_actions.alignment = BoxContainer.ALIGNMENT_CENTER
+
+	var copy_btn := Button.new()
+	copy_btn.text = "Copy report"
+	copy_btn.tooltip_text = "Copy the whole report so you can paste it anywhere"
+	copy_btn.pressed.connect(_on_copy_pressed)
+	_send_actions.add_child(copy_btn)
+
+	var issue_btn := Button.new()
+	issue_btn.text = "Open the tracker"
+	issue_btn.tooltip_text = "Opens a pre-filled issue in your browser"
+	issue_btn.pressed.connect(_on_open_issue_pressed)
+	_send_actions.add_child(issue_btn)
+
+	var folder_btn := Button.new()
+	folder_btn.text = "Show the file"
+	folder_btn.tooltip_text = "Open the folder holding the saved report"
+	folder_btn.pressed.connect(_on_open_folder_pressed)
+	_send_actions.add_child(folder_btn)
+
+	vbox.add_child(_send_actions)
+	vbox.move_child(_send_actions, confirmation_label.get_index() + 1)
+
+
+func _on_copy_pressed() -> void:
+	if _last_report.is_empty():
+		return
+	DisplayServer.clipboard_set(BugReporter.format_for_transport(_last_report))
+	confirmation_label.text = "Copied. Paste it into the tracker, Discord, or an email -- whichever you already use.\n\n%s" % BugReporter.ROUTING_TEXT
+
+
+func _on_open_issue_pressed() -> void:
+	if _last_report.is_empty():
+		return
+	# Clipboard too: GitHub truncates long query strings, and a player who hits
+	# that should still have the full text in hand rather than silently losing it.
+	DisplayServer.clipboard_set(BugReporter.format_for_transport(_last_report))
+	OS.shell_open(BugReporter.github_issue_url(_last_report))
+
+
+func _on_open_folder_pressed() -> void:
+	if _last_report_path == "":
+		return
+	OS.shell_open(_last_report_path.get_base_dir())
+
+
 func _ready():
 	# Hide panel by default
 	visible = false
@@ -102,6 +167,12 @@ func reset_form():
 	name_input.editable = false
 	contact_input.editable = false
 	confirmation_label.visible = false
+	# #1281: the send-it-onward row belongs to ONE saved report. A reused panel
+	# showing the previous report's buttons would copy or file the wrong thing.
+	if _send_actions != null and is_instance_valid(_send_actions):
+		_send_actions.visible = false
+	_last_report = {}
+	_last_report_path = ""
 	# Re-enable Submit when the panel is reused (it is disabled in the thanks state, #603).
 	submit_button.disabled = false
 
@@ -152,6 +223,11 @@ func _on_submit_pressed():
 		save_path
 	)
 
+	# #1281: keep the report so the send-it-onward buttons have something to act
+	# on. Saving is not sending, and until this line existed the panel threw the
+	# report away the moment it hit disk.
+	_last_report = report
+
 	# Save report locally
 	var filepath = bug_reporter.save_report_locally(report, screenshot, save_path)
 
@@ -183,19 +259,26 @@ func _on_report_saved(filepath: String):
 	# truth (was implying an auto-filed GitHub issue) and surface the path + an email
 	# so tester feedback actually reaches us.
 	var global_path := ProjectSettings.globalize_path(filepath)
-	var thanks_text := "Thanks! Saved locally to:\n%s\n\nThis build does not send reports automatically yet -- please email that file to team@pdoom1.com so it reaches us." % global_path
-	show_confirmation(thanks_text)
+	_last_report_path = global_path
 
-	# #882: the panel used to auto-close after a silent wait -- the player half-waits,
-	# unsure it will close itself. Count down visibly so the behaviour is legible.
-	# Bail out if the panel was closed/reused meanwhile (ESC, or a new report opened).
-	for remaining in range(6, 0, -1):
-		if not visible or confirmation_label.modulate != Color.GREEN:
-			return
-		confirmation_label.text = "%s\n\nClosing in %d..." % [thanks_text, remaining]
-		await get_tree().create_timer(1.0).timeout
-	if visible:  # Only reset if still visible
-		hide_panel()
+	# #1281: the old text said "please email that file to team@pdoom1.com so it
+	# reaches us". Nobody does that. Measured: after a fortnight of playtesting
+	# this machine's user://bug_reports was EMPTY -- not one report had ever been
+	# filed, let alone emailed. Saving to disk and calling it reported is the same
+	# inert-mechanic defect as a lever that quotes a number it never applies.
+	#
+	# So the panel now offers the exits that actually work with no backend, and
+	# states the routing, because a player who does not know where it goes does
+	# not send it.
+	var thanks_text := ("Saved. Now send it -- one click:\n\n%s\n\nOn disk at: %s"
+		% [BugReporter.ROUTING_TEXT, global_path])
+	show_confirmation(thanks_text)
+	_show_send_actions()
+
+	# #882 kept a visible 6s countdown so auto-close was legible. That is now WRONG
+	# here: the buttons above are the whole point, and yanking them away after six
+	# seconds would restore the original defect by a different route. The player
+	# closes this themselves.
 
 ## Handle report save failure
 func _on_report_save_failed(error: String):
