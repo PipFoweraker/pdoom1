@@ -1162,6 +1162,10 @@
       "text": "# SEAM (ruled 2026-07-27, review-by 2026-08-31): AUDITS ground-truth reported vs actual."
     },
     {
+      "source": "godot/scripts/core/researcher.gd:190",
+      "text": "# Ruled by Pip 2026-08-22 (#1247): \"real STAFF, but they might not eg produce"
+    },
+    {
       "source": "godot/scripts/core/researcher.gd:61",
       "text": "# \"Hiring pipeline RULED\" (A1/A2/A3); appetites/quirks per ADR-0011 section 8; pay-to-see"
     },
@@ -1170,7 +1174,11 @@
       "text": "# Hire lifecycle (WORKSHOP_2 \"Hiring pipeline RULED\"): pool -> offered -> employed ->"
     },
     {
-      "source": "godot/scripts/core/turn_manager.gd:306",
+      "source": "godot/scripts/core/turn_manager.gd:239",
+      "text": "# #1247, ruled by Pip: real staff, but \"they might not eg produce"
+    },
+    {
+      "source": "godot/scripts/core/turn_manager.gd:313",
       "text": "SEAM (ruled 2026-07-27, review-by 2026-08-31): AUDITS ground-truth reported vs actual."
     },
     {
@@ -1200,6 +1208,10 @@
     {
       "source": "godot/tests/unit/test_cold_open_intro.gd:46",
       "text": "# Pip approved this string personally (#801 ruled copy). If this fails, someone edited"
+    },
+    {
+      "source": "godot/tests/unit/test_compute_engineers_are_staff.gd:12",
+      "text": "## Ruled by Pip 2026-08-22: \"real STAFF, but they might not eg produce as much"
     },
     {
       "source": "godot/tests/unit/test_no_debug_event_injection.gd:9",

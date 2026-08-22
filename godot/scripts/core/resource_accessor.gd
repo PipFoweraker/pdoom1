@@ -78,8 +78,28 @@ static func add(state, resource_name: String, value) -> bool:
 			# Follow-up content lane re-authors events to write intermediaries instead.
 			state.doom += value
 		"compute_engineers":
-			# Compute engineers use legacy count only (no Researcher object)
-			state.compute_engineers += value
+			# #1247: they ARE Researcher objects now (Pip's ruling 2026-08-22), so this
+			# channel creates and removes PEOPLE. The old comment here read "compute
+			# engineers use legacy count only (no Researcher object)" -- true when
+			# written, and exactly the split that let event content mint staff the sim
+			# could not see. add_researcher/remove_researcher keep the counter in step.
+			var n := int(value)
+			if n > 0:
+				for _i in range(n):
+					var ce := Researcher.new("compute_engineer")
+					ce.generate_random(state.rng)
+					ce.specialization = "compute_engineer"
+					state.add_researcher(ce)
+			elif n < 0:
+				for _i in range(-n):
+					var victim = null
+					for r in state.researchers:
+						if r.specialization == "compute_engineer":
+							victim = r
+							break
+					if victim == null:
+						break  # none left; do NOT drive the counter negative
+					state.remove_researcher(victim)
 		_:
 			return false
 	return true
