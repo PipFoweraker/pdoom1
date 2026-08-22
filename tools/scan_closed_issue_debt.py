@@ -189,7 +189,13 @@ def main():
         print("\n  #%-5d %s" % (i["number"], i["title"][:66]))
         print("         %s" % i["_criteria"][:96])
     print("\nConfirmed shadow debt from the 2026-08-22 run: #775 only (now #1269).")
-    print("Four others checked by hand were satisfied. Expect a low hit rate.")
+    print("Five others checked by hand were satisfied. Expect a low hit rate.")
+    print("Of the 13 prose-criteria issues, 11 are pygame-era (#66-#170) so their")
+    print("criteria are moot. #720 was the only unexamined modern one and all four")
+    print("of its criteria were verified met in the tree (show_hints lives in")
+    print("GameConfig and persists, settings_menu.gd exposes the toggle, and")
+    print("welcome_overlay.gd is the first-launch overlay pointing at the Player")
+    print("Guide). Re-verify rather than trusting this line.")
     return 0
 
 
