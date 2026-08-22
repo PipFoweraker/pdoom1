@@ -100,6 +100,7 @@ Declared with a `Layer:` line in a tool's module docstring; `--` = undeclared.
 | render_budget.py | -- | Render the funding budget from data. Every published form, one source. | human (docstring usage) |
 | reset_player_state.py | -- | Reset this machine's P(Doom) player state to a genuine first-launch experience. | test:test_reset_player_state_restore.py |
 | rule.py | -- | Capture a ruling in one command, and show the precedent before you make it. | human (docstring usage) |
+| scan_closed_issue_debt.py | PROVE | Find closed issues whose own acceptance criteria may never have been checked. | human (docstring usage) |
 | slim_repo.py | -- | Reclaim git + .pck weight -- the slack mapped by the 2026-07-25 archival pass (#861). | human (docstring usage) |
 | sync_version.py | PROVE | Stamp the canonical game version into every place that cannot self-read it. | pre-commit; ci:quality-checks.yml; tool:build_release.py; tool:check_ladder_bump.py |
 | transcribe.py | OBSERVE | Transcribe a recording to timestamped text, offline, and optionally join it to the review log. | tool:serve_review.py |
@@ -243,4 +244,4 @@ DISCUSSING CI); the rest are the hollow-runner shape -- read them.
 
 27 `.html` tool(s) under `tools/` (browser-opened, no docstring to parse): `tools/art_review/doom_overlay_preview.html`, `tools/art_review/hero_gallery_template.html`, `tools/art_review/icon_pass_2026-07-21.html`, `tools/art_review/icon_pass_verdicts_2026-07-21.html`, `tools/art_review/palette.html`, `tools/art_review/palette_swatches.html`, `tools/art_review/scene_wave2_2026-07-21.html`, `tools/art_review/style_review.html`, `tools/assets/review_generated.html`, `tools/music/commission_sheets.html`, `tools/music/jukebox.html`, `tools/music/listening_room.html`, `tools/music/stem_board.html`, `tools/runsheet/CEREMONY-ALL-GATES-2026-07-31.html`, `tools/runsheet/SUNDAY-postmortem-2026-08-07.html`, `tools/runsheet/chronicle-2026-08-06_07.html`, `tools/runsheet/commitments-2026-08.html`, `tools/runsheet/copy-review-2026-08-09.html`, `tools/runsheet/fri-2026-07-31-EVENING-1620.html`, `tools/runsheet/fri-2026-07-31-GATES-1700.html`, `tools/runsheet/fri-2026-07-31-TO-MIDNIGHT-1733.html`, `tools/runsheet/fri-2026-07-31-league-day.html`, `tools/runsheet/playtest_card.html`, `tools/runsheet/wed-thu-2026-07-29.html`, `tools/social_composer.html`, `tools/ui_comparison.html`, `tools/ui_mockup/wireframe.html`.
 
-Total: 140 active tools (11 GENERATE, 8 OBSERVE, 12 PROVE, 1 SWEEP, 108 undeclared); 11 in UNKNOWN; 6 archived.
+Total: 141 active tools (11 GENERATE, 8 OBSERVE, 13 PROVE, 1 SWEEP, 108 undeclared); 11 in UNKNOWN; 6 archived.
