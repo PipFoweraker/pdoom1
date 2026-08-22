@@ -603,6 +603,9 @@ const HANDLED_EFFECT_KEYS := [
 	"safety_researchers", "capability_researchers",  # staffing arms
 	"has_cat", "lose_researcher",
 	"loyalty_hit",  # employee_burnout "Push Through" interim content (WORKSHOP_2_BACKLOG ruling)
+	"retain_researcher",  # rival-retention counter-offers (#1225 item 4). Handled at
+	                      # events.gd:350 via _retain_most_at_risk: raises loyalty AND
+	                      # current_salary, so the counter bills through payroll forever.
 ]
 
 # Every cost key can_afford/spend_resources actually checks and deducts.
