@@ -484,7 +484,23 @@ func _show_offer_dialog(candidate_id: String) -> void:
 	var reserve_now: int = st.month_plan.reserve_remaining() if st.month_plan != null else 0
 	var onboard_lbl := Label.new()
 	onboard_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	onboard_lbl.text = "If they accept: onboarding costs ~%d Attention (+%d optional mentoring). Reserve on hand: %d." % [onboard_att, mentor_att, reserve_now]
+	# #1225 item 5: the MONEY was missing. hard_checklist_money() already existed and was
+	# called from build_onboard_prompt, _provision_hard_checklist, _resolve_job and the
+	# tests -- from everywhere EXCEPT the one screen where the player is still deciding.
+	# The number first appeared on the "<name> said yes" card, riding costs:{"money"} --
+	# AFTER the player was committed. #789 item 1 asked for these to be "predictable AP
+	# sinks you can plan for WHEN YOU MAKE THE OFFER"; the Attention half shipped and the
+	# cash half did not.
+	var onboard_money: float = st.hiring.hard_checklist_money(cand)
+	# And the VISA, which is why that number moves. needs_visa is `serial % 4 == 0` -- one
+	# hire in four -- costing $5,000 and 2 Attention on top of the $3,000 laptop. It is not
+	# in get_card_data() and not on the candidate card, so a $8,000 hire was
+	# indistinguishable from a $3,000 one except by reading "~5" instead of "~3".
+	var visa_note := "  Includes a visa ($%d + %d Att) -- this hire is a foreign/remote one." % [
+		int(st.hiring.item_money("visa")), int(st.hiring.item_attention("visa"))
+	] if cand.needs_visa else ""
+	onboard_lbl.text = "If they accept: onboarding costs ~%d Attention and $%d (+%d optional mentoring). Reserve on hand: %d.%s" % [
+		onboard_att, int(onboard_money), mentor_att, reserve_now, visa_note]
 	onboard_lbl.add_theme_font_size_override("font_size", 9)
 	onboard_lbl.add_theme_color_override("font_color", Color(0.7, 0.8, 0.9))
 	vb.add_child(onboard_lbl)

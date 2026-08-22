@@ -618,7 +618,25 @@ func build_mentoring_prompt(cand: Researcher) -> Dictionary:
 		"id": "hiring_mentor_%s" % cand.candidate_id,
 		"kind": "hiring_mentoring_prompt",
 		"name": "Mentor %s?" % cand.researcher_name,
-		"description": "Optional: block out founder time to mentor %s. Mentored hires ramp to full effectiveness faster and are less likely to quit early. Skipping saves the time now, at a lasting output debuff and an early-quit risk." % cand.researcher_name,
+		# #1225 item 5, the trap: LAPSING OR DISMISSING THIS CARD IS CHOOSING TO SKIP.
+		# _resolve_hiring_window treats a dismissal as mentoring_skipped, which arms a
+		# PERMANENT x0.85 output debuff and a 15% per-month early-quit roll. A player who
+		# closes a popup had made a permanent decision and was never told so -- a #1221
+		# case: a refusal, or here a default, must say what it is.
+		#
+		# The numbers are named rather than hinted. They were previously "a lasting output
+		# debuff and an early-quit risk", which is true and unactionable.
+		"description": ("Optional: block out founder time to mentor %s. Mentored hires ramp to full effectiveness faster and are less likely to quit early.\n\n"
+			+ "Skipping costs a PERMANENT x%.2f output penalty and a %d%% chance per month that they quit early.\n\n"
+			+ "CLOSING OR IGNORING THIS CARD COUNTS AS SKIPPING. You can still mentor them later from the hiring screen, which un-arms both.") % [
+				cand.researcher_name,
+				# The SAME keys the sim reads, not lookalikes: researcher.gd's
+				# get_effective_productivity() applies skimped_multiplier, and
+				# _roll_early_attrition() rolls against attrition_risk. Reading different
+				# keys here would let the card and the sim drift the moment either is
+				# tuned -- the exact defect class this issue is about.
+				Balance.num("hiring.onboarding.skimped_multiplier", 0.85),
+				int(Balance.num("hiring.onboarding.attrition_risk", 0.15) * 100.0)],
 		"type": "popup",
 		"delivery_tier": "window",
 		"event_class": "no-action",
