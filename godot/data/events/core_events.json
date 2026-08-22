@@ -274,7 +274,9 @@
 					"costs": {
 						"money": 80000
 					},
-					"effects": {},
+					"effects": {
+						"retain_researcher": 1
+					},
 					"message": "Successfully retained researchers with counter-offer"
 				},
 				{
@@ -1074,7 +1076,8 @@
 						"money": 50000
 					},
 					"effects": {
-						"reputation": 2
+						"reputation": 2,
+						"retain_researcher": 1
 					},
 					"message": "Matched offer, researcher stays (+2 reputation for loyalty)"
 				},
@@ -1086,7 +1089,8 @@
 						"money": 30000
 					},
 					"effects": {
-						"reputation": 3
+						"reputation": 3,
+						"retain_researcher": 1
 					},
 					"message": "Promoted researcher to senior role (+3 reputation)"
 				},
