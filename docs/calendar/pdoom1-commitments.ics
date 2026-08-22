@@ -3720,6 +3720,30 @@ DESCRIPTION:needs a declaration -- run_godot_tests.py (unparsed) -- unowne
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:05b625e62be13e2c@commitments.pdoom1
+DTSTAMP:20260822T000000Z
+DTSTART;VALUE=DATE:20260822
+DTEND;VALUE=DATE:20260823
+SUMMARY:[UNPARSED] needs a declaration -- scan_closed_issue_debt.py
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/scan_closed_issu
+ e_debt.py:8. 4 line(s) in tools/scan_closed_issue_debt.py mention this da
+ te and no COMMITMENT: declaration accounts for it. Either add a declarati
+ on or the date is incidental. First line: Pip\, 2026-08-22\, on discoveri
+ ng that #775 was closed COMPLETED with one of its -- Generated from track
+ ed sources by scripts/generate_commitment_calendar.py\; regenerate to upd
+ ate.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- scan_closed_issue_debt.py (unparsed) --
+  unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:d1a889291109778a@commitments.pdoom1
 DTSTAMP:20260824T000000Z
 DTSTART;VALUE=DATE:20260824
