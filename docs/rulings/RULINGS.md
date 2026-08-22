@@ -5,7 +5,7 @@
 > `python scripts/generate_rulings.py`. The convention, and why it looks
 > like this, is argued in `docs/rulings/RULINGS_CONVENTION.md`.
 
-**35 ruling(s)** across **6 flavour(s)**. **218** prose ruling(s) not yet declared.
+**35 ruling(s)** across **6 flavour(s)**. **219** prose ruling(s) not yet declared.
 
 ## One index, five sources
 
@@ -219,6 +219,7 @@ is not.
 - `docs/game-design/DESIGN_2026-08-15_causality-violation.md:395` -- with an icon. **His own earlier ruling says no.** On 2026-07-31 he ruled that
 - `docs/game-design/DESIGN_PHILOSOPHY.md:423` -- **The founder currency is named `Attention`** (ruled 2026-07-13): Pip's own canon
 - `docs/game-design/DESIGN_PHILOSOPHY.md:56` -- race enters the seed timeline. The two collisions ruled: 2017 run-start holds (fixed
+- `docs/game-design/DESPERATION_LEVER_PRICING.md:3` -- **Ruled by Pip, 2026-08-22:** *"we need to give the mechanical inertness a definite
 - `docs/game-design/DQ-21-INTERMEDIARY-SEMANTICS-STRAWMAN.md:150` -- - **Enters doom via ([x] R2-Q2 ruled: gate-only, no stream of its own):** positive
 - `docs/game-design/DQ-21-INTERMEDIARY-SEMANTICS-STRAWMAN.md:279` -- 3. **Trend-grade invariant ([x] R2-Q7 ruled, N=6):** doom rate MAY go negative on any turn;
 - `docs/game-design/DQ-21-INTERMEDIARY-SEMANTICS-STRAWMAN.md:491` -- - [x] **Q-FN-3** Resolved via rounds 2+4: dampers can push the *rate* negative; sacred-object chains (?2b) are the discrete *level* reductions; the R2-Q7 trend-grade invariant (now ruled, N=6) polices

@@ -355,16 +355,34 @@ static func accept_offer(offer: Dictionary, state) -> Dictionary:
 			result["money_delta"] = principal
 			result["message"] = "Accepted %s: +$%d, a gift -- no repayment (scarce)" % [offer.get("name", "gift"), int(principal)]
 		"desperation_payroll":
-			# Immediate doom SUPPRESSION (unchanged pre-L5 path -- boundary: no doom_system touch),
-			# plants a secret, compounding governance liability with the QUOTED terms.
-			var suppress := _cfg_num("desperation_doom_suppression", 10.0)
-			state.add_resources({"doom": -suppress})
-			result["doom_delta"] = -suppress
+			# #967. This USED TO promise the player a number it never delivered:
+			#
+			#     state.add_resources({"doom": -suppress})
+			#     result["message"] = "... -%d doom now; a SECRET liability is planted"
+			#
+			# That write goes through the INERT sink -- Resources.add() does
+			# `state.doom += value`, and turn_manager clobbers it every resolve with
+			# `state.doom = doom_system.current_doom` (ADR-0015: DoomSystem's streams are
+			# the authority). So the suppression never survived a single resolve. A live,
+			# player-reachable promise that silently did nothing, and it QUOTED A FIGURE,
+			# which is the part that makes it a lie rather than a no-op.
+			#
+			# The fix pattern already existed: actions.gd "desperation_lever" is the
+			# already-corrected sibling. It routes the reprieve through safety_absorption
+			# (a real offset the overhang stream reads) and deliberately PRINTS NO DOOM
+			# NUMBER. finance_engine.gd is the duplicate ADR-0015's sweep missed, because
+			# that sweep only covered godot/data/.
+			#
+			# Mirrored here rather than re-invented, so the two desperation paths cannot
+			# drift again.
+			state.safety_absorption += Balance.num("doom.streams.action_desperation_absorb", 0.0)
+			# doom_delta stays absent on purpose: there is no direct doom write to report,
+			# and reporting one is exactly what this issue is about.
 			var sev := Balance.num("ledger.desperation_payroll.severity_base", 1200.0)
 			if _has(state, "rng") and state.rng != null:
 				sev += state.rng.randf() * Balance.num("ledger.desperation_payroll.severity_spread", 800.0)
 			entries.append(Ledger.Entry.new("payroll_coinflip", "governance", sev, fuse, rate, true))
-			result["message"] = "Pulled the desperation lever: -%d doom now; a SECRET liability is planted" % int(suppress)
+			result["message"] = "Pulled the desperation lever (brief reprieve now; a SECRET liability is planted)"
 		_:
 			result["message"] = "Unknown instrument factory: %s" % factory
 			return result

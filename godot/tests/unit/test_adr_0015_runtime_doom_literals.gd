@@ -96,11 +96,20 @@ const DOOM_WRITE_ALLOWLIST := {
 ## with an owner-visible reason. Listed separately from the allowlist so they read as debt,
 ## not as blessing, and so the count can be asserted downward over time.
 const DOOM_WRITE_KNOWN_DEBT := {
-	# desperation_payroll advertises "-10 doom now" and delivers nothing: add_resources' doom
-	# sink is clobbered at resolve, so this is an inert lie rather than an exploit. Migrating
-	# it would turn a no-op into a real -10 doom -- a BALANCE change, not a routing fix, so it
-	# is out of scope for this lane. Its own comment fences it: "unchanged pre-L5 path".
-	"res://scripts/core/finance_engine.gd": ['state.add_resources({"doom": -suppress})'],
+	# EMPTY, and that is the win. This held ONE entry -- desperation_payroll's
+	# `state.add_resources({"doom": -suppress})`, which advertised "-10 doom now" and
+	# delivered nothing because the sink is clobbered at resolve (#967).
+	#
+	# The entry's own note said migrating it "would turn a no-op into a real -10 doom --
+	# a BALANCE change, not a routing fix, so it is out of scope for this lane." That
+	# balance call was MADE on 2026-08-22: Pip ruled "I'd rather have a bad thing in
+	# there now, unsubtle, rather than no thing... players need to suffer", the write was
+	# migrated to safety_absorption like its actions.gd sibling, and
+	# doom.streams.action_desperation_absorb went 0.0 -> 25.0 with a dated balancing
+	# commitment (docs/game-design/DESPERATION_LEVER_PRICING.md, 2026-09-19).
+	#
+	# Keep this dict EMPTY. A new entry means a new unrouted doom write was tolerated,
+	# and it must carry the same thing this one did: a reason, and what would retire it.
 }
 
 
@@ -173,9 +182,11 @@ func test_no_code_outside_the_doom_system_writes_doom_directly() -> void:
 		+ "global_alarm / global_panic / frontier_capability) instead:\n  ")
 		+ "\n  ".join(PackedStringArray(offenders)))
 
-	assert_eq(debt_seen, 1,
-		("the known-unrouted doom write list should hold exactly the one fenced "
-		+ "finance_engine case; got %d. If you migrated it, shrink the list.") % debt_seen)
+	assert_eq(debt_seen, 0,
+		("the known-unrouted doom write list is EMPTY since #967 migrated the last entry "
+		+ "(finance_engine desperation_payroll -> safety_absorption); got %d. A non-zero "
+		+ "count means a new unrouted doom write was added to the debt list -- it needs a "
+		+ "reason and a retirement condition, not just an entry.") % debt_seen)
 
 
 const DOOM_REDUCING_CATEGORIES := [
