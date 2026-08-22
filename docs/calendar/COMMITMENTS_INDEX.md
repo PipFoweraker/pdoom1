@@ -13,7 +13,7 @@ Horizon: **2026-08-09** (the prose scan reports dates at or after this; roll it
 forward deliberately in `COMMITMENTS.md`, never automatically -- a clock-reading
 generator goes stale overnight and trains people to ignore the check).
 
-**53 declared, 4 release-train, 151 UNPARSED, 0 malformed.**
+**53 declared, 4 release-train, 153 UNPARSED, 0 malformed.**
 
 ## Declared commitments
 
@@ -367,9 +367,12 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-22 | `tools/scan_closed_issue_debt.py` | 24 | The first run, 2026-08-22, measured on 426 closed issues: |
 | 2026-08-22 | `tools/scan_closed_issue_debt.py` | 83 | # 2026-08-22 -- it raised UnicodeDecodeError on byte 0x8f mid-fetch, which |
 | 2026-08-22 | `tools/scan_closed_issue_debt.py` | 191 | print("\nConfirmed shadow debt from the 2026-08-22 run: #775 only (now #1269).") |
+| 2026-08-23 | `docs/release/CODE_SIGNING.md` | 3 | Written 2026-08-23 against a stated budget of **AUD $5,000** and a stated |
+| 2026-08-23 | `docs/release/CODE_SIGNING.md` | 8 | 2026-08-23, not recalled. Where a belief of mine turned out to be wrong, the |
 | 2026-08-23 | `docs/rulings/RULINGS.md` | 81 | \| 2026-08-23 \| ladder debt is paid when it is incurred, not deferred to build time, so a fresh epoch never inherits a forked board key \| `tools/check_ |
 | 2026-08-23 | `docs/rulings/RULINGS.md` | 93 | \| 2026-08-23 \| player feedback routes to the PUBLIC issue tracker and is triaged and summarised before the developer reads it; it never lands in a per |
 | 2026-08-23 | `tools/check_ladder_bump.py` | 38 | RULING: 2026-08-23 -- ladder debt is paid when it is incurred, not deferred to build time, so a fresh epoch never inherits a forked board key -- flavo |
+| 2026-08-23 | `tools/sign_release.py` | 6 | WHY THIS EXISTS, 2026-08-23 |
 | 2026-08-24 | `docs/design/LEAGUE_CUTOVER_PLAYBOOK.md` | 41 | at L4, and is pinned for reflective review on/after 2026-08-24. |
 | 2026-08-24 | `pdoom1#808` | 0 | Reflective review (on/after 2026-08-24): release/league cycle nomenclature + cadence |
 | 2026-08-24 | `pdoom1#811` | 0 | Workshop 3 (mechanics) -- Mon 07-27 W-3a / Tue 07-28 build / Wed 07-29 W-3b-W-4: crisp parts, brutal decisions |
