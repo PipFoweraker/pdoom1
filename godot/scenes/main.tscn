@@ -390,8 +390,8 @@ scroll_active = false
 
 [node name="BugReportButton" type="Button" parent="TabManager/MainUI/BottomBar"]
 layout_mode = 2
-custom_minimum_size = Vector2(110, 0)
-text = "Bug Report (N)"
+custom_minimum_size = Vector2(140, 0)
+text = "Send Feedback (N)"
 theme_override_font_sizes/font_size = 12
 
 [node name="EmployeeScreen" parent="TabManager" instance=ExtResource("7_employee")]

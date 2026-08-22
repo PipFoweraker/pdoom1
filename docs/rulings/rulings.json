@@ -3,7 +3,7 @@
   "repo": "pdoom1",
   "generated_from": "tracked files at HEAD",
   "convention": "docs/rulings/RULINGS_CONVENTION.md",
-  "count": 37,
+  "count": 38,
   "rulings": [
     {
       "id": "pdoom1:2026-07-04:12de8fc2",
@@ -508,6 +508,20 @@
       "supersedes": null,
       "superseded_by": null,
       "source": "godot/tests/unit/test_ad_campaign_is_visible.gd:11"
+    },
+    {
+      "id": "pdoom1:2026-08-23:93877464",
+      "date": "2026-08-23",
+      "ruling": "player feedback routes to the PUBLIC issue tracker and is triaged and summarised before the developer reads it; it never lands in a personal inbox, and the player is told this in the panel",
+      "summary": "",
+      "flavour": "player-feedback",
+      "kind": "declaration",
+      "status": "",
+      "by": "Pip",
+      "mechanism": "BugReporter.ROUTING_TEXT and its tests",
+      "supersedes": null,
+      "superseded_by": null,
+      "source": "godot/scripts/core/bug_reporter.gd:328"
     },
     {
       "id": "pdoom1:2026-08-23:40cd814d",

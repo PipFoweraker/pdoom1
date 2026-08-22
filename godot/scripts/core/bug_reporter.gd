@@ -295,3 +295,110 @@ static func get_report_type_name(report_type: ReportType) -> String:
 func is_reports_directory_ready() -> bool:
 	var dir = DirAccess.open(REPORTS_DIR)
 	return dir != null
+
+
+# ---------------------------------------------------------------------------
+# TRANSPORT (#1281). Everything above SAVES a report. Nothing above ever SENT
+# one, and the confirmation told the player to find the file and email it --
+# which is a step nobody takes. Measured on this machine after a fortnight of
+# playtesting: user://bug_reports was EMPTY. Zero reports, ever.
+#
+# Pip, 2026-08-23: "I'm still terrified that I'm losing in-game comms... there
+# aren't easy ways in game for players to give feedback and I want it like 50%
+# easier and twice as obvious."
+#
+# There is no feedback endpoint on api.pdoom1.com, so this deliberately does
+# NOT build a sender to a URL that does not answer -- that would be the same
+# inert-mechanic defect this repo spent the weekend removing (#967, #1225).
+# Instead these produce the two exits that work TODAY with no backend at all:
+# a paste-ready block for the clipboard, and a pre-filled issue URL.
+#
+# Pure and static: no HTTP, no state, no nodes. This is where the contract bugs
+# hide, so they are unit-tested directly -- the same reasoning leaderboard_sync
+# gives for its own pure helpers.
+# ---------------------------------------------------------------------------
+
+## Where a report goes once it leaves. Public so the panel can TELL the player,
+## rather than the routing being folklore.
+const REPO_URL := "https://github.com/PipFoweraker/pdoom1"
+const ISSUE_LABEL := "player-feedback"
+
+## The routing promise, in the player's words.
+##
+## RULING: 2026-08-23 -- player feedback routes to the PUBLIC issue tracker and is triaged and summarised before the developer reads it; it never lands in a personal inbox, and the player is told this in the panel -- flavour: player-feedback -- mechanism: BugReporter.ROUTING_TEXT and its tests
+##
+## Saying so is the point: a player who does not know where a report goes does
+## not send it. Declared here rather than left in the conversation that produced
+## it, because a ruling that lives only in chat is already lost -- measured twice
+## on 2026-08-23 (coordination#97).
+const ROUTING_TEXT := "Your report goes to the public P(Doom)1 issue tracker, where it is triaged and summarised before the developer reads it. It does not go to anyone's personal inbox."
+
+static func _label_for(report_type_name: String) -> String:
+	match report_type_name:
+		"feature_request": return "Feature request"
+		"feedback": return "Feedback"
+		_: return "Bug"
+
+## A report as paste-ready Markdown: clipboard, an issue body, a Discord message,
+## an email -- all the same text. No personal data beyond what the player chose
+## to attach (attribution is opt-in above and is echoed only if present).
+static func format_for_transport(report: Dictionary) -> String:
+	var lines: Array = []
+	var kind := _label_for(str(report.get("report_type", "bug")))
+	lines.append("## %s: %s" % [kind, str(report.get("title", "(no title)"))])
+	lines.append("")
+	lines.append(str(report.get("description", "")).strip_edges())
+
+	# Labels are spelled out rather than derived from the key. GDScript's
+	# String.capitalize() title-cases EVERY word ("Steps To Reproduce"), which is
+	# not how a sentence reads -- and deriving a player-facing string from an
+	# internal key name means a rename silently changes the UI.
+	var section_labels := {
+		"steps_to_reproduce": "Steps to reproduce",
+		"expected_behavior": "Expected",
+		"actual_behavior": "What happened instead",
+	}
+	for key in ["steps_to_reproduce", "expected_behavior", "actual_behavior"]:
+		var v := str(report.get(key, "")).strip_edges()
+		if v != "":
+			lines.append("")
+			lines.append("**%s**" % section_labels[key])
+			lines.append(v)
+
+	var sys: Dictionary = report.get("system_info", {}) if report.get("system_info", {}) is Dictionary else {}
+	lines.append("")
+	lines.append("---")
+	lines.append("game %s | godot %s | %s | %s" % [
+		str(sys.get("game_version", "?")), str(sys.get("godot_version", "?")),
+		str(sys.get("os_type", "?")), str(sys.get("timestamp", "?"))])
+
+	var att: Dictionary = report.get("attachments", {}) if report.get("attachments", {}) is Dictionary else {}
+	if bool(att.get("screenshot_included", false)) or bool(att.get("save_file_included", false)):
+		var have: Array = []
+		if bool(att.get("screenshot_included", false)):
+			have.append("screenshot")
+		if bool(att.get("save_file_included", false)):
+			have.append("save file")
+		# Metadata only -- the files stay on the player's disk. Say so, so nobody
+		# believes an attachment travelled when it did not.
+		lines.append("player has a %s on their machine (not attached here)" % " and a ".join(have))
+
+	var attrib = report.get("attribution")
+	if attrib is Dictionary and str(attrib.get("name", "")) != "":
+		lines.append("reported by %s" % str(attrib["name"]))
+
+	return "\n".join(lines)
+
+## A pre-filled "new issue" URL. Opening this in a browser is the one path that
+## reaches the tracker today with no backend and no client credentials.
+## GitHub truncates very long query strings, so the body is capped and the
+## player is told the full text is already on their clipboard.
+static func github_issue_url(report: Dictionary) -> String:
+	var title := str(report.get("title", "")).strip_edges()
+	if title == "":
+		title = "%s from a player" % _label_for(str(report.get("report_type", "bug")))
+	var body := format_for_transport(report)
+	if body.length() > 4000:
+		body = body.substr(0, 4000) + "\n\n[truncated -- full report is on the player's clipboard]"
+	return "%s/issues/new?labels=%s&title=%s&body=%s" % [
+		REPO_URL, ISSUE_LABEL.uri_encode(), title.uri_encode(), body.uri_encode()]
