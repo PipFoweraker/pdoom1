@@ -340,7 +340,7 @@ DTSTART;VALUE=DATE:20260810
 DTEND;VALUE=DATE:20260811
 SUMMARY:[TASK] Book the half-day audit-mechanics workshop\, target window 
  opens
-DESCRIPTION:Owner: pip. Kind: task. Source: docs/rulings/RULINGS.md:181. p
+DESCRIPTION:Owner: pip. Kind: task. Source: docs/rulings/RULINGS.md:187. p
  doom1#984\, ruled 2026-07-27 18:11. Scheduled to precede the 2026-08-31 f
   -- Generated from tracked sources by scripts/generate_commitment_calenda
  r.py\; regenerate to update.
@@ -607,11 +607,11 @@ DTSTART;VALUE=DATE:20260811
 DTEND;VALUE=DATE:20260812
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:96. 6 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
- TMENT: declaration accounts for it. Either add a declaration or the date 
- is incidental. First line: Rulings with no `mechanism:`. Pip's doctrine (
- 2026-08-11): what forces a -- Generated from tracked sources by scripts/g
- enerate_commitment_calendar.py\; regenerate to update.
+ d:102. 6 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ ITMENT: declaration accounts for it. Either add a declaration or the date
+  is incidental. First line: Rulings with no `mechanism:`. Pip's doctrine 
+ (2026-08-11): what forces a -- Generated from tracked sources by scripts/
+ generate_commitment_calendar.py\; regenerate to update.
 CATEGORIES:UNPARSED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -748,7 +748,7 @@ DTSTART;VALUE=DATE:20260812
 DTEND;VALUE=DATE:20260813
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:292. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:298. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `godot/scripts/core/capacity.gd:5` -- ## Ru
  led 2026-08-12 (coordination/DESIGN_2026-08-12_interrupt-resolution-varia
@@ -1136,7 +1136,7 @@ DTSTART;VALUE=DATE:20260813
 DTEND;VALUE=DATE:20260814
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:140. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:146. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `docs/CONTENT_DISTRIBUTION_SYSTEM.md:10` --
   > **SUPERSEDED\, not merely "outdated in spirit"\, as of 2026-08-13.** P
@@ -1598,7 +1598,7 @@ DTSTART;VALUE=DATE:20260814
 DTEND;VALUE=DATE:20260815
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:311. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:317. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `godot/tests/unit/simulation/test_events.gd
  :50` -- ## THE RATCHET WAS DELIBERATELY LOOSENED -- 2026-08-14\, ruled by
@@ -3079,7 +3079,7 @@ DTSTART;VALUE=DATE:20260820
 DTEND;VALUE=DATE:20260821
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:164. 3 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:170. 3 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `docs/art/A4_COLLAPSE_2026-08-20.md:3` -- *
  *2026-08-20\, `pdoom1` seat on New-Bort.** Ruled by Pip: canonicalise on 
@@ -3612,7 +3612,7 @@ DTSTART;VALUE=DATE:20260821
 DTEND;VALUE=DATE:20260822
 SUMMARY:[UNPARSED] needs a declaration -- check_ladder_bump.py
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/check_ladder_bum
- p.py:327. 2 line(s) in tools/check_ladder_bump.py mention this date and n
+ p.py:348. 2 line(s) in tools/check_ladder_bump.py mention this date and n
  o COMMITMENT: declaration accounts for it. Either add a declaration or th
  e date is incidental. First line: THE HOLE THIS CLOSES (measured 2026-08-
  21). Direction 1 below accepts any -- Generated from tracked sources by s
@@ -3750,7 +3750,7 @@ DTSTART;VALUE=DATE:20260822
 DTEND;VALUE=DATE:20260823
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:222. 3 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:228. 3 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `docs/game-design/DESPERATION_LEVER_PRICING
  .md:3` -- **Ruled by Pip\, 2026-08-22:** *"we need to give the mechanical
@@ -3788,6 +3788,53 @@ ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- scan_closed_issue_debt.py (unparsed) --
   unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:bc5b9192e93765aa@commitments.pdoom1
+DTSTAMP:20260823T000000Z
+DTSTART;VALUE=DATE:20260823
+DTEND;VALUE=DATE:20260824
+SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
+ d:81. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
+ TMENT: declaration accounts for it. Either add a declaration or the date 
+ is incidental. First line: | 2026-08-23 | ladder debt is paid when it is 
+ incurred\, not deferred to build time\, so a fresh epoch never inherits a
+  forked board key | `tools/check_ -- Generated from tracked sources by sc
+ ripts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- RULINGS.md (unparsed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:a49bd179c78c8d9e@commitments.pdoom1
+DTSTAMP:20260823T000000Z
+DTSTART;VALUE=DATE:20260823
+DTEND;VALUE=DATE:20260824
+SUMMARY:[UNPARSED] needs a declaration -- check_ladder_bump.py
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/check_ladder_bum
+ p.py:38. 1 line(s) in tools/check_ladder_bump.py mention this date and no
+  COMMITMENT: declaration accounts for it. Either add a declaration or the
+  date is incidental. First line: RULING: 2026-08-23 -- ladder debt is pai
+ d when it is incurred\, not deferred to build time\, so a fresh epoch nev
+ er inherits a forked board key -- flavo -- Generated from tracked sources
+  by scripts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- check_ladder_bump.py (unparsed) -- unow
+ ned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
@@ -4020,7 +4067,7 @@ DTSTART;VALUE=DATE:20260831
 DTEND;VALUE=DATE:20260901
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:300. 2 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:306. 2 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `godot/scripts/core/researcher.gd:150` -- #
   SEAM (ruled 2026-07-27\, review-by 2026-08-31): AUDITS ground-truth repo

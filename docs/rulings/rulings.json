@@ -3,7 +3,7 @@
   "repo": "pdoom1",
   "generated_from": "tracked files at HEAD",
   "convention": "docs/rulings/RULINGS_CONVENTION.md",
-  "count": 35,
+  "count": 36,
   "rulings": [
     {
       "id": "pdoom1:2026-07-04:12de8fc2",
@@ -494,6 +494,20 @@
       "supersedes": null,
       "superseded_by": null,
       "source": "tools/assets/check_provenance.py:65"
+    },
+    {
+      "id": "pdoom1:2026-08-23:40cd814d",
+      "date": "2026-08-23",
+      "ruling": "ladder debt is paid when it is incurred, not deferred to build time, so a fresh epoch never inherits a forked board key",
+      "summary": "",
+      "flavour": "ladder-epochs",
+      "kind": "declaration",
+      "status": "",
+      "by": "Pip",
+      "mechanism": "tools/check_ladder_bump.py --owed",
+      "supersedes": null,
+      "superseded_by": null,
+      "source": "tools/check_ladder_bump.py:38"
     }
   ],
   "undeclared": [

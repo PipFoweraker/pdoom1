@@ -5,7 +5,7 @@
 > `python scripts/generate_rulings.py`. The convention, and why it looks
 > like this, is argued in `docs/rulings/RULINGS_CONVENTION.md`.
 
-**35 ruling(s)** across **6 flavour(s)**. **222** prose ruling(s) not yet declared.
+**36 ruling(s)** across **7 flavour(s)**. **222** prose ruling(s) not yet declared.
 
 ## One index, five sources
 
@@ -16,7 +16,7 @@ flattening either into one line would delete what makes it worth having.
 
 | kind | n | what it is | where |
 |---|---:|---|---|
-| `declaration` | 10 | a `RULING:` line written next to what it governs | anywhere |
+| `declaration` | 11 | a `RULING:` line written next to what it governs | anywhere |
 | `adr` | 19 | a full architecture argument, summarised here | `docs/game-design/decisions/` |
 | `session` | 3 | a transcript or workshop ruling set, pointed at | `docs/SPOKEN_*`, `*RULINGS*` |
 | `card` | 3 | the input a ruling was made from | `docs/decision-cards/` |
@@ -73,6 +73,12 @@ flavour it belongs to and read what was already decided there.
 | 2026-08-15 | the ruling road is cross-repo from day one, federated: each repo scans itself and emits rulings.json, an aggregator reads them, nothing writes back | `scripts/generate_rulings.py` | `docs/rulings/LEDGER.md:10` |
 | 2026-08-15 | naming a mechanism is OPTIONAL on a ruling, and the generated index reports which rulings have none | `scripts/generate_rulings.py` | `docs/rulings/LEDGER.md:11` |
 | 2026-08-17 | published figures live in tooling, not prose: the line item is the atom and every rendering is a projection | `tools/render_budget.py --check` | `tools/render_budget.py:12` |
+
+### `ladder-epochs` (only one so far)
+
+| date | ruling | mechanism | source |
+|---|---|---|---|
+| 2026-08-23 | ladder debt is paid when it is incurred, not deferred to build time, so a fresh epoch never inherits a forked board key | `tools/check_ladder_bump.py --owed` | `tools/check_ladder_bump.py:38` |
 
 ### `session-record`
 

@@ -28,6 +28,27 @@ version bumps if and only if two identical inputs (same seed, same player
 choices) could produce a different score, trajectory, or RNG stream than the
 previous epoch.
 
+WHEN THE DEBT GETS PAID
+-----------------------
+``--owed`` exists because ``bump`` and ``none`` were previously identical to
+the machine: both were just a declaration line, and nothing ever checked that a
+declared bump was actually settled. Four unpaid declarations accumulated on
+epoch L5 within a day of it opening, and none of them was visible to any gate.
+
+RULING: 2026-08-23 -- ladder debt is paid when it is incurred, not deferred to build time, so a fresh epoch never inherits a forked board key -- flavour: ladder-epochs -- mechanism: tools/check_ladder_bump.py --owed
+
+The deferred alternative is not merely slower, it is worse-shaped: the board
+key is ``(seed, ladder_version)``, so every hour a bump-declaring commit sits
+unpaid is an hour in which a build could ship materially different play onto a
+board that has already been blessed and opened. Paying at build time turns a
+routine decision into a blocker at the worst possible moment.
+
+NOTE FOR WHOEVER WRITES THE NEXT RULING: ``scripts/generate_rulings.py`` scans
+the TREE, not ``git log``. A ``RULING:`` line written only in a commit message
+is never captured and evaporates silently -- which is the precise failure the
+rulings system exists to prevent. Write it in a file, next to the thing it
+governs, as it is written above.
+
 WHAT CHANGED, AND WHY
 ---------------------
 
