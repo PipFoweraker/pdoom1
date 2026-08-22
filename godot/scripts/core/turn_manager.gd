@@ -235,6 +235,13 @@ func _step_researcher_productivity() -> Dictionary:
 					"alignment":
 						# Reduces negative events (passive, handled in event system)
 						doom_reduction_from_safety += 0.15 * productivity
+					"compute_engineer":
+						# #1247, ruled by Pip: real staff, but "they might not eg produce
+						# as much research". They keep the infrastructure up; they do not
+						# write papers. This is the FIRST nonzero contribution they have
+						# ever made -- before this they produced nothing at all while
+						# still drawing a stationery bill and counting toward doom.
+						base_research *= Researcher.SPECIALIZATIONS["compute_engineer"]["research_speed_modifier"]
 
 				research_from_employees += base_research
 

@@ -5,7 +5,7 @@
 > `python scripts/generate_rulings.py`. The convention, and why it looks
 > like this, is argued in `docs/rulings/RULINGS_CONVENTION.md`.
 
-**35 ruling(s)** across **6 flavour(s)**. **218** prose ruling(s) not yet declared.
+**35 ruling(s)** across **6 flavour(s)**. **221** prose ruling(s) not yet declared.
 
 ## One index, five sources
 
@@ -297,9 +297,11 @@ is not.
 - `godot/scripts/core/office.gd:58` -- ## menu size is: Pip ruled "3 offices to choose from", so the choice is fixed-width and
 - `godot/scripts/core/prop_catalogue.gd:141` -- scummy/decent/premium (ruled 2026-07-26). Empty for unmanifested ids."""
 - `godot/scripts/core/researcher.gd:131` -- # SEAM (ruled 2026-07-27, review-by 2026-08-31): AUDITS ground-truth reported vs actual.
+- `godot/scripts/core/researcher.gd:171` -- # Ruled by Pip 2026-08-22 (#1247): "real STAFF, but they might not eg produce
 - `godot/scripts/core/researcher.gd:61` -- # "Hiring pipeline RULED" (A1/A2/A3); appetites/quirks per ADR-0011 section 8; pay-to-see
 - `godot/scripts/core/researcher.gd:69` -- # Hire lifecycle (WORKSHOP_2 "Hiring pipeline RULED"): pool -> offered -> employed ->
-- `godot/scripts/core/turn_manager.gd:306` -- SEAM (ruled 2026-07-27, review-by 2026-08-31): AUDITS ground-truth reported vs actual.
+- `godot/scripts/core/turn_manager.gd:239` -- # #1247, ruled by Pip: real staff, but "they might not eg produce
+- `godot/scripts/core/turn_manager.gd:313` -- SEAM (ruled 2026-07-27, review-by 2026-08-31): AUDITS ground-truth reported vs actual.
 - `godot/scripts/debug/debug_overlay.gd:15` -- ## reproduced it repeatably in a release build and ruled the feature out rather than
 - `godot/scripts/ui/cold_open_sequence.gd:43` -- # not copy: the strings are the ruled #801 copy, unchanged.
 - `godot/scripts/ui/office_floor/office_floor.gd:493` -- ## (no tinting hacks -- ruled 2026-07-26). "" or "decent" = shipped default art.
@@ -307,6 +309,7 @@ is not.
 - `godot/scripts/ui/office_floor/office_sandbox.gd:175` -- # The tier whose art stands in when a tier-variant is missing (ruled 2026-07-26).
 - `godot/tests/unit/simulation/test_events.gd:50` -- ## THE RATCHET WAS DELIBERATELY LOOSENED -- 2026-08-14, ruled by Pip, for content velocity.
 - `godot/tests/unit/test_cold_open_intro.gd:46` -- # Pip approved this string personally (#801 ruled copy). If this fails, someone edited
+- `godot/tests/unit/test_compute_engineers_are_staff.gd:12` -- ## Ruled by Pip 2026-08-22: "real STAFF, but they might not eg produce as much
 - `godot/tests/unit/test_no_debug_event_injection.gd:9` -- ## the hard lock repeatably in a release build (2026-08-06) and ruled the feature out:
 - `godot/tests/unit/test_number_format_policy.gd:2` -- ## Locks the number-format policy ruled in #1087 (docs/NUMBER_FORMATS.md).
 - `godot/tests/unit/test_prop_manifest.gd:96` -- # style_tags restricted to the canonical quality-tier ladder (ruled 2026-07-26).

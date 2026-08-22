@@ -793,11 +793,43 @@ func check_win_lose():
 		victory = false
 
 func get_total_staff() -> int:
-	# Count individual researchers if using new system
-	if researchers.size() > 0:
-		return researchers.size() + managers
-	# Fallback to legacy counts
-	return safety_researchers + capability_researchers + compute_engineers + managers
+	"""Headcount. ONE model, always.
+
+	#1247. This used to switch: `researchers.size() + managers` when any Researcher
+	object existed, and the legacy integer sum otherwise. So the instant a player
+	hired one real person, every staff member who was only ever an integer stopped
+	counting -- while the screens went on printing those integers beside the total.
+
+	Pip's Employee Management screen, 2026-08-21, in one frame:
+
+	    Team Size: 1 employees
+	    * Safety Researchers: 1
+	    * Compute Engineers: 2
+
+	and the game-over screen: `Team: 3 -- 3 safety | 0 capability | 2 compute eng`.
+
+	Both were internally consistent and mutually contradictory. Worse than a
+	display bug: `desks_free` derives from this (office_hire_cap - get_total_staff),
+	so staff that did not count occupied no desks, and acquisition was a route
+	around the office cap that #791's early economy treats as a real constraint.
+
+	Every staff member is a Researcher object now (add_researcher keeps the legacy
+	counters in lockstep for doom_system and the stationery bill), so the object
+	list is the headcount and the counters are a derived view of the same people.
+	Managers remain an integer -- they have no Researcher yet, which is the next
+	instance of this same seam.
+
+	WHY max() AND NOT EITHER ALONE. The counters and the objects are two VIEWS of
+	the same people: add_researcher/remove_researcher keep them in lockstep, so in
+	any state the game can now produce they are EQUAL and max() is a no-op. They
+	diverge in exactly one direction -- a legacy path that set a counter without
+	creating a person (the salary-billing fallback that test_turn_manager.gd
+	documents, and content that predates the object model). max() sees those; a
+	plain sum would double-count the synced case, and either model alone is how
+	this bug happened. Objects can never exceed counters, because every
+	add_researcher arm bumps one."""
+	var legacy: int = safety_researchers + capability_researchers + compute_engineers
+	return max(researchers.size(), legacy) + managers
 
 func get_researcher_count_by_spec(spec: String) -> int:
 	"""Count researchers by specialization"""
@@ -830,6 +862,8 @@ func add_researcher(researcher: Researcher, full_reveal: bool = true):
 			capability_researchers += 1
 		"interpretability", "alignment":
 			safety_researchers += 1  # Count as safety for legacy systems
+		"compute_engineer":
+			compute_engineers += 1  # #1247: a person now, and the counter follows them
 
 func remove_researcher(researcher: Researcher):
 	"""Remove a researcher from the team"""
@@ -845,6 +879,8 @@ func remove_researcher(researcher: Researcher):
 				capability_researchers = max(0, capability_researchers - 1)
 			"interpretability", "alignment":
 				safety_researchers = max(0, safety_researchers - 1)
+			"compute_engineer":
+				compute_engineers = max(0, compute_engineers - 1)  # #1247
 
 		# A departing person stops accruing, but what they already contributed STAYS on the
 		# workstream (contributions feed later authorship). Losing your lead is supposed to
