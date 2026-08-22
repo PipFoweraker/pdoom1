@@ -284,6 +284,24 @@ func make_offer(state, candidate_id: String, cash_offer: float, promises: Array 
 		return {"success": false, "message": Office.no_desk_message(state)}
 	if _has_job_for(candidate_id, KIND_OFFER):
 		return {"success": false, "message": "%s already has an offer out." % cand.researcher_name}
+	# #1225 item 2, adjacent hole: this checked only KIND_OFFER. Offering during an
+	# IN-FLIGHT INTERVIEW was allowed; on accept the candidate leaves the pool, and the
+	# orphaned interview job later finds find_pool_candidate == null and is SILENTLY
+	# DROPPED -- 2 Attention burned, no message. Refuse instead, spending nothing.
+	if _has_job_for(candidate_id, KIND_INTERVIEW):
+		return {"success": false,
+			"message": "%s is mid-interview -- wait for it to land before offering." % cand.researcher_name}
+	# #1225 item 2, the exploit itself. A rejection left no mark, so re-sending the SAME
+	# lowball every 2 workdays at 1 Attention was a guaranteed eventual hire: rejection is
+	# a roll, and repeated rolls always land. Refuse a repeat at or below what they have
+	# already turned down -- crisp, free, and it says the number.
+	#
+	# NOT a raised floor: self_worth_floor() is untouched and a better offer resolves
+	# exactly as before. The candidate simply remembers.
+	if cand.offers_rejected > 0 and cash_offer <= cand.highest_rejected_offer:
+		return {"success": false,
+			"message": "%s already turned down $%d. Offer more than that, or move on." % [
+				cand.researcher_name, int(cand.highest_rejected_offer)]}
 	var cost_att := Balance.inum("hiring.offer.cost_attention", 1)
 	if state.month_plan == null or not state.month_plan.spend_attention(cost_att):
 		return {"success": false, "message": "Not enough Attention to make an offer (%d needed)" % cost_att}
@@ -313,10 +331,16 @@ func _resolve_offer(state, cand: Researcher, cash: float, promises: Array) -> Di
 	var shortfall_frac: float = (floor - cash) / maxf(1.0, floor)
 	var prob_reject: float = clampf(shortfall_frac * reject_scale, 0.0, 1.0)
 	if state.rng.randf() < prob_reject:
-		# Declined -- candidate returns to the pool (still selectable / re-offerable).
+		# Declined -- candidate returns to the pool (still selectable, but see below).
 		cand.transition_hire_state(Researcher.HireState.CANDIDATE_IN_POOL)
+		# #1225 item 2: REMEMBER IT. Without this the candidate came back identical and
+		# the same lowball could be re-sent until a roll landed. make_offer() now refuses
+		# anything at or below this number.
+		cand.highest_rejected_offer = maxf(cand.highest_rejected_offer, cash)
+		cand.offers_rejected += 1
 		return {"success": true, "outcome": "rejected",
-			"message": "%s declined the offer (lowball) -- back in the pool." % cand.researcher_name}
+			"message": "%s declined $%d -- back in the pool, and they will remember the number." % [
+				cand.researcher_name, int(cash)]}
 	# Accepted, but resentful: employed with a loyalty debt (ADR-0003).
 	return _accept_offer(state, cand, cash, promises, true)
 
@@ -618,7 +642,25 @@ func build_mentoring_prompt(cand: Researcher) -> Dictionary:
 		"id": "hiring_mentor_%s" % cand.candidate_id,
 		"kind": "hiring_mentoring_prompt",
 		"name": "Mentor %s?" % cand.researcher_name,
-		"description": "Optional: block out founder time to mentor %s. Mentored hires ramp to full effectiveness faster and are less likely to quit early. Skipping saves the time now, at a lasting output debuff and an early-quit risk." % cand.researcher_name,
+		# #1225 item 5, the trap: LAPSING OR DISMISSING THIS CARD IS CHOOSING TO SKIP.
+		# _resolve_hiring_window treats a dismissal as mentoring_skipped, which arms a
+		# PERMANENT x0.85 output debuff and a 15% per-month early-quit roll. A player who
+		# closes a popup had made a permanent decision and was never told so -- a #1221
+		# case: a refusal, or here a default, must say what it is.
+		#
+		# The numbers are named rather than hinted. They were previously "a lasting output
+		# debuff and an early-quit risk", which is true and unactionable.
+		"description": ("Optional: block out founder time to mentor %s. Mentored hires ramp to full effectiveness faster and are less likely to quit early.\n\n"
+			+ "Skipping costs a PERMANENT x%.2f output penalty and a %d%% chance per month that they quit early.\n\n"
+			+ "CLOSING OR IGNORING THIS CARD COUNTS AS SKIPPING. You can still mentor them later from the hiring screen, which un-arms both.") % [
+				cand.researcher_name,
+				# The SAME keys the sim reads, not lookalikes: researcher.gd's
+				# get_effective_productivity() applies skimped_multiplier, and
+				# _roll_early_attrition() rolls against attrition_risk. Reading different
+				# keys here would let the card and the sim drift the moment either is
+				# tuned -- the exact defect class this issue is about.
+				Balance.num("hiring.onboarding.skimped_multiplier", 0.85),
+				int(Balance.num("hiring.onboarding.attrition_risk", 0.15) * 100.0)],
 		"type": "popup",
 		"delivery_tier": "window",
 		"event_class": "no-action",

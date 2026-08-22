@@ -13,7 +13,7 @@ Horizon: **2026-08-09** (the prose scan reports dates at or after this; roll it
 forward deliberately in `COMMITMENTS.md`, never automatically -- a clock-reading
 generator goes stale overnight and trains people to ignore the check).
 
-**53 declared, 4 release-train, 148 UNPARSED, 0 malformed.**
+**53 declared, 4 release-train, 149 UNPARSED, 0 malformed.**
 
 ## Declared commitments
 
@@ -360,10 +360,14 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-21 | `tools/reset_player_state.py` | 158 | Until 2026-08-21 this function skipped any destination that already existed |
 | 2026-08-22 | `docs/game-design/DESPERATION_LEVER_PRICING.md` | 3 | **Ruled by Pip, 2026-08-22:** *"we need to give the mechanical inertness a definite |
 | 2026-08-22 | `docs/rulings/RULINGS.md` | 222 | - `docs/game-design/DESPERATION_LEVER_PRICING.md:3` -- **Ruled by Pip, 2026-08-22:** *"we need to give the mechanical inertness a definite |
+| 2026-08-22 | `tools/scan_closed_issue_debt.py` | 8 | Pip, 2026-08-22, on discovering that #775 was closed COMPLETED with one of its |
+| 2026-08-22 | `tools/scan_closed_issue_debt.py` | 24 | The first run, 2026-08-22, measured on 426 closed issues: |
+| 2026-08-22 | `tools/scan_closed_issue_debt.py` | 83 | # 2026-08-22 -- it raised UnicodeDecodeError on byte 0x8f mid-fetch, which |
+| 2026-08-22 | `tools/scan_closed_issue_debt.py` | 191 | print("\nConfirmed shadow debt from the 2026-08-22 run: #775 only (now #1269).") |
 | 2026-08-24 | `docs/design/LEAGUE_CUTOVER_PLAYBOOK.md` | 41 | at L4, and is pinned for reflective review on/after 2026-08-24. |
 | 2026-08-24 | `pdoom1#808` | 0 | Reflective review (on/after 2026-08-24): release/league cycle nomenclature + cadence |
 | 2026-08-24 | `pdoom1#811` | 0 | Workshop 3 (mechanics) -- Mon 07-27 W-3a / Tue 07-28 build / Wed 07-29 W-3b-W-4: crisp parts, brutal decisions |
-| 2026-08-31 | `docs/rulings/RULINGS.md` | 300 | - `godot/scripts/core/researcher.gd:131` -- # SEAM (ruled 2026-07-27, review-by 2026-08-31): AUDITS ground-truth reported vs actual. |
+| 2026-08-31 | `docs/rulings/RULINGS.md` | 300 | - `godot/scripts/core/researcher.gd:150` -- # SEAM (ruled 2026-07-27, review-by 2026-08-31): AUDITS ground-truth reported vs actual. |
 | 2026-08-31 | `docs/rulings/RULINGS.md` | 303 | - `godot/scripts/core/turn_manager.gd:306` -- SEAM (ruled 2026-07-27, review-by 2026-08-31): AUDITS ground-truth reported vs actual. |
 | 2026-08-31 | `docs/rulings/UNDECLARED_TRIAGE.md` | 221 | - # SEAM (ruled 2026-07-27, review-by 2026-08-31): AUDITS ground-truth reported vs actual. |
 | 2026-08-31 | `docs/rulings/UNDECLARED_TRIAGE.md` | 227 | - SEAM (ruled 2026-07-27, review-by 2026-08-31): AUDITS ground-truth reported vs actual. |

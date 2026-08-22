@@ -1162,7 +1162,7 @@
       "text": "scummy/decent/premium (ruled 2026-07-26). Empty for unmanifested ids.\"\"\""
     },
     {
-      "source": "godot/scripts/core/researcher.gd:131",
+      "source": "godot/scripts/core/researcher.gd:150",
       "text": "# SEAM (ruled 2026-07-27, review-by 2026-08-31): AUDITS ground-truth reported vs actual."
     },
     {
