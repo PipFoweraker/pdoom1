@@ -121,10 +121,29 @@ def creds_present() -> bool:
 
 
 def find_signtool() -> Path | None:
-    """signtool.exe, from PATH or the usual Windows SDK locations."""
+    """signtool.exe, from an explicit override, PATH, or a known install.
+
+    NOT installed by the full Windows SDK on this machine, deliberately. winget
+    only carries 2018-era SDK packages (10.0.17134 / 10.0.18362), which are old
+    enough to predate signing algorithms we want. Microsoft also ships signtool
+    inside the `Microsoft.Windows.SDK.BuildTools` NuGet package -- a ~22MB
+    download, no administrator rights, and no multi-gigabyte SDK for one binary.
+    That is what is deployed here (2026-08-23, version 10.0.28000.2526).
+
+    Note it is extracted WITH its sibling DLLs rather than as a lone exe:
+    signtool loads wintrust/appx helpers from its own directory and fails
+    obscurely if they are missing.
+    """
+    explicit = os.environ.get("PDOOM1_SIGNTOOL")
+    if explicit and Path(explicit).is_file():
+        return Path(explicit)
     which = shutil.which("signtool")
     if which:
         return Path(which)
+    # The NuGet BuildTools drop, then the full-SDK locations.
+    nuget_drop = Path.home() / "bin" / "windows-sdk-buildtools" / "signtool.exe"
+    if nuget_drop.is_file():
+        return nuget_drop
     roots = [
         Path("C:/Program Files (x86)/Windows Kits/10/bin"),
         Path("C:/Program Files/Windows Kits/10/bin"),

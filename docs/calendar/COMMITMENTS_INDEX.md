@@ -373,6 +373,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-23 | `docs/rulings/RULINGS.md` | 93 | \| 2026-08-23 \| player feedback routes to the PUBLIC issue tracker and is triaged and summarised before the developer reads it; it never lands in a per |
 | 2026-08-23 | `tools/check_ladder_bump.py` | 38 | RULING: 2026-08-23 -- ladder debt is paid when it is incurred, not deferred to build time, so a fresh epoch never inherits a forked board key -- flavo |
 | 2026-08-23 | `tools/sign_release.py` | 6 | WHY THIS EXISTS, 2026-08-23 |
+| 2026-08-23 | `tools/sign_release.py` | 131 | That is what is deployed here (2026-08-23, version 10.0.28000.2526). |
 | 2026-08-24 | `docs/design/LEAGUE_CUTOVER_PLAYBOOK.md` | 41 | at L4, and is pinned for reflective review on/after 2026-08-24. |
 | 2026-08-24 | `pdoom1#808` | 0 | Reflective review (on/after 2026-08-24): release/league cycle nomenclature + cadence |
 | 2026-08-24 | `pdoom1#811` | 0 | Workshop 3 (mechanics) -- Mon 07-27 W-3a / Tue 07-28 build / Wed 07-29 W-3b-W-4: crisp parts, brutal decisions |

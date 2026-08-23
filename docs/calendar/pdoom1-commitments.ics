@@ -3866,7 +3866,7 @@ DTSTART;VALUE=DATE:20260823
 DTEND;VALUE=DATE:20260824
 SUMMARY:[UNPARSED] needs a declaration -- sign_release.py
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/sign_release.py:
- 6. 1 line(s) in tools/sign_release.py mention this date and no COMMITMENT
+ 6. 2 line(s) in tools/sign_release.py mention this date and no COMMITMENT
  : declaration accounts for it. Either add a declaration or the date is in
  cidental. First line: WHY THIS EXISTS\, 2026-08-23 -- Generated from trac
  ked sources by scripts/generate_commitment_calendar.py\; regenerate to up
