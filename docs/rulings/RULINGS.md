@@ -5,7 +5,7 @@
 > `python scripts/generate_rulings.py`. The convention, and why it looks
 > like this, is argued in `docs/rulings/RULINGS_CONVENTION.md`.
 
-**38 ruling(s)** across **9 flavour(s)**. **222** prose ruling(s) not yet declared.
+**39 ruling(s)** across **10 flavour(s)**. **222** prose ruling(s) not yet declared.
 
 ## One index, five sources
 
@@ -16,7 +16,7 @@ flattening either into one line would delete what makes it worth having.
 
 | kind | n | what it is | where |
 |---|---:|---|---|
-| `declaration` | 13 | a `RULING:` line written next to what it governs | anywhere |
+| `declaration` | 14 | a `RULING:` line written next to what it governs | anywhere |
 | `adr` | 19 | a full architecture argument, summarised here | `docs/game-design/decisions/` |
 | `session` | 3 | a transcript or workshop ruling set, pointed at | `docs/SPOKEN_*`, `*RULINGS*` |
 | `card` | 3 | the input a ruling was made from | `docs/decision-cards/` |
@@ -102,6 +102,12 @@ flavour it belongs to and read what was already decided there.
 | 2026-08-01 | 2026-08-01 seed-authority | -- none -- | `docs/decision-cards/2026-08-01_seed-authority.html:1` |
 | 2026-08-02 | SPOKEN RULINGS 2026-08-02 playtest-and-cards | -- none -- | `docs/SPOKEN_RULINGS_2026-08-02_playtest-and-cards.md:1` |
 | 2026-08-02 | 2026-08-02 pdoom-data-contract | -- none -- | `docs/decision-cards/2026-08-02_pdoom-data-contract.md:1` |
+
+### `silent-failure` (only one so far)
+
+| date | ruling | mechanism | source |
+|---|---|---|---|
+| 2026-08-23 | silent failures are a named defect class and the counter is instrumentation, never vigilance; a failure representable in its own success type must be made countable rather than watched for | `this register, and the census/aggregate/differential counters it names` | `docs/design/SILENT_FAILURE_REGISTER.md:116` |
 
 ### `ui-legibility` (only one so far)
 
