@@ -3,7 +3,7 @@
   "repo": "pdoom1",
   "generated_from": "tracked files at HEAD",
   "convention": "docs/rulings/RULINGS_CONVENTION.md",
-  "count": 39,
+  "count": 40,
   "rulings": [
     {
       "id": "pdoom1:2026-07-04:12de8fc2",
@@ -548,8 +548,22 @@
       "by": "Pip",
       "mechanism": "tools/check_ladder_bump.py --owed",
       "supersedes": null,
-      "superseded_by": null,
+      "superseded_by": "pdoom1:2026-08-23:fa830705",
       "source": "tools/check_ladder_bump.py:38"
+    },
+    {
+      "id": "pdoom1:2026-08-23:fa830705",
+      "date": "2026-08-23",
+      "ruling": "ladder debt is DECLARED when incurred and PAID at the release that ships it; deferring is legal, forgetting is not, and the epoch must never fork on an ordinary gameplay PR",
+      "summary": "",
+      "flavour": "ladder-epochs",
+      "kind": "declaration",
+      "status": "",
+      "by": "Pip",
+      "mechanism": "tools/check_ladder_bump.py --owed, run at cut time",
+      "supersedes": "pdoom1:2026-08-23:40cd814d",
+      "superseded_by": null,
+      "source": "tools/check_ladder_bump.py:40"
     }
   ],
   "undeclared": [
