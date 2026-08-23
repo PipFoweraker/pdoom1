@@ -3842,7 +3842,7 @@ DTSTART;VALUE=DATE:20260823
 DTEND;VALUE=DATE:20260824
 SUMMARY:[UNPARSED] needs a declaration -- SILENT_FAILURE_REGISTER.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/design/SILENT_FAI
- LURE_REGISTER.md:1. 3 line(s) in docs/design/SILENT_FAILURE_REGISTER.md m
+ LURE_REGISTER.md:1. 5 line(s) in docs/design/SILENT_FAILURE_REGISTER.md m
  ention this date and no COMMITMENT: declaration accounts for it. Either a
  dd a declaration or the date is incidental. First line: # Silent failure 
  register -- first alert\, 2026-08-23 -- Generated from tracked sources by
@@ -3879,6 +3879,29 @@ ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- SMELL_PASS_2026-08-23.md (unparsed) -- 
  unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:34118876d9fe2623@commitments.pdoom1
+DTSTAMP:20260823T000000Z
+DTSTART;VALUE=DATE:20260823
+DTEND;VALUE=DATE:20260824
+SUMMARY:[UNPARSED] needs a declaration -- check_balance_keys.py
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/check_balance_ke
+ ys.py:6. 1 line(s) in tools/check_balance_keys.py mention this date and n
+ o COMMITMENT: declaration accounts for it. Either add a declaration or th
+ e date is incidental. First line: WHY THIS EXISTS\, 2026-08-23 -- Generat
+ ed from tracked sources by scripts/generate_commitment_calendar.py\; rege
+ nerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- check_balance_keys.py (unparsed) -- uno
+ wned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT

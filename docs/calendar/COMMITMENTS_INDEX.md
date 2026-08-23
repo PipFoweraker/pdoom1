@@ -13,7 +13,7 @@ Horizon: **2026-08-09** (the prose scan reports dates at or after this; roll it
 forward deliberately in `COMMITMENTS.md`, never automatically -- a clock-reading
 generator goes stale overnight and trains people to ignore the check).
 
-**53 declared, 4 release-train, 155 UNPARSED, 0 malformed.**
+**53 declared, 4 release-train, 156 UNPARSED, 0 malformed.**
 
 ## Declared commitments
 
@@ -370,12 +370,15 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-23 | `docs/design/SILENT_FAILURE_REGISTER.md` | 1 | # Silent failure register -- first alert, 2026-08-23 |
 | 2026-08-23 | `docs/design/SILENT_FAILURE_REGISTER.md` | 5 | Pip named it, 2026-08-23, on being shown the smell-pass finding: *"these are |
 | 2026-08-23 | `docs/design/SILENT_FAILURE_REGISTER.md` | 116 | RULING: 2026-08-23 -- silent failures are a named defect class and the counter is instrumentation, never vigilance; a failure representable in its own |
+| 2026-08-23 | `docs/design/SILENT_FAILURE_REGISTER.md` | 144 | \| 2026-08-23 \| 15 \| -- (register opened) \| census (`check_balance_keys.py`) \| |
+| 2026-08-23 | `docs/design/SILENT_FAILURE_REGISTER.md` | 152 | Four instances were fixed on 2026-08-23: the desperation lever, the ad |
 | 2026-08-23 | `docs/design/SMELL_PASS_2026-08-23.md` | 1 | # Smell pass, 2026-08-23 -- starting where we first sniffed |
 | 2026-08-23 | `docs/release/CODE_SIGNING.md` | 3 | Written 2026-08-23 against a stated budget of **AUD $5,000** and a stated |
 | 2026-08-23 | `docs/release/CODE_SIGNING.md` | 8 | 2026-08-23, not recalled. Where a belief of mine turned out to be wrong, the |
 | 2026-08-23 | `docs/rulings/RULINGS.md` | 81 | \| 2026-08-23 \| ladder debt is paid when it is incurred, not deferred to build time, so a fresh epoch never inherits a forked board key \| `tools/check_ |
 | 2026-08-23 | `docs/rulings/RULINGS.md` | 93 | \| 2026-08-23 \| player feedback routes to the PUBLIC issue tracker and is triaged and summarised before the developer reads it; it never lands in a per |
 | 2026-08-23 | `docs/rulings/RULINGS.md` | 110 | \| 2026-08-23 \| silent failures are a named defect class and the counter is instrumentation, never vigilance; a failure representable in its own succes |
+| 2026-08-23 | `tools/check_balance_keys.py` | 6 | WHY THIS EXISTS, 2026-08-23 |
 | 2026-08-23 | `tools/check_ladder_bump.py` | 38 | RULING: 2026-08-23 -- ladder debt is paid when it is incurred, not deferred to build time, so a fresh epoch never inherits a forked board key -- flavo |
 | 2026-08-23 | `tools/sign_release.py` | 6 | WHY THIS EXISTS, 2026-08-23 |
 | 2026-08-23 | `tools/sign_release.py` | 131 | That is what is deployed here (2026-08-23, version 10.0.28000.2526). |

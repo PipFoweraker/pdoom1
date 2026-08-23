@@ -217,6 +217,17 @@ repos:
       # own process, generated from the source. A hand-stale trust page is WORSE
       # than none: an absent declaration is honest, a stale one is a false
       # declaration to exactly the audience least able to check it.
+      # Silent-failure register sighting #1: Balance.num(key, fallback) returns
+      # the fallback for a key that does not exist, which is the generator behind
+      # four of the fifteen confirmed sightings. This is the ONLY gate pointed at
+      # the balance surface, in either direction.
+      - id: balance-key-census
+        name: Balance keys are defined where they are read
+        entry: python tools/check_balance_keys.py --check
+        language: system
+        files: '^(godot/data/balance/.*\.json|godot/.*\.gd|tools/check_balance_keys\.py|tools/balance_unread_ratchet\.txt)$'
+        pass_filenames: false
+
       - id: trust-declaration-check
         name: TRUST.md matches what the source actually reaches for
         entry: python tools/generate_trust_declaration.py --check

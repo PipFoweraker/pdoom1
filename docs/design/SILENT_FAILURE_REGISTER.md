@@ -117,6 +117,53 @@ RULING: 2026-08-23 -- silent failures are a named defect class and the counter i
 
 **Status: first alert. The register is open and expected to grow.**
 
+---
+
+## Rate, not count -- the metric that actually reports progress
+
+Pip, on the same day the register opened, naming the property that makes this
+class so durable:
+
+> *"their attacks all leave residue that is individually useful to solve, so it
+> feels like progress is happening, but then they kill you through old age or
+> other stochastic murder."*
+
+**This is the important sentence in the whole document.** Every sighting, once
+found, is a clean fix with a good commit message and a visible win. So the local
+signal reads WINNING for the entire duration of losing. It is not camouflage
+against detection -- it is camouflage against *the realisation that detection is
+not enough*. A defect class producing irritating fixes would have been
+generalised years ago out of sheer annoyance. This one buys immunity by being
+pleasant to work on.
+
+The consequence for this register: **the count is close to meaningless. The rate
+is the metric.**
+
+| date | sightings known | new since last | counters built |
+|---|---:|---:|---|
+| 2026-08-23 | 15 | -- (register opened) | census (`check_balance_keys.py`) |
+
+Fifteen sightings says nothing on its own. Fifteen more next month says the
+generator is untouched and every fix so far was tribute. **The health signal is
+whether new sightings get HARDER TO FIND, not whether the list gets longer.**
+
+### An honest accounting of the day the register opened
+
+Four instances were fixed on 2026-08-23: the desperation lever, the ad
+campaign's silent months, feedback that never left the machine, and the
+effect-key allowlist. All four were residue.
+
+Three things were generator-level: `--owed` (turned a declaration into countable
+debt), `TRUST.md` (census, generated rather than written), and the rule that a
+ruling must live in a file.
+
+**One generator was named and left standing until the end of the day**:
+`Balance.num`'s silent fallback, sighting #1, behind four of the fifteen. The
+census that closes it was built only after that ratio was noticed and said out
+loud. Recorded here because the ratio is the thing to watch, and a register that
+only lists enemy positions and never its own tribute payments would be the more
+comfortable document and the less useful one.
+
 A sighting belongs here when it meets all three signature properties. Add the
 row when it is confirmed, not when it is suspected -- an unverified sighting in
 a register of verified ones is itself a silent failure.
