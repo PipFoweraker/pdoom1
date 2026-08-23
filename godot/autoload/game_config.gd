@@ -540,7 +540,7 @@ func increment_games_played() -> void:
 ## league seed -- the metabolic cycle rotates it at Pip's call ("manual for now",
 ## see docs/RELEASE_AND_LEAGUE_CYCLE.html). To rotate the league, edit this const
 ## (or clear it to fall back to the calendar-week auto-seed below).
-const FEATURED_SEED_OVERRIDE: String = "weekly-2026-w33"
+const FEATURED_SEED_OVERRIDE: String = "weekly-2026-w34"
 
 ## Get weekly challenge seed (the featured/default league seed).
 func get_weekly_seed() -> String:
