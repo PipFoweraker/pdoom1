@@ -13,7 +13,7 @@ Horizon: **2026-08-09** (the prose scan reports dates at or after this; roll it
 forward deliberately in `COMMITMENTS.md`, never automatically -- a clock-reading
 generator goes stale overnight and trains people to ignore the check).
 
-**53 declared, 4 release-train, 153 UNPARSED, 0 malformed.**
+**53 declared, 4 release-train, 154 UNPARSED, 0 malformed.**
 
 ## Declared commitments
 
@@ -367,6 +367,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-22 | `tools/scan_closed_issue_debt.py` | 24 | The first run, 2026-08-22, measured on 426 closed issues: |
 | 2026-08-22 | `tools/scan_closed_issue_debt.py` | 83 | # 2026-08-22 -- it raised UnicodeDecodeError on byte 0x8f mid-fetch, which |
 | 2026-08-22 | `tools/scan_closed_issue_debt.py` | 191 | print("\nConfirmed shadow debt from the 2026-08-22 run: #775 only (now #1269).") |
+| 2026-08-23 | `docs/design/SMELL_PASS_2026-08-23.md` | 1 | # Smell pass, 2026-08-23 -- starting where we first sniffed |
 | 2026-08-23 | `docs/release/CODE_SIGNING.md` | 3 | Written 2026-08-23 against a stated budget of **AUD $5,000** and a stated |
 | 2026-08-23 | `docs/release/CODE_SIGNING.md` | 8 | 2026-08-23, not recalled. Where a belief of mine turned out to be wrong, the |
 | 2026-08-23 | `docs/rulings/RULINGS.md` | 81 | \| 2026-08-23 \| ladder debt is paid when it is incurred, not deferred to build time, so a fresh epoch never inherits a forked board key \| `tools/check_ |
