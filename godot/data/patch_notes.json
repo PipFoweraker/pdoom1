@@ -1,6 +1,39 @@
 {
   "versions": [
     {
+      "version": "0.14.3",
+      "date": "2026-08-23",
+      "title": "Things That Charged You And Did Nothing",
+      "highlights": [
+        "Compute engineers are people. An acquired startup's engineers used to show on the employee screen and never load into the sim -- they consumed stationery and produced nothing",
+        "The desperation lever stops quoting a doom figure it never applied. It now routes real safety absorption, so the button does what the text says",
+        "Your ad campaign reports itself every month, including the months nobody applies -- a barren month used to be silent and indistinguishable from no campaign at all",
+        "A rejected offer leaves a mark: the same lowball is no longer a guaranteed eventual hire, and the panel tells you so",
+        "Counter-offers keep a named person, raise their loyalty, and raise their salary forever -- an $80,000 option that previously did nothing",
+        "Send Feedback (N) now offers three one-click ways to actually send it. It used to save a file to your disk and ask you to email it"
+      ],
+      "sections": {
+        "added": [
+          "Counter-offers retain a named researcher, at a permanent payroll cost (#1225 item 4)",
+          "The onboarding bill and visa obligation are previewed before you commit (#1225 item 5)",
+          "Ad campaigns emit a monthly report whether or not anyone applied, and name what the campaign cost when it closes (#1225 item 3)",
+          "A signed-build path: tooling exists and is tested, awaiting the certificate (#1038)",
+          "docs/TRUST.md, generated from source -- every point the game reaches outside its own process (#1038)"
+        ],
+        "changed": [
+          "Compute engineers are real staff rather than an integer counter (#1247)",
+          "The header stops calling committed Attention 'queued', and hiring says days (#1223)",
+          "The music conductor takes a nudge, and a pick made mid-crossfade is no longer dropped (#1249)",
+          "The game ships with its own icon instead of the default engine one -- visible in the taskbar, alt-tab, and the Windows publisher warning"
+        ],
+        "fixed": [
+          "The game-over screen stops blaming crises the player actually survived (#1248)",
+          "The desperation lever applies real safety absorption instead of a printed figure (#967)",
+          "An offer at or below a previously rejected figure is refused rather than silently accepted (#1225 item 2)"
+        ]
+      }
+    },
+    {
       "version": "0.14.2",
       "date": "2026-08-21",
       "title": "The Game Stops Doing Things Silently",
