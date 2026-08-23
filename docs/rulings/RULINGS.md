@@ -5,7 +5,7 @@
 > `python scripts/generate_rulings.py`. The convention, and why it looks
 > like this, is argued in `docs/rulings/RULINGS_CONVENTION.md`.
 
-**39 ruling(s)** across **10 flavour(s)**. **222** prose ruling(s) not yet declared.
+**40 ruling(s)** across **10 flavour(s)**. **222** prose ruling(s) not yet declared.
 
 ## One index, five sources
 
@@ -17,7 +17,7 @@ flattening either into one line would delete what makes it worth having.
 | kind | n | what it is | where |
 |---|---:|---|---|
 | `declaration` | 14 | a `RULING:` line written next to what it governs | anywhere |
-| `adr` | 19 | a full architecture argument, summarised here | `docs/game-design/decisions/` |
+| `adr` | 20 | a full architecture argument, summarised here | `docs/game-design/decisions/` |
 | `session` | 3 | a transcript or workshop ruling set, pointed at | `docs/SPOKEN_*`, `*RULINGS*` |
 | `card` | 3 | the input a ruling was made from | `docs/decision-cards/` |
 
@@ -49,6 +49,7 @@ flavour it belongs to and read what was already decided there.
 | 2026-07-17 | ADR-0017 -- Anti-hollow test strategy (load-time smoke + property-based invariants) | -- none -- | `docs/game-design/decisions/ADR-0017-anti-hollow-test-strategy.md:1` |
 | 2026-07-27 | ADR-0018 -- Render-only office doctrine: no spatial fact becomes a gameplay input | -- none -- | `docs/game-design/decisions/ADR-0018-render-only-office-doctrine.md:1` |
 | 2026-08-03 | ADR-0019 -- Pull-from-demand asset pipeline: the pack is a function of declared demand | -- none -- | `docs/game-design/decisions/ADR-0019-pull-from-demand-asset-pipeline.md:1` |
+| 2026-08-23 | ADR-0020 -- Machine actor identity: a bot acts under its own name, or the attribution record is fiction | -- none -- | `docs/game-design/decisions/ADR-0020-machine-actor-identity.md:1` |
 
 ### `art-provenance`
 
@@ -147,6 +148,7 @@ an empty list here is not a goal.
 - `pdoom1:2026-08-02:6c6d32f9` -- SPOKEN RULINGS 2026-08-02 playtest-and-cards (`docs/SPOKEN_RULINGS_2026-08-02_playtest-and-cards.md:1`)
 - `pdoom1:2026-08-02:327d595d` -- 2026-08-02 pdoom-data-contract (`docs/decision-cards/2026-08-02_pdoom-data-contract.md:1`)
 - `pdoom1:2026-08-03:fb9eeed6` -- ADR-0019 -- Pull-from-demand asset pipeline: the pack is a function of declared demand (`docs/game-design/decisions/ADR-0019-pull-from-demand-asset-pipeline.md:1`)
+- `pdoom1:2026-08-23:278981bd` -- ADR-0020 -- Machine actor identity: a bot acts under its own name, or the attribution record is fiction (`docs/game-design/decisions/ADR-0020-machine-actor-identity.md:1`)
 
 ## UNDECLARED -- prose that reads like a ruling
 

@@ -340,7 +340,7 @@ DTSTART;VALUE=DATE:20260810
 DTEND;VALUE=DATE:20260811
 SUMMARY:[TASK] Book the half-day audit-mechanics workshop\, target window 
  opens
-DESCRIPTION:Owner: pip. Kind: task. Source: docs/rulings/RULINGS.md:205. p
+DESCRIPTION:Owner: pip. Kind: task. Source: docs/rulings/RULINGS.md:207. p
  doom1#984\, ruled 2026-07-27 18:11. Scheduled to precede the 2026-08-31 f
   -- Generated from tracked sources by scripts/generate_commitment_calenda
  r.py\; regenerate to update.
@@ -607,7 +607,7 @@ DTSTART;VALUE=DATE:20260811
 DTEND;VALUE=DATE:20260812
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:120. 6 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:121. 6 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: Rulings with no `mechanism:`. Pip's doctrine 
  (2026-08-11): what forces a -- Generated from tracked sources by scripts/
@@ -748,7 +748,7 @@ DTSTART;VALUE=DATE:20260812
 DTEND;VALUE=DATE:20260813
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:316. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:318. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `godot/scripts/core/capacity.gd:5` -- ## Ru
  led 2026-08-12 (coordination/DESIGN_2026-08-12_interrupt-resolution-varia
@@ -1136,7 +1136,7 @@ DTSTART;VALUE=DATE:20260813
 DTEND;VALUE=DATE:20260814
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:164. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:166. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `docs/CONTENT_DISTRIBUTION_SYSTEM.md:10` --
   > **SUPERSEDED\, not merely "outdated in spirit"\, as of 2026-08-13.** P
@@ -1598,7 +1598,7 @@ DTSTART;VALUE=DATE:20260814
 DTEND;VALUE=DATE:20260815
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:335. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:337. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `godot/tests/unit/simulation/test_events.gd
  :50` -- ## THE RATCHET WAS DELIBERATELY LOOSENED -- 2026-08-14\, ruled by
@@ -2154,7 +2154,7 @@ DTSTART;VALUE=DATE:20260815
 DTEND;VALUE=DATE:20260816
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:57. 9 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
+ d:58. 9 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
  TMENT: declaration accounts for it. Either add a declaration or the date 
  is incidental. First line: | 2026-08-15 | Tier W (website disclosure) shi
  ps first and standalone\; Tier G (in-game motifs and epoch marks) stays r
@@ -2559,7 +2559,7 @@ DTSTART;VALUE=DATE:20260817
 DTEND;VALUE=DATE:20260818
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:75. 2 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
+ d:76. 2 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
  TMENT: declaration accounts for it. Either add a declaration or the date 
  is incidental. First line: | 2026-08-17 | published figures live in tooli
  ng\, not prose: the line item is the atom and every rendering is a projec
@@ -2746,7 +2746,7 @@ DTSTART;VALUE=DATE:20260819
 DTEND;VALUE=DATE:20260820
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:59. 6 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
+ d:60. 6 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
  TMENT: declaration accounts for it. Either add a declaration or the date 
  is incidental. First line: | 2026-08-19 | New-Bort is the working machine
   and hosts new archives and images\; the generated masters are NOT transf
@@ -3079,7 +3079,7 @@ DTSTART;VALUE=DATE:20260820
 DTEND;VALUE=DATE:20260821
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:188. 3 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:190. 3 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `docs/art/A4_COLLAPSE_2026-08-20.md:3` -- *
  *2026-08-20\, `pdoom1` seat on New-Bort.** Ruled by Pip: canonicalise on 
@@ -3750,7 +3750,7 @@ DTSTART;VALUE=DATE:20260822
 DTEND;VALUE=DATE:20260823
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:87. 4 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
+ d:88. 4 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
  TMENT: declaration accounts for it. Either add a declaration or the date 
  is incidental. First line: | 2026-08-22 | a mechanic that charges the pla
  yer and does nothing observable gets an unsubtle placeholder consequence 
@@ -3791,6 +3791,31 @@ DESCRIPTION:needs a declaration -- scan_closed_issue_debt.py (unparsed) --
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:1c29084cd32c1014@commitments.pdoom1
+DTSTAMP:20260823T000000Z
+DTSTART;VALUE=DATE:20260823
+DTEND;VALUE=DATE:20260824
+SUMMARY:[UNPARSED] needs a declaration -- ADR-0020-machine-actor-identity.
+ md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/game-design/decis
+ ions/ADR-0020-machine-actor-identity.md:4. 6 line(s) in docs/game-design/
+ decisions/ADR-0020-machine-actor-identity.md mention this date and no COM
+ MITMENT: declaration accounts for it. Either add a declaration or the dat
+ e is incidental. First line: - **Date:** 2026-08-23 -- Generated from tra
+ cked sources by scripts/generate_commitment_calendar.py\; regenerate to u
+ pdate.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- ADR-0020-machine-actor-identity.md (unp
+ arsed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:bc46aa0d14f164c8@commitments.pdoom1
 DTSTAMP:20260823T000000Z
 DTSTART;VALUE=DATE:20260823
@@ -3813,18 +3838,42 @@ DESCRIPTION:needs a declaration -- CODE_SIGNING.md (unparsed) -- unowned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:ab73cd6fcd8a697c@commitments.pdoom1
+DTSTAMP:20260823T000000Z
+DTSTART;VALUE=DATE:20260823
+DTEND;VALUE=DATE:20260824
+SUMMARY:[UNPARSED] needs a declaration -- README.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/game-design/decis
+ ions/README.md:33. 1 line(s) in docs/game-design/decisions/README.md ment
+ ion this date and no COMMITMENT: declaration accounts for it. Either add 
+ a declaration or the date is incidental. First line: | [ADR-0020](ADR-002
+ 0-machine-actor-identity.md) | Machine actor identity: a bot acts under i
+ ts own name\, or the attribution record is fiction | PROPO -- Generated f
+ rom tracked sources by scripts/generate_commitment_calendar.py\; regenera
+ te to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- README.md (unparsed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:bc5b9192e93765aa@commitments.pdoom1
 DTSTAMP:20260823T000000Z
 DTSTART;VALUE=DATE:20260823
 DTEND;VALUE=DATE:20260824
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:81. 3 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
+ d:52. 5 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
  TMENT: declaration accounts for it. Either add a declaration or the date 
- is incidental. First line: | 2026-08-23 | ladder debt is paid when it is 
- incurred\, not deferred to build time\, so a fresh epoch never inherits a
-  forked board key | `tools/check_ -- Generated from tracked sources by sc
- ripts/generate_commitment_calendar.py\; regenerate to update.
+ is incidental. First line: | 2026-08-23 | ADR-0020 -- Machine actor ident
+ ity: a bot acts under its own name\, or the attribution record is fiction
+  | -- none -- | `docs/game-desig -- Generated from tracked sources by scr
+ ipts/generate_commitment_calendar.py\; regenerate to update.
 CATEGORIES:UNPARSED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -4180,7 +4229,7 @@ DTSTART;VALUE=DATE:20260831
 DTEND;VALUE=DATE:20260901
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:324. 2 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:326. 2 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `godot/scripts/core/researcher.gd:150` -- #
   SEAM (ruled 2026-07-27\, review-by 2026-08-31): AUDITS ground-truth repo
