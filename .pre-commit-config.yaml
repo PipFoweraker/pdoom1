@@ -213,6 +213,17 @@ repos:
         files: '^(docs/.*\.md|tools/.*\.(py|md)|scripts/.*\.py|godot/.*\.gd|docs/rulings/.*|[^/]*\.md)$'
         pass_filenames: false
 
+      # #1038. docs/TRUST.md enumerates every point the game reaches outside its
+      # own process, generated from the source. A hand-stale trust page is WORSE
+      # than none: an absent declaration is honest, a stale one is a false
+      # declaration to exactly the audience least able to check it.
+      - id: trust-declaration-check
+        name: TRUST.md matches what the source actually reaches for
+        entry: python tools/generate_trust_declaration.py --check
+        language: system
+        files: '^(godot/(scripts|autoload)/.*\.gd|tools/generate_trust_declaration\.py|docs/TRUST\.md)$'
+        pass_filenames: false
+
       # Shipped images must not silently lose their signed C2PA credential. PIL
       # drops unknown ancillary chunks on re-encode, so one Image.open(...).save()
       # anywhere downstream deletes provenance irreversibly and invisibly -- the

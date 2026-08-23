@@ -44,8 +44,15 @@ WHATS IN HERE
    *.dll        Steam integration libraries (keep them here)
 
 FEEDBACK
-   In-game N saves a bug report to your disk and shows you the file path --
-   please email that file to team@pdoom1.com (the in-game reporter does not
-   send anything itself yet).
+   Press N in game, or click "Send Feedback". Write anything -- a bug, an
+   idea, or just what you thought. When you save it the game offers three
+   one-click ways to send it onward: copy the whole report to your clipboard,
+   open a pre-filled issue in your browser, or open the folder holding the
+   file. Bugs, ideas and plain reactions are all wanted equally.
+
+   WHERE IT GOES: to the public P(Doom)1 issue tracker, where it is triaged
+   and summarised before the developer reads it. It does not go to anyone's
+   personal inbox. Your contact details are never included in the copied
+   text -- only a name, and only if you tick the box.
 
 Thanks for playing -- Pip

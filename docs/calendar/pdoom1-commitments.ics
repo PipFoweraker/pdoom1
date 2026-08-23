@@ -3791,6 +3791,28 @@ DESCRIPTION:needs a declaration -- scan_closed_issue_debt.py (unparsed) --
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:bc46aa0d14f164c8@commitments.pdoom1
+DTSTAMP:20260823T000000Z
+DTSTART;VALUE=DATE:20260823
+DTEND;VALUE=DATE:20260824
+SUMMARY:[UNPARSED] needs a declaration -- CODE_SIGNING.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/release/CODE_SIGN
+ ING.md:3. 2 line(s) in docs/release/CODE_SIGNING.md mention this date and
+  no COMMITMENT: declaration accounts for it. Either add a declaration or 
+ the date is incidental. First line: Written 2026-08-23 against a stated b
+ udget of **AUD $5\,000** and a stated -- Generated from tracked sources b
+ y scripts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- CODE_SIGNING.md (unparsed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:bc5b9192e93765aa@commitments.pdoom1
 DTSTAMP:20260823T000000Z
 DTSTART;VALUE=DATE:20260823
@@ -3835,6 +3857,28 @@ ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- check_ladder_bump.py (unparsed) -- unow
  ned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:322e6fdd089d7661@commitments.pdoom1
+DTSTAMP:20260823T000000Z
+DTSTART;VALUE=DATE:20260823
+DTEND;VALUE=DATE:20260824
+SUMMARY:[UNPARSED] needs a declaration -- sign_release.py
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/sign_release.py:
+ 6. 2 line(s) in tools/sign_release.py mention this date and no COMMITMENT
+ : declaration accounts for it. Either add a declaration or the date is in
+ cidental. First line: WHY THIS EXISTS\, 2026-08-23 -- Generated from trac
+ ked sources by scripts/generate_commitment_calendar.py\; regenerate to up
+ date.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- sign_release.py (unparsed) -- unowned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
