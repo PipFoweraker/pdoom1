@@ -84,12 +84,60 @@ eligibility; a geography that excludes Australia today may not next year.
   **459 days (~15 months).** Three-year plans still exist but require annual
   re-issuance. Budget for this as a recurring cost, not a one-off.
 
-**What only Pip can do:** organisation validation requires a verifiable legal
-entity, a verifiable phone number, and usually a callback. **Which entity signs
-this is a decision, not a detail** -- the publisher name in that certificate is
-what every Windows user sees forever, and reputation does not transfer between
-publisher identities. Signing as `Beacon` and later re-signing as `Certes`
-starts reputation again from zero.
+#### Buy the INDIVIDUAL variant, and do not wait for the entity decision
+
+There are two validation levels and the cheaper one is also the faster one:
+
+- **OV (Organisation Validation)** puts an entity name on the binary. It
+  requires a verifiable legal entity, a phone number findable in public records,
+  and a callback. **This is where new entities stall** -- an org too young to
+  appear in a public directory cannot complete validation, and there is no way
+  to hurry it.
+- **IV (Individual Validation)** puts a verified *person's* name on the binary
+  with **no business entity required**. Government photo ID, proof of address,
+  and a callback. It is the lowest-cost path to Authenticode signing for a solo
+  developer.
+
+**Recommendation: buy IV as `Pip Foweraker`, now.** Four reasons:
+
+1. **It is honest.** A solo developer's name on an indie AI-safety game is
+   accurate, and to a donor doing five minutes of due diligence it reads better
+   than a company they have never heard of.
+2. **It unblocks immediately.** No ABN, no directory listing, no tax history,
+   and no need to resolve which of three orgs owns this.
+3. **The forfeited reputation is near zero TODAY.** Reputation starts from
+   nothing either way. Switching publisher identity in a year costs a year of
+   accrual; switching now costs nothing. The cost of this decision grows every
+   week it is deferred, which is an argument for acting, not for waiting.
+4. **A certificate purchase should not force an entity decision.** That
+   decision has its own reasons and its own timeline.
+
+**The one thing that is genuinely permanent:** the name on the certificate is
+what every Windows user sees, and **SmartScreen reputation does not transfer
+between publisher identities.** Signing as `Pip Foweraker` and later re-signing
+as `Beacon GCR` restarts reputation from zero. That is a real cost, taken
+knowingly, in exchange for starting today.
+
+#### Cloud signing, not a hardware token -- this is not a preference
+
+**SSL.com eSigner** (FIPS 140-2 Level 3 cloud HSM) or an equivalent cloud
+service. A physical USB token:
+
+- has to be shipped to Tasmania, adding days before anything can be signed;
+- must be physically present at every signing, so **CI cannot sign at all** --
+  hardware tokens cannot participate in cloud-hosted runners;
+- makes signing impossible while Pip is in Singapore 26 Aug - 1 Sep.
+
+A cloud HSM signs from GitHub Actions natively. Given a release cadence of
+twenty-plus commits in two days, a signing step a human must be present for is
+a signing step that will be skipped.
+
+#### What to have ready before starting
+
+- Government photo ID (passport or licence)
+- Proof of address matching that ID
+- A phone number that will be answered for the callback
+- **The exact publisher name, spelled the way it should appear forever**
 
 ### PRIORITY 2 -- Windows SDK (free, do it today)
 
