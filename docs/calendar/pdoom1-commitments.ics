@@ -3791,6 +3791,52 @@ DESCRIPTION:needs a declaration -- scan_closed_issue_debt.py (unparsed) --
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:1890048ff097c7d0@commitments.pdoom1
+DTSTAMP:20260823T000000Z
+DTSTART;VALUE=DATE:20260823
+DTEND;VALUE=DATE:20260824
+SUMMARY:[UNPARSED] needs a declaration -- ARCHITECTURE.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/ARCHITECTURE.md:1
+ 1. 4 line(s) in docs/ARCHITECTURE.md mention this date and no COMMITMENT:
+  declaration accounts for it. Either add a declaration or the date is inc
+ idental. First line: > Partners") was **retired 2026-08-23**: it advertis
+ ed an annual funding ladder that was -- Generated from tracked sources by
+  scripts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- ARCHITECTURE.md (unparsed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:4d88f45168460892@commitments.pdoom1
+DTSTAMP:20260823T000000Z
+DTSTART;VALUE=DATE:20260823
+DTEND;VALUE=DATE:20260824
+SUMMARY:[UNPARSED] needs a declaration -- ARCHITECTURE_FUNDERS.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/ARCHITECTURE_FUND
+ ERS.md:3. 4 line(s) in docs/ARCHITECTURE_FUNDERS.md mention this date and
+  no COMMITMENT: declaration accounts for it. Either add a declaration or 
+ the date is incidental. First line: > **RETIRED 2026-08-23.** The funder-
+ facing architecture pitch that lived at this path -- Generated from track
+ ed sources by scripts/generate_commitment_calendar.py\; regenerate to upd
+ ate.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- ARCHITECTURE_FUNDERS.md (unparsed) -- u
+ nowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:bc46aa0d14f164c8@commitments.pdoom1
 DTSTAMP:20260823T000000Z
 DTSTART;VALUE=DATE:20260823
@@ -4447,6 +4493,29 @@ BEGIN:VALARM
 ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:Manifund deadline (deadline) -- pip
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ea6a4ed8157b65e7@commitments.pdoom1
+DTSTAMP:20260909T000000Z
+DTSTART;VALUE=DATE:20260909
+DTEND;VALUE=DATE:20260910
+SUMMARY:[UNPARSED] needs a declaration -- ARCHITECTURE_FUNDERS.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/ARCHITECTURE_FUND
+ ERS.md:18. 1 line(s) in docs/ARCHITECTURE_FUNDERS.md mention this date an
+ d no COMMITMENT: declaration accounts for it. Either add a declaration or
+  the date is incidental. First line: - **Closes:** 2026-09-09 -- Generate
+ d from tracked sources by scripts/generate_commitment_calendar.py\; regen
+ erate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- ARCHITECTURE_FUNDERS.md (unparsed) -- u
+ nowned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT

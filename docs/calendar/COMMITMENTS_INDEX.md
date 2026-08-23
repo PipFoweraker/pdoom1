@@ -13,7 +13,7 @@ Horizon: **2026-08-09** (the prose scan reports dates at or after this; roll it
 forward deliberately in `COMMITMENTS.md`, never automatically -- a clock-reading
 generator goes stale overnight and trains people to ignore the check).
 
-**53 declared, 4 release-train, 156 UNPARSED, 0 malformed.**
+**53 declared, 4 release-train, 159 UNPARSED, 0 malformed.**
 
 ## Declared commitments
 
@@ -367,6 +367,14 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-22 | `tools/scan_closed_issue_debt.py` | 24 | The first run, 2026-08-22, measured on 426 closed issues: |
 | 2026-08-22 | `tools/scan_closed_issue_debt.py` | 83 | # 2026-08-22 -- it raised UnicodeDecodeError on byte 0x8f mid-fetch, which |
 | 2026-08-22 | `tools/scan_closed_issue_debt.py` | 191 | print("\nConfirmed shadow debt from the 2026-08-22 run: #775 only (now #1269).") |
+| 2026-08-23 | `docs/ARCHITECTURE.md` | 11 | > Partners") was **retired 2026-08-23**: it advertised an annual funding ladder that was |
+| 2026-08-23 | `docs/ARCHITECTURE.md` | 14 | > [`archive/2026-08-23-architecture-funders/`](archive/2026-08-23-architecture-funders/ARCHITECTURE_FUNDERS.md). |
+| 2026-08-23 | `docs/ARCHITECTURE.md` | 14 | > [`archive/2026-08-23-architecture-funders/`](archive/2026-08-23-architecture-funders/ARCHITECTURE_FUNDERS.md). |
+| 2026-08-23 | `docs/ARCHITECTURE.md` | 357 | path~~ **Resolved 2026-08-23:** the funder pitch is archived (see the banner at the top of |
+| 2026-08-23 | `docs/ARCHITECTURE_FUNDERS.md` | 3 | > **RETIRED 2026-08-23.** The funder-facing architecture pitch that lived at this path |
+| 2026-08-23 | `docs/ARCHITECTURE_FUNDERS.md` | 8 | > [`docs/archive/2026-08-23-architecture-funders/ARCHITECTURE_FUNDERS.md`](archive/2026-08-23-architecture-funders/ARCHITECTURE_FUNDERS.md). |
+| 2026-08-23 | `docs/ARCHITECTURE_FUNDERS.md` | 8 | > [`docs/archive/2026-08-23-architecture-funders/ARCHITECTURE_FUNDERS.md`](archive/2026-08-23-architecture-funders/ARCHITECTURE_FUNDERS.md). |
+| 2026-08-23 | `docs/ARCHITECTURE_FUNDERS.md` | 59 | Verified against the repository on 2026-08-23. Correct these here rather than restating |
 | 2026-08-23 | `docs/design/SILENT_FAILURE_REGISTER.md` | 1 | # Silent failure register -- first alert, 2026-08-23 |
 | 2026-08-23 | `docs/design/SILENT_FAILURE_REGISTER.md` | 5 | Pip named it, 2026-08-23, on being shown the smell-pass finding: *"these are |
 | 2026-08-23 | `docs/design/SILENT_FAILURE_REGISTER.md` | 116 | RULING: 2026-08-23 -- silent failures are a named defect class and the counter is instrumentation, never vigilance; a failure representable in its own |
@@ -393,6 +401,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-09-04 | `coordination#48` | 0 | League cutover timing contract: pdoom1 can publish in 5m30s and cannot tell you when pdoom1.com will agree -- what do you need to pre-announce? |
 | 2026-09-04 | `docs/design/LEAGUE_CUTOVER_PLAYBOOK.md` | 705 | 2026-09-04 per `docs/ROADMAP.md`) runs without any phase in section 2 being |
 | 2026-09-09 | `coordination#30` | 0 | AGENDA: tri-repo content workshop, 2026-08-06 -- six items, three need Pip, and A1 has deferred three times |
+| 2026-09-09 | `docs/ARCHITECTURE_FUNDERS.md` | 18 | - **Closes:** 2026-09-09 |
 | 2026-09-09 | `pdoom1#1061` | 0 | IP / trademark follow-up -- Australian lawyers, DUE Monday 2026-08-03 |
 | 2026-09-29 | `docs/calendar/COMMITMENTS.md` | 108 | - **GitHub milestones.** Four exist; the nearest due date is 2026-09-29 and one |
 | 2026-09-29 | `docs/game-design/WORKSHOP_3_PREP.md` | 544 | "Now" is v0.12 First Contact (created 2026-07-20, due 2026-09-29). [VERIFIED] |
