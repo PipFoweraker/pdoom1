@@ -1160,7 +1160,7 @@
       "text": "\"style_tags\": \"office quality tiers this art serves, from the canonical ladder [\\\"scummy\\\", \\\"decent\\\", \\\"premium\\\"] (ruled 2026-07-26; see docs/game-design/SEED_ASSET_REGISTRY_AND_VERDICTS.md). Tag o"
     },
     {
-      "source": "godot/data/patch_notes.json:90",
+      "source": "godot/data/patch_notes.json:123",
       "text": "\"WHY THE BOARD FORKED: the historical event deck was retimed to one turn = one month, and the ruled event promotions were applied. Different events now fire on the same seed, so an L4 run is not compa"
     },
     {
