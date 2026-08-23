@@ -3,7 +3,7 @@
   "repo": "pdoom1",
   "generated_from": "tracked files at HEAD",
   "convention": "docs/rulings/RULINGS_CONVENTION.md",
-  "count": 38,
+  "count": 39,
   "rulings": [
     {
       "id": "pdoom1:2026-07-04:12de8fc2",
@@ -508,6 +508,20 @@
       "supersedes": null,
       "superseded_by": null,
       "source": "godot/tests/unit/test_ad_campaign_is_visible.gd:11"
+    },
+    {
+      "id": "pdoom1:2026-08-23:bf741fb8",
+      "date": "2026-08-23",
+      "ruling": "silent failures are a named defect class and the counter is instrumentation, never vigilance; a failure representable in its own success type must be made countable rather than watched for",
+      "summary": "",
+      "flavour": "silent-failure",
+      "kind": "declaration",
+      "status": "",
+      "by": "Pip",
+      "mechanism": "this register, and the census/aggregate/differential counters it names",
+      "supersedes": null,
+      "superseded_by": null,
+      "source": "docs/design/SILENT_FAILURE_REGISTER.md:116"
     },
     {
       "id": "pdoom1:2026-08-23:93877464",
