@@ -5,7 +5,7 @@
 > `python scripts/generate_rulings.py`. The convention, and why it looks
 > like this, is argued in `docs/rulings/RULINGS_CONVENTION.md`.
 
-**56 ruling(s)** across **15 flavour(s)**. **237** prose ruling(s) not yet declared.
+**56 ruling(s)** across **15 flavour(s)**. **238** prose ruling(s) not yet declared.
 
 ## One index, five sources
 
@@ -355,6 +355,7 @@ is not.
 - `docs/release-body-v0.14.0-CORRECTED.md:43` -- - **The last player-facing "AP" is gone**, and one number format is ruled across
 - `docs/releases/RELEASE_LINKING_TO_0.20.md:111` -- Whichever is ruled, it should then be **mechanised**: derive the expected seed
 - `docs/releases/RELEASE_LINKING_TO_0.20.md:175` -- Under the atomise protocol clause 3 (ruled 2026-08-24: *"do not build an atom
+- `docs/rituals/records/GATE_RECORD_2026-08-24_v0.14.3.md:20` -- morning of 2026-08-24, during ISO week 35. Pip ruled that the seed names the ISO
 - `docs/strategy/IP_AND_OPENNESS_PREMORTEM.md:443` -- except keeping the data backbone clean (already ruled).
 - `docs/strategy/IP_AND_OPENNESS_PREMORTEM.md:87` -- community reads retraction as betrayal. Pip has already ruled against
 - `godot/assets/images/events/README.md:26` -- **They are GRANDFATHERED. Pip ruled 2026-08-03 that already-packed assets stay
