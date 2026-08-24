@@ -144,6 +144,42 @@ const to be **merged and inside the cut before** Gate 5 -- blessing a seed witho
 editing the const makes the blessed and posted boards diverge silently, and looks
 correct from both ends.
 
+## [0.14.2] - 2026-08-21 -- The Game Stops Doing Things Silently
+
+**NEW BOARD.** Ladder epoch L4 -> L5. The doom maths and the event deck both
+changed, so scores are not comparable with L4 runs. Your L4 scores stay valid
+and stay visible under L4.
+
+### Added
+- 28 new events covering every risk pool and severity cell (#1230), with varied
+  numbers of options instead of the same three-option shape
+- The cold-open arrival: a portal stitch and a held frame before the first
+  screen (#1196)
+- Response windows advertise their Attention cost up front (#1217)
+
+### Changed
+- The month review is a clipboard: about three times the area, typeset, and it
+  no longer sits over the feed you were reading (#1231)
+- One font-size lever moves every unoverridden screen, and the guide stopped
+  scrolling in five directions at once (#1236)
+- The first screen was rewritten to be legible to someone who has never
+  played (#1205)
+- A refusal now states whether it is a rule or a stub, so "you cannot do that"
+  and "this is not built yet" stop looking identical (#1222)
+- Monthly Attention capacity is derived in one place instead of several (#1211)
+
+### Fixed
+- Runtime pdoom-data event options bypassed the doom streams entirely, acting as
+  a sink of up to -6 doom per turn (#1233). **This changes run outcomes and is
+  why the ladder forks.**
+- PLAN-time rejections went to a hidden feed instead of to the player (#1204)
+- Submenu-driven refusals were invisible: the message existed and never reached
+  a surface you were looking at (#1220)
+- The Operator name was collected at signup and then carried nowhere, and long
+  names were being amputated rather than truncated (#1176)
+- 12 live contact addresses were redacted from the bundled historical
+  events (#1212)
+
 ## [0.14.1] - 2026-08-08
 
 **The board key does NOT move.** Ladder stays **L4**, featured seed stays
