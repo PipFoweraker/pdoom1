@@ -81,6 +81,24 @@ SCAN_EXCLUDE = (
     # promises anybody made -- scanning them would turn a forecast into a
     # calendar full of commitments nobody declared.
     "docs/releases/RELEASE_HORIZON.md",
+    # Same case: every date in the release ledger is a git COMMIT date echoed
+    # out of history by tools/check_release_ledger.py. It regenerates whenever a
+    # version is tagged, so indexing it would make this calendar go stale on
+    # every release -- the exact overnight-staleness this file's header says
+    # trains people to ignore the check.
+    "docs/releases/RELEASE_LEDGER.md",
+    # NOTE 2026-08-24: this list is MIRRORED by an independent SCAN_EXCLUDE in
+    # scripts/generate_rulings.py, and the two have DIVERGED -- that one omits
+    # docs/TOOLS.md, docs/ACTION_TAXONOMY.md, docs/game-design/DQ_INDEX.md,
+    # docs/archive/ and both files above. It is not double-counting today
+    # (verified: no generated index appears as a source in rulings.json, and the
+    # single "RULING:" string in docs/TOOLS.md is prose describing the marker,
+    # not a declaration). That safety is ACCIDENTAL: TOOLS.md echoes only a
+    # tool's first docstring line, and check_release_ledger.py carries a real
+    # RULING: declaration further down its docstring. If the index generator
+    # ever widens what it copies, the rulings store double-counts silently.
+    # Two hand-maintained lists of the same knowledge is the shape this repo
+    # generates indexes to avoid. Tracked rather than fixed here.
 )
 
 ISO_DATE = re.compile(r"\b(20[2-9]\d)-([01]\d)-([0-3]\d)\b")
