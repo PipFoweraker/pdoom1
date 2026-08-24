@@ -60,10 +60,27 @@ DYNAMIC_PREFIXES below is for the residue: prefixes whose leaves are assembled
 at runtime from values this scanner cannot enumerate. Each entry states why.
 Adding one is a claim, and the claim is visible in review.
 
+EXIT CODES -- THREE, NOT TWO
+    0  measured pass.
+    1  measured failure (a live silent fallback, or the ratchet rose).
+    2  COULD NOT MEASURE -- defaults.json is missing, so there is no census. This is
+       not a pass and it is not a finding; anything that reports it as either is
+       asserting a result from a run that established nothing.
+
 USAGE
-    python tools/check_balance_keys.py            # census, human-readable
-    python tools/check_balance_keys.py --check    # gate: exit 1 on direction 1
-    python tools/check_balance_keys.py --json     # machine-readable
+    python tools/check_balance_keys.py             # census, human-readable
+    python tools/check_balance_keys.py --check     # gate: exit 1 on direction 1
+    python tools/check_balance_keys.py --json      # machine-readable
+    python tools/check_balance_keys.py --self-test # prove BOTH directions still work
+
+WHY --self-test EXISTS (added 2026-08-24, issue #1265)
+    The first draft of this file listed "doom.streams." in DYNAMIC_PREFIXES and thereby
+    reported "no live silent fallbacks" while doom.streams.upgrade_cat_alarm -- the
+    sighting the tool was built for -- sat undefined three lines away. That failure mode
+    is invisible from the outside: a suppressed gate and a satisfied gate print the same
+    line. The self-test pins it directly: direction 1 must still catch a key that sits
+    under a DYNAMIC_PREFIXES entry. If someone "fixes a false positive" by widening that
+    list, this goes red instead of going quiet.
 """
 
 from __future__ import annotations
@@ -147,46 +164,22 @@ def scan_reads() -> dict[str, list[str]]:
     return found
 
 
-def under_dynamic_prefix(key: str) -> str | None:
-    for p in DYNAMIC_PREFIXES:
+def under_dynamic_prefix(key: str, prefixes=None) -> str | None:
+    for p in DYNAMIC_PREFIXES if prefixes is None else prefixes:
         if key.startswith(p) and key != p:
             return p
     return None
 
 
-def load_ratchet() -> int:
-    if RATCHET_FILE.is_file():
-        try:
-            return int(RATCHET_FILE.read_text(encoding="utf-8").split("#")[0].strip())
-        except ValueError:
-            pass
-    return 10**6
+def adjudicate(data: dict, reads: dict, src: str, prefixes=None):
+    """The whole decision, with nothing read from disk.
 
-
-def main() -> int:
-    ap = argparse.ArgumentParser(
-        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
-    )
-    ap.add_argument(
-        "--check", action="store_true", help="gate mode: exit 1 on a live silent fallback"
-    )
-    ap.add_argument("--json", dest="as_json", action="store_true")
-    ap.add_argument(
-        "--write-ratchet",
-        action="store_true",
-        help="record the current unread count as the new ceiling",
-    )
-    args = ap.parse_args()
-
-    if not DEFAULTS.is_file():
-        print("[balance] CANNOT RUN: %s missing" % DEFAULTS, file=sys.stderr)
-        return 2
-
-    data = json.loads(DEFAULTS.read_text(encoding="utf-8"))
+    Split out of main() so --self-test can drive it with synthetic inputs. Returns
+    (defined_leaves, missing, unread). `prefixes` overrides DYNAMIC_PREFIXES and
+    exists ONLY so the self-test can prove direction 1 ignores it.
+    """
     defined_leaves = leaves(data)
     defined_all = all_paths(data)
-    reads = scan_reads()
-    src = "\n".join(f.read_text(encoding="utf-8", errors="replace") for f in gd_sources())
 
     # --- direction 1: read but not defined -------------------------------
     #
@@ -213,7 +206,7 @@ def main() -> int:
     for key in sorted(defined_leaves):
         if key in reads:
             continue
-        if under_dynamic_prefix(key):
+        if under_dynamic_prefix(key, prefixes):
             continue
         leaf = key.rsplit(".", 1)[-1]
         # A leaf name appearing anywhere in source counts as reachable: it may be
@@ -223,6 +216,152 @@ def main() -> int:
         if f'"{leaf}"' in src or f".{leaf}" in src:
             continue
         unread.append(key)
+
+    return defined_leaves, missing, unread
+
+
+def self_test() -> int:
+    """Prove the census can return BOTH answers in BOTH directions."""
+    ok = True
+
+    def check(label, cond, detail=""):
+        nonlocal ok
+        if cond:
+            print("  [ok] %s" % label)
+        else:
+            ok = False
+            print("SELF-TEST FAIL: %s %s" % (label, detail))
+
+    # Shaped like defaults.json around the real sighting: a doom.streams namespace
+    # with siblings defined, and one key that is read and never defined.
+    data = {
+        "_description": "documentation, not a tunable",
+        "doom": {
+            "streams": {"baseline": 1.0, "compute_pressure": 2.0},
+            "legacy_curve": 0.5,
+        },
+        "financing": {"instruments": {"seed": {"cap": 10}}},
+        "ledger": {"promise": {"grant_a": {"fuse_turns": 3}}},
+    }
+    src_clean = 'Balance.num("doom.streams.baseline", 1.0)\n'
+
+    # SIGHTING #2, verbatim: read at upgrades.gd:143, defined nowhere.
+    reads = {
+        "doom.streams.baseline": ["godot/scripts/core/doom_system.gd:10"],
+        "doom.streams.upgrade_cat_alarm": ["godot/scripts/core/upgrades.gd:143"],
+        # The two false-positive shapes that must NEVER be reported: a literal
+        # left behind by concatenation, and a format string.
+        "financing.": ["godot/scripts/core/finance_engine.gd:111"],
+        "ledger.promise.%s.fuse_turns": ["godot/scripts/core/ledger.gd:156"],
+    }
+
+    _, missing, _ = adjudicate(data, reads, src_clean)
+    check(
+        "direction 1 catches sighting #2 (doom.streams.upgrade_cat_alarm) and only it",
+        list(missing) == ["doom.streams.upgrade_cat_alarm"],
+        repr(sorted(missing)),
+    )
+    check(
+        'the composed shapes ("financing." and a %s format string) are NOT reported',
+        "financing." not in missing and "ledger.promise.%s.fuse_turns" not in missing,
+    )
+
+    # THE REGRESSION THAT MATTERS. Suppressing the whole namespace must not
+    # suppress direction 1 -- that is exactly the bug the first draft shipped.
+    _, missing_sup, _ = adjudicate(
+        data, reads, src_clean, prefixes={"doom.streams.": "pretend this is dynamic"}
+    )
+    check(
+        "direction 1 STILL catches it when doom.streams. is declared dynamic",
+        list(missing_sup) == ["doom.streams.upgrade_cat_alarm"],
+        repr(sorted(missing_sup)),
+    )
+
+    # The other answer: a defaults file that defines what is read reports nothing.
+    data_fixed = json.loads(json.dumps(data))
+    data_fixed["doom"]["streams"]["upgrade_cat_alarm"] = 5.0
+    _, missing_none, _ = adjudicate(data_fixed, reads, src_clean)
+    check("direction 1 goes GREEN once the key is defined", missing_none == {}, repr(missing_none))
+
+    # Direction 2, both answers.
+    _, _, unread = adjudicate(data, reads, src_clean)
+    check(
+        "direction 2 reports doom.legacy_curve (sighting #3's shape) as unread",
+        "doom.legacy_curve" in unread,
+        repr(unread),
+    )
+    check(
+        "direction 2 does NOT report keys under a declared dynamic prefix",
+        not any(k.startswith("financing.instruments.") for k in unread)
+        and not any(k.startswith("ledger.promise.") for k in unread),
+        repr(unread),
+    )
+    _, _, unread_seen = adjudicate(data, reads, src_clean + '"legacy_curve"\n')
+    check(
+        "a leaf name appearing in source is treated as reachable (composed reads)",
+        "doom.legacy_curve" not in unread_seen,
+        repr(unread_seen),
+    )
+    check("_description keys are documentation, never tunables", "_description" not in str(unread))
+
+    # The regex is the other half of direction 1: a key nobody parses is a key
+    # nobody can miss.
+    hits = CALL.findall(
+        'Balance.num("a.b", 1.0) Balance.inum("c.d", 2) Balance.table("e") Balance.has("f")'
+    )
+    check(
+        "the call regex sees num/inum/table/has",
+        hits == ["a.b", "c.d", "e", "f"],
+        repr(hits),
+    )
+
+    print("SELF-TEST %s" % ("PASSED" if ok else "FAILED"))
+    return 0 if ok else 1
+
+
+def load_ratchet() -> int:
+    if RATCHET_FILE.is_file():
+        try:
+            return int(RATCHET_FILE.read_text(encoding="utf-8").split("#")[0].strip())
+        except ValueError:
+            pass
+    return 10**6
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    ap.add_argument(
+        "--check", action="store_true", help="gate mode: exit 1 on a live silent fallback"
+    )
+    ap.add_argument("--json", dest="as_json", action="store_true")
+    ap.add_argument(
+        "--write-ratchet",
+        action="store_true",
+        help="record the current unread count as the new ceiling",
+    )
+    ap.add_argument(
+        "--self-test",
+        action="store_true",
+        help="prove the census can still return BOTH answers in BOTH directions",
+    )
+    args = ap.parse_args()
+
+    if args.self_test:
+        return self_test()
+
+    if not DEFAULTS.is_file():
+        # Exit 2, NOT 1: there is no census, so there is no finding. Callers must
+        # keep these apart -- reporting 2 as 1 asserts a result from a run that
+        # measured nothing.
+        print("[balance] CANNOT RUN: %s missing" % DEFAULTS, file=sys.stderr)
+        return 2
+
+    data = json.loads(DEFAULTS.read_text(encoding="utf-8"))
+    reads = scan_reads()
+    src = "\n".join(f.read_text(encoding="utf-8", errors="replace") for f in gd_sources())
+    defined_leaves, missing, unread = adjudicate(data, reads, src)
 
     ceiling = load_ratchet()
 
