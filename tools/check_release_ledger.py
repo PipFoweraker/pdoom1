@@ -480,24 +480,55 @@ def self_test() -> int:
     else:
         problems.append("0.14.2 missing from the ledger")
 
-    # Anchor 2: the version that is NOT tagged must classify UNTAGGED.
-    if "0.14.3" in by_version:
-        if by_version["0.14.3"]["tag_state"] != "UNTAGGED":
-            problems.append(
-                "0.14.3 should classify UNTAGGED -- if this now fails because "
-                "the tag was pushed, replace this anchor with the next "
-                "untagged version rather than deleting it"
-            )
-    else:
-        problems.append("0.14.3 missing from the ledger")
+    # Anchor 2: the UNTAGGED answer, proved SYNTHETICALLY and not against live
+    # history.
+    #
+    # This anchor used to name 0.14.3, which was untagged when this tool was
+    # written. On 2026-08-24 the tag was pushed and the self-test began FAILING
+    # -- which failed step 4 of 7 in release-ledger.yml, so the ledger check
+    # after it never ran. THE INSTRUMENT BUILT TO CATCH AN UNTAGGED VERSION WAS
+    # DISARMED BY A VERSION BEING TAGGED.
+    #
+    # The original anchor even printed "replace this with the next untagged
+    # version" on failure. That advice was wrong and this comment supersedes it:
+    # re-pointing at the next untagged version just re-arms the same trap for
+    # whoever tags THAT one. A self-test that depends on live repository state
+    # is not a test -- it is a measurement wearing a test's clothes, and it
+    # expires the moment the thing it measures changes.
+    #
+    # So the TAGGED answer is proved against real history (anchor 1, using the
+    # oldest tag, which cannot become untagged), and the UNTAGGED answer is
+    # proved against a constructed row that no git operation can reach.
+    synthetic = {
+        "version": "0.0.0-selftest",
+        "bump_commit": "0" * 40,
+        "bump_commit_short": "0" * 8,
+        "bump_date": "2000-01-01T00:00:00+00:00",
+        "bump_subject": "synthetic row, never in history",
+    }
+    fake_tags: dict[str, str] = {}
+    if tag_for_version(synthetic["version"], fake_tags) is not None:
+        problems.append(
+            "a version with no tag in the tag map resolved to a tag -- "
+            "the UNTAGGED classification cannot be reached"
+        )
+
+    # And prove the same lookup DOES find a tag when one exists, so the check
+    # above is discriminating rather than merely always-None.
+    if tag_for_version("9.9.9", {"v9.9.9": "deadbeef"}) != "v9.9.9":
+        problems.append(
+            "a version WITH a tag failed to resolve -- the classifier cannot "
+            "return the TAGGED answer, so the UNTAGGED result proves nothing"
+        )
 
     if problems:
         for problem in problems:
             print("[release_ledger] SELF-TEST FAIL: " + problem)
         return 1
     print(
-        "[release_ledger] SELF-TEST OK: classifier returns both answers on "
-        "real history (0.14.2 TAGGED, 0.14.3 UNTAGGED)."
+        "[release_ledger] SELF-TEST OK: classifier returns both answers -- "
+        "TAGGED proved against real history (0.14.2), UNTAGGED proved against "
+        "a synthetic row no git operation can reach."
     )
     return 0
 

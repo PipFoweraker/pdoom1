@@ -454,3 +454,111 @@ one-line string sort called v0.9.0 "latest" from November onward because
   builds are unsigned too and SmartScreen will warn on a fresh reputation.
   Different mechanism from Gatekeeper, and not blocking in the same way, but it
   is the same class of first-run friction.
+
+---
+
+## Addendum 2026-08-24 -- the first release that shipped no macOS asset
+
+v0.14.3 published `PDoom-Windows-v0.14.3.zip` and `PDoom-Linux-v0.14.3.zip` and
+**no macOS asset at all**. Every release from v0.13.1 through v0.14.2 carried
+`PDoom-macOS-v<version>.zip`; this was the first that did not.
+
+### The cause, from the log
+
+Run `32690368004`, job **Build Godot Game (All Platforms)**, step *Build all
+platforms*:
+
+```
+[   0% ] export | Started Exporting for macOS (3 steps)
+[   0% ] export | Creating app bundle
+ERROR: Project export for preset "macOS" failed.
+   at: _fs_changed (editor/editor_node.cpp:1275)
+```
+
+That is the entire diagnostic Godot emitted. 1.4 seconds after the bundle step
+began, before a single `Storing File:` line -- so the export died while
+assembling the bundle from the template, not while packing the game.
+
+The only change to the macOS preset between the two tags, other than the routine
+version strings and a new copyright line, was **one line added by #1282**:
+
+```
+-application/icon=""
++application/icon="res://assets/images/pdoom1.ico"
+```
+
+Godot has no `.ico` decoder. Measured on the same Godot 4.5.1 build CI runs, on
+this machine:
+
+```
+[probe] Image.load err=15 (OK=0) empty=true      # res://assets/images/pdoom1.ico
+[probe] control png err=0 size=(256, 256)        # res://assets/images/logo.png
+```
+
+Error 15 is `ERR_FILE_UNRECOGNIZED`. Godot's own property hints say the same
+thing (`get_export_options`, Godot 4.5-stable): macOS accepts
+`*.icns,*.png,*.webp,*.svg`, Windows accepts `*.ico,*.png,*.webp,*.svg`. The
+Windows exporter consumes `.ico` natively, which is why the Windows build was
+fine and only macOS died.
+
+**Why the message was empty.** In `platform/macos/export/export_plugin.cpp` the
+icon load writes into the same `err` the export-template unzip loop tests:
+
+```
+Ref<Image> icon = _load_icon_or_splash_image(icon_path, &err);
+...
+while (ret == UNZ_OK && err == OK)
+```
+
+A failed icon load therefore ends the loop with no message of its own, and the
+export returns that error. The binary entry (`Contents/MacOS/...`) sorts before
+`Contents/Resources/icon.icns`, so `found_binary` was already true and even the
+missing-binary message never fired. Nothing anywhere named the icon.
+
+### This is a regression, not #1071 finally firing
+
+Different failure, opposite shape. #1071 is the GodotSteam `.framework` losing
+its `Versions/Current` symlink on a non-mac checkout; on v0.14.2 it produced
+`ERROR: LipO`, `ERROR: CodeSign: Invalid binary format` and
+`WARNING: Project export for preset "macOS" completed with warnings` -- and then
+**shipped a 119.5 MB zip anyway**. Those warnings are non-fatal and the asset
+published. In v0.14.3 the export never reached the frameworks at all. #1071
+remains exactly as open and as unverified as it was.
+
+What is genuinely latent here is the measurement gap, and it is the reason a
+one-line preset edit reached a tag:
+
+```
+$ grep -rl "export-release" .github/workflows/
+.github/workflows/enhanced-release.yml
+```
+
+**One file.** No PR check, no nightly, nothing but the release workflow itself
+ever runs a macOS export. The first measurement of a preset change is the
+release. `tools/check_export_icons.py` (pre-commit hook `export-icon-check`,
+~10ms, no Godot launch) closes the specific hole: it fails on the v0.14.3 tree
+and passes on the v0.14.2 tree and on the fix.
+
+### Whether v0.14.3 can be given its macOS asset without re-tagging
+
+`enhanced-release.yml`'s `workflow_dispatch` takes a `version` input and every
+job resolves `${{ github.event.inputs.version || github.ref_name }}`, so a
+dispatch naming `v0.14.3` would build, name and upload as v0.14.3.
+`softprops/action-gh-release@v1` with an existing `tag_name` updates the
+existing release rather than creating a tag, so the ruleset restricting `v*`
+tag creation to admins is not in the path.
+
+It still does not help, for a reason that has nothing to do with permissions:
+**no `actions/checkout` step in that workflow sets `ref:`**, so a dispatch
+builds whatever ref it was dispatched from.
+
+- Dispatch from the tag `v0.14.3` -- builds the tag's tree, which contains the
+  broken icon line, so the macOS export fails again, identically.
+- Dispatch from a fixed branch -- builds a tree that is not v0.14.3, and
+  publishes the result under the v0.14.3 name. That is exactly the class of
+  claim the freshness proof in `tools/build_release.py` exists to prevent.
+
+So: not retriable in place. The honest routes are (a) cut the next version with
+the fix in it, or (b) leave v0.14.3 without a macOS asset and say so in the
+release body. Note that `verify-release-urls` is currently red on v0.14.3 for
+this reason, which is the loud signal working as designed.
