@@ -3,7 +3,7 @@
   "repo": "pdoom1",
   "generated_from": "tracked files at HEAD",
   "convention": "docs/rulings/RULINGS_CONVENTION.md",
-  "count": 43,
+  "count": 44,
   "rulings": [
     {
       "id": "pdoom1:2026-07-04:12de8fc2",
@@ -550,6 +550,20 @@
       "supersedes": null,
       "superseded_by": null,
       "source": "tools/check_ladder_bump.py:38"
+    },
+    {
+      "id": "pdoom1:2026-08-24:db51d521",
+      "date": "2026-08-24",
+      "ruling": "a best-effort platform build that fails must be TRACKED, not merely warned about: the release still publishes for the platforms that built, and the absence becomes ONE rolling per-platform issue plus a machine-readable build-status.json field the website reads, so a download page says \"build coming\" with a link instead of advertising a URL that 404s or pointing at an older release",
+      "summary": "",
+      "flavour": "silent-failure",
+      "kind": "declaration",
+      "status": "",
+      "by": "Pip",
+      "mechanism": "scripts/check_platform_builds.py + scripts/report_missing_build_issue.py, run by the platform-build-status job below",
+      "supersedes": null,
+      "superseded_by": null,
+      "source": ".github/workflows/enhanced-release.yml:240"
     },
     {
       "id": "pdoom1:2026-08-24:c4c9f98a",

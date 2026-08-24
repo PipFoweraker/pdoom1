@@ -7,6 +7,19 @@ on:
     tags:
       - 'v*.*.*'
 
+# PERMISSIONS ARE REQUIRED AND WERE ABSENT UNTIL 2026-08-24.
+# This workflow's last step files an issue when the checks fail. With no
+# `permissions:` block it inherits the repo default, which is read-only here, so
+# on the v0.14.3 tag the job went RED, the issue-filing step 403'd with
+# "Resource not accessible by integration", and the failure it existed to
+# announce filed NOTHING and was invisible. A reporter that cannot report is
+# worse than no reporter: the red looks like a flake and the real defect
+# (v0.14.3 published with no macOS asset) went unnoticed until a human hit the
+# 404. Same defect and same fix as release-reminder.yml on 2026-08-08.
+permissions:
+  contents: read
+  issues: write
+
 jobs:
   pre-release-validation:
     runs-on: ubuntu-latest

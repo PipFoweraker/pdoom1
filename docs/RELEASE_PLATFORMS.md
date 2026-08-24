@@ -439,6 +439,76 @@ one-line string sort called v0.9.0 "latest" from November onward because
 
 ---
 
+## `build-status.json` -- the contract for "this platform is missing"
+
+Added 2026-08-24, after **v0.14.3 published with no macOS asset**. The macOS
+upload step carries `if-no-files-found: warn`, which is the correct #1071
+behaviour (Windows and Linux publishing outranks an all-or-nothing gate), but it
+warned INTO THE VOID: the job went green, nothing was filed, and the feed still
+advertised a macOS URL that 404s. Every release from v0.13.1 to v0.14.2 had
+shipped a mac asset, so nothing downstream had ever had to describe an absent
+platform.
+
+The `platform-build-status` job in `.github/workflows/enhanced-release.yml` now
+checks the **downloaded files**, not the upload step's verdict (that verdict is
+evaluated once and readable by nothing afterwards), and writes
+`build-status.json` into the `release-feeds` artefact -- so it is attached to the
+GitHub Release AND deployed with the rest of `public/releases/`.
+
+Shape (`schema: "pdoom.build_status/1.0"`), trimmed:
+
+```json
+{
+  "schema": "pdoom.build_status/1.0",
+  "version": "v0.14.3",
+  "all_present": false,
+  "missing_platforms": ["macos"],
+  "platforms": {
+    "windows": { "available": true,  "tracking_issue": null },
+    "macos": {
+      "label": "macOS",
+      "required": false,
+      "available": false,
+      "missing_assets": ["PDoom-macOS-v0.14.3.zip", "PDoom.app.zip"],
+      "user_message": "The macOS build for v0.14.3 did not complete, ...",
+      "tracking_issue": {
+        "number": 1234,
+        "url": "https://github.com/PipFoweraker/pdoom1/issues/1234",
+        "labels": ["build-missing", "platform:macos"],
+        "state": "open"
+      }
+    }
+  }
+}
+```
+
+What the website should do with it: when `platforms.<key>.available` is false,
+render "build coming" linked to `tracking_issue.url` (and optionally
+`user_message` verbatim) **instead of** a download button -- never the download
+URL, and never a silent fallback to the previous release's asset. When
+`available` is true, `tracking_issue` is `null` and the normal button applies.
+A platform is `available` only if BOTH its versioned zip and its unversioned
+alias exist and clear a 1 MB floor; half a platform is not a platform (#1068).
+
+The issue is **rolling, one per platform**, found by the label pair
+`build-missing` + `platform:<key>`: re-used and updated on every affected
+release rather than re-opened, and **closed automatically** when that platform
+builds again -- so the site stops saying "coming" the moment it is not.
+
+Loud but not blocking, and the split is the point:
+
+- a missing best-effort build is not an error. It is a warning annotation, a job
+  summary table, a JSON field and a labelled issue. Windows and Linux publish.
+  The run still reds afterwards through `verify-release-urls`' alias check,
+  which runs AFTER publication on purpose.
+- a failure of the **reporter** IS an error and reds its job, because an
+  unfiled failure is invisible. On the v0.14.3 tag `pre-release-checks.yml`
+  403'd with "Resource not accessible by integration" and filed nothing -- the
+  fix was the missing `permissions: issues: write` block, now present with a
+  comment explaining why it cannot be trimmed.
+
+---
+
 ## What this sheet does not cover
 
 - **Any claim about a macOS or Linux build actually running.** No such proof
