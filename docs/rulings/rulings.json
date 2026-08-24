@@ -3,7 +3,7 @@
   "repo": "pdoom1",
   "generated_from": "tracked files at HEAD",
   "convention": "docs/rulings/RULINGS_CONVENTION.md",
-  "count": 49,
+  "count": 53,
   "rulings": [
     {
       "id": "pdoom1:2026-07-04:12de8fc2",
@@ -606,6 +606,62 @@
       "supersedes": null,
       "superseded_by": null,
       "source": ".github/workflows/release-ledger.yml:102"
+    },
+    {
+      "id": "pdoom1:2026-08-24:56df71c4",
+      "date": "2026-08-24",
+      "ruling": "a gate's verdict must be traced to a consumer before it is called a gate: a red that blocks no merge, gates no job, and reaches no human is theatre, and it costs attention as well as buying nothing",
+      "summary": "",
+      "flavour": "ci-gates",
+      "kind": "declaration",
+      "status": "",
+      "by": "Pip",
+      "mechanism": "this audit, and docs/deployment/RELEASE_FLOW_MAP_2026-08-24.md",
+      "supersedes": null,
+      "superseded_by": null,
+      "source": "docs/deployment/GATE_AUDIT_2026-08-24.md:949"
+    },
+    {
+      "id": "pdoom1:2026-08-24:dab3f9b9",
+      "date": "2026-08-24",
+      "ruling": "a workflow that writes anything must declare `permissions:`, because this repo's default workflow token is read-only and a write attempt without one 403s into either a permanent meaningless red or, under continue-on-error, a green that hides it",
+      "summary": "",
+      "flavour": "ci-gates",
+      "kind": "declaration",
+      "status": "",
+      "by": "Pip",
+      "mechanism": "gh api repos/PipFoweraker/pdoom1/actions/permissions/workflow",
+      "supersedes": null,
+      "superseded_by": null,
+      "source": "docs/deployment/GATE_AUDIT_2026-08-24.md:951"
+    },
+    {
+      "id": "pdoom1:2026-08-24:ab4af277",
+      "date": "2026-08-24",
+      "ruling": "a release must be verified before it is published, not after: verify-release-urls runs downstream of create-github-release, so on v0.14.3 the macOS 404 was proven at 04:37:34 against a release that had been public since 04:37:16, and there is no un-publish",
+      "summary": "",
+      "flavour": "releases",
+      "kind": "declaration",
+      "status": "",
+      "by": "Pip",
+      "mechanism": ".github/workflows/enhanced-release.yml, and docs/deployment/RELEASE_FLOW_MAP_2026-08-24.md",
+      "supersedes": null,
+      "superseded_by": null,
+      "source": "docs/deployment/RELEASE_FLOW_MAP_2026-08-24.md:566"
+    },
+    {
+      "id": "pdoom1:2026-08-24:4065d73f",
+      "date": "2026-08-24",
+      "ruling": "two workflows firing on the same event with no dependency between them are not parallel, they are racing to a verdict nobody joins: on the first v0.14.3 tag pre-release-checks found RN003 at t+21s and enhanced-release found the same defect at t+4m39s after a full three-platform build, so the cheap gate bought nothing",
+      "summary": "",
+      "flavour": "ci-gates",
+      "kind": "declaration",
+      "status": "",
+      "by": "Pip",
+      "mechanism": "docs/deployment/RELEASE_FLOW_MAP_2026-08-24.md",
+      "supersedes": null,
+      "superseded_by": null,
+      "source": "docs/deployment/RELEASE_FLOW_MAP_2026-08-24.md:568"
     },
     {
       "id": "pdoom1:2026-08-24:9847c4c9",
