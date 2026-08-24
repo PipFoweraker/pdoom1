@@ -24,19 +24,24 @@ that changed nothing, and a feedback button that saved a file to your disk and
 asked you to email it.
 
 ### Added
-- Counter-offers retain a named researcher, at a permanent payroll cost (#1225 item 4)
-- The onboarding bill and visa obligation are previewed before you commit (#1225 item 5)
+- Counter-offers retain a named researcher, at a permanent payroll cost.
+  Item 4 of the hiring-panel set; #1225 is still OPEN.
+- The onboarding bill and visa obligation are previewed before you commit.
+  Item 5 of the hiring-panel set; #1225 is still OPEN.
 - Ad campaigns emit a monthly report whether or not anyone applied, and name what
-  the campaign cost when it closes (#1225 item 3)
-- A signed-build path: tooling exists and is tested, awaiting the certificate (#1038)
+  the campaign cost when it closes. Item 3 of the hiring-panel set;
+  #1225 is still OPEN.
+- A signed-build path: tooling exists and is tested, awaiting the
+  certificate. #1038 is still OPEN.
 - `docs/TRUST.md`, generated from source -- every point the game reaches outside
-  its own process (#1038)
+  its own process. #1038 is still OPEN.
 
 ### Changed
 - Compute engineers are real staff rather than an integer counter (#1247). They
   used to appear on the employee screen and never load into the sim -- consuming
   stationery and producing nothing.
-- The header stops calling committed Attention "queued", and hiring says days (#1223)
+- The header stops calling committed Attention "queued", and hiring says
+  days. #1223 is still OPEN.
 - The music conductor takes a nudge, and a pick made mid-crossfade is no longer
   dropped (#1249)
 - The game ships with its own icon instead of the default engine one -- visible in
@@ -52,7 +57,7 @@ asked you to email it.
 - The desperation lever applies real safety absorption instead of a printed
   figure (#967) -- the button now does what its text says
 - An offer at or below a previously rejected figure is refused rather than
-  silently accepted (#1225 item 2)
+  silently accepted. Item 2 of the hiring-panel set; #1225 is still OPEN.
 - Send Feedback (N) offers three one-click ways to actually send it. It used to
   save a file to your disk and ask you to email it.
 - The weekly-seed fallback generator computed a non-ISO week and would have
