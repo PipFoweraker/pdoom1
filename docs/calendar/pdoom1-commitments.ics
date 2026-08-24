@@ -3981,6 +3981,31 @@ DESCRIPTION:Reflective review: release / league cycle (review) -- pip
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:5d3156a659f6f790@commitments.pdoom1
+DTSTAMP:20260824T000000Z
+DTSTART;VALUE=DATE:20260824
+DTEND;VALUE=DATE:20260825
+SUMMARY:[UNPARSED] needs a declaration -- LEADERBOARD_WEBSITE_INTEGRATION.
+ md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/LEADERBOARD_WEBSI
+ TE_INTEGRATION.md:208. 2 line(s) in docs/LEADERBOARD_WEBSITE_INTEGRATION.
+ md mention this date and no COMMITMENT: declaration accounts for it. Eith
+ er add a declaration or the date is incidental. First line: **The server-
+ side fix is the real fix\, and it landed in #1272 (2026-08-24):** -- Gene
+ rated from tracked sources by scripts/generate_commitment_calendar.py\; r
+ egenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- LEADERBOARD_WEBSITE_INTEGRATION.md (unp
+ arsed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:6bd9fb2eeede953a@commitments.pdoom1
 DTSTAMP:20260824T000000Z
 DTSTART;VALUE=DATE:20260824

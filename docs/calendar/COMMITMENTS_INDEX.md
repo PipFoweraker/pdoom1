@@ -13,7 +13,7 @@ Horizon: **2026-08-09** (the prose scan reports dates at or after this; roll it
 forward deliberately in `COMMITMENTS.md`, never automatically -- a clock-reading
 generator goes stale overnight and trains people to ignore the check).
 
-**53 declared, 4 release-train, 156 UNPARSED, 0 malformed.**
+**53 declared, 4 release-train, 157 UNPARSED, 0 malformed.**
 
 ## Declared commitments
 
@@ -113,8 +113,8 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-10 | `docs/LEADERBOARD_WEBSITE_INTEGRATION.md` | 148 | \| `player_name` \| string \| **Misnamed: this carries the LAB name, and since 2026-08-10 the operator too, composed as `Lab -- Operator`.** Max 40 BYTES |
 | 2026-08-10 | `docs/LEADERBOARD_WEBSITE_INTEGRATION.md` | 175 | Confirmed again on 2026-08-10 by direct probe of the deployed API on a throwaway |
 | 2026-08-10 | `docs/LEADERBOARD_WEBSITE_INTEGRATION.md` | 183 | ### A split codepoint DESTROYS THE BOARD (measured 2026-08-10) |
-| 2026-08-10 | `docs/LEADERBOARD_WEBSITE_INTEGRATION.md` | 211 | ### Two identity values, one wire field (shipped 2026-08-10) |
-| 2026-08-10 | `docs/LEADERBOARD_WEBSITE_INTEGRATION.md` | 215 | may run several labs over time. He restated it on 2026-08-10 after a second real |
+| 2026-08-10 | `docs/LEADERBOARD_WEBSITE_INTEGRATION.md` | 215 | ### Two identity values, one wire field (shipped 2026-08-10) |
+| 2026-08-10 | `docs/LEADERBOARD_WEBSITE_INTEGRATION.md` | 219 | may run several labs over time. He restated it on 2026-08-10 after a second real |
 | 2026-08-10 | `docs/PRIVACY_POSTURE.md` | 25 | **HOW the two names are published (measured, PR #1176, 2026-08-10).** Both names |
 | 2026-08-10 | `pdoom1#984` | 0 | Half-day workshop: audit mechanics deep-dive (next epoch) -- something amazing under the smell |
 | 2026-08-10 | `tools/check_self_merge_eligibility.py` | 18 | 2026-08-10 and, until this file existed, they **promised eligibility and checked |
@@ -382,6 +382,8 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-23 | `tools/check_ladder_bump.py` | 38 | RULING: 2026-08-23 -- ladder debt is paid when it is incurred, not deferred to build time, so a fresh epoch never inherits a forked board key -- flavo |
 | 2026-08-23 | `tools/sign_release.py` | 6 | WHY THIS EXISTS, 2026-08-23 |
 | 2026-08-23 | `tools/sign_release.py` | 131 | That is what is deployed here (2026-08-23, version 10.0.28000.2526). |
+| 2026-08-24 | `docs/LEADERBOARD_WEBSITE_INTEGRATION.md` | 208 | **The server-side fix is the real fix, and it landed in #1272 (2026-08-24):** |
+| 2026-08-24 | `docs/LEADERBOARD_WEBSITE_INTEGRATION.md` | 257 | ### Coordination ask -- status after #1272 (2026-08-24) |
 | 2026-08-24 | `docs/design/LEAGUE_CUTOVER_PLAYBOOK.md` | 41 | at L4, and is pinned for reflective review on/after 2026-08-24. |
 | 2026-08-24 | `pdoom1#808` | 0 | Reflective review (on/after 2026-08-24): release/league cycle nomenclature + cadence |
 | 2026-08-24 | `pdoom1#811` | 0 | Workshop 3 (mechanics) -- Mon 07-27 W-3a / Tue 07-28 build / Wed 07-29 W-3b-W-4: crisp parts, brutal decisions |

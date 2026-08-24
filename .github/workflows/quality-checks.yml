@@ -191,6 +191,22 @@ jobs:
 
         echo "Commit message ASCII compliance verified"
 
+    - name: Leaderboard API tests (score_api.php, issue #1272)
+      run: |
+        # server/leaderboard/score_api.php is the only PHP in this repo, and it
+        # is a live public write endpoint: before #1272 one submitted player
+        # name could empty a whole league board. The test is dependency-free
+        # (no composer, no PHPUnit) and boots `php -S` for a real end-to-end
+        # pass, so all it needs is a php CLI.
+        #
+        # It exits 0 = pass, 1 = measured failure, 2 = DID NOT COMPLETE. The 2
+        # matters: a pre-fix score_api.php calls exit() when included, which
+        # once let the harness return green having run a third of its
+        # assertions. Do not collapse 2 into 0.
+        php --version || (sudo apt-get update -qq && sudo apt-get install -y -qq php-cli)
+        php --version
+        php server/leaderboard/tests/test_score_api.php
+
     - name: Health Gate Check
       run: |
         echo "Running project health assessment..."
