@@ -5,7 +5,7 @@
 > `python scripts/generate_rulings.py`. The convention, and why it looks
 > like this, is argued in `docs/rulings/RULINGS_CONVENTION.md`.
 
-**45 ruling(s)** across **13 flavour(s)**. **228** prose ruling(s) not yet declared.
+**46 ruling(s)** across **13 flavour(s)**. **228** prose ruling(s) not yet declared.
 
 ## One index, five sources
 
@@ -16,7 +16,7 @@ flattening either into one line would delete what makes it worth having.
 
 | kind | n | what it is | where |
 |---|---:|---|---|
-| `declaration` | 19 | a `RULING:` line written next to what it governs | anywhere |
+| `declaration` | 20 | a `RULING:` line written next to what it governs | anywhere |
 | `adr` | 20 | a full architecture argument, summarised here | `docs/game-design/decisions/` |
 | `session` | 3 | a transcript or workshop ruling set, pointed at | `docs/SPOKEN_*`, `*RULINGS*` |
 | `card` | 3 | the input a ruling was made from | `docs/decision-cards/` |
@@ -67,10 +67,11 @@ flavour it belongs to and read what was already decided there.
 |---|---|---|---|
 | 2026-08-15 | flaw:<thing> joins the harvest vocabulary as the negative counterpart to element:, because the sweeps are mostly negative and prose cannot be counted | `tools/art_review/serve_review.py HARVEST_DOC, emitted to docs/art/NOMENCLATURE.md` | `docs/rulings/LEDGER.md:13` |
 
-### `ci-gates` (only one so far)
+### `ci-gates`
 
 | date | ruling | mechanism | source |
 |---|---|---|---|
+| 2026-08-22 | a check that fails 100% of the time is not a check; chronic red trains the team to ignore red, so a permanently-failing gate must be either fixed or explicitly declared, never left standing | `tools/check_chronic_red.py, owed by issue #1279` | `.github/workflows/docs-sync.yml:127` |
 | 2026-08-24 | a command's exit status must be read from the command, never through a pipe: $? after a pipeline is the RIGHTMOST command's status, so `tool | tee`, `tool | head` and `tool | tail` all discard the tool's verdict and report the wrapper's success | `this workflow, and live-site-release-freshness.yml` | `.github/workflows/release-ledger.yml:102` |
 
 ### `estate-process`
