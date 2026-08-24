@@ -13,7 +13,7 @@ Horizon: **2026-08-09** (the prose scan reports dates at or after this; roll it
 forward deliberately in `COMMITMENTS.md`, never automatically -- a clock-reading
 generator goes stale overnight and trains people to ignore the check).
 
-**53 declared, 4 release-train, 181 UNPARSED, 0 malformed.**
+**53 declared, 4 release-train, 183 UNPARSED, 0 malformed.**
 
 ## Declared commitments
 
@@ -378,6 +378,8 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-23 | `docs/ARCHITECTURE_FUNDERS.md` | 8 | > [`docs/archive/2026-08-23-architecture-funders/ARCHITECTURE_FUNDERS.md`](archive/2026-08-23-architecture-funders/ARCHITECTURE_FUNDERS.md). |
 | 2026-08-23 | `docs/ARCHITECTURE_FUNDERS.md` | 8 | > [`docs/archive/2026-08-23-architecture-funders/ARCHITECTURE_FUNDERS.md`](archive/2026-08-23-architecture-funders/ARCHITECTURE_FUNDERS.md). |
 | 2026-08-23 | `docs/ARCHITECTURE_FUNDERS.md` | 59 | Verified against the repository on 2026-08-23. Correct these here rather than restating |
+| 2026-08-23 | `docs/deployment/RELEASE_SECURITY_2026-08-24.md` | 674 | `tools/sign_release.py` (added in #1282, 2026-08-23) wraps `signtool` with three |
+| 2026-08-23 | `docs/deployment/RELEASE_SECURITY_2026-08-24.md` | 694 | `docs/release/CODE_SIGNING.md` (2026-08-23) already contains the purchasing |
 | 2026-08-23 | `docs/design/SILENT_FAILURE_REGISTER.md` | 1 | # Silent failure register -- first alert, 2026-08-23 |
 | 2026-08-23 | `docs/design/SILENT_FAILURE_REGISTER.md` | 5 | Pip named it, 2026-08-23, on being shown the smell-pass finding: *"these are |
 | 2026-08-23 | `docs/design/SILENT_FAILURE_REGISTER.md` | 116 | RULING: 2026-08-23 -- silent failures are a named defect class and the counter is instrumentation, never vigilance; a failure representable in its own |
@@ -413,6 +415,9 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-23 | `tools/sign_release.py` | 131 | That is what is deployed here (2026-08-23, version 10.0.28000.2526). |
 | 2026-08-24 | `docs/HANDOVER_2026-08-24_pdoom1_seat.md` | 267 | > wrote without the user's authorisation.** *Window:* ~2 hours on 2026-08-24. |
 | 2026-08-24 | `docs/RELEASE_PLATFORMS.md` | 460 | ## Addendum 2026-08-24 -- the first release that shipped no macOS asset |
+| 2026-08-24 | `docs/deployment/RELEASE_SECURITY_2026-08-24.md` | 8 | **Measured:** 2026-08-24, against `PipFoweraker/pdoom1` at `28f8cd94`. |
+| 2026-08-24 | `docs/deployment/RELEASE_SECURITY_2026-08-24.md` | 16 | This document was commissioned from a measurement taken earlier on 2026-08-24 |
+| 2026-08-24 | `docs/deployment/RELEASE_SECURITY_2026-08-24.md` | 1085 | SHA-pin the two third-party actions. The SHAs below were resolved on 2026-08-24 |
 | 2026-08-24 | `docs/design/LEAGUE_CUTOVER_PLAYBOOK.md` | 41 | at L4, and is pinned for reflective review on/after 2026-08-24. |
 | 2026-08-24 | `docs/releases/RELEASE_LINKING_TO_0.20.md` | 4 | Written 2026-08-24 off the mechanical sweep in `RELEASE_LEDGER.md`, which is |
 | 2026-08-24 | `docs/releases/RELEASE_LINKING_TO_0.20.md` | 92 | 2026-08-24, **ISO week 35**. The live const reads `weekly-2026-w34`. If the next |
