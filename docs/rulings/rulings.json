@@ -3,7 +3,7 @@
   "repo": "pdoom1",
   "generated_from": "tracked files at HEAD",
   "convention": "docs/rulings/RULINGS_CONVENTION.md",
-  "count": 39,
+  "count": 53,
   "rulings": [
     {
       "id": "pdoom1:2026-07-04:12de8fc2",
@@ -496,6 +496,20 @@
       "source": "tools/assets/check_provenance.py:65"
     },
     {
+      "id": "pdoom1:2026-08-22:ab31a2fa",
+      "date": "2026-08-22",
+      "ruling": "a check that fails 100% of the time is not a check; chronic red trains the team to ignore red, so a permanently-failing gate must be either fixed or explicitly declared, never left standing",
+      "summary": "",
+      "flavour": "ci-gates",
+      "kind": "declaration",
+      "status": "",
+      "by": "Pip",
+      "mechanism": "tools/check_chronic_red.py, owed by issue #1279",
+      "supersedes": null,
+      "superseded_by": null,
+      "source": ".github/workflows/docs-sync.yml:127"
+    },
+    {
       "id": "pdoom1:2026-08-22:8130f800",
       "date": "2026-08-22",
       "ruling": "a mechanic that charges the player and does nothing observable gets an unsubtle placeholder consequence NOW rather than waiting for a balanced one; players need to suffer, and balance comes later",
@@ -524,6 +538,20 @@
       "source": "docs/design/SILENT_FAILURE_REGISTER.md:116"
     },
     {
+      "id": "pdoom1:2026-08-23:278981bd",
+      "date": "2026-08-23",
+      "ruling": "ADR-0020 -- Machine actor identity: a bot acts under its own name, or the attribution record is fiction",
+      "summary": "Agent work is currently indistinguishable from Pip's in every repo's attribution record, because agents act through his credentials. This proposes a single machine actor with its own identity, its own audit trail, and permissions strictly narrower than Pip's -- and names the six questions that must be answered before one is created.",
+      "flavour": "architecture",
+      "kind": "adr",
+      "status": "PROPOSED -- built not released, per Pip's constraint. Design gates below are unanswered and BLOCK creation.",
+      "by": "Pip",
+      "mechanism": null,
+      "supersedes": null,
+      "superseded_by": null,
+      "source": "docs/game-design/decisions/ADR-0020-machine-actor-identity.md:1"
+    },
+    {
       "id": "pdoom1:2026-08-23:93877464",
       "date": "2026-08-23",
       "ruling": "player feedback routes to the PUBLIC issue tracker and is triaged and summarised before the developer reads it; it never lands in a personal inbox, and the player is told this in the panel",
@@ -548,21 +576,193 @@
       "by": "Pip",
       "mechanism": "tools/check_ladder_bump.py --owed",
       "supersedes": null,
-      "superseded_by": null,
+      "superseded_by": "pdoom1:2026-08-23:fa830705",
       "source": "tools/check_ladder_bump.py:38"
+    },
+    {
+      "id": "pdoom1:2026-08-23:fa830705",
+      "date": "2026-08-23",
+      "ruling": "ladder debt is DECLARED when incurred and PAID at the release that ships it; deferring is legal, forgetting is not, and the epoch must never fork on an ordinary gameplay PR",
+      "summary": "",
+      "flavour": "ladder-epochs",
+      "kind": "declaration",
+      "status": "",
+      "by": "Pip",
+      "mechanism": "tools/check_ladder_bump.py --owed, run at cut time",
+      "supersedes": "pdoom1:2026-08-23:40cd814d",
+      "superseded_by": null,
+      "source": "tools/check_ladder_bump.py:40"
+    },
+    {
+      "id": "pdoom1:2026-08-24:c4c9f98a",
+      "date": "2026-08-24",
+      "ruling": "a command's exit status must be read from the command, never through a pipe: $? after a pipeline is the RIGHTMOST command's status, so `tool | tee`, `tool | head` and `tool | tail` all discard the tool's verdict and report the wrapper's success",
+      "summary": "",
+      "flavour": "ci-gates",
+      "kind": "declaration",
+      "status": "",
+      "by": "Pip",
+      "mechanism": "this workflow, and live-site-release-freshness.yml",
+      "supersedes": null,
+      "superseded_by": null,
+      "source": ".github/workflows/release-ledger.yml:102"
+    },
+    {
+      "id": "pdoom1:2026-08-24:56df71c4",
+      "date": "2026-08-24",
+      "ruling": "a gate's verdict must be traced to a consumer before it is called a gate: a red that blocks no merge, gates no job, and reaches no human is theatre, and it costs attention as well as buying nothing",
+      "summary": "",
+      "flavour": "ci-gates",
+      "kind": "declaration",
+      "status": "",
+      "by": "Pip",
+      "mechanism": "this audit, and docs/deployment/RELEASE_FLOW_MAP_2026-08-24.md",
+      "supersedes": null,
+      "superseded_by": null,
+      "source": "docs/deployment/GATE_AUDIT_2026-08-24.md:949"
+    },
+    {
+      "id": "pdoom1:2026-08-24:dab3f9b9",
+      "date": "2026-08-24",
+      "ruling": "a workflow that writes anything must declare `permissions:`, because this repo's default workflow token is read-only and a write attempt without one 403s into either a permanent meaningless red or, under continue-on-error, a green that hides it",
+      "summary": "",
+      "flavour": "ci-gates",
+      "kind": "declaration",
+      "status": "",
+      "by": "Pip",
+      "mechanism": "gh api repos/PipFoweraker/pdoom1/actions/permissions/workflow",
+      "supersedes": null,
+      "superseded_by": null,
+      "source": "docs/deployment/GATE_AUDIT_2026-08-24.md:951"
+    },
+    {
+      "id": "pdoom1:2026-08-24:ab4af277",
+      "date": "2026-08-24",
+      "ruling": "a release must be verified before it is published, not after: verify-release-urls runs downstream of create-github-release, so on v0.14.3 the macOS 404 was proven at 04:37:34 against a release that had been public since 04:37:16, and there is no un-publish",
+      "summary": "",
+      "flavour": "releases",
+      "kind": "declaration",
+      "status": "",
+      "by": "Pip",
+      "mechanism": ".github/workflows/enhanced-release.yml, and docs/deployment/RELEASE_FLOW_MAP_2026-08-24.md",
+      "supersedes": null,
+      "superseded_by": null,
+      "source": "docs/deployment/RELEASE_FLOW_MAP_2026-08-24.md:566"
+    },
+    {
+      "id": "pdoom1:2026-08-24:4065d73f",
+      "date": "2026-08-24",
+      "ruling": "two workflows firing on the same event with no dependency between them are not parallel, they are racing to a verdict nobody joins: on the first v0.14.3 tag pre-release-checks found RN003 at t+21s and enhanced-release found the same defect at t+4m39s after a full three-platform build, so the cheap gate bought nothing",
+      "summary": "",
+      "flavour": "ci-gates",
+      "kind": "declaration",
+      "status": "",
+      "by": "Pip",
+      "mechanism": "docs/deployment/RELEASE_FLOW_MAP_2026-08-24.md",
+      "supersedes": null,
+      "superseded_by": null,
+      "source": "docs/deployment/RELEASE_FLOW_MAP_2026-08-24.md:568"
+    },
+    {
+      "id": "pdoom1:2026-08-24:9847c4c9",
+      "date": "2026-08-24",
+      "ruling": "the diegetic-opening redesign (M24-002..009) must not be ladder- or epoch-breaking",
+      "summary": "",
+      "flavour": "ladder-epochs",
+      "kind": "declaration",
+      "status": "",
+      "by": "Pip",
+      "mechanism": "`tools/check_ladder_bump.py`",
+      "supersedes": null,
+      "superseded_by": null,
+      "source": "docs/game-design/DESIGN_2026-08-24_diegetic-opening.md:16"
+    },
+    {
+      "id": "pdoom1:2026-08-24:c1ce27d0",
+      "date": "2026-08-24",
+      "ruling": "the featured seed names the ISO week the league opens in, so a league that slips is renamed to the week it actually runs and the slip is recorded in the log, never hidden in the label",
+      "summary": "",
+      "flavour": "league-seeds",
+      "kind": "declaration",
+      "status": "",
+      "by": "Pip",
+      "mechanism": "godot/autoload/game_config.gd get_weekly_seed",
+      "supersedes": null,
+      "superseded_by": null,
+      "source": "godot/autoload/game_config.gd:550"
+    },
+    {
+      "id": "pdoom1:2026-08-24:9cf941d9",
+      "date": "2026-08-24",
+      "ruling": "the featured seed names the ISO week the league opens in",
+      "summary": "",
+      "flavour": "league-seeds",
+      "kind": "declaration",
+      "status": "",
+      "by": "Pip",
+      "mechanism": "godot/tests/unit/test_iso_week_seed.gd",
+      "supersedes": null,
+      "superseded_by": null,
+      "source": "godot/tests/unit/test_iso_week_seed.gd:24"
+    },
+    {
+      "id": "pdoom1:2026-08-24:f6ea4303",
+      "date": "2026-08-24",
+      "ruling": "an environment no workflow references is either clutter or a lie, and which one depends entirely on what it is called; a safety-vocabulary name with no reference is a finding, any other name is reported and not gated",
+      "summary": "",
+      "flavour": "guard-doctrine",
+      "kind": "declaration",
+      "status": "",
+      "by": "Pip",
+      "mechanism": "tools/check_environments.py in .github/workflows/guards.yml",
+      "supersedes": null,
+      "superseded_by": null,
+      "source": "tools/check_environments.py:51"
+    },
+    {
+      "id": "pdoom1:2026-08-24:0ef5abab",
+      "date": "2026-08-24",
+      "ruling": "a guard wired only to pre-commit is not installed; every local hook must either run in a workflow or carry a declared waiver naming what covers it instead",
+      "summary": "",
+      "flavour": "guard-doctrine",
+      "kind": "declaration",
+      "status": "",
+      "by": "Pip",
+      "mechanism": "tools/check_guard_parity.py --check in .github/workflows/guards.yml",
+      "supersedes": null,
+      "superseded_by": null,
+      "source": "tools/check_guard_parity.py:47"
+    },
+    {
+      "id": "pdoom1:2026-08-24:5b478ae8",
+      "date": "2026-08-24",
+      "ruling": "every value version.txt has ever held must have a matching git tag, or a declared exemption; a bump with no tag is a defect the machine reports, not a thing a human is expected to remember",
+      "summary": "",
+      "flavour": "release-cadence",
+      "kind": "declaration",
+      "status": "",
+      "by": "Pip",
+      "mechanism": "tools/check_release_ledger.py",
+      "supersedes": null,
+      "superseded_by": null,
+      "source": "tools/check_release_ledger.py:34"
     }
   ],
   "undeclared": [
     {
-      "source": "CHANGELOG.md:164",
+      "source": ".github/workflows/guards.yml:3",
+      "text": "# WHY THIS FILE EXISTS (issue #1265, ruled by Pip 2026-08-20)"
+    },
+    {
+      "source": "CHANGELOG.md:251",
       "text": "was retimed to one-turn-one-month and the ruled promotions were applied (#1137),"
     },
     {
-      "source": "CHANGELOG.md:195",
+      "source": "CHANGELOG.md:282",
       "text": "and the ruled promotions applied (#1137), against Pip's rulings of 2026-08-04."
     },
     {
-      "source": "CHANGELOG.md:203",
+      "source": "CHANGELOG.md:290",
       "text": "- **The last player-facing \"AP\" is gone**, and one number format is ruled across"
     },
     {
@@ -596,6 +796,14 @@
     {
       "source": "docs/HANDOVER_2026-08-06_EVENING.md:43",
       "text": "He ruled on it Tuesday and it was never built. B1 and B2 refer to the proposals in"
+    },
+    {
+      "source": "docs/HANDOVER_2026-08-24_pdoom1_seat.md:140",
+      "text": "immediately with an offer to revert; he ruled keep. The changes were verified"
+    },
+    {
+      "source": "docs/HANDOVER_2026-08-24_pdoom1_seat.md:44",
+      "text": "## 2. What was ruled today"
     },
     {
       "source": "docs/ISSUE_MINING_2026-08-06.md:191",
@@ -898,6 +1106,34 @@
       "text": "with an icon. **His own earlier ruling says no.** On 2026-07-31 he ruled that"
     },
     {
+      "source": "docs/game-design/DESIGN_2026-08-24_diegetic-opening.md:242",
+      "text": "| How do interrupts trade against the committed queue? | **Still open.** Variants A/B/C written and never ruled. | `coordination/DESIGN_2026-08-12_interrupt-resolution-variants.md` |"
+    },
+    {
+      "source": "docs/game-design/DESIGN_2026-08-24_diegetic-opening.md:3",
+      "text": "> **Status: design document. Nothing ruled, nothing built, no code written.** Assembled"
+    },
+    {
+      "source": "docs/game-design/DESIGN_2026-08-24_diegetic-opening.md:493",
+      "text": "occupies. **Pip already ruled this** (`DESIGN_2026-08-10` s3), and #1202 item 4 names it as a"
+    },
+    {
+      "source": "docs/game-design/DESIGN_2026-08-24_diegetic-opening.md:628",
+      "text": "is ruled out today.\"* The doctrine has a **review clause dated 2027-07-27** and that review is"
+    },
+    {
+      "source": "docs/game-design/DESIGN_2026-08-24_diegetic-opening.md:739",
+      "text": "**Its two questions are still open and neither was ever ruled:** (1) A, B or C; (2) *\"Does an"
+    },
+    {
+      "source": "docs/game-design/DESIGN_2026-08-24_diegetic-opening.md:866",
+      "text": "9. **A variable attention grant.** Already ruled and already commented in"
+    },
+    {
+      "source": "docs/game-design/DESIGN_2026-08-24_diegetic-opening.md:927",
+      "text": "| 1 | **Lift `OfficeFloor` out of `WatchScreen`** into a region registered as neither plan-only nor watch-only | `main_ui.gd`, `watch_screen.gd`, `screen_mode.gd`, `main.tscn` | Already ruled by Pip ("
+    },
+    {
       "source": "docs/game-design/DESIGN_PHILOSOPHY.md:423",
       "text": "**The founder currency is named `Attention`** (ruled 2026-07-13): Pip's own canon"
     },
@@ -1134,6 +1370,14 @@
       "text": "- **The last player-facing \"AP\" is gone**, and one number format is ruled across"
     },
     {
+      "source": "docs/releases/RELEASE_LINKING_TO_0.20.md:111",
+      "text": "Whichever is ruled, it should then be **mechanised**: derive the expected seed"
+    },
+    {
+      "source": "docs/releases/RELEASE_LINKING_TO_0.20.md:175",
+      "text": "Under the atomise protocol clause 3 (ruled 2026-08-24: *\"do not build an atom"
+    },
+    {
       "source": "docs/strategy/IP_AND_OPENNESS_PREMORTEM.md:443",
       "text": "except keeping the data backbone clean (already ruled)."
     },
@@ -1146,7 +1390,7 @@
       "text": "**They are GRANDFATHERED. Pip ruled 2026-08-03 that already-packed assets stay"
     },
     {
-      "source": "godot/autoload/game_config.gd:776",
+      "source": "godot/autoload/game_config.gd:851",
       "text": "# ruled by Pip via PR #1096: \"alpha-tools naming and wording settled\") -----------------"
     },
     {
@@ -1408,6 +1652,18 @@
     {
       "source": "tools/assets/provenance_unknown_pin.json:2",
       "text": "\"_why\": \"Pinned unknown set. Ruled by Pip 2026-08-11: keep the unattributable assets, record them honestly, and let a mechanism force the question later rather than a document.\","
+    },
+    {
+      "source": "tools/check_guard_parity.py:6",
+      "text": "WHY THIS EXISTS (issue #1265, ruled by Pip 2026-08-20)"
+    },
+    {
+      "source": "tools/check_release_ledger.py:30",
+      "text": "This is the ruled ``manufactured confidence`` shape (Pip, 2026-08-23 16:42):"
+    },
+    {
+      "source": "tools/check_release_ledger.py:59",
+      "text": "``pdoom.releases/0.1``). Under the atomise protocol clause 3 (ruled by Pip,"
     },
     {
       "source": "tools/rule.py:153",

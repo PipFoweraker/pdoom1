@@ -284,6 +284,20 @@ repos:
         files: '(\.tscn|\.gd|\.tres|project\.godot)$'
         pass_filenames: false
 
+      # v0.14.3 shipped with NO macOS asset -- the first release ever to do so
+      # -- because the macOS preset's application/icon was pointed at a .ico,
+      # which Godot has no decoder for. The export died printing only
+      # 'Project export for preset "macOS" failed.' with no reason, and the
+      # ONLY thing in this repo that runs a macOS export is the release
+      # workflow, so the first measurement was the release itself. ~10ms, no
+      # Godot launch.
+      - id: export-icon-check
+        name: Export preset icons are a format that platform can decode
+        entry: python tools/check_export_icons.py
+        language: system
+        files: '^(godot/export_presets\.cfg|godot/assets/images/.*|tools/check_export_icons\.py)$'
+        pass_filenames: false
+
       - id: version-sync-check
         name: version.txt + ladder_version.txt synced to derived copies
         entry: python tools/sync_version.py --check

@@ -540,7 +540,22 @@ func increment_games_played() -> void:
 ## league seed -- the metabolic cycle rotates it at Pip's call ("manual for now",
 ## see docs/RELEASE_AND_LEAGUE_CYCLE.html). To rotate the league, edit this const
 ## (or clear it to fall back to the calendar-week auto-seed below).
-const FEATURED_SEED_OVERRIDE: String = "weekly-2026-w34"
+##
+## THE SEED NAMES THE ISO WEEK THE LEAGUE OPENS IN. That convention was followed
+## by all five rolls to date (w30 on 2026-07-24, w31 on 07-31, w32 on 08-07,
+## w33 on 08-13, w34 on 08-23) but was written down NOWHERE until 2026-08-24 --
+## the ritual sheet carried only examples. It is now stated here, at the const
+## it governs, and in docs/releases/RELEASE_LINKING_TO_0.20.md.
+##
+## RULING: 2026-08-24 -- the featured seed names the ISO week the league opens in, so a league that slips is renamed to the week it actually runs and the slip is recorded in the log, never hidden in the label -- flavour: league-seeds -- mechanism: godot/autoload/game_config.gd get_weekly_seed
+##
+## Precedent, and the reason this is a rule rather than a preference: on
+## 2026-07-30 the const still read `weekly-2026-w30` and was corrected to
+## `weekly-2026-w31` BEFORE that cut (docs/rituals/gate_5_seed_blessing.md).
+## A stale week number has always been treated here as a defect to fix before
+## cutting, because a board key cannot be tidied afterwards -- "filtering
+## standings is editing them".
+const FEATURED_SEED_OVERRIDE: String = "weekly-2026-w35"
 
 ## Get weekly challenge seed (the featured/default league seed).
 func get_weekly_seed() -> String:
@@ -549,14 +564,74 @@ func get_weekly_seed() -> String:
 	# FIX: previously used Time.get_ticks_msec() (ms since ENGINE START, always
 	# < 1 week for any real session), which froze the week at 0. Derive the week
 	# from the real wall-clock date so it advances weekly.
+	#
+	# FIX 2026-08-24: this used to compute `(doy - 1) / 7 + 1` against
+	# `time.year` and format with `%d`. That is NOT the ISO week, and it
+	# disagrees with every seed ever blessed, starting 2027-01-01 and never
+	# re-converging. Measured against the convention:
+	#
+	#     2026-07-24 .. 2026-12-25   naive == ISO        (agrees all of 2026)
+	#     2027-01-01   naive weekly-2027-w1  vs ISO weekly-2026-w53
+	#     2027-01-08   naive weekly-2027-w2  vs ISO weekly-2027-w01
+	#     2027-02-05   naive weekly-2027-w6  vs ISO weekly-2027-w05
+	#
+	# Three defects firing on one date: wrong ISO YEAR (1 Jan 2027 is in ISO
+	# week 53 OF 2026), wrong week NUMBER, and no zero-padding -- and
+	# `weekly-2027-w1` and `weekly-2027-w01` are different strings, so they are
+	# different boards. This is dead code while FEATURED_SEED_OVERRIDE is set,
+	# which is exactly why it could rot unnoticed; clearing the override is a
+	# one-character change that would have armed it.
+	#
+	# v0.19 is scheduled for Friday 2027-01-01 (accepted by Pip, 2026-08-24),
+	# so the bug's fire date and a league night are the same evening.
 	var time := Time.get_datetime_dict_from_system()
-	var year := int(time.year)
+	return iso_week_seed(int(time.year), int(time.month), int(time.day))
+
+## Days in a Gregorian year.
+static func _days_in_year(year: int) -> int:
+	var leap := year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)
+	return 366 if leap else 365
+
+## Ordinal day of the year, 1-based.
+static func _day_of_year(year: int, month: int, day: int) -> int:
 	var days_before := [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334]
-	var doy: int = int(days_before[int(time.month) - 1]) + int(time.day)
-	if int(time.month) > 2 and (year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)):
+	var doy: int = int(days_before[month - 1]) + day
+	var leap := year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)
+	if month > 2 and leap:
 		doy += 1
-	var week: int = (doy - 1) / 7 + 1
-	return "weekly-%d-w%d" % [year, week]
+	return doy
+
+## ISO-8601 weekday, Monday=1 .. Sunday=7, via Zeller-style day-of-week.
+static func _iso_weekday(year: int, month: int, day: int) -> int:
+	# Sakamoto's algorithm returns 0=Sunday .. 6=Saturday.
+	var t := [0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4]
+	var y := year
+	if month < 3:
+		y -= 1
+	var dow: int = (y + y / 4 - y / 100 + y / 400 + int(t[month - 1]) + day) % 7
+	# Remap 0=Sunday -> 7 so Monday=1 .. Sunday=7.
+	return 7 if dow == 0 else dow
+
+## The league seed string for a calendar date, keyed on the ISO WEEK.
+##
+## ISO-8601: a week belongs to the year that contains its Thursday. That is why
+## 2027-01-01 is `weekly-2026-w53` and not `weekly-2027-w01` -- the week
+## containing it has its Thursday in 2026. The zero-padding is load-bearing:
+## a board key is an exact string, so `w1` and `w01` are different boards.
+static func iso_week_seed(year: int, month: int, day: int) -> String:
+	var doy := _day_of_year(year, month, day)
+	var dow := _iso_weekday(year, month, day)
+	# The Thursday of this week decides which ISO year the week belongs to.
+	var thursday_doy: int = doy - dow + 4
+	var iso_year := year
+	if thursday_doy < 1:
+		iso_year = year - 1
+		thursday_doy += _days_in_year(iso_year)
+	elif thursday_doy > _days_in_year(year):
+		iso_year = year + 1
+		thursday_doy -= _days_in_year(year)
+	var week: int = (thursday_doy - 1) / 7 + 1
+	return "weekly-%d-w%02d" % [iso_year, week]
 
 ## Get display seed (weekly or custom)
 func get_display_seed() -> String:
