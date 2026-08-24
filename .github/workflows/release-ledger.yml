@@ -74,8 +74,28 @@ jobs:
         run: |
           set +e
           python tools/check_release_ledger.py --check | tee ledger-report.txt
-          echo "status=$?" >> "$GITHUB_OUTPUT"
+          # PIPESTATUS[0], not $?. After a pipeline $? is the exit status of the
+          # RIGHTMOST command -- tee -- which returns 0 whenever it can write the
+          # file. This block declares no `shell:`, so it runs under GitHub's
+          # default `bash -e {0}`, which does NOT set pipefail (that is only
+          # added for an explicit `shell: bash`). So `$?` here was ALWAYS 0, and
+          # both the issue-filing step and the failure step below are gated on
+          # it: this workflow would have gone green and filed nothing while
+          # 0.14.3 sat untagged.
+          #
+          # That is the exact condition this workflow exists to detect, and the
+          # wiring could not hear its own tool -- the manufactured-confidence
+          # shape written into the instrument built to prevent it, which is
+          # where it has now been caught twice in two days. Found 2026-08-24 by
+          # a sweep for this defect class, and demonstrated rather than argued:
+          #   (python -c "import sys; sys.exit(1)" | tee /dev/null; echo $?) -> 0
+          #   (python -c "import sys; sys.exit(1)" > /dev/null; echo $?)     -> 1
+          #
+          # live-site-release-freshness.yml already had the correct form; this
+          # is copied from it rather than reinvented.
+          status=${PIPESTATUS[0]}
           set -e
+          echo "status=$status" >> "$GITHUB_OUTPUT"
 
       - name: Open or update the rolling issue
         if: steps.check.outputs.status != '0'
@@ -137,6 +157,18 @@ jobs:
 
       - name: Fail if the ledger is not settled
         if: steps.check.outputs.status != '0'
+        env:
+          STATUS: ${{ steps.check.outputs.status }}
         run: |
-          echo "::error::A bumped version has no tag and no declaration. See the rolling release-ledger issue."
+          # Exit 1 and exit 2 are DIFFERENT claims and must not be reported as
+          # one. 1 = measured, and a bumped version has no tag. 2 = could not
+          # measure at all (git history unreachable -- a shallow clone would do
+          # it). Collapsing them would say "a version is untagged" on a run that
+          # established nothing, which is the same defect in the opposite
+          # direction: a confident verdict standing in for an unasked question.
+          if [ "$STATUS" = "2" ]; then
+            echo "::error::DID NOT COMPLETE -- the release ledger could not be measured (git history unreachable). This run proves nothing either way; it is not evidence that every version is tagged."
+          else
+            echo "::error::A bumped version has no tag and no declaration. See the rolling release-ledger issue."
+          fi
           exit 1
