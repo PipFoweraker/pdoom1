@@ -5,7 +5,7 @@
 > `python scripts/generate_rulings.py`. The convention, and why it looks
 > like this, is argued in `docs/rulings/RULINGS_CONVENTION.md`.
 
-**39 ruling(s)** across **10 flavour(s)**. **222** prose ruling(s) not yet declared.
+**40 ruling(s)** across **11 flavour(s)**. **222** prose ruling(s) not yet declared.
 
 ## One index, five sources
 
@@ -16,7 +16,7 @@ flattening either into one line would delete what makes it worth having.
 
 | kind | n | what it is | where |
 |---|---:|---|---|
-| `declaration` | 14 | a `RULING:` line written next to what it governs | anywhere |
+| `declaration` | 15 | a `RULING:` line written next to what it governs | anywhere |
 | `adr` | 19 | a full architecture argument, summarised here | `docs/game-design/decisions/` |
 | `session` | 3 | a transcript or workshop ruling set, pointed at | `docs/SPOKEN_*`, `*RULINGS*` |
 | `card` | 3 | the input a ruling was made from | `docs/decision-cards/` |
@@ -92,6 +92,12 @@ flavour it belongs to and read what was already decided there.
 |---|---|---|---|
 | 2026-08-23 | player feedback routes to the PUBLIC issue tracker and is triaged and summarised before the developer reads it; it never lands in a personal inbox, and the player is told this in the panel | `BugReporter.ROUTING_TEXT and its tests` | `godot/scripts/core/bug_reporter.gd:328` |
 
+### `release-cadence` (only one so far)
+
+| date | ruling | mechanism | source |
+|---|---|---|---|
+| 2026-08-24 | a minor version bump ALWAYS cuts the ladder, and the ladder MAY ALSO cut mid-version whenever gameplay forks; therefore ladder epochs >= minor versions, always, and the ladder epoch is NEVER forecastable | `tools/generate_release_horizon.py` | `tools/generate_release_horizon.py:37` |
+
 ### `session-record`
 
 | date | ruling | mechanism | source |
@@ -163,8 +169,8 @@ is not.
 - `art_source/pixellab_2026-07-26_cat_sweep/MANIFEST.md:3` -- Execution of Pip's locked recipe (ruled 2026-07-26, "go cat sweep 8 dir now"):
 - `docs/CONTENT_DISTRIBUTION_SYSTEM.md:10` -- > **SUPERSEDED, not merely "outdated in spirit", as of 2026-08-13.** Pip ruled
 - `docs/DEV_BLOG_DECISION_2026-08-21.md:155` -- Pip ruled **option A**: archive the pygame-era entries, keep the 2026-07-22 post.
-- `docs/GLOSSARY.md:272` -- Naming (ruled 2026-07-29, Pip): gates are written name-first with a 1-6
-- `docs/GLOSSARY.md:471` -- ## Observed inconsistency (flagged, not ruled)
+- `docs/GLOSSARY.md:278` -- Naming (ruled 2026-07-29, Pip): gates are written name-first with a 1-6
+- `docs/GLOSSARY.md:477` -- ## Observed inconsistency (flagged, not ruled)
 - `docs/HANDOVER_2026-08-06_EVENING.md:43` -- He ruled on it Tuesday and it was never built. B1 and B2 refer to the proposals in
 - `docs/ISSUE_MINING_2026-08-06.md:191` -- having ruled. W3 ruled. Any survivor is now ordinary work with a known spec,
 - `docs/ISSUE_MINING_2026-08-06.md:350` -- overlay and called it *"kind of cool"*, then correctly ruled it out of scope

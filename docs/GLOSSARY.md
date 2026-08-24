@@ -43,7 +43,10 @@ Source: `godot/autoload/game_config.gd:138-146`,
 A separate, slow-moving integer -- the ruleset/epoch counter -- whose SSOT is
 `ladder_version.txt` at the repo root, stamped into
 `GameConfig.LADDER_VERSION` by `sync_version.py` exactly like the build
-version. It bumps ONLY when gameplay/scoring/seed/RNG rules change. Rendered
+version. It bumps ONLY when gameplay/scoring/seed/RNG rules change -- which is
+why it is NOT forecastable from a version number: a minor bump always cuts it,
+and a mid-version gameplay change cuts it too, so epochs outnumber minors
+(`docs/releases/RELEASE_HORIZON.md`). Rendered
 as `"L<n>"` (e.g. `L3`) so it is unambiguous next to a `v0.13.1` build
 string; `GameConfig.get_board_version()` returns `"L" + LADDER_VERSION`.
 
@@ -225,7 +228,10 @@ Source: `docs/game-design/DISTRIBUTION_AND_PATCHING.md:29-60`
 ### the L0-L3 update ladder
 The distribution options ladder, cheapest first. NOTE: this `L<n>` is a
 DIFFERENT namespace from the ladder-version `L<n>` -- context disambiguates,
-but do not read "L3" as an epoch here.
+but do not read "L3" as an epoch here. Build and art lanes have ALSO been
+numbered `L0..L10` (a third namespace). Disambiguating convention, and which
+one wins near a board key: `docs/RELEASE_NOMENCLATURE.md`, section
+"`L<n>` means two unrelated things".
 
 - **L0** raw zip + manual extract (the run-from-inside-zip trap).
 - **L1** Inno Setup installer (ruled: adopt).
