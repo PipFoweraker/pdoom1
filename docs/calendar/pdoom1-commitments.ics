@@ -3819,7 +3819,7 @@ DTSTART;VALUE=DATE:20260823
 DTEND;VALUE=DATE:20260824
 SUMMARY:[UNPARSED] needs a declaration -- RELEASE_SECURITY_2026-08-24.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/deployment/RELEAS
- E_SECURITY_2026-08-24.md:511. 2 line(s) in docs/deployment/RELEASE_SECURI
+ E_SECURITY_2026-08-24.md:674. 2 line(s) in docs/deployment/RELEASE_SECURI
  TY_2026-08-24.md mention this date and no COMMITMENT: declaration account
  s for it. Either add a declaration or the date is incidental. First line:
   `tools/sign_release.py` (added in #1282\, 2026-08-23) wraps `signtool` w

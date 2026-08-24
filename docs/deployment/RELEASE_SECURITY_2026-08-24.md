@@ -50,6 +50,25 @@ That is the same failure the CLAIM_AUDIT rule in `CLAUDE.md` names: *"a
 published command must be shown capable of returning the other answer."* This
 one cannot. It should not be cited again except alongside the rulesets call.
 
+**It has already recurred once, which is the reason this subsection is long.**
+While this document was being written, a second seat supplied further
+measurements -- several of them genuinely new and incorporated below -- carrying
+the framing *"combined with `tags/protection` returning 404 ... two accounts
+besides Pip can push a `v*.*.*` tag and publish a public release, with no review
+step."* Re-running `gh api repos/PipFoweraker/pdoom1/rulesets` shows the tag
+ruleset still `active`, so the tag half of that sentence has been false since
+11:17 this morning, and the evidence offered for it is the endpoint that cannot
+answer the question.
+
+Nothing is wrong with the seat's other numbers; I re-ran them and they
+reproduce, and section 1.2b exists because of them. What travelled was the
+*characterisation* -- precisely the trap `CLAUDE.md` names as "relaying a
+sibling agent's characterisation ... read the diff, not the description". A
+stale premise attached to fresh measurements is more durable than either,
+because the fresh numbers lend it credibility. **The conclusion in section 2.2
+is that the write-account risk is real and larger than the brief thought -- but
+for an entirely different reason than the tag path, which is closed.**
+
 ---
 
 ## 1. The current state, with the command for each claim
@@ -110,11 +129,29 @@ $ gh api repos/PipFoweraker/pdoom1/actions/permissions/workflow
 {"default_workflow_permissions":"read","can_approve_pull_request_reviews":false}
 ```
 
-Default `GITHUB_TOKEN` is read-only and workflows cannot approve PRs. Each
-workflow that needs more asks for it explicitly in a `permissions:` block --
-`enhanced-release.yml` declares `contents: write` and `issues: write`, and
-nothing else in the tree asks for more than `contents: write` +
-`pull-requests: write`.
+Default `GITHUB_TOKEN` is read-only and workflows cannot approve PRs. **This is
+the right setting and it deserves saying so**, because it is the one that makes
+every other workflow permission a deliberate choice rather than an inherited
+default. Each workflow that needs more asks for it explicitly in a
+`permissions:` block -- `enhanced-release.yml` declares `contents: write` and
+`issues: write`, and nothing else in the tree asks for more than
+`contents: write` + `pull-requests: write`.
+
+`release-reminder.yml` is the pattern done properly, and the comment above its
+block shows the reasoning is live rather than copied:
+
+```
+# A gate that reds on something it does not gate trains the reader to discount
+# reds, which is how a real one gets waved through.
+permissions:
+  contents: read
+  issues: write
+```
+
+A workflow that only files issues holds only `issues: write`. When section 5
+recommends SHA-pinning, it is asking for the same discipline applied one layer
+out -- to *what code runs* inside those permissions, which is currently the
+unguarded half.
 
 **No deploy keys.**
 
@@ -223,6 +260,45 @@ key** -- are referenced by nothing in `.github/workflows/`. They were added
 anything by being deleted, and it can be read by any workflow that gains the
 ability to read secrets.
 
+### 1.2b One environment, zero rules, referenced by nothing
+
+```
+$ gh api repos/PipFoweraker/pdoom1/environments -q '.environments[]? | "\(.name) rules=\(.protection_rules|length) created=\(.created_at)"'
+copilot rules=0 created=2025-07-31T05:33:30Z
+
+$ grep -rn "^[[:space:]]*environment:" .github/workflows/
+(no matches)
+```
+
+One environment. It has no protection rules and **no workflow references it**,
+so it is inert -- it neither gates nor fails to gate anything.
+
+**Calibrate this honestly: `copilot` is clutter, not a false control.** Its name
+asserts nothing about safety, so it misleads nobody who reads it. Recommend
+deleting it as hygiene (5.4), not as a security fix, and do not let it be
+written up as a finding it is not.
+
+The general rule underneath it is worth more than the instance, and it is a
+standing check rather than a one-off:
+
+> **An environment that no workflow references is either clutter or a lie,
+> depending entirely on what it is called.**
+
+The lie half is not hypothetical. The `pdoom1-website` seat reports the same
+shape and materially worse there: an environment literally named
+`production-approval`, created 2025-10-09, with an empty `protection_rules`
+array and referenced by no workflow. Anyone auditing by listing environments
+reads "production-approval" and concludes deploys are gated. That is
+manufactured confidence implemented **in a name** rather than in code -- the
+same defect as the disabled `Default no-ruin rules` ruleset above and the stub
+`deploy-feeds` job in section 3, and the cheapest of the three to create by
+accident. **[Attributed measurement -- taken by the `pdoom1-website` seat, not
+re-run here. Verify against that repository before quoting it.]**
+
+The check is two commands and belongs in any future audit of either repo: list
+the environments, grep the workflows for `environment:`, and reconcile. Anything
+in the first list and not the second is answerable only by reading its name.
+
 ### 1.3 Who has push access
 
 ```
@@ -235,6 +311,15 @@ stevenhobartwork-create | write | admin=false push=true
 Three collaborators, not one. This did not 403; it is a measured answer.
 Two accounts hold `write` and neither holds `admin`. The repository is public
 (`"visibility":"public"`, `"private":false`) and is not a fork.
+
+**The logins appear here once, and nowhere else in this document.** They are in
+this section because a measurement that cannot be reproduced is not a
+measurement. Everywhere the question is risk rather than fact -- section 2
+throughout -- the phrasing is "two accounts holding write", because the finding
+is *a missing control on a permission level*, and it would be identical if those
+two accounts belonged to Pip's other laptops. Nobody named here has done
+anything. A security document that reads as an accusation gets argued with
+instead of acted on, and it deserves to be.
 
 ### 1.4 What the release path actually does
 
@@ -269,12 +354,15 @@ and, with `enforce_admins: false`, bypasses branch protection too. **Nothing in
 this repository constrains Pip, or anything acting as Pip.** That includes his
 `gh` session on this machine and any agent using it.
 
-**`tegabeta` and `stevenhobartwork-create`.** Write, not admin. Since 11:17
-today they can no longer create, move, or delete a `v*` tag. They can still:
-open PRs; merge a PR that has one approval and green checks; push directly to
-any non-`main` branch; push a tag that does *not* match `v*` (harmless -- the
-release workflow only listens on `v*.*.*`); and run `workflow_dispatch` on
-`enhanced-release.yml`.
+**Two accounts holding `write`, neither holding admin.** Named in 1.3 because a
+measurement has to be reproducible; referred to by count from here on, because
+this section is about a missing control and not about two people, neither of
+whom has done anything. Since 11:17 today they can no longer create, move or
+delete a `v*` tag. They can still: open PRs; merge a PR that has one approval
+and green checks; push directly to any non-`main` branch; push a tag that does
+*not* match `v*` (harmless -- the release workflow only listens on `v*.*.*`);
+run `workflow_dispatch` on `enhanced-release.yml`; and -- the one that matters
+most and is developed in 2.2 -- **read every repository secret.**
 
 **The public.** Read-only. Can fork and open PRs. On a `pull_request` event
 from a fork, GitHub gives the job a read-only `GITHUB_TOKEN` and **withholds
@@ -291,8 +379,43 @@ or was checked -- verify supply-chain advisories yourself before quoting this].
 
 ### 2.2 What a compromise buys, per actor
 
-**A stolen `write` collaborator token.** Cannot create a `v*` tag any more.
-Can `workflow_dispatch` `enhanced-release.yml`. Two sub-cases, and they differ:
+**A stolen `write` collaborator token -- and this is where the tag ruleset stops
+being the interesting control.** Start with the quiet path, because it is worse
+than the loud one and nothing in this document's brief addresses it.
+
+*Push access is read access to every repository secret.* A workflow file is just
+a file in the repository. Push a branch containing
+`.github/workflows/anything.yml` that triggers `on: push` and prints
+`${{ secrets.CROSS_REPO_TOKEN }}` in any obfuscated form, and GitHub runs it
+with full secret access -- because the secret-withholding rule protects against
+**forks**, not against branches of the repository itself. No review is involved:
+branch protection governs `main`, and this never touches `main`. **[Mechanism
+claim, from GitHub's documented secret-availability rules; NOT tested here,
+because testing it means exfiltrating a live credential. Verifiable by reading
+the docs, or by pushing a branch whose workflow prints only the secret's
+*length*.]**
+
+Consequences, in order of how much they should change the plan:
+
+- The five `DH_*` secrets are not merely clutter (1.2). One of them is an **SSH
+  private key to a production host**, and it is readable today by two accounts
+  that have no reason to hold it. Deleting them moves from hygiene to
+  remediation.
+- `CROSS_REPO_TOKEN` and `WEBSITE_SYNC_TOKEN` are cross-repository write
+  credentials. Reading them converts write-access-here into write-access-there.
+  Given what the website seat reports in 2.3, that is the shorter path to a
+  production server than anything in the release pipeline. **[The tokens'
+  actual scopes were not verified -- repository secrets are write-only through
+  the API and cannot be read back. Their names and their use in the four sync
+  workflows are the evidence; confirm scopes wherever the PATs were minted.]**
+- **The tag ruleset does not touch any of this.** It closed the loud path -- the
+  one with a version number on it -- at zero friction, and it was worth doing.
+  It is not a general answer to "what can a write account do", and it should not
+  be allowed to feel like one. That is the honest reading of section 0's good
+  news.
+
+The loud path, for completeness: cannot create a `v*` tag any more, but can
+`workflow_dispatch` `enhanced-release.yml`. Two sub-cases, and they differ:
 
 - *With a version input naming a tag that already exists* (`v0.14.2`): the
   workflow builds from that tag's tree and `softprops/action-gh-release` updates
@@ -322,7 +445,47 @@ artifacts the build produced, so a tampered build produces a manifest that
 faithfully attests the tampered file (section 3.2). Can exfiltrate
 `CROSS_REPO_TOKEN` from the inherited-secrets job.
 
-### 2.3 Blast radius
+### 2.3 The other end of the chain (attributed, not measured here)
+
+Pip owns both repositories and the release chain spans them, so one paragraph is
+warranted. **Every claim in this subsection was measured by the `pdoom1-website`
+seat, not by me. I have run none of these commands. Re-run them there before
+acting on any of it.**
+
+As reported: `pdoom1-website` has no branch protection on `main`, no rulesets and
+no tag protection, and two accounts with push. Its `auto-deploy-on-push.yml`
+fires on any push to `main` touching `public/**` and `rsync --delete`s to the
+live document root in roughly twenty seconds, running no tests.
+
+The second-order finding is the real one, and it is the same mechanism as 2.2
+pointed the other way: **push access there is also read access to every deploy
+secret**, because anyone who can push can add a workflow that echoes
+`DH_SSH_KEY` / `DH_HOST` / `DH_USER` / `DH_PATH`. So push access to the website
+is not "can publish a page"; it is "has the production server key".
+
+Two things follow for *this* document, and only these two:
+
+1. It sharpens why the `DH_*` secrets sitting unused in **this** repository are
+   worth deleting today (1.2, 2.2). The same key names appear in both places. A
+   credential readable from two repositories is not twice as exposed; it is
+   exposed to the union of both push lists.
+2. It reorders 2.2's blast radius. If `CROSS_REPO_TOKEN` carries write to the
+   website, then write-here leads to write-there leads to a twenty-second
+   untested deploy to the live host. That is a shorter path to production than
+   anything in the release pipeline this document was commissioned to examine.
+
+**No recommendation is offered for the website's settings, deliberately.** The
+seat that measured it flagged a real tradeoff: four workflows there commit to
+`main` on a schedule, and a naive "require pull request reviews" rule breaks all
+four. That is a genuine design problem -- scheduled committers and required
+reviews are in direct tension, and the resolutions (a bypass actor for the bot,
+moving those commits to a branch, or accepting the exposure) have different
+costs that only someone who has read those four workflows can weigh. Presenting
+it as a switch to flip would be exactly the "read the diff, not the
+description" error `CLAUDE.md` warns about. It is that seat's call, not this
+document's.
+
+### 2.4 Blast radius
 
 The output is Windows, macOS and Linux zips on a public releases page under
 `github.com/PipFoweraker/pdoom1`, linked from pdoom1.com, downloaded by people
@@ -695,14 +858,24 @@ by reading `verify-release-urls` before committing to B2.]**
   immediately: OV/IV reputation accrues over releases; there is no instant
   bypass to buy since March 2024.
 
-### 5.4 Cheap extras found while measuring (not in the brief)
+### 5.4 Found while measuring (not in the brief) -- and the first item is the best in the document
 
-These are not really "options"; they are three chores with no downside, and
-together they cost less than an hour.
+These are not really "options"; they are chores with no downside, and together
+they cost less than an hour. They are listed last because they were not briefed,
+not because they matter least -- the first one matters most (section 6).
 
-- **Delete the five `DH_*` secrets.** Zero references in any workflow (1.2).
-  One of them is an SSH private key. Cost: zero. Prevents: that key being
-  readable by any future workflow, or by a compromised action.
+- **Delete the five `DH_*` secrets. This is the highest-value item in the whole
+  document and it costs nothing.** Zero references in any workflow (1.2). One of
+  them is an SSH private key to a production host. Per 2.2, it is readable
+  *today* by two accounts, because push access is secret-read access; per 2.3,
+  the same key names appear in a second repository with a second push list. Cost:
+  zero. This is remediation, not hygiene -- it is the only line here that removes
+  an exposure rather than narrowing one.
+- **Delete the `copilot` environment.** Zero protection rules, referenced by no
+  workflow (1.2b). Cost: zero. **Prevents nothing** -- say so plainly; its name
+  asserts nothing about safety so it misleads no one. This is tidying, and the
+  reason to do it is to keep the environments list short enough that the
+  standing check in section 6 stays cheap to run.
 - **Delete the `Default no-ruin rules` ruleset.** Disabled since 2025, and both
   its rules are already delivered by branch protection (1.2). Cost: zero.
   Prevents nothing operationally -- it removes a false signal, which is worth
@@ -733,10 +906,29 @@ together they cost less than an hour.
 
 ## 6. Recommendation
 
-**Do 5.4 first, this week.** Three deletions and two pins. They cost nothing,
-they add zero recurring friction, and the SHA-pinning is the only item in this
-document that addresses the one attacker Pip cannot revoke. Nothing here needs
-a decision; it is just work.
+**Delete the five `DH_*` secrets today.** Not "in 5.4", not "this week" -- this
+one item, first. It is thirty seconds of typing, it needs no decision, it breaks
+nothing (nothing references them), and it is the only line in this document that
+*removes* an exposure instead of narrowing one. An unused SSH private key to a
+production host, readable by every account with push (2.2) across two
+repositories (2.3), is the single worst thing measured here, and it is also the
+easiest to fix. If nothing else in this document is ever acted on, do this.
+
+**Then the rest of 5.4.** Two more deletions and two pins. They cost nothing,
+add zero recurring friction, and the SHA-pinning is the only item that addresses
+the one attacker Pip cannot revoke. Nothing here needs a decision; it is work.
+
+**Note what changed about the shape of the risk.** The brief, and a second seat
+after it, framed this as "who can push a release tag". The tag ruleset closed
+that at 11:17 today, and it was worth doing -- but section 2.2 argues the tag
+path was never the widest one. **Push access is read access to every repository
+secret**, and no ruleset, branch protection or approval gate touches that,
+because adding a workflow file to a branch is an ordinary push. The lever that
+actually reduces write-account risk is therefore not another gate; it is
+*holding fewer secrets* and *granting write to fewer accounts*. The first is
+free and is the paragraph above. The second is Pip's call and is not
+recommended here in either direction -- I do not know what those two accounts
+are for, and guessing would be exactly the failure section 0 is about.
 
 **Then verify Option A's side effect (7.1) before you need it.** The tag
 ruleset is a good control that arrived free, but it plausibly broke the
@@ -780,6 +972,35 @@ code change rather than an invisible setting, and the pause is spent doing
 something useful (looking at the artifacts) instead of clicking through a
 modal. It is also trivially reversible: one line back to `draft: false`.
 
+### 6.1 One standing check, for whoever audits this next
+
+Most of this document is a snapshot and will rot. This part should not, because
+it is a question rather than a finding, and it caught something in both
+repositories on the day it was first asked:
+
+> **An environment that no workflow references is either clutter or a lie,
+> depending entirely on what it is called.**
+
+Two commands, and reconcile the outputs:
+
+    gh api repos/OWNER/REPO/environments -q '.environments[]? | "\(.name) rules=\(.protection_rules|length)"'
+    grep -rn "^[[:space:]]*environment:" .github/workflows/
+
+Anything in the first list and not the second gates nothing. Whether that
+matters is decided **solely by its name**: `copilot` (this repo) is clutter and
+misleads nobody; `production-approval` (reported in `pdoom1-website`, 2.3) reads
+to any auditor as proof that deploys are approved, and is a false statement made
+by a settings page rather than by code.
+
+The general form is the thread running through this whole document -- the
+disabled ruleset with a confident name (1.2), the `deploy-feeds` job whose
+deployment step is a `TODO` and an `ls` (3), the manifest that publishes zero
+integrity anchors and exits 0 (4.2), the label that "promised eligibility and
+checked nothing" which `self-merge-eligibility.yml` was written to fix. **A
+control is only as real as the mechanism behind it, and a name is not a
+mechanism.** The check above is one cheap instance of asking that question; the
+habit generalises further than the check does.
+
 ---
 
 ## 7. How to apply each -- NONE OF THESE HAVE BEEN RUN
@@ -791,7 +1012,7 @@ been tested against this repository, and several are destructive. Check each one
 before running it. Where a command deletes something, the "put it back" form is
 given alongside.
 
-### 7.1 Verify Option A's side effect on `workflow_dispatch` (do this first, it is read-mostly)
+### 7.1 Verify Option A's side effect on `workflow_dispatch` (read-mostly; do it before you need it, but do 7.2's secret deletion first)
 
 Look at the ruleset in the UI, which prints the bypass role by name rather than
 by the numeric `5` that section 1.1 had to infer:
@@ -819,7 +1040,7 @@ integration as a bypass actor in the ruleset UI (Rulesets -> the tag ruleset ->
 Bypass list -> Add bypass -> Integrations -> GitHub Actions), which restores the
 dispatch path while keeping human non-admins blocked.
 
-### 7.2 The cheap extras (5.4)
+### 7.2 The chores (5.4) -- the secret deletion is the priority, not the filler
 
 Delete the five unused secrets:
 
@@ -847,6 +1068,19 @@ Reversible: recreate via Settings -> Rules -> Rulesets -> New ruleset, target
 Branch, `~DEFAULT_BRANCH`, rules "Restrict deletions" and "Block force pushes".
 Both are already enforced by branch protection, so there is nothing to restore
 in practice.
+
+Delete the inert `copilot` environment (confirm it is still unreferenced first,
+since this is the whole basis for deleting it):
+
+    grep -rn "^[[:space:]]*environment:" .github/workflows/
+    gh api -X DELETE repos/PipFoweraker/pdoom1/environments/copilot
+
+Reversible: Settings -> Environments -> New environment. Note that deleting an
+environment also deletes any environment-scoped secrets and variables it holds;
+this one has none, but check before running the same command anywhere else:
+
+    gh api repos/PipFoweraker/pdoom1/environments/copilot/secrets --jq '.total_count'
+    gh api repos/PipFoweraker/pdoom1/environments/copilot/variables --jq '.total_count'
 
 SHA-pin the two third-party actions. The SHAs below were resolved on 2026-08-24
 and are the current tips of those `v1` tags; re-resolve before using, since a
@@ -890,6 +1124,20 @@ UI is the reliable path, because the reviewers field is awkward over the API:
         environment: release
 
 Step 4 is a normal PR. Steps 1-3 are settings and are Pip's alone.
+
+**Step 4 is the one that is easy to skip and fatal to skip.** An environment
+created without a workflow referencing it is inert -- exactly the `copilot` case
+in 1.2b, except that this one would be *named* `release`, which puts it squarely
+in the "lie" half of the standing check in 6.1: a settings page asserting that
+releases are approved while every release publishes unapproved. Verify with the
+same two commands, and do not consider this option applied until the grep
+returns a hit:
+
+    grep -rn "^[[:space:]]*environment:" .github/workflows/
+    gh api repos/PipFoweraker/pdoom1/environments -q '.environments[]? | "\(.name) rules=\(.protection_rules|length)"'
+
+A first release after this change is also its own test: the run should stop and
+say "Waiting for review". If it publishes without pausing, step 4 did not land.
 
 To reverse: delete the environment (Settings -> Environments -> ... -> Delete)
 and revert the one-line workflow change.
@@ -960,6 +1208,9 @@ Copy-paste as a block; all are read-only.
     gh api repos/PipFoweraker/pdoom1/actions/permissions
     gh api repos/PipFoweraker/pdoom1/actions/permissions/workflow
     gh api repos/PipFoweraker/pdoom1/environments
+    gh api repos/PipFoweraker/pdoom1/environments/copilot/secrets --jq '.total_count'
+    gh api repos/PipFoweraker/pdoom1/environments/copilot/variables --jq '.total_count'
+    grep -rn "^[[:space:]]*environment:" .github/workflows/
     gh api repos/PipFoweraker/pdoom1/actions/secrets
     gh api repos/PipFoweraker/pdoom1/keys
     gh api repos/PipFoweraker/pdoom1/releases --jq '.[0:3][] | {tag_name, author: .author.login}'
@@ -973,9 +1224,20 @@ Copy-paste as a block; all are read-only.
     grep -rho "uses: [^ ]*@[0-9a-f]\{40\}" .github/workflows/*.yml | wc -l
 
 Anything in this document not reachable from one of those, or from a named file
-path, is marked with a bracketed hedge. There are five such hedges: the
-repository-role ID mapping (1.1), the two `action-gh-release` behavioural
-predictions (2.2 and 5, Option B2's `verify-release-urls` interaction), the
-GitHub self-review default (5, Option B), and the general third-party-action
-compromise mechanism (2.1), which is a mechanism and not a claim about either
-named action.
+path, is marked with a bracketed hedge. There are eight:
+
+| # | claim | why it is hedged | what would settle it |
+|---|---|---|---|
+| 1 | repository role `5` = Admin (1.1) | inferred from GitHub's documented role ordering | the ruleset UI prints the role by name |
+| 2 | `action-gh-release` can no longer create a new tag (2.2, Option A) | untested on purpose -- testing means pushing a tag | the throwaway dispatch in 7.1 |
+| 3 | push access = secret-read access (2.2) | mechanism from GitHub's secret-availability rules; not tested, because testing means exfiltrating a live credential | GitHub docs, or a branch whose workflow prints only the secret's *length* |
+| 4 | `CROSS_REPO_TOKEN` / `WEBSITE_SYNC_TOKEN` scopes (2.2) | repository secrets are write-only through the API and cannot be read back | check wherever the PATs were minted |
+| 5 | everything in 2.3 | measured by the `pdoom1-website` seat, not by me; I ran none of it | re-run there |
+| 6 | `verify-release-urls` breaks on a draft release (Option B2) | predicted from the job's stated purpose | read the job |
+| 7 | GitHub's self-review default (Option B) | not verified in the UI | look at the environment's protection-rule page |
+| 8 | third-party-action compromise (2.1) | a mechanism, not a claim about either named action | supply-chain advisories for those two repos |
+
+Hedges 3, 4 and 5 carry the load for the reordered recommendation in section 6,
+so they are the ones worth settling first. Note that 3 is a claim about how
+GitHub Actions works rather than about this repository, which makes it the
+cheapest of the three to check and the most expensive to be wrong about.
