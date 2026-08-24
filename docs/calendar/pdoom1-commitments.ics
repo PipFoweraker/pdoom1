@@ -4051,6 +4051,31 @@ DESCRIPTION:Reflective review: release / league cycle (review) -- pip
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:6d03c885720d6e82@commitments.pdoom1
+DTSTAMP:20260824T000000Z
+DTSTART;VALUE=DATE:20260824
+DTEND;VALUE=DATE:20260825
+SUMMARY:[UNPARSED] needs a declaration -- DESIGN_2026-08-24_release_lanes.
+ md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/deployment/DESIGN
+ _2026-08-24_release_lanes.md:3. 1 line(s) in docs/deployment/DESIGN_2026-
+ 08-24_release_lanes.md mention this date and no COMMITMENT: declaration a
+ ccounts for it. Either add a declaration or the date is incidental. First
+  line: **Status:** design document. No code changes accompany it. Written
+  2026-08-24 -- Generated from tracked sources by scripts/generate_commitm
+ ent_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- DESIGN_2026-08-24_release_lanes.md (unp
+ arsed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:6bd9fb2eeede953a@commitments.pdoom1
 DTSTAMP:20260824T000000Z
 DTSTART;VALUE=DATE:20260824

@@ -13,7 +13,7 @@ Horizon: **2026-08-09** (the prose scan reports dates at or after this; roll it
 forward deliberately in `COMMITMENTS.md`, never automatically -- a clock-reading
 generator goes stale overnight and trains people to ignore the check).
 
-**53 declared, 4 release-train, 172 UNPARSED, 0 malformed.**
+**53 declared, 4 release-train, 173 UNPARSED, 0 malformed.**
 
 ## Declared commitments
 
@@ -388,6 +388,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-23 | `tools/check_release_ledger.py` | 386 | "to 0.14.3 at 07:47 on 2026-08-23 with the seed still reading " |
 | 2026-08-23 | `tools/sign_release.py` | 6 | WHY THIS EXISTS, 2026-08-23 |
 | 2026-08-23 | `tools/sign_release.py` | 131 | That is what is deployed here (2026-08-23, version 10.0.28000.2526). |
+| 2026-08-24 | `docs/deployment/DESIGN_2026-08-24_release_lanes.md` | 3 | **Status:** design document. No code changes accompany it. Written 2026-08-24 |
 | 2026-08-24 | `docs/design/LEAGUE_CUTOVER_PLAYBOOK.md` | 41 | at L4, and is pinned for reflective review on/after 2026-08-24. |
 | 2026-08-24 | `docs/releases/RELEASE_LINKING_TO_0.20.md` | 4 | Written 2026-08-24 off the mechanical sweep in `RELEASE_LEDGER.md`, which is |
 | 2026-08-24 | `docs/releases/RELEASE_LINKING_TO_0.20.md` | 92 | 2026-08-24, **ISO week 35**. The live const reads `weekly-2026-w34`. If the next |
