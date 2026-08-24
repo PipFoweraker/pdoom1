@@ -13,7 +13,7 @@ Horizon: **2026-08-09** (the prose scan reports dates at or after this; roll it
 forward deliberately in `COMMITMENTS.md`, never automatically -- a clock-reading
 generator goes stale overnight and trains people to ignore the check).
 
-**53 declared, 4 release-train, 197 UNPARSED, 0 malformed.**
+**53 declared, 4 release-train, 198 UNPARSED, 0 malformed.**
 
 ## Declared commitments
 
@@ -422,6 +422,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-23 | `tools/sign_release.py` | 131 | That is what is deployed here (2026-08-23, version 10.0.28000.2526). |
 | 2026-08-24 | `docs/HANDOVER_2026-08-24_pdoom1_seat.md` | 267 | > wrote without the user's authorisation.** *Window:* ~2 hours on 2026-08-24. |
 | 2026-08-24 | `docs/RELEASE_PLATFORMS.md` | 460 | ## Addendum 2026-08-24 -- the first release that shipped no macOS asset |
+| 2026-08-24 | `docs/deployment/DESIGN_2026-08-24_release_lanes.md` | 3 | **Status:** design document. No code changes accompany it. Written 2026-08-24 |
 | 2026-08-24 | `docs/deployment/GATE_AUDIT_2026-08-24.md` | 1 | # Gate audit -- 2026-08-24 |
 | 2026-08-24 | `docs/deployment/GATE_AUDIT_2026-08-24.md` | 394 | Merged 2026-08-24 to catch "a version was bumped and never tagged". It has run |
 | 2026-08-24 | `docs/deployment/GATE_AUDIT_2026-08-24.md` | 949 | RULING: 2026-08-24 -- a gate's verdict must be traced to a consumer before it is called a gate: a red that blocks no merge, gates no job, and reaches  |
