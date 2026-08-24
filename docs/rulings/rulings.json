@@ -3,7 +3,7 @@
   "repo": "pdoom1",
   "generated_from": "tracked files at HEAD",
   "convention": "docs/rulings/RULINGS_CONVENTION.md",
-  "count": 44,
+  "count": 45,
   "rulings": [
     {
       "id": "pdoom1:2026-07-04:12de8fc2",
@@ -522,6 +522,20 @@
       "supersedes": null,
       "superseded_by": null,
       "source": "docs/design/SILENT_FAILURE_REGISTER.md:116"
+    },
+    {
+      "id": "pdoom1:2026-08-23:278981bd",
+      "date": "2026-08-23",
+      "ruling": "ADR-0020 -- Machine actor identity: a bot acts under its own name, or the attribution record is fiction",
+      "summary": "Agent work is currently indistinguishable from Pip's in every repo's attribution record, because agents act through his credentials. This proposes a single machine actor with its own identity, its own audit trail, and permissions strictly narrower than Pip's -- and names the six questions that must be answered before one is created.",
+      "flavour": "architecture",
+      "kind": "adr",
+      "status": "PROPOSED -- built not released, per Pip's constraint. Design gates below are unanswered and BLOCK creation.",
+      "by": "Pip",
+      "mechanism": null,
+      "supersedes": null,
+      "superseded_by": null,
+      "source": "docs/game-design/decisions/ADR-0020-machine-actor-identity.md:1"
     },
     {
       "id": "pdoom1:2026-08-23:93877464",
