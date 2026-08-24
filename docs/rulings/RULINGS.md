@@ -5,7 +5,7 @@
 > `python scripts/generate_rulings.py`. The convention, and why it looks
 > like this, is argued in `docs/rulings/RULINGS_CONVENTION.md`.
 
-**43 ruling(s)** across **13 flavour(s)**. **226** prose ruling(s) not yet declared.
+**47 ruling(s)** across **14 flavour(s)**. **226** prose ruling(s) not yet declared.
 
 ## One index, five sources
 
@@ -16,7 +16,7 @@ flattening either into one line would delete what makes it worth having.
 
 | kind | n | what it is | where |
 |---|---:|---|---|
-| `declaration` | 18 | a `RULING:` line written next to what it governs | anywhere |
+| `declaration` | 22 | a `RULING:` line written next to what it governs | anywhere |
 | `adr` | 19 | a full architecture argument, summarised here | `docs/game-design/decisions/` |
 | `session` | 3 | a transcript or workshop ruling set, pointed at | `docs/SPOKEN_*`, `*RULINGS*` |
 | `card` | 3 | the input a ruling was made from | `docs/decision-cards/` |
@@ -66,11 +66,14 @@ flavour it belongs to and read what was already decided there.
 |---|---|---|---|
 | 2026-08-15 | flaw:<thing> joins the harvest vocabulary as the negative counterpart to element:, because the sweeps are mostly negative and prose cannot be counted | `tools/art_review/serve_review.py HARVEST_DOC, emitted to docs/art/NOMENCLATURE.md` | `docs/rulings/LEDGER.md:13` |
 
-### `ci-gates` (only one so far)
+### `ci-gates`
 
 | date | ruling | mechanism | source |
 |---|---|---|---|
 | 2026-08-24 | a command's exit status must be read from the command, never through a pipe: $? after a pipeline is the RIGHTMOST command's status, so `tool | tee`, `tool | head` and `tool | tail` all discard the tool's verdict and report the wrapper's success | `this workflow, and live-site-release-freshness.yml` | `.github/workflows/release-ledger.yml:102` |
+| 2026-08-24 | a gate's verdict must be traced to a consumer before it is called a gate: a red that blocks no merge, gates no job, and reaches no human is theatre, and it costs attention as well as buying nothing | `this audit, and docs/deployment/RELEASE_FLOW_MAP_2026-08-24.md` | `docs/deployment/GATE_AUDIT_2026-08-24.md:949` |
+| 2026-08-24 | a workflow that writes anything must declare `permissions:`, because this repo's default workflow token is read-only and a write attempt without one 403s into either a permanent meaningless red or, under continue-on-error, a green that hides it | `gh api repos/PipFoweraker/pdoom1/actions/permissions/workflow` | `docs/deployment/GATE_AUDIT_2026-08-24.md:951` |
+| 2026-08-24 | two workflows firing on the same event with no dependency between them are not parallel, they are racing to a verdict nobody joins: on the first v0.14.3 tag pre-release-checks found RN003 at t+21s and enhanced-release found the same defect at t+4m39s after a full three-platform build, so the cheap gate bought nothing | `docs/deployment/RELEASE_FLOW_MAP_2026-08-24.md` | `docs/deployment/RELEASE_FLOW_MAP_2026-08-24.md:568` |
 
 ### `estate-process`
 
@@ -110,6 +113,12 @@ flavour it belongs to and read what was already decided there.
 | date | ruling | mechanism | source |
 |---|---|---|---|
 | 2026-08-24 | every value version.txt has ever held must have a matching git tag, or a declared exemption; a bump with no tag is a defect the machine reports, not a thing a human is expected to remember | `tools/check_release_ledger.py` | `tools/check_release_ledger.py:34` |
+
+### `releases` (only one so far)
+
+| date | ruling | mechanism | source |
+|---|---|---|---|
+| 2026-08-24 | a release must be verified before it is published, not after: verify-release-urls runs downstream of create-github-release, so on v0.14.3 the macOS 404 was proven at 04:37:34 against a release that had been public since 04:37:16, and there is no un-publish | `.github/workflows/enhanced-release.yml, and docs/deployment/RELEASE_FLOW_MAP_2026-08-24.md` | `docs/deployment/RELEASE_FLOW_MAP_2026-08-24.md:566` |
 
 ### `session-record`
 
