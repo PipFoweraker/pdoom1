@@ -5,7 +5,7 @@
 > `python scripts/generate_rulings.py`. The convention, and why it looks
 > like this, is argued in `docs/rulings/RULINGS_CONVENTION.md`.
 
-**40 ruling(s)** across **10 flavour(s)**. **222** prose ruling(s) not yet declared.
+**44 ruling(s)** across **13 flavour(s)**. **228** prose ruling(s) not yet declared.
 
 ## One index, five sources
 
@@ -16,7 +16,7 @@ flattening either into one line would delete what makes it worth having.
 
 | kind | n | what it is | where |
 |---|---:|---|---|
-| `declaration` | 15 | a `RULING:` line written next to what it governs | anywhere |
+| `declaration` | 19 | a `RULING:` line written next to what it governs | anywhere |
 | `adr` | 19 | a full architecture argument, summarised here | `docs/game-design/decisions/` |
 | `session` | 3 | a transcript or workshop ruling set, pointed at | `docs/SPOKEN_*`, `*RULINGS*` |
 | `card` | 3 | the input a ruling was made from | `docs/decision-cards/` |
@@ -66,6 +66,12 @@ flavour it belongs to and read what was already decided there.
 |---|---|---|---|
 | 2026-08-15 | flaw:<thing> joins the harvest vocabulary as the negative counterpart to element:, because the sweeps are mostly negative and prose cannot be counted | `tools/art_review/serve_review.py HARVEST_DOC, emitted to docs/art/NOMENCLATURE.md` | `docs/rulings/LEDGER.md:13` |
 
+### `ci-gates` (only one so far)
+
+| date | ruling | mechanism | source |
+|---|---|---|---|
+| 2026-08-24 | a command's exit status must be read from the command, never through a pipe: $? after a pipeline is the RIGHTMOST command's status, so `tool | tee`, `tool | head` and `tool | tail` all discard the tool's verdict and report the wrapper's success | `this workflow, and live-site-release-freshness.yml` | `.github/workflows/release-ledger.yml:102` |
+
 ### `estate-process`
 
 | date | ruling | mechanism | source |
@@ -81,6 +87,13 @@ flavour it belongs to and read what was already decided there.
 | 2026-08-23 | ~~ladder debt is paid when it is incurred, not deferred to build time, so a fresh epoch never inherits a forked board key~~ (superseded by `pdoom1:2026-08-23:fa830705`) | `tools/check_ladder_bump.py --owed` | `tools/check_ladder_bump.py:38` |
 | 2026-08-23 | ladder debt is DECLARED when incurred and PAID at the release that ships it; deferring is legal, forgetting is not, and the epoch must never fork on an ordinary gameplay PR | `tools/check_ladder_bump.py --owed, run at cut time` | `tools/check_ladder_bump.py:40` |
 
+### `league-seeds`
+
+| date | ruling | mechanism | source |
+|---|---|---|---|
+| 2026-08-24 | the featured seed names the ISO week the league opens in, so a league that slips is renamed to the week it actually runs and the slip is recorded in the log, never hidden in the label | `godot/autoload/game_config.gd get_weekly_seed` | `godot/autoload/game_config.gd:550` |
+| 2026-08-24 | the featured seed names the ISO week the league opens in | `godot/tests/unit/test_iso_week_seed.gd` | `godot/tests/unit/test_iso_week_seed.gd:24` |
+
 ### `mechanical-inertness` (only one so far)
 
 | date | ruling | mechanism | source |
@@ -92,6 +105,12 @@ flavour it belongs to and read what was already decided there.
 | date | ruling | mechanism | source |
 |---|---|---|---|
 | 2026-08-23 | player feedback routes to the PUBLIC issue tracker and is triaged and summarised before the developer reads it; it never lands in a personal inbox, and the player is told this in the panel | `BugReporter.ROUTING_TEXT and its tests` | `godot/scripts/core/bug_reporter.gd:328` |
+
+### `release-cadence` (only one so far)
+
+| date | ruling | mechanism | source |
+|---|---|---|---|
+| 2026-08-24 | every value version.txt has ever held must have a matching git tag, or a declared exemption; a bump with no tag is a defect the machine reports, not a thing a human is expected to remember | `tools/check_release_ledger.py` | `tools/check_release_ledger.py:34` |
 
 ### `session-record`
 
@@ -156,9 +175,9 @@ Found by heuristic scan. These are a WORK LIST, not rulings: each needs a
 than dropped because an index that silently omits looks complete when it
 is not.
 
-- `CHANGELOG.md:164` -- was retimed to one-turn-one-month and the ruled promotions were applied (#1137),
-- `CHANGELOG.md:195` -- and the ruled promotions applied (#1137), against Pip's rulings of 2026-08-04.
-- `CHANGELOG.md:203` -- - **The last player-facing "AP" is gone**, and one number format is ruled across
+- `CHANGELOG.md:251` -- was retimed to one-turn-one-month and the ruled promotions were applied (#1137),
+- `CHANGELOG.md:282` -- and the ruled promotions applied (#1137), against Pip's rulings of 2026-08-04.
+- `CHANGELOG.md:290` -- - **The last player-facing "AP" is gone**, and one number format is ruled across
 - `CLAUDE.md:226` -- quarterly pins to v0.15; league/content cadence is MONTHLY (ruled 2026-07-21).
 - `CLAUDE.md:254` -- `UNDECLARED`, never dropped. **Cross-repo by design** (ruled 2026-08-15):
 - `art_source/pixellab_2026-07-26_cat_sweep/MANIFEST.md:3` -- Execution of Pip's locked recipe (ruled 2026-07-26, "go cat sweep 8 dir now"):
@@ -167,6 +186,8 @@ is not.
 - `docs/GLOSSARY.md:272` -- Naming (ruled 2026-07-29, Pip): gates are written name-first with a 1-6
 - `docs/GLOSSARY.md:471` -- ## Observed inconsistency (flagged, not ruled)
 - `docs/HANDOVER_2026-08-06_EVENING.md:43` -- He ruled on it Tuesday and it was never built. B1 and B2 refer to the proposals in
+- `docs/HANDOVER_2026-08-24_pdoom1_seat.md:140` -- immediately with an offer to revert; he ruled keep. The changes were verified
+- `docs/HANDOVER_2026-08-24_pdoom1_seat.md:44` -- ## 2. What was ruled today
 - `docs/ISSUE_MINING_2026-08-06.md:191` -- having ruled. W3 ruled. Any survivor is now ordinary work with a known spec,
 - `docs/ISSUE_MINING_2026-08-06.md:350` -- overlay and called it *"kind of cool"*, then correctly ruled it out of scope
 - `docs/ISSUE_MINING_2026-08-06.md:357` -- UI work; Pip ruled decomposition deferred until the game is out. These are
@@ -301,10 +322,12 @@ is not.
 - `docs/release-body-v0.14.0-CORRECTED.md:35` -- and the ruled promotions applied (#1137), against Pip's rulings of 2026-08-04.
 - `docs/release-body-v0.14.0-CORRECTED.md:4` -- was retimed to one-turn-one-month and the ruled promotions were applied (#1137),
 - `docs/release-body-v0.14.0-CORRECTED.md:43` -- - **The last player-facing "AP" is gone**, and one number format is ruled across
+- `docs/releases/RELEASE_LINKING_TO_0.20.md:111` -- Whichever is ruled, it should then be **mechanised**: derive the expected seed
+- `docs/releases/RELEASE_LINKING_TO_0.20.md:175` -- Under the atomise protocol clause 3 (ruled 2026-08-24: *"do not build an atom
 - `docs/strategy/IP_AND_OPENNESS_PREMORTEM.md:443` -- except keeping the data backbone clean (already ruled).
 - `docs/strategy/IP_AND_OPENNESS_PREMORTEM.md:87` -- community reads retraction as betrayal. Pip has already ruled against
 - `godot/assets/images/events/README.md:26` -- **They are GRANDFATHERED. Pip ruled 2026-08-03 that already-packed assets stay
-- `godot/autoload/game_config.gd:776` -- # ruled by Pip via PR #1096: "alpha-tools naming and wording settled") -----------------
+- `godot/autoload/game_config.gd:851` -- # ruled by Pip via PR #1096: "alpha-tools naming and wording settled") -----------------
 - `godot/autoload/theme_manager.gd:161` -- # It is not restored here for a reason already ruled on: #1155 kept the
 - `godot/data/asset_provenance.json:14` -- "_unknown_is_not_a_guess": "`unknown` means no record exists. It is never inferred from image dimensions. 1024x1024 and 1536x1024 are OpenAI output sizes, which makes 'these are gpt-image' a plausible
 - `godot/data/asset_provenance.json:5132` -- "why": "Ruled by Pip 2026-08-15. A signed credential outranks every heuristic and is the only evidence that survives a file moving between repos. Applied narrowly because a full re-run would rewrite 2
@@ -370,6 +393,8 @@ is not.
 - `tools/assets/check_provenance.py:60` -- this estate has already ruled carries no information.
 - `tools/assets/manifests/new_subjects.json:115` -- "prompt_tail": "an almost perfectly flat-on frontal view of a wall of bureaucratic paperwork, shot square to the wall with minimal perspective so the picture plane and the wall plane are nearly parall
 - `tools/assets/provenance_unknown_pin.json:2` -- "_why": "Pinned unknown set. Ruled by Pip 2026-08-11: keep the unattributable assets, record them honestly, and let a mechanism force the question later rather than a document.",
+- `tools/check_release_ledger.py:30` -- This is the ruled ``manufactured confidence`` shape (Pip, 2026-08-23 16:42):
+- `tools/check_release_ledger.py:59` -- ``pdoom.releases/0.1``). Under the atomise protocol clause 3 (ruled by Pip,
 - `tools/rule.py:153` -- description="Capture a ruling, after showing what was already ruled in its flavour."
 - `tools/rule.py:159` -- ap.add_argument("--by", default="Pip", help="who ruled (default: Pip)")
 - `tools/triage_undeclared_rulings.py:15` -- ruling, a doc explaining that something was ruled elsewhere, a tool's docstring
