@@ -141,8 +141,31 @@ def occurrence_marker(key: str, version: str) -> str:
     return f"<!-- pdoom-build-missing: {key} {version} -->"
 
 
+TITLE_PREFIX = "[build-missing]"
+
+
 def issue_title(label: str, version: str) -> str:
-    return f"[build-missing] {label} build unavailable (latest: {version})"
+    return f"{TITLE_PREFIX} {label} build unavailable (latest: {version})"
+
+
+def owns_title(existing_title: str) -> bool:
+    """Whether this script wrote the title, and may therefore rewrite it.
+
+    Found by a real example: issue #1309 was filed BY HAND for the v0.14.3
+    macOS gap, carrying the right label pair and the title "macOS build is
+    missing from v0.14.3 -- broken by an .ico icon Godot cannot decode". That
+    title says strictly more than the generated one. Adopting the issue (which
+    the label match does correctly) while overwriting that title with
+    "[build-missing] macOS build unavailable (latest: v0.14.3)" would be the
+    same defect the managed-block markers already guard against in the BODY: a
+    robot stomping a human's better text is a robot people stop reading.
+
+    So only a title this script generated gets refreshed. A human title stays,
+    and may therefore name an older version than the managed block does -- the
+    block, the comments and build-status.json all carry the current version, so
+    nothing that a consumer reads goes stale.
+    """
+    return existing_title.startswith(TITLE_PREFIX)
 
 
 def managed_block(label: str, key: str, version: str, info: Dict, run_url: str) -> str:
@@ -233,14 +256,17 @@ def sync_platform(
         print(f"[*] {label}: opened tracking issue #{issue['number']}")
     else:
         number = existing["number"]
-        client.update_issue(
-            number,
-            title=issue_title(label, version),
-            body=splice_body(
+        fields = {
+            "body": splice_body(
                 existing.get("body") or "",
                 managed_block(label, key, version, info, run_url),
-            ),
-        )
+            )
+        }
+        if owns_title(existing.get("title") or ""):
+            fields["title"] = issue_title(label, version)
+        else:
+            print(f"[*] {label}: #{number} has a hand-written title; leaving it alone")
+        client.update_issue(number, **fields)
         marker = occurrence_marker(key, version)
         seen = any(marker in (c.get("body") or "") for c in client.list_comments(number))
         if seen:

@@ -495,6 +495,58 @@ The issue is **rolling, one per platform**, found by the label pair
 release rather than re-opened, and **closed automatically** when that platform
 builds again -- so the site stops saying "coming" the moment it is not.
 
+Adoption is by LABEL, not by author, so an issue a human filed by hand is
+picked up rather than duplicated -- issue #1309 (the v0.14.3 macOS gap) is the
+worked example. Two things a human wrote are never overwritten: prose outside
+the managed-block markers, and a **hand-written title** (only a title this
+script generated, recognisable by its `[build-missing]` prefix, is refreshed to
+name the newest affected version). A human title may therefore name an older
+version than the managed block does. The block, the per-release comments and
+`build-status.json` all carry the current version, so nothing a consumer reads
+goes stale -- do not "fix" this by making the robot win.
+
+### Known consumers -- who breaks if you rename a field
+
+Write this down every time the schema changes. **A contract with no named
+consumer is how a field gets renamed safely-looking.**
+
+| Consumer | Reads | Maps it to |
+|---|---|---|
+| `pdoom1-website` -- `update-version-info.py` (PR #363) | `platforms.<key>.available`, `platforms.<key>.tracking_issue` from the release's `build-status.json` | `version.json` -> `latest_release.platforms` and `latest_release.platform_tracking` |
+
+The name difference is deliberate and agreed with the website seat, not drift:
+**the producer stays authoritative and keeps `tracking_issue`; the consumer
+keeps its own shape and does the mapping on its side.** Nothing in this repo
+emits `platform_tracking`, and nothing should start -- if you go looking for
+that key here, you are on the website's side of the boundary.
+
+### Absence semantics -- ABSENT MEANS UNKNOWN, NOT "EVERYTHING BUILT"
+
+This is the part that rots, so it is a rule, not a note.
+
+**No release published before this landed has a `build-status.json` at all.**
+A consumer that treats a missing file as "all platforms fine" would report
+every historical release as fully built -- including v0.14.3, which is the exact
+release that has no macOS asset. That is the original defect wearing a new hat:
+a value meaning *I could not tell* rendered as a value meaning *fine*.
+
+Required consumer behaviour:
+
+- **file absent** -> platform availability is **UNKNOWN** for that release.
+  Fall back to whatever the site did before (its own asset probing, or the
+  normal buttons), and do not render a "build coming" link, an availability
+  claim, or a green tick sourced from this file. Absence is not evidence.
+- **file present but `schema` unrecognised** -> also UNKNOWN. Do not guess the
+  meaning from the shape.
+- **file present, `schema` recognised** -> use it; it is authoritative for that
+  release.
+
+The top-level **`schema`** key exists precisely so a consumer branches on a
+declared version rather than sniffing for keys. It reads
+`"pdoom.build_status/1.0"` today. Additive fields keep `1.0`; anything that
+changes the meaning of an existing field bumps the major, and this table is
+where you go to find out who you just broke.
+
 Loud but not blocking, and the split is the point:
 
 - a missing best-effort build is not an error. It is a warning annotation, a job

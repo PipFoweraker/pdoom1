@@ -303,6 +303,65 @@ class TestIssueReporting(unittest.TestCase):
         self.assertIn("Human note: this is the #1071 framework symlink.", body)
         self.assertIn("v0.14.4", existing["title"])
 
+    def test_adopts_a_hand_filed_issue_without_stomping_it(self):
+        # Modelled on the REAL issue #1309, filed by hand for the v0.14.3 macOS
+        # gap: right label pair, a title that says strictly more than the
+        # generated one, a different managed-block marker, and a long human
+        # diagnosis. Adoption must happen on the LABELS, and nothing the human
+        # wrote may be destroyed.
+        hand_filed = {
+            "number": 1309,
+            "title": "macOS build is missing from v0.14.3 -- broken by an .ico icon Godot cannot decode",
+            "body": (
+                "<!-- managed-block:build-missing:macos -->\n"
+                "## macOS build is missing from v0.14.3\n\n"
+                "Godot has no `.ico` decoder, so the macOS export failed.\n"
+            ),
+            "labels": ["build-missing", "platform:macos"],
+            "state": "open",
+            "html_url": "https://github.com/PipFoweraker/pdoom1/issues/1309",
+        }
+        client = FakeGitHub(issues=[hand_filed])
+
+        later = status_with(["macos"])
+        later["version"] = "v0.14.4"
+        result = rmb.sync_all(client, later, "http://run/4")
+
+        # Adopted, not duplicated.
+        self.assertEqual(client.created, [], "must adopt #1309, not open a second issue")
+        self.assertEqual(result["platforms"]["macos"]["tracking_issue"]["number"], 1309)
+
+        # The human title survives -- it says more than the generated one.
+        self.assertEqual(
+            hand_filed["title"],
+            "macOS build is missing from v0.14.3 -- broken by an .ico icon Godot cannot decode",
+        )
+        # The human diagnosis survives, and the managed block is added.
+        self.assertIn("Godot has no `.ico` decoder", hand_filed["body"])
+        self.assertIn(rmb.BODY_START, hand_filed["body"])
+        self.assertIn("v0.14.4", hand_filed["body"])
+        # And the new occurrence is recorded as a comment.
+        self.assertIn("v0.14.4", client.comments[1309][0]["body"])
+
+    def test_a_generated_title_is_still_refreshed(self):
+        # The other half of owns_title: a title this script wrote must keep
+        # tracking the latest affected version.
+        generated = {
+            "number": 900,
+            "title": rmb.issue_title("macOS", "v0.14.3"),
+            "body": "seed",
+            "labels": ["build-missing", "platform:macos"],
+            "state": "open",
+            "html_url": "https://github.com/o/r/issues/900",
+        }
+        client = FakeGitHub(issues=[generated])
+        later = status_with(["macos"])
+        later["version"] = "v0.14.5"
+        rmb.sync_all(client, later, "http://run/5")
+
+        self.assertIn("v0.14.5", generated["title"])
+        self.assertTrue(rmb.owns_title(generated["title"]))
+
     def test_rerunning_the_same_tag_does_not_duplicate_the_comment(self):
         existing = {
             "number": 900,
