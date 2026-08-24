@@ -3,7 +3,7 @@
   "repo": "pdoom1",
   "generated_from": "tracked files at HEAD",
   "convention": "docs/rulings/RULINGS_CONVENTION.md",
-  "count": 39,
+  "count": 40,
   "rulings": [
     {
       "id": "pdoom1:2026-07-04:12de8fc2",
@@ -494,6 +494,20 @@
       "supersedes": null,
       "superseded_by": null,
       "source": "tools/assets/check_provenance.py:65"
+    },
+    {
+      "id": "pdoom1:2026-08-22:ab31a2fa",
+      "date": "2026-08-22",
+      "ruling": "a check that fails 100% of the time is not a check; chronic red trains the team to ignore red, so a permanently-failing gate must be either fixed or explicitly declared, never left standing",
+      "summary": "",
+      "flavour": "ci-gates",
+      "kind": "declaration",
+      "status": "",
+      "by": "Pip",
+      "mechanism": "tools/check_chronic_red.py, owed by issue #1279",
+      "supersedes": null,
+      "superseded_by": null,
+      "source": ".github/workflows/docs-sync.yml:127"
     },
     {
       "id": "pdoom1:2026-08-22:8130f800",

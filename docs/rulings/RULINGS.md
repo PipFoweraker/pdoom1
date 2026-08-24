@@ -5,7 +5,7 @@
 > `python scripts/generate_rulings.py`. The convention, and why it looks
 > like this, is argued in `docs/rulings/RULINGS_CONVENTION.md`.
 
-**39 ruling(s)** across **10 flavour(s)**. **222** prose ruling(s) not yet declared.
+**40 ruling(s)** across **11 flavour(s)**. **222** prose ruling(s) not yet declared.
 
 ## One index, five sources
 
@@ -16,7 +16,7 @@ flattening either into one line would delete what makes it worth having.
 
 | kind | n | what it is | where |
 |---|---:|---|---|
-| `declaration` | 14 | a `RULING:` line written next to what it governs | anywhere |
+| `declaration` | 15 | a `RULING:` line written next to what it governs | anywhere |
 | `adr` | 19 | a full architecture argument, summarised here | `docs/game-design/decisions/` |
 | `session` | 3 | a transcript or workshop ruling set, pointed at | `docs/SPOKEN_*`, `*RULINGS*` |
 | `card` | 3 | the input a ruling was made from | `docs/decision-cards/` |
@@ -65,6 +65,12 @@ flavour it belongs to and read what was already decided there.
 | date | ruling | mechanism | source |
 |---|---|---|---|
 | 2026-08-15 | flaw:<thing> joins the harvest vocabulary as the negative counterpart to element:, because the sweeps are mostly negative and prose cannot be counted | `tools/art_review/serve_review.py HARVEST_DOC, emitted to docs/art/NOMENCLATURE.md` | `docs/rulings/LEDGER.md:13` |
+
+### `ci-gates` (only one so far)
+
+| date | ruling | mechanism | source |
+|---|---|---|---|
+| 2026-08-22 | a check that fails 100% of the time is not a check; chronic red trains the team to ignore red, so a permanently-failing gate must be either fixed or explicitly declared, never left standing | `tools/check_chronic_red.py, owed by issue #1279` | `.github/workflows/docs-sync.yml:127` |
 
 ### `estate-process`
 
