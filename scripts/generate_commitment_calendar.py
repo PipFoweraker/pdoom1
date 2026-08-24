@@ -76,6 +76,12 @@ SCAN_EXCLUDE = (
     "docs/TOOLS.md",
     "docs/ACTION_TAXONOMY.md",
     "docs/game-design/DQ_INDEX.md",
+    # Same case, added 2026-08-24: every date in the release ledger is a git
+    # COMMIT date echoed out of history by tools/check_release_ledger.py. It
+    # regenerates whenever a version is tagged, so indexing it would make this
+    # calendar go stale on every release -- the exact overnight-staleness this
+    # file's header says trains people to ignore the check.
+    "docs/releases/RELEASE_LEDGER.md",
 )
 
 ISO_DATE = re.compile(r"\b(20[2-9]\d)-([01]\d)-([0-3]\d)\b")

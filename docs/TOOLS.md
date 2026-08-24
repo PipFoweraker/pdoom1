@@ -80,9 +80,11 @@ Declared with a `Layer:` line in a tool's module docstring; `--` = undeclared.
 | check_agent_env.py | PROVE | Guard: is CLAUDE.md still describing THIS machine? | make |
 | check_balance_keys.py | PROVE | Census the Balance surface in BOTH directions, because nothing else does. | pre-commit |
 | check_class_cache.py | PROVE | check_class_cache.py -- catch a STALE global script class cache before it eats a playtest. | pre-commit; make; test:test_check_class_cache.py |
+| check_export_icons.py | -- | Every export preset's application/icon is a format that platform can decode. | pre-commit |
 | check_font_sizes.py | PROVE | check_font_sizes.py -- count what the font-size SSOT still cannot reach. | pre-commit |
 | check_ladder_bump.py | PROVE | Guard: did this diff need a ladder_version bump (or get one it did not need)? | ci:quality-checks.yml; test:test_check_ladder_bump.py; test:test_check_self_merge_eligibility.py; tool:sync_version.py |
 | check_refusal_classification.py | PROVE | check_refusal_classification.py -- every NEW player-facing refusal must say whether it | pre-commit; ci:quality-checks.yml |
+| check_release_ledger.py | PROVE | Guard: has every version we bumped to actually been tagged and released? | ci:release-ledger.yml; tool:generate_commitment_calendar.py |
 | check_review_js.py | -- | Syntax-check the JavaScript that serve_review.py serves to the browser. | pre-commit |
 | check_scene_nav.py | PROVE | check_scene_nav.py -- enforce the single-scene-navigation-chokepoint invariant. | pre-commit; ci:quality-checks.yml; tool:enforce_standards.py |
 | check_self_merge_eligibility.py | PROVE | Guard: does this PR actually qualify for the self-merge class it claims? | ci:self-merge-eligibility.yml; test:test_check_self_merge_eligibility.py |
@@ -226,7 +228,9 @@ DISCUSSING CI); the rest are the hollow-runner shape -- read them.
 - `tools/assets/check_credentials.py` -- docstring mentions CI; no workflow calls it
 - `tools/capture_cinematic.py` -- docstring mentions CI; no workflow calls it
 - `tools/check_class_cache.py` -- docstring mentions CI; no workflow calls it
+- `tools/check_export_icons.py` -- docstring mentions CI; no workflow calls it
 - `tools/check_font_sizes.py` -- docstring mentions CI; no workflow calls it
+- `tools/check_release_ledger.py` -- docstring mentions pre-commit; no pre-commit hook calls it
 - `tools/commit.py` -- docstring mentions pre-commit; no pre-commit hook calls it
 - `tools/find_dead_code.py` -- docstring mentions pre-commit; no pre-commit hook calls it
 - `tools/find_dead_code.py` -- docstring mentions CI; no workflow calls it
@@ -247,4 +251,4 @@ DISCUSSING CI); the rest are the hollow-runner shape -- read them.
 
 27 `.html` tool(s) under `tools/` (browser-opened, no docstring to parse): `tools/art_review/doom_overlay_preview.html`, `tools/art_review/hero_gallery_template.html`, `tools/art_review/icon_pass_2026-07-21.html`, `tools/art_review/icon_pass_verdicts_2026-07-21.html`, `tools/art_review/palette.html`, `tools/art_review/palette_swatches.html`, `tools/art_review/scene_wave2_2026-07-21.html`, `tools/art_review/style_review.html`, `tools/assets/review_generated.html`, `tools/music/commission_sheets.html`, `tools/music/jukebox.html`, `tools/music/listening_room.html`, `tools/music/stem_board.html`, `tools/runsheet/CEREMONY-ALL-GATES-2026-07-31.html`, `tools/runsheet/SUNDAY-postmortem-2026-08-07.html`, `tools/runsheet/chronicle-2026-08-06_07.html`, `tools/runsheet/commitments-2026-08.html`, `tools/runsheet/copy-review-2026-08-09.html`, `tools/runsheet/fri-2026-07-31-EVENING-1620.html`, `tools/runsheet/fri-2026-07-31-GATES-1700.html`, `tools/runsheet/fri-2026-07-31-TO-MIDNIGHT-1733.html`, `tools/runsheet/fri-2026-07-31-league-day.html`, `tools/runsheet/playtest_card.html`, `tools/runsheet/wed-thu-2026-07-29.html`, `tools/social_composer.html`, `tools/ui_comparison.html`, `tools/ui_mockup/wireframe.html`.
 
-Total: 144 active tools (11 GENERATE, 8 OBSERVE, 14 PROVE, 1 SWEEP, 110 undeclared); 11 in UNKNOWN; 6 archived.
+Total: 146 active tools (11 GENERATE, 8 OBSERVE, 15 PROVE, 1 SWEEP, 111 undeclared); 11 in UNKNOWN; 6 archived.
