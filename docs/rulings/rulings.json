@@ -3,7 +3,7 @@
   "repo": "pdoom1",
   "generated_from": "tracked files at HEAD",
   "convention": "docs/rulings/RULINGS_CONVENTION.md",
-  "count": 39,
+  "count": 42,
   "rulings": [
     {
       "id": "pdoom1:2026-07-04:12de8fc2",
@@ -550,6 +550,48 @@
       "supersedes": null,
       "superseded_by": null,
       "source": "tools/check_ladder_bump.py:38"
+    },
+    {
+      "id": "pdoom1:2026-08-24:c1ce27d0",
+      "date": "2026-08-24",
+      "ruling": "the featured seed names the ISO week the league opens in, so a league that slips is renamed to the week it actually runs and the slip is recorded in the log, never hidden in the label",
+      "summary": "",
+      "flavour": "league-seeds",
+      "kind": "declaration",
+      "status": "",
+      "by": "Pip",
+      "mechanism": "godot/autoload/game_config.gd get_weekly_seed",
+      "supersedes": null,
+      "superseded_by": null,
+      "source": "godot/autoload/game_config.gd:550"
+    },
+    {
+      "id": "pdoom1:2026-08-24:9cf941d9",
+      "date": "2026-08-24",
+      "ruling": "the featured seed names the ISO week the league opens in",
+      "summary": "",
+      "flavour": "league-seeds",
+      "kind": "declaration",
+      "status": "",
+      "by": "Pip",
+      "mechanism": "godot/tests/unit/test_iso_week_seed.gd",
+      "supersedes": null,
+      "superseded_by": null,
+      "source": "godot/tests/unit/test_iso_week_seed.gd:24"
+    },
+    {
+      "id": "pdoom1:2026-08-24:5b478ae8",
+      "date": "2026-08-24",
+      "ruling": "every value version.txt has ever held must have a matching git tag, or a declared exemption; a bump with no tag is a defect the machine reports, not a thing a human is expected to remember",
+      "summary": "",
+      "flavour": "release-cadence",
+      "kind": "declaration",
+      "status": "",
+      "by": "Pip",
+      "mechanism": "tools/check_release_ledger.py",
+      "supersedes": null,
+      "superseded_by": null,
+      "source": "tools/check_release_ledger.py:34"
     }
   ],
   "undeclared": [
@@ -1134,6 +1176,14 @@
       "text": "- **The last player-facing \"AP\" is gone**, and one number format is ruled across"
     },
     {
+      "source": "docs/releases/RELEASE_LINKING_TO_0.20.md:103",
+      "text": "Whichever is ruled, it should then be **mechanised**: derive the expected seed"
+    },
+    {
+      "source": "docs/releases/RELEASE_LINKING_TO_0.20.md:156",
+      "text": "Under the atomise protocol clause 3 (ruled 2026-08-24: *\"do not build an atom"
+    },
+    {
       "source": "docs/strategy/IP_AND_OPENNESS_PREMORTEM.md:443",
       "text": "except keeping the data backbone clean (already ruled)."
     },
@@ -1146,7 +1196,7 @@
       "text": "**They are GRANDFATHERED. Pip ruled 2026-08-03 that already-packed assets stay"
     },
     {
-      "source": "godot/autoload/game_config.gd:776",
+      "source": "godot/autoload/game_config.gd:851",
       "text": "# ruled by Pip via PR #1096: \"alpha-tools naming and wording settled\") -----------------"
     },
     {
@@ -1408,6 +1458,14 @@
     {
       "source": "tools/assets/provenance_unknown_pin.json:2",
       "text": "\"_why\": \"Pinned unknown set. Ruled by Pip 2026-08-11: keep the unattributable assets, record them honestly, and let a mechanism force the question later rather than a document.\","
+    },
+    {
+      "source": "tools/check_release_ledger.py:30",
+      "text": "This is the ruled ``manufactured confidence`` shape (Pip, 2026-08-23 16:42):"
+    },
+    {
+      "source": "tools/check_release_ledger.py:59",
+      "text": "``pdoom.releases/0.1``). Under the atomise protocol clause 3 (ruled by Pip,"
     },
     {
       "source": "tools/rule.py:153",

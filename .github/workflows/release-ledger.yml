@@ -1,0 +1,142 @@
+name: Release Ledger
+
+# THE ONE TRIGGER IN THIS FAMILY THAT IS UPSTREAM OF THE TAG.
+#
+# Every other release-adjacent workflow here fires on a tag push or a release
+# publish:
+#   enhanced-release.yml            on: push tags v*.*.*
+#   release-reminder.yml            on: push tags v*.*.*
+#   sync-game-version.yml           on: release published/edited
+#   release-sync-monitor.yml        compares the LATEST PUBLISHED release
+#   live-site-release-freshness.yml compares the LATEST PUBLISHED release
+#
+# So "version.txt was bumped and never tagged" is the exact state in which all
+# of them are silent -- by construction. Worse, the two monitors both measure
+# against the latest PUBLISHED release, so when that is itself stale they agree
+# with each other and both go green. That is how v0.14.3 sat bumped, built,
+# seed-blessed and unreleased from 2026-08-23 with nothing reporting it.
+#
+# This workflow fires on the BUMP instead. It is the first thing in the chain
+# that can notice a release was prepared and never delivered.
+#
+# PERMISSIONS ARE REQUIRED. See the same note in release-reminder.yml: without
+# `issues: write` the issue step 403s with "Resource not accessible by
+# integration", the job goes red for a reason unrelated to what it gates, and a
+# gate that reds on something it does not gate trains the reader to discount
+# reds. docs-sync.yml is the live example -- 100% red on PRs since 2026-07-28
+# for exactly this reason (#1279).
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'version.txt'
+      - 'ladder_version.txt'
+      - 'docs/releases/UNTAGGED.md'
+      - 'tools/check_release_ledger.py'
+  schedule:
+    # Daily 04:23 UTC, offset off the hour -- this repo family's habit, and not
+    # cosmetic: top-of-hour scheduled runs are the most delayed, and a
+    # freshness check that is itself late is a poor witness.
+    - cron: '23 4 * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  ledger:
+    name: Every bumped version is tagged, or declared
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # Tags and full history are the measurement. A shallow clone would
+          # make every version look untagged, which is a false RED -- the
+          # inverse of the failure this workflow exists to catch, and just as
+          # corrosive.
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+
+      - name: Prove the classifier can return both answers
+        run: python tools/check_release_ledger.py --self-test
+
+      - name: Check the ledger
+        id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set +e
+          python tools/check_release_ledger.py --check | tee ledger-report.txt
+          echo "status=$?" >> "$GITHUB_OUTPUT"
+          set -e
+
+      - name: Open or update the rolling issue
+        if: steps.check.outputs.status != '0'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const report = fs.readFileSync('ledger-report.txt', 'utf8');
+            const title = 'Release ledger: a version was bumped and never tagged';
+            const body = [
+              'A value of `version.txt` has no matching git tag and no',
+              'declaration in `docs/releases/UNTAGGED.md`.',
+              '',
+              'This issue is opened by `.github/workflows/release-ledger.yml`,',
+              'which is the only release trigger in this repo that fires on the',
+              'BUMP rather than on the tag. Everything else in the release',
+              'family is downstream of tagging and cannot see this state.',
+              '',
+              '```',
+              report.trim(),
+              '```',
+              '',
+              '## The two exits, and there are only two',
+              '',
+              '1. **Push the tag.** That arms `enhanced-release.yml`, which',
+              '   builds all three platforms and publishes the release with',
+              '   assets. It is outward-facing and hard to reverse.',
+              '2. **Declare it** in `docs/releases/UNTAGGED.md` with the reason',
+              '   it stays internal.',
+              '',
+              'Leaving it undecided is the state this workflow exists to end.',
+            ].join('\n');
+
+            const existing = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: 'release-ledger',
+            });
+
+            if (existing.data.length > 0) {
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: existing.data[0].number,
+                body,
+              });
+              core.notice(`Updated rolling issue #${existing.data[0].number}`);
+            } else {
+              const created = await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title,
+                body,
+                labels: ['release-ledger'],
+              });
+              core.notice(`Opened issue #${created.data.number}`);
+            }
+
+      - name: Fail if the ledger is not settled
+        if: steps.check.outputs.status != '0'
+        run: |
+          echo "::error::A bumped version has no tag and no declaration. See the rolling release-ledger issue."
+          exit 1
