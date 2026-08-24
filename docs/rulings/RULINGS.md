@@ -5,7 +5,7 @@
 > `python scripts/generate_rulings.py`. The convention, and why it looks
 > like this, is argued in `docs/rulings/RULINGS_CONVENTION.md`.
 
-**39 ruling(s)** across **10 flavour(s)**. **228** prose ruling(s) not yet declared.
+**39 ruling(s)** across **10 flavour(s)**. **232** prose ruling(s) not yet declared.
 
 ## One index, five sources
 
@@ -206,9 +206,10 @@ is not.
 - `docs/calendar/github_snapshot.json:2237` -- "title": "Ladder eligibility must be visible BEFORE the run starts, not delivered at death (ruled by Pip 2026-08-07)",
 - `docs/content/ROLE_CREATIVE_DIRECTOR.md:16` -- > pipeline pushes to, not the home of the process"*. Pip ruled **`pull`** on
 - `docs/copy/MANIFUND_SUBMITTED_2026-07-29.md:181` -- Compatible with the ruled model (monthly Theme/Epoch, weekly Seed rotation
-- `docs/copy/budget.json:56` -- "needs_pip": "Pip ruled the AMOUNT, not the day count. Whether the minimum-case figure still buys one focused day a week at a much lower implied rate, or the same rate for fewer days, is not decided a
-- `docs/copy/budget.json:65` -- "settled_by": "Pip naming the lines. Community support and the music line are the candidates on the face of the ruling; neither was ruled.",
-- `docs/copy/budget.json:74` -- "basis": "No developer has been engaged and no rate agreed. This is a constructed figure written to size the ask, not a quote. It was cut on 2026-08-24 and the difference moved to community support, w
+- `docs/copy/budget.json:11` -- "_currency_note": "Ruled 2026-08-24. Every figure in this file, and on every rendering of it, is US dollars. See the last entry in `constraints`.",
+- `docs/copy/budget.json:223` -- "_own_day_note": "RULED 2026-08-24: what Pip will actually pay himself for a day on this. His words: 'even if I pay myself like $150 or $200 for a day, that gets me fewer days in the year, which is fi
+- `docs/copy/budget.json:56` -- "basis": "FEWER DAYS AT A REALISTIC RATE. The figure was cut from $9,000 on the morning of 2026-08-24 -- Pip is less anxious about a holiday now that work money is coming in, and would rather pay more
+- `docs/copy/budget.json:65` -- "basis": "No developer has been engaged and no rate agreed. This is a constructed figure written to size the ask, not a quote. It was cut on 2026-08-24 and the difference moved to community support, w
 - `docs/decision-cards/2026-08-02_pdoom-data-contract.md:130` -- - The future draw-down is already ruled: ADR-0016 monthly world-update packs
 - `docs/design/ASSET_PROVENANCE_SCOPE_2026-08-06.md:119` -- a very plausible guess. It is still a guess, and `coordination#32` already ruled
 - `docs/design/PHASE_GUARD_AUDIT_2026-08-06.md:10` -- This is **not** about #1134. PR #1143 (retire the feature) is the ruled fix for the
@@ -372,9 +373,12 @@ is not.
 - `tools/assets/check_provenance.py:60` -- this estate has already ruled carries no information.
 - `tools/assets/manifests/new_subjects.json:115` -- "prompt_tail": "an almost perfectly flat-on frontal view of a wall of bureaucratic paperwork, shot square to the wall with minimal perspective so the picture plane and the wall plane are nearly parall
 - `tools/assets/provenance_unknown_pin.json:2` -- "_why": "Pinned unknown set. Ruled by Pip 2026-08-11: keep the unattributable assets, record them honestly, and let a mechanism force the question later rather than a document.",
-- `tools/render_budget.py:1241` -- # RULED 2026-08-24: the previous ending -- "that is the honest version, I'd
-- `tools/render_budget.py:324` -- # here once, and when Pip ruled on 2026-08-24 that the $500 is misc platform
-- `tools/render_budget.py:749` -- # line. Clear the needs_pip field on the item once he has ruled it.
+- `tools/render_budget.py:1400` -- # RULED 2026-08-24: say the Windows item too, not only macOS. It was the
+- `tools/render_budget.py:1465` -- # RULED 2026-08-24: the previous ending -- "that is the honest version, I'd
+- `tools/render_budget.py:246` -- Pip's own time line buys at the rate he ruled he would pay himself.
+- `tools/render_budget.py:394` -- # here once, and when Pip ruled on 2026-08-24 that the $500 is misc platform
+- `tools/render_budget.py:698` -- "a second currency on a page ruled to be consistent US figures only. "
+- `tools/render_budget.py:875` -- # line. Clear the needs_pip field on the item once he has ruled it.
 - `tools/rule.py:153` -- description="Capture a ruling, after showing what was already ruled in its flavour."
 - `tools/rule.py:159` -- ap.add_argument("--by", default="Pip", help="who ruled (default: Pip)")
 - `tools/triage_undeclared_rulings.py:15` -- ruling, a doc explaining that something was ruled elsewhere, a tool's docstring

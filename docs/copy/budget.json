@@ -7,6 +7,8 @@
     "closes": "2026-09-09",
     "all_or_nothing": true,
     "url": "https://manifund.org/projects/fund-development-of-pdoom1",
+    "currency": "USD",
+    "_currency_note": "Ruled 2026-08-24. Every figure in this file, and on every rendering of it, is US dollars. See the last entry in `constraints`.",
     "_note": "These four are STABLE and may be typed into copy. The raised total and days-remaining are NOT -- they move daily and a stale number is worse than none. The renderer refuses to emit either."
   },
   "provenance_vocabulary": {
@@ -51,19 +53,8 @@
       "min_usd": 5000,
       "goal_usd": 12000,
       "provenance": "own_labour",
-      "basis": "One focused day a week for twelve months. The minimum-case figure was cut on 2026-08-24 -- Pip's ruling: he is less anxious about a holiday now that work money is coming in, and would rather pay more people more. What came off this line stays in the minimum column and is held on the line below. The rates block prices what each column buys per focused day; the minimum-case rate that falls out of this cut is below the junior developer range, which is a consequence of the ruling and not a second decision.",
-      "settled_by": null,
-      "needs_pip": "Pip ruled the AMOUNT, not the day count. Whether the minimum-case figure still buys one focused day a week at a much lower implied rate, or the same rate for fewer days, is not decided and is not decided here."
-    },
-    {
-      "id": "reallocation",
-      "label": "Minimum case: money moved off Pip's own draw, not yet assigned",
-      "min_usd": 4000,
-      "goal_usd": null,
-      "provenance": "needs_pip",
-      "basis": "CONSTRUCTED BY SUBTRACTION, and held rather than spread. When the minimum-case draw was cut on 2026-08-24 the published minimum did not move, so what came off Pip's line stays in the minimum column and pays somebody who is not Pip. His ruling names the DIRECTION -- would rather pay more people more, and treat the remainder as capital for the game -- but does not name the lines it lands on. Spreading it across them would be inventing an allocation he did not make, so it sits here where it can be seen.",
-      "settled_by": "Pip naming the lines. Community support and the music line are the candidates on the face of the ruling; neither was ruled.",
-      "needs_pip": "Which lines the minimum-case money goes to. The amount is his; the destination is not stated anywhere in the memos."
+      "basis": "FEWER DAYS AT A REALISTIC RATE. The figure was cut from $9,000 on the morning of 2026-08-24 -- Pip is less anxious about a holiday now that work money is coming in, and would rather pay more people more -- and that afternoon he ruled what the smaller figure buys: 'even if I pay myself like $150 or $200 for a day, that gets me fewer days in the year, which is fine. So maybe I work on it once a fortnight. That's what flows out of this, so be it.' So the DAY COUNT is derived from the rate, not the rate from the day count. Each column is divided by that rate band wherever a day count is stated, so no day count is written down anywhere and none can go stale. What came off this line stays in the minimum column, on the community support and music lines.",
+      "settled_by": null
     },
     {
       "id": "developer",
@@ -87,20 +78,19 @@
     {
       "id": "musicians",
       "label": "Music: session musicians, an editor and a mixer",
-      "min_usd": null,
+      "min_usd": 2400,
       "goal_usd": null,
-      "provenance": "needs_pip",
-      "basis": "PLACEHOLDER, DELIBERATELY NOT PRICED IN EITHER COLUMN. Pip's ruling 2026-08-24: four musicians at one session each, about $600 each, plus one editor and one mixer, with at least $3,000 going to artists. His own words about the total, recorded verbatim because they are the whole problem: \"four musos at one session each, that's $2400 US, also AU, don't just back convert that to Australia.\" NOTE, AND THE AMBIGUITY IS THE POINT: the same $2,400 is named as both US and AU in one sentence, so the currency of this line is unresolved. No conversion is chosen here, no figure is entered, and the goal column does NOT yet include this line, so the published goal is unchanged by it.",
-      "settled_by": "Pip saying which currency the $600 a session and the $2,400 total are in, and then which line inside the published goal the money comes out of. Both are open; the second does not become answerable until the first is.",
-      "needs_pip": "The currency. Pip flagged it himself, in his own words, and it is not being guessed on his behalf."
+      "provenance": "needs_quote",
+      "basis": "Four musicians at one session each, at Pip's own estimate of about $600 a session, which is $2,400 -- the figure he stated in US dollars himself. Plus one editor and one mixer, whose sessions are NOT priced here, because no rate for either has been obtained and none is invented. The money is not an increase in the ask: it comes off Pip's own minimum-case draw, cut the same day, so the published goal is unchanged and the goal column does not carry this line separately.",
+      "settled_by": "Rates for the editor and the mixer, who are the unpriced half of this line, and a decision about what music costs above the minimum. Nobody has been approached for either."
     },
     {
       "id": "community",
       "label": "Community support",
-      "min_usd": null,
+      "min_usd": 1600,
       "goal_usd": 5000,
       "provenance": "needs_quote",
-      "basis": "DEFINED 2026-08-24, having been undefined until then: moderation time, events, promotion of the game, comments, and finding things for the watch list. Chat and forum hosting at this size is close to free, so every dollar on this line is somebody's time rather than a bill. The figure is constructed, increased on 2026-08-24 by exactly the amount taken off the developer line.",
+      "basis": "DEFINED 2026-08-24, having been undefined until then: moderation time, events, promotion of the game, comments, and finding things for the watch list. Chat and forum hosting at this size is close to free, so every dollar on this line is somebody's time rather than a bill. Both figures are constructed. The goal figure went up on 2026-08-24 by exactly the amount taken off the developer line. The minimum figure is new the same day: it is the balance of the money Pip took off his own draw, after the musicians' sessions.",
       "settled_by": "A rate for the moderation and events hours, or a decision to pay it as an honorarium rather than by the hour."
     }
   ],
@@ -160,6 +150,45 @@
       ]
     }
   },
+  "windows_signing": {
+    "_why": "Pip's ruling 2026-08-24: say the Windows item too, not only macOS. The Windows binary is unsigned, which is a different defect from the macOS one, costs more to fix than the macOS one, and is the larger part of the pre-compliance basket below. It is not claimed to be the WORSE defect: the macOS build has never been verified to run at all, which is worse, and only cheaper.",
+    "codesigned": false,
+    "_evidence": "docs/release/CODE_SIGNING.md, 2026-08-23, carries a code signing certificate as PRIORITY 1 and records that none has been obtained. The same document withdraws an earlier belief that an EV certificate grants instant SmartScreen reputation.",
+    "certificate_usd_per_year_low": 215,
+    "certificate_usd_per_year_high": 260,
+    "plan": [
+      "Buy the INDIVIDUAL-validation variant rather than the organisation-validation one. Organisation validation needs a legal entity findable in public records, which is where a young entity stalls; individual validation needs government photo identification, proof of address and a callback, and does not wait on the unresolved question of which entity owns this.",
+      "Take the certificate authority's cloud signing option rather than a physical token. Since June 2023 the private key must live on certified hardware, and a physical token has to be present at every signing, which rules out signing from continuous integration and rules it out entirely on any day the token and the person are not in the same room.",
+      "Budget it as a recurring cost. Since 2026-02-23 the CA/Browser Forum caps a code signing certificate at 459 days, so even a three-year plan means re-issuance each year."
+    ],
+    "_not_in_the_budget": "The certificate is not in the table and is not being asked for, for the same reason as the Apple enrolment: the sum is small next to the ask, and what blocks it is validation lead time and the entity choice rather than money."
+  },
+  "pre_compliance_basket": {
+    "_why": "A CORRECTION, made while applying the 2026-08-24 rulings and confirmed by Pip that afternoon. An earlier draft said that fixing macOS costs USD 415-460. It does not. That range is the WHOLE pre-compliance basket -- the Windows certificate, the Apple enrolment and the Steam Direct fee together -- and the macOS half of it is the $99 Apple Developer Program enrolment alone.",
+    "items": [
+      {
+        "what": "Windows code signing certificate",
+        "low_usd": 215,
+        "high_usd": 260,
+        "recurring": "annual"
+      },
+      {
+        "what": "Apple Developer Program enrolment",
+        "low_usd": 99,
+        "high_usd": 99,
+        "recurring": "annual"
+      },
+      {
+        "what": "Steam Direct",
+        "low_usd": 100,
+        "high_usd": 100,
+        "recurring": "per title, recoupable"
+      }
+    ],
+    "_computed": "The renderer SUMS these items and states the total. No total is typed here, so the basket cannot come to disagree with its parts.",
+    "_source_rounds_it": "docs/release/CODE_SIGNING.md states the same basket as about USD 415-460. The exact sum of its own rows is $414-459. The renderer publishes the sum, not the rounding.",
+    "_not_in_the_budget": "None of it is in the table and none of it is being asked for. It is named because these are real defects in a thing people are being asked to fund, and because money is not what blocks any of the three."
+  },
   "known_gaps": [
     {
       "id": "five-hundred",
@@ -183,13 +212,15 @@
     "Never write the phrase 'open source'. The licence is an INTERIM source-available licence, all rights reserved; an open-source licence for the engine is only planned. The renderer greps the emitted page for it.",
     "Do not type the raised total or days remaining. Link the page and let it resolve.",
     "Do not identify the project's first backer, by name OR by description, until he has been asked.",
-    "p(Doom)1 is not finished. No copy may frame this as a launch, a 1.0, or a completed thing."
+    "p(Doom)1 is not finished. No copy may frame this as a launch, a 1.0, or a completed thing.",
+    "EVERY FIGURE ON THE PAGE IS US DOLLARS, and no second currency appears anywhere on it. Pip estimates in his own currency what he would pay people in Australia and converts it himself before it reaches this file; the conversion is his and is not shown. His words, 2026-08-24: 'just the US talking, consistent US figures, and just take my estimations what I am going to pay artists in Australia and convert it to US dollars -- it just adds math to people.' No dual-currency row, no parenthetical, no rate. The renderer greps the finished page for the other currency's marks."
   ],
   "rates": {
     "_why": "Pip's ruling 2026-08-24: state the rates as derived facts, as data points rather than as prose, so it is visible that the day figures in this budget were CONSTRUCTED and not quoted. The renderer computes what each column prices a focused day at; no per-day figure is typed into this file.",
     "_source": "Pip's own record of what he last billed, stated 2026-08-24. Not a client quote and not a market survey.",
-    "focused_days_per_year": 52,
-    "_focused_days_note": "One focused day a week for twelve months. The day count the time line has always been derived from.",
+    "own_day_low_usd": 150,
+    "own_day_high_usd": 200,
+    "_own_day_note": "RULED 2026-08-24: what Pip will actually pay himself for a day on this. His words: 'even if I pay myself like $150 or $200 for a day, that gets me fewer days in the year, which is fine. So maybe I work on it once a fortnight. That's what flows out of this, so be it.' The renderer divides the time line by this band to get a DAY COUNT. Nothing divides a column by a day count to get a rate any more; that direction is what produced the $96 day, and it is withdrawn.",
     "commercial_day_low_usd": 700,
     "commercial_day_high_usd": 1200,
     "_commercial_note": "Operations and governance work. His last commercial rates.",
@@ -198,7 +229,7 @@
     "junior_developer_day_low_usd": 450,
     "junior_developer_day_high_usd": 650,
     "_junior_note": "Junior developer day rates, carried for comparison against the developer line rather than as a quote for it.",
-    "_superseded": "An earlier draft anchored this section on a $9,000 minimum-case draw, which priced the day near $170. The 2026-08-24 ruling cut that draw, so the anchor is gone and the implied rates are recomputed from the line items."
+    "_superseded": "TWO anchors are withdrawn, not softened. First, an earlier draft priced Pip's day near $170 from a $9,000 minimum-case draw; the morning ruling of 2026-08-24 cut that draw. Second, the draft that replaced it divided the cut draw by fifty-two focused days a year and got $96 a day; the afternoon ruling of 2026-08-24 reversed the division. The day count is the output now, and the rate is the input."
   },
   "if_unfunded": {
     "_supersedes": "The 4 August estimate that unfunded, the work 'slips by about six months'. WITHDRAWN by Pip on 2026-08-24. Do not republish it; it is superseded, not merely unconfirmed.",

@@ -758,15 +758,19 @@
       "text": "Compatible with the ruled model (monthly Theme/Epoch, weekly Seed rotation"
     },
     {
+      "source": "docs/copy/budget.json:11",
+      "text": "\"_currency_note\": \"Ruled 2026-08-24. Every figure in this file, and on every rendering of it, is US dollars. See the last entry in `constraints`.\","
+    },
+    {
+      "source": "docs/copy/budget.json:223",
+      "text": "\"_own_day_note\": \"RULED 2026-08-24: what Pip will actually pay himself for a day on this. His words: 'even if I pay myself like $150 or $200 for a day, that gets me fewer days in the year, which is fi"
+    },
+    {
       "source": "docs/copy/budget.json:56",
-      "text": "\"needs_pip\": \"Pip ruled the AMOUNT, not the day count. Whether the minimum-case figure still buys one focused day a week at a much lower implied rate, or the same rate for fewer days, is not decided a"
+      "text": "\"basis\": \"FEWER DAYS AT A REALISTIC RATE. The figure was cut from $9,000 on the morning of 2026-08-24 -- Pip is less anxious about a holiday now that work money is coming in, and would rather pay more"
     },
     {
       "source": "docs/copy/budget.json:65",
-      "text": "\"settled_by\": \"Pip naming the lines. Community support and the music line are the candidates on the face of the ruling; neither was ruled.\","
-    },
-    {
-      "source": "docs/copy/budget.json:74",
       "text": "\"basis\": \"No developer has been engaged and no rate agreed. This is a constructed figure written to size the ask, not a quote. It was cut on 2026-08-24 and the difference moved to community support, w"
     },
     {
@@ -1422,15 +1426,27 @@
       "text": "\"_why\": \"Pinned unknown set. Ruled by Pip 2026-08-11: keep the unattributable assets, record them honestly, and let a mechanism force the question later rather than a document.\","
     },
     {
-      "source": "tools/render_budget.py:1241",
+      "source": "tools/render_budget.py:1400",
+      "text": "# RULED 2026-08-24: say the Windows item too, not only macOS. It was the"
+    },
+    {
+      "source": "tools/render_budget.py:1465",
       "text": "# RULED 2026-08-24: the previous ending -- \"that is the honest version, I'd"
     },
     {
-      "source": "tools/render_budget.py:324",
+      "source": "tools/render_budget.py:246",
+      "text": "Pip's own time line buys at the rate he ruled he would pay himself."
+    },
+    {
+      "source": "tools/render_budget.py:394",
       "text": "# here once, and when Pip ruled on 2026-08-24 that the $500 is misc platform"
     },
     {
-      "source": "tools/render_budget.py:749",
+      "source": "tools/render_budget.py:698",
+      "text": "\"a second currency on a page ruled to be consistent US figures only. \""
+    },
+    {
+      "source": "tools/render_budget.py:875",
       "text": "# line. Clear the needs_pip field on the item once he has ruled it."
     },
     {

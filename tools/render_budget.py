@@ -179,18 +179,54 @@ def check(b):
     # would silently produce a per-day number that is wrong rather than absent.
     rates = b.get("rates")
     if rates:
-        if not rates.get("focused_days_per_year"):
+        if not (rates.get("own_day_low_usd") and rates.get("own_day_high_usd")):
             problems.append(
-                "rates: focused_days_per_year is missing or zero, so the "
-                "implied day rates cannot be computed and the copy would have "
-                "to type one"
+                "rates: own_day_low_usd/own_day_high_usd is missing or zero, "
+                "so the number of days Pip's own line buys cannot be computed "
+                "and the copy would have to type one"
             )
         for lo, hi in (
+            ("own_day_low_usd", "own_day_high_usd"),
             ("commercial_day_low_usd", "commercial_day_high_usd"),
             ("junior_developer_day_low_usd", "junior_developer_day_high_usd"),
         ):
             if rates.get(lo) and rates.get(hi) and rates[lo] > rates[hi]:
                 problems.append("rates: %s is above %s" % (lo, hi))
+
+    # The pre-compliance basket exists to carry ONE correction: the USD 415-460
+    # range is the whole basket and not the macOS fix. A correction that can
+    # drift apart from the figures it corrects is worse than no correction, so
+    # the rows are reconciled against the two blocks they are drawn from and the
+    # total is never typed.
+    basket = b.get("pre_compliance_basket")
+    if basket:
+        rows = basket.get("items") or []
+        if not rows:
+            problems.append("pre_compliance_basket carries no items to sum")
+        for r in rows:
+            if r["low_usd"] > r["high_usd"]:
+                problems.append("pre_compliance_basket: %s has a low above its high" % r["what"])
+        fee = (b.get("macos_signing") or {}).get("apple_developer_program_usd_per_year")
+        if fee and not any(r["low_usd"] == fee and r["high_usd"] == fee for r in rows):
+            problems.append(
+                "pre_compliance_basket has no row equal to the Apple enrolment "
+                "fee the macOS block states (%s). The whole point of the basket "
+                "is that the Apple fee is ONE row of it, so the two must agree." % usd(fee)
+            )
+        win = b.get("windows_signing") or {}
+        if win.get("certificate_usd_per_year_low") and not any(
+            r["low_usd"] == win["certificate_usd_per_year_low"]
+            and r["high_usd"] == win["certificate_usd_per_year_high"]
+            for r in rows
+        ):
+            problems.append(
+                "pre_compliance_basket disagrees with windows_signing about the "
+                "certificate: %s-%s is stated there and appears in no basket row"
+                % (
+                    usd(win["certificate_usd_per_year_low"]),
+                    usd(win["certificate_usd_per_year_high"]),
+                )
+            )
 
     return problems
 
@@ -205,20 +241,43 @@ def pip_flags(b):
     return [(i["label"], i["needs_pip"]) for i in b["line_items"] if i.get("needs_pip")]
 
 
-def implied_day_rates(b):
-    """(min_per_day, goal_per_day, days) for Pip's time line, computed rather
-    than stated. Returns (None, None, None) if either half is missing, so the
-    copy omits the figure instead of guessing at it."""
+def own_draw_days(b):
+    """((fewest, most) minimum-case days, (fewest, most) goal-case days) that
+    Pip's own time line buys at the rate he ruled he would pay himself.
+
+    THE DIRECTION OF THE DIVISION IS THE RULING, 2026-08-24: the rate is the
+    input and the day count is the output. The version this replaces did it the
+    other way -- column divided by a fixed fifty-two days a year -- and
+    published whatever rate fell out, which is how a $96 day reached a draft of
+    this page. Returns (None, None) if the band or the line is missing, so the
+    copy omits the count rather than guessing at it."""
     rates = b.get("rates") or {}
-    days = rates.get("focused_days_per_year")
+    lo = rates.get("own_day_low_usd")
+    hi = rates.get("own_day_high_usd")
     time = next((i for i in b["line_items"] if i["id"] == "time"), None)
-    if not days or time is None:
-        return None, None, None
+    if time is None or not lo or not hi:
+        return None, None
 
-    def per(n):
-        return int(round(float(n) / days)) if n else None
+    def days(n):
+        # High rate buys the fewest days. Floor, not round: a part-day is not a
+        # day, and rounding up would promise a day the money does not buy.
+        return (int(n // hi), int(n // lo)) if n else None
 
-    return per(time.get("min_usd")), per(time.get("goal_usd")), days
+    return days(time.get("min_usd")), days(time.get("goal_usd"))
+
+
+def basket_total(b):
+    """(low, high) for the pre-compliance basket, SUMMED rather than stated.
+
+    The correction this carries is that USD 415-460 was the whole basket and
+    not the macOS fix. Summing it here means the total cannot drift from the
+    rows, and the rows cannot drift from the two signing blocks -- check()
+    reconciles them."""
+    basket = b.get("pre_compliance_basket") or {}
+    rows = basket.get("items") or []
+    if not rows:
+        return None, None
+    return sum(r["low_usd"] for r in rows), sum(r["high_usd"] for r in rows)
 
 
 def developer_days(b):
@@ -281,11 +340,13 @@ def fmt_manifund(b):
     art = b["art_measurement"]
     unpriced = [i for i in b["line_items"] if i["provenance"] in UNSETTLED]
     flags = pip_flags(b)
-    min_day, goal_day, days = implied_day_rates(b)
+    min_days, goal_days = own_draw_days(b)
     dev_most, dev_fewest = developer_days(b)
     proj = unfunded_projection(b)
     rates = b.get("rates") or {}
     mac = b.get("macos_signing") or {}
+    win = b.get("windows_signing") or {}
+    basket_low, basket_high = basket_total(b)
 
     L = []
     L.append("## What the money is actually for")
@@ -297,14 +358,23 @@ def fmt_manifund(b):
     )
     L.append("")
     L.append(
+        "Every figure below is **US dollars**. There is no second currency "
+        "anywhere in this budget and no conversion is shown: where something "
+        "would be paid elsewhere I have converted it myself before it reached "
+        "the table, because two currencies in a column adds arithmetic for you "
+        "and buys nothing."
+    )
+    L.append("")
+    L.append(
         "**The two numbers buy different things, and the difference is not "
         "scale -- it is who does the work.**"
     )
     L.append("")
     L.append(
         "At **%s**, the project does not stop: hosting, the generation and "
-        "tooling budget, the open dataset kept current, and partial "
-        "recovery of one focused day a week. Nobody else is paid. The art "
+        "tooling budget, the open dataset kept current, a reduced draw for "
+        "my own time, and the two lines that reduction pays for. **No "
+        "illustrator and no developer is paid at this tier.** The art "
         "keeps improving the way it improved on 14 August -- generate a "
         "lot, throw most away, write down why." % usd(p["minimum_usd"])
     )
@@ -312,8 +382,8 @@ def fmt_manifund(b):
     L.append(
         "At **%s**, somebody other than me draws it. That is the honest "
         "headline, and it cuts against my own ask: **every dollar of the "
-        "human-artist line sits above the minimum.** At %s nothing is "
-        "commissioned." % (usd(p["goal_usd"]), usd(p["minimum_usd"]))
+        "human-artist line sits above the minimum.** At %s no illustrator "
+        "is paid at all." % (usd(p["goal_usd"]), usd(p["minimum_usd"]))
     )
     L.append("")
     L.append(fmt_table(b))
@@ -379,14 +449,25 @@ def fmt_manifund(b):
                     usd(rates["junior_developer_day_high_usd"]),
                 )
             )
-        if min_day:
+        if rates.get("own_day_low_usd"):
             L.append(
-                "- **%s a day** -- what the minimum column actually prices my "
-                "focused day at, over %d of them in a year. That is the "
-                "number, and it is below every rate above it." % (usd(min_day), days)
+                "- **%s to %s a day** -- what I will pay myself for a day on "
+                "this. Well below every rate above it, and that is the "
+                "decision rather than an accident of the arithmetic."
+                % (usd(rates["own_day_low_usd"]), usd(rates["own_day_high_usd"]))
             )
-        if goal_day:
-            L.append("- **%s a day** -- the same division against the goal column." % usd(goal_day))
+        if min_days:
+            L.append(
+                "- **%d to %d days** -- what the minimum column buys at that "
+                "rate. Fewer days rather than a cheaper day, which is the way "
+                "round I decided it: something close to once a fortnight."
+                % (min_days[0], min_days[1])
+            )
+        if goal_days:
+            L.append(
+                "- **%d to %d days** -- the same division against the goal "
+                "column." % (goal_days[0], goal_days[1])
+            )
         if dev_most:
             L.append(
                 "- **%d to %d days** -- what the developer line buys at those "
@@ -462,7 +543,7 @@ def fmt_manifund(b):
     L.append("")
     if mac:
         L.append(
-            "**A defect in the thing I am asking you to fund, stated plainly.** "
+            "**Defects in the thing I am asking you to fund, stated plainly.** "
             "The macOS build is **not codesigned and not notarised**, so modern "
             "macOS refuses it by default. The plan to get there, in order:"
         )
@@ -473,6 +554,38 @@ def fmt_manifund(b):
         if mac.get("_not_in_the_budget"):
             L.append(mac["_not_in_the_budget"])
             L.append("")
+    if win:
+        L.append(
+            "**And the same is true on Windows, which is the larger of the "
+            "two.** The Windows build is **not code-signed**, so SmartScreen "
+            "warns on it. A certificate runs **%s to %s a year**, against %s "
+            "once a year for the Apple enrolment, and the route through it:"
+            % (
+                usd(win.get("certificate_usd_per_year_low")),
+                usd(win.get("certificate_usd_per_year_high")),
+                usd(mac.get("apple_developer_program_usd_per_year")),
+            )
+        )
+        L.append("")
+        for step in win.get("plan", []):
+            L.append("- %s" % step)
+        L.append("")
+    if basket_low:
+        L.append(
+            "**A correction to an earlier draft of this, because it read the "
+            "wrong way round.** That draft attached this whole basket to the "
+            "macOS fix. The basket is three things, not one, and it comes to "
+            "**%s to %s** -- the Windows certificate, the Apple enrolment and "
+            "the store fee. The macOS half of it is the %s Apple enrolment on "
+            "its own. None of it is in the table and none of it is being asked "
+            "for."
+            % (
+                usd(basket_low),
+                usd(basket_high),
+                usd(mac.get("apple_developer_program_usd_per_year")),
+            )
+        )
+        L.append("")
 
     if proj:
         L.append("**If it does not fund.**")
@@ -579,6 +692,12 @@ FORBIDDEN = [
     (
         r"\b(hired|commissioned|engaged|contracted|quoted)\s+(an?|the)\s",
         "reads as though somebody has been engaged; constraint 1",
+    ),
+    (
+        r"\bAUD\b|\bAU\$|A\$\s?\d|\bAustralian dollars?\b|\balso AU\b",
+        "a second currency on a page ruled to be consistent US figures only. "
+        "Pip converts his own estimates before they reach the data and the "
+        "conversion is not shown; constraint 7",
     ),
 ]
 
@@ -738,9 +857,16 @@ def fmt_html(b):
     art_item = next((i for i in items if i["id"] == "art"), None)
     rates = b.get("rates") or {}
     mac = b.get("macos_signing") or {}
-    min_day, goal_day, focused_days = implied_day_rates(b)
+    win = b.get("windows_signing") or {}
+    basket_low, basket_high = basket_total(b)
+    min_days, goal_days = own_draw_days(b)
     dev_most, dev_fewest = developer_days(b)
     proj = unfunded_projection(b)
+    # A line with a minimum figure and no goal figure is unusual enough that a
+    # reader will read the dash as an omission. It is not: it means the money
+    # came off another line rather than being added to the ask. Said below the
+    # table, from the data, so the sentence disappears if the shape does.
+    min_only = [i for i in items if i["min_usd"] and i["goal_usd"] is None]
 
     # A line waiting on Pip is publishable as a draft and NOT publishable as a
     # page. The page is the artefact a stranger reads, and shipping it with an
@@ -887,6 +1013,13 @@ def fmt_html(b):
         )
     )
     w(
+        "\t\t\t<p>Every figure on this page is <strong>US dollars</strong>. There "
+        "is no second currency anywhere on it and no conversion is shown &mdash; "
+        "where something would be paid elsewhere, I have converted it myself "
+        "before it reached the budget, because two currencies in a column adds "
+        "arithmetic for you and buys nothing.</p>"
+    )
+    w(
         "\t\t\t<p>The live figures are on the Manifund page and are deliberately "
         "not typed here. They move daily, this page does not, and a stale number "
         "is worse than no number at all.</p>"
@@ -916,7 +1049,9 @@ def fmt_html(b):
         )
     w("\t\t\t\t\t</ul>")
     w(
-        "\t\t\t\t\t<p>Nobody else is paid anything. The dataset stays maintained "
+        "\t\t\t\t\t<p>No illustrator and no developer is paid at this tier. "
+        "What is paid, other than my own reduced draw, is what came off that "
+        "draw. The dataset stays maintained "
         "rather than drifting, and the art keeps improving the way it improved on "
         "%s: generate a great deal of it, throw most of it away, and write down "
         "why. That is a real answer to the art problem, but it is not the answer "
@@ -1012,13 +1147,23 @@ def fmt_html(b):
     w("\t\t\t\t</tfoot>")
     w("\t\t\t</table>")
     w("\t\t\t</div>")
+    for i in min_only:
+        w(
+            '\t\t\t<p class="note">%s carries a figure in the minimum column '
+            "and a dash in the goal column, and the dash is deliberate rather "
+            "than an omission. The money for it came off my own draw rather "
+            "than being added to the ask, so the goal total is unchanged by it. "
+            "What it would cost above the minimum is not decided, and I would "
+            "rather leave the cell empty than fill it with a figure I made "
+            "up.</p>" % esc(i["label"])
+        )
     w("\t\t</section>")
     w("")
 
     # -- the rates ----------------------------------------------------------
     #
     # Points, not a paragraph, and every dollar here is either a rate carried in
-    # the data or a division done in implied_day_rates()/developer_days(). The
+    # the data or a division done in own_draw_days()/developer_days(). The
     # ruling behind the shape: a constructed number should look constructed.
     if rates:
         w('\t\t<section class="panel">')
@@ -1056,17 +1201,31 @@ def fmt_html(b):
                     usd_html(rates["junior_developer_day_high_usd"]),
                 )
             )
-        if min_day:
+        if rates.get("own_day_low_usd"):
             w(
-                '\t\t\t\t<li><span class="amt">%s</span> a day is what the minimum '
-                "column actually prices my focused day at, across %s of them in a "
-                "year. Below every rate above it, and I would rather you noticed "
-                "that than that I buried it.</li>" % (usd_html(min_day), words(focused_days))
+                '\t\t\t\t<li><span class="amt">%s&ndash;%s</span> a day is what I '
+                "will pay myself for a day on this. Well below every rate above "
+                "it, and that is the decision rather than an accident of the "
+                "arithmetic.</li>"
+                % (
+                    usd_html(rates["own_day_low_usd"]),
+                    usd_html(rates["own_day_high_usd"]),
+                )
             )
-        if goal_day:
+        if min_days:
             w(
-                '\t\t\t\t<li><span class="amt">%s</span> a day is the same '
-                "division against the goal column.</li>" % usd_html(goal_day)
+                '\t\t\t\t<li><span class="amt">%s&ndash;%s days</span> is what the '
+                "minimum column buys at that rate. Fewer days rather than a "
+                "cheaper day, which is the way round I decided it &mdash; "
+                "something close to one day a fortnight, and that is what falls "
+                "out of the figure rather than a schedule I am promising "
+                "you.</li>" % (format(min_days[0], ",d"), format(min_days[1], ",d"))
+            )
+        if goal_days:
+            w(
+                '\t\t\t\t<li><span class="amt">%s&ndash;%s days</span> is the same '
+                "division against the goal column.</li>"
+                % (format(goal_days[0], ",d"), format(goal_days[1], ",d"))
             )
         if dev_most:
             w(
@@ -1233,6 +1392,71 @@ def fmt_html(b):
             )
         if mac.get("_not_in_the_budget"):
             w('\t\t\t<p class="note">%s</p>' % esc(mac["_not_in_the_budget"]))
+        w("\t\t</section>")
+        w("")
+
+    # -- the Windows build --------------------------------------------------
+    #
+    # RULED 2026-08-24: say the Windows item too, not only macOS. It was the
+    # missing half of a correction about the macOS figure, and it is the more
+    # expensive of the two defects, so naming only the cheaper one flattered
+    # the page.
+    if win:
+        w('\t\t<section class="panel">')
+        w("\t\t\t<h2>Nor is the Windows build, and that one costs more</h2>")
+        w(
+            "\t\t\t<p>The Windows build is <strong>not code-signed</strong>, so "
+            "SmartScreen warns on it and some people will not get past that "
+            "warning. It is the more expensive of the two to fix, though not "
+            "the worse of the two: a certificate runs <strong>%s&ndash;%s a "
+            "year</strong> against <strong>%s a year</strong> for the Apple "
+            "enrolment, and it is the macOS build that has never been verified "
+            "to run at all.</p>"
+            % (
+                usd_html(win.get("certificate_usd_per_year_low")),
+                usd_html(win.get("certificate_usd_per_year_high")),
+                usd_html(mac.get("apple_developer_program_usd_per_year")),
+            )
+        )
+        if win.get("plan"):
+            w("\t\t\t<p>The route out of it, in order:</p>")
+            w('\t\t\t<ul class="slots">')
+            for step in win["plan"]:
+                w("\t\t\t\t<li>%s</li>" % esc(step))
+            w("\t\t\t</ul>")
+        if basket_low:
+            basket = b.get("pre_compliance_basket") or {}
+            w(
+                "\t\t\t<p><strong>A correction to an earlier draft of this "
+                "page, because it read the wrong way round.</strong> That draft "
+                "attached this whole basket to the macOS fix. The basket is "
+                "three things, not one, and it comes to <strong>%s&ndash;%s</strong> "
+                "&mdash; the certificate above, the Apple enrolment, and the "
+                "store fee. The macOS half of it is the %s enrolment on its "
+                "own.</p>"
+                % (
+                    usd_html(basket_low),
+                    usd_html(basket_high),
+                    usd_html(mac.get("apple_developer_program_usd_per_year")),
+                )
+            )
+            w('\t\t\t<ul class="slots">')
+            for r in basket["items"]:
+                w(
+                    '\t\t\t\t<li><span class="amt">%s</span> %s, %s.</li>'
+                    % (
+                        (
+                            usd_html(r["low_usd"])
+                            if r["low_usd"] == r["high_usd"]
+                            else "%s&ndash;%s" % (usd_html(r["low_usd"]), usd_html(r["high_usd"]))
+                        ),
+                        esc(r["what"]),
+                        esc(r["recurring"]),
+                    )
+                )
+            w("\t\t\t</ul>")
+            if basket.get("_not_in_the_budget"):
+                w('\t\t\t<p class="note">%s</p>' % esc(basket["_not_in_the_budget"]))
         w("\t\t</section>")
         w("")
 
