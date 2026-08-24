@@ -748,7 +748,7 @@ DTSTART;VALUE=DATE:20260812
 DTEND;VALUE=DATE:20260813
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:316. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:319. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `godot/scripts/core/capacity.gd:5` -- ## Ru
  led 2026-08-12 (coordination/DESIGN_2026-08-12_interrupt-resolution-varia
@@ -1598,7 +1598,7 @@ DTSTART;VALUE=DATE:20260814
 DTEND;VALUE=DATE:20260815
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:335. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:338. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `godot/tests/unit/simulation/test_events.gd
  :50` -- ## THE RATCHET WAS DELIBERATELY LOOSENED -- 2026-08-14\, ruled by
@@ -4005,6 +4005,29 @@ DESCRIPTION:needs a declaration -- LEAGUE_CUTOVER_PLAYBOOK.md (unparsed) -
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:b73be9bb1fec79d5@commitments.pdoom1
+DTSTAMP:20260824T000000Z
+DTSTART;VALUE=DATE:20260824
+DTEND;VALUE=DATE:20260825
+SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
+ d:211. 3 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ ITMENT: declaration accounts for it. Either add a declaration or the date
+  is incidental. First line: - `docs/copy/budget.json:74` -- "basis": "No 
+ developer has been engaged and no rate agreed. This is a constructed figu
+ re written to size the ask\, not -- Generated from tracked sources by scr
+ ipts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- RULINGS.md (unparsed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:1adf480975234981@commitments.pdoom1
 DTSTAMP:20260824T000000Z
 DTSTART;VALUE=DATE:20260824
@@ -4046,6 +4069,28 @@ BEGIN:VALARM
 ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- pdoom1#811 (unparsed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:9bcc1a7d9ebcf22c@commitments.pdoom1
+DTSTAMP:20260824T000000Z
+DTSTART;VALUE=DATE:20260824
+DTEND;VALUE=DATE:20260825
+SUMMARY:[UNPARSED] needs a declaration -- render_budget.py
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/render_budget.py
+ :324. 2 line(s) in tools/render_budget.py mention this date and no COMMIT
+ MENT: declaration accounts for it. Either add a declaration or the date i
+ s incidental. First line: # here once\, and when Pip ruled on 2026-08-24 
+ that the $500 is misc platform -- Generated from tracked sources by scrip
+ ts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- render_budget.py (unparsed) -- unowned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
@@ -4180,7 +4225,7 @@ DTSTART;VALUE=DATE:20260831
 DTEND;VALUE=DATE:20260901
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:324. 2 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:327. 2 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `godot/scripts/core/researcher.gd:150` -- #
   SEAM (ruled 2026-07-27\, review-by 2026-08-31): AUDITS ground-truth repo

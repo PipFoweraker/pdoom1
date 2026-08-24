@@ -84,7 +84,13 @@ MARK = {
     "own_labour": "own labour, own rate",
     "needs_quote": "NEEDS A QUOTE",
     "needs_definition": "NEEDS A DEFINITION",
+    "needs_pip": "NEEDS PIP",
 }
+
+# Provenances that describe a number nobody has stood behind yet. Each one has
+# to say what would settle it, or the blank reads as vagueness rather than as a
+# recorded open question.
+UNSETTLED = ("needs_quote", "needs_definition", "needs_pip")
 
 
 def load():
@@ -135,7 +141,7 @@ def check(b):
     for item in b["line_items"]:
         if item["provenance"] not in b["provenance_vocabulary"]:
             problems.append("%s: unknown provenance %r" % (item["id"], item["provenance"]))
-        if item["provenance"] in ("needs_quote", "needs_definition") and not item.get("settled_by"):
+        if item["provenance"] in UNSETTLED and not item.get("settled_by"):
             problems.append(
                 "%s: unpriced with no settled_by -- say what would "
                 "settle it, or the gap reads as vagueness" % item["id"]
@@ -167,7 +173,85 @@ def check(b):
                     "but naive_per_slot_usd says $%d"
                     % (usd(art_goal), art["distinct_slots"], recomputed, naive)
                 )
+
+    # The rates block exists so that no per-day figure is ever typed into copy:
+    # every one of them is a division done here. A missing or absurd divisor
+    # would silently produce a per-day number that is wrong rather than absent.
+    rates = b.get("rates")
+    if rates:
+        if not rates.get("focused_days_per_year"):
+            problems.append(
+                "rates: focused_days_per_year is missing or zero, so the "
+                "implied day rates cannot be computed and the copy would have "
+                "to type one"
+            )
+        for lo, hi in (
+            ("commercial_day_low_usd", "commercial_day_high_usd"),
+            ("junior_developer_day_low_usd", "junior_developer_day_high_usd"),
+        ):
+            if rates.get(lo) and rates.get(hi) and rates[lo] > rates[hi]:
+                problems.append("rates: %s is above %s" % (lo, hi))
+
     return problems
+
+
+def pip_flags(b):
+    """Line items waiting on a decision only Pip can make.
+
+    NOT a problem in check()'s sense: the arithmetic is sound with these
+    outstanding, and an unresolved question that is visible is the desired
+    state. It is a problem for PUBLISHING, which is why fmt_html refuses on it
+    and --check merely says so."""
+    return [(i["label"], i["needs_pip"]) for i in b["line_items"] if i.get("needs_pip")]
+
+
+def implied_day_rates(b):
+    """(min_per_day, goal_per_day, days) for Pip's time line, computed rather
+    than stated. Returns (None, None, None) if either half is missing, so the
+    copy omits the figure instead of guessing at it."""
+    rates = b.get("rates") or {}
+    days = rates.get("focused_days_per_year")
+    time = next((i for i in b["line_items"] if i["id"] == "time"), None)
+    if not days or time is None:
+        return None, None, None
+
+    def per(n):
+        return int(round(float(n) / days)) if n else None
+
+    return per(time.get("min_usd")), per(time.get("goal_usd")), days
+
+
+def developer_days(b):
+    """(most_days, fewest_days) the developer line buys at the junior day rates
+    carried in the data. Arithmetic on two published figures, not a forecast."""
+    rates = b.get("rates") or {}
+    dev = next((i for i in b["line_items"] if i["id"] == "developer"), None)
+    lo = rates.get("junior_developer_day_low_usd")
+    hi = rates.get("junior_developer_day_high_usd")
+    if dev is None or not dev.get("goal_usd") or not lo or not hi:
+        return None, None
+    return int(dev["goal_usd"] // lo), int(dev["goal_usd"] // hi)
+
+
+def unfunded_projection(b):
+    """What Pip's own percentages come to over his own stated period.
+
+    He gave a drop and a duration and asked for the projection; this multiplies
+    them and does nothing else. Returns None if the block is absent, because a
+    projection with no stated inputs is an invention."""
+    u = b.get("if_unfunded")
+    if not u:
+        return None
+    months = u["period_months"]
+    kept_hi = months * (100 - u["velocity_drop_low_pct"]) / 100.0  # smaller drop
+    kept_lo = months * (100 - u["velocity_drop_high_pct"]) / 100.0
+    return {
+        "months": months,
+        "kept_low_months": round(kept_lo, 2),
+        "kept_high_months": round(kept_hi, 2),
+        "lost_low_months": round(months - kept_hi, 2),
+        "lost_high_months": round(months - kept_lo, 2),
+    }
 
 
 def fmt_table(b):
@@ -178,6 +262,8 @@ def fmt_table(b):
             basis += " **Settled by:** " + i["settled_by"]
         if i.get("softest_number"):
             basis += " *Softest number here: " + i["softest_number"] + "*"
+        if i.get("needs_pip"):
+            basis += " **NEEDS PIP:** " + i["needs_pip"]
         out.append(
             "| %s | %s | %s | **%s.** %s |"
             % (i["label"], usd(i["min_usd"]), usd(i["goal_usd"]), MARK[i["provenance"]], basis)
@@ -193,9 +279,13 @@ def fmt_manifund(b):
     tmin, tgoal = totals(b)
     gap = p["minimum_usd"] - tmin
     art = b["art_measurement"]
-    unpriced = [
-        i for i in b["line_items"] if i["provenance"] in ("needs_quote", "needs_definition")
-    ]
+    unpriced = [i for i in b["line_items"] if i["provenance"] in UNSETTLED]
+    flags = pip_flags(b)
+    min_day, goal_day, days = implied_day_rates(b)
+    dev_most, dev_fewest = developer_days(b)
+    proj = unfunded_projection(b)
+    rates = b.get("rates") or {}
+    mac = b.get("macos_signing") or {}
 
     L = []
     L.append("## What the money is actually for")
@@ -230,14 +320,28 @@ def fmt_manifund(b):
     L.append("")
     L.append("**Two gaps I would rather name than close.**")
     L.append("")
+    # The explanation is READ FROM THE DATA, not restated here. It was restated
+    # here once, and when Pip ruled on 2026-08-24 that the $500 is misc platform
+    # fees and admin, the HTML page picked the ruling up and this short form did
+    # not -- two renderings of one file disagreeing, which is the failure the
+    # file exists to prevent.
+    five = next((g for g in b["known_gaps"] if g["id"] == "five-hundred"), None)
     L.append(
         "The minimum column sums to %s against a published minimum of %s. "
-        "That %s is rounding from the evening I set the figure, not a "
-        "hidden line item, and I would rather flag it than retrofit "
-        "something to cover it. I also have not established whether the "
-        "platform takes a cut; if it does, the gap is larger, and it is "
-        "better that I find that out than that you do."
-        % (usd(tmin), usd(p["minimum_usd"]), usd(gap))
+        "That %s is %s, and I would rather flag it than retrofit something "
+        "to cover it. I also have not established whether the platform "
+        "takes a cut; if it does, the gap is larger, and it is better that "
+        "I find that out than that you do."
+        % (
+            usd(tmin),
+            usd(p["minimum_usd"]),
+            usd(gap),
+            (
+                five["explanation"].rstrip(".")
+                if five and five.get("explanation")
+                else "unexplained"
+            ),
+        )
     )
     L.append("")
     L.append(
@@ -246,6 +350,66 @@ def fmt_manifund(b):
         "settle it." % (len(unpriced), len(b["line_items"]))
     )
     L.append("")
+
+    if rates:
+        L.append(
+            "**What my day is priced at, and how the figure was made.** These "
+            "are data points rather than a paragraph, because every one of "
+            "them was constructed and I would rather you could see the "
+            "construction:"
+        )
+        L.append("")
+        if rates.get("commercial_day_low_usd"):
+            L.append(
+                "- **%s to %s a day** -- what I bill for operations and "
+                "governance work. My last commercial rates, not a survey."
+                % (usd(rates["commercial_day_low_usd"]), usd(rates["commercial_day_high_usd"]))
+            )
+        if rates.get("for_profit_floor_usd"):
+            L.append(
+                "- **%s a day** -- the floor. I do not work below it in the "
+                "for-profit sector." % usd(rates["for_profit_floor_usd"])
+            )
+        if rates.get("junior_developer_day_low_usd"):
+            L.append(
+                "- **%s to %s a day** -- junior developer day rates, carried "
+                "for comparison against the developer line."
+                % (
+                    usd(rates["junior_developer_day_low_usd"]),
+                    usd(rates["junior_developer_day_high_usd"]),
+                )
+            )
+        if min_day:
+            L.append(
+                "- **%s a day** -- what the minimum column actually prices my "
+                "focused day at, over %d of them in a year. That is the "
+                "number, and it is below every rate above it." % (usd(min_day), days)
+            )
+        if goal_day:
+            L.append("- **%s a day** -- the same division against the goal column." % usd(goal_day))
+        if dev_most:
+            L.append(
+                "- **%d to %d days** -- what the developer line buys at those "
+                "junior rates, if a junior rate is what it turns out to be."
+                % (dev_fewest, dev_most)
+            )
+        L.append("")
+
+    if flags:
+        L.append(
+            "**%d line%s on the table %s waiting on a decision of mine rather "
+            "than on a quote.** Each carries the open question rather than a "
+            "figure I picked to fill the space:"
+            % (
+                len(flags),
+                "" if len(flags) == 1 else "s",
+                "is" if len(flags) == 1 else "are",
+            )
+        )
+        L.append("")
+        for label, why in flags:
+            L.append("- **%s** -- %s" % (label, why))
+        L.append("")
     L.append(
         "**The art line, measured rather than gestured at.** On 14 August "
         "I judged %d generated assets in about 23 minutes and discarded "
@@ -271,19 +435,78 @@ def fmt_manifund(b):
     L.append("")
     L.append(
         "And the division, which is what I would want to see in somebody "
-        "else's budget: %s across %d slots is about $%d a slot. I do not "
-        "believe that is a real rate for commissioned illustration and I "
-        "am not going to pretend otherwise. %s"
+        "else's budget: %s across %d slots is about $%d a slot. **That is "
+        "not a real rate for commissioned illustration and I am not going "
+        "to pretend otherwise.** A per-output division is the wrong shape "
+        "for this work, so here is what the line actually buys, as points "
+        "rather than as a paragraph:"
         % (
             usd(
                 next(i["goal_usd"] for i in b["line_items"] if i["id"] == "art"),
             ),
             art["distinct_slots"],
             art["division"]["naive_per_slot_usd"],
-            art["division"]["hypothesis"],
         )
     )
     L.append("")
+    breakdown = art.get("commission_breakdown") or {}
+    for pt in breakdown.get("points", []):
+        L.append("- **%s** -- %s" % (pt["item"], pt["note"]))
+    if breakdown.get("points"):
+        L.append("")
+        L.append(
+            "Paid hourly or by session rather than per output. %s" % breakdown.get("_no_total", "")
+        )
+        L.append("")
+    L.append("%s" % art["division"]["_hypothesis_status"])
+    L.append("")
+    if mac:
+        L.append(
+            "**A defect in the thing I am asking you to fund, stated plainly.** "
+            "The macOS build is **not codesigned and not notarised**, so modern "
+            "macOS refuses it by default. The plan to get there, in order:"
+        )
+        L.append("")
+        for step in mac.get("plan", []):
+            L.append("- %s" % step)
+        L.append("")
+        if mac.get("_not_in_the_budget"):
+            L.append(mac["_not_in_the_budget"])
+            L.append("")
+
+    if proj:
+        L.append("**If it does not fund.**")
+        L.append("")
+        L.append(
+            "The game does not stop. It stays a thing done in the gaps. The "
+            "dataset stays a thing maintained in the gaps, and somebody other "
+            "than me does not get to draw it."
+        )
+        L.append("")
+        L.append(
+            "What that costs, in my own estimate rather than measured: my main "
+            "job takes about %d%% of my attention, with the second job and the "
+            "other projects at home on top of it, and the time available for "
+            "this drops **%d to %d%% against the current rate for about %d "
+            "months**. Multiplied out, %d months of calendar produce about %s "
+            "to %s months of work at the current rate -- so roughly %s to %s "
+            "months of progress does not happen."
+            % (
+                b["if_unfunded"]["other_work_attention_share_pct"],
+                b["if_unfunded"]["velocity_drop_low_pct"],
+                b["if_unfunded"]["velocity_drop_high_pct"],
+                proj["months"],
+                proj["months"],
+                ("%g" % proj["kept_low_months"]),
+                ("%g" % proj["kept_high_months"]),
+                ("%g" % proj["lost_low_months"]),
+                ("%g" % proj["lost_high_months"]),
+            )
+        )
+        L.append("")
+        L.append("What the funding buys is not survival. It is speed and other " "people's hands.")
+        L.append("")
+
     L.append(
         "Nobody has been hired, commissioned or engaged; every figure "
         "describes what the money would pay for. The game is free and "
@@ -347,6 +570,11 @@ FORBIDDEN = [
     (
         r"\b(launch|1\.0|version one|finished game|complete[d]? game)\b",
         "frames an unfinished game as a launch; constraint 5",
+    ),
+    (
+        r"\bopen[-\s]source\b",
+        "the licence is an interim source-available one, all rights "
+        "reserved; the phrase is forbidden outright",
     ),
     (
         r"\b(hired|commissioned|engaged|contracted|quoted)\s+(an?|the)\s",
@@ -504,10 +732,36 @@ def fmt_html(b):
 
     min_tier = [i for i in items if i["min_usd"]]
     goal_only = [i for i in items if i["min_usd"] is None]
-    unpriced = [i for i in items if i["provenance"] in ("needs_quote", "needs_definition")]
+    unpriced = [i for i in items if i["provenance"] in UNSETTLED]
     measured = [i for i in items if i["provenance"] == "measured"]
     own = [i for i in items if i["provenance"] == "own_labour"]
     art_item = next((i for i in items if i["id"] == "art"), None)
+    rates = b.get("rates") or {}
+    mac = b.get("macos_signing") or {}
+    min_day, goal_day, focused_days = implied_day_rates(b)
+    dev_most, dev_fewest = developer_days(b)
+    proj = unfunded_projection(b)
+
+    # A line waiting on Pip is publishable as a draft and NOT publishable as a
+    # page. The page is the artefact a stranger reads, and shipping it with an
+    # unanswered question of his inside it answers the question by omission --
+    # which is exactly what he asked not to happen on the currency of the music
+    # line. Clear the needs_pip field on the item once he has ruled it.
+    flags = pip_flags(b)
+    if flags:
+        return None, [
+            "REFUSING to render the public page: %d line item%s %s waiting on "
+            "a decision only Pip can make. This is not an arithmetic fault -- "
+            "--check passes -- and it is not fixed by editing this file. Take "
+            "his ruling, put it in budget.json, and remove that item's "
+            "needs_pip field.\n%s"
+            % (
+                len(flags),
+                "" if len(flags) == 1 else "s",
+                "is" if len(flags) == 1 else "are",
+                "\n".join("      %s: %s" % (lab, why) for lab, why in flags),
+            )
+        ]
 
     gap_paras, gap_problem = html_gap_paragraphs(b)
     if gap_problem:
@@ -702,9 +956,10 @@ def fmt_html(b):
     w("\t\t\t<h2>The line items, and how far each number can be defended</h2>")
     w(
         "\t\t\t<p>There are %s lines. %s %s backed by receipts; %s %s marked as "
-        "needing a quote or a definition, with the thing that would settle each "
-        "one named; and %s %s my own labour priced at my own rate, which is a "
-        "decision I made rather than a price anybody quoted me.</p>"
+        "needing a quote, a definition or a decision of mine, with the thing "
+        "that would settle each one named; and %s %s my own labour priced at my "
+        "own rate, which is a decision I made rather than a price anybody quoted "
+        "me.</p>"
         % (
             words(len(items)),
             words(len(measured)).capitalize(),
@@ -741,6 +996,8 @@ def fmt_html(b):
             known.append("<em>Softest number here: %s</em>" % esc(i["softest_number"]))
         if i.get("settled_by"):
             known.append("<strong>Settled by:</strong> %s" % esc(i["settled_by"]))
+        if i.get("needs_pip"):
+            known.append("<strong>Open question:</strong> %s" % esc(i["needs_pip"]))
         w(
             '\t\t\t\t\t<tr><td><b>%s</b></td><td class="num">%s</td>'
             '<td class="num">%s</td><td>%s</td></tr>'
@@ -757,6 +1014,71 @@ def fmt_html(b):
     w("\t\t\t</div>")
     w("\t\t</section>")
     w("")
+
+    # -- the rates ----------------------------------------------------------
+    #
+    # Points, not a paragraph, and every dollar here is either a rate carried in
+    # the data or a division done in implied_day_rates()/developer_days(). The
+    # ruling behind the shape: a constructed number should look constructed.
+    if rates:
+        w('\t\t<section class="panel">')
+        w("\t\t\t<h2>What my time is priced at, and how the figure was " "made</h2>")
+        w(
+            "\t\t\t<p>Two lines in that table are my own labour at my own rate, "
+            "which means I set them. So here is the arithmetic they came out of, "
+            "as points rather than as a paragraph &mdash; a constructed number "
+            "ought to look constructed.</p>"
+        )
+        w('\t\t\t<ul class="slots">')
+        if rates.get("commercial_day_low_usd"):
+            w(
+                '\t\t\t\t<li><span class="amt">%s&ndash;%s</span> a day for '
+                "operations and governance work. My last commercial rates, not a "
+                "market survey.</li>"
+                % (
+                    usd_html(rates["commercial_day_low_usd"]),
+                    usd_html(rates["commercial_day_high_usd"]),
+                )
+            )
+        if rates.get("for_profit_floor_usd"):
+            w(
+                '\t\t\t\t<li><span class="amt">%s</span> a day is the floor. I do '
+                "not work below it in the for-profit sector.</li>"
+                % usd_html(rates["for_profit_floor_usd"])
+            )
+        if rates.get("junior_developer_day_low_usd"):
+            w(
+                '\t\t\t\t<li><span class="amt">%s&ndash;%s</span> a day, junior '
+                "developer rates. Carried for comparison against the developer "
+                "line, not as a quote for it.</li>"
+                % (
+                    usd_html(rates["junior_developer_day_low_usd"]),
+                    usd_html(rates["junior_developer_day_high_usd"]),
+                )
+            )
+        if min_day:
+            w(
+                '\t\t\t\t<li><span class="amt">%s</span> a day is what the minimum '
+                "column actually prices my focused day at, across %s of them in a "
+                "year. Below every rate above it, and I would rather you noticed "
+                "that than that I buried it.</li>" % (usd_html(min_day), words(focused_days))
+            )
+        if goal_day:
+            w(
+                '\t\t\t\t<li><span class="amt">%s</span> a day is the same '
+                "division against the goal column.</li>" % usd_html(goal_day)
+            )
+        if dev_most:
+            w(
+                '\t\t\t\t<li><span class="amt">%s&ndash;%s days</span> is what the '
+                "developer line buys at those junior rates, if a junior rate is "
+                "what it turns out to be.</li>" % (format(dev_fewest, ",d"), format(dev_most, ",d"))
+            )
+        w("\t\t\t</ul>")
+        if rates.get("_source"):
+            w('\t\t\t<p class="note">%s</p>' % esc(rates["_source"]))
+        w("\t\t</section>")
+        w("")
 
     # -- the gaps -----------------------------------------------------------
     w('\t\t<section class="panel">')
@@ -836,16 +1158,29 @@ def fmt_html(b):
         w(
             "\t\t\t<p>Now the division, which is the part I would want to see in "
             "somebody else&rsquo;s budget. %s across %s slots is about $%s a "
-            "slot. I do not believe that is a real rate for commissioned "
-            "illustration and I am not going to pretend otherwise. The shape I "
-            "think the money actually buys is narrower and more useful. %s</p>"
+            "slot. <strong>That is not a real rate for commissioned illustration "
+            "and I am not going to pretend otherwise.</strong> Dividing a line by "
+            "an output count is the wrong shape for this work in the first place, "
+            "so here is what the line buys instead.</p>"
             % (
                 usd_html(art_item["goal_usd"]),
                 format(art["distinct_slots"], ",d"),
                 format(art["division"]["naive_per_slot_usd"], ",d"),
-                esc(art["division"]["hypothesis"]),
             )
         )
+        breakdown = art.get("commission_breakdown") or {}
+        if breakdown.get("points"):
+            w('\t\t\t<ul class="slots">')
+            for pt in breakdown["points"]:
+                w("\t\t\t\t<li><b>%s</b> &mdash; %s</li>" % (esc(pt["item"]), esc(pt["note"])))
+            w("\t\t\t</ul>")
+            w(
+                "\t\t\t<p>Paid <strong>hourly or by session</strong> rather than "
+                "per output, which is how illustration is actually bought and is "
+                "also the only way the briefing hours get paid for at all.</p>"
+            )
+            if breakdown.get("_no_total"):
+                w('\t\t\t<p class="note">%s</p>' % esc(breakdown["_no_total"]))
         w('\t\t\t<p class="note">%s</p>' % esc(art["division"]["_hypothesis_status"]))
     w("\t\t</section>")
     w("")
@@ -860,13 +1195,102 @@ def fmt_html(b):
         "money <em>would</em> pay for if the round closes above the minimum; the "
         "conditional tense throughout is not hedging, it is accuracy.</p>"
     )
+    w("\t\t</section>")
+    w("")
+
+    # -- the macOS build ----------------------------------------------------
+    #
+    # A disclosed defect in the thing being funded, and the plan is rendered as
+    # steps because a defect named without a route out of it is just a warning.
+    if mac:
+        w('\t\t<section class="panel">')
+        w("\t\t\t<h2>The macOS build is not signed, and here is the plan</h2>")
+        w(
+            "\t\t\t<p>The macOS build is <strong>not codesigned and not "
+            "notarised</strong>%s. Modern macOS refuses an unsigned, "
+            "unnotarised application by default, so a reader who downloads it "
+            "on a Mac today hits that wall. The README carries a workaround, "
+            "and a workaround is not the same as it working.</p>"
+            % (
+                (
+                    ", and the build has never been verified to run at all"
+                    if not mac.get("codesigned") and not mac.get("notarised")
+                    else ""
+                )
+            )
+        )
+        if mac.get("plan"):
+            w("\t\t\t<p>The route out of it, in order:</p>")
+            w('\t\t\t<ul class="slots">')
+            for step in mac["plan"]:
+                w("\t\t\t\t<li>%s</li>" % esc(step))
+            w("\t\t\t</ul>")
+        if mac.get("apple_developer_program_usd_per_year"):
+            w(
+                "\t\t\t<p>The enrolment that unlocks all of it costs <strong>%s a "
+                "year</strong>, and notarisation itself is free once enrolled.</p>"
+                % usd_html(mac["apple_developer_program_usd_per_year"])
+            )
+        if mac.get("_not_in_the_budget"):
+            w('\t\t\t<p class="note">%s</p>' % esc(mac["_not_in_the_budget"]))
+        w("\t\t</section>")
+        w("")
+
+    # -- if it does not fund ------------------------------------------------
+    #
+    # RULED 2026-08-24: the previous ending -- "that is the honest version, I'd
+    # rather say it than manufacture an emergency" -- is deleted, not softened.
+    # Pip: "I don't like this phrasing." What follows is what he replaced it
+    # with, plus his superseding velocity estimate, multiplied out here rather
+    # than asserted as a slip in months.
+    w('\t\t<section class="panel">')
+    w("\t\t\t<h2>If it does not fund</h2>")
     w(
-        "\t\t\t<p>If it does not fund, the pledges return, nobody loses anything, "
-        "and I keep going at the rate I have been going at. The game does not "
-        "stop; it stays a thing done in the gaps, the dataset stays a thing "
-        "maintained in the gaps, and somebody other than me does not get to draw "
-        "it. That is a real outcome and not a catastrophic one, and I would "
-        "rather say so than manufacture an emergency.</p>"
+        "\t\t\t<p>Then the pledges return and nobody loses anything. <strong>The "
+        "game does not stop.</strong> It stays a thing done in the gaps. The "
+        "dataset stays a thing maintained in the gaps, and somebody other than "
+        "me does not get to draw it.</p>"
+    )
+    if proj:
+        u = b["if_unfunded"]
+        w(
+            "\t\t\t<p>What that costs, estimated by me rather than measured: my "
+            "main job takes about %d%% of my attention, with a second job and "
+            "other projects at home on top of it, and I am not planning to buy "
+            "the difference out of my work-life balance. The time available for "
+            "this drops <strong>%d to %d%% against the current rate, for about "
+            "%s months</strong>.</p>"
+            % (
+                u["other_work_attention_share_pct"],
+                u["velocity_drop_low_pct"],
+                u["velocity_drop_high_pct"],
+                words(u["period_months"]),
+            )
+        )
+        w(
+            "\t\t\t<p>Multiplied out, that is what those %s months produce: "
+            "<strong>about %s to %s months of work at the current rate</strong>, "
+            "so roughly <strong>%s to %s months of progress does not happen</strong>. "
+            "That is a projection and not a second estimate laid on top of the "
+            "first: it is the percentage above times the period above, and "
+            "nothing else.</p>"
+            % (
+                words(proj["months"]),
+                "%g" % proj["kept_low_months"],
+                "%g" % proj["kept_high_months"],
+                "%g" % proj["lost_low_months"],
+                "%g" % proj["lost_high_months"],
+            )
+        )
+        # u["_supersedes"] is deliberately NOT rendered. It is an instruction to
+        # whoever writes the copy -- the 4 August six-month slip is withdrawn --
+        # and a page that narrates its own retracted estimates is worse copy,
+        # not more honest copy. Same treatment known_gaps["handling"] gets.
+    w(
+        "\t\t\t<p><strong>What the funding buys is not survival. It is speed and "
+        "other people&rsquo;s hands.</strong> At the minimum I can justify a day "
+        "a week on this for a year instead of stealing the hours. Above it, the "
+        "parts I am worst at stop being the parts I do.</p>"
     )
     w("\t\t</section>")
     w("")
@@ -1055,7 +1479,7 @@ CSS = """\t\t:root {
 \t\t.mark { display: block; margin-bottom: 0.25rem; }
 \t\t.m-measured { color: var(--accent-secondary); }
 \t\t.m-own-labour { color: var(--text-primary); }
-\t\t.m-needs-quote, .m-needs-definition { color: var(--accent-primary); }
+\t\t.m-needs-quote, .m-needs-definition, .m-needs-pip { color: var(--accent-primary); }
 
 \t\t.cta { text-align: center; }
 \t\t.cta p { max-width: none; }
@@ -1158,6 +1582,17 @@ def main():
                 usd(b["published"]["minimum_usd"] - tmin),
             )
         )
+        flags = pip_flags(b)
+        if flags:
+            # Not a failure. The arithmetic is sound WITH these outstanding;
+            # what they block is the public render, which refuses separately.
+            print(
+                "NEEDS PIP: %d line item%s carrying a question only he can "
+                "answer. --check passes; --format html will not."
+                % (len(flags), "" if len(flags) == 1 else "s")
+            )
+            for label, why in flags:
+                print("  - %s: %s" % (label, why))
         print("Constraints carried (not machine-checkable, honour them):")
         for c in b["constraints"]:
             print("  - %s" % c)
