@@ -439,6 +439,128 @@ one-line string sort called v0.9.0 "latest" from November onward because
 
 ---
 
+## `build-status.json` -- the contract for "this platform is missing"
+
+Added 2026-08-24, after **v0.14.3 published with no macOS asset**. The macOS
+upload step carries `if-no-files-found: warn`, which is the correct #1071
+behaviour (Windows and Linux publishing outranks an all-or-nothing gate), but it
+warned INTO THE VOID: the job went green, nothing was filed, and the feed still
+advertised a macOS URL that 404s. Every release from v0.13.1 to v0.14.2 had
+shipped a mac asset, so nothing downstream had ever had to describe an absent
+platform.
+
+The `platform-build-status` job in `.github/workflows/enhanced-release.yml` now
+checks the **downloaded files**, not the upload step's verdict (that verdict is
+evaluated once and readable by nothing afterwards), and writes
+`build-status.json` into the `release-feeds` artefact -- so it is attached to the
+GitHub Release AND deployed with the rest of `public/releases/`.
+
+Shape (`schema: "pdoom.build_status/1.0"`), trimmed:
+
+```json
+{
+  "schema": "pdoom.build_status/1.0",
+  "version": "v0.14.3",
+  "all_present": false,
+  "missing_platforms": ["macos"],
+  "platforms": {
+    "windows": { "available": true,  "tracking_issue": null },
+    "macos": {
+      "label": "macOS",
+      "required": false,
+      "available": false,
+      "missing_assets": ["PDoom-macOS-v0.14.3.zip", "PDoom.app.zip"],
+      "user_message": "The macOS build for v0.14.3 did not complete, ...",
+      "tracking_issue": {
+        "number": 1234,
+        "url": "https://github.com/PipFoweraker/pdoom1/issues/1234",
+        "labels": ["build-missing", "platform:macos"],
+        "state": "open"
+      }
+    }
+  }
+}
+```
+
+What the website should do with it: when `platforms.<key>.available` is false,
+render "build coming" linked to `tracking_issue.url` (and optionally
+`user_message` verbatim) **instead of** a download button -- never the download
+URL, and never a silent fallback to the previous release's asset. When
+`available` is true, `tracking_issue` is `null` and the normal button applies.
+A platform is `available` only if BOTH its versioned zip and its unversioned
+alias exist and clear a 1 MB floor; half a platform is not a platform (#1068).
+
+The issue is **rolling, one per platform**, found by the label pair
+`build-missing` + `platform:<key>`: re-used and updated on every affected
+release rather than re-opened, and **closed automatically** when that platform
+builds again -- so the site stops saying "coming" the moment it is not.
+
+Adoption is by LABEL, not by author, so an issue a human filed by hand is
+picked up rather than duplicated -- issue #1309 (the v0.14.3 macOS gap) is the
+worked example. Two things a human wrote are never overwritten: prose outside
+the managed-block markers, and a **hand-written title** (only a title this
+script generated, recognisable by its `[build-missing]` prefix, is refreshed to
+name the newest affected version). A human title may therefore name an older
+version than the managed block does. The block, the per-release comments and
+`build-status.json` all carry the current version, so nothing a consumer reads
+goes stale -- do not "fix" this by making the robot win.
+
+### Known consumers -- who breaks if you rename a field
+
+Write this down every time the schema changes. **A contract with no named
+consumer is how a field gets renamed safely-looking.**
+
+| Consumer | Reads | Maps it to |
+|---|---|---|
+| `pdoom1-website` -- `update-version-info.py` (PR #363) | `platforms.<key>.available`, `platforms.<key>.tracking_issue` from the release's `build-status.json` | `version.json` -> `latest_release.platforms` and `latest_release.platform_tracking` |
+
+The name difference is deliberate and agreed with the website seat, not drift:
+**the producer stays authoritative and keeps `tracking_issue`; the consumer
+keeps its own shape and does the mapping on its side.** Nothing in this repo
+emits `platform_tracking`, and nothing should start -- if you go looking for
+that key here, you are on the website's side of the boundary.
+
+### Absence semantics -- ABSENT MEANS UNKNOWN, NOT "EVERYTHING BUILT"
+
+This is the part that rots, so it is a rule, not a note.
+
+**No release published before this landed has a `build-status.json` at all.**
+A consumer that treats a missing file as "all platforms fine" would report
+every historical release as fully built -- including v0.14.3, which is the exact
+release that has no macOS asset. That is the original defect wearing a new hat:
+a value meaning *I could not tell* rendered as a value meaning *fine*.
+
+Required consumer behaviour:
+
+- **file absent** -> platform availability is **UNKNOWN** for that release.
+  Fall back to whatever the site did before (its own asset probing, or the
+  normal buttons), and do not render a "build coming" link, an availability
+  claim, or a green tick sourced from this file. Absence is not evidence.
+- **file present but `schema` unrecognised** -> also UNKNOWN. Do not guess the
+  meaning from the shape.
+- **file present, `schema` recognised** -> use it; it is authoritative for that
+  release.
+
+The top-level **`schema`** key exists precisely so a consumer branches on a
+declared version rather than sniffing for keys. It reads
+`"pdoom.build_status/1.0"` today. Additive fields keep `1.0`; anything that
+changes the meaning of an existing field bumps the major, and this table is
+where you go to find out who you just broke.
+
+Loud but not blocking, and the split is the point:
+
+- a missing best-effort build is not an error. It is a warning annotation, a job
+  summary table, a JSON field and a labelled issue. Windows and Linux publish.
+  The run still reds afterwards through `verify-release-urls`' alias check,
+  which runs AFTER publication on purpose.
+- a failure of the **reporter** IS an error and reds its job, because an
+  unfiled failure is invisible. On the v0.14.3 tag `pre-release-checks.yml`
+  403'd with "Resource not accessible by integration" and filed nothing -- the
+  fix was the missing `permissions: issues: write` block, now present with a
+  comment explaining why it cannot be trimmed.
+
+---
+
 ## What this sheet does not cover
 
 - **Any claim about a macOS or Linux build actually running.** No such proof
