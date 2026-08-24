@@ -13,7 +13,7 @@ Horizon: **2026-08-09** (the prose scan reports dates at or after this; roll it
 forward deliberately in `COMMITMENTS.md`, never automatically -- a clock-reading
 generator goes stale overnight and trains people to ignore the check).
 
-**53 declared, 4 release-train, 198 UNPARSED, 0 malformed.**
+**53 declared, 4 release-train, 202 UNPARSED, 0 malformed.**
 
 ## Declared commitments
 
@@ -415,6 +415,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-23 | `tools/check_ladder_bump.py` | 38 | RULING: 2026-08-23 -- ladder debt is paid when it is incurred, not deferred to build time, so a fresh epoch never inherits a forked board key -- flavo |
 | 2026-08-23 | `tools/check_ladder_bump.py` | 40 | RULING: 2026-08-23 -- ladder debt is DECLARED when incurred and PAID at the release that ships it; deferring is legal, forgetting is not, and the epoc |
 | 2026-08-23 | `tools/check_ladder_bump.py` | 40 | RULING: 2026-08-23 -- ladder debt is DECLARED when incurred and PAID at the release that ships it; deferring is legal, forgetting is not, and the epoc |
+| 2026-08-23 | `tools/check_patch_notes.py` | 24 | value meaning "fine" (Pip's ruling, 2026-08-23). |
 | 2026-08-23 | `tools/check_release_ledger.py` | 30 | This is the ruled ``manufactured confidence`` shape (Pip, 2026-08-23 16:42): |
 | 2026-08-23 | `tools/check_release_ledger.py` | 53 | question it could not ask. That is the 2026-08-23 ruling, applied to the tool |
 | 2026-08-23 | `tools/check_release_ledger.py` | 386 | "to 0.14.3 at 07:47 on 2026-08-23 with the seed still reading " |
@@ -457,6 +458,12 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-24 | `pdoom1#808` | 0 | Reflective review (on/after 2026-08-24): release/league cycle nomenclature + cadence |
 | 2026-08-24 | `pdoom1#811` | 0 | Workshop 3 (mechanics) -- Mon 07-27 W-3a / Tue 07-28 build / Wed 07-29 W-3b-W-4: crisp parts, brutal decisions |
 | 2026-08-24 | `scripts/check_no_emoji.py` | 28 | WHY --self-test EXISTS (added 2026-08-24, issue #1265): |
+| 2026-08-24 | `scripts/generate_release_manifest.py` | 177 | This was the THIRD copy of the same defect (2026-08-24): the excerpt reached a |
+| 2026-08-24 | `scripts/generate_release_metadata.py` | 38 | # before 2026-08-24 and call them what they are. Never emitted again. |
+| 2026-08-24 | `scripts/generate_release_metadata.py` | 116 | Used by --check to name the defect in an index generated before 2026-08-24, |
+| 2026-08-24 | `scripts/generate_release_metadata.py` | 179 | WHY (2026-08-24). This used to return |
+| 2026-08-24 | `scripts/generate_release_metadata.py` | 352 | # "<description>Release v0.13.1" for 14 releases before 2026-08-24. |
+| 2026-08-24 | `scripts/generate_release_metadata.py` | 493 | # Inspect the CHANGELOG FIELD, not just the tag list. Until 2026-08-24 this |
 | 2026-08-24 | `tools/check_balance_keys.py` | 76 | WHY --self-test EXISTS (added 2026-08-24, issue #1265) |
 | 2026-08-24 | `tools/check_environments.py` | 6 | THE DEFECT CLASS (found 2026-08-24 across two repos in this estate) |
 | 2026-08-24 | `tools/check_environments.py` | 44 | built to prevent it on 2026-08-24 alone. |
@@ -464,6 +471,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-24 | `tools/check_export_icons.py` | 4 | WHY THIS EXISTS (v0.14.3, 2026-08-24) |
 | 2026-08-24 | `tools/check_guard_parity.py` | 47 | RULING: 2026-08-24 -- a guard wired only to pre-commit is not installed; every local hook must either run in a workflow or carry a declared waiver nam |
 | 2026-08-24 | `tools/check_guard_parity.py` | 95 | # the files a commit touches, so the untouched tree has drifted: measured 2026-08-24 over |
+| 2026-08-24 | `tools/check_patch_notes.py` | 31 | STATE AT TIME OF WRITING (2026-08-24): 0.14.3 IS present, so this is latent. That is |
 | 2026-08-24 | `tools/check_release_ledger.py` | 8 | On 2026-08-24 the repo held ``version.txt = 0.14.3``, a proven build on disk, |
 | 2026-08-24 | `tools/check_release_ledger.py` | 34 | RULING: 2026-08-24 -- every value version.txt has ever held must have a matching git tag, or a declared exemption; a bump with no tag is a defect the  |
 | 2026-08-24 | `tools/check_release_ledger.py` | 60 | 2026-08-24: *"do not build an atom store unless a named party will rule it"*), |

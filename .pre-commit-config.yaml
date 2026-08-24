@@ -305,6 +305,21 @@ repos:
         files: '(version\.txt|ladder_version\.txt|godot/autoload/game_config\.gd|godot/project\.godot|godot/export_presets\.cfg|godot/scenes/welcome\.tscn)$'
         pass_filenames: false
 
+      # The OTHER half of the version chain. version-sync-check above proves
+      # version.txt reached game_config.gd's CURRENT_VERSION; this proves the version
+      # the modal then looks up actually exists in the data it looks it up in.
+      # Without it, a release bump that forgets patch_notes.json tells every player
+      # "No detailed patch notes available for this version" -- a missing entry
+      # rendered as a quiet release. The same assertion exists in
+      # godot/tests/unit/test_patch_notes.gd, but that tier needs a Godot binary and
+      # an import pass, so nothing was checking it at commit time.
+      - id: patch-notes-cover-shipped-version
+        name: patch_notes.json has an entry for version.txt's version
+        entry: python tools/check_patch_notes.py --quiet
+        language: system
+        files: '^(version\.txt|godot/data/patch_notes\.json|tools/check_patch_notes\.py)$'
+        pass_filenames: false
+
       # Release feed index is GENERATED, never hand-maintained (#1008). Same anti-rot
       # pattern as the DQ index. Scoped to the feed itself, so it only fires when someone
       # touches those files -- a full-tree gate would block every commit after a tag until

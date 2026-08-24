@@ -33,6 +33,31 @@ from xml.dom import minidom
 # Matches vMAJOR.MINOR.PATCH with an optional suffix, e.g. v0.13.1 or v0.2.12-hotfix.
 _TAG_RE = re.compile(r"^v(\d+)\.(\d+)\.(\d+)(?:[-.](.+))?$")
 
+# The two placeholder strings this generator used to emit when it could not find a
+# CHANGELOG section. Kept ONLY so --check can recognise them in an index generated
+# before 2026-08-24 and call them what they are. Never emitted again.
+_RETIRED_PLACEHOLDERS = (
+    "See CHANGELOG.md for details.",
+    "No changelog available.",
+)
+
+# What the feed says INSTEAD of a fabricated release note. Deliberately bracketed and
+# machine-obvious: it states the absence rather than papering over it, so a reader of
+# the RSS feed can tell "nobody wrote notes" from "this release was quiet".
+_ABSENT_MARKER = "[no CHANGELOG.md section for {version} -- release notes were never written]"
+
+# Releases that shipped before the section-per-release convention was enforced, and
+# which will therefore never grow a CHANGELOG section retroactively. This is a
+# RATCHET in the same spirit as tools/balance_unread_ratchet.txt: entries may be
+# REMOVED (by writing the missing section), never added for a new release. A tag that
+# is missing a section and is NOT listed here fails the generator and --check.
+#
+# It is a pin rather than a hard failure because 15 of 25 tags were already missing
+# sections when this gate was written -- a gate that is red on arrival gets disabled
+# inside a week (the lesson already recorded against action-taxonomy-index-check).
+# Pinned gaps are still PRINTED on every run, so they cannot go quiet.
+_CHANGELOG_GAP_PIN = "scripts/changelog_gap_pin.txt"
+
 
 def _ascii_safe(text: str) -> str:
     """Strip non-ASCII from generated feed text.
@@ -68,6 +93,34 @@ def _semver_sort_key(tag: str):
     return (int(major), int(minor), int(patch), 0 if suffix else 1, suffix or "")
 
 
+def load_gap_pin(repo_root: Path) -> List[str]:
+    """Read the pinned list of tags known to have no CHANGELOG section.
+
+    Absent file = empty pin = every gap is fatal. That is the safe direction: a
+    deleted pin makes the gate stricter, never quieter.
+    """
+    pin_path = repo_root / _CHANGELOG_GAP_PIN
+    if not pin_path.exists():
+        return []
+    pinned = []
+    for line in pin_path.read_text(encoding="utf-8").splitlines():
+        entry = line.split("#", 1)[0].strip()
+        if entry:
+            pinned.append(entry)
+    return pinned
+
+
+def is_placeholder_changelog(text: Optional[str]) -> bool:
+    """True if `text` is one of the retired manufactured-confidence placeholders.
+
+    Used by --check to name the defect in an index generated before 2026-08-24,
+    rather than silently accepting a non-empty string as a real release note.
+    """
+    if not text:
+        return False
+    return any(marker in text for marker in _RETIRED_PLACEHOLDERS)
+
+
 class ReleaseMetadataGenerator:
     """Generates metadata files for game releases."""
 
@@ -75,6 +128,9 @@ class ReleaseMetadataGenerator:
         self.repo_root = repo_root
         self.output_dir = repo_root / "public" / "releases"
         self.output_dir.mkdir(parents=True, exist_ok=True)
+        # Tags found with no CHANGELOG section and no entry in the gap pin. Populated
+        # by generate_all_metadata(); main() exits nonzero on a non-empty list.
+        self.unpinned_gaps: List[str] = []
 
     def get_git_tag_info(self, tag: str) -> Optional[Dict]:
         """Extract information from a git tag."""
@@ -113,12 +169,33 @@ class ReleaseMetadataGenerator:
         except subprocess.CalledProcessError:
             return None
 
-    def extract_changelog_for_version(self, version: str) -> str:
-        """Extract changelog section for a specific version."""
+    def extract_changelog_for_version(self, version: str) -> Optional[str]:
+        """Return the CHANGELOG section for `version`, or None if there is not one.
+
+        None is a SENTINEL meaning "I could not find a section", and callers MUST
+        treat it as fatal (see `generate_all_metadata` and `main`). This function
+        deliberately never returns prose.
+
+        WHY (2026-08-24). This used to return
+        `f"Release {version}\\n\\nSee CHANGELOG.md for details."` when the section was
+        absent, and `"...No changelog available."` when CHANGELOG.md itself was
+        missing. Both strings land in the `changelog` field of
+        public/releases/<tag>.json AND in the <description> of every item in
+        public/releases/releases.rss -- deployed, player-visible files. A reader
+        cannot tell that text apart from a real, terse release note, so "the
+        generator found nothing" rendered as "this release had nothing to say".
+        Measured at the time: `grep -c "0\\.14\\.2" CHANGELOG.md` returned 0, and 14
+        of the 23 entries in the tracked index carried the placeholder, including the
+        live `<description>Release v0.13.1` in releases.rss.
+
+        A value meaning "I could not tell" must not render as a value meaning "fine".
+        The one legitimate use for prose here would be to state the ABSENCE, and that
+        belongs in the feed writer (which marks it explicitly), not here.
+        """
         changelog_file = self.repo_root / "CHANGELOG.md"
 
         if not changelog_file.exists():
-            return f"Release {version}\n\nNo changelog available."
+            return None
 
         with open(changelog_file, encoding="utf-8") as f:
             content = f.read()
@@ -147,7 +224,7 @@ class ReleaseMetadataGenerator:
         changelog_text = "\n".join(changelog_lines).strip()
 
         if not changelog_text:
-            return f"Release {version}\n\nSee CHANGELOG.md for details."
+            return None
 
         return changelog_text
 
@@ -171,7 +248,12 @@ class ReleaseMetadataGenerator:
             "release_date": tag_info["date"],
             "commit_hash": tag_info["commit"],
             "is_prerelease": is_prerelease,
-            "changelog": _ascii_safe(changelog),
+            # null, not a sentence. A consumer that renders this field gets nothing to
+            # render, which is the truth, instead of a sentence that reads like a
+            # release note. `changelog_status` is the greppable form of the same fact
+            # and is what --check inspects.
+            "changelog": _ascii_safe(changelog) if changelog is not None else None,
+            "changelog_status": "present" if changelog is not None else "missing",
             # Asset names must match what scripts/build_all_platforms.py actually
             # produces and enhanced-release.yml actually uploads (build-windows/
             # **/*.zip, build-linux/**/*.zip, build-mac/**/*.zip) -- NOT a guessed
@@ -264,11 +346,18 @@ class ReleaseMetadataGenerator:
             ElementTree.SubElement(item, "link").text = (
                 f"https://github.com/PipFoweraker/pdoom1/releases/tag/{release['version']}"
             )
-            ElementTree.SubElement(item, "description").text = (
-                release["changelog"][:500] + "..."
-                if len(release["changelog"]) > 500
-                else release["changelog"]
-            )
+            # A missing changelog gets an explicit statement of ABSENCE, never a
+            # stand-in release note. RSS <description> is the most player-visible
+            # surface this generator writes -- the live feed carried
+            # "<description>Release v0.13.1" for 14 releases before 2026-08-24.
+            changelog = release.get("changelog")
+            if changelog is None:
+                description = _ABSENT_MARKER.format(version=release["version"])
+            elif len(changelog) > 500:
+                description = changelog[:500] + "..."
+            else:
+                description = changelog
+            ElementTree.SubElement(item, "description").text = description
             ElementTree.SubElement(item, "pubDate").text = datetime.datetime.fromisoformat(
                 release["release_date"]
             ).strftime("%a, %d %b %Y %H:%M:%S %z")
@@ -330,10 +419,33 @@ class ReleaseMetadataGenerator:
             f.write(rss_content)
         print(f"[+] Generated RSS feed: {rss_file}")
 
+        # Report the changelog gaps BEFORE the success banner, and never let a gap
+        # pass silently. Pinned gaps are printed too: a pin that goes quiet is just a
+        # slower way of losing the information.
+        pinned = load_gap_pin(self.repo_root)
+        gaps = [r["version"] for r in releases if r["changelog_status"] == "missing"]
+        self.unpinned_gaps = [tag for tag in gaps if tag not in pinned]
+        for tag in gaps:
+            state = "pinned" if tag in pinned else "UNPINNED"
+            print(f"[!] no CHANGELOG.md section for {tag} ({state})")
+
         print(f"\n[SUCCESS] Generated metadata for {len(releases)} release(s)")
         print(f"[*] Output directory: {self.output_dir}")
         print(f"[*] Latest version: {index_data['latest_version']}")
         print(f"[*] Latest stable: {index_data['latest_stable']}")
+
+        if self.unpinned_gaps:
+            print(
+                "\n[FATAL] These releases have no CHANGELOG.md section, so the feed has "
+                "no release notes to publish for them:"
+            )
+            for tag in self.unpinned_gaps:
+                print(f"  - {tag}")
+            print(
+                f"[FATAL] Write a '## [<version>]' section in CHANGELOG.md, or add the tag to "
+                f"{_CHANGELOG_GAP_PIN} if it genuinely predates the convention."
+            )
+            print("[FATAL] The generator will NOT invent release notes to fill the gap.")
 
         return release_files
 
@@ -377,6 +489,36 @@ def _run_check(generator: "ReleaseMetadataGenerator", repo_root: Path) -> int:
         problems.append(
             f"latest_version is {tracked.get('latest_version')!r}, expected {expected_latest!r}"
         )
+
+    # Inspect the CHANGELOG FIELD, not just the tag list. Until 2026-08-24 this
+    # function compared which releases were listed and which was latest, and never
+    # looked at the one field a player actually reads. An index could therefore be
+    # "fresh" by every assertion here while every entry in it said
+    # "Release vX.Y.Z / See CHANGELOG.md for details." -- which is what shipped.
+    pinned = load_gap_pin(repo_root)
+    for release in tracked.get("releases", []):
+        version = str(release.get("version", "?"))
+        changelog = release.get("changelog")
+        if is_placeholder_changelog(changelog):
+            problems.append(
+                f"{version}: changelog is a retired placeholder ({changelog!r:.60}...) -- "
+                f"regenerate; the generator no longer emits these"
+            )
+        elif changelog is None or not str(changelog).strip():
+            if version not in pinned:
+                problems.append(
+                    f"{version}: no changelog and not listed in {_CHANGELOG_GAP_PIN} -- "
+                    f"write a '## [{version.lstrip('v')}]' section in CHANGELOG.md"
+                )
+        elif "changelog_status" in release and release["changelog_status"] != "present":
+            # Only fires when the field EXISTS and disagrees with the text. An index
+            # generated before the field was added simply omits it, and complaining
+            # about that on every legacy entry would bury the placeholder findings
+            # under 9 lines of noise -- measured, that is exactly what it did.
+            problems.append(
+                f"{version}: has changelog text but changelog_status is "
+                f"{release['changelog_status']!r} -- regenerate"
+            )
 
     if problems:
         print("[check] Release index is stale:")
@@ -435,6 +577,12 @@ def main():
             print("WARNING  No release tags found!")
     else:
         generated_files = generator.generate_all_metadata(specific_version=args.version)
+
+    # A missing changelog section is FATAL, not a shrug. The files are still written
+    # (so the feed stays regenerable and the gap is visible in them), but the exit
+    # code refuses to call the run a success.
+    if generator.unpinned_gaps:
+        sys.exit(1)
 
     if args.verify:
         sys.path.insert(0, str(Path(__file__).parent))
