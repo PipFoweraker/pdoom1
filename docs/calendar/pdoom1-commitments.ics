@@ -4510,12 +4510,11 @@ DTEND;VALUE=DATE:20260825
 SUMMARY:[UNPARSED] needs a declaration -- HANDOVER_2026-08-24_pdoom1_seat.
  md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/HANDOVER_2026-08-
- 24_pdoom1_seat.md:267. 1 line(s) in docs/HANDOVER_2026-08-24_pdoom1_seat.
- md mention this date and no COMMITMENT: declaration accounts for it. Eith
- er add a declaration or the date is incidental. First line: > wrote witho
- ut the user's authorisation.** *Window:* ~2 hours on 2026-08-24. -- Gener
- ated from tracked sources by scripts/generate_commitment_calendar.py\; re
- generate to update.
+ 24_pdoom1_seat.md:29. 4 line(s) in docs/HANDOVER_2026-08-24_pdoom1_seat.m
+ d mention this date and no COMMITMENT: declaration accounts for it. Eithe
+ r add a declaration or the date is incidental. First line: | Merged 2026-
+ 08-24 | **19** | -- Generated from tracked sources by scripts/generate_co
+ mmitment_calendar.py\; regenerate to update.
 CATEGORIES:UNPARSED
 TRANSP:TRANSPARENT
 SEQUENCE:0

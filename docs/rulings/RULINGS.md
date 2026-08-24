@@ -216,8 +216,8 @@ is not.
 - `docs/GLOSSARY.md:278` -- Naming (ruled 2026-07-29, Pip): gates are written name-first with a 1-6
 - `docs/GLOSSARY.md:477` -- ## Observed inconsistency (flagged, not ruled)
 - `docs/HANDOVER_2026-08-06_EVENING.md:43` -- He ruled on it Tuesday and it was never built. B1 and B2 refer to the proposals in
-- `docs/HANDOVER_2026-08-24_pdoom1_seat.md:140` -- immediately with an offer to revert; he ruled keep. The changes were verified
-- `docs/HANDOVER_2026-08-24_pdoom1_seat.md:44` -- ## 2. What was ruled today
+- `docs/HANDOVER_2026-08-24_pdoom1_seat.md:141` -- immediately with an offer to revert; he ruled keep. The changes were verified
+- `docs/HANDOVER_2026-08-24_pdoom1_seat.md:45` -- ## 2. What was ruled today
 - `docs/ISSUE_MINING_2026-08-06.md:191` -- having ruled. W3 ruled. Any survivor is now ordinary work with a known spec,
 - `docs/ISSUE_MINING_2026-08-06.md:350` -- overlay and called it *"kind of cool"*, then correctly ruled it out of scope
 - `docs/ISSUE_MINING_2026-08-06.md:357` -- UI work; Pip ruled decomposition deferred until the game is out. These are
