@@ -13,7 +13,8 @@
     "measured": "backed by invoices or logged usage this seat can produce",
     "own_labour": "Pip's own time at his own stated rate; not a quote, and not meant to be",
     "needs_quote": "no rate has been obtained and none is invented here",
-    "needs_definition": "cannot be priced because the thing itself is not yet decided"
+    "needs_definition": "cannot be priced because the thing itself is not yet decided",
+    "needs_pip": "a decision only Pip can make; nothing is inferred here, and the public render refuses to emit while the flag stands"
   },
   "line_items": [
     {
@@ -47,19 +48,30 @@
     {
       "id": "time",
       "label": "Partial recovery of Pip's time",
-      "min_usd": 9000,
+      "min_usd": 5000,
       "goal_usd": 12000,
       "provenance": "own_labour",
-      "basis": "One focused day a week for twelve months. $9,000 prices the day near $170, well under what his operations and governance work commands. Deliberate, and better noticed than not.",
-      "settled_by": null
+      "basis": "One focused day a week for twelve months. The minimum-case figure was cut on 2026-08-24 -- Pip's ruling: he is less anxious about a holiday now that work money is coming in, and would rather pay more people more. What came off this line stays in the minimum column and is held on the line below. The rates block prices what each column buys per focused day; the minimum-case rate that falls out of this cut is below the junior developer range, which is a consequence of the ruling and not a second decision.",
+      "settled_by": null,
+      "needs_pip": "Pip ruled the AMOUNT, not the day count. Whether the minimum-case figure still buys one focused day a week at a much lower implied rate, or the same rate for fewer days, is not decided and is not decided here."
+    },
+    {
+      "id": "reallocation",
+      "label": "Minimum case: money moved off Pip's own draw, not yet assigned",
+      "min_usd": 4000,
+      "goal_usd": null,
+      "provenance": "needs_pip",
+      "basis": "CONSTRUCTED BY SUBTRACTION, and held rather than spread. When the minimum-case draw was cut on 2026-08-24 the published minimum did not move, so what came off Pip's line stays in the minimum column and pays somebody who is not Pip. His ruling names the DIRECTION -- would rather pay more people more, and treat the remainder as capital for the game -- but does not name the lines it lands on. Spreading it across them would be inventing an allocation he did not make, so it sits here where it can be seen.",
+      "settled_by": "Pip naming the lines. Community support and the music line are the candidates on the face of the ruling; neither was ruled.",
+      "needs_pip": "Which lines the minimum-case money goes to. The amount is his; the destination is not stated anywhere in the memos."
     },
     {
       "id": "developer",
       "label": "Part-time gameplay developer, ~6 months",
       "min_usd": null,
-      "goal_usd": 20000,
+      "goal_usd": 17000,
       "provenance": "needs_quote",
-      "basis": "No developer has been engaged and no rate agreed. $20,000 over six months is a placeholder written to size the ask.",
+      "basis": "No developer has been engaged and no rate agreed. This is a constructed figure written to size the ask, not a quote. It was cut on 2026-08-24 and the difference moved to community support, which Pip ruled up in the same breath: 'I actually feel more correct about those numbers.' Size it against the junior developer day rates in the rates block.",
       "settled_by": "Two or three actual rate conversations with people who would plausibly do the work."
     },
     {
@@ -73,13 +85,23 @@
       "see_also": "art_measurement"
     },
     {
+      "id": "musicians",
+      "label": "Music: session musicians, an editor and a mixer",
+      "min_usd": null,
+      "goal_usd": null,
+      "provenance": "needs_pip",
+      "basis": "PLACEHOLDER, DELIBERATELY NOT PRICED IN EITHER COLUMN. Pip's ruling 2026-08-24: four musicians at one session each, about $600 each, plus one editor and one mixer, with at least $3,000 going to artists. His own words about the total, recorded verbatim because they are the whole problem: \"four musos at one session each, that's $2400 US, also AU, don't just back convert that to Australia.\" NOTE, AND THE AMBIGUITY IS THE POINT: the same $2,400 is named as both US and AU in one sentence, so the currency of this line is unresolved. No conversion is chosen here, no figure is entered, and the goal column does NOT yet include this line, so the published goal is unchanged by it.",
+      "settled_by": "Pip saying which currency the $600 a session and the $2,400 total are in, and then which line inside the published goal the money comes out of. Both are open; the second does not become answerable until the first is.",
+      "needs_pip": "The currency. Pip flagged it himself, in his own words, and it is not being guessed on his behalf."
+    },
+    {
       "id": "community",
       "label": "Community support",
       "min_usd": null,
-      "goal_usd": 2000,
-      "provenance": "needs_definition",
-      "basis": "Chat and forum hosting at this size is close to free, so this line is either moderation time, events, or nothing. Undecided, and pricing it before deciding would be inventing a number.",
-      "settled_by": "Deciding what it is."
+      "goal_usd": 5000,
+      "provenance": "needs_quote",
+      "basis": "DEFINED 2026-08-24, having been undefined until then: moderation time, events, promotion of the game, comments, and finding things for the watch list. Chat and forum hosting at this size is close to free, so every dollar on this line is somebody's time rather than a bill. The figure is constructed, increased on 2026-08-24 by exactly the amount taken off the developer line.",
+      "settled_by": "A rate for the moderation and events hours, or a decision to pay it as an honorarium rather than by the hour."
     }
   ],
   "art_measurement": {
@@ -102,19 +124,49 @@
     "hero_kept": 19,
     "division": {
       "naive_per_slot_usd": 30,
-      "_naive_note": "$6,000 over 198 slots. Not a real commissioned-illustration rate, and the copy says so rather than pretending. The renderer recomputes this division and fails if it stops agreeing, so the figure cannot outlive the slot count.",
-      "hypothesis": "A style bible plus a directed pass over the ~53 hero and background slots, near $113 each, with the icon set regenerated against that direction rather than drawn by hand.",
-      "_hypothesis_status": "A hypothesis about what an illustrator would say. Not a plan anyone has agreed to. Precisely what a quote would settle."
+      "_naive_note": "The line divided by the slot count. This is the division the copy REJECTS, kept in the data because a rejected number has to stay checkable: the renderer recomputes it and fails if it stops agreeing, so the figure cannot outlive the slot count. Pip, 2026-08-24: not a real rate for commissioned illustration. What replaces it is commission_breakdown, not another quotient.",
+      "hypothesis": "What replaces it is not a rate per output at all: briefing hours with the artists first, then sketches, compositional shots, a couple of small pieces at $50 or $100, a couple of poster or hero pieces, and one main illustrator image -- paid hourly or by session against a written brief.",
+      "_hypothesis_status": "A shape, not a plan. Nobody has been asked, no rate card has been obtained, and the totals are deliberately not built here. Precisely what a quote would settle."
     },
-    "remixed": 1
+    "remixed": 1,
+    "commission_breakdown": {
+      "_why": "Pip's ruling 2026-08-24: the per-slot division is not a real rate for commissioned illustration, so the line is described as the work it buys instead of as a quotient. Paid HOURLY OR BY SESSION, not per output.",
+      "_no_total": "No total is built from these points. The line is the line, the shape is this list, and nobody has been asked for a rate. Adding these up would manufacture the precision the ruling removed.",
+      "points": [
+        {
+          "item": "Design-briefing hours with the artists",
+          "note": "Paid time before anything is drawn: their workflow, their style, their portfolio, and how the work would fold into the repositories -- which needs their consent, asked for in that conversation and not assumed."
+        },
+        {
+          "item": "Concept sketches",
+          "note": "Exploratory, several per direction. The cheapest thing on the list and the one that decides the rest."
+        },
+        {
+          "item": "Compositional shots",
+          "note": "Layout and staging for the surfaces that set the tone."
+        },
+        {
+          "item": "A couple of small pieces",
+          "note": "Some slots are worth $50 or $100 and no more. Stated figures rather than derived ones, said in the same breath as the ruling that broke this line up."
+        },
+        {
+          "item": "A couple of poster or hero pieces",
+          "note": "Few, and where the money should concentrate."
+        },
+        {
+          "item": "One main image from the illustrator",
+          "note": "A single piece the project can be identified by."
+        }
+      ]
+    }
   },
   "known_gaps": [
     {
       "id": "five-hundred",
       "what": "The minimum-tier line items sum to $14,000 against a published minimum of $14,500.",
       "size_usd": 500,
-      "explanation": "Rounding from the evening the figure was set, not a hidden line item.",
-      "handling": "Name it. A reader who adds the column and finds it short with no acknowledgement concludes the table was reverse-engineered from the ask; one who finds it already flagged concludes the opposite.",
+      "explanation": "misc platform fees and admin, carried over from the rounding of the evening the figure was set, not a hidden line item",
+      "handling": "Name it, and name what it is for. A reader who adds the column and finds it short with no acknowledgement concludes the table was reverse-engineered from the ask; one who finds it already flagged concludes the opposite.",
       "_computed": "The renderer RECOMPUTES this gap from line_items and refuses to publish if the stated size disagrees. It cannot go stale."
     },
     {
@@ -128,8 +180,49 @@
   "constraints": [
     "NOBODY has been hired, commissioned, approached, quoted or engaged. Every figure is conditional. A single slip into past tense makes this a misrepresentation.",
     "The game is free and source-available and stays that way. A pledge funds the work, not a licence, and not early access.",
+    "Never write the phrase 'open source'. The licence is an INTERIM source-available licence, all rights reserved; an open-source licence for the engine is only planned. The renderer greps the emitted page for it.",
     "Do not type the raised total or days remaining. Link the page and let it resolve.",
     "Do not identify the project's first backer, by name OR by description, until he has been asked.",
     "p(Doom)1 is not finished. No copy may frame this as a launch, a 1.0, or a completed thing."
-  ]
+  ],
+  "rates": {
+    "_why": "Pip's ruling 2026-08-24: state the rates as derived facts, as data points rather than as prose, so it is visible that the day figures in this budget were CONSTRUCTED and not quoted. The renderer computes what each column prices a focused day at; no per-day figure is typed into this file.",
+    "_source": "Pip's own record of what he last billed, stated 2026-08-24. Not a client quote and not a market survey.",
+    "focused_days_per_year": 52,
+    "_focused_days_note": "One focused day a week for twelve months. The day count the time line has always been derived from.",
+    "commercial_day_low_usd": 700,
+    "commercial_day_high_usd": 1200,
+    "_commercial_note": "Operations and governance work. His last commercial rates.",
+    "for_profit_floor_usd": 1200,
+    "_floor_note": "He does not work below this in the for-profit sector.",
+    "junior_developer_day_low_usd": 450,
+    "junior_developer_day_high_usd": 650,
+    "_junior_note": "Junior developer day rates, carried for comparison against the developer line rather than as a quote for it.",
+    "_superseded": "An earlier draft anchored this section on a $9,000 minimum-case draw, which priced the day near $170. The 2026-08-24 ruling cut that draw, so the anchor is gone and the implied rates are recomputed from the line items."
+  },
+  "if_unfunded": {
+    "_supersedes": "The 4 August estimate that unfunded, the work 'slips by about six months'. WITHDRAWN by Pip on 2026-08-24. Do not republish it; it is superseded, not merely unconfirmed.",
+    "_source": "Pip's own estimate, 2026-08-24. Not measured, and the projection below is arithmetic on his percentages rather than a second estimate laid on top of the first.",
+    "other_work_attention_share_pct": 75,
+    "_attention_note": "Roughly three quarters of his attention goes to the main job, with some time on the second job and the other projects at home, and the work-life balance is not treated as optional.",
+    "velocity_drop_low_pct": 75,
+    "velocity_drop_high_pct": 80,
+    "period_months": 3,
+    "_period_note": "Against the CURRENT rate, which is itself unusually high and is not claimed to be sustainable."
+  },
+  "macos_signing": {
+    "_why": "Pip's ruling 2026-08-24: be explicit that the macOS build is not codesigned and not notarised, and say what the plan to get there is. A disclosed defect in the thing being funded.",
+    "codesigned": false,
+    "notarised": false,
+    "_evidence": "godot/export_presets.cfg carries codesign/identity empty and notarization/notarization 0; docs/release/CODE_SIGNING.md, 2026-08-23 -- 'The macOS build has never been verified to run at all (#1071)'. The README carries a workaround, and a workaround is not the same as it working.",
+    "apple_developer_program_usd_per_year": 99,
+    "plan": [
+      "Enrol in the Apple Developer Program as an INDIVIDUAL, not as an organisation. Individual enrolment skips the D-U-N-S number, which is the slow step and which drags in the unresolved question of which entity owns this.",
+      "Verify the macOS build actually boots. It has never been confirmed to run, so there is nothing worth notarising until it does.",
+      "Obtain the Developer ID certificate that enrolment unlocks; notarisation itself costs nothing once enrolled.",
+      "Sign and notarise from the existing tooling. tools/sign_release.py is already written and tested against its three states, so this is configuration rather than code.",
+      "Migrate to an organisation account later, once the entity question is settled with a lawyer. A deliberate acceptance of a later migration, recorded as such."
+    ],
+    "_not_in_the_budget": "The enrolment fee is not in the table and is not being asked for. It is named because it is a real defect in a thing people are being asked to fund, and because the cost is small enough that money is not what is blocking it -- validation lead time and the entity choice are."
+  }
 }

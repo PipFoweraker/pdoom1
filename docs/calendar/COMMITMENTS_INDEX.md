@@ -13,7 +13,7 @@ Horizon: **2026-08-09** (the prose scan reports dates at or after this; roll it
 forward deliberately in `COMMITMENTS.md`, never automatically -- a clock-reading
 generator goes stale overnight and trains people to ignore the check).
 
-**53 declared, 4 release-train, 156 UNPARSED, 0 malformed.**
+**53 declared, 4 release-train, 158 UNPARSED, 0 malformed.**
 
 ## Declared commitments
 
@@ -120,11 +120,11 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-10 | `tools/check_self_merge_eligibility.py` | 18 | 2026-08-10 and, until this file existed, they **promised eligibility and checked |
 | 2026-08-11 | `docs/GUARD_AUDIT_2026-08-19.md` | 7 | 2026-08-11 as *"a mechanism, not a document"*, appeared in **no** pre-commit hook, |
 | 2026-08-11 | `docs/rulings/RULINGS.md` | 120 | Rulings with no `mechanism:`. Pip's doctrine (2026-08-11): what forces a |
-| 2026-08-11 | `docs/rulings/RULINGS.md` | 360 | - `tools/assets/backfill_provenance.py:38` -- ORIGIN VOCABULARY -- five values, ruled by Pip 2026-08-11 |
-| 2026-08-11 | `docs/rulings/RULINGS.md` | 362 | - `tools/assets/backfill_provenance.py:558` -- # The five values ruled by Pip 2026-08-11, as a constant rather than a literal |
-| 2026-08-11 | `docs/rulings/RULINGS.md` | 367 | - `tools/assets/check_provenance.py:4` -- Ruled by Pip 2026-08-11: the six unattributable assets are KEPT and recorded as |
-| 2026-08-11 | `docs/rulings/RULINGS.md` | 368 | - `tools/assets/check_provenance.py:439` -- "_why": "Pinned unknown set. Ruled by Pip 2026-08-11: keep the " |
-| 2026-08-11 | `docs/rulings/RULINGS.md` | 371 | - `tools/assets/provenance_unknown_pin.json:2` -- "_why": "Pinned unknown set. Ruled by Pip 2026-08-11: keep the unattributable assets, record them ho |
+| 2026-08-11 | `docs/rulings/RULINGS.md` | 363 | - `tools/assets/backfill_provenance.py:38` -- ORIGIN VOCABULARY -- five values, ruled by Pip 2026-08-11 |
+| 2026-08-11 | `docs/rulings/RULINGS.md` | 365 | - `tools/assets/backfill_provenance.py:558` -- # The five values ruled by Pip 2026-08-11, as a constant rather than a literal |
+| 2026-08-11 | `docs/rulings/RULINGS.md` | 370 | - `tools/assets/check_provenance.py:4` -- Ruled by Pip 2026-08-11: the six unattributable assets are KEPT and recorded as |
+| 2026-08-11 | `docs/rulings/RULINGS.md` | 371 | - `tools/assets/check_provenance.py:439` -- "_why": "Pinned unknown set. Ruled by Pip 2026-08-11: keep the " |
+| 2026-08-11 | `docs/rulings/RULINGS.md` | 374 | - `tools/assets/provenance_unknown_pin.json:2` -- "_why": "Pinned unknown set. Ruled by Pip 2026-08-11: keep the unattributable assets, record them ho |
 | 2026-08-11 | `docs/rulings/RULINGS_CONVENTION.md` | 87 | RULING: 2026-08-11 -- keep unattributable assets and record them as unknown -- flavour: art-provenance -- mechanism: tools/assets/check_provenance.py |
 | 2026-08-11 | `docs/rulings/RULINGS_CONVENTION.md` | 100 | Pip's doctrine, ruled 2026-08-11 and embodied in `check_provenance.py`: *what |
 | 2026-08-11 | `docs/rulings/RULINGS_CONVENTION.md` | 176 | {"source": "tools/assets/check_provenance.py:4", "text": "Ruled by Pip 2026-08-11: the six unattributable assets are KEPT ..."} |
@@ -141,7 +141,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-11 | `tools/assets/backfill_provenance.py` | 558 | # The five values ruled by Pip 2026-08-11, as a constant rather than a literal |
 | 2026-08-11 | `tools/assets/check_provenance.py` | 4 | Ruled by Pip 2026-08-11: the six unattributable assets are KEPT and recorded as |
 | 2026-08-11 | `tools/assets/check_provenance.py` | 439 | "_why": "Pinned unknown set. Ruled by Pip 2026-08-11: keep the " |
-| 2026-08-12 | `docs/rulings/RULINGS.md` | 316 | - `godot/scripts/core/capacity.gd:5` -- ## Ruled 2026-08-12 (coordination/DESIGN_2026-08-12_interrupt-resolution-variants.md, |
+| 2026-08-12 | `docs/rulings/RULINGS.md` | 319 | - `godot/scripts/core/capacity.gd:5` -- ## Ruled 2026-08-12 (coordination/DESIGN_2026-08-12_interrupt-resolution-variants.md, |
 | 2026-08-12 | `docs/rulings/UNDECLARED_TRIAGE.md` | 205 | - ## Ruled 2026-08-12 (coordination/DESIGN_2026-08-12_interrupt-resolution-variants.md, |
 | 2026-08-12 | `tools/assets/backfill_provenance.py` | 691 | 2026-08-12 (`ab85ed0b`, #1196) one day after the guard landed, and nobody saw |
 | 2026-08-13 | `CLAUDE.md` | 12 | - **Never a bare `godot --path godot`.** That is what was typed on 2026-08-13 |
@@ -197,7 +197,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-14 | `docs/art/audit_2026-08-13/THE_REVISIONS_ARE_THE_STORY.md` | 69 | and the session ran on **2026-08-14**. **It was about four hours old when it first |
 | 2026-08-14 | `docs/art/audit_2026-08-13/THE_REVISIONS_ARE_THE_STORY.md` | 82 | Measured coverage as at 2026-08-14: **1,391 of 2,099 families decided (66.3%)**. |
 | 2026-08-14 | `docs/art/audit_2026-08-13/THE_REVISIONS_ARE_THE_STORY.md` | 119 | \| **review state, verdict, notes, revision history** \| **yes, as of 2026-08-14** \| |
-| 2026-08-14 | `docs/rulings/RULINGS.md` | 335 | - `godot/tests/unit/simulation/test_events.gd:50` -- ## THE RATCHET WAS DELIBERATELY LOOSENED -- 2026-08-14, ruled by Pip, for content velocity. |
+| 2026-08-14 | `docs/rulings/RULINGS.md` | 338 | - `godot/tests/unit/simulation/test_events.gd:50` -- ## THE RATCHET WAS DELIBERATELY LOOSENED -- 2026-08-14, ruled by Pip, for content velocity. |
 | 2026-08-14 | `docs/rulings/UNDECLARED_TRIAGE.md` | 239 | - ## THE RATCHET WAS DELIBERATELY LOOSENED -- 2026-08-14, ruled by Pip, for content velocity. |
 | 2026-08-14 | `tools/art_review/build_full_gallery.py` | 374 | # the 2026-08-14/15 sweeps -- and 1,439 of those were `keep` under BOTH |
 | 2026-08-14 | `tools/art_review/collapse_px_keys.py` | 11 | `px:<dir>/<stem>.png`. Both resolve to the same image. The 2026-08-14/15 sweeps |
@@ -242,9 +242,9 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-15 | `docs/rulings/RULINGS.md` | 73 | \| 2026-08-15 \| the ruling road is cross-repo from day one, federated: each repo scans itself and emits rulings.json, an aggregator reads them, nothing |
 | 2026-08-15 | `docs/rulings/RULINGS.md` | 74 | \| 2026-08-15 \| naming a mechanism is OPTIONAL on a ruling, and the generated index reports which rulings have none \| `scripts/generate_rulings.py` \| ` |
 | 2026-08-15 | `docs/rulings/RULINGS.md` | 162 | - `CLAUDE.md:254` -- `UNDECLARED`, never dropped. **Cross-repo by design** (ruled 2026-08-15): |
-| 2026-08-15 | `docs/rulings/RULINGS.md` | 309 | - `godot/data/asset_provenance.json:5132` -- "why": "Ruled by Pip 2026-08-15. A signed credential outranks every heuristic and is the only evidence th |
-| 2026-08-15 | `docs/rulings/RULINGS.md` | 358 | - `tools/art_review/serve_review.py:205` -- "to element: -- ruled by Pip 2026-08-15 because the sweeps are mostly " |
-| 2026-08-15 | `docs/rulings/RULINGS.md` | 361 | - `tools/assets/backfill_provenance.py:479` -- "Ruled by Pip 2026-08-15. A signed credential outranks every heuristic and " |
+| 2026-08-15 | `docs/rulings/RULINGS.md` | 312 | - `godot/data/asset_provenance.json:5132` -- "why": "Ruled by Pip 2026-08-15. A signed credential outranks every heuristic and is the only evidence th |
+| 2026-08-15 | `docs/rulings/RULINGS.md` | 361 | - `tools/art_review/serve_review.py:205` -- "to element: -- ruled by Pip 2026-08-15 because the sweeps are mostly " |
+| 2026-08-15 | `docs/rulings/RULINGS.md` | 364 | - `tools/assets/backfill_provenance.py:479` -- "Ruled by Pip 2026-08-15. A signed credential outranks every heuristic and " |
 | 2026-08-15 | `docs/rulings/RULINGS_CONVENTION.md` | 43 | Rulings in this estate are already being captured -- measured 2026-08-15, more |
 | 2026-08-15 | `docs/rulings/RULINGS_CONVENTION.md` | 52 | 2. **Recall by flavour.** Pip, 2026-08-15: *"these will show up again in |
 | 2026-08-15 | `docs/rulings/RULINGS_CONVENTION.md` | 85 | RULING: 2026-08-15 -- the epoch counter starts at 1, no backfill over past waves -- flavour: art-lineage |
@@ -295,9 +295,9 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-19 | `docs/rulings/RULINGS.md` | 59 | \| 2026-08-19 \| New-Bort is the working machine and hosts new archives and images; the generated masters are NOT transferred to it but coordinated on a |
 | 2026-08-19 | `docs/rulings/RULINGS.md` | 60 | \| 2026-08-19 \| every asset record names its author as well as its origin, with a named agent only where a source already in the repo names one and `un |
 | 2026-08-19 | `docs/rulings/RULINGS.md` | 61 | \| 2026-08-19 \| the provenance guard compares against the git blob, not the working tree, and runs in pre-commit and CI; a guard wired to nothing is a  |
-| 2026-08-19 | `docs/rulings/RULINGS.md` | 310 | - `godot/data/asset_provenance.json:5138` -- "why": "Ruled by Pip 2026-08-19 (D2). ADR-0019 has no provenance field and this manifest answered only WH |
-| 2026-08-19 | `docs/rulings/RULINGS.md` | 311 | - `godot/data/asset_provenance.json:5150` -- "why": "Ruled by Pip 2026-08-19 (D2). ADR-0019 has no provenance field and this manifest answered only WH |
-| 2026-08-19 | `docs/rulings/RULINGS.md` | 363 | - `tools/assets/backfill_provenance.py:673` -- "Ruled by Pip 2026-08-19 (D2). ADR-0019 has no provenance field and this " |
+| 2026-08-19 | `docs/rulings/RULINGS.md` | 313 | - `godot/data/asset_provenance.json:5138` -- "why": "Ruled by Pip 2026-08-19 (D2). ADR-0019 has no provenance field and this manifest answered only WH |
+| 2026-08-19 | `docs/rulings/RULINGS.md` | 314 | - `godot/data/asset_provenance.json:5150` -- "why": "Ruled by Pip 2026-08-19 (D2). ADR-0019 has no provenance field and this manifest answered only WH |
+| 2026-08-19 | `docs/rulings/RULINGS.md` | 366 | - `tools/assets/backfill_provenance.py:673` -- "Ruled by Pip 2026-08-19 (D2). ADR-0019 has no provenance field and this " |
 | 2026-08-19 | `docs/rulings/UNDECLARED_TRIAGE.md` | 285 | - "Ruled by Pip 2026-08-19 (D2). ADR-0019 has no provenance field and this " |
 | 2026-08-19 | `docs/rulings/UNDECLARED_TRIAGE.md` | 414 | - "why": "Ruled by Pip 2026-08-19 (D2). ADR-0019 has no provenance field and this manifest answered only WHAT made an asset, never WHO is owed credit  |
 | 2026-08-19 | `docs/rulings/UNDECLARED_TRIAGE.md` | 416 | - "why": "Ruled by Pip 2026-08-19 (D2). ADR-0019 has no provenance field and this manifest answered only WHAT made an asset, never WHO is owed credit  |
@@ -321,8 +321,8 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-20 | `docs/MIGRATION_TO_NEW_PC.md` | 39 | \| `tools/print_doc.py` \| **SumatraPDF** (strongly preferred) \| The ONLY silent print path. Without it the tool falls back to Acrobat (steals focus) an |
 | 2026-08-20 | `docs/art/A4_COLLAPSE_2026-08-20.md` | 3 | **2026-08-20, `pdoom1` seat on New-Bort.** Ruled by Pip: canonicalise on the write |
 | 2026-08-20 | `docs/rulings/RULINGS.md` | 188 | - `docs/art/A4_COLLAPSE_2026-08-20.md:3` -- **2026-08-20, `pdoom1` seat on New-Bort.** Ruled by Pip: canonicalise on the write |
-| 2026-08-20 | `docs/rulings/RULINGS.md` | 348 | - `tools/art_review/ORPHANS_2026-08-15.md:65` -- **A4: RULED 2026-08-20 and DONE.** Canonicalise on the write path and collapse the |
-| 2026-08-20 | `docs/rulings/RULINGS.md` | 352 | - `tools/art_review/collapse_px_keys.py:4` -- ORPHANS A4. Ruled by Pip 2026-08-20: canonicalise on the write path AND collapse |
+| 2026-08-20 | `docs/rulings/RULINGS.md` | 351 | - `tools/art_review/ORPHANS_2026-08-15.md:65` -- **A4: RULED 2026-08-20 and DONE.** Canonicalise on the write path and collapse the |
+| 2026-08-20 | `docs/rulings/RULINGS.md` | 355 | - `tools/art_review/collapse_px_keys.py:4` -- ORPHANS A4. Ruled by Pip 2026-08-20: canonicalise on the write path AND collapse |
 | 2026-08-20 | `docs/rulings/UNDECLARED_TRIAGE.md` | 44 | - **2026-08-20, `pdoom1` seat on New-Bort.** Ruled by Pip: canonicalise on the write |
 | 2026-08-20 | `docs/rulings/UNDECLARED_TRIAGE.md` | 263 | - ORPHANS A4. Ruled by Pip 2026-08-20: canonicalise on the write path AND collapse |
 | 2026-08-20 | `docs/rulings/UNDECLARED_TRIAGE.md` | 424 | - **A4: RULED 2026-08-20 and DONE.** Canonicalise on the write path and collapse the |
@@ -343,7 +343,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-21 | `docs/PDOOM_DATA_CONTRACT_BRIEF.md` | 14 | untracked from 2026-07-25 to 2026-08-21 and already contained one struck-through |
 | 2026-08-21 | `docs/PLAYTEST_2026-08-21_WANASAI.md` | 1 | # Playtest sheet -- 2026-08-21, Wanasai, first session |
 | 2026-08-21 | `docs/rulings/RULINGS.md` | 12 | Consolidated 2026-08-21. The estate had five places rulings were recorded; |
-| 2026-08-21 | `docs/rulings/RULINGS.md` | 342 | - `scripts/generate_rulings.py:164` -- # CONSOLIDATION, ruled by Pip 2026-08-21. |
+| 2026-08-21 | `docs/rulings/RULINGS.md` | 345 | - `scripts/generate_rulings.py:164` -- # CONSOLIDATION, ruled by Pip 2026-08-21. |
 | 2026-08-21 | `docs/rulings/RULINGS_CONVENTION.md` | 7 | ## This is an INDEX, not the only store (consolidated 2026-08-21) |
 | 2026-08-21 | `docs/rulings/RULINGS_CONVENTION.md` | 9 | An audit on 2026-08-21 found five places rulings were being recorded, four of |
 | 2026-08-21 | `docs/rulings/UNDECLARED_TRIAGE.md` | 249 | - # CONSOLIDATION, ruled by Pip 2026-08-21. |
@@ -360,9 +360,9 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-21 | `tools/reset_player_state.py` | 158 | Until 2026-08-21 this function skipped any destination that already existed |
 | 2026-08-22 | `docs/game-design/DESPERATION_LEVER_PRICING.md` | 3 | **Ruled by Pip, 2026-08-22:** *"we need to give the mechanical inertness a definite |
 | 2026-08-22 | `docs/rulings/RULINGS.md` | 87 | \| 2026-08-22 \| a mechanic that charges the player and does nothing observable gets an unsubtle placeholder consequence NOW rather than waiting for a b |
-| 2026-08-22 | `docs/rulings/RULINGS.md` | 246 | - `docs/game-design/DESPERATION_LEVER_PRICING.md:3` -- **Ruled by Pip, 2026-08-22:** *"we need to give the mechanical inertness a definite |
-| 2026-08-22 | `docs/rulings/RULINGS.md` | 325 | - `godot/scripts/core/researcher.gd:190` -- # Ruled by Pip 2026-08-22 (#1247): "real STAFF, but they might not eg produce |
-| 2026-08-22 | `docs/rulings/RULINGS.md` | 337 | - `godot/tests/unit/test_compute_engineers_are_staff.gd:12` -- ## Ruled by Pip 2026-08-22: "real STAFF, but they might not eg produce as much |
+| 2026-08-22 | `docs/rulings/RULINGS.md` | 249 | - `docs/game-design/DESPERATION_LEVER_PRICING.md:3` -- **Ruled by Pip, 2026-08-22:** *"we need to give the mechanical inertness a definite |
+| 2026-08-22 | `docs/rulings/RULINGS.md` | 328 | - `godot/scripts/core/researcher.gd:190` -- # Ruled by Pip 2026-08-22 (#1247): "real STAFF, but they might not eg produce |
+| 2026-08-22 | `docs/rulings/RULINGS.md` | 340 | - `godot/tests/unit/test_compute_engineers_are_staff.gd:12` -- ## Ruled by Pip 2026-08-22: "real STAFF, but they might not eg produce as much |
 | 2026-08-22 | `tools/scan_closed_issue_debt.py` | 8 | Pip, 2026-08-22, on discovering that #775 was closed COMPLETED with one of its |
 | 2026-08-22 | `tools/scan_closed_issue_debt.py` | 24 | The first run, 2026-08-22, measured on 426 closed issues: |
 | 2026-08-22 | `tools/scan_closed_issue_debt.py` | 83 | # 2026-08-22 -- it raised UnicodeDecodeError on byte 0x8f mid-fetch, which |
@@ -383,10 +383,15 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-23 | `tools/sign_release.py` | 6 | WHY THIS EXISTS, 2026-08-23 |
 | 2026-08-23 | `tools/sign_release.py` | 131 | That is what is deployed here (2026-08-23, version 10.0.28000.2526). |
 | 2026-08-24 | `docs/design/LEAGUE_CUTOVER_PLAYBOOK.md` | 41 | at L4, and is pinned for reflective review on/after 2026-08-24. |
+| 2026-08-24 | `docs/rulings/RULINGS.md` | 211 | - `docs/copy/budget.json:74` -- "basis": "No developer has been engaged and no rate agreed. This is a constructed figure written to size the ask, not  |
+| 2026-08-24 | `docs/rulings/RULINGS.md` | 375 | - `tools/render_budget.py:1241` -- # RULED 2026-08-24: the previous ending -- "that is the honest version, I'd |
+| 2026-08-24 | `docs/rulings/RULINGS.md` | 376 | - `tools/render_budget.py:324` -- # here once, and when Pip ruled on 2026-08-24 that the $500 is misc platform |
 | 2026-08-24 | `pdoom1#808` | 0 | Reflective review (on/after 2026-08-24): release/league cycle nomenclature + cadence |
 | 2026-08-24 | `pdoom1#811` | 0 | Workshop 3 (mechanics) -- Mon 07-27 W-3a / Tue 07-28 build / Wed 07-29 W-3b-W-4: crisp parts, brutal decisions |
-| 2026-08-31 | `docs/rulings/RULINGS.md` | 324 | - `godot/scripts/core/researcher.gd:150` -- # SEAM (ruled 2026-07-27, review-by 2026-08-31): AUDITS ground-truth reported vs actual. |
-| 2026-08-31 | `docs/rulings/RULINGS.md` | 329 | - `godot/scripts/core/turn_manager.gd:313` -- SEAM (ruled 2026-07-27, review-by 2026-08-31): AUDITS ground-truth reported vs actual. |
+| 2026-08-24 | `tools/render_budget.py` | 324 | # here once, and when Pip ruled on 2026-08-24 that the $500 is misc platform |
+| 2026-08-24 | `tools/render_budget.py` | 1241 | # RULED 2026-08-24: the previous ending -- "that is the honest version, I'd |
+| 2026-08-31 | `docs/rulings/RULINGS.md` | 327 | - `godot/scripts/core/researcher.gd:150` -- # SEAM (ruled 2026-07-27, review-by 2026-08-31): AUDITS ground-truth reported vs actual. |
+| 2026-08-31 | `docs/rulings/RULINGS.md` | 332 | - `godot/scripts/core/turn_manager.gd:313` -- SEAM (ruled 2026-07-27, review-by 2026-08-31): AUDITS ground-truth reported vs actual. |
 | 2026-08-31 | `docs/rulings/UNDECLARED_TRIAGE.md` | 221 | - # SEAM (ruled 2026-07-27, review-by 2026-08-31): AUDITS ground-truth reported vs actual. |
 | 2026-08-31 | `docs/rulings/UNDECLARED_TRIAGE.md` | 227 | - SEAM (ruled 2026-07-27, review-by 2026-08-31): AUDITS ground-truth reported vs actual. |
 | 2026-08-31 | `pdoom1#984` | 0 | Half-day workshop: audit mechanics deep-dive (next epoch) -- something amazing under the smell |

@@ -758,6 +758,18 @@
       "text": "Compatible with the ruled model (monthly Theme/Epoch, weekly Seed rotation"
     },
     {
+      "source": "docs/copy/budget.json:56",
+      "text": "\"needs_pip\": \"Pip ruled the AMOUNT, not the day count. Whether the minimum-case figure still buys one focused day a week at a much lower implied rate, or the same rate for fewer days, is not decided a"
+    },
+    {
+      "source": "docs/copy/budget.json:65",
+      "text": "\"settled_by\": \"Pip naming the lines. Community support and the music line are the candidates on the face of the ruling; neither was ruled.\","
+    },
+    {
+      "source": "docs/copy/budget.json:74",
+      "text": "\"basis\": \"No developer has been engaged and no rate agreed. This is a constructed figure written to size the ask, not a quote. It was cut on 2026-08-24 and the difference moved to community support, w"
+    },
+    {
       "source": "docs/decision-cards/2026-08-02_pdoom-data-contract.md:130",
       "text": "- The future draw-down is already ruled: ADR-0016 monthly world-update packs"
     },
@@ -1408,6 +1420,18 @@
     {
       "source": "tools/assets/provenance_unknown_pin.json:2",
       "text": "\"_why\": \"Pinned unknown set. Ruled by Pip 2026-08-11: keep the unattributable assets, record them honestly, and let a mechanism force the question later rather than a document.\","
+    },
+    {
+      "source": "tools/render_budget.py:1241",
+      "text": "# RULED 2026-08-24: the previous ending -- \"that is the honest version, I'd"
+    },
+    {
+      "source": "tools/render_budget.py:324",
+      "text": "# here once, and when Pip ruled on 2026-08-24 that the $500 is misc platform"
+    },
+    {
+      "source": "tools/render_budget.py:749",
+      "text": "# line. Clear the needs_pip field on the item once he has ruled it."
     },
     {
       "source": "tools/rule.py:153",
