@@ -1088,11 +1088,11 @@ DTSTART;VALUE=DATE:20260813
 DTEND;VALUE=DATE:20260814
 SUMMARY:[UNPARSED] needs a declaration -- RELEASE_LINKING_TO_0.20.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/releases/RELEASE_
- LINKING_TO_0.20.md:75. 1 line(s) in docs/releases/RELEASE_LINKING_TO_0.20
+ LINKING_TO_0.20.md:74. 1 line(s) in docs/releases/RELEASE_LINKING_TO_0.20
  .md mention this date and no COMMITMENT: declaration accounts for it. Eit
  her add a declaration or the date is incidental. First line: | `weekly-20
- 26-w33` | 2026-08-13 | w33 | yes | -- Generated from tracked sources by s
- cripts/generate_commitment_calendar.py\; regenerate to update.
+ 26-w33` | 2026-08-13 | **Thu** | w33 | yes | -- Generated from tracked so
+ urces by scripts/generate_commitment_calendar.py\; regenerate to update.
 CATEGORIES:UNPARSED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -3842,12 +3842,12 @@ DTSTART;VALUE=DATE:20260823
 DTEND;VALUE=DATE:20260824
 SUMMARY:[UNPARSED] needs a declaration -- RELEASE_LINKING_TO_0.20.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/releases/RELEASE_
- LINKING_TO_0.20.md:76. 1 line(s) in docs/releases/RELEASE_LINKING_TO_0.20
+ LINKING_TO_0.20.md:75. 1 line(s) in docs/releases/RELEASE_LINKING_TO_0.20
  .md mention this date and no COMMITMENT: declaration accounts for it. Eit
  her add a declaration or the date is incidental. First line: | `weekly-20
- 26-w34` | 2026-08-23 | w34 | yes\, **on the last day of w34** | -- Genera
- ted from tracked sources by scripts/generate_commitment_calendar.py\; reg
- enerate to update.
+ 26-w34` | 2026-08-23 | **Sun** | w34 | yes\, **on the last day of w34** |
+  -- Generated from tracked sources by scripts/generate_commitment_calenda
+ r.py\; regenerate to update.
 CATEGORIES:UNPARSED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -4282,7 +4282,7 @@ DTSTART;VALUE=DATE:20260828
 DTEND;VALUE=DATE:20260829
 SUMMARY:[UNPARSED] needs a declaration -- RELEASE_LINKING_TO_0.20.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/releases/RELEASE_
- LINKING_TO_0.20.md:85. 1 line(s) in docs/releases/RELEASE_LINKING_TO_0.20
+ LINKING_TO_0.20.md:93. 1 line(s) in docs/releases/RELEASE_LINKING_TO_0.20
  .md mention this date and no COMMITMENT: declaration accounts for it. Eit
  her add a declaration or the date is incidental. First line: league opens
   on Friday 2026-08-28 -- also week 35 -- then by the 2026-07-30 -- Genera
@@ -4584,7 +4584,7 @@ DTSTART;VALUE=DATE:20260904
 DTEND;VALUE=DATE:20260905
 SUMMARY:[UNPARSED] needs a declaration -- RELEASE_LINKING_TO_0.20.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/releases/RELEASE_
- LINKING_TO_0.20.md:120. 1 line(s) in docs/releases/RELEASE_LINKING_TO_0.2
+ LINKING_TO_0.20.md:128. 1 line(s) in docs/releases/RELEASE_LINKING_TO_0.2
  0.md mention this date and no COMMITMENT: declaration accounts for it. Ei
  ther add a declaration or the date is incidental. First line: | v0.15 | F
  ri 2026-09-04 | w36 | `weekly-2026-w36` | -- Generated from tracked sourc
@@ -5123,7 +5123,7 @@ DTSTART;VALUE=DATE:20261002
 DTEND;VALUE=DATE:20261003
 SUMMARY:[UNPARSED] needs a declaration -- RELEASE_LINKING_TO_0.20.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/releases/RELEASE_
- LINKING_TO_0.20.md:121. 1 line(s) in docs/releases/RELEASE_LINKING_TO_0.2
+ LINKING_TO_0.20.md:129. 1 line(s) in docs/releases/RELEASE_LINKING_TO_0.2
  0.md mention this date and no COMMITMENT: declaration accounts for it. Ei
  ther add a declaration or the date is incidental. First line: | v0.16 | F
  ri 2026-10-02 | w40 | `weekly-2026-w40` | -- Generated from tracked sourc
@@ -5303,7 +5303,7 @@ DTSTART;VALUE=DATE:20261106
 DTEND;VALUE=DATE:20261107
 SUMMARY:[UNPARSED] needs a declaration -- RELEASE_LINKING_TO_0.20.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/releases/RELEASE_
- LINKING_TO_0.20.md:122. 1 line(s) in docs/releases/RELEASE_LINKING_TO_0.2
+ LINKING_TO_0.20.md:130. 1 line(s) in docs/releases/RELEASE_LINKING_TO_0.2
  0.md mention this date and no COMMITMENT: declaration accounts for it. Ei
  ther add a declaration or the date is incidental. First line: | v0.17 | F
  ri 2026-11-06 | w45 | `weekly-2026-w45` | -- Generated from tracked sourc
@@ -5356,7 +5356,7 @@ DTSTART;VALUE=DATE:20261204
 DTEND;VALUE=DATE:20261205
 SUMMARY:[UNPARSED] needs a declaration -- RELEASE_LINKING_TO_0.20.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/releases/RELEASE_
- LINKING_TO_0.20.md:123. 1 line(s) in docs/releases/RELEASE_LINKING_TO_0.2
+ LINKING_TO_0.20.md:131. 1 line(s) in docs/releases/RELEASE_LINKING_TO_0.2
  0.md mention this date and no COMMITMENT: declaration accounts for it. Ei
  ther add a declaration or the date is incidental. First line: | v0.18 | F
  ri 2026-12-04 | w49 | `weekly-2026-w49` | -- Generated from tracked sourc
@@ -5416,17 +5416,42 @@ DESCRIPTION:Read the 49 archived pygame-era dev-blog entries end to end an
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:87ed846431cd4c49@commitments.pdoom1
+DTSTAMP:20261231T000000Z
+DTSTART;VALUE=DATE:20261231
+DTEND;VALUE=DATE:20270101
+SUMMARY:[UNPARSED] needs a declaration -- RELEASE_LINKING_TO_0.20.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/releases/RELEASE_
+ LINKING_TO_0.20.md:147. 1 line(s) in docs/releases/RELEASE_LINKING_TO_0.2
+ 0.md mention this date and no COMMITMENT: declaration accounts for it. Ei
+ ther add a declaration or the date is incidental. First line: 2026-12-31.
+  So the correct seed carries the year **2026** on a date in 2027. -- Gene
+ rated from tracked sources by scripts/generate_commitment_calendar.py\; r
+ egenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- RELEASE_LINKING_TO_0.20.md (unparsed) -
+ - unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:607b1be2a19b500f@commitments.pdoom1
 DTSTAMP:20270101T000000Z
 DTSTART;VALUE=DATE:20270101
 DTEND;VALUE=DATE:20270102
 SUMMARY:[UNPARSED] needs a declaration -- RELEASE_LINKING_TO_0.20.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/releases/RELEASE_
- LINKING_TO_0.20.md:124. 1 line(s) in docs/releases/RELEASE_LINKING_TO_0.2
+ LINKING_TO_0.20.md:132. 1 line(s) in docs/releases/RELEASE_LINKING_TO_0.2
  0.md mention this date and no COMMITMENT: declaration accounts for it. Ei
  ther add a declaration or the date is incidental. First line: | v0.19 | F
- ri 2027-01-01 | w53 | `weekly-2027-w53` | -- Generated from tracked sourc
- es by scripts/generate_commitment_calendar.py\; regenerate to update.
+ ri 2027-01-01 | **w53 of 2026** | `weekly-2026-w53` | -- Generated from t
+ racked sources by scripts/generate_commitment_calendar.py\; regenerate to
+  update.
 CATEGORIES:UNPARSED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -5445,7 +5470,7 @@ DTSTART;VALUE=DATE:20270108
 DTEND;VALUE=DATE:20270109
 SUMMARY:[UNPARSED] needs a declaration -- RELEASE_LINKING_TO_0.20.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/releases/RELEASE_
- LINKING_TO_0.20.md:135. 1 line(s) in docs/releases/RELEASE_LINKING_TO_0.2
+ LINKING_TO_0.20.md:143. 1 line(s) in docs/releases/RELEASE_LINKING_TO_0.2
  0.md mention this date and no COMMITMENT: declaration accounts for it. Ei
  ther add a declaration or the date is incidental. First line: **RULING NE
  EDED (3):** hold v0.19 to 2027-01-08 (w02)\, or accept 1 January. -- Gene
@@ -5469,7 +5494,7 @@ DTSTART;VALUE=DATE:20270205
 DTEND;VALUE=DATE:20270206
 SUMMARY:[UNPARSED] needs a declaration -- RELEASE_LINKING_TO_0.20.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/releases/RELEASE_
- LINKING_TO_0.20.md:125. 1 line(s) in docs/releases/RELEASE_LINKING_TO_0.2
+ LINKING_TO_0.20.md:133. 1 line(s) in docs/releases/RELEASE_LINKING_TO_0.2
  0.md mention this date and no COMMITMENT: declaration accounts for it. Ei
  ther add a declaration or the date is incidental. First line: | v0.20 | F
  ri 2027-02-05 | w05 | `weekly-2027-w05` | -- Generated from tracked sourc

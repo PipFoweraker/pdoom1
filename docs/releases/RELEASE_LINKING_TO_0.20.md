@@ -64,18 +64,26 @@ derives it, nothing checks it, and the convention it follows is **written down
 nowhere** -- I grepped `RELEASE_NOMENCLATURE.md`, `BUILD_VS_LADDER_VERSION_SPLIT.md`
 and every ritual sheet, and found only examples.
 
-From the five rolls, the convention is evidently *"name the ISO week the league
-opens in"*:
+All five rolls name the ISO week of the date the const was **set**:
 
-| Seed | Set on | ISO week of that date | Match |
-|---|---|---|---|
-| `weekly-2026-w30` | 2026-07-24 | w30 | yes |
-| `weekly-2026-w31` | 2026-07-31 | w31 | yes |
-| `weekly-2026-w32` | 2026-08-07 | w32 | yes |
-| `weekly-2026-w33` | 2026-08-13 | w33 | yes |
-| `weekly-2026-w34` | 2026-08-23 | w34 | yes, **on the last day of w34** |
+| Seed | Set on | Weekday | ISO week of that date | Match |
+|---|---|---|---|---|
+| `weekly-2026-w30` | 2026-07-24 | Fri | w30 | yes |
+| `weekly-2026-w31` | 2026-07-31 | Fri | w31 | yes |
+| `weekly-2026-w32` | 2026-08-07 | Fri | w32 | yes |
+| `weekly-2026-w33` | 2026-08-13 | **Thu** | w33 | yes |
+| `weekly-2026-w34` | 2026-08-23 | **Sun** | w34 | yes, **on the last day of w34** |
 
-And `gate_5_seed_blessing.md` records the precedent directly: on 2026-07-30 the
+**Read that table carefully, because the first draft of this document read it
+wrong.** It establishes that the seed names the week it was **DRAWN** in -- which
+is convention (b) below, not (a). Three of the five were set on a Friday, where
+drawn-in and opens-in coincide and the table cannot separate them; the two that
+could separate them, the Thursday and the Sunday, both name the week they were
+set in. **These "yes"es are not evidence for convention (a).** I originally
+presented them as though they were, and a second reader caught it.
+
+The real evidence for (a) is a single precedent, and it is worth more than the
+table: `gate_5_seed_blessing.md` records that on 2026-07-30 the
 const still read `weekly-2026-w30` and *"it was corrected to `weekly-2026-w31`
 before that cut"* -- a stale week number was treated as a defect to fix before
 cutting, not a cosmetic detail.
@@ -121,7 +129,7 @@ Friday, per `ROADMAP.md`:
 | v0.16 | Fri 2026-10-02 | w40 | `weekly-2026-w40` |
 | v0.17 | Fri 2026-11-06 | w45 | `weekly-2026-w45` |
 | v0.18 | Fri 2026-12-04 | w49 | `weekly-2026-w49` |
-| v0.19 | Fri 2027-01-01 | w53 | `weekly-2027-w53` |
+| v0.19 | Fri 2027-01-01 | **w53 of 2026** | `weekly-2026-w53` |
 | v0.20 | Fri 2027-02-05 | w05 | `weekly-2027-w05` |
 
 Interleaved weekly seeds between those dates are the remaining Fridays and are
@@ -133,13 +141,24 @@ Two things in that table are traps and are called out rather than smoothed:
 - **v0.19 falls on Friday 1 January 2027.** New Year's Day. A monthly-train rule
   applied blindly puts an epoch cut and a league open on a public holiday.
   **RULING NEEDED (3):** hold v0.19 to 2027-01-08 (w02), or accept 1 January.
-- **`weekly-2027-w53`** is not a typo -- 1 January 2027 is in **ISO week 53 of
-  2026**, not week 1 of 2027. Any seed generator that formats
-  `f"weekly-{year}-w{week}"` from a naive `date.year` will emit
-  `weekly-2027-w53`, which is a week that does not exist. Use
-  `isocalendar()[0]` for the year, not `.year`. This is a live bug waiting in
-  any generator written for ruling (2) above, and it fires exactly once, in
-  January, on a league night.
+- **`weekly-2026-w53` is not a typo, and this row previously WAS one.** 1 January
+  2027 falls in **ISO week 53 of 2026**, not week 1 of 2027, because ISO-8601
+  assigns a week to the year containing its Thursday -- and that Thursday is
+  2026-12-31. So the correct seed carries the year **2026** on a date in 2027.
+
+  **This row read `weekly-2027-w53` in the first draft, which is exactly the
+  buggy output the rest of this bullet warns about.** A generator formatting
+  `f"weekly-{d.year}-w{week}"` from a naive `.year` emits `weekly-2027-w53` --
+  a week that does not exist. Use `isocalendar()[0]`, not `.year`, and zero-pad
+  the week (`w01`, not `w1`), because a board key is an exact string and `w1`
+  and `w01` are different boards.
+
+  I had computed the correct value an hour before writing this table and then
+  typed the wrong one into it, under a paragraph explaining the bug. Caught by a
+  second reader, not by me -- which is the point of the whole section. It fires
+  exactly once, in January, on a league night, and it is now pinned by a test
+  that asserts the naive formatting produces `weekly-2027-w53` and the generator
+  does not (without that assertion every other case passes under the bug).
 
 **FORECAST -- a plan, revisable, owned by Pip.** Theme names for v0.15+ are
 provisional and `RELEASE_NOMENCLATURE.md` already says Pip names them. Nothing

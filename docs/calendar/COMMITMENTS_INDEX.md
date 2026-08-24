@@ -13,7 +13,7 @@ Horizon: **2026-08-09** (the prose scan reports dates at or after this; roll it
 forward deliberately in `COMMITMENTS.md`, never automatically -- a clock-reading
 generator goes stale overnight and trains people to ignore the check).
 
-**53 declared, 4 release-train, 171 UNPARSED, 0 malformed.**
+**53 declared, 4 release-train, 172 UNPARSED, 0 malformed.**
 
 ## Declared commitments
 
@@ -165,7 +165,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-13 | `docs/content/ROLE_CREATIVE_DIRECTOR.md` | 4 | > The header read "DRAFT ... Not committed anywhere yet" until 2026-08-13, which |
 | 2026-08-13 | `docs/content/ROLE_CREATIVE_DIRECTOR.md` | 13 | > **CORRECTED 2026-08-13, per the retirement prescribed in |
 | 2026-08-13 | `docs/content/ROLE_CREATIVE_DIRECTOR.md` | 17 | > 2026-08-13 (`pdoom1-website#249`): the game emits an artefact, the website |
-| 2026-08-13 | `docs/releases/RELEASE_LINKING_TO_0.20.md` | 75 | \| `weekly-2026-w33` \| 2026-08-13 \| w33 \| yes \| |
+| 2026-08-13 | `docs/releases/RELEASE_LINKING_TO_0.20.md` | 74 | \| `weekly-2026-w33` \| 2026-08-13 \| **Thu** \| w33 \| yes \| |
 | 2026-08-13 | `docs/rulings/RULINGS.md` | 183 | - `docs/CONTENT_DISTRIBUTION_SYSTEM.md:10` -- > **SUPERSEDED, not merely "outdated in spirit", as of 2026-08-13.** Pip ruled |
 | 2026-08-13 | `docs/rulings/UNDECLARED_TRIAGE.md` | 20 | - > **SUPERSEDED, not merely "outdated in spirit", as of 2026-08-13.** Pip ruled |
 | 2026-08-13 | `tools/art_review/apply_review.py` | 316 | # v2 called remix "iterate"; "shelf" is new in v3 (2026-08-13). NOT "hold" -- |
@@ -376,7 +376,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-23 | `docs/design/SMELL_PASS_2026-08-23.md` | 1 | # Smell pass, 2026-08-23 -- starting where we first sniffed |
 | 2026-08-23 | `docs/release/CODE_SIGNING.md` | 3 | Written 2026-08-23 against a stated budget of **AUD $5,000** and a stated |
 | 2026-08-23 | `docs/release/CODE_SIGNING.md` | 8 | 2026-08-23, not recalled. Where a belief of mine turned out to be wrong, the |
-| 2026-08-23 | `docs/releases/RELEASE_LINKING_TO_0.20.md` | 76 | \| `weekly-2026-w34` \| 2026-08-23 \| w34 \| yes, **on the last day of w34** \| |
+| 2026-08-23 | `docs/releases/RELEASE_LINKING_TO_0.20.md` | 75 | \| `weekly-2026-w34` \| 2026-08-23 \| **Sun** \| w34 \| yes, **on the last day of w34** \| |
 | 2026-08-23 | `docs/rulings/RULINGS.md` | 87 | \| 2026-08-23 \| ladder debt is paid when it is incurred, not deferred to build time, so a fresh epoch never inherits a forked board key \| `tools/check_ |
 | 2026-08-23 | `docs/rulings/RULINGS.md` | 106 | \| 2026-08-23 \| player feedback routes to the PUBLIC issue tracker and is triaged and summarised before the developer reads it; it never lands in a per |
 | 2026-08-23 | `docs/rulings/RULINGS.md` | 129 | \| 2026-08-23 \| silent failures are a named defect class and the counter is instrumentation, never vigilance; a failure representable in its own succes |
@@ -390,22 +390,22 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-23 | `tools/sign_release.py` | 131 | That is what is deployed here (2026-08-23, version 10.0.28000.2526). |
 | 2026-08-24 | `docs/design/LEAGUE_CUTOVER_PLAYBOOK.md` | 41 | at L4, and is pinned for reflective review on/after 2026-08-24. |
 | 2026-08-24 | `docs/releases/RELEASE_LINKING_TO_0.20.md` | 4 | Written 2026-08-24 off the mechanical sweep in `RELEASE_LEDGER.md`, which is |
-| 2026-08-24 | `docs/releases/RELEASE_LINKING_TO_0.20.md` | 84 | 2026-08-24, **ISO week 35**. The live const reads `weekly-2026-w34`. If the next |
-| 2026-08-24 | `docs/releases/RELEASE_LINKING_TO_0.20.md` | 149 | 2026-08-24 the floor is **L6**. Every future row should read `>= L6`, ratcheting |
-| 2026-08-24 | `docs/releases/RELEASE_LINKING_TO_0.20.md` | 156 | Under the atomise protocol clause 3 (ruled 2026-08-24: *"do not build an atom |
+| 2026-08-24 | `docs/releases/RELEASE_LINKING_TO_0.20.md` | 92 | 2026-08-24, **ISO week 35**. The live const reads `weekly-2026-w34`. If the next |
+| 2026-08-24 | `docs/releases/RELEASE_LINKING_TO_0.20.md` | 168 | 2026-08-24 the floor is **L6**. Every future row should read `>= L6`, ratcheting |
+| 2026-08-24 | `docs/releases/RELEASE_LINKING_TO_0.20.md` | 175 | Under the atomise protocol clause 3 (ruled 2026-08-24: *"do not build an atom |
 | 2026-08-24 | `docs/releases/UNTAGGED.md` | 7 | was prepared and never delivered, and until 2026-08-24 nothing in this repo |
 | 2026-08-24 | `docs/releases/UNTAGGED.md` | 32 | As of 2026-08-24 this is `0.14.3`, and it is **not** being declared here, |
 | 2026-08-24 | `docs/rulings/RULINGS.md` | 73 | \| 2026-08-24 \| a command's exit status must be read from the command, never through a pipe: $? after a pipeline is the RIGHTMOST command's status, so  |
 | 2026-08-24 | `docs/rulings/RULINGS.md` | 93 | \| 2026-08-24 \| the featured seed names the ISO week the league opens in, so a league that slips is renamed to the week it actually runs and the slip i |
 | 2026-08-24 | `docs/rulings/RULINGS.md` | 94 | \| 2026-08-24 \| the featured seed names the ISO week the league opens in \| `godot/tests/unit/test_iso_week_seed.gd` \| `godot/tests/unit/test_iso_week_s |
 | 2026-08-24 | `docs/rulings/RULINGS.md` | 112 | \| 2026-08-24 \| every value version.txt has ever held must have a matching git tag, or a declared exemption; a bump with no tag is a defect the machine |
-| 2026-08-24 | `docs/rulings/RULINGS.md` | 323 | - `docs/releases/RELEASE_LINKING_TO_0.20.md:156` -- Under the atomise protocol clause 3 (ruled 2026-08-24: *"do not build an atom |
+| 2026-08-24 | `docs/rulings/RULINGS.md` | 323 | - `docs/releases/RELEASE_LINKING_TO_0.20.md:175` -- Under the atomise protocol clause 3 (ruled 2026-08-24: *"do not build an atom |
 | 2026-08-24 | `pdoom1#808` | 0 | Reflective review (on/after 2026-08-24): release/league cycle nomenclature + cadence |
 | 2026-08-24 | `pdoom1#811` | 0 | Workshop 3 (mechanics) -- Mon 07-27 W-3a / Tue 07-28 build / Wed 07-29 W-3b-W-4: crisp parts, brutal decisions |
 | 2026-08-24 | `tools/check_release_ledger.py` | 8 | On 2026-08-24 the repo held ``version.txt = 0.14.3``, a proven build on disk, |
 | 2026-08-24 | `tools/check_release_ledger.py` | 34 | RULING: 2026-08-24 -- every value version.txt has ever held must have a matching git tag, or a declared exemption; a bump with no tag is a defect the  |
 | 2026-08-24 | `tools/check_release_ledger.py` | 60 | 2026-08-24: *"do not build an atom store unless a named party will rule it"*), |
-| 2026-08-28 | `docs/releases/RELEASE_LINKING_TO_0.20.md` | 85 | league opens on Friday 2026-08-28 -- also week 35 -- then by the 2026-07-30 |
+| 2026-08-28 | `docs/releases/RELEASE_LINKING_TO_0.20.md` | 93 | league opens on Friday 2026-08-28 -- also week 35 -- then by the 2026-07-30 |
 | 2026-08-31 | `docs/rulings/RULINGS.md` | 345 | - `godot/scripts/core/researcher.gd:150` -- # SEAM (ruled 2026-07-27, review-by 2026-08-31): AUDITS ground-truth reported vs actual. |
 | 2026-08-31 | `docs/rulings/RULINGS.md` | 350 | - `godot/scripts/core/turn_manager.gd:313` -- SEAM (ruled 2026-07-27, review-by 2026-08-31): AUDITS ground-truth reported vs actual. |
 | 2026-08-31 | `docs/rulings/UNDECLARED_TRIAGE.md` | 221 | - # SEAM (ruled 2026-07-27, review-by 2026-08-31): AUDITS ground-truth reported vs actual. |
@@ -413,16 +413,17 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-31 | `pdoom1#984` | 0 | Half-day workshop: audit mechanics deep-dive (next epoch) -- something amazing under the smell |
 | 2026-09-04 | `coordination#48` | 0 | League cutover timing contract: pdoom1 can publish in 5m30s and cannot tell you when pdoom1.com will agree -- what do you need to pre-announce? |
 | 2026-09-04 | `docs/design/LEAGUE_CUTOVER_PLAYBOOK.md` | 705 | 2026-09-04 per `docs/ROADMAP.md`) runs without any phase in section 2 being |
-| 2026-09-04 | `docs/releases/RELEASE_LINKING_TO_0.20.md` | 120 | \| v0.15 \| Fri 2026-09-04 \| w36 \| `weekly-2026-w36` \| |
+| 2026-09-04 | `docs/releases/RELEASE_LINKING_TO_0.20.md` | 128 | \| v0.15 \| Fri 2026-09-04 \| w36 \| `weekly-2026-w36` \| |
 | 2026-09-09 | `coordination#30` | 0 | AGENDA: tri-repo content workshop, 2026-08-06 -- six items, three need Pip, and A1 has deferred three times |
 | 2026-09-09 | `pdoom1#1061` | 0 | IP / trademark follow-up -- Australian lawyers, DUE Monday 2026-08-03 |
 | 2026-09-29 | `docs/calendar/COMMITMENTS.md` | 108 | - **GitHub milestones.** Four exist; the nearest due date is 2026-09-29 and one |
 | 2026-09-29 | `docs/game-design/WORKSHOP_3_PREP.md` | 544 | "Now" is v0.12 First Contact (created 2026-07-20, due 2026-09-29). [VERIFIED] |
-| 2026-10-02 | `docs/releases/RELEASE_LINKING_TO_0.20.md` | 121 | \| v0.16 \| Fri 2026-10-02 \| w40 \| `weekly-2026-w40` \| |
+| 2026-10-02 | `docs/releases/RELEASE_LINKING_TO_0.20.md` | 129 | \| v0.16 \| Fri 2026-10-02 \| w40 \| `weekly-2026-w40` \| |
 | 2026-10-23 | `tools/assets/generate_images.py` | 38 | # Default OpenAI model. gpt-image-1 retires 2026-10-23, so gpt-image-1.5 is the |
-| 2026-11-06 | `docs/releases/RELEASE_LINKING_TO_0.20.md` | 122 | \| v0.17 \| Fri 2026-11-06 \| w45 \| `weekly-2026-w45` \| |
-| 2026-12-04 | `docs/releases/RELEASE_LINKING_TO_0.20.md` | 123 | \| v0.18 \| Fri 2026-12-04 \| w49 \| `weekly-2026-w49` \| |
-| 2027-01-01 | `docs/releases/RELEASE_LINKING_TO_0.20.md` | 124 | \| v0.19 \| Fri 2027-01-01 \| w53 \| `weekly-2027-w53` \| |
-| 2027-01-08 | `docs/releases/RELEASE_LINKING_TO_0.20.md` | 135 | **RULING NEEDED (3):** hold v0.19 to 2027-01-08 (w02), or accept 1 January. |
-| 2027-02-05 | `docs/releases/RELEASE_LINKING_TO_0.20.md` | 125 | \| v0.20 \| Fri 2027-02-05 \| w05 \| `weekly-2027-w05` \| |
+| 2026-11-06 | `docs/releases/RELEASE_LINKING_TO_0.20.md` | 130 | \| v0.17 \| Fri 2026-11-06 \| w45 \| `weekly-2026-w45` \| |
+| 2026-12-04 | `docs/releases/RELEASE_LINKING_TO_0.20.md` | 131 | \| v0.18 \| Fri 2026-12-04 \| w49 \| `weekly-2026-w49` \| |
+| 2026-12-31 | `docs/releases/RELEASE_LINKING_TO_0.20.md` | 147 | 2026-12-31. So the correct seed carries the year **2026** on a date in 2027. |
+| 2027-01-01 | `docs/releases/RELEASE_LINKING_TO_0.20.md` | 132 | \| v0.19 \| Fri 2027-01-01 \| **w53 of 2026** \| `weekly-2026-w53` \| |
+| 2027-01-08 | `docs/releases/RELEASE_LINKING_TO_0.20.md` | 143 | **RULING NEEDED (3):** hold v0.19 to 2027-01-08 (w02), or accept 1 January. |
+| 2027-02-05 | `docs/releases/RELEASE_LINKING_TO_0.20.md` | 133 | \| v0.20 \| Fri 2027-02-05 \| w05 \| `weekly-2027-w05` \| |
 | 2031-04-18 | `pdoom1#994` | 0 | feat(emit): calibration artifact -- baseline p(Doom), sim 100%-topout date, ladder version (unblocks the website's doom clock + pdoom1-website#177) |

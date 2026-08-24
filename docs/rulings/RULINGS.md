@@ -319,8 +319,8 @@ is not.
 - `docs/release-body-v0.14.0-CORRECTED.md:35` -- and the ruled promotions applied (#1137), against Pip's rulings of 2026-08-04.
 - `docs/release-body-v0.14.0-CORRECTED.md:4` -- was retimed to one-turn-one-month and the ruled promotions were applied (#1137),
 - `docs/release-body-v0.14.0-CORRECTED.md:43` -- - **The last player-facing "AP" is gone**, and one number format is ruled across
-- `docs/releases/RELEASE_LINKING_TO_0.20.md:103` -- Whichever is ruled, it should then be **mechanised**: derive the expected seed
-- `docs/releases/RELEASE_LINKING_TO_0.20.md:156` -- Under the atomise protocol clause 3 (ruled 2026-08-24: *"do not build an atom
+- `docs/releases/RELEASE_LINKING_TO_0.20.md:111` -- Whichever is ruled, it should then be **mechanised**: derive the expected seed
+- `docs/releases/RELEASE_LINKING_TO_0.20.md:175` -- Under the atomise protocol clause 3 (ruled 2026-08-24: *"do not build an atom
 - `docs/strategy/IP_AND_OPENNESS_PREMORTEM.md:443` -- except keeping the data backbone clean (already ruled).
 - `docs/strategy/IP_AND_OPENNESS_PREMORTEM.md:87` -- community reads retraction as betrayal. Pip has already ruled against
 - `godot/assets/images/events/README.md:26` -- **They are GRANDFATHERED. Pip ruled 2026-08-03 that already-packed assets stay
