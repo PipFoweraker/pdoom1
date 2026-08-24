@@ -12,6 +12,31 @@
     "source_zip": "https://github.com/PipFoweraker/pdoom1/archive/refs/tags/v0.13.1.zip",
     "source_tar": "https://github.com/PipFoweraker/pdoom1/archive/refs/tags/v0.13.1.tar.gz"
   },
+  "platform_status": {
+    "windows": {
+      "status": "available",
+      "asset": "PDoom-Windows-v0.13.1.zip",
+      "evidence": "github-api",
+      "url": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.13.1/PDoom-Windows-v0.13.1.zip"
+    },
+    "linux": {
+      "status": "available",
+      "asset": "PDoom-Linux-v0.13.1.zip",
+      "evidence": "github-api",
+      "url": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.13.1/PDoom-Linux-v0.13.1.zip"
+    },
+    "mac": {
+      "status": "available",
+      "asset": "PDoom-macOS-v0.13.1.zip",
+      "evidence": "github-api",
+      "url": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.13.1/PDoom-macOS-v0.13.1.zip"
+    }
+  },
+  "asset_evidence": {
+    "source": "github-api",
+    "resolved": true,
+    "detail": "https://api.github.com/repos/PipFoweraker/pdoom1/releases/tags/v0.13.1"
+  },
   "metadata": {
     "engine": "Godot 4.5.1",
     "platforms": [

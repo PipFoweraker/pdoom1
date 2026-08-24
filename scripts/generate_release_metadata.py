@@ -8,10 +8,18 @@ This script creates JSON and RSS feeds for game releases that can be
 consumed by the pdoom.net website. It extracts version information,
 changelog entries, and download links to make releases easily discoverable.
 
+A platform appears in a feed entry ONLY when its asset was OBSERVED to exist --
+see the PLATFORMS table and AssetEvidence below. Asset presence comes either
+from a local build-artifact directory (--assets-dir, what CI has before the
+release is published) or from the GitHub Releases API. When neither can answer,
+the platform is reported `unknown` and NO url is emitted.
+
 Usage:
     python scripts/generate_release_metadata.py --version v0.10.1
     python scripts/generate_release_metadata.py --latest
     python scripts/generate_release_metadata.py --version v0.10.1 --verify
+    python scripts/generate_release_metadata.py --version v0.14.4 --assets-dir build-artifacts
+    python scripts/generate_release_metadata.py --no-probe   # offline: all UNKNOWN
 
 --verify HEADs every generated download URL (via scripts/verify_release_urls.py)
 after writing the files and exits nonzero on any non-200. This is the same
@@ -22,16 +30,188 @@ locally to catch a generator/build-pipeline mismatch before pushing a tag.
 import argparse
 import datetime
 import json
+import os
 import re
 import subprocess
 import sys
+import urllib.error
+import urllib.request
 import xml.etree.ElementTree as ElementTree
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, Iterable, List, Optional, Set
 from xml.dom import minidom
 
 # Matches vMAJOR.MINOR.PATCH with an optional suffix, e.g. v0.13.1 or v0.2.12-hotfix.
 _TAG_RE = re.compile(r"^v(\d+)\.(\d+)\.(\d+)(?:[-.](.+))?$")
+
+GITHUB_REPO = "PipFoweraker/pdoom1"
+_API_TIMEOUT_SECONDS = 15.0
+
+# --- The platform asset contract ---------------------------------------------
+# (key, human label, asset filename template). These are the names
+# scripts/build_all_platforms.py actually produces and enhanced-release.yml
+# actually uploads -- NOT a guessed shape.
+#
+# The load-bearing rule, and the reason this table exists separately from the
+# URL builder: a feed entry for a platform is DERIVED FROM AN OBSERVED ASSET,
+# never from the naming convention alone.
+#
+# Issue #963 was the first shape of that bug: PDoom.exe / PDoom.x86_64 /
+# pdoom-*-source.* were hardcoded into every release JSON and 404'd against
+# every real release, because no such asset was ever produced.
+#
+# RULING: 2026-08-24 -- a published release artifact states a platform shipped only by enumerating an asset that exists, never by a naming convention or a hardcoded list, and where presence cannot be observed it says UNKNOWN instead of advertising a URL -- flavour: release-artifacts -- mechanism: generate_release_metadata.audit_advertised_platforms and generate_release_manifest.derive_platforms
+#
+# v0.14.3 (2026-08-24) was the second shape, and the convention was RIGHT this
+# time -- the asset simply never arrived. macOS is a deliberately best-effort
+# platform (issue #1071: the GodotSteam .framework loses its Versions/Current
+# symlink on non-mac checkouts), its export failed, build_all_platforms.py
+# dropped the macOS zips exactly as designed, Windows/Linux published exactly
+# as designed -- and the feed advertised PDoom-macOS-v0.14.3.zip anyway. A live
+# 404 in a public feed, on the day the download link was going out by email.
+# The build pipeline knew. The feed generator was never told.
+PLATFORMS = (
+    ("windows", "Windows", "PDoom-Windows-{version}.zip"),
+    ("linux", "Linux", "PDoom-Linux-{version}.zip"),
+    ("mac", "macOS", "PDoom-macOS-{version}.zip"),
+)
+
+# The unversioned alias each platform ALSO publishes. Issue #1068: the website's
+# download buttons are fixed strings against releases/latest/download/<name>, a
+# second distribution path the versioned feed never covered. Kept beside
+# PLATFORMS so exactly ONE place in the repo knows what a platform's assets are
+# called -- scripts/generate_release_manifest.py imports it rather than keeping
+# a second opinion, which is how the manifest came to declare a macOS build for
+# v0.14.3 while its own file list showed only Windows and Linux.
+PLATFORM_ALIASES = {
+    "windows": "PDoom-Windows.zip",
+    "linux": "PDoom-Linux.zip",
+    "mac": "PDoom.app.zip",
+}
+
+
+def platform_assets_for(version: str) -> Dict[str, List[str]]:
+    """Every filename a platform may ship under, versioned name first.
+
+    Two consumers with different needs read this: the feed advertises the
+    versioned name only, while the release manifest must RECOGNISE either the
+    versioned name or the unversioned alias when deciding whether a platform
+    shipped. Both derive from the same table, so they cannot drift apart.
+    """
+    return {
+        key: [template.format(version=version)]
+        + ([PLATFORM_ALIASES[key]] if key in PLATFORM_ALIASES else [])
+        for key, _label, template in PLATFORMS
+    }
+
+
+# Per-platform status values carried in the feed. Three, not two, on purpose.
+STATUS_AVAILABLE = "available"  # asset OBSERVED -- the only state that emits a URL
+STATUS_NOT_BUILT = "not_built"  # asset list observed, this name absent from it
+STATUS_UNKNOWN = "unknown"  # no asset list could be obtained at all
+
+
+class AssetEvidence:
+    """What is KNOWN about which assets a release has, and where that came from.
+
+    Three states per platform, and the third state is the entire point.
+
+    RULING 2026-08-23 (Pip, "manufactured confidence"): a value meaning "I could
+    not tell" must never be rendered as a value meaning "fine". Applied here:
+    when no asset list can be obtained, every platform reports `unknown` and
+    emits NO download URL. An unverifiable platform is not an advertised one.
+
+    `names is None` means UNRESOLVED -- nothing was observed. An EMPTY SET is a
+    real observation (a published release that carries no assets) and is a
+    different answer; conflating the two is the bug this class exists to make
+    unrepresentable.
+    """
+
+    def __init__(self, names: Optional[Iterable[str]], source: str, detail: str = ""):
+        self.names: Optional[Set[str]] = None if names is None else {str(n) for n in names}
+        self.source = source
+        self.detail = detail
+
+    @property
+    def resolved(self) -> bool:
+        """True iff an asset list was actually observed."""
+        return self.names is not None
+
+    def status_for(self, asset_name: str) -> str:
+        if self.names is None:
+            return STATUS_UNKNOWN
+        return STATUS_AVAILABLE if asset_name in self.names else STATUS_NOT_BUILT
+
+    def as_dict(self) -> Dict:
+        return {"source": self.source, "resolved": self.resolved, "detail": self.detail}
+
+
+def unresolved_evidence(reason: str) -> AssetEvidence:
+    """The honest default: nothing was checked, so nothing is claimed."""
+    return AssetEvidence(None, "none", reason)
+
+
+def evidence_from_directory(assets_dir: Path) -> AssetEvidence:
+    """Observe asset names from a local build-artifact tree.
+
+    This is what CI has BEFORE the release exists: generate-feeds runs after
+    build-godot, so the downloaded build-* artifacts are the ground truth at
+    that moment. Mirrors generate_release_manifest.py --assets-dir.
+
+    A missing/unreadable directory yields UNRESOLVED, not an empty observation:
+    "the artifact download step is misconfigured" must not render as "no
+    platform was built".
+    """
+    if not assets_dir.is_dir():
+        return AssetEvidence(None, "assets-dir", f"not a directory: {assets_dir}")
+    try:
+        names = {path.name for path in assets_dir.rglob("*") if path.is_file()}
+    except OSError as exc:
+        return AssetEvidence(None, "assets-dir", f"unreadable: {assets_dir} ({exc})")
+    return AssetEvidence(names, "assets-dir", str(assets_dir))
+
+
+def evidence_from_github(
+    version: str, repo: str = GITHUB_REPO, timeout: float = _API_TIMEOUT_SECONDS
+) -> AssetEvidence:
+    """Observe asset names from the GitHub Releases API.
+
+    Authoritative once a release is published, which is the case for every tag
+    this generator regenerates after the fact. Uses GH_TOKEN/GITHUB_TOKEN when
+    present purely for rate limit headroom.
+
+    EVERY failure path -- offline, 404 (tag has no Release object), 403 rate
+    limit, garbled payload -- returns UNRESOLVED. Never an empty observed set:
+    "I could not ask" and "I asked and there are none" must not collapse into
+    one answer, or a rate-limited run would quietly unpublish every platform.
+    """
+    url = f"https://api.github.com/repos/{repo}/releases/tags/{version}"
+    request = urllib.request.Request(
+        url,
+        headers={
+            "User-Agent": "pdoom1-release-metadata-generator",
+            "Accept": "application/vnd.github+json",
+        },
+    )
+    token = os.environ.get("GH_TOKEN") or os.environ.get("GITHUB_TOKEN")
+    if token:
+        request.add_header("Authorization", f"Bearer {token}")
+
+    try:
+        with urllib.request.urlopen(request, timeout=timeout) as response:
+            payload = json.loads(response.read().decode("utf-8"))
+    except urllib.error.HTTPError as exc:
+        return AssetEvidence(None, "github-api", f"HTTP {exc.code} from {url}")
+    except (urllib.error.URLError, TimeoutError, OSError) as exc:
+        return AssetEvidence(None, "github-api", f"unreachable: {exc}")
+    except (ValueError, UnicodeDecodeError) as exc:
+        return AssetEvidence(None, "github-api", f"unparseable response: {exc}")
+
+    assets = payload.get("assets")
+    if not isinstance(assets, list):
+        return AssetEvidence(None, "github-api", "response carried no 'assets' list")
+    names = [a.get("name", "") for a in assets if isinstance(a, dict)]
+    return AssetEvidence(names, "github-api", url)
 
 
 def _ascii_safe(text: str) -> str:
@@ -66,6 +246,42 @@ def _semver_sort_key(tag: str):
         return (-1, -1, -1, 0, tag)
     major, minor, patch, suffix = match.groups()
     return (int(major), int(minor), int(patch), 0 if suffix else 1, suffix or "")
+
+
+def _report_platform_status(tag: str, platform_status: Dict, evidence: AssetEvidence) -> None:
+    """Say out loud what each platform resolved to.
+
+    A silent omission is the failure mode being fixed, so the omission itself
+    has to be noisy: dropping macOS from the feed prints a line and, on the CI
+    log, a ::warning:: annotation. Nobody should have to diff two feeds to
+    notice a platform stopped shipping.
+    """
+    for key, _label, _template in PLATFORMS:
+        entry = platform_status.get(key, {})
+        status = entry.get("status", STATUS_UNKNOWN)
+        marker = {STATUS_AVAILABLE: "[OK]", STATUS_NOT_BUILT: "[--]", STATUS_UNKNOWN: "[??]"}[
+            status
+        ]
+        print(f"    {marker} {key:8s} {status:10s} {entry.get('asset', '?')}")
+
+    dropped = [k for k, v in platform_status.items() if v.get("status") == STATUS_NOT_BUILT]
+    unknown = [k for k, v in platform_status.items() if v.get("status") == STATUS_UNKNOWN]
+    if dropped:
+        message = (
+            f"{tag}: no asset for {', '.join(sorted(dropped))} "
+            f"(evidence: {evidence.source}) -- omitted from the feed, NOT advertised"
+        )
+        print(f"    [!] {message}")
+        if os.environ.get("GITHUB_ACTIONS") == "true":
+            print(f"::warning::{message}")
+    if unknown:
+        message = (
+            f"{tag}: could not determine asset presence for {', '.join(sorted(unknown))} "
+            f"({evidence.detail or 'no evidence source'}) -- reported UNKNOWN, no URL emitted"
+        )
+        print(f"    [??] {message}")
+        if os.environ.get("GITHUB_ACTIONS") == "true":
+            print(f"::warning::{message}")
 
 
 class ReleaseMetadataGenerator:
@@ -151,9 +367,20 @@ class ReleaseMetadataGenerator:
 
         return changelog_text
 
-    def generate_release_json(self, version: str, tag_info: Dict) -> Dict:
-        """Generate JSON metadata for a single release."""
+    def generate_release_json(
+        self, version: str, tag_info: Dict, evidence: Optional[AssetEvidence] = None
+    ) -> Dict:
+        """Generate JSON metadata for a single release.
+
+        `evidence` says which assets were OBSERVED for this release. Omitting it
+        means "nothing was checked", which yields `unknown` for every platform
+        and NO download URLs -- deliberately the most conservative default, so a
+        caller that forgets to supply evidence under-advertises rather than
+        inventing links.
+        """
         version_num = version.lstrip("v")
+        if evidence is None:
+            evidence = unresolved_evidence("no asset evidence supplied to generate_release_json")
 
         # Extract changelog
         changelog = self.extract_changelog_for_version(version)
@@ -162,8 +389,38 @@ class ReleaseMetadataGenerator:
         is_prerelease = "-" in version or "alpha" in version.lower() or "beta" in version.lower()
 
         # Generate download URLs (GitHub releases pattern)
-        github_repo = "PipFoweraker/pdoom1"
-        base_url = f"https://github.com/{github_repo}/releases/download/{version}"
+        base_url = f"https://github.com/{GITHUB_REPO}/releases/download/{version}"
+
+        # A URL is emitted ONLY for a platform whose asset was observed. The
+        # asset name still comes from the PLATFORMS contract -- the convention
+        # says what to LOOK FOR; the evidence says whether it is there.
+        downloads: Dict[str, str] = {}
+        platform_status: Dict[str, Dict] = {}
+        available_labels: List[str] = []
+        for key, label, template in PLATFORMS:
+            asset_name = template.format(version=version)
+            status = evidence.status_for(asset_name)
+            entry: Dict = {
+                "status": status,
+                "asset": asset_name,
+                "evidence": evidence.source,
+            }
+            if status == STATUS_AVAILABLE:
+                entry["url"] = f"{base_url}/{asset_name}"
+                downloads[key] = entry["url"]
+                available_labels.append(label)
+            platform_status[key] = entry
+
+        # GitHub auto-generates these codeload archives for every tag; they are
+        # not uploaded release assets, so this URL shape works even though no
+        # matching file appears in `gh release view`. They are therefore NOT
+        # gated on asset evidence -- their existence follows from the tag.
+        downloads["source_zip"] = (
+            f"https://github.com/{GITHUB_REPO}/archive/refs/tags/{version}.zip"
+        )
+        downloads["source_tar"] = (
+            f"https://github.com/{GITHUB_REPO}/archive/refs/tags/{version}.tar.gz"
+        )
 
         release_data = {
             "version": version,
@@ -172,25 +429,22 @@ class ReleaseMetadataGenerator:
             "commit_hash": tag_info["commit"],
             "is_prerelease": is_prerelease,
             "changelog": _ascii_safe(changelog),
-            # Asset names must match what scripts/build_all_platforms.py actually
-            # produces and enhanced-release.yml actually uploads (build-windows/
-            # **/*.zip, build-linux/**/*.zip, build-mac/**/*.zip) -- NOT a guessed
-            # shape. Verified against the real v0.13.1 release asset list
-            # (issue #963: PDoom.exe / PDoom.x86_64 / pdoom-*-source.* were all
-            # 404s because no such assets are ever produced).
-            "downloads": {
-                "windows": f"{base_url}/PDoom-Windows-{version}.zip",
-                "linux": f"{base_url}/PDoom-Linux-{version}.zip",
-                "mac": f"{base_url}/PDoom-macOS-{version}.zip",
-                # GitHub auto-generates these codeload archives for every tag;
-                # they are not uploaded release assets, so this URL shape works
-                # even though no matching file appears in `gh release view`.
-                "source_zip": f"https://github.com/{github_repo}/archive/refs/tags/{version}.zip",
-                "source_tar": f"https://github.com/{github_repo}/archive/refs/tags/{version}.tar.gz",
-            },
+            "downloads": downloads,
+            # The explicit half of the answer. `downloads` alone cannot tell a
+            # consumer WHY a platform is missing; this block distinguishes
+            # "not_built" (we looked, it is not there) from "unknown" (we could
+            # not look). A consumer that renders a download page can therefore
+            # say "macOS: not built for this release" instead of silently
+            # dropping a button, and can refuse to guess a URL when the status
+            # is unknown.
+            "platform_status": platform_status,
+            "asset_evidence": evidence.as_dict(),
             "metadata": {
                 "engine": "Godot 4.5.1",
-                "platforms": ["Windows", "Linux", "macOS"],
+                # DERIVED, not declared. This was hardcoded to
+                # ["Windows", "Linux", "macOS"] and therefore claimed a macOS
+                # build on v0.14.3, which did not exist.
+                "platforms": available_labels,
                 "tag_message": _ascii_safe(tag_info.get("message", "")),
             },
         }
@@ -281,7 +535,38 @@ class ReleaseMetadataGenerator:
         dom = minidom.parseString(xml_string)
         return dom.toprettyxml(indent="  ")
 
-    def generate_all_metadata(self, specific_version: Optional[str] = None) -> List[Path]:
+    def resolve_evidence(
+        self, tag: str, assets_dir: Optional[Path], probe_github: bool
+    ) -> AssetEvidence:
+        """Pick the asset-observation source for one tag, most local first.
+
+        Order matters: a local --assets-dir is what CI has at feed-generation
+        time (the release does not exist yet), and it is the SAME artifact set
+        that is about to be uploaded, so it is the closest thing to the truth.
+        The API is the fallback for regenerating already-published releases.
+        Neither available => unknown, never a guess.
+        """
+        if assets_dir is not None:
+            evidence = evidence_from_directory(assets_dir)
+            if evidence.resolved:
+                return evidence
+            print(f"    [!] assets-dir gave no observation: {evidence.detail}")
+            # Fall through: a broken --assets-dir must not silently become
+            # "nothing was built"; try the API before giving up to unknown.
+        if probe_github:
+            evidence = evidence_from_github(tag)
+            if evidence.resolved:
+                return evidence
+            print(f"    [!] GitHub asset probe failed: {evidence.detail}")
+            return evidence
+        return unresolved_evidence("--no-probe set and no usable --assets-dir")
+
+    def generate_all_metadata(
+        self,
+        specific_version: Optional[str] = None,
+        assets_dir: Optional[Path] = None,
+        probe_github: bool = True,
+    ) -> List[Path]:
         """Generate all metadata files. Returns the list of individual
         per-release JSON files written (used by --verify)."""
         print("[*] Generating release metadata for P(Doom)...")
@@ -306,8 +591,10 @@ class ReleaseMetadataGenerator:
             tag_info = self.get_git_tag_info(tag)
 
             if tag_info:
-                release_data = self.generate_release_json(tag, tag_info)
+                evidence = self.resolve_evidence(tag, assets_dir, probe_github)
+                release_data = self.generate_release_json(tag, tag_info, evidence)
                 releases.append(release_data)
+                _report_platform_status(tag, release_data["platform_status"], evidence)
 
                 # Save individual release file
                 release_file = self.output_dir / f"{tag}.json"
@@ -335,7 +622,56 @@ class ReleaseMetadataGenerator:
         print(f"[*] Latest version: {index_data['latest_version']}")
         print(f"[*] Latest stable: {index_data['latest_stable']}")
 
+        latest = releases[0] if releases else None
+        if latest:
+            status = latest["platform_status"]
+            shipped = [k for k, v in status.items() if v["status"] == STATUS_AVAILABLE]
+            print(
+                f"[*] {latest['version']} advertises: "
+                f"{', '.join(sorted(shipped)) if shipped else 'NO PLATFORMS'}"
+            )
+
         return release_files
+
+
+def audit_advertised_platforms(releases: List[Dict]) -> List[str]:
+    """Offline invariant: every advertised platform URL is backed by a status.
+
+    Checks the one thing that needs no network and that the v0.14.3 feed
+    violated: a `downloads` entry for a platform must correspond to a
+    `platform_status` of `available`. A URL for a `not_built` or `unknown`
+    platform -- or a URL with no status block at all -- is an advertised 404
+    waiting to happen, and this returns it as a problem.
+
+    Returns a list of human-readable problems (empty means clean).
+    """
+    problems: List[str] = []
+    platform_keys = [key for key, _label, _template in PLATFORMS]
+    for release in releases:
+        version = release.get("version", "?")
+        downloads = release.get("downloads", {}) or {}
+        status_block = release.get("platform_status")
+        if status_block is None:
+            problems.append(
+                f"{version}: no platform_status block -- cannot tell 'not built' from "
+                f"'not checked' (regenerate with the current generator)"
+            )
+            continue
+        for key in platform_keys:
+            entry = status_block.get(key, {})
+            status = entry.get("status")
+            has_url = key in downloads
+            if has_url and status != STATUS_AVAILABLE:
+                problems.append(
+                    f"{version}: advertises a {key} download while platform_status says "
+                    f"{status!r} -- a missing asset must never render as a URL"
+                )
+            if not has_url and status == STATUS_AVAILABLE:
+                problems.append(
+                    f"{version}: platform_status says {key} is available but no download "
+                    f"URL is listed"
+                )
+    return problems
 
 
 def _run_check(generator: "ReleaseMetadataGenerator", repo_root: Path) -> int:
@@ -378,8 +714,10 @@ def _run_check(generator: "ReleaseMetadataGenerator", repo_root: Path) -> int:
             f"latest_version is {tracked.get('latest_version')!r}, expected {expected_latest!r}"
         )
 
+    problems.extend(audit_advertised_platforms(tracked.get("releases", [])))
+
     if problems:
-        print("[check] Release index is stale:")
+        print("[check] Release index is stale or self-inconsistent:")
         for problem in problems:
             print(f"  - {problem}")
         print("[check] Fix: python scripts/generate_release_metadata.py")
@@ -387,6 +725,7 @@ def _run_check(generator: "ReleaseMetadataGenerator", repo_root: Path) -> int:
         return 1
 
     print(f"[check] Release index matches {len(expected)} git tags; latest={expected_latest}")
+    print("[check] Every advertised platform URL is backed by an 'available' status")
     return 0
 
 
@@ -415,6 +754,23 @@ def main():
         "mirroring sync_version.py --check and generate_dq_index.py --check.",
     )
 
+    parser.add_argument(
+        "--assets-dir",
+        type=Path,
+        help="Directory tree of the release's built assets (e.g. CI's downloaded "
+        "build-* artifacts). A platform gets a feed entry ONLY if its asset file "
+        "is found here. This is the pre-publication source of truth -- use it in "
+        "the release workflow, where the GitHub release does not exist yet.",
+    )
+    parser.add_argument(
+        "--no-probe",
+        action="store_true",
+        help="Do not ask the GitHub Releases API which assets exist. Without an "
+        "--assets-dir this makes every platform UNKNOWN and emits no download "
+        "URLs at all -- which is the point: offline means unverified, and "
+        "unverified must never render as an advertised link.",
+    )
+
     args = parser.parse_args()
 
     # Find repository root
@@ -425,16 +781,21 @@ def main():
     if args.check:
         sys.exit(_run_check(generator, repo_root))
 
+    probe_github = not args.no_probe
     generated_files: List[Path] = []
     if args.latest and not args.version:
         # Get latest tag
         tags = generator.get_all_release_tags()
         if tags:
-            generated_files = generator.generate_all_metadata(specific_version=tags[0])
+            generated_files = generator.generate_all_metadata(
+                specific_version=tags[0], assets_dir=args.assets_dir, probe_github=probe_github
+            )
         else:
             print("WARNING  No release tags found!")
     else:
-        generated_files = generator.generate_all_metadata(specific_version=args.version)
+        generated_files = generator.generate_all_metadata(
+            specific_version=args.version, assets_dir=args.assets_dir, probe_github=probe_github
+        )
 
     if args.verify:
         sys.path.insert(0, str(Path(__file__).parent))

@@ -30,7 +30,7 @@ Declared with a `Layer:` line in a tool's module docstring; `--` = undeclared.
 |---|---|---|---|
 | ascii_compliance_fixer.py | -- | ASCII Compliance Fixer for P(Doom) Documentation | NONE FOUND |
 | branch_manager.py | -- | Automated Branch Management System for P(Doom) | human (docstring usage) |
-| build_all_platforms.py | -- | Build P(Doom) for all platforms (Windows, Linux, macOS). | ci:enhanced-release.yml; test:test_build_all_platforms.py; tool:generate_release_metadata.py |
+| build_all_platforms.py | -- | Build P(Doom) for all platforms (Windows, Linux, macOS). | ci:enhanced-release.yml; test:test_build_all_platforms.py; test:test_generate_release_metadata.py; tool:generate_release_metadata.py |
 | check_no_emoji.py | PROVE | Blocking no-emoji / ASCII enforcement for the Godot tree (issue #744). | pre-commit |
 | check_release_notes.py | -- | Guard against a release note that announces something we did not ship. | pre-commit; ci:enhanced-release.yml; ci:pre-release-checks.yml; test:test_release_notes_guard.py |
 | check_site_release_freshness.py | -- | Is pdoom1.com advertising the release we actually published? | ci:live-site-release-freshness.yml |
@@ -47,8 +47,8 @@ Declared with a `Layer:` line in a tool's module docstring; `--` = undeclared.
 | generate_credits.py | GENERATE | Generate godot/data/credits.json from CREDITS.md. | pre-commit; tool:backfill_provenance.py |
 | generate_dq_index.py | GENERATE | Generate docs/game-design/DQ_INDEX.md from WORKSHOP_2_BACKLOG.md. | pre-commit; tool:enforce_standards.py; tool:generate_credits.py; tool:generate_release_metadata.py; tool:intelligent_ascii_converter.py |
 | generate_mechanics_docs.py | GENERATE | Generate mechanics documentation from game code. | ci:docs-sync.yml |
-| generate_release_manifest.py | GENERATE | Generate release_manifest.json -- the machine-readable release descriptor. | ci:enhanced-release.yml; test:test_generate_release_manifest.py |
-| generate_release_metadata.py | GENERATE | Generate release metadata for website integration. | pre-commit; ci:enhanced-release.yml; tool:generate_release_manifest.py |
+| generate_release_manifest.py | GENERATE | Generate release_manifest.json -- the machine-readable release descriptor. | ci:enhanced-release.yml; test:test_generate_release_manifest.py; tool:generate_release_metadata.py |
+| generate_release_metadata.py | GENERATE | Generate release metadata for website integration. | pre-commit; ci:enhanced-release.yml; test:test_generate_release_manifest.py; test:test_generate_release_metadata.py; tool:generate_release_manifest.py |
 | generate_rulings.py | GENERATE | Generate the rulings index + the cross-repo rulings.json from RULING: declarations. | pre-commit; tool:check_credentials.py; tool:rule.py; tool:triage_undeclared_rulings.py |
 | generate_tools_index.py | GENERATE | Generate docs/TOOLS.md -- the index of the dev tooling in scripts/ and tools/. | pre-commit; test:test_generate_tools_index.py |
 | health_automation.py | -- | Project Health Automation Suite - BLITZ MODE | human (docstring usage) |
@@ -68,7 +68,7 @@ Declared with a `Layer:` line in a tool's module docstring; `--` = undeclared.
 | todo_tracker.py | -- | TODO/FIXME/HACK Tracker | human (docstring usage) |
 | token-setup-guide.py | -- | Quick GitHub Token Setup Guide for P(Doom) Cross-Repository Sync | NONE FOUND |
 | validate_historical_data.py | -- | Historical Data Validation Script | make; ci:data-validation.yml; ci:enhanced-release.yml |
-| verify_release_urls.py | -- | Verify release-feed download URLs actually resolve. | ci:enhanced-release.yml; tool:generate_release_metadata.py |
+| verify_release_urls.py | -- | Verify release-feed download URLs actually resolve. | ci:enhanced-release.yml; test:test_generate_release_metadata.py; tool:generate_release_metadata.py |
 
 ## `tools/`
 

@@ -230,13 +230,36 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      # The feed must be derived from assets that EXIST. At this point in the
+      # workflow the GitHub release does not exist yet, so the only ground
+      # truth is the artifact set build-godot just uploaded -- which is also
+      # exactly what create-github-release is about to attach. Download it and
+      # hand it to the generator as --assets-dir.
+      #
+      # Why this step exists at all (v0.14.3, 2026-08-24): macOS is a
+      # best-effort platform (issue #1071). Its export failed, build-mac
+      # uploaded nothing (`if-no-files-found: warn`, correctly), Windows/Linux
+      # published -- and the generator, which knew nothing about any of it,
+      # advertised PDoom-macOS-v0.14.3.zip from the naming convention alone.
+      # Live 404 in a public feed. The build pipeline had the answer the whole
+      # time; nothing carried it across the job boundary. This does.
+      - name: Download build artifacts (asset ground truth for the feed)
+        uses: actions/download-artifact@v8
+        with:
+          pattern: build-*
+          path: build-artifacts/
+
       - name: Generate release metadata
         env:
           RELEASE_VERSION: ${{ github.event.inputs.version || github.ref_name }}
         run: |
           VERSION="$RELEASE_VERSION"
           echo "MEMO Generating metadata for $VERSION..."
-          python scripts/generate_release_metadata.py --version "$VERSION"
+          echo "Assets observed for the feed:"
+          find build-artifacts -type f -name '*.zip' -printf '  %f\n' || true
+          python scripts/generate_release_metadata.py \
+            --version "$VERSION" \
+            --assets-dir build-artifacts
 
       - name: Upload metadata artifacts
         uses: actions/upload-artifact@v7

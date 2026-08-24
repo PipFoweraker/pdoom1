@@ -6,19 +6,34 @@
   "is_prerelease": false,
   "changelog": "Release v0.9.0\n\nSee CHANGELOG.md for details.",
   "downloads": {
-    "windows": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.9.0/PDoom-Windows-v0.9.0.zip",
-    "linux": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.9.0/PDoom-Linux-v0.9.0.zip",
-    "mac": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.9.0/PDoom-macOS-v0.9.0.zip",
     "source_zip": "https://github.com/PipFoweraker/pdoom1/archive/refs/tags/v0.9.0.zip",
     "source_tar": "https://github.com/PipFoweraker/pdoom1/archive/refs/tags/v0.9.0.tar.gz"
   },
+  "platform_status": {
+    "windows": {
+      "status": "unknown",
+      "asset": "PDoom-Windows-v0.9.0.zip",
+      "evidence": "github-api"
+    },
+    "linux": {
+      "status": "unknown",
+      "asset": "PDoom-Linux-v0.9.0.zip",
+      "evidence": "github-api"
+    },
+    "mac": {
+      "status": "unknown",
+      "asset": "PDoom-macOS-v0.9.0.zip",
+      "evidence": "github-api"
+    }
+  },
+  "asset_evidence": {
+    "source": "github-api",
+    "resolved": false,
+    "detail": "HTTP 404 from https://api.github.com/repos/PipFoweraker/pdoom1/releases/tags/v0.9.0"
+  },
   "metadata": {
     "engine": "Godot 4.5.1",
-    "platforms": [
-      "Windows",
-      "Linux",
-      "macOS"
-    ],
+    "platforms": [],
     "tag_message": "v0.9.0: Alpha Stability & Audio System\n\nMajor milestone release featuring:\n- Complete audio system breakthrough (fixed since inception)\n- Monolith architecture extraction (558+ lines)\n- Critical stability improvements (5 GitHub issues resolved)\n- Comprehensive documentation reorganization\n- Enhanced test suite with re-enabled sound tests\n- Ready for stable alpha and beta progression"
   }
 }

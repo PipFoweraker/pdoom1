@@ -26,6 +26,7 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
 import generate_release_manifest as grm  # noqa: E402
+from generate_release_metadata import platform_assets_for  # noqa: E402
 
 
 class TestValidateVersion(unittest.TestCase):
@@ -264,6 +265,111 @@ class TestGeneratedManifestCarriesTheSeed(unittest.TestCase):
         self.assertIn("league_seed", manifest, "the website reads this field; it must exist")
         self.assertTrue(manifest["league_seed"], "league_seed must never ship empty")
         self.assertEqual(manifest["league_seed"], expected)
+
+
+class TestPlatformsAreEnumeratedNotDeclared(unittest.TestCase):
+    """`platforms` was a hardcoded literal, and it contradicted `assets`.
+
+    THE SHIPPED DEFECT (v0.14.3, 2026-08-24), verified against the published
+    release_manifest.json: `platforms` read ["windows", "linux", "macos"] while
+    `assets` -- enumerated from what actually built -- listed only the four
+    Windows/Linux zips. One published artifact carrying both the right answer
+    and the wrong one, with the wrong one in the field a consumer reads first.
+
+    A constant cannot be wrong by accident, so the fix is derivation, and the
+    test that proves derivation must show the value CHANGING with the input.
+    Hence the pair below: same version, same code, different asset lists,
+    different `platforms`. A check that cannot return the other answer proves
+    nothing.
+    """
+
+    VERSION = "v0.14.3"
+
+    # Exactly what shipped, taken from `gh release view v0.14.3 --json assets`.
+    SHIPPED_ASSETS = [
+        {"name": "PDoom-Linux-v0.14.3.zip", "size": 1, "sha256": "a"},
+        {"name": "PDoom-Linux.zip", "size": 1, "sha256": "a"},
+        {"name": "PDoom-Windows-v0.14.3.zip", "size": 1, "sha256": "b"},
+        {"name": "PDoom-Windows.zip", "size": 1, "sha256": "b"},
+    ]
+
+    ALL_THREE_ASSETS = SHIPPED_ASSETS + [
+        {"name": "PDoom-macOS-v0.14.3.zip", "size": 1, "sha256": "c"},
+        {"name": "PDoom.app.zip", "size": 1, "sha256": "c"},
+    ]
+
+    def _manifest(self, assets, assets_resolved=None):
+        return grm.build_manifest(
+            version=self.VERSION,
+            commit="0" * 40,
+            ladder_version="6",
+            league_seed="weekly-2026-w35",
+            highlights="",
+            assets=assets,
+            repository="PipFoweraker/pdoom1",
+            assets_resolved=assets_resolved,
+        )
+
+    def test_all_three_platforms_when_all_three_shipped(self):
+        manifest = self._manifest(self.ALL_THREE_ASSETS)
+        self.assertEqual(manifest["platforms"], ["windows", "linux", "macos"])
+        for token in ("windows", "linux", "macos"):
+            self.assertEqual(manifest["platform_status"][token], "available")
+
+    def test_the_real_v0143_asset_list_yields_two_platforms(self):
+        manifest = self._manifest(self.SHIPPED_ASSETS)
+        self.assertEqual(manifest["platforms"], ["windows", "linux"])
+        self.assertNotIn("macos", manifest["platforms"])
+
+    def test_macos_absence_is_stated_not_merely_omitted(self):
+        manifest = self._manifest(self.SHIPPED_ASSETS)
+        self.assertEqual(manifest["platform_status"]["macos"], "not_built")
+        self.assertEqual(manifest["platform_status"]["windows"], "available")
+
+    def test_manifest_no_longer_contradicts_its_own_asset_list(self):
+        # The defect in one assertion: every platform CLAIMED must be backed by
+        # an asset actually listed in the same file.
+        manifest = self._manifest(self.SHIPPED_ASSETS)
+        listed = {asset["name"] for asset in manifest["assets"]}
+        expected = platform_assets_for(self.VERSION)
+        reverse = {v: k for k, v in grm.MANIFEST_PLATFORM_TOKENS.items()}
+        for token in manifest["platforms"]:
+            candidates = expected[reverse[token]]
+            self.assertTrue(
+                any(name in listed for name in candidates),
+                "manifest claims %s but lists none of %s" % (token, candidates),
+            )
+
+    def test_unversioned_alias_alone_still_counts_as_shipped(self):
+        # The website's download buttons use the unversioned alias, so a
+        # release carrying only the alias has genuinely shipped that platform.
+        manifest = self._manifest([{"name": "PDoom.app.zip", "size": 1, "sha256": "c"}])
+        self.assertIn("macos", manifest["platforms"])
+
+    def test_unobserved_assets_are_unknown_not_three_platforms(self):
+        # RULING 2026-08-23 (manufactured confidence). The old literal declared
+        # all three even on a dry run with no artifacts at all.
+        manifest = self._manifest([], assets_resolved=False)
+        self.assertEqual(manifest["platforms"], [])
+        for token in ("windows", "linux", "macos"):
+            self.assertEqual(manifest["platform_status"][token], "unknown")
+
+    def test_forgetting_the_flag_under_claims_rather_than_over_claims(self):
+        manifest = self._manifest([])
+        self.assertEqual(manifest["platforms"], [])
+        self.assertEqual(manifest["platform_status"]["windows"], "unknown")
+
+    def test_observed_empty_directory_is_not_built_not_unknown(self):
+        manifest = self._manifest([], assets_resolved=True)
+        for token in ("windows", "linux", "macos"):
+            self.assertEqual(manifest["platform_status"][token], "not_built")
+
+    def test_platforms_field_is_still_present_and_still_spelled_macos(self):
+        # Add-only contract: the field name and its value vocabulary are a
+        # shipped interface. Only the DERIVATION changed.
+        manifest = self._manifest(self.ALL_THREE_ASSETS)
+        self.assertIn("platforms", manifest)
+        self.assertIn("macos", manifest["platforms"])
 
 
 if __name__ == "__main__":

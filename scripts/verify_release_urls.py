@@ -17,6 +17,9 @@ Two modes:
                 meant to run in CI right after a release's assets are
                 uploaded, so a future generator/pipeline mismatch fails the
                 workflow instead of silently shipping 404s.
+                It ALSO cross-checks the "platform_status" block offline: a
+                404 sweep can only see URLs that are listed, so an omitted
+                platform would be invisible to it. See verify_platform_status.
 
   --sweep PATH  Report-only sweep (unless --strict). Walks every entry in a
                 releases.json index, checks whether a matching GitHub
@@ -100,6 +103,43 @@ def release_exists(version: str) -> bool:
     return status == 200
 
 
+def verify_platform_status(data: Dict, label: str) -> List[str]:
+    """Offline cross-check between `platform_status` and `downloads`.
+
+    The URL checks above can only fail on a URL that IS listed. That is exactly
+    how the v0.14.3 macOS 404 could have been shipped quietly under a slightly
+    different generator bug: an omitted platform is invisible to a 404 sweep.
+    So this asserts the other direction too -- an `available` status must have a
+    URL, and a `not_built`/`unknown` status must NOT have one.
+
+    A feed with no `platform_status` block at all is reported (not silently
+    passed): it was written by a generator that could not distinguish "not
+    built" from "not checked".
+    """
+    problems: List[str] = []
+    status_block = data.get("platform_status")
+    if status_block is None:
+        print(f"  [!] {label}: no platform_status block (pre-#963-followup generator)")
+        return [f"{label}: no platform_status block -- cannot audit omitted platforms"]
+
+    downloads = data.get("downloads", {}) or {}
+    for platform, entry in sorted(status_block.items()):
+        status = entry.get("status")
+        has_url = platform in downloads
+        marker = {"available": "[OK]", "not_built": "[--]", "unknown": "[??]"}.get(status, "[!]")
+        print(f"  {marker} {label}.{platform:12s} status={status!s:10s} url_listed={has_url}")
+        if has_url and status != "available":
+            problems.append(
+                f"{label}.{platform}: URL advertised while status is {status!r} "
+                f"-- a missing asset must never render as a URL"
+            )
+        if not has_url and status == "available":
+            problems.append(f"{label}.{platform}: status 'available' but no download URL listed")
+        if status not in ("available", "not_built", "unknown"):
+            problems.append(f"{label}.{platform}: unrecognised status {status!r}")
+    return problems
+
+
 def cmd_file(path: Path) -> int:
     """Blocking: verify one release JSON's download URLs."""
     data = json.loads(path.read_text(encoding="utf-8"))
@@ -107,13 +147,14 @@ def cmd_file(path: Path) -> int:
     print(f"[*] Verifying download URLs for {version} ({path})")
 
     failures = verify_downloads(data.get("downloads", {}), version)
+    failures += verify_platform_status(data, version)
     if failures:
-        print(f"\n[!] {len(failures)} broken URL(s) in {path}:")
+        print(f"\n[!] {len(failures)} problem(s) in {path}:")
         for f in failures:
             print(f"  [!] {f}")
         return 1
 
-    print(f"[OK] All download URLs for {version} resolve")
+    print(f"[OK] All download URLs for {version} resolve, and match their platform_status")
     return 0
 
 

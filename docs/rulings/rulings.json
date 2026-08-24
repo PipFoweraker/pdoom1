@@ -3,7 +3,7 @@
   "repo": "pdoom1",
   "generated_from": "tracked files at HEAD",
   "convention": "docs/rulings/RULINGS_CONVENTION.md",
-  "count": 43,
+  "count": 44,
   "rulings": [
     {
       "id": "pdoom1:2026-07-04:12de8fc2",
@@ -592,6 +592,20 @@
       "supersedes": null,
       "superseded_by": null,
       "source": "godot/tests/unit/test_iso_week_seed.gd:24"
+    },
+    {
+      "id": "pdoom1:2026-08-24:49689d9d",
+      "date": "2026-08-24",
+      "ruling": "a published release artifact states a platform shipped only by enumerating an asset that exists, never by a naming convention or a hardcoded list, and where presence cannot be observed it says UNKNOWN instead of advertising a URL",
+      "summary": "",
+      "flavour": "release-artifacts",
+      "kind": "declaration",
+      "status": "",
+      "by": "Pip",
+      "mechanism": "generate_release_metadata.audit_advertised_platforms and generate_release_manifest.derive_platforms",
+      "supersedes": null,
+      "superseded_by": null,
+      "source": "scripts/generate_release_metadata.py:63"
     },
     {
       "id": "pdoom1:2026-08-24:5b478ae8",
@@ -1350,8 +1364,16 @@
       "text": "# style_tags restricted to the canonical quality-tier ladder (ruled 2026-07-26)."
     },
     {
-      "source": "public/releases/releases.json:12",
+      "source": "public/releases/releases.json:156",
       "text": "\"changelog\": \"Ladder epoch **L3 -> L4** -- this is a FORKING release. The historical event deck\\nwas retimed to one-turn-one-month and the ruled promotions were applied (#1137),\\nwhich changes which e"
+    },
+    {
+      "source": "public/releases/releases.json:49",
+      "text": "\"tag_message\": \"P(Doom) v0.14.3 -- ladder epoch L6\\n\\nLadder L6. Featured seed weekly-2026-w35. Board key (weekly-2026-w35, L6).\\n\\nFORKING RELEASE, and the fork happened before this build. L6 was cut"
+    },
+    {
+      "source": "public/releases/v0.14.3.json:44",
+      "text": "\"tag_message\": \"P(Doom) v0.14.3 -- ladder epoch L6\\n\\nLadder L6. Featured seed weekly-2026-w35. Board key (weekly-2026-w35, L6).\\n\\nFORKING RELEASE, and the fork happened before this build. L6 was cut"
     },
     {
       "source": "scripts/generate_rulings.py:164",

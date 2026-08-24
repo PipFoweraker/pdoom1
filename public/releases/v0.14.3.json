@@ -1,0 +1,46 @@
+{
+  "version": "v0.14.3",
+  "version_number": "0.14.3",
+  "release_date": "2026-08-24T14:30:55+10:00",
+  "commit_hash": "67c93fee645d449b6757bfbc07c31775396730d3",
+  "is_prerelease": false,
+  "changelog": "A pass over things that took your money, or your attention, and gave nothing\nback for it -- an acquired startup's engineers who drew salary and never worked,\na lever that quoted a doom figure it never applied, an $80,000 counter-offer\nthat changed nothing, and a feedback button that saved a file to your disk and\nasked you to email it.\n\n### Added\n- Counter-offers retain a named researcher, at a permanent payroll cost.\n  Item 4 of the hiring-panel set; #1225 is still OPEN.\n- The onboarding bill and visa obligation are previewed before you commit.\n  Item 5 of the hiring-panel set; #1225 is still OPEN.\n- Ad campaigns emit a monthly report whether or not anyone applied, and name what\n  the campaign cost when it closes. Item 3 of the hiring-panel set;\n  #1225 is still OPEN.\n- A signed-build path: tooling exists and is tested, awaiting the\n  certificate. #1038 is still OPEN.\n- `docs/TRUST.md`, generated from source -- every point the game reaches outside\n  its own process. #1038 is still OPEN.\n\n### Changed\n- Compute engineers are real staff rather than an integer counter (#1247). They\n  used to appear on the employee screen and never load into the sim -- consuming\n  stationery and producing nothing.\n- The header stops calling committed Attention \"queued\", and hiring says\n  days. #1223 is still OPEN.\n- The music conductor takes a nudge, and a pick made mid-crossfade is no longer\n  dropped (#1249)\n- The game ships with its own icon instead of the default engine one -- visible in\n  the taskbar, alt-tab, and the Windows publisher warning\n- The featured league seed is `weekly-2026-w35` on ladder epoch `L6`. The seed\n  names the ISO week the league opens in; the rolls to `w34` (23 Aug) and `w35`\n  (24 Aug) were made in the repository but never reached a published build, so\n  players stayed on `weekly-2026-w33` / `L5`. This is the build that carries them\n  across. The slip is recorded rather than papered over.\n\n### Fixed\n- The game-over screen stops blaming crises the player actually survived (#1248)\n- The desperation lever applies real safety absorption instead of a printed\n  figure (#967) -- the button now does what its text says\n- An offer at or below a previously rejected figure is refused rather than\n  silently accepted. Item 2 of the hiring-panel set; #1225 is still OPEN.\n- Send Feedback (N) offers three one-click ways to actually send it. It used to\n  save a file to your disk and ask you to email it.\n- The weekly-seed fallback generator computed a non-ISO week and would have\n  emitted `weekly-2027-w1` on 1 January 2027, where the ISO week is\n  `weekly-2026-w53`. Wrong year, wrong week, and unpadded -- and `w1` and `w01`\n  are different board keys. Unreachable while the seed override is set, and now\n  correct if it ever is not.",
+  "downloads": {
+    "windows": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.14.3/PDoom-Windows-v0.14.3.zip",
+    "linux": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.14.3/PDoom-Linux-v0.14.3.zip",
+    "source_zip": "https://github.com/PipFoweraker/pdoom1/archive/refs/tags/v0.14.3.zip",
+    "source_tar": "https://github.com/PipFoweraker/pdoom1/archive/refs/tags/v0.14.3.tar.gz"
+  },
+  "platform_status": {
+    "windows": {
+      "status": "available",
+      "asset": "PDoom-Windows-v0.14.3.zip",
+      "evidence": "github-api",
+      "url": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.14.3/PDoom-Windows-v0.14.3.zip"
+    },
+    "linux": {
+      "status": "available",
+      "asset": "PDoom-Linux-v0.14.3.zip",
+      "evidence": "github-api",
+      "url": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.14.3/PDoom-Linux-v0.14.3.zip"
+    },
+    "mac": {
+      "status": "not_built",
+      "asset": "PDoom-macOS-v0.14.3.zip",
+      "evidence": "github-api"
+    }
+  },
+  "asset_evidence": {
+    "source": "github-api",
+    "resolved": true,
+    "detail": "https://api.github.com/repos/PipFoweraker/pdoom1/releases/tags/v0.14.3"
+  },
+  "metadata": {
+    "engine": "Godot 4.5.1",
+    "platforms": [
+      "Windows",
+      "Linux"
+    ],
+    "tag_message": "P(Doom) v0.14.3 -- ladder epoch L6\n\nLadder L6. Featured seed weekly-2026-w35. Board key (weekly-2026-w35, L6).\n\nFORKING RELEASE, and the fork happened before this build. L6 was cut on\n2026-08-23 by 38c5951e, when four outstanding ladder-bump declarations came due.\nThis is the first build to SHIP that epoch. L5 entries stay valid and visible\nunder L5; new runs land on L6.\n\nTHE SEED ROLLED TWICE AND NO BUILD CARRIED IT. FEATURED_SEED_OVERRIDE is a\ncompiled-in constant, so a roll in the repository moves nothing until a build\ncarrying it is published. It went to weekly-2026-w34 on 2026-08-23 (4098f28e)\nand to weekly-2026-w35 on 2026-08-24, and neither shipped. Every player has been\non v0.14.2's (weekly-2026-w33, L5) since 21 August, and the league board has held\nno scores since 2026-08-14. This build is what carries them across.\n\nweekly-2026-w34 was never published and no board was ever opened on it. It is\nskipped rather than reused: the seed names the ISO week the league OPENS in\n(ruled 2026-08-24), and week 34 has passed.\n\nAlso in this build:\n  Compute engineers load into the sim instead of drawing salary and producing\n  nothing (#1247). The desperation lever applies real safety absorption rather\n  than printing a figure it never used (#967). A rejected offer leaves a mark\n  (#1225). Counter-offers retain a named researcher at a permanent payroll cost.\n  Ad campaigns report every month, including the barren ones. Send Feedback\n  offers three one-click ways to actually send a report -- the previous path\n  saved a file to disk and asked the player to email it, and user://bug_reports\n  was measured EMPTY after a fortnight of playtesting (#1281).\n\nThe weekly-seed fallback generator no longer emits weekly-2027-w1 for 1 January\n2027. ISO-8601 puts that date in week 53 OF 2026, and w1 and w01 are different\nboard keys. Verified against date.isocalendar() over every day from 2024-01-01\nto 2032-12-31.\n\nFull notes: CHANGELOG.md [0.14.3]. Builds are unsigned; see the release body."
+  }
+}
