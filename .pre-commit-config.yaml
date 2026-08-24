@@ -176,6 +176,22 @@ repos:
         files: '^(docs/.*\.md|docs/calendar/github_snapshot\.json|scripts/generate_commitment_calendar\.py|tools/.*\.py|scripts/.*\.py|[^/]*\.md)$'
         pass_filenames: false
 
+      # The release horizon is GENERATED (same anti-rot pattern as the DQ/ADR/
+      # tools indexes and the commitment calendar). It carries the SCHEDULED tier
+      # -- dates and ISO-week seeds out to v0.20 -- plus a ladder-epoch FLOOR that
+      # ratchets from ladder_version.txt. #1152 filed the hand-maintained version
+      # -> epoch tables as "off by one"; they were not off by one, the model was
+      # wrong, so the fix is that no document carries a predicted epoch and this
+      # gate keeps the floor honest.
+      # Fires on the two SSOT files it reads, the two documents it splices a
+      # generated region into, and its own outputs.
+      - id: release-horizon-check
+        name: release horizon (dates, seeds, ladder floor) up to date
+        entry: python tools/generate_release_horizon.py --check
+        language: system
+        files: '^(version\.txt|ladder_version\.txt|docs/ROADMAP\.md|docs/RELEASE_NOMENCLATURE\.md|docs/releases/(RELEASE_HORIZON\.md|release_horizon\.json)|tools/generate_release_horizon\.py)$'
+        pass_filenames: false
+
       # Godot class cache vs the class_name declarations (2026-08-13 playtest incident).
       # NOTE THE STAGE: post-merge / post-checkout, NOT pre-commit. This failure is a
       # property of a long-lived WORKING COPY, not of a diff -- the machine that authors a

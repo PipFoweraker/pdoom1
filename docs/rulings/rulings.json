@@ -3,7 +3,7 @@
   "repo": "pdoom1",
   "generated_from": "tracked files at HEAD",
   "convention": "docs/rulings/RULINGS_CONVENTION.md",
-  "count": 54,
+  "count": 55,
   "rulings": [
     {
       "id": "pdoom1:2026-07-04:12de8fc2",
@@ -760,6 +760,20 @@
       "supersedes": null,
       "superseded_by": null,
       "source": "tools/check_release_ledger.py:34"
+    },
+    {
+      "id": "pdoom1:2026-08-24:c596d6b9",
+      "date": "2026-08-24",
+      "ruling": "a minor version bump ALWAYS cuts the ladder, and the ladder MAY ALSO cut mid-version whenever gameplay forks; therefore ladder epochs >= minor versions, always, and the ladder epoch is NEVER forecastable",
+      "summary": "",
+      "flavour": "release-cadence",
+      "kind": "declaration",
+      "status": "",
+      "by": "Pip",
+      "mechanism": "tools/generate_release_horizon.py",
+      "supersedes": null,
+      "superseded_by": null,
+      "source": "tools/generate_release_horizon.py:37"
     }
   ],
   "undeclared": [
@@ -800,11 +814,11 @@
       "text": "Pip ruled **option A**: archive the pygame-era entries, keep the 2026-07-22 post."
     },
     {
-      "source": "docs/GLOSSARY.md:272",
+      "source": "docs/GLOSSARY.md:278",
       "text": "Naming (ruled 2026-07-29, Pip): gates are written name-first with a 1-6"
     },
     {
-      "source": "docs/GLOSSARY.md:471",
+      "source": "docs/GLOSSARY.md:477",
       "text": "## Observed inconsistency (flagged, not ruled)"
     },
     {

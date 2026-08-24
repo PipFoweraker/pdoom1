@@ -50,7 +50,7 @@ Declared with a `Layer:` line in a tool's module docstring; `--` = undeclared.
 | generate_mechanics_docs.py | GENERATE | Generate mechanics documentation from game code. | ci:docs-sync.yml |
 | generate_release_manifest.py | GENERATE | Generate release_manifest.json -- the machine-readable release descriptor. | ci:enhanced-release.yml; test:test_generate_release_manifest.py; test:test_generate_release_metadata.py |
 | generate_release_metadata.py | GENERATE | Generate release metadata for website integration. | pre-commit; ci:enhanced-release.yml; test:test_generate_release_metadata.py; tool:generate_release_manifest.py |
-| generate_rulings.py | GENERATE | Generate the rulings index + the cross-repo rulings.json from RULING: declarations. | pre-commit; ci:guards.yml; tool:check_credentials.py; tool:rule.py; tool:triage_undeclared_rulings.py |
+| generate_rulings.py | GENERATE | Generate the rulings index + the cross-repo rulings.json from RULING: declarations. | pre-commit; ci:guards.yml; tool:generate_commitment_calendar.py; tool:check_credentials.py; tool:rule.py; tool:triage_undeclared_rulings.py |
 | generate_tools_index.py | GENERATE | Generate docs/TOOLS.md -- the index of the dev tooling in scripts/ and tools/. | pre-commit; ci:guards.yml; test:test_generate_tools_index.py |
 | health_automation.py | -- | Project Health Automation Suite - BLITZ MODE | human (docstring usage) |
 | health_tracker.py | -- | Project Health History Tracker & Dev Blog Integration | ci:enhanced-cicd-pipeline.yml |
@@ -98,6 +98,7 @@ Declared with a `Layer:` line in a tool's module docstring; `--` = undeclared.
 | commit.py | -- | Commit wrapper that absorbs the "hook reformatted a file then aborted" dance. | make; test:test_find_dead_code.py; tool:find_dead_code.py |
 | find_dead_code.py | -- | find_dead_code.py -- report-only dead-path scanner for P(Doom)1. | test:test_find_dead_code.py; tool:generate_tools_index.py |
 | generate_cat_placeholders.py | -- | Generate placeholder cat images for different doom levels. | tool:backfill_provenance.py |
+| generate_release_horizon.py | -- | Generate the release horizon: which version ships when, on which seed, and | pre-commit; test:test_generate_release_horizon.py; tool:generate_commitment_calendar.py |
 | generate_trust_declaration.py | -- | Generate docs/TRUST.md -- what the game reaches for, derived from the source. | pre-commit; ci:guards.yml |
 | ingest_recordings.py | -- | Pull fresh OBS recordings into the repo's working area. | human (docstring usage) |
 | phase2_setup.py | -- | Phase 2: Events System Setup | human (docstring usage) |
@@ -254,4 +255,4 @@ DISCUSSING CI); the rest are the hollow-runner shape -- read them.
 
 27 `.html` tool(s) under `tools/` (browser-opened, no docstring to parse): `tools/art_review/doom_overlay_preview.html`, `tools/art_review/hero_gallery_template.html`, `tools/art_review/icon_pass_2026-07-21.html`, `tools/art_review/icon_pass_verdicts_2026-07-21.html`, `tools/art_review/palette.html`, `tools/art_review/palette_swatches.html`, `tools/art_review/scene_wave2_2026-07-21.html`, `tools/art_review/style_review.html`, `tools/assets/review_generated.html`, `tools/music/commission_sheets.html`, `tools/music/jukebox.html`, `tools/music/listening_room.html`, `tools/music/stem_board.html`, `tools/runsheet/CEREMONY-ALL-GATES-2026-07-31.html`, `tools/runsheet/SUNDAY-postmortem-2026-08-07.html`, `tools/runsheet/chronicle-2026-08-06_07.html`, `tools/runsheet/commitments-2026-08.html`, `tools/runsheet/copy-review-2026-08-09.html`, `tools/runsheet/fri-2026-07-31-EVENING-1620.html`, `tools/runsheet/fri-2026-07-31-GATES-1700.html`, `tools/runsheet/fri-2026-07-31-TO-MIDNIGHT-1733.html`, `tools/runsheet/fri-2026-07-31-league-day.html`, `tools/runsheet/playtest_card.html`, `tools/runsheet/wed-thu-2026-07-29.html`, `tools/social_composer.html`, `tools/ui_comparison.html`, `tools/ui_mockup/wireframe.html`.
 
-Total: 151 active tools (11 GENERATE, 8 OBSERVE, 17 PROVE, 1 SWEEP, 114 undeclared); 11 in UNKNOWN; 6 archived.
+Total: 152 active tools (11 GENERATE, 8 OBSERVE, 17 PROVE, 1 SWEEP, 115 undeclared); 11 in UNKNOWN; 6 archived.
