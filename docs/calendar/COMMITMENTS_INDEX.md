@@ -405,6 +405,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-24 | `tools/check_release_ledger.py` | 8 | On 2026-08-24 the repo held ``version.txt = 0.14.3``, a proven build on disk, |
 | 2026-08-24 | `tools/check_release_ledger.py` | 34 | RULING: 2026-08-24 -- every value version.txt has ever held must have a matching git tag, or a declared exemption; a bump with no tag is a defect the  |
 | 2026-08-24 | `tools/check_release_ledger.py` | 60 | 2026-08-24: *"do not build an atom store unless a named party will rule it"*), |
+| 2026-08-24 | `tools/check_release_ledger.py` | 487 | # written. On 2026-08-24 the tag was pushed and the self-test began FAILING |
 | 2026-08-28 | `docs/releases/RELEASE_LINKING_TO_0.20.md` | 93 | league opens on Friday 2026-08-28 -- also week 35 -- then by the 2026-07-30 |
 | 2026-08-31 | `docs/rulings/RULINGS.md` | 345 | - `godot/scripts/core/researcher.gd:150` -- # SEAM (ruled 2026-07-27, review-by 2026-08-31): AUDITS ground-truth reported vs actual. |
 | 2026-08-31 | `docs/rulings/RULINGS.md` | 350 | - `godot/scripts/core/turn_manager.gd:313` -- SEAM (ruled 2026-07-27, review-by 2026-08-31): AUDITS ground-truth reported vs actual. |

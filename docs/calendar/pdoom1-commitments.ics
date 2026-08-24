@@ -4150,7 +4150,7 @@ DTSTART;VALUE=DATE:20260824
 DTEND;VALUE=DATE:20260825
 SUMMARY:[UNPARSED] needs a declaration -- check_release_ledger.py
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/check_release_le
- dger.py:8. 3 line(s) in tools/check_release_ledger.py mention this date a
+ dger.py:8. 4 line(s) in tools/check_release_ledger.py mention this date a
  nd no COMMITMENT: declaration accounts for it. Either add a declaration o
  r the date is incidental. First line: On 2026-08-24 the repo held ``versi
  on.txt = 0.14.3``\, a proven build on disk\, -- Generated from tracked so
