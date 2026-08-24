@@ -26,6 +26,18 @@ jobs:
     name: Check Documentation Sync
     runs-on: ubuntu-latest
 
+    # Read-only on purpose. This job only reads the tree and uploads an
+    # artifact. NOTE a latent gap, deliberately NOT closed here: the
+    # "Auto-commit updated docs (main branch only)" step below ends in
+    # `git push`, which needs `contents: write`. It has never yet fired --
+    # every main run so far found the docs already in sync -- so it has never
+    # been observed either working or 403ing. Granting push-to-main rights on
+    # the strength of a step nobody has seen run is a bigger decision than the
+    # comment-permission repair this file is being changed for (issue #1279);
+    # whoever makes that call should do it knowingly, not inherit it.
+    permissions:
+      contents: read
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v7
@@ -92,6 +104,38 @@ jobs:
     needs: check-docs-sync
     if: github.event_name == 'pull_request' && always()
 
+    # PERMISSIONS ARE REQUIRED AND WERE ABSENT UNTIL 2026-08-24 (issue #1279).
+    # Without them the job inherits the repo default read-only GITHUB_TOKEN --
+    # run 32569928505 logged it as exactly "Contents: read / Metadata: read /
+    # Packages: read" -- and the createComment call below 403s with
+    # "Resource not accessible by integration" on
+    # POST /repos/PipFoweraker/pdoom1/issues/<pr>/comments.
+    # Measured before the fix, over this workflow's ENTIRE run history (127
+    # runs, 2025-12-07 to 2026-08-22): 77 of 77 pull_request runs FAILED and
+    # 50 of 50 push-to-main runs PASSED. It has never once passed on a PR.
+    # Main never fails because this job is gated on
+    # `github.event_name == 'pull_request'` and so never runs there.
+    # The 403 is confirmed in the log of every failed run whose log still
+    # exists (2026-06-27 through 2026-08-22); older logs are 410 Gone.
+    # A gate that reds on something it does not gate is worse than no gate: it
+    # trains the reader to discount reds, which is how a real one gets waved
+    # through. Same defect, same shape, as release-reminder.yml (2026-08-08).
+    # The ruling that governs this block. It has to sit on one line because
+    # the rulings generator matches per-line; do not reflow it. (Naming that
+    # generator's path here would make the generated dev-tools index list this
+    # workflow as one of its callers, which would be false -- see docs/TOOLS.md.)
+    # RULING: 2026-08-22 -- a check that fails 100% of the time is not a check; chronic red trains the team to ignore red, so a permanently-failing gate must be either fixed or explicitly declared, never left standing -- flavour: ci-gates -- mechanism: tools/check_chronic_red.py, owed by issue #1279
+    #
+    # `pull-requests: write` and not `issues: write`: the endpoint is the
+    # shared issue-comments endpoint, but this job runs ONLY on
+    # `pull_request`, so `context.issue.number` is always a PR number and the
+    # resource GitHub authorises is the pull request. Least privilege is
+    # therefore the PR scope; `issues: write` would additionally grant writes
+    # to every real issue in the repo, which nothing here needs.
+    permissions:
+      contents: read
+      pull-requests: write
+
     steps:
       - name: Download website export
         uses: actions/download-artifact@v8
@@ -105,7 +149,7 @@ jobs:
             const fs = require('fs');
             const manifest = JSON.parse(fs.readFileSync('manifest.json', 'utf8'));
 
-            const comment = `## 📚 Documentation Preview
+            const comment = `## [DOCS] Documentation Preview
 
             Mechanics docs have been exported for website preview:
 

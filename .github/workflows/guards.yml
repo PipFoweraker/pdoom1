@@ -1,0 +1,176 @@
+name: Guards
+
+# WHY THIS FILE EXISTS (issue #1265, ruled by Pip 2026-08-20)
+#
+# Fifteen guards ran in .pre-commit-config.yaml and in NO workflow. A pre-commit hook is
+# per-clone: it is not installed on a machine that never ran `pre-commit install`, and
+# `git commit --no-verify` steps over every one of them. So those fifteen were guards the
+# project believed it had. The worked example: `balance-key-census` -- the only gate
+# pointed at the balance surface in either direction -- could be skipped by anyone,
+# silently, forever, and CI would never notice.
+#
+# This workflow runs the ones that had no CI presence. It deliberately does NOT touch
+# quality-checks.yml or any other existing workflow: those files are contended, and a
+# guard that cannot be added without a merge conflict is a guard that does not get added.
+#
+# Guards NOT here, with reasons (the same reasons are declared as WAIVERS in
+# tools/check_guard_parity.py, which fails if this list and that list ever disagree):
+#   * class-cache-check      -- CI is structurally blind to it (fresh clone, correct
+#                               cache every time). quality-checks.yml proves the DETECTOR
+#                               instead, via `unittest tests.test_check_class_cache`.
+#   * style-guide-reminder   -- reads `git diff --cached`, empty on a CI checkout, and
+#                               warn-only without --strict. In CI it could return exactly
+#                               one answer forever, which is the thing this PR is against.
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
+  # Forcible, for the reason quality-checks.yml already learned the hard way: a PR that
+  # touches .github/workflows/ can have its pull_request-triggered runs suppressed, and a
+  # gate you cannot invoke on demand is only as good as the events that happen to fire it.
+  workflow_dispatch:
+
+# PERMISSIONS ARE STATED, NOT INHERITED.
+# The default GITHUB_TOKEN scope is a repository/org setting, so an unstated `permissions:`
+# block means this job's authority is whatever someone last set elsewhere -- it can widen
+# without anyone touching this file. release-reminder.yml carries the other half of the
+# lesson: an absent block cost a red run on a clean v0.14.0 release, and a gate that reds
+# on something it does not gate trains the reader to discount reds.
+# These guards only read the checkout. They post nothing, tag nothing, and write nothing.
+permissions:
+  contents: read
+
+jobs:
+  guards:
+    name: Guards with no other CI presence
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # scripts/generate_rulings.py shells out to `git ls-files`, and
+          # generate_commitment_calendar.py scans the tracked tree; both work on a
+          # shallow clone. Nothing here replays history, so fetch-depth stays at the
+          # default. (check_ladder_bump.py, which does, lives in quality-checks.yml
+          # with fetch-depth: 0.)
+          fetch-depth: 1
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run the guards
+        env:
+          # tools/check_environments.py shells out to `gh api`, which needs a token.
+          # Read-only use: it lists environments and never writes one.
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # GitHub's default shell here is `bash --noprofile --norc -e -o pipefail {0}`.
+          # `-e` MUST go: every guard has to run every time. Stopping at the first
+          # failure would report one finding and hide the rest, and the point of a
+          # census is seeing the whole surface in one run.
+          set +e
+          set -uo pipefail
+
+          fail=0
+          summary_rows=""
+
+          guard() {
+            label="$1"; shift
+            echo "::group::${label}  --  $*"
+            # `tee` so the output reaches both the folded log and a file, which lets the
+            # ::error:: annotation below carry the guard's own last line into the checks
+            # panel instead of a bare exit code.
+            "$@" 2>&1 | tee /tmp/guard.out
+            # ${PIPESTATUS[0]}, NEVER $?. After a pipeline $? is the RIGHTMOST command's
+            # status -- here that is `tee`, which succeeds whatever the guard did. A
+            # workflow written in this repo on 2026-08-24 had exactly this bug and
+            # reported green over a failing tool.
+            code=${PIPESTATUS[0]}
+            last=$(tail -n 1 /tmp/guard.out 2>/dev/null)
+            echo "::endgroup::"
+            case "$code" in
+              0)
+                echo "PASS  ${label}"
+                summary_rows="${summary_rows}| PASS | ${label} | \`$*\` |"$'\n'
+                ;;
+              2)
+                # THREE OUTCOMES, NOT TWO. Exit 2 in this repo means COULD NOT MEASURE
+                # (see scripts/run_godot_tests.py and tools/check_balance_keys.py). It
+                # fails the job -- a guard that did not run is not a pass -- but it must
+                # NOT be reported as a finding, because nothing was established. Folding
+                # it into "FAIL" would assert a result from a run that measured nothing.
+                echo "::error title=Guard could not run::${label} exited 2 (COULD NOT MEASURE) -- no result, not a finding. ${last}"
+                summary_rows="${summary_rows}| COULD NOT MEASURE (exit 2) | ${label} | \`$*\` |"$'\n'
+                fail=1
+                ;;
+              *)
+                echo "::error title=Guard failed::${label} exited ${code}. ${last}"
+                summary_rows="${summary_rows}| FAIL (exit ${code}) | ${label} | \`$*\` |"$'\n'
+                fail=1
+                ;;
+            esac
+          }
+
+          # --- the parity census itself -------------------------------------------
+          # Runs FIRST and self-tests before it censuses, so a new pre-commit-only hook
+          # is caught the day it is added rather than at the next audit.
+          guard "guard-parity self-test" python tools/check_guard_parity.py --self-test
+          guard "guard-parity census" python tools/check_guard_parity.py --check
+
+          # --- self-tests for guards that had none (issue #1265, act 2) ------------
+          # Each of these proves the checker can still return BOTH answers. They run
+          # BEFORE the guard they belong to, so a decayed detector reports as a decayed
+          # detector rather than as a clean tree.
+          guard "no-emoji self-test" python scripts/check_no_emoji.py --self-test
+          guard "balance-key-census self-test" python tools/check_balance_keys.py --self-test
+          # scene-nav-check already runs in quality-checks.yml; only its self-test is new,
+          # and it goes here because that file must not be edited (see the header).
+          guard "scene-nav self-test" python tools/check_scene_nav.py --self-test
+          # Pre-existing self-tests for tools whose GATE had no CI presence.
+          guard "credential-check self-test" python tools/assets/check_credentials.py --self-test
+
+          # --- the thirteen guards that ran in pre-commit and nowhere else ---------
+          guard "no-emoji" python scripts/check_no_emoji.py
+          guard "review-js-parses" python tools/check_review_js.py
+          guard "dq-index-check" python scripts/generate_dq_index.py --check
+          guard "adr-index-check" python scripts/generate_adr_index.py --check
+          guard "tools-index-check" python scripts/generate_tools_index.py --check
+          guard "action-taxonomy-index-check" python scripts/generate_action_taxonomy.py --check-stale
+          guard "credits-json-check" python scripts/generate_credits.py --check
+          guard "commitment-calendar-check" python scripts/generate_commitment_calendar.py --check
+          guard "rulings-index-check" python scripts/generate_rulings.py --check
+          guard "balance-key-census" python tools/check_balance_keys.py --check
+          guard "trust-declaration-check" python tools/generate_trust_declaration.py --check
+          guard "credential-check" python tools/assets/check_credentials.py
+          guard "font-size-ssot-check" python tools/check_font_sizes.py
+
+          # --- the environments audit ---------------------------------------------
+          # CI-only by construction: it calls the GitHub API, and a pre-commit hook that
+          # makes a network call is slow, fails offline, and teaches people to skip
+          # hooks. Reports only -- it never edits an environment; settings are Pip's.
+          # If this exits 2 with a 403, GITHUB_TOKEN needs more than `contents: read`
+          # for the environments endpoint. Exit 2 is the RIGHT answer there: the audit
+          # did not run, and saying "no findings" would be the defect it looks for.
+          guard "environments self-test" python tools/check_environments.py --self-test
+          guard "environments audit" python tools/check_environments.py
+
+          {
+            echo "## Guards"
+            echo ""
+            echo "| result | guard | command |"
+            echo "| --- | --- | --- |"
+            printf '%s' "${summary_rows}"
+            echo ""
+            echo "Exit 2 means COULD NOT MEASURE -- the guard did not produce a result."
+            echo "It fails the job, but it is not a finding."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          exit "$fail"
