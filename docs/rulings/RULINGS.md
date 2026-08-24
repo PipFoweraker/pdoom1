@@ -216,7 +216,7 @@ is not.
 - `docs/ISSUE_MINING_2026-08-06.md:412` -- touched); the #1037 identifier rename (its author already ruled "separate PR, or
 - `docs/ISSUE_TRIAGE_2026-08-06.md:182` -- F3 event injection. Pip ruled the fix is to REMOVE the debug event-trigger, not
 - `docs/ISSUE_TRIAGE_2026-08-06.md:73` -- historical patch notes and the dev overlay, both ruled legitimate by that
-- `docs/LEADERBOARD_WEBSITE_INTEGRATION.md:213` -- Pip ruled on 2026-08-08 that the board should carry **both** an Operator (the
+- `docs/LEADERBOARD_WEBSITE_INTEGRATION.md:217` -- Pip ruled on 2026-08-08 that the board should carry **both** an Operator (the
 - `docs/LEDGER_ROW_PROTOCOL_2026-08-21.md:25` -- ## Amendment 1 -- ROLL, NOT BLESS-IN-PLACE (ruled 2026-07-31)
 - `docs/LEDGER_ROW_PROTOCOL_2026-08-21.md:50` -- thing being ruled out.
 - `docs/NUMBER_FORMATS.md:91` -- 1. **Behaviour** -- the formatters produce the formats ruled above, for the exact

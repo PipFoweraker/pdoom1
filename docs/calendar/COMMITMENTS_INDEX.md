@@ -13,7 +13,7 @@ Horizon: **2026-08-09** (the prose scan reports dates at or after this; roll it
 forward deliberately in `COMMITMENTS.md`, never automatically -- a clock-reading
 generator goes stale overnight and trains people to ignore the check).
 
-**53 declared, 4 release-train, 204 UNPARSED, 0 malformed.**
+**53 declared, 4 release-train, 205 UNPARSED, 0 malformed.**
 
 ## Declared commitments
 
@@ -114,8 +114,8 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-10 | `docs/LEADERBOARD_WEBSITE_INTEGRATION.md` | 148 | \| `player_name` \| string \| **Misnamed: this carries the LAB name, and since 2026-08-10 the operator too, composed as `Lab -- Operator`.** Max 40 BYTES |
 | 2026-08-10 | `docs/LEADERBOARD_WEBSITE_INTEGRATION.md` | 175 | Confirmed again on 2026-08-10 by direct probe of the deployed API on a throwaway |
 | 2026-08-10 | `docs/LEADERBOARD_WEBSITE_INTEGRATION.md` | 183 | ### A split codepoint DESTROYS THE BOARD (measured 2026-08-10) |
-| 2026-08-10 | `docs/LEADERBOARD_WEBSITE_INTEGRATION.md` | 211 | ### Two identity values, one wire field (shipped 2026-08-10) |
-| 2026-08-10 | `docs/LEADERBOARD_WEBSITE_INTEGRATION.md` | 215 | may run several labs over time. He restated it on 2026-08-10 after a second real |
+| 2026-08-10 | `docs/LEADERBOARD_WEBSITE_INTEGRATION.md` | 215 | ### Two identity values, one wire field (shipped 2026-08-10) |
+| 2026-08-10 | `docs/LEADERBOARD_WEBSITE_INTEGRATION.md` | 219 | may run several labs over time. He restated it on 2026-08-10 after a second real |
 | 2026-08-10 | `docs/PRIVACY_POSTURE.md` | 25 | **HOW the two names are published (measured, PR #1176, 2026-08-10).** Both names |
 | 2026-08-10 | `docs/game-design/DESIGN_2026-08-24_diegetic-opening.md` | 308 | minutes on 2026-08-10, could not work out what to do."* And the warning against reading the |
 | 2026-08-10 | `pdoom1#984` | 0 | Half-day workshop: audit mechanics deep-dive (next epoch) -- something amazing under the smell |
@@ -423,6 +423,8 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-23 | `tools/sign_release.py` | 6 | WHY THIS EXISTS, 2026-08-23 |
 | 2026-08-23 | `tools/sign_release.py` | 131 | That is what is deployed here (2026-08-23, version 10.0.28000.2526). |
 | 2026-08-24 | `docs/HANDOVER_2026-08-24_pdoom1_seat.md` | 267 | > wrote without the user's authorisation.** *Window:* ~2 hours on 2026-08-24. |
+| 2026-08-24 | `docs/LEADERBOARD_WEBSITE_INTEGRATION.md` | 208 | **The server-side fix is the real fix, and it landed in #1272 (2026-08-24):** |
+| 2026-08-24 | `docs/LEADERBOARD_WEBSITE_INTEGRATION.md` | 257 | ### Coordination ask -- status after #1272 (2026-08-24) |
 | 2026-08-24 | `docs/RELEASE_PLATFORMS.md` | 444 | Added 2026-08-24, after **v0.14.3 published with no macOS asset**. The macOS |
 | 2026-08-24 | `docs/RELEASE_PLATFORMS.md` | 582 | ## Addendum 2026-08-24 -- the first release that shipped no macOS asset |
 | 2026-08-24 | `docs/deployment/DESIGN_2026-08-24_release_lanes.md` | 3 | **Status:** design document. No code changes accompany it. Written 2026-08-24 |
