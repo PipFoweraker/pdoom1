@@ -47,8 +47,8 @@ Declared with a `Layer:` line in a tool's module docstring; `--` = undeclared.
 | generate_credits.py | GENERATE | Generate godot/data/credits.json from CREDITS.md. | pre-commit; tool:backfill_provenance.py |
 | generate_dq_index.py | GENERATE | Generate docs/game-design/DQ_INDEX.md from WORKSHOP_2_BACKLOG.md. | pre-commit; tool:enforce_standards.py; tool:generate_credits.py; tool:generate_release_metadata.py; tool:intelligent_ascii_converter.py |
 | generate_mechanics_docs.py | GENERATE | Generate mechanics documentation from game code. | ci:docs-sync.yml |
-| generate_release_manifest.py | GENERATE | Generate release_manifest.json -- the machine-readable release descriptor. | ci:enhanced-release.yml; test:test_generate_release_manifest.py |
-| generate_release_metadata.py | GENERATE | Generate release metadata for website integration. | pre-commit; ci:enhanced-release.yml; tool:generate_release_manifest.py |
+| generate_release_manifest.py | GENERATE | Generate release_manifest.json -- the machine-readable release descriptor. | ci:enhanced-release.yml; test:test_generate_release_manifest.py; test:test_generate_release_metadata.py |
+| generate_release_metadata.py | GENERATE | Generate release metadata for website integration. | pre-commit; ci:enhanced-release.yml; test:test_generate_release_metadata.py; tool:generate_release_manifest.py |
 | generate_rulings.py | GENERATE | Generate the rulings index + the cross-repo rulings.json from RULING: declarations. | pre-commit; tool:check_credentials.py; tool:rule.py; tool:triage_undeclared_rulings.py |
 | generate_tools_index.py | GENERATE | Generate docs/TOOLS.md -- the index of the dev tooling in scripts/ and tools/. | pre-commit; test:test_generate_tools_index.py |
 | health_automation.py | -- | Project Health Automation Suite - BLITZ MODE | human (docstring usage) |
@@ -82,6 +82,7 @@ Declared with a `Layer:` line in a tool's module docstring; `--` = undeclared.
 | check_class_cache.py | PROVE | check_class_cache.py -- catch a STALE global script class cache before it eats a playtest. | pre-commit; make; test:test_check_class_cache.py |
 | check_font_sizes.py | PROVE | check_font_sizes.py -- count what the font-size SSOT still cannot reach. | pre-commit |
 | check_ladder_bump.py | PROVE | Guard: did this diff need a ladder_version bump (or get one it did not need)? | ci:quality-checks.yml; test:test_check_ladder_bump.py; test:test_check_self_merge_eligibility.py; tool:sync_version.py |
+| check_patch_notes.py | -- | check_patch_notes.py -- the shipped version must have patch notes to show. | pre-commit; test:test_check_patch_notes.py |
 | check_refusal_classification.py | PROVE | check_refusal_classification.py -- every NEW player-facing refusal must say whether it | pre-commit; ci:quality-checks.yml |
 | check_review_js.py | -- | Syntax-check the JavaScript that serve_review.py serves to the browser. | pre-commit |
 | check_scene_nav.py | PROVE | check_scene_nav.py -- enforce the single-scene-navigation-chokepoint invariant. | pre-commit; ci:quality-checks.yml; tool:enforce_standards.py |
@@ -247,4 +248,4 @@ DISCUSSING CI); the rest are the hollow-runner shape -- read them.
 
 27 `.html` tool(s) under `tools/` (browser-opened, no docstring to parse): `tools/art_review/doom_overlay_preview.html`, `tools/art_review/hero_gallery_template.html`, `tools/art_review/icon_pass_2026-07-21.html`, `tools/art_review/icon_pass_verdicts_2026-07-21.html`, `tools/art_review/palette.html`, `tools/art_review/palette_swatches.html`, `tools/art_review/scene_wave2_2026-07-21.html`, `tools/art_review/style_review.html`, `tools/assets/review_generated.html`, `tools/music/commission_sheets.html`, `tools/music/jukebox.html`, `tools/music/listening_room.html`, `tools/music/stem_board.html`, `tools/runsheet/CEREMONY-ALL-GATES-2026-07-31.html`, `tools/runsheet/SUNDAY-postmortem-2026-08-07.html`, `tools/runsheet/chronicle-2026-08-06_07.html`, `tools/runsheet/commitments-2026-08.html`, `tools/runsheet/copy-review-2026-08-09.html`, `tools/runsheet/fri-2026-07-31-EVENING-1620.html`, `tools/runsheet/fri-2026-07-31-GATES-1700.html`, `tools/runsheet/fri-2026-07-31-TO-MIDNIGHT-1733.html`, `tools/runsheet/fri-2026-07-31-league-day.html`, `tools/runsheet/playtest_card.html`, `tools/runsheet/wed-thu-2026-07-29.html`, `tools/social_composer.html`, `tools/ui_comparison.html`, `tools/ui_mockup/wireframe.html`.
 
-Total: 144 active tools (11 GENERATE, 8 OBSERVE, 14 PROVE, 1 SWEEP, 110 undeclared); 11 in UNKNOWN; 6 archived.
+Total: 145 active tools (11 GENERATE, 8 OBSERVE, 14 PROVE, 1 SWEEP, 111 undeclared); 11 in UNKNOWN; 6 archived.

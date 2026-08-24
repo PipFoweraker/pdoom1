@@ -1,0 +1,50 @@
+# Tags that shipped with no "## [<version>]" section in CHANGELOG.md.
+#
+# READ THIS BEFORE ADDING A LINE.
+#
+# scripts/generate_release_metadata.py used to paper over a missing section by
+# emitting "Release vX.Y.Z / See CHANGELOG.md for details." into the `changelog`
+# field of public/releases/<tag>.json and into the <description> of every item in
+# public/releases/releases.rss. Those files are deployed and player-visible, and
+# that sentence is indistinguishable from a real, terse release note. So a
+# generator that found NOTHING rendered as a release that HAD nothing to say --
+# "I could not tell" displayed as "fine". Measured 2026-08-24: 14 of the 23
+# entries in the tracked index carried the placeholder, and releases.rss served
+# "<description>Release v0.13.1" to every subscriber.
+#
+# The generator now returns a sentinel instead, writes `"changelog": null` plus
+# `"changelog_status": "missing"`, and EXITS NONZERO for any missing tag that is
+# not listed below.
+#
+# THIS FILE IS A RATCHET. Lines may be REMOVED (by writing the missing section in
+# CHANGELOG.md); a line must NOT be added for a newly cut release. Every tag here
+# predates the section-per-release convention and will never be written up
+# retroactively -- inventing release notes for a shipped build is exactly the
+# false-delivery-claim failure that issue #1165 exists to prevent.
+#
+# The pin is not a silencer: generate_release_metadata.py prints a
+# "[!] no CHANGELOG.md section for <tag> (pinned)" line for each of these on
+# every run, so the gaps stay visible.
+#
+# Proven capable of returning the other answer by
+# tests/test_generate_release_metadata.py::test_unpinned_gap_is_fatal.
+#
+# DELIBERATELY ABSENT: v0.14.2. It has no CHANGELOG section either, but it is a
+# CURRENT release rather than a historical one, so it is left unpinned and the
+# generator fails loudly on it. Fix it by writing the section, not by adding a
+# line here.
+
+v0.2.6
+v0.2.12-hotfix
+v0.3.1
+v0.7.0
+v0.9.0
+v0.10.1
+v0.10.2
+v0.10.3
+v0.10.4
+v0.10.5
+v0.10.6
+v0.11.0
+v0.13.0
+v0.13.1

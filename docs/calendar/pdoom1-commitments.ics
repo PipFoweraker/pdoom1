@@ -3929,6 +3929,29 @@ DESCRIPTION:needs a declaration -- check_ladder_bump.py (unparsed) -- unow
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:dda0ffa36fd0de3a@commitments.pdoom1
+DTSTAMP:20260823T000000Z
+DTSTART;VALUE=DATE:20260823
+DTEND;VALUE=DATE:20260824
+SUMMARY:[UNPARSED] needs a declaration -- check_patch_notes.py
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/check_patch_note
+ s.py:24. 1 line(s) in tools/check_patch_notes.py mention this date and no
+  COMMITMENT: declaration accounts for it. Either add a declaration or the
+  date is incidental. First line: value meaning "fine" (Pip's ruling\, 202
+ 6-08-23). -- Generated from tracked sources by scripts/generate_commitmen
+ t_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- check_patch_notes.py (unparsed) -- unow
+ ned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:322e6fdd089d7661@commitments.pdoom1
 DTSTAMP:20260823T000000Z
 DTSTART;VALUE=DATE:20260823
@@ -4002,6 +4025,77 @@ ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- LEAGUE_CUTOVER_PLAYBOOK.md (unparsed) -
  - unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:8dab9ab7cdf76ab8@commitments.pdoom1
+DTSTAMP:20260824T000000Z
+DTSTART;VALUE=DATE:20260824
+DTEND;VALUE=DATE:20260825
+SUMMARY:[UNPARSED] needs a declaration -- check_patch_notes.py
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/check_patch_note
+ s.py:31. 1 line(s) in tools/check_patch_notes.py mention this date and no
+  COMMITMENT: declaration accounts for it. Either add a declaration or the
+  date is incidental. First line: STATE AT TIME OF WRITING (2026-08-24): 0
+ .14.3 IS present\, so this is latent. That is -- Generated from tracked s
+ ources by scripts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- check_patch_notes.py (unparsed) -- unow
+ ned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:3c8aea6f07c37022@commitments.pdoom1
+DTSTAMP:20260824T000000Z
+DTSTART;VALUE=DATE:20260824
+DTEND;VALUE=DATE:20260825
+SUMMARY:[UNPARSED] needs a declaration -- generate_release_manifest.py
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: scripts/generate_relea
+ se_manifest.py:177. 1 line(s) in scripts/generate_release_manifest.py men
+ tion this date and no COMMITMENT: declaration accounts for it. Either add
+  a declaration or the date is incidental. First line: This was the THIRD 
+ copy of the same defect (2026-08-24): the excerpt reached a -- Generated 
+ from tracked sources by scripts/generate_commitment_calendar.py\; regener
+ ate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- generate_release_manifest.py (unparsed)
+  -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:a1086668cd00142d@commitments.pdoom1
+DTSTAMP:20260824T000000Z
+DTSTART;VALUE=DATE:20260824
+DTEND;VALUE=DATE:20260825
+SUMMARY:[UNPARSED] needs a declaration -- generate_release_metadata.py
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: scripts/generate_relea
+ se_metadata.py:38. 5 line(s) in scripts/generate_release_metadata.py ment
+ ion this date and no COMMITMENT: declaration accounts for it. Either add 
+ a declaration or the date is incidental. First line: # before 2026-08-24 
+ and call them what they are. Never emitted again. -- Generated from track
+ ed sources by scripts/generate_commitment_calendar.py\; regenerate to upd
+ ate.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- generate_release_metadata.py (unparsed)
+  -- unowned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
