@@ -37,11 +37,29 @@ epoch L5 within a day of it opening, and none of them was visible to any gate.
 
 RULING: 2026-08-23 -- ladder debt is paid when it is incurred, not deferred to build time, so a fresh epoch never inherits a forked board key -- flavour: ladder-epochs -- mechanism: tools/check_ladder_bump.py --owed
 
-The deferred alternative is not merely slower, it is worse-shaped: the board
-key is ``(seed, ladder_version)``, so every hour a bump-declaring commit sits
-unpaid is an hour in which a build could ship materially different play onto a
-board that has already been blessed and opened. Paying at build time turns a
-routine decision into a blocker at the worst possible moment.
+RULING: 2026-08-23 -- ladder debt is DECLARED when incurred and PAID at the release that ships it; deferring is legal, forgetting is not, and the epoch must never fork on an ordinary gameplay PR -- flavour: ladder-epochs -- mechanism: tools/check_ladder_bump.py --owed, run at cut time -- supersedes: pdoom1:2026-08-23:40cd814d
+
+The superseded version said debt is "paid when it is incurred, not deferred to
+build time". That was written the same morning and it was WRONG -- applied
+literally it forks the ladder on every gameplay PR, which the docstring above
+explicitly calls out as the failure mode this tool exists to prevent:
+
+    "forking the ladder on every gameplay PR is wrong -- the cut belongs to the
+     release. So this is a QUERY, not a blocker: deferring stays legal,
+     forgetting does not."
+
+I wrote a ruling that contradicted the documented design of the very tool I
+named as its mechanism, and did not notice until the tool disagreed with me four
+hours later over #1280. Kept visible rather than edited away: a superseded
+ruling with its reason is evidence about how rulings go wrong, and this one went
+wrong by being written faster than it was checked.
+
+The risk the superseded version was reaching for is real, and the corrected
+ruling handles it: the board key is ``(seed, ladder_version)``, so an unpaid
+bump-declaring commit is only dangerous IF A BUILD SHIPS while it is unpaid.
+The danger is bounded by the release, not by elapsed time -- which is exactly
+why ``--owed`` belongs at cut time rather than at merge time. Debt sitting on an
+unshipped epoch is not debt, it is simply the next release's contents.
 
 NOTE FOR WHOEVER WRITES THE NEXT RULING: ``scripts/generate_rulings.py`` scans
 the TREE, not ``git log``. A ``RULING:`` line written only in a commit message
