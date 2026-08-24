@@ -22,12 +22,25 @@ non-blocking, auto-fix-oriented Unicode handling in enforce_standards.py, which
 let a coffee emoji ship.
 
 Usage:
-    python scripts/check_no_emoji.py          # scan the tree, exit 1 on violations
+    python scripts/check_no_emoji.py             # scan the tree, exit 1 on violations
+    python scripts/check_no_emoji.py --self-test # prove all four scanners return BOTH answers
+
+WHY --self-test EXISTS (added 2026-08-24, issue #1265):
+    This gate exists BECAUSE its predecessor could only ever return one answer in
+    practice -- the non-blocking Unicode handling in enforce_standards.py let a coffee
+    emoji (U+2615) ship. Replacing a gate that never went red with another gate that
+    has never gone red would repeat the mistake at one remove. The self-test pins the
+    two real incidents as fixtures: U+2615 must be classified emoji, and the #1163
+    mojibake ("\\u00e2\\u2020\\u2019", the cp1252 misread of a UTF-8 right arrow) must be
+    invisible to the byte scanner and caught by the decoded-JSON scanner. That second
+    case is the one that matters: for weeks this script printed
+    "OK: godot .gd/.json are pure ASCII" while two player-visible titles were mojibake.
 """
 
 import json
 import re
 import sys
+import tempfile
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
@@ -61,7 +74,14 @@ def is_emoji(cp: int) -> bool:
 
 
 def _rel(p: Path) -> str:
-    return p.relative_to(PROJECT_ROOT).as_posix()
+    try:
+        return p.relative_to(PROJECT_ROOT).as_posix()
+    except ValueError:
+        # --self-test scans a synthetic tree in a tempdir, which is not under the
+        # repo. Report the absolute posix path rather than raising: the scanners
+        # must behave identically wherever the tree lives, or the self-test would
+        # be proving something about a different code path than the gate runs.
+        return p.as_posix()
 
 
 def _iter(base: Path, suffix: str):
@@ -217,7 +237,117 @@ def scan_json_decoded_ascii(base: Path):
             yield item
 
 
+# --- self-test -------------------------------------------------------------
+# Fixtures are written with escapes, never literal bytes, because this file is
+# itself subject to the repo's ASCII-only rule.
+_EM_DASH = chr(0x2014)  # a plain non-ASCII char, NOT an emoji
+_COFFEE = chr(0x2615)  # the emoji that actually shipped (CLAUDE.md, issue #744)
+_ARROW = chr(0x2192)  # RIGHTWARDS ARROW -- not an emoji, but banned in authored copy
+_E_ACUTE = chr(0x00E9)  # engine-serialized non-ASCII in a .tscn: must be left alone
+
+# Pure-ASCII BYTES whose decoded values are not ASCII. This is the #1163 shape,
+# copied from godot/data/historical_events.json as it stood on 2026-08-21:
+# U+00E2 U+2020 U+2019 is the cp1252 misread of the UTF-8 bytes E2 86 92, i.e. a
+# mangled U+2192. Three codepoints, zero non-ASCII bytes.
+_MOJIBAKE_JSON = '{"title": "UK AI Safety Institute \\u00e2\\u2020\\u2019 AI Security Institute"}\n'
+
+
+def _write(path: Path, text: str) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(text, encoding="utf-8", newline="\n")
+
+
+def self_test() -> int:
+    """Prove all four scanners return BOTH answers (CLAUDE.md: a published command
+    must be shown capable of returning the other answer)."""
+    ok = True
+
+    def check(label, cond, detail=""):
+        nonlocal ok
+        if cond:
+            print("  [ok] %s" % label)
+        else:
+            ok = False
+            print("SELF-TEST FAIL: %s %s" % (label, detail))
+
+    # Direction 1: the classifier itself, pinned to the two real incidents.
+    check(
+        "U+2615 (the coffee that shipped) classifies as emoji",
+        is_emoji(0x2615) and is_emoji(0x1F600),
+    )
+    check(
+        "U+2192 arrow and U+2014 em-dash are NOT emoji (they are ASCII violations,",
+        not is_emoji(0x2192) and not is_emoji(0x2014),
+    )
+    print("       which is a different rule and a different fix)")
+
+    with tempfile.TemporaryDirectory() as td:
+        base = Path(td)
+        _write(base / "clean.gd", 'var s = "[M] -- press [ESC] -> ok"\n')
+        _write(base / "dirty.gd", 'var s = "budget %s cut"\n' % _EM_DASH)
+        _write(base / "addons" / "vendor.gd", 'var s = "%s"\n' % _COFFEE)
+        _write(base / "data" / "clean.json", '{"title": "AI Security Institute"}\n')
+        _write(base / "data" / "mojibake.json", _MOJIBAKE_JSON)
+        _write(base / "emoji.tscn", 'icon_hint = "%s"\n' % _COFFEE)
+        _write(base / "arrow.tscn", 'text = "Press [ESC] %s back"\n' % _ARROW)
+        _write(base / "engine.tscn", 'resource_name = "caf%s"\n' % _E_ACUTE)
+
+        gd = list(scan_ascii(base, ".gd", skip_addons=True))
+        check(
+            "a clean .gd passes and an em-dash .gd fails (1 hit, U+2014)",
+            len(gd) == 1 and gd[0][3] == 0x2014 and gd[0][0].endswith("dirty.gd"),
+            repr(gd),
+        )
+
+        gd_all = list(scan_ascii(base, ".gd", skip_addons=False))
+        check(
+            "addons/ is skipped only because skip_addons says so (1 -> 2 hits)",
+            len(gd_all) == 2,
+            repr(gd_all),
+        )
+
+        # THE #1163 CASE. The byte scanner must see nothing; the decoded scanner
+        # must see all three. If these two ever agree, one of them is dead code.
+        raw_json = list(scan_ascii(base / "data", ".json", skip_addons=False))
+        dec_json = list(scan_json_decoded_ascii(base / "data"))
+        check(
+            "the #1163 mojibake is INVISIBLE to the byte scanner",
+            raw_json == [],
+            repr(raw_json),
+        )
+        check(
+            "and CAUGHT by the decoded-JSON scanner (U+00E2 U+2020 U+2019)",
+            sorted(h[3] for h in dec_json) == [0x00E2, 0x2019, 0x2020],
+            repr(dec_json),
+        )
+
+        tscn_emoji = list(scan_emoji(base, ".tscn", set()))
+        check(
+            "a .tscn emoji is caught and engine-serialized non-ASCII is not",
+            len(tscn_emoji) == 1
+            and tscn_emoji[0][3] == 0x2615
+            and tscn_emoji[0][0].endswith("emoji.tscn"),
+            repr(tscn_emoji),
+        )
+
+        tscn_auth = list(scan_tscn_authored_ascii(base, ".tscn", set()))
+        check(
+            "an arrow in an AUTHORED .tscn string fails (#1035) while the same",
+            len(tscn_auth) == 1
+            and tscn_auth[0][3] == 0x2192
+            and tscn_auth[0][0].endswith("arrow.tscn"),
+            repr(tscn_auth),
+        )
+        print("       class of character in resource_name is left alone")
+
+    print("SELF-TEST %s" % ("PASSED" if ok else "FAILED"))
+    return 0 if ok else 1
+
+
 def main() -> int:
+    if "--self-test" in sys.argv[1:]:
+        return self_test()
+
     violations = []
     violations += list(scan_ascii(GODOT, ".gd", skip_addons=True))
     violations += list(scan_ascii(GODOT / "data", ".json", skip_addons=False))

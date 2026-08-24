@@ -30,27 +30,28 @@ Declared with a `Layer:` line in a tool's module docstring; `--` = undeclared.
 |---|---|---|---|
 | ascii_compliance_fixer.py | -- | ASCII Compliance Fixer for P(Doom) Documentation | NONE FOUND |
 | branch_manager.py | -- | Automated Branch Management System for P(Doom) | human (docstring usage) |
-| build_all_platforms.py | -- | Build P(Doom) for all platforms (Windows, Linux, macOS). | ci:enhanced-release.yml; test:test_build_all_platforms.py; tool:generate_release_metadata.py |
-| check_no_emoji.py | PROVE | Blocking no-emoji / ASCII enforcement for the Godot tree (issue #744). | pre-commit |
+| build_all_platforms.py | -- | Build P(Doom) for all platforms (Windows, Linux, macOS). | ci:enhanced-release.yml; test:test_build_all_platforms.py; tool:check_platform_builds.py; tool:generate_release_metadata.py |
+| check_no_emoji.py | PROVE | Blocking no-emoji / ASCII enforcement for the Godot tree (issue #744). | pre-commit; ci:guards.yml |
+| check_platform_builds.py | VERIFY (unrecognised) | Detect, per platform, whether a release's build artefacts actually EXIST. | ci:enhanced-release.yml; test:test_platform_build_status.py |
 | check_release_notes.py | -- | Guard against a release note that announces something we did not ship. | pre-commit; ci:enhanced-release.yml; ci:pre-release-checks.yml; test:test_release_notes_guard.py |
 | check_site_release_freshness.py | -- | Is pdoom1.com advertising the release we actually published? | ci:live-site-release-freshness.yml |
-| check_style_guide.py | -- | Style Guide Enforcement Check | pre-commit |
+| check_style_guide.py | -- | Style Guide Enforcement Check | pre-commit; tool:check_guard_parity.py |
 | ci_health_integration.py | -- | CI/CD Health Integration - GitHub Actions Integration | ci:enhanced-cicd-pipeline.yml; ci:quality-checks.yml |
 | cleanup_project.py | -- | Project Cleanup Automation Script | make |
 | content_publisher.py | -- | P(Doom) Content Publisher - Multi-Platform Publishing System | human (docstring usage) |
 | devblog_automation.py | -- | Dev Blog Automation System with Metadata | tool:content_publisher.py |
 | enforce_standards.py | -- | P(Doom) Development Standards Enforcement Script | pre-commit; ci:enhanced-cicd-pipeline.yml; ci:quality-checks.yml; tool:generate_credits.py; tool:intelligent_ascii_converter.py; tool:pre_version_bump.py |
 | find_duplicates.py | -- | Duplicate File Detector | human (docstring usage) |
-| generate_action_taxonomy.py | GENERATE | Generate docs/ACTION_TAXONOMY.md and check the action taxonomy for rot. | pre-commit; test:test_generate_action_taxonomy.py |
-| generate_adr_index.py | GENERATE | Generate docs/game-design/decisions/README.md from the ADR files themselves. | pre-commit; tool:generate_action_taxonomy.py; tool:generate_tools_index.py |
-| generate_commitment_calendar.py | GENERATE | Generate a subscribable .ics calendar + index from this repo's dated commitments. | pre-commit; test:test_generate_commitment_calendar.py |
-| generate_credits.py | GENERATE | Generate godot/data/credits.json from CREDITS.md. | pre-commit; tool:backfill_provenance.py |
-| generate_dq_index.py | GENERATE | Generate docs/game-design/DQ_INDEX.md from WORKSHOP_2_BACKLOG.md. | pre-commit; tool:enforce_standards.py; tool:generate_credits.py; tool:generate_release_metadata.py; tool:intelligent_ascii_converter.py |
+| generate_action_taxonomy.py | GENERATE | Generate docs/ACTION_TAXONOMY.md and check the action taxonomy for rot. | pre-commit; ci:guards.yml; test:test_generate_action_taxonomy.py; tool:check_guard_parity.py |
+| generate_adr_index.py | GENERATE | Generate docs/game-design/decisions/README.md from the ADR files themselves. | pre-commit; ci:guards.yml; tool:generate_action_taxonomy.py; tool:generate_tools_index.py |
+| generate_commitment_calendar.py | GENERATE | Generate a subscribable .ics calendar + index from this repo's dated commitments. | pre-commit; ci:guards.yml; test:test_generate_commitment_calendar.py |
+| generate_credits.py | GENERATE | Generate godot/data/credits.json from CREDITS.md. | pre-commit; ci:guards.yml; tool:backfill_provenance.py |
+| generate_dq_index.py | GENERATE | Generate docs/game-design/DQ_INDEX.md from WORKSHOP_2_BACKLOG.md. | pre-commit; ci:guards.yml; tool:enforce_standards.py; tool:generate_credits.py; tool:generate_release_metadata.py; tool:intelligent_ascii_converter.py; tool:check_guard_parity.py |
 | generate_mechanics_docs.py | GENERATE | Generate mechanics documentation from game code. | ci:docs-sync.yml |
-| generate_release_manifest.py | GENERATE | Generate release_manifest.json -- the machine-readable release descriptor. | ci:enhanced-release.yml; test:test_generate_release_manifest.py |
-| generate_release_metadata.py | GENERATE | Generate release metadata for website integration. | pre-commit; ci:enhanced-release.yml; tool:generate_release_manifest.py |
-| generate_rulings.py | GENERATE | Generate the rulings index + the cross-repo rulings.json from RULING: declarations. | pre-commit; tool:check_credentials.py; tool:rule.py; tool:triage_undeclared_rulings.py |
-| generate_tools_index.py | GENERATE | Generate docs/TOOLS.md -- the index of the dev tooling in scripts/ and tools/. | pre-commit; test:test_generate_tools_index.py |
+| generate_release_manifest.py | GENERATE | Generate release_manifest.json -- the machine-readable release descriptor. | ci:enhanced-release.yml; test:test_generate_release_manifest.py; test:test_generate_release_metadata.py |
+| generate_release_metadata.py | GENERATE | Generate release metadata for website integration. | pre-commit; ci:enhanced-release.yml; test:test_generate_release_metadata.py; tool:generate_release_manifest.py |
+| generate_rulings.py | GENERATE | Generate the rulings index + the cross-repo rulings.json from RULING: declarations. | pre-commit; ci:guards.yml; tool:check_credentials.py; tool:rule.py; tool:triage_undeclared_rulings.py |
+| generate_tools_index.py | GENERATE | Generate docs/TOOLS.md -- the index of the dev tooling in scripts/ and tools/. | pre-commit; ci:guards.yml; test:test_generate_tools_index.py |
 | health_automation.py | -- | Project Health Automation Suite - BLITZ MODE | human (docstring usage) |
 | health_tracker.py | -- | Project Health History Tracker & Dev Blog Integration | ci:enhanced-cicd-pipeline.yml |
 | intelligent_ascii_converter.py | -- | Intelligent ASCII Converter for P(Doom) Documentation | ci:enhanced-cicd-pipeline.yml; ci:quality-checks.yml; tool:enforce_standards.py; tool:pre_version_bump.py |
@@ -61,7 +62,8 @@ Declared with a `Layer:` line in a tool's module docstring; `--` = undeclared.
 | pre_version_bump.py | -- | Pre-Version Bump Quality Checks for P(Doom) | human (docstring usage) |
 | project_health.py | -- | P(Doom) Project Health Dashboard - BLITZ MODE IMPLEMENTATION | make; ci:enhanced-cicd-pipeline.yml; ci:quality-checks.yml |
 | repo-status.py | -- | P(Doom) Ecosystem Repository Status Dashboard | NONE FOUND |
-| run_godot_tests.py | PROVE | Run Godot GUT (Godot Unit Test) tests from command line. | make; ci:godot-tests.yml; test:test_find_dead_code.py; test:test_generate_tools_index.py; test:test_run_godot_tests_outcomes.py; tool:check_agent_env.py |
+| report_missing_build_issue.py | REPORT (unrecognised) | File / update ONE ROLLING tracking issue per platform whose build is missing. | ci:enhanced-release.yml; test:test_platform_build_status.py; tool:check_platform_builds.py |
+| run_godot_tests.py | PROVE | Run Godot GUT (Godot Unit Test) tests from command line. | make; ci:godot-tests.yml; ci:guards.yml; test:test_find_dead_code.py; test:test_generate_tools_index.py; test:test_run_godot_tests_outcomes.py; tool:check_agent_env.py |
 | setup-token.py | -- | GitHub Token Setup Helper for VS Code Users | NONE FOUND |
 | sync_website_docs.py | -- | Sync documentation from pdoom1 repo to website export format. | ci:docs-sync.yml |
 | test_before_push.py | -- | Test Before Push - Local Development Workflow | human (docstring usage) |
@@ -78,20 +80,25 @@ Declared with a `Layer:` line in a tool's module docstring; `--` = undeclared.
 | build_release.py | PROVE | build_release.py -- export a P(Doom) build FROM A VERIFIED-CLEAN STATE. | ci:enhanced-release.yml; test:test_build_all_platforms.py; test:test_build_release_paths.py; tool:build_all_platforms.py; tool:check_agent_env.py; tool:find_dead_code.py |
 | capture_cinematic.py | -- | Cinematic capture harness for P(Doom)1 -- deterministic scene footage -> mp4/gif. | test:test_find_dead_code.py; tool:find_dead_code.py |
 | check_agent_env.py | PROVE | Guard: is CLAUDE.md still describing THIS machine? | make |
-| check_balance_keys.py | PROVE | Census the Balance surface in BOTH directions, because nothing else does. | pre-commit |
+| check_balance_keys.py | PROVE | Census the Balance surface in BOTH directions, because nothing else does. | pre-commit; ci:guards.yml |
 | check_class_cache.py | PROVE | check_class_cache.py -- catch a STALE global script class cache before it eats a playtest. | pre-commit; make; test:test_check_class_cache.py |
-| check_font_sizes.py | PROVE | check_font_sizes.py -- count what the font-size SSOT still cannot reach. | pre-commit |
+| check_environments.py | PROVE | Flag GitHub environments that no workflow references -- and say which are LIES. | ci:guards.yml |
+| check_export_icons.py | -- | Every export preset's application/icon is a format that platform can decode. | pre-commit |
+| check_font_sizes.py | PROVE | check_font_sizes.py -- count what the font-size SSOT still cannot reach. | pre-commit; ci:guards.yml |
+| check_guard_parity.py | PROVE | Census every pre-commit hook against the workflows, and fail on a guard CI cannot see. | ci:guards.yml |
 | check_ladder_bump.py | PROVE | Guard: did this diff need a ladder_version bump (or get one it did not need)? | ci:quality-checks.yml; test:test_check_ladder_bump.py; test:test_check_self_merge_eligibility.py; tool:sync_version.py |
+| check_patch_notes.py | -- | check_patch_notes.py -- the shipped version must have patch notes to show. | pre-commit; test:test_check_patch_notes.py |
 | check_refusal_classification.py | PROVE | check_refusal_classification.py -- every NEW player-facing refusal must say whether it | pre-commit; ci:quality-checks.yml |
-| check_review_js.py | -- | Syntax-check the JavaScript that serve_review.py serves to the browser. | pre-commit |
-| check_scene_nav.py | PROVE | check_scene_nav.py -- enforce the single-scene-navigation-chokepoint invariant. | pre-commit; ci:quality-checks.yml; tool:enforce_standards.py |
+| check_release_ledger.py | PROVE | Guard: has every version we bumped to actually been tagged and released? | ci:release-ledger.yml; tool:generate_commitment_calendar.py |
+| check_review_js.py | -- | Syntax-check the JavaScript that serve_review.py serves to the browser. | pre-commit; ci:guards.yml |
+| check_scene_nav.py | PROVE | check_scene_nav.py -- enforce the single-scene-navigation-chokepoint invariant. | pre-commit; ci:guards.yml; ci:quality-checks.yml; tool:enforce_standards.py; tool:check_guard_parity.py |
 | check_self_merge_eligibility.py | PROVE | Guard: does this PR actually qualify for the self-merge class it claims? | ci:self-merge-eligibility.yml; test:test_check_self_merge_eligibility.py |
 | cleanup-duplicate-issues.py | -- | Cleanup script for duplicate GitHub issues created by sync tool failure. | NONE FOUND |
 | collect_ui_evolution.py | -- | UI evolution capture collector for P(Doom). | human (docstring usage) |
 | commit.py | -- | Commit wrapper that absorbs the "hook reformatted a file then aborted" dance. | make; test:test_find_dead_code.py; tool:find_dead_code.py |
 | find_dead_code.py | -- | find_dead_code.py -- report-only dead-path scanner for P(Doom)1. | test:test_find_dead_code.py; tool:generate_tools_index.py |
 | generate_cat_placeholders.py | -- | Generate placeholder cat images for different doom levels. | tool:backfill_provenance.py |
-| generate_trust_declaration.py | -- | Generate docs/TRUST.md -- what the game reaches for, derived from the source. | pre-commit |
+| generate_trust_declaration.py | -- | Generate docs/TRUST.md -- what the game reaches for, derived from the source. | pre-commit; ci:guards.yml |
 | ingest_recordings.py | -- | Pull fresh OBS recordings into the repo's working area. | human (docstring usage) |
 | phase2_setup.py | -- | Phase 2: Events System Setup | human (docstring usage) |
 | phase3_setup.py | -- | Phase 3: Extract Features to Shared | human (docstring usage) |
@@ -173,7 +180,7 @@ Declared with a `Layer:` line in a tool's module docstring; `--` = undeclared.
 | backfill_provenance.py | -- | Backfill asset provenance for everything already packed into godot/assets/. | tool:check_provenance.py |
 | build_review_gallery.py | -- | Rebuild tools/assets/review_generated.html from whatever PNGs are on disk under | human (docstring usage) |
 | build_share_set.py | -- | Derive the ART SHARE SET from verdicts already applied -- no new review pass. | human (docstring usage) |
-| check_credentials.py | PROVE | Guard: shipped images must not silently lose their C2PA content credential. | pre-commit; test:test_check_credentials.py; tool:backfill_provenance.py |
+| check_credentials.py | PROVE | Guard: shipped images must not silently lose their C2PA content credential. | pre-commit; ci:guards.yml; test:test_check_credentials.py; tool:backfill_provenance.py; tool:check_guard_parity.py |
 | check_provenance.py | -- | Guard: the provenance manifest and the pack must agree, and `unknown` must not grow. | pre-commit; ci:quality-checks.yml; tool:backfill_provenance.py |
 | extract_palette.py | -- | Extract a brand palette from an image (default: the P(Doom)1 hero background). | human (docstring usage) |
 | generate_images.py | -- | Generalized batch image generator for pdoom1 art assets. | test:test_check_credentials.py; tool:promote_assets.py |
@@ -216,17 +223,17 @@ The tool's own docstring names an automated caller category that the scan
 could not corroborate. Some are prose false-positives (a docstring merely
 DISCUSSING CI); the rest are the hollow-runner shape -- read them.
 
-- `scripts/generate_commitment_calendar.py` -- docstring mentions CI; no workflow calls it
 - `scripts/health_automation.py` -- docstring mentions CI; no workflow calls it
 - `scripts/logging_system.py` -- docstring mentions CI; no workflow calls it
 - `tools/art_review/apply_review.py` -- docstring mentions pre-commit; no pre-commit hook calls it
 - `tools/art_review/notes_brief.py` -- docstring mentions pre-commit; no pre-commit hook calls it
 - `tools/art_review/scan_text_leak.py` -- docstring mentions CI; no workflow calls it
 - `tools/assets/build_share_set.py` -- docstring mentions CI; no workflow calls it
-- `tools/assets/check_credentials.py` -- docstring mentions CI; no workflow calls it
 - `tools/capture_cinematic.py` -- docstring mentions CI; no workflow calls it
 - `tools/check_class_cache.py` -- docstring mentions CI; no workflow calls it
-- `tools/check_font_sizes.py` -- docstring mentions CI; no workflow calls it
+- `tools/check_export_icons.py` -- docstring mentions CI; no workflow calls it
+- `tools/check_guard_parity.py` -- docstring mentions pre-commit; no pre-commit hook calls it
+- `tools/check_release_ledger.py` -- docstring mentions pre-commit; no pre-commit hook calls it
 - `tools/commit.py` -- docstring mentions pre-commit; no pre-commit hook calls it
 - `tools/find_dead_code.py` -- docstring mentions pre-commit; no pre-commit hook calls it
 - `tools/find_dead_code.py` -- docstring mentions CI; no workflow calls it
@@ -247,4 +254,4 @@ DISCUSSING CI); the rest are the hollow-runner shape -- read them.
 
 27 `.html` tool(s) under `tools/` (browser-opened, no docstring to parse): `tools/art_review/doom_overlay_preview.html`, `tools/art_review/hero_gallery_template.html`, `tools/art_review/icon_pass_2026-07-21.html`, `tools/art_review/icon_pass_verdicts_2026-07-21.html`, `tools/art_review/palette.html`, `tools/art_review/palette_swatches.html`, `tools/art_review/scene_wave2_2026-07-21.html`, `tools/art_review/style_review.html`, `tools/assets/review_generated.html`, `tools/music/commission_sheets.html`, `tools/music/jukebox.html`, `tools/music/listening_room.html`, `tools/music/stem_board.html`, `tools/runsheet/CEREMONY-ALL-GATES-2026-07-31.html`, `tools/runsheet/SUNDAY-postmortem-2026-08-07.html`, `tools/runsheet/chronicle-2026-08-06_07.html`, `tools/runsheet/commitments-2026-08.html`, `tools/runsheet/copy-review-2026-08-09.html`, `tools/runsheet/fri-2026-07-31-EVENING-1620.html`, `tools/runsheet/fri-2026-07-31-GATES-1700.html`, `tools/runsheet/fri-2026-07-31-TO-MIDNIGHT-1733.html`, `tools/runsheet/fri-2026-07-31-league-day.html`, `tools/runsheet/playtest_card.html`, `tools/runsheet/wed-thu-2026-07-29.html`, `tools/social_composer.html`, `tools/ui_comparison.html`, `tools/ui_mockup/wireframe.html`.
 
-Total: 144 active tools (11 GENERATE, 8 OBSERVE, 14 PROVE, 1 SWEEP, 110 undeclared); 11 in UNKNOWN; 6 archived.
+Total: 151 active tools (11 GENERATE, 8 OBSERVE, 17 PROVE, 1 SWEEP, 114 undeclared); 11 in UNKNOWN; 6 archived.
