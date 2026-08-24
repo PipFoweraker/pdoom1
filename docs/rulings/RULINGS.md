@@ -5,7 +5,7 @@
 > `python scripts/generate_rulings.py`. The convention, and why it looks
 > like this, is argued in `docs/rulings/RULINGS_CONVENTION.md`.
 
-**56 ruling(s)** across **15 flavour(s)**. **237** prose ruling(s) not yet declared.
+**57 ruling(s)** across **16 flavour(s)**. **239** prose ruling(s) not yet declared.
 
 ## One index, five sources
 
@@ -16,7 +16,7 @@ flattening either into one line would delete what makes it worth having.
 
 | kind | n | what it is | where |
 |---|---:|---|---|
-| `declaration` | 30 | a `RULING:` line written next to what it governs | anywhere |
+| `declaration` | 31 | a `RULING:` line written next to what it governs | anywhere |
 | `adr` | 20 | a full architecture argument, summarised here | `docs/game-design/decisions/` |
 | `session` | 3 | a transcript or workshop ruling set, pointed at | `docs/SPOKEN_*`, `*RULINGS*` |
 | `card` | 3 | the input a ruling was made from | `docs/decision-cards/` |
@@ -118,6 +118,12 @@ flavour it belongs to and read what was already decided there.
 | date | ruling | mechanism | source |
 |---|---|---|---|
 | 2026-08-23 | player feedback routes to the PUBLIC issue tracker and is triaged and summarised before the developer reads it; it never lands in a personal inbox, and the player is told this in the panel | `BugReporter.ROUTING_TEXT and its tests` | `godot/scripts/core/bug_reporter.gd:328` |
+
+### `release-artifacts` (only one so far)
+
+| date | ruling | mechanism | source |
+|---|---|---|---|
+| 2026-08-24 | a published release artifact states a platform shipped only by enumerating an asset that exists, never by a naming convention or a hardcoded list, and where presence cannot be observed it says UNKNOWN instead of advertising a URL | `generate_release_metadata.audit_advertised_platforms and generate_release_manifest.derive_platforms` | `scripts/generate_release_metadata.py:91` |
 
 ### `release-cadence`
 
@@ -393,7 +399,9 @@ is not.
 - `godot/tests/unit/test_no_debug_event_injection.gd:9` -- ## the hard lock repeatably in a release build (2026-08-06) and ruled the feature out:
 - `godot/tests/unit/test_number_format_policy.gd:2` -- ## Locks the number-format policy ruled in #1087 (docs/NUMBER_FORMATS.md).
 - `godot/tests/unit/test_prop_manifest.gd:96` -- # style_tags restricted to the canonical quality-tier ladder (ruled 2026-07-26).
-- `public/releases/releases.json:12` -- "changelog": "Ladder epoch **L3 -> L4** -- this is a FORKING release. The historical event deck\nwas retimed to one-turn-one-month and the ruled promotions were applied (#1137),\nwhich changes which e
+- `public/releases/releases.json:159` -- "changelog": "Ladder epoch **L3 -> L4** -- this is a FORKING release. The historical event deck\nwas retimed to one-turn-one-month and the ruled promotions were applied (#1137),\nwhich changes which e
+- `public/releases/releases.json:50` -- "tag_message": "P(Doom) v0.14.3 -- ladder epoch L6\n\nLadder L6. Featured seed weekly-2026-w35. Board key (weekly-2026-w35, L6).\n\nFORKING RELEASE, and the fork happened before this build. L6 was cut
+- `public/releases/v0.14.3.json:45` -- "tag_message": "P(Doom) v0.14.3 -- ladder epoch L6\n\nLadder L6. Featured seed weekly-2026-w35. Board key (weekly-2026-w35, L6).\n\nFORKING RELEASE, and the fork happened before this build. L6 was cut
 - `scripts/generate_rulings.py:164` -- # CONSOLIDATION, ruled by Pip 2026-08-21.
 - `scripts/generate_rulings.py:9` -- (`ruled by Pip`, `Pip ruled`, `ruled 2026-..`) scattered across .py docstrings,
 - `tests/test_art_promotion_pipeline.py:480` -- """Pip ruled 2026-08-03: "Keep both, you pick naming variant."
