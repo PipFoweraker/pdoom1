@@ -340,7 +340,7 @@ DTSTART;VALUE=DATE:20260810
 DTEND;VALUE=DATE:20260811
 SUMMARY:[TASK] Book the half-day audit-mechanics workshop\, target window 
  opens
-DESCRIPTION:Owner: pip. Kind: task. Source: docs/rulings/RULINGS.md:205. p
+DESCRIPTION:Owner: pip. Kind: task. Source: docs/rulings/RULINGS.md:224. p
  doom1#984\, ruled 2026-07-27 18:11. Scheduled to precede the 2026-08-31 f
   -- Generated from tracked sources by scripts/generate_commitment_calenda
  r.py\; regenerate to update.
@@ -607,7 +607,7 @@ DTSTART;VALUE=DATE:20260811
 DTEND;VALUE=DATE:20260812
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:120. 6 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:139. 6 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: Rulings with no `mechanism:`. Pip's doctrine 
  (2026-08-11): what forces a -- Generated from tracked sources by scripts/
@@ -748,7 +748,7 @@ DTSTART;VALUE=DATE:20260812
 DTEND;VALUE=DATE:20260813
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:316. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:337. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `godot/scripts/core/capacity.gd:5` -- ## Ru
  led 2026-08-12 (coordination/DESIGN_2026-08-12_interrupt-resolution-varia
@@ -1082,6 +1082,29 @@ DESCRIPTION:needs a declaration -- PROVENANCE_COMPLETENESS.md (unparsed) -
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:c1e33d815a4065fe@commitments.pdoom1
+DTSTAMP:20260813T000000Z
+DTSTART;VALUE=DATE:20260813
+DTEND;VALUE=DATE:20260814
+SUMMARY:[UNPARSED] needs a declaration -- RELEASE_LINKING_TO_0.20.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/releases/RELEASE_
+ LINKING_TO_0.20.md:74. 1 line(s) in docs/releases/RELEASE_LINKING_TO_0.20
+ .md mention this date and no COMMITMENT: declaration accounts for it. Eit
+ her add a declaration or the date is incidental. First line: | `weekly-20
+ 26-w33` | 2026-08-13 | **Thu** | w33 | yes | -- Generated from tracked so
+ urces by scripts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- RELEASE_LINKING_TO_0.20.md (unparsed) -
+ - unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:362bca7f12c0806b@commitments.pdoom1
 DTSTAMP:20260813T000000Z
 DTSTART;VALUE=DATE:20260813
@@ -1136,7 +1159,7 @@ DTSTART;VALUE=DATE:20260813
 DTEND;VALUE=DATE:20260814
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:164. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:183. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `docs/CONTENT_DISTRIBUTION_SYSTEM.md:10` --
   > **SUPERSEDED\, not merely "outdated in spirit"\, as of 2026-08-13.** P
@@ -1598,7 +1621,7 @@ DTSTART;VALUE=DATE:20260814
 DTEND;VALUE=DATE:20260815
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:335. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:356. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `godot/tests/unit/simulation/test_events.gd
  :50` -- ## THE RATCHET WAS DELIBERATELY LOOSENED -- 2026-08-14\, ruled by
@@ -2559,7 +2582,7 @@ DTSTART;VALUE=DATE:20260817
 DTEND;VALUE=DATE:20260818
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:75. 2 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
+ d:81. 2 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
  TMENT: declaration accounts for it. Either add a declaration or the date 
  is incidental. First line: | 2026-08-17 | published figures live in tooli
  ng\, not prose: the line item is the atom and every rendering is a projec
@@ -3079,7 +3102,7 @@ DTSTART;VALUE=DATE:20260820
 DTEND;VALUE=DATE:20260821
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:188. 3 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:207. 3 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `docs/art/A4_COLLAPSE_2026-08-20.md:3` -- *
  *2026-08-20\, `pdoom1` seat on New-Bort.** Ruled by Pip: canonicalise on 
@@ -3750,12 +3773,12 @@ DTSTART;VALUE=DATE:20260822
 DTEND;VALUE=DATE:20260823
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:87. 4 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
- TMENT: declaration accounts for it. Either add a declaration or the date 
- is incidental. First line: | 2026-08-22 | a mechanic that charges the pla
- yer and does nothing observable gets an unsubtle placeholder consequence 
- NOW rather than waiting for a b -- Generated from tracked sources by scri
- pts/generate_commitment_calendar.py\; regenerate to update.
+ d:100. 4 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ ITMENT: declaration accounts for it. Either add a declaration or the date
+  is incidental. First line: | 2026-08-22 | a mechanic that charges the pl
+ ayer and does nothing observable gets an unsubtle placeholder consequence
+  NOW rather than waiting for a b -- Generated from tracked sources by scr
+ ipts/generate_commitment_calendar.py\; regenerate to update.
 CATEGORIES:UNPARSED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -3813,13 +3836,37 @@ DESCRIPTION:needs a declaration -- CODE_SIGNING.md (unparsed) -- unowned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:8560496332a9b1c1@commitments.pdoom1
+DTSTAMP:20260823T000000Z
+DTSTART;VALUE=DATE:20260823
+DTEND;VALUE=DATE:20260824
+SUMMARY:[UNPARSED] needs a declaration -- RELEASE_LINKING_TO_0.20.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/releases/RELEASE_
+ LINKING_TO_0.20.md:75. 1 line(s) in docs/releases/RELEASE_LINKING_TO_0.20
+ .md mention this date and no COMMITMENT: declaration accounts for it. Eit
+ her add a declaration or the date is incidental. First line: | `weekly-20
+ 26-w34` | 2026-08-23 | **Sun** | w34 | yes\, **on the last day of w34** |
+  -- Generated from tracked sources by scripts/generate_commitment_calenda
+ r.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- RELEASE_LINKING_TO_0.20.md (unparsed) -
+ - unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:bc5b9192e93765aa@commitments.pdoom1
 DTSTAMP:20260823T000000Z
 DTSTART;VALUE=DATE:20260823
 DTEND;VALUE=DATE:20260824
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:81. 3 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
+ d:87. 4 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
  TMENT: declaration accounts for it. Either add a declaration or the date 
  is incidental. First line: | 2026-08-23 | ladder debt is paid when it is 
  incurred\, not deferred to build time\, so a fresh epoch never inherits a
@@ -3929,6 +3976,29 @@ DESCRIPTION:needs a declaration -- check_ladder_bump.py (unparsed) -- unow
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:ba5478d3317dd187@commitments.pdoom1
+DTSTAMP:20260823T000000Z
+DTSTART;VALUE=DATE:20260823
+DTEND;VALUE=DATE:20260824
+SUMMARY:[UNPARSED] needs a declaration -- check_release_ledger.py
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/check_release_le
+ dger.py:30. 3 line(s) in tools/check_release_ledger.py mention this date 
+ and no COMMITMENT: declaration accounts for it. Either add a declaration 
+ or the date is incidental. First line: This is the ruled ``manufactured c
+ onfidence`` shape (Pip\, 2026-08-23 16:42): -- Generated from tracked sou
+ rces by scripts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- check_release_ledger.py (unparsed) -- u
+ nowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:322e6fdd089d7661@commitments.pdoom1
 DTSTAMP:20260823T000000Z
 DTSTART;VALUE=DATE:20260823
@@ -4002,6 +4072,98 @@ ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- LEAGUE_CUTOVER_PLAYBOOK.md (unparsed) -
  - unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2d4f1bcb5fe1ab1e@commitments.pdoom1
+DTSTAMP:20260824T000000Z
+DTSTART;VALUE=DATE:20260824
+DTEND;VALUE=DATE:20260825
+SUMMARY:[UNPARSED] needs a declaration -- RELEASE_LINKING_TO_0.20.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/releases/RELEASE_
+ LINKING_TO_0.20.md:4. 4 line(s) in docs/releases/RELEASE_LINKING_TO_0.20.
+ md mention this date and no COMMITMENT: declaration accounts for it. Eith
+ er add a declaration or the date is incidental. First line: Written 2026-
+ 08-24 off the mechanical sweep in `RELEASE_LEDGER.md`\, which is -- Gener
+ ated from tracked sources by scripts/generate_commitment_calendar.py\; re
+ generate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- RELEASE_LINKING_TO_0.20.md (unparsed) -
+ - unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:b73be9bb1fec79d5@commitments.pdoom1
+DTSTAMP:20260824T000000Z
+DTSTART;VALUE=DATE:20260824
+DTEND;VALUE=DATE:20260825
+SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
+ d:73. 5 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
+ TMENT: declaration accounts for it. Either add a declaration or the date 
+ is incidental. First line: | 2026-08-24 | a command's exit status must be
+  read from the command\, never through a pipe: $? after a pipeline is the
+  RIGHTMOST command's status\, so -- Generated from tracked sources by scr
+ ipts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- RULINGS.md (unparsed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:85f61a1a08787a8d@commitments.pdoom1
+DTSTAMP:20260824T000000Z
+DTSTART;VALUE=DATE:20260824
+DTEND;VALUE=DATE:20260825
+SUMMARY:[UNPARSED] needs a declaration -- UNTAGGED.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/releases/UNTAGGED
+ .md:7. 2 line(s) in docs/releases/UNTAGGED.md mention this date and no CO
+ MMITMENT: declaration accounts for it. Either add a declaration or the da
+ te is incidental. First line: was prepared and never delivered\, and unti
+ l 2026-08-24 nothing in this repo -- Generated from tracked sources by sc
+ ripts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- UNTAGGED.md (unparsed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:bca586fcce173def@commitments.pdoom1
+DTSTAMP:20260824T000000Z
+DTSTART;VALUE=DATE:20260824
+DTEND;VALUE=DATE:20260825
+SUMMARY:[UNPARSED] needs a declaration -- check_release_ledger.py
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/check_release_le
+ dger.py:8. 3 line(s) in tools/check_release_ledger.py mention this date a
+ nd no COMMITMENT: declaration accounts for it. Either add a declaration o
+ r the date is incidental. First line: On 2026-08-24 the repo held ``versi
+ on.txt = 0.14.3``\, a proven build on disk\, -- Generated from tracked so
+ urces by scripts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- check_release_ledger.py (unparsed) -- u
+ nowned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
@@ -4114,6 +4276,30 @@ DESCRIPTION:Rektango 17:30 -- the weekly anchor\, a hard stop (cadence) --
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:fd685d4c7d04e0a7@commitments.pdoom1
+DTSTAMP:20260828T000000Z
+DTSTART;VALUE=DATE:20260828
+DTEND;VALUE=DATE:20260829
+SUMMARY:[UNPARSED] needs a declaration -- RELEASE_LINKING_TO_0.20.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/releases/RELEASE_
+ LINKING_TO_0.20.md:93. 1 line(s) in docs/releases/RELEASE_LINKING_TO_0.20
+ .md mention this date and no COMMITMENT: declaration accounts for it. Eit
+ her add a declaration or the date is incidental. First line: league opens
+  on Friday 2026-08-28 -- also week 35 -- then by the 2026-07-30 -- Genera
+ ted from tracked sources by scripts/generate_commitment_calendar.py\; reg
+ enerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- RELEASE_LINKING_TO_0.20.md (unparsed) -
+ - unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:74ca38be8dd56115@commitments.pdoom1
 DTSTAMP:20260831T000000Z
 DTSTART;VALUE=DATE:20260831
@@ -4180,7 +4366,7 @@ DTSTART;VALUE=DATE:20260831
 DTEND;VALUE=DATE:20260901
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:324. 2 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:345. 2 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `godot/scripts/core/researcher.gd:150` -- #
   SEAM (ruled 2026-07-27\, review-by 2026-08-31): AUDITS ground-truth repo
@@ -4388,6 +4574,29 @@ BEGIN:VALARM
 ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- LEAGUE_CUTOVER_PLAYBOOK.md (unparsed) -
+ - unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:fca0afb0bd3baf0d@commitments.pdoom1
+DTSTAMP:20260904T000000Z
+DTSTART;VALUE=DATE:20260904
+DTEND;VALUE=DATE:20260905
+SUMMARY:[UNPARSED] needs a declaration -- RELEASE_LINKING_TO_0.20.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/releases/RELEASE_
+ LINKING_TO_0.20.md:128. 1 line(s) in docs/releases/RELEASE_LINKING_TO_0.2
+ 0.md mention this date and no COMMITMENT: declaration accounts for it. Ei
+ ther add a declaration or the date is incidental. First line: | v0.15 | F
+ ri 2026-09-04 | w36 | `weekly-2026-w36` | -- Generated from tracked sourc
+ es by scripts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- RELEASE_LINKING_TO_0.20.md (unparsed) -
  - unowned
 END:VALARM
 END:VEVENT
@@ -4908,6 +5117,29 @@ DESCRIPTION:Release train: v0.16 ships -- Sightings (prov.) (release) -- p
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:9ff21bde5eea21e7@commitments.pdoom1
+DTSTAMP:20261002T000000Z
+DTSTART;VALUE=DATE:20261002
+DTEND;VALUE=DATE:20261003
+SUMMARY:[UNPARSED] needs a declaration -- RELEASE_LINKING_TO_0.20.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/releases/RELEASE_
+ LINKING_TO_0.20.md:129. 1 line(s) in docs/releases/RELEASE_LINKING_TO_0.2
+ 0.md mention this date and no COMMITMENT: declaration accounts for it. Ei
+ ther add a declaration or the date is incidental. First line: | v0.16 | F
+ ri 2026-10-02 | w40 | `weekly-2026-w40` | -- Generated from tracked sourc
+ es by scripts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- RELEASE_LINKING_TO_0.20.md (unparsed) -
+ - unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:5d499fca3a5e6ea0@commitments.pdoom1
 DTSTAMP:20261008T000000Z
 DTSTART;VALUE=DATE:20261008
@@ -5065,6 +5297,29 @@ DESCRIPTION:Release train: v0.17 ships -- The World Shoots Back (prov.) (r
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:395af123fdcfb6d3@commitments.pdoom1
+DTSTAMP:20261106T000000Z
+DTSTART;VALUE=DATE:20261106
+DTEND;VALUE=DATE:20261107
+SUMMARY:[UNPARSED] needs a declaration -- RELEASE_LINKING_TO_0.20.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/releases/RELEASE_
+ LINKING_TO_0.20.md:130. 1 line(s) in docs/releases/RELEASE_LINKING_TO_0.2
+ 0.md mention this date and no COMMITMENT: declaration accounts for it. Ei
+ ther add a declaration or the date is incidental. First line: | v0.17 | F
+ ri 2026-11-06 | w45 | `weekly-2026-w45` | -- Generated from tracked sourc
+ es by scripts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- RELEASE_LINKING_TO_0.20.md (unparsed) -
+ - unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:4b051dfbbf945dc6@commitments.pdoom1
 DTSTAMP:20261204T000000Z
 DTSTART;VALUE=DATE:20261204
@@ -5092,6 +5347,29 @@ BEGIN:VALARM
 ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:Release train: v0.18 ships -- (unnamed) (release) -- pip
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:83194a8c34ec4843@commitments.pdoom1
+DTSTAMP:20261204T000000Z
+DTSTART;VALUE=DATE:20261204
+DTEND;VALUE=DATE:20261205
+SUMMARY:[UNPARSED] needs a declaration -- RELEASE_LINKING_TO_0.20.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/releases/RELEASE_
+ LINKING_TO_0.20.md:131. 1 line(s) in docs/releases/RELEASE_LINKING_TO_0.2
+ 0.md mention this date and no COMMITMENT: declaration accounts for it. Ei
+ ther add a declaration or the date is incidental. First line: | v0.18 | F
+ ri 2026-12-04 | w49 | `weekly-2026-w49` | -- Generated from tracked sourc
+ es by scripts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- RELEASE_LINKING_TO_0.20.md (unparsed) -
+ - unowned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
@@ -5135,6 +5413,101 @@ DESCRIPTION:Read the 49 archived pygame-era dev-blog entries end to end an
  d write the retrospective post: what the pygame era actually cost\, what 
  survived the port to Godot\, and what the agent-written progress reports 
  got wrong about their own importance (review) -- pip
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:87ed846431cd4c49@commitments.pdoom1
+DTSTAMP:20261231T000000Z
+DTSTART;VALUE=DATE:20261231
+DTEND;VALUE=DATE:20270101
+SUMMARY:[UNPARSED] needs a declaration -- RELEASE_LINKING_TO_0.20.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/releases/RELEASE_
+ LINKING_TO_0.20.md:147. 1 line(s) in docs/releases/RELEASE_LINKING_TO_0.2
+ 0.md mention this date and no COMMITMENT: declaration accounts for it. Ei
+ ther add a declaration or the date is incidental. First line: 2026-12-31.
+  So the correct seed carries the year **2026** on a date in 2027. -- Gene
+ rated from tracked sources by scripts/generate_commitment_calendar.py\; r
+ egenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- RELEASE_LINKING_TO_0.20.md (unparsed) -
+ - unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:607b1be2a19b500f@commitments.pdoom1
+DTSTAMP:20270101T000000Z
+DTSTART;VALUE=DATE:20270101
+DTEND;VALUE=DATE:20270102
+SUMMARY:[UNPARSED] needs a declaration -- RELEASE_LINKING_TO_0.20.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/releases/RELEASE_
+ LINKING_TO_0.20.md:132. 1 line(s) in docs/releases/RELEASE_LINKING_TO_0.2
+ 0.md mention this date and no COMMITMENT: declaration accounts for it. Ei
+ ther add a declaration or the date is incidental. First line: | v0.19 | F
+ ri 2027-01-01 | **w53 of 2026** | `weekly-2026-w53` | -- Generated from t
+ racked sources by scripts/generate_commitment_calendar.py\; regenerate to
+  update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- RELEASE_LINKING_TO_0.20.md (unparsed) -
+ - unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:28d8fddf788bbbf5@commitments.pdoom1
+DTSTAMP:20270108T000000Z
+DTSTART;VALUE=DATE:20270108
+DTEND;VALUE=DATE:20270109
+SUMMARY:[UNPARSED] needs a declaration -- RELEASE_LINKING_TO_0.20.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/releases/RELEASE_
+ LINKING_TO_0.20.md:143. 1 line(s) in docs/releases/RELEASE_LINKING_TO_0.2
+ 0.md mention this date and no COMMITMENT: declaration accounts for it. Ei
+ ther add a declaration or the date is incidental. First line: **RULING NE
+ EDED (3):** hold v0.19 to 2027-01-08 (w02)\, or accept 1 January. -- Gene
+ rated from tracked sources by scripts/generate_commitment_calendar.py\; r
+ egenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- RELEASE_LINKING_TO_0.20.md (unparsed) -
+ - unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:96f99d5baf5ca768@commitments.pdoom1
+DTSTAMP:20270205T000000Z
+DTSTART;VALUE=DATE:20270205
+DTEND;VALUE=DATE:20270206
+SUMMARY:[UNPARSED] needs a declaration -- RELEASE_LINKING_TO_0.20.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/releases/RELEASE_
+ LINKING_TO_0.20.md:133. 1 line(s) in docs/releases/RELEASE_LINKING_TO_0.2
+ 0.md mention this date and no COMMITMENT: declaration accounts for it. Ei
+ ther add a declaration or the date is incidental. First line: | v0.20 | F
+ ri 2027-02-05 | w05 | `weekly-2027-w05` | -- Generated from tracked sourc
+ es by scripts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- RELEASE_LINKING_TO_0.20.md (unparsed) -
+ - unowned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
