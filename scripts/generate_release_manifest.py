@@ -77,6 +77,7 @@ REPO_ROOT = SCRIPT_DIR.parent
 sys.path.insert(0, str(SCRIPT_DIR))
 
 from generate_release_metadata import (  # noqa: E402
+    _ABSENT_MARKER,
     ReleaseMetadataGenerator,
     _ascii_safe,
     platform_assets_for,
@@ -231,9 +232,20 @@ def collect_assets(assets_dir: Path) -> list:
 
 
 def extract_highlights(repo_root: Path, version: str, max_chars: int = HIGHLIGHTS_MAX_CHARS) -> str:
-    """ASCII-safe CHANGELOG excerpt for this version, hard-capped in length."""
+    """ASCII-safe CHANGELOG excerpt for this version, hard-capped in length.
+
+    A missing section yields an explicit ABSENCE marker, never a stand-in note.
+    This was the THIRD copy of the same defect (2026-08-24): the excerpt reached a
+    client tooltip, and when extract_changelog_for_version() had no section it
+    returned "Release vX.Y.Z / See CHANGELOG.md for details.", which reads as a real
+    if terse release note. The extractor now returns None for "I could not find one",
+    and this states that rather than papering over it.
+    """
     generator = ReleaseMetadataGenerator(repo_root)
-    text = _ascii_safe(generator.extract_changelog_for_version(version)).strip()
+    raw = generator.extract_changelog_for_version(version)
+    if raw is None:
+        return _ABSENT_MARKER.format(version=version)
+    text = _ascii_safe(raw).strip()
     if len(text) > max_chars:
         text = text[:max_chars].rstrip() + TRUNCATION_MARK
     return text

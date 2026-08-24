@@ -4,7 +4,8 @@
   "release_date": "2025-09-28T11:58:20+10:00",
   "commit_hash": "cd054e6b9e4cc2fb0bca7464280a843e9d6f0cc4",
   "is_prerelease": false,
-  "changelog": "Release v0.9.0\n\nSee CHANGELOG.md for details.",
+  "changelog": null,
+  "changelog_status": "missing",
   "downloads": {
     "source_zip": "https://github.com/PipFoweraker/pdoom1/archive/refs/tags/v0.9.0.zip",
     "source_tar": "https://github.com/PipFoweraker/pdoom1/archive/refs/tags/v0.9.0.tar.gz"

@@ -27,12 +27,50 @@ hosting serves PHP on request. No DB unless you want one later.
      ```
 5. Hand Claude the URL + token; the Godot client gets wired to it (an HTTPRequest).
 
+## Tests -- run these before you upload anything
+
+    php server/leaderboard/tests/test_score_api.php
+
+Dependency-free: no composer, no PHPUnit, only the `pcre` + `json` extensions
+that every PHP build has. It boots PHP's built-in `php -S` over a COPY of the
+API in a temp docroot with a temp data dir, so it drives real HTTP and touches
+neither live data nor api.pdoom1.com.
+
+**Three outcomes, not two** (same convention as `scripts/run_godot_tests.py`):
+`0` = measured pass, `1` = measured failure, `2` = **DID NOT COMPLETE**. Exit 2
+means no measurement was taken -- do not report a suite result from that run.
+
+To see the suite return the other answer (a test that cannot fail proves
+nothing):
+
+    git show <pre-1272-rev>:server/leaderboard/score_api.php > /tmp/old_api.php
+    PDOOM_SCORE_API=/tmp/old_api.php php server/leaderboard/tests/test_score_api.php
+
+Group B goes red: a 7-row board drops to **0 rows** while the API answers
+`{"ok":true,"added":true,"rank":8}`.
+
+## DEPLOY IS MANUAL, AND NOTHING IN THIS REPO CHECKS IT
+
+There is no deploy path from this repo to api.pdoom1.com. Editing this file and
+merging changes NOTHING that a player touches -- the fix ships only when someone
+uploads it. Verify a deploy landed with a GET, not with a green CI run:
+
+    curl "https://api.pdoom1.com/score_api.php?seed=%FF&version=L4&limit=1"
+
+Pre-#1272 that returns **HTTP 200 with a zero-byte body** (measured 2026-08-24).
+Once the fix is deployed it returns HTTP 400 with a JSON error. That one request
+distinguishes the deployed version from the repo version without a POST and
+without touching any board.
+
 ## API
 - `GET  ?seed=&version=&limit=` -> `{ ok, seed, version, entries: [...] }` (top-N, score DESC, doom_integral tiebreak).
 - `POST` (JSON body, `X-PDoom-Token` header) -> `{ ok, added, rank }`. Idempotent on `entry_uuid`.
 
-Accepted body fields (whitelisted): score, doom_integral, player_name, date, level_reached,
-game_mode, duration_seconds, entry_uuid, baseline_score, baseline_doom_integral, plus seed + version.
+Accepted body fields (whitelisted): score, doom_integral, player_name, operator_name, date,
+level_reached, game_mode, duration_seconds, entry_uuid, baseline_score, baseline_doom_integral,
+plus seed + version. `player_name` and `operator_name` are fitted to 40 BYTES on a codepoint
+boundary, with a visible `...` when shortened; the POST response echoes the stored `player_name`.
+An unknown key is still accepted and dropped.
 
 ## Website integration
 The board files are plain JSON (`board_<seed>__<version>.json`). The pdoom website can read them

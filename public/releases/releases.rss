@@ -5,7 +5,7 @@
     <link>https://pdoom.net</link>
     <description>Latest releases of P(Doom) - AI Safety Strategy Game</description>
     <language>en-us</language>
-    <lastBuildDate>Mon, 24 Aug 2026 08:30:32 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 24 Aug 2026 10:23:38 +0000</lastBuildDate>
     <atom:link href="https://pdoom.net/releases/releases.rss" rel="self" type="application/rss+xml"/>
     <item>
       <title>P(Doom) v0.14.3</title>
@@ -89,18 +89,14 @@ economy was rebuilt, so scores are not comparable with L2 boards.
     <item>
       <title>P(Doom) v0.13.1</title>
       <link>https://github.com/PipFoweraker/pdoom1/releases/tag/v0.13.1</link>
-      <description>Release v0.13.1
-
-See CHANGELOG.md for details.</description>
+      <description>[no CHANGELOG.md section for v0.13.1 -- release notes were never written]</description>
       <pubDate>Sat, 25 Jul 2026 22:23:46 +1000</pubDate>
       <guid isPermaLink="false">pdoom-release-v0.13.1</guid>
     </item>
     <item>
       <title>P(Doom) v0.13.0</title>
       <link>https://github.com/PipFoweraker/pdoom1/releases/tag/v0.13.0</link>
-      <description>Release v0.13.0
-
-See CHANGELOG.md for details.</description>
+      <description>[no CHANGELOG.md section for v0.13.0 -- release notes were never written]</description>
       <pubDate>Fri, 24 Jul 2026 18:54:09 +1000</pubDate>
       <guid isPermaLink="false">pdoom-release-v0.13.0</guid>
     </item>
@@ -122,18 +118,14 @@ player-facing record for this release and lists the rest of what it contained.
     <item>
       <title>P(Doom) v0.11.0</title>
       <link>https://github.com/PipFoweraker/pdoom1/releases/tag/v0.11.0</link>
-      <description>Release v0.11.0
-
-See CHANGELOG.md for details.</description>
+      <description>[no CHANGELOG.md section for v0.11.0 -- release notes were never written]</description>
       <pubDate>Mon, 08 Dec 2025 08:06:41 +1100</pubDate>
       <guid isPermaLink="false">pdoom-release-v0.11.0</guid>
     </item>
     <item>
       <title>P(Doom) v0.10.6</title>
       <link>https://github.com/PipFoweraker/pdoom1/releases/tag/v0.10.6</link>
-      <description>Release v0.10.6
-
-See CHANGELOG.md for details.</description>
+      <description>[no CHANGELOG.md section for v0.10.6 -- release notes were never written]</description>
       <pubDate>Tue, 25 Nov 2025 17:44:13 +1100</pubDate>
       <guid isPermaLink="false">pdoom-release-v0.10.6</guid>
     </item>

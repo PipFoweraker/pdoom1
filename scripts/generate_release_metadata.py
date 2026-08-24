@@ -8,17 +8,22 @@ This script creates JSON and RSS feeds for game releases that can be
 consumed by the pdoom.net website. It extracts version information,
 changelog entries, and download links to make releases easily discoverable.
 
-A platform appears in a feed entry ONLY when its asset was OBSERVED to exist --
-see the PLATFORMS table and AssetEvidence below. Asset presence comes either
-from a local build-artifact directory (--assets-dir, what CI has before the
-release is published) or from the GitHub Releases API. When neither can answer,
-the platform is reported `unknown` and NO url is emitted.
+TWO KINDS OF ABSENCE ARE REFUSED HERE, and they are independent:
+
+  prose  -- a release with no CHANGELOG section gets `changelog: null` and
+            `changelog_status: "missing"`, never a stand-in sentence (#1298).
+  files  -- a platform appears in a feed entry ONLY when its asset was
+            OBSERVED to exist. Availability comes from build-status.json
+            (scripts/check_platform_builds.py, #1307 -- authoritative), or a
+            local --assets-dir, or the GitHub Releases API. When none can
+            answer, the platform is `unknown` and NO url is emitted.
 
 Usage:
     python scripts/generate_release_metadata.py --version v0.10.1
     python scripts/generate_release_metadata.py --latest
     python scripts/generate_release_metadata.py --version v0.10.1 --verify
-    python scripts/generate_release_metadata.py --version v0.14.4 --assets-dir build-artifacts
+    python scripts/generate_release_metadata.py --version v0.14.4 \
+        --build-status public/releases/build-status.json
     python scripts/generate_release_metadata.py --no-probe   # offline: all UNKNOWN
 
 --verify HEADs every generated download URL (via scripts/verify_release_urls.py)
@@ -41,57 +46,99 @@ from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Set
 from xml.dom import minidom
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+# The asset-name contract lives in check_platform_builds.py (issue #1307), which
+# is stdlib-only and does no network I/O, so importing it here is cheap and safe.
+# Importing rather than restating it is the whole point: two tables of "what a
+# platform's zip is called" is exactly the drift that lets a build report and a
+# release feed disagree about the same release. That module is AUTHORITATIVE for
+# the names, and for the CI availability verdict (see evidence_from_build_status).
+import check_platform_builds  # noqa: E402
+
 # Matches vMAJOR.MINOR.PATCH with an optional suffix, e.g. v0.13.1 or v0.2.12-hotfix.
 _TAG_RE = re.compile(r"^v(\d+)\.(\d+)\.(\d+)(?:[-.](.+))?$")
+
+# The two placeholder strings this generator used to emit when it could not find a
+# CHANGELOG section. Kept ONLY so --check can recognise them in an index generated
+# before 2026-08-24 and call them what they are. Never emitted again.
+_RETIRED_PLACEHOLDERS = (
+    "See CHANGELOG.md for details.",
+    "No changelog available.",
+)
+
+# What the feed says INSTEAD of a fabricated release note. Deliberately bracketed and
+# machine-obvious: it states the absence rather than papering over it, so a reader of
+# the RSS feed can tell "nobody wrote notes" from "this release was quiet".
+_ABSENT_MARKER = "[no CHANGELOG.md section for {version} -- release notes were never written]"
+
+# Releases that shipped before the section-per-release convention was enforced, and
+# which will therefore never grow a CHANGELOG section retroactively. This is a
+# RATCHET in the same spirit as tools/balance_unread_ratchet.txt: entries may be
+# REMOVED (by writing the missing section), never added for a new release. A tag that
+# is missing a section and is NOT listed here fails the generator and --check.
+#
+# It is a pin rather than a hard failure because 15 of 25 tags were already missing
+# sections when this gate was written -- a gate that is red on arrival gets disabled
+# inside a week (the lesson already recorded against action-taxonomy-index-check).
+# Pinned gaps are still PRINTED on every run, so they cannot go quiet.
+_CHANGELOG_GAP_PIN = "scripts/changelog_gap_pin.txt"
 
 GITHUB_REPO = "PipFoweraker/pdoom1"
 _API_TIMEOUT_SECONDS = 15.0
 
 # --- The platform asset contract ---------------------------------------------
-# (key, human label, asset filename template). These are the names
-# scripts/build_all_platforms.py actually produces and enhanced-release.yml
-# actually uploads -- NOT a guessed shape.
-#
-# The load-bearing rule, and the reason this table exists separately from the
-# URL builder: a feed entry for a platform is DERIVED FROM AN OBSERVED ASSET,
-# never from the naming convention alone.
-#
-# Issue #963 was the first shape of that bug: PDoom.exe / PDoom.x86_64 /
-# pdoom-*-source.* were hardcoded into every release JSON and 404'd against
-# every real release, because no such asset was ever produced.
-#
 # RULING: 2026-08-24 -- a published release artifact states a platform shipped only by enumerating an asset that exists, never by a naming convention or a hardcoded list, and where presence cannot be observed it says UNKNOWN instead of advertising a URL -- flavour: release-artifacts -- mechanism: generate_release_metadata.audit_advertised_platforms and generate_release_manifest.derive_platforms
+#
+# The feed's own key for macOS is "mac" (it is in the shipped `downloads` block
+# and cannot be renamed); check_platform_builds spells it "macos". This map is
+# the ONLY place that translation lives.
+_FEED_TO_BUILD_KEY = {"windows": "windows", "linux": "linux", "mac": "macos"}
+
+
+def _platform_contract():
+    """(feed_key, label, versioned_template, alias) per platform, from #1307's table.
+
+    Derived, not restated. check_platform_builds.PLATFORMS lists each platform's
+    assets as (versioned_template, unversioned_alias) -- the order matters and is
+    asserted by a test, because deriving from a tuple whose order silently
+    flipped would swap "the URL to advertise" with "the website's button target".
+    """
+    by_key = {spec["key"]: spec for spec in check_platform_builds.PLATFORMS}
+    rows = []
+    for feed_key, build_key in _FEED_TO_BUILD_KEY.items():
+        spec = by_key[build_key]
+        versioned, alias = spec["assets"][0], spec["assets"][1]
+        rows.append((feed_key, spec["label"], versioned, alias))
+    return tuple(rows)
+
+
+# (key, human label, versioned asset filename template) -- the shape the rest of
+# this module loops over. The load-bearing rule, and the reason this exists at
+# all rather than a literal URL builder: a feed entry for a platform is DERIVED
+# FROM AN OBSERVED ASSET, never from the naming convention alone.
+#
+# Issue #963 was the first shape of that bug: PDoom.exe / PDoom.x86_64 were
+# hardcoded into every release JSON and 404'd against every real release,
+# because no such asset was ever produced.
 #
 # v0.14.3 (2026-08-24) was the second shape, and the convention was RIGHT this
 # time -- the asset simply never arrived. macOS is a deliberately best-effort
-# platform (issue #1071: the GodotSteam .framework loses its Versions/Current
-# symlink on non-mac checkouts), its export failed, build_all_platforms.py
-# dropped the macOS zips exactly as designed, Windows/Linux published exactly
-# as designed -- and the feed advertised PDoom-macOS-v0.14.3.zip anyway. A live
-# 404 in a public feed, on the day the download link was going out by email.
-# The build pipeline knew. The feed generator was never told.
-PLATFORMS = (
-    ("windows", "Windows", "PDoom-Windows-{version}.zip"),
-    ("linux", "Linux", "PDoom-Linux-{version}.zip"),
-    ("mac", "macOS", "PDoom-macOS-{version}.zip"),
-)
+# platform, its export failed on a Windows .ico that Godot cannot decode
+# (fixed in #1305), build_all_platforms.py dropped the macOS zips exactly as
+# designed, Windows/Linux published exactly as designed -- and the feed
+# advertised PDoom-macOS-v0.14.3.zip anyway. A live 404 in a public feed, on
+# the day the download link was going out by email. The build pipeline knew.
+# The feed generator was never told.
+PLATFORMS = tuple((key, label, versioned) for key, label, versioned, _alias in _platform_contract())
 
-# The unversioned alias each platform ALSO publishes. Issue #1068: the website's
-# download buttons are fixed strings against releases/latest/download/<name>, a
-# second distribution path the versioned feed never covered. Kept beside
-# PLATFORMS so exactly ONE place in the repo knows what a platform's assets are
-# called -- scripts/generate_release_manifest.py imports it rather than keeping
-# a second opinion, which is how the manifest came to declare a macOS build for
-# v0.14.3 while its own file list showed only Windows and Linux.
-PLATFORM_ALIASES = {
-    "windows": "PDoom-Windows.zip",
-    "linux": "PDoom-Linux.zip",
-    "mac": "PDoom.app.zip",
-}
+# The unversioned alias each platform ALSO publishes (issue #1068: the website's
+# download buttons are fixed strings against releases/latest/download/<name>).
+PLATFORM_ALIASES = {key: alias for key, _label, _versioned, alias in _platform_contract()}
 
 
 def platform_assets_for(version: str) -> Dict[str, List[str]]:
-    """Every filename a platform may ship under, versioned name first.
+    """Every filename a platform may ship under, versioned name FIRST.
 
     Two consumers with different needs read this: the feed advertises the
     versioned name only, while the release manifest must RECOGNISE either the
@@ -121,9 +168,15 @@ class AssetEvidence:
     when no asset list can be obtained, every platform reports `unknown` and
     emits NO download URL. An unverifiable platform is not an advertised one.
 
+    This is the same principle #1298 applied to CHANGELOG prose in this very
+    file -- `changelog: null` + `changelog_status: "missing"` rather than a
+    sentence that reads like a release note. Neither subsumes the other: that
+    one is about absent PROSE, this one about absent FILES, and a release can
+    have either, both, or neither.
+
     `names is None` means UNRESOLVED -- nothing was observed. An EMPTY SET is a
     real observation (a published release that carries no assets) and is a
-    different answer; conflating the two is the bug this class exists to make
+    different answer; conflating the two is the bug this class makes
     unrepresentable.
     """
 
@@ -131,13 +184,21 @@ class AssetEvidence:
         self.names: Optional[Set[str]] = None if names is None else {str(n) for n in names}
         self.source = source
         self.detail = detail
+        # Set by evidence_from_build_status: a verdict already reached by the
+        # authoritative scanner, which is stricter than a name lookup can be.
+        self.verdicts: Optional[Dict[str, bool]] = None
 
     @property
     def resolved(self) -> bool:
-        """True iff an asset list was actually observed."""
-        return self.names is not None
+        """True iff an asset list (or a verdict set) was actually observed."""
+        return self.names is not None or self.verdicts is not None
 
-    def status_for(self, asset_name: str) -> str:
+    def status_for(self, platform_key: str, asset_name: str) -> str:
+        if self.verdicts is not None:
+            verdict = self.verdicts.get(platform_key)
+            if verdict is None:
+                return STATUS_UNKNOWN
+            return STATUS_AVAILABLE if verdict else STATUS_NOT_BUILT
         if self.names is None:
             return STATUS_UNKNOWN
         return STATUS_AVAILABLE if asset_name in self.names else STATUS_NOT_BUILT
@@ -151,12 +212,51 @@ def unresolved_evidence(reason: str) -> AssetEvidence:
     return AssetEvidence(None, "none", reason)
 
 
+def evidence_from_build_status(status_path: Path) -> AssetEvidence:
+    """Adopt the verdict of scripts/check_platform_builds.py (issue #1307).
+
+    THIS IS THE AUTHORITATIVE SOURCE in CI, and the generator deliberately does
+    not form a second opinion. That scanner runs in its own job BEFORE
+    generate-feeds, walks the downloaded artefact tree, and is STRICTER than a
+    filename lookup can be: it requires BOTH the versioned zip and the
+    unversioned alias, and enforces a minimum size, so a truncated or zero-byte
+    zip counts as a missing build. Re-deriving availability here from names
+    alone would create a second, weaker answer to a question already answered --
+    which is precisely the "two tables, one truth" failure this composition
+    exists to avoid.
+
+    Any problem reading or parsing the file yields UNRESOLVED, never a verdict.
+    """
+    if not status_path.is_file():
+        return AssetEvidence(None, "build-status", f"no such file: {status_path}")
+    try:
+        payload = json.loads(status_path.read_text(encoding="utf-8"))
+    except (OSError, ValueError) as exc:
+        return AssetEvidence(None, "build-status", f"unreadable {status_path}: {exc}")
+
+    platforms = payload.get("platforms")
+    if not isinstance(platforms, dict):
+        return AssetEvidence(None, "build-status", "no 'platforms' object in build-status.json")
+
+    verdicts: Dict[str, bool] = {}
+    for feed_key, build_key in _FEED_TO_BUILD_KEY.items():
+        entry = platforms.get(build_key)
+        if isinstance(entry, dict) and isinstance(entry.get("available"), bool):
+            verdicts[feed_key] = entry["available"]
+    if not verdicts:
+        return AssetEvidence(None, "build-status", "no usable per-platform verdicts")
+
+    evidence = AssetEvidence(None, "build-status", str(status_path))
+    evidence.verdicts = verdicts
+    return evidence
+
+
 def evidence_from_directory(assets_dir: Path) -> AssetEvidence:
     """Observe asset names from a local build-artifact tree.
 
-    This is what CI has BEFORE the release exists: generate-feeds runs after
-    build-godot, so the downloaded build-* artifacts are the ground truth at
-    that moment. Mirrors generate_release_manifest.py --assets-dir.
+    The local/offline fallback for when there is no build-status.json -- a
+    developer regenerating feeds by hand against a builds/ directory. CI should
+    use --build-status instead, which is stricter.
 
     A missing/unreadable directory yields UNRESOLVED, not an empty observation:
     "the artifact download step is misconfigured" must not render as "no
@@ -176,9 +276,9 @@ def evidence_from_github(
 ) -> AssetEvidence:
     """Observe asset names from the GitHub Releases API.
 
-    Authoritative once a release is published, which is the case for every tag
-    this generator regenerates after the fact. Uses GH_TOKEN/GITHUB_TOKEN when
-    present purely for rate limit headroom.
+    The source for regenerating ALREADY-PUBLISHED releases, where no
+    build-status.json exists and never will (every tag before v0.14.4). Uses
+    GH_TOKEN/GITHUB_TOKEN when present purely for rate-limit headroom.
 
     EVERY failure path -- offline, 404 (tag has no Release object), 403 rate
     limit, garbled payload -- returns UNRESOLVED. Never an empty observed set:
@@ -212,6 +312,97 @@ def evidence_from_github(
         return AssetEvidence(None, "github-api", "response carried no 'assets' list")
     names = [a.get("name", "") for a in assets if isinstance(a, dict)]
     return AssetEvidence(names, "github-api", url)
+
+
+def _report_platform_status(tag: str, platform_status: Dict, evidence: AssetEvidence) -> None:
+    """Say out loud what each platform resolved to.
+
+    A silent omission is the failure mode being fixed, so the omission itself
+    has to be noisy: dropping macOS from the feed prints a line and, on CI, a
+    ::warning:: annotation. Nobody should have to diff two feeds to notice a
+    platform stopped shipping.
+    """
+    for key, _label, _template in PLATFORMS:
+        entry = platform_status.get(key, {})
+        status = entry.get("status", STATUS_UNKNOWN)
+        marker = {STATUS_AVAILABLE: "[OK]", STATUS_NOT_BUILT: "[--]", STATUS_UNKNOWN: "[??]"}[
+            status
+        ]
+        print(f"    {marker} {key:8s} {status:10s} {entry.get('asset', '?')}")
+
+    dropped = [k for k, v in platform_status.items() if v.get("status") == STATUS_NOT_BUILT]
+    unknown = [k for k, v in platform_status.items() if v.get("status") == STATUS_UNKNOWN]
+    if dropped:
+        message = (
+            f"{tag}: no asset for {', '.join(sorted(dropped))} "
+            f"(evidence: {evidence.source}) -- omitted from the feed, NOT advertised"
+        )
+        print(f"    [!] {message}")
+        if os.environ.get("GITHUB_ACTIONS") == "true":
+            print(f"::warning::{message}")
+    if unknown:
+        message = (
+            f"{tag}: could not determine asset presence for {', '.join(sorted(unknown))} "
+            f"({evidence.detail or 'no evidence source'}) -- reported UNKNOWN, no URL emitted"
+        )
+        print(f"    [??] {message}")
+        if os.environ.get("GITHUB_ACTIONS") == "true":
+            print(f"::warning::{message}")
+
+
+def audit_advertised_platforms(releases: List[Dict]) -> List[str]:
+    """Offline invariant: every advertised platform URL is backed by a status.
+
+    Checks the one thing that needs no network and that the v0.14.3 feed
+    violated: a `downloads` entry for a platform must correspond to a
+    `platform_status` of `available`. A URL for a `not_built` or `unknown`
+    platform -- or a URL with no status block at all -- is an advertised 404
+    waiting to happen, and this returns it as a problem.
+
+    Deliberately parallel to the changelog audit #1298 added to _run_check: same
+    function, same gate, one asks "is this prose real" and this asks "is this
+    file real".
+    """
+    problems: List[str] = []
+    platform_keys = [key for key, _label, _template in PLATFORMS]
+    for release in releases:
+        version = release.get("version", "?")
+        downloads = release.get("downloads", {}) or {}
+        status_block = release.get("platform_status")
+        if status_block is None:
+            # A MISSING block is not itself the defect, and saying so would fire
+            # on every entry of a pre-2026-08-24 index. That is the same call
+            # #1298 made one loop above for `changelog_status`, for the same
+            # measured reason: a finding that fires on all 23 legacy entries
+            # buries the one that matters.
+            #
+            # What IS still a defect, block or no block, is an ADVERTISED
+            # platform URL with nothing backing it. That is precisely the shape
+            # the published v0.14.3 feed had -- downloads.mac, no
+            # platform_status -- so leniency here must not extend to it.
+            advertised = [key for key in platform_keys if key in downloads]
+            if advertised:
+                problems.append(
+                    f"{version}: advertises {', '.join(advertised)} with no platform_status "
+                    f"to back it -- regenerate; an unbacked URL is how the v0.14.3 macOS "
+                    f"404 shipped"
+                )
+            continue
+        for key in platform_keys:
+            entry = status_block.get(key, {})
+            status = entry.get("status")
+            has_url = key in downloads
+            if has_url and status != STATUS_AVAILABLE:
+                problems.append(
+                    f"{version}: advertises a {key} download while platform_status says "
+                    f"{status!r} -- a missing asset must never render as a URL"
+                )
+            if not has_url and status == STATUS_AVAILABLE:
+                problems.append(
+                    f"{version}: platform_status says {key} is available but no download "
+                    f"URL is listed"
+                )
+    return problems
 
 
 def _ascii_safe(text: str) -> str:
@@ -248,40 +439,32 @@ def _semver_sort_key(tag: str):
     return (int(major), int(minor), int(patch), 0 if suffix else 1, suffix or "")
 
 
-def _report_platform_status(tag: str, platform_status: Dict, evidence: AssetEvidence) -> None:
-    """Say out loud what each platform resolved to.
+def load_gap_pin(repo_root: Path) -> List[str]:
+    """Read the pinned list of tags known to have no CHANGELOG section.
 
-    A silent omission is the failure mode being fixed, so the omission itself
-    has to be noisy: dropping macOS from the feed prints a line and, on the CI
-    log, a ::warning:: annotation. Nobody should have to diff two feeds to
-    notice a platform stopped shipping.
+    Absent file = empty pin = every gap is fatal. That is the safe direction: a
+    deleted pin makes the gate stricter, never quieter.
     """
-    for key, _label, _template in PLATFORMS:
-        entry = platform_status.get(key, {})
-        status = entry.get("status", STATUS_UNKNOWN)
-        marker = {STATUS_AVAILABLE: "[OK]", STATUS_NOT_BUILT: "[--]", STATUS_UNKNOWN: "[??]"}[
-            status
-        ]
-        print(f"    {marker} {key:8s} {status:10s} {entry.get('asset', '?')}")
+    pin_path = repo_root / _CHANGELOG_GAP_PIN
+    if not pin_path.exists():
+        return []
+    pinned = []
+    for line in pin_path.read_text(encoding="utf-8").splitlines():
+        entry = line.split("#", 1)[0].strip()
+        if entry:
+            pinned.append(entry)
+    return pinned
 
-    dropped = [k for k, v in platform_status.items() if v.get("status") == STATUS_NOT_BUILT]
-    unknown = [k for k, v in platform_status.items() if v.get("status") == STATUS_UNKNOWN]
-    if dropped:
-        message = (
-            f"{tag}: no asset for {', '.join(sorted(dropped))} "
-            f"(evidence: {evidence.source}) -- omitted from the feed, NOT advertised"
-        )
-        print(f"    [!] {message}")
-        if os.environ.get("GITHUB_ACTIONS") == "true":
-            print(f"::warning::{message}")
-    if unknown:
-        message = (
-            f"{tag}: could not determine asset presence for {', '.join(sorted(unknown))} "
-            f"({evidence.detail or 'no evidence source'}) -- reported UNKNOWN, no URL emitted"
-        )
-        print(f"    [??] {message}")
-        if os.environ.get("GITHUB_ACTIONS") == "true":
-            print(f"::warning::{message}")
+
+def is_placeholder_changelog(text: Optional[str]) -> bool:
+    """True if `text` is one of the retired manufactured-confidence placeholders.
+
+    Used by --check to name the defect in an index generated before 2026-08-24,
+    rather than silently accepting a non-empty string as a real release note.
+    """
+    if not text:
+        return False
+    return any(marker in text for marker in _RETIRED_PLACEHOLDERS)
 
 
 class ReleaseMetadataGenerator:
@@ -291,6 +474,9 @@ class ReleaseMetadataGenerator:
         self.repo_root = repo_root
         self.output_dir = repo_root / "public" / "releases"
         self.output_dir.mkdir(parents=True, exist_ok=True)
+        # Tags found with no CHANGELOG section and no entry in the gap pin. Populated
+        # by generate_all_metadata(); main() exits nonzero on a non-empty list.
+        self.unpinned_gaps: List[str] = []
 
     def get_git_tag_info(self, tag: str) -> Optional[Dict]:
         """Extract information from a git tag."""
@@ -329,12 +515,33 @@ class ReleaseMetadataGenerator:
         except subprocess.CalledProcessError:
             return None
 
-    def extract_changelog_for_version(self, version: str) -> str:
-        """Extract changelog section for a specific version."""
+    def extract_changelog_for_version(self, version: str) -> Optional[str]:
+        """Return the CHANGELOG section for `version`, or None if there is not one.
+
+        None is a SENTINEL meaning "I could not find a section", and callers MUST
+        treat it as fatal (see `generate_all_metadata` and `main`). This function
+        deliberately never returns prose.
+
+        WHY (2026-08-24). This used to return
+        `f"Release {version}\\n\\nSee CHANGELOG.md for details."` when the section was
+        absent, and `"...No changelog available."` when CHANGELOG.md itself was
+        missing. Both strings land in the `changelog` field of
+        public/releases/<tag>.json AND in the <description> of every item in
+        public/releases/releases.rss -- deployed, player-visible files. A reader
+        cannot tell that text apart from a real, terse release note, so "the
+        generator found nothing" rendered as "this release had nothing to say".
+        Measured at the time: `grep -c "0\\.14\\.2" CHANGELOG.md` returned 0, and 14
+        of the 23 entries in the tracked index carried the placeholder, including the
+        live `<description>Release v0.13.1` in releases.rss.
+
+        A value meaning "I could not tell" must not render as a value meaning "fine".
+        The one legitimate use for prose here would be to state the ABSENCE, and that
+        belongs in the feed writer (which marks it explicitly), not here.
+        """
         changelog_file = self.repo_root / "CHANGELOG.md"
 
         if not changelog_file.exists():
-            return f"Release {version}\n\nNo changelog available."
+            return None
 
         with open(changelog_file, encoding="utf-8") as f:
             content = f.read()
@@ -363,7 +570,7 @@ class ReleaseMetadataGenerator:
         changelog_text = "\n".join(changelog_lines).strip()
 
         if not changelog_text:
-            return f"Release {version}\n\nSee CHANGELOG.md for details."
+            return None
 
         return changelog_text
 
@@ -371,6 +578,14 @@ class ReleaseMetadataGenerator:
         self, version: str, tag_info: Dict, evidence: Optional[AssetEvidence] = None
     ) -> Dict:
         """Generate JSON metadata for a single release.
+
+        TWO INDEPENDENT ABSENCES ARE HANDLED HERE, and they are not the same
+        absence. `changelog` / `changelog_status` (2026-08-24, #1298) covers
+        release notes that were never WRITTEN. `downloads` / `platform_status`
+        (this file, same day) covers a platform whose asset was never BUILT. A
+        release can have either, both, or neither; both obey the same rule, that
+        a value meaning "I could not tell" must not render as one meaning
+        "fine".
 
         `evidence` says which assets were OBSERVED for this release. Omitting it
         means "nothing was checked", which yields `unknown` for every platform
@@ -399,7 +614,7 @@ class ReleaseMetadataGenerator:
         available_labels: List[str] = []
         for key, label, template in PLATFORMS:
             asset_name = template.format(version=version)
-            status = evidence.status_for(asset_name)
+            status = evidence.status_for(key, asset_name)
             entry: Dict = {
                 "status": status,
                 "asset": asset_name,
@@ -428,15 +643,17 @@ class ReleaseMetadataGenerator:
             "release_date": tag_info["date"],
             "commit_hash": tag_info["commit"],
             "is_prerelease": is_prerelease,
-            "changelog": _ascii_safe(changelog),
+            # null, not a sentence. A consumer that renders this field gets nothing to
+            # render, which is the truth, instead of a sentence that reads like a
+            # release note. `changelog_status` is the greppable form of the same fact
+            # and is what --check inspects.
+            "changelog": _ascii_safe(changelog) if changelog is not None else None,
+            "changelog_status": "present" if changelog is not None else "missing",
             "downloads": downloads,
-            # The explicit half of the answer. `downloads` alone cannot tell a
-            # consumer WHY a platform is missing; this block distinguishes
+            # The explicit half of the asset answer. `downloads` alone cannot
+            # tell a consumer WHY a platform is missing; this block distinguishes
             # "not_built" (we looked, it is not there) from "unknown" (we could
-            # not look). A consumer that renders a download page can therefore
-            # say "macOS: not built for this release" instead of silently
-            # dropping a button, and can refuse to guess a URL when the status
-            # is unknown.
+            # not look). Exactly parallel to `changelog_status` above.
             "platform_status": platform_status,
             "asset_evidence": evidence.as_dict(),
             "metadata": {
@@ -518,11 +735,18 @@ class ReleaseMetadataGenerator:
             ElementTree.SubElement(item, "link").text = (
                 f"https://github.com/PipFoweraker/pdoom1/releases/tag/{release['version']}"
             )
-            ElementTree.SubElement(item, "description").text = (
-                release["changelog"][:500] + "..."
-                if len(release["changelog"]) > 500
-                else release["changelog"]
-            )
+            # A missing changelog gets an explicit statement of ABSENCE, never a
+            # stand-in release note. RSS <description> is the most player-visible
+            # surface this generator writes -- the live feed carried
+            # "<description>Release v0.13.1" for 14 releases before 2026-08-24.
+            changelog = release.get("changelog")
+            if changelog is None:
+                description = _ABSENT_MARKER.format(version=release["version"])
+            elif len(changelog) > 500:
+                description = changelog[:500] + "..."
+            else:
+                description = changelog
+            ElementTree.SubElement(item, "description").text = description
             ElementTree.SubElement(item, "pubDate").text = datetime.datetime.fromisoformat(
                 release["release_date"]
             ).strftime("%a, %d %b %Y %H:%M:%S %z")
@@ -536,16 +760,28 @@ class ReleaseMetadataGenerator:
         return dom.toprettyxml(indent="  ")
 
     def resolve_evidence(
-        self, tag: str, assets_dir: Optional[Path], probe_github: bool
+        self,
+        tag: str,
+        build_status: Optional[Path],
+        assets_dir: Optional[Path],
+        probe_github: bool,
     ) -> AssetEvidence:
-        """Pick the asset-observation source for one tag, most local first.
+        """Pick the asset-observation source for one tag, most authoritative first.
 
-        Order matters: a local --assets-dir is what CI has at feed-generation
-        time (the release does not exist yet), and it is the SAME artifact set
-        that is about to be uploaded, so it is the closest thing to the truth.
-        The API is the fallback for regenerating already-published releases.
-        Neither available => unknown, never a guess.
+        1. build-status.json from check_platform_builds.py (#1307). In CI this
+           is the answer: its own job already walked the artefact tree, checked
+           both the versioned zip AND the alias, and applied a size floor.
+        2. --assets-dir, for a local regeneration against a builds/ tree.
+        3. The GitHub Releases API, for regenerating already-published tags
+           (which is every tag before v0.14.4 -- they have no build-status.json
+           and never will).
+        4. Nothing => unknown. Never a guess.
         """
+        if build_status is not None:
+            evidence = evidence_from_build_status(build_status)
+            if evidence.resolved:
+                return evidence
+            print(f"    [!] build-status gave no verdict: {evidence.detail}")
         if assets_dir is not None:
             evidence = evidence_from_directory(assets_dir)
             if evidence.resolved:
@@ -559,11 +795,12 @@ class ReleaseMetadataGenerator:
                 return evidence
             print(f"    [!] GitHub asset probe failed: {evidence.detail}")
             return evidence
-        return unresolved_evidence("--no-probe set and no usable --assets-dir")
+        return unresolved_evidence("--no-probe set and no usable build-status/assets-dir")
 
     def generate_all_metadata(
         self,
         specific_version: Optional[str] = None,
+        build_status: Optional[Path] = None,
         assets_dir: Optional[Path] = None,
         probe_github: bool = True,
     ) -> List[Path]:
@@ -591,7 +828,7 @@ class ReleaseMetadataGenerator:
             tag_info = self.get_git_tag_info(tag)
 
             if tag_info:
-                evidence = self.resolve_evidence(tag, assets_dir, probe_github)
+                evidence = self.resolve_evidence(tag, build_status, assets_dir, probe_github)
                 release_data = self.generate_release_json(tag, tag_info, evidence)
                 releases.append(release_data)
                 _report_platform_status(tag, release_data["platform_status"], evidence)
@@ -617,61 +854,35 @@ class ReleaseMetadataGenerator:
             f.write(rss_content)
         print(f"[+] Generated RSS feed: {rss_file}")
 
+        # Report the changelog gaps BEFORE the success banner, and never let a gap
+        # pass silently. Pinned gaps are printed too: a pin that goes quiet is just a
+        # slower way of losing the information.
+        pinned = load_gap_pin(self.repo_root)
+        gaps = [r["version"] for r in releases if r["changelog_status"] == "missing"]
+        self.unpinned_gaps = [tag for tag in gaps if tag not in pinned]
+        for tag in gaps:
+            state = "pinned" if tag in pinned else "UNPINNED"
+            print(f"[!] no CHANGELOG.md section for {tag} ({state})")
+
         print(f"\n[SUCCESS] Generated metadata for {len(releases)} release(s)")
         print(f"[*] Output directory: {self.output_dir}")
         print(f"[*] Latest version: {index_data['latest_version']}")
         print(f"[*] Latest stable: {index_data['latest_stable']}")
 
-        latest = releases[0] if releases else None
-        if latest:
-            status = latest["platform_status"]
-            shipped = [k for k, v in status.items() if v["status"] == STATUS_AVAILABLE]
+        if self.unpinned_gaps:
             print(
-                f"[*] {latest['version']} advertises: "
-                f"{', '.join(sorted(shipped)) if shipped else 'NO PLATFORMS'}"
+                "\n[FATAL] These releases have no CHANGELOG.md section, so the feed has "
+                "no release notes to publish for them:"
             )
+            for tag in self.unpinned_gaps:
+                print(f"  - {tag}")
+            print(
+                f"[FATAL] Write a '## [<version>]' section in CHANGELOG.md, or add the tag to "
+                f"{_CHANGELOG_GAP_PIN} if it genuinely predates the convention."
+            )
+            print("[FATAL] The generator will NOT invent release notes to fill the gap.")
 
         return release_files
-
-
-def audit_advertised_platforms(releases: List[Dict]) -> List[str]:
-    """Offline invariant: every advertised platform URL is backed by a status.
-
-    Checks the one thing that needs no network and that the v0.14.3 feed
-    violated: a `downloads` entry for a platform must correspond to a
-    `platform_status` of `available`. A URL for a `not_built` or `unknown`
-    platform -- or a URL with no status block at all -- is an advertised 404
-    waiting to happen, and this returns it as a problem.
-
-    Returns a list of human-readable problems (empty means clean).
-    """
-    problems: List[str] = []
-    platform_keys = [key for key, _label, _template in PLATFORMS]
-    for release in releases:
-        version = release.get("version", "?")
-        downloads = release.get("downloads", {}) or {}
-        status_block = release.get("platform_status")
-        if status_block is None:
-            problems.append(
-                f"{version}: no platform_status block -- cannot tell 'not built' from "
-                f"'not checked' (regenerate with the current generator)"
-            )
-            continue
-        for key in platform_keys:
-            entry = status_block.get(key, {})
-            status = entry.get("status")
-            has_url = key in downloads
-            if has_url and status != STATUS_AVAILABLE:
-                problems.append(
-                    f"{version}: advertises a {key} download while platform_status says "
-                    f"{status!r} -- a missing asset must never render as a URL"
-                )
-            if not has_url and status == STATUS_AVAILABLE:
-                problems.append(
-                    f"{version}: platform_status says {key} is available but no download "
-                    f"URL is listed"
-                )
-    return problems
 
 
 def _run_check(generator: "ReleaseMetadataGenerator", repo_root: Path) -> int:
@@ -714,6 +925,39 @@ def _run_check(generator: "ReleaseMetadataGenerator", repo_root: Path) -> int:
             f"latest_version is {tracked.get('latest_version')!r}, expected {expected_latest!r}"
         )
 
+    # Inspect the CHANGELOG FIELD, not just the tag list. Until 2026-08-24 this
+    # function compared which releases were listed and which was latest, and never
+    # looked at the one field a player actually reads. An index could therefore be
+    # "fresh" by every assertion here while every entry in it said
+    # "Release vX.Y.Z / See CHANGELOG.md for details." -- which is what shipped.
+    pinned = load_gap_pin(repo_root)
+    for release in tracked.get("releases", []):
+        version = str(release.get("version", "?"))
+        changelog = release.get("changelog")
+        if is_placeholder_changelog(changelog):
+            problems.append(
+                f"{version}: changelog is a retired placeholder ({changelog!r:.60}...) -- "
+                f"regenerate; the generator no longer emits these"
+            )
+        elif changelog is None or not str(changelog).strip():
+            if version not in pinned:
+                problems.append(
+                    f"{version}: no changelog and not listed in {_CHANGELOG_GAP_PIN} -- "
+                    f"write a '## [{version.lstrip('v')}]' section in CHANGELOG.md"
+                )
+        elif "changelog_status" in release and release["changelog_status"] != "present":
+            # Only fires when the field EXISTS and disagrees with the text. An index
+            # generated before the field was added simply omits it, and complaining
+            # about that on every legacy entry would bury the placeholder findings
+            # under 9 lines of noise -- measured, that is exactly what it did.
+            problems.append(
+                f"{version}: has changelog text but changelog_status is "
+                f"{release['changelog_status']!r} -- regenerate"
+            )
+
+    # The asset half of the same question the changelog loop above asks. That one
+    # catches prose that was never written; this catches a URL for a file that was
+    # never built. Both are offline, so both can gate pre-commit.
     problems.extend(audit_advertised_platforms(tracked.get("releases", [])))
 
     if problems:
@@ -755,20 +999,28 @@ def main():
     )
 
     parser.add_argument(
+        "--build-status",
+        type=Path,
+        help="build-status.json emitted by scripts/check_platform_builds.py (#1307). "
+        "THE authoritative source of platform availability in CI -- it checked the "
+        "artefact tree itself, including the unversioned alias and a size floor. "
+        "Preferred over --assets-dir; the generator adopts its verdict rather than "
+        "forming a second opinion.",
+    )
+    parser.add_argument(
         "--assets-dir",
         type=Path,
-        help="Directory tree of the release's built assets (e.g. CI's downloaded "
-        "build-* artifacts). A platform gets a feed entry ONLY if its asset file "
-        "is found here. This is the pre-publication source of truth -- use it in "
-        "the release workflow, where the GitHub release does not exist yet.",
+        help="Directory tree of the release's built assets. Local fallback for when "
+        "there is no build-status.json. A platform gets a feed entry ONLY if its "
+        "asset file is found here.",
     )
     parser.add_argument(
         "--no-probe",
         action="store_true",
-        help="Do not ask the GitHub Releases API which assets exist. Without an "
-        "--assets-dir this makes every platform UNKNOWN and emits no download "
-        "URLs at all -- which is the point: offline means unverified, and "
-        "unverified must never render as an advertised link.",
+        help="Do not ask the GitHub Releases API which assets exist. With no other "
+        "evidence this makes every platform UNKNOWN and emits no download URLs at "
+        "all -- which is the point: offline means unverified, and unverified must "
+        "never render as an advertised link.",
     )
 
     args = parser.parse_args()
@@ -788,14 +1040,26 @@ def main():
         tags = generator.get_all_release_tags()
         if tags:
             generated_files = generator.generate_all_metadata(
-                specific_version=tags[0], assets_dir=args.assets_dir, probe_github=probe_github
+                specific_version=tags[0],
+                build_status=args.build_status,
+                assets_dir=args.assets_dir,
+                probe_github=probe_github,
             )
         else:
             print("WARNING  No release tags found!")
     else:
         generated_files = generator.generate_all_metadata(
-            specific_version=args.version, assets_dir=args.assets_dir, probe_github=probe_github
+            specific_version=args.version,
+            build_status=args.build_status,
+            assets_dir=args.assets_dir,
+            probe_github=probe_github,
         )
+
+    # A missing changelog section is FATAL, not a shrug. The files are still written
+    # (so the feed stays regenerable and the gap is visible in them), but the exit
+    # code refuses to call the run a success.
+    if generator.unpinned_gaps:
+        sys.exit(1)
 
     if args.verify:
         sys.path.insert(0, str(Path(__file__).parent))

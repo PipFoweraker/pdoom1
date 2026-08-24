@@ -211,10 +211,116 @@ jobs:
           path: builds/mac/${{ github.event.inputs.version || github.ref_name }}/
           if-no-files-found: warn
 
+  # Turn the macOS `if-no-files-found: warn` above from a warning INTO THE VOID
+  # into a tracked, linkable fact (v0.14.3, 2026-08-24). v0.14.3 published with
+  # no macOS asset: the upload warned, the job stayed green, nothing was filed,
+  # and the release feed then advertised a macOS URL that 404s. Every release
+  # from v0.13.1 to v0.14.2 had shipped a mac asset, so nothing downstream had
+  # ever had to describe an absent platform.
+  #
+  # This job checks the DOWNLOADED FILES, not the upload step's verdict -- an
+  # `if-no-files-found` outcome is evaluated once, discarded, and readable by
+  # nothing afterwards. It emits build-status.json (schema
+  # `pdoom.build_status/1.0`) into the release-feeds artefact, so pdoom1.com can
+  # render "build coming -- <issue url>" instead of either lying about
+  # availability or pointing people at an old release.
+  #
+  # LOUD BUT NOT BLOCKING, and the split is the whole design:
+  #   - a MISSING best-effort build is NOT an error here. It produces a warning
+  #     annotation, a job-summary table, a JSON field and a rolling labelled
+  #     issue. Windows and Linux publish regardless (ruled in #1069/#1071).
+  #     The run still goes RED afterwards via verify-release-urls' alias check,
+  #     which is deliberately AFTER publication.
+  #   - a failure OF THE REPORTER is an error, and reds this job. A reporter
+  #     that 403s quietly is worse than no reporter: that is exactly how the
+  #     v0.14.3 pre-release-checks failure filed nothing and stayed invisible.
+  #   - to keep that red off the publication path, generate-feeds runs under
+  #     `if: always()` and its download of this artefact is continue-on-error.
+  #
+  # RULING: 2026-08-24 -- a best-effort platform build that fails must be TRACKED, not merely warned about: the release still publishes for the platforms that built, and the absence becomes ONE rolling per-platform issue plus a machine-readable build-status.json field the website reads, so a download page says "build coming" with a link instead of advertising a URL that 404s or pointing at an older release -- flavour: silent-failure -- mechanism: scripts/check_platform_builds.py + scripts/report_missing_build_issue.py, run by the platform-build-status job below
+  platform-build-status:
+    name: Detect Missing Platform Builds
+    runs-on: ubuntu-latest
+    needs: [validate-data, build-godot]
+    # PERMISSIONS ARE REQUIRED HERE AND MUST NOT BE TRIMMED TO `contents: read`.
+    # Without `issues: write` the reporting step 403s with "Resource not
+    # accessible by integration" and files NOTHING -- which is precisely what
+    # happened to pre-release-checks.yml on the v0.14.3 tag: the check went RED
+    # for a reason nobody could read, and the missing macOS build stayed
+    # invisible until a human noticed the 404. Narrowing this block does not
+    # make the failure go away, it makes it silent. (Same reasoning, same
+    # wording style as release-reminder.yml.)
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.11'
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v8
+        with:
+          pattern: build-*
+          path: build-artifacts/
+
+      # No pipes anywhere in this job. RULING 2026-08-24 (flavour ci-gates):
+      # `$?` after a pipeline is the RIGHTMOST command's status, so `tool | tee`
+      # discards the tool's verdict, and a `|| fallback` after a pipeline never
+      # fires and manufactures a confident negative. The scripts write their own
+      # $GITHUB_STEP_SUMMARY block for exactly this reason, so there is nothing
+      # to tee.
+      - name: Check which platform artefacts actually exist
+        id: detect
+        # Exits 1 only if a REQUIRED platform (Windows/Linux) is missing, which
+        # cannot normally reach here (their uploads use if-no-files-found:
+        # error). A missing macOS build exits 0 on purpose.
+        continue-on-error: true
+        env:
+          RELEASE_VERSION: ${{ github.event.inputs.version || github.ref_name }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          mkdir -p public/releases
+          python scripts/check_platform_builds.py \
+            --artifacts-dir build-artifacts \
+            --version "$RELEASE_VERSION" \
+            --run-url "$RUN_URL" \
+            --output public/releases/build-status.json
+
+      # BLOCKING (this job only): if the tracking issue cannot be filed or
+      # updated, the missing build becomes invisible again and we are back to
+      # v0.14.3. Downstream jobs use `if: always()`, so this red never withholds
+      # the Windows/Linux release.
+      - name: File or update the rolling per-platform tracking issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          python scripts/report_missing_build_issue.py \
+            --status public/releases/build-status.json \
+            --repo "${{ github.repository }}" \
+            --run-url "$RUN_URL"
+
+      - name: Upload build status for the feeds
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: release-build-status
+          path: public/releases/build-status.json
+          if-no-files-found: error
+
   generate-feeds:
     name: Generate Release Feeds & Metadata
     runs-on: ubuntu-latest
-    needs: [validate-data, build-godot]
+    needs: [validate-data, build-godot, platform-build-status]
+    # `always()` on purpose: platform-build-status reds when the REPORTER fails,
+    # and a reporting failure must never withhold a good Windows/Linux release.
+    # The real gate is still build-godot -- if that did not succeed, nothing
+    # publishes.
+    if: always() && needs.build-godot.result == 'success'
     steps:
       - uses: actions/checkout@v7
         with:
@@ -230,36 +336,49 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # The feed must be derived from assets that EXIST. At this point in the
-      # workflow the GitHub release does not exist yet, so the only ground
-      # truth is the artifact set build-godot just uploaded -- which is also
-      # exactly what create-github-release is about to attach. Download it and
-      # hand it to the generator as --assets-dir.
+      # Fold build-status.json (with its tracking-issue URLs) into the SAME
+      # artefact the website already consumes, rather than inventing a second
+      # feed the site would have to learn about. It rides along into
+      # `release-feeds`, which is both attached to the GitHub release and
+      # deployed by deploy-feeds -- so the site gets it wherever it already
+      # reads the feed.
       #
-      # Why this step exists at all (v0.14.3, 2026-08-24): macOS is a
-      # best-effort platform (issue #1071). Its export failed, build-mac
-      # uploaded nothing (`if-no-files-found: warn`, correctly), Windows/Linux
-      # published -- and the generator, which knew nothing about any of it,
-      # advertised PDoom-macOS-v0.14.3.zip from the naming convention alone.
-      # Live 404 in a public feed. The build pipeline had the answer the whole
-      # time; nothing carried it across the job boundary. This does.
-      - name: Download build artifacts (asset ground truth for the feed)
+      # THIS NOW RUNS BEFORE THE GENERATOR, and the order is the point. #1307
+      # emits this file from its own job, which already walked the artefact tree
+      # and decided per platform whether a build exists. The feed generator
+      # ADOPTS that verdict via --build-status instead of scanning the artefacts
+      # a second time and forming its own opinion. Two scans of one artefact
+      # tree is two answers waiting to disagree; the scanner is authoritative
+      # and this is the wire that carries its answer.
+      #
+      # continue-on-error: a reporter failure must not cost us the feed. If the
+      # file is absent the generator says so loudly and falls back to the
+      # Releases API, and failing that reports every platform UNKNOWN -- it
+      # never silently reverts to advertising all three.
+      - name: Fold platform build status into the feed
+        continue-on-error: true
         uses: actions/download-artifact@v8
         with:
-          pattern: build-*
-          path: build-artifacts/
+          name: release-build-status
+          path: public/releases/
 
+      # Why the generator needs telling at all (v0.14.3, 2026-08-24): macOS is a
+      # best-effort platform. Its export failed on a Windows .ico Godot cannot
+      # decode (#1305), build-mac uploaded nothing (`if-no-files-found: warn`,
+      # correctly), Windows/Linux published -- and the generator, which knew
+      # nothing about any of it, advertised PDoom-macOS-v0.14.3.zip from the
+      # naming convention alone. Live 404 in a public feed. The build pipeline
+      # had the answer the whole time; nothing carried it across the job
+      # boundary. --build-status is that wire.
       - name: Generate release metadata
         env:
           RELEASE_VERSION: ${{ github.event.inputs.version || github.ref_name }}
         run: |
           VERSION="$RELEASE_VERSION"
           echo "MEMO Generating metadata for $VERSION..."
-          echo "Assets observed for the feed:"
-          find build-artifacts -type f -name '*.zip' -printf '  %f\n' || true
           python scripts/generate_release_metadata.py \
             --version "$VERSION" \
-            --assets-dir build-artifacts
+            --build-status public/releases/build-status.json
 
       - name: Upload metadata artifacts
         uses: actions/upload-artifact@v7

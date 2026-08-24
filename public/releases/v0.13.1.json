@@ -4,7 +4,8 @@
   "release_date": "2026-07-25T22:23:46+10:00",
   "commit_hash": "409535dc0215d5e7bf4ff1b83025e8da98d7b4ef",
   "is_prerelease": false,
-  "changelog": "Release v0.13.1\n\nSee CHANGELOG.md for details.",
+  "changelog": null,
+  "changelog_status": "missing",
   "downloads": {
     "windows": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.13.1/PDoom-Windows-v0.13.1.zip",
     "linux": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.13.1/PDoom-Linux-v0.13.1.zip",
