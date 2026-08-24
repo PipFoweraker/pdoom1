@@ -236,6 +236,55 @@ means deciding whether two lists should become one.
 
 ---
 
+## 4c. Day close -- what is actually true at the end of it
+
+**THE GAME IS RELEASED, THE BOARD IS OPEN, AND SOMEBODY WHO IS NOT PIP HAS
+PLAYED IT.** Verified from outside, cache-busted, at day close:
+
+    pdoom1.com/leaderboard   1 entry -- "bubble gum factory -- mic oxe", 21, 2026-08-24T18:04:47
+    published-board.json     seed weekly-2026-w35 | epoch L6 | published 2026-08-24T10:39:07Z
+
+**The chain works end to end and it was broken at FOUR independent points this
+morning.** Merged -> tagged -> published -> downloaded -> played -> posted ->
+arrived -> displayed. The four:
+
+1. **The featured seed is a compiled-in const.** It rolled twice in the repo and
+   no published build ever carried either roll, so the league was dark for ten
+   days for that reason and no other.
+2. **`version.txt` held 0.14.3 with no tag and no release**, and every release
+   trigger fires on a tag push or a release publish -- so that state was the one
+   thing the whole apparatus could not see.
+3. **The feed advertised a macOS build that did not exist** -- a live 404 on the
+   day the download link was going out by email.
+4. **The site published a CLOSED board** (w32/L4, 11 entries, 17 August) while
+   the shipped client posted somewhere else entirely.
+
+**Nothing is on fire at close.** One PR open in pdoom1 and it is coordination's.
+
+## The thing worth carrying forward, if only one thing is
+
+Today's real catches did not come from rules, and they did not come from a
+single seat being careful. **They came from two seats checking each other.**
+
+The website seat corrected this one four times -- the empty-board reasoning, a
+false "can never appear" claim that had already reached code, a durability
+overclaim about the gate record, and a sequencing this seat had inverted. All
+four held. This seat corrected that one twice. Agents corrected both of us,
+including one that **refused an instruction from this seat** on the grounds that
+following it would introduce the fault it was fixing.
+
+**A mechanism only fires on the input it inspects. A second reader finds the
+SHAPE; a mechanism stops it RECURRING.** They are sequential, not alternatives,
+and today was almost entirely the first half.
+
+The corresponding gap, recorded and not built: **a ceremony performed across two
+sessions has no single record.** `check-blessing-consistency.py` compares four
+artefacts *within* the website repo, so two repositories recorded one blessing
+83 minutes apart and nothing noticed. **A cross-repo blessing record has no guard
+at all.** That is pdoom1's to build, because the ceremony is performed here.
+
+---
+
 ## 5. Hazards for whoever sits here next
 
 **The four PRs on the macOS chain want reviewing together and they conflict.**
