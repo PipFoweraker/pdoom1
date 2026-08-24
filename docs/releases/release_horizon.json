@@ -1,0 +1,104 @@
+{
+  "schema": "pdoom.release-horizon/0.1",
+  "generated_by": "tools/generate_release_horizon.py",
+  "ruler": "Pip Foweraker, interim",
+  "current_version": "0.14.3",
+  "ladder_floor": 6,
+  "ladder_floor_label": ">= L6",
+  "ladder_forecastable": false,
+  "comparability_horizon": "A score set today stays comparable until the next MINOR version at the latest, and possibly sooner.",
+  "anchor": {
+    "version": "0.15",
+    "year": 2026,
+    "month": 9,
+    "rule": "monthly release train, first Friday"
+  },
+  "scheduled": [
+    {
+      "version": "0.15",
+      "ships": "2026-09-04",
+      "iso_year": 2026,
+      "iso_week": 36,
+      "featured_seed": "weekly-2026-w36",
+      "cycle_seeds": [
+        "weekly-2026-w36",
+        "weekly-2026-w37",
+        "weekly-2026-w38",
+        "weekly-2026-w39"
+      ],
+      "holiday": null
+    },
+    {
+      "version": "0.16",
+      "ships": "2026-10-02",
+      "iso_year": 2026,
+      "iso_week": 40,
+      "featured_seed": "weekly-2026-w40",
+      "cycle_seeds": [
+        "weekly-2026-w40",
+        "weekly-2026-w41",
+        "weekly-2026-w42",
+        "weekly-2026-w43",
+        "weekly-2026-w44"
+      ],
+      "holiday": null
+    },
+    {
+      "version": "0.17",
+      "ships": "2026-11-06",
+      "iso_year": 2026,
+      "iso_week": 45,
+      "featured_seed": "weekly-2026-w45",
+      "cycle_seeds": [
+        "weekly-2026-w45",
+        "weekly-2026-w46",
+        "weekly-2026-w47",
+        "weekly-2026-w48"
+      ],
+      "holiday": null
+    },
+    {
+      "version": "0.18",
+      "ships": "2026-12-04",
+      "iso_year": 2026,
+      "iso_week": 49,
+      "featured_seed": "weekly-2026-w49",
+      "cycle_seeds": [
+        "weekly-2026-w49",
+        "weekly-2026-w50",
+        "weekly-2026-w51",
+        "weekly-2026-w52"
+      ],
+      "holiday": null
+    },
+    {
+      "version": "0.19",
+      "ships": "2027-01-01",
+      "iso_year": 2026,
+      "iso_week": 53,
+      "featured_seed": "weekly-2026-w53",
+      "cycle_seeds": [
+        "weekly-2026-w53",
+        "weekly-2027-w01",
+        "weekly-2027-w02",
+        "weekly-2027-w03",
+        "weekly-2027-w04"
+      ],
+      "holiday": "New Year's Day"
+    },
+    {
+      "version": "0.20",
+      "ships": "2027-02-05",
+      "iso_year": 2027,
+      "iso_week": 5,
+      "featured_seed": "weekly-2027-w05",
+      "cycle_seeds": [
+        "weekly-2027-w05",
+        "weekly-2027-w06",
+        "weekly-2027-w07",
+        "weekly-2027-w08"
+      ],
+      "holiday": null
+    }
+  ]
+}
