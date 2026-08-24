@@ -3813,6 +3813,30 @@ DESCRIPTION:needs a declaration -- CODE_SIGNING.md (unparsed) -- unowned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:5207d635da8663f9@commitments.pdoom1
+DTSTAMP:20260823T000000Z
+DTSTART;VALUE=DATE:20260823
+DTEND;VALUE=DATE:20260824
+SUMMARY:[UNPARSED] needs a declaration -- RELEASE_SECURITY_2026-08-24.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/deployment/RELEAS
+ E_SECURITY_2026-08-24.md:511. 2 line(s) in docs/deployment/RELEASE_SECURI
+ TY_2026-08-24.md mention this date and no COMMITMENT: declaration account
+ s for it. Either add a declaration or the date is incidental. First line:
+  `tools/sign_release.py` (added in #1282\, 2026-08-23) wraps `signtool` w
+ ith three -- Generated from tracked sources by scripts/generate_commitmen
+ t_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- RELEASE_SECURITY_2026-08-24.md (unparse
+ d) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:bc5b9192e93765aa@commitments.pdoom1
 DTSTAMP:20260823T000000Z
 DTSTART;VALUE=DATE:20260823
@@ -4002,6 +4026,30 @@ ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- LEAGUE_CUTOVER_PLAYBOOK.md (unparsed) -
  - unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:157df58bc2950577@commitments.pdoom1
+DTSTAMP:20260824T000000Z
+DTSTART;VALUE=DATE:20260824
+DTEND;VALUE=DATE:20260825
+SUMMARY:[UNPARSED] needs a declaration -- RELEASE_SECURITY_2026-08-24.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/deployment/RELEAS
+ E_SECURITY_2026-08-24.md:8. 3 line(s) in docs/deployment/RELEASE_SECURITY
+ _2026-08-24.md mention this date and no COMMITMENT: declaration accounts 
+ for it. Either add a declaration or the date is incidental. First line: *
+ *Measured:** 2026-08-24\, against `PipFoweraker/pdoom1` at `28f8cd94`. --
+  Generated from tracked sources by scripts/generate_commitment_calendar.p
+ y\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- RELEASE_SECURITY_2026-08-24.md (unparse
+ d) -- unowned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT

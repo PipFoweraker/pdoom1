@@ -13,7 +13,7 @@ Horizon: **2026-08-09** (the prose scan reports dates at or after this; roll it
 forward deliberately in `COMMITMENTS.md`, never automatically -- a clock-reading
 generator goes stale overnight and trains people to ignore the check).
 
-**53 declared, 4 release-train, 156 UNPARSED, 0 malformed.**
+**53 declared, 4 release-train, 158 UNPARSED, 0 malformed.**
 
 ## Declared commitments
 
@@ -367,6 +367,8 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-22 | `tools/scan_closed_issue_debt.py` | 24 | The first run, 2026-08-22, measured on 426 closed issues: |
 | 2026-08-22 | `tools/scan_closed_issue_debt.py` | 83 | # 2026-08-22 -- it raised UnicodeDecodeError on byte 0x8f mid-fetch, which |
 | 2026-08-22 | `tools/scan_closed_issue_debt.py` | 191 | print("\nConfirmed shadow debt from the 2026-08-22 run: #775 only (now #1269).") |
+| 2026-08-23 | `docs/deployment/RELEASE_SECURITY_2026-08-24.md` | 511 | `tools/sign_release.py` (added in #1282, 2026-08-23) wraps `signtool` with three |
+| 2026-08-23 | `docs/deployment/RELEASE_SECURITY_2026-08-24.md` | 531 | `docs/release/CODE_SIGNING.md` (2026-08-23) already contains the purchasing |
 | 2026-08-23 | `docs/design/SILENT_FAILURE_REGISTER.md` | 1 | # Silent failure register -- first alert, 2026-08-23 |
 | 2026-08-23 | `docs/design/SILENT_FAILURE_REGISTER.md` | 5 | Pip named it, 2026-08-23, on being shown the smell-pass finding: *"these are |
 | 2026-08-23 | `docs/design/SILENT_FAILURE_REGISTER.md` | 116 | RULING: 2026-08-23 -- silent failures are a named defect class and the counter is instrumentation, never vigilance; a failure representable in its own |
@@ -382,6 +384,9 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-23 | `tools/check_ladder_bump.py` | 38 | RULING: 2026-08-23 -- ladder debt is paid when it is incurred, not deferred to build time, so a fresh epoch never inherits a forked board key -- flavo |
 | 2026-08-23 | `tools/sign_release.py` | 6 | WHY THIS EXISTS, 2026-08-23 |
 | 2026-08-23 | `tools/sign_release.py` | 131 | That is what is deployed here (2026-08-23, version 10.0.28000.2526). |
+| 2026-08-24 | `docs/deployment/RELEASE_SECURITY_2026-08-24.md` | 8 | **Measured:** 2026-08-24, against `PipFoweraker/pdoom1` at `28f8cd94`. |
+| 2026-08-24 | `docs/deployment/RELEASE_SECURITY_2026-08-24.md` | 16 | This document was commissioned from a measurement taken earlier on 2026-08-24 |
+| 2026-08-24 | `docs/deployment/RELEASE_SECURITY_2026-08-24.md` | 851 | SHA-pin the two third-party actions. The SHAs below were resolved on 2026-08-24 |
 | 2026-08-24 | `docs/design/LEAGUE_CUTOVER_PLAYBOOK.md` | 41 | at L4, and is pinned for reflective review on/after 2026-08-24. |
 | 2026-08-24 | `pdoom1#808` | 0 | Reflective review (on/after 2026-08-24): release/league cycle nomenclature + cadence |
 | 2026-08-24 | `pdoom1#811` | 0 | Workshop 3 (mechanics) -- Mon 07-27 W-3a / Tue 07-28 build / Wed 07-29 W-3b-W-4: crisp parts, brutal decisions |
