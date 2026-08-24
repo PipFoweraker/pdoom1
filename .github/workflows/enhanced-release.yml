@@ -644,7 +644,22 @@ jobs:
           RELEASE_VERSION: ${{ github.event.inputs.version || github.ref_name }}
         run: |
           echo "SUCCESS Release $RELEASE_VERSION published successfully!"
-          echo "Game builds created for Windows, Linux, and macOS"
+          # The line that used to sit here read, unconditionally:
+          #   "Game builds created for Windows, Linux, and macOS"
+          # DESIGN_2026-08-24_release_lanes.md counts that as the third of four
+          # documents that asserted macOS shipped on v0.14.3 when it had not --
+          # the same defect as the feed and the manifest, in an echo.
+          #
+          # It is DELETED rather than replaced with a derived list. This job
+          # downloads no artefacts, so it would have to re-read or re-derive the
+          # platform set to say anything true, and the honest options are a
+          # heredoc (this workflow's manifest heredoc is exactly why
+          # scripts/generate_release_manifest.py exists -- untestable and
+          # silently fragile) or a fourth consumer of build-status.json for a
+          # log line nobody acts on. The truth already ships in the feed, the
+          # manifest and build-status.json, all three of which now agree. A
+          # notification that repeats it adds no information and one more place
+          # to drift.
           echo "Feeds generated and ready for website consumption"
 
       - name: Release Failure Notification
