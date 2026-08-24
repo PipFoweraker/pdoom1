@@ -5,7 +5,7 @@
 > `python scripts/generate_rulings.py`. The convention, and why it looks
 > like this, is argued in `docs/rulings/RULINGS_CONVENTION.md`.
 
-**55 ruling(s)** across **15 flavour(s)**. **237** prose ruling(s) not yet declared.
+**56 ruling(s)** across **15 flavour(s)**. **237** prose ruling(s) not yet declared.
 
 ## One index, five sources
 
@@ -16,7 +16,7 @@ flattening either into one line would delete what makes it worth having.
 
 | kind | n | what it is | where |
 |---|---:|---|---|
-| `declaration` | 29 | a `RULING:` line written next to what it governs | anywhere |
+| `declaration` | 30 | a `RULING:` line written next to what it governs | anywhere |
 | `adr` | 20 | a full architecture argument, summarised here | `docs/game-design/decisions/` |
 | `session` | 3 | a transcript or workshop ruling set, pointed at | `docs/SPOKEN_*`, `*RULINGS*` |
 | `card` | 3 | the input a ruling was made from | `docs/decision-cards/` |
@@ -149,6 +149,7 @@ flavour it belongs to and read what was already decided there.
 |---|---|---|---|
 | 2026-08-23 | silent failures are a named defect class and the counter is instrumentation, never vigilance; a failure representable in its own success type must be made countable rather than watched for | `this register, and the census/aggregate/differential counters it names` | `docs/design/SILENT_FAILURE_REGISTER.md:116` |
 | 2026-08-24 | a best-effort platform build that fails must be TRACKED, not merely warned about: the release still publishes for the platforms that built, and the absence becomes ONE rolling per-platform issue plus a machine-readable build-status.json field the website reads, so a download page says "build coming" with a link instead of advertising a URL that 404s or pointing at an older release | `scripts/check_platform_builds.py + scripts/report_missing_build_issue.py, run by the platform-build-status job below` | `.github/workflows/enhanced-release.yml:240` |
+| 2026-08-24 | a player-facing surface must not collapse distinct failures into one reassuring sentence: each cause gets its own words, its own consequence and its own way for the player to report it | `this table and godot/tests/unit/test_whats_new_states.gd, which fails if any two rows share a body or a code` | `godot/scripts/ui/whats_new_modal.gd:87` |
 
 ### `ui-legibility` (only one so far)
 

@@ -3,7 +3,7 @@
   "repo": "pdoom1",
   "generated_from": "tracked files at HEAD",
   "convention": "docs/rulings/RULINGS_CONVENTION.md",
-  "count": 55,
+  "count": 56,
   "rulings": [
     {
       "id": "pdoom1:2026-07-04:12de8fc2",
@@ -704,6 +704,20 @@
       "supersedes": null,
       "superseded_by": null,
       "source": "godot/autoload/game_config.gd:550"
+    },
+    {
+      "id": "pdoom1:2026-08-24:a291f6a3",
+      "date": "2026-08-24",
+      "ruling": "a player-facing surface must not collapse distinct failures into one reassuring sentence: each cause gets its own words, its own consequence and its own way for the player to report it",
+      "summary": "",
+      "flavour": "silent-failure",
+      "kind": "declaration",
+      "status": "",
+      "by": "Pip",
+      "mechanism": "this table and godot/tests/unit/test_whats_new_states.gd, which fails if any two rows share a body or a code",
+      "supersedes": null,
+      "superseded_by": null,
+      "source": "godot/scripts/ui/whats_new_modal.gd:87"
     },
     {
       "id": "pdoom1:2026-08-24:9cf941d9",
