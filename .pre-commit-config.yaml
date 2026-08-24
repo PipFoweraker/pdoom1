@@ -217,6 +217,17 @@ repos:
       # own process, generated from the source. A hand-stale trust page is WORSE
       # than none: an absent declaration is honest, a stale one is a false
       # declaration to exactly the audience least able to check it.
+      # Silent-failure register sighting #1: Balance.num(key, fallback) returns
+      # the fallback for a key that does not exist, which is the generator behind
+      # four of the fifteen confirmed sightings. This is the ONLY gate pointed at
+      # the balance surface, in either direction.
+      - id: balance-key-census
+        name: Balance keys are defined where they are read
+        entry: python tools/check_balance_keys.py --check
+        language: system
+        files: '^(godot/data/balance/.*\.json|godot/.*\.gd|tools/check_balance_keys\.py|tools/balance_unread_ratchet\.txt)$'
+        pass_filenames: false
+
       - id: trust-declaration-check
         name: TRUST.md matches what the source actually reaches for
         entry: python tools/generate_trust_declaration.py --check
@@ -273,11 +284,40 @@ repos:
         files: '(\.tscn|\.gd|\.tres|project\.godot)$'
         pass_filenames: false
 
+      # v0.14.3 shipped with NO macOS asset -- the first release ever to do so
+      # -- because the macOS preset's application/icon was pointed at a .ico,
+      # which Godot has no decoder for. The export died printing only
+      # 'Project export for preset "macOS" failed.' with no reason, and the
+      # ONLY thing in this repo that runs a macOS export is the release
+      # workflow, so the first measurement was the release itself. ~10ms, no
+      # Godot launch.
+      - id: export-icon-check
+        name: Export preset icons are a format that platform can decode
+        entry: python tools/check_export_icons.py
+        language: system
+        files: '^(godot/export_presets\.cfg|godot/assets/images/.*|tools/check_export_icons\.py)$'
+        pass_filenames: false
+
       - id: version-sync-check
         name: version.txt + ladder_version.txt synced to derived copies
         entry: python tools/sync_version.py --check
         language: system
         files: '(version\.txt|ladder_version\.txt|godot/autoload/game_config\.gd|godot/project\.godot|godot/export_presets\.cfg|godot/scenes/welcome\.tscn)$'
+        pass_filenames: false
+
+      # The OTHER half of the version chain. version-sync-check above proves
+      # version.txt reached game_config.gd's CURRENT_VERSION; this proves the version
+      # the modal then looks up actually exists in the data it looks it up in.
+      # Without it, a release bump that forgets patch_notes.json tells every player
+      # "No detailed patch notes available for this version" -- a missing entry
+      # rendered as a quiet release. The same assertion exists in
+      # godot/tests/unit/test_patch_notes.gd, but that tier needs a Godot binary and
+      # an import pass, so nothing was checking it at commit time.
+      - id: patch-notes-cover-shipped-version
+        name: patch_notes.json has an entry for version.txt's version
+        entry: python tools/check_patch_notes.py --quiet
+        language: system
+        files: '^(version\.txt|godot/data/patch_notes\.json|tools/check_patch_notes\.py)$'
         pass_filenames: false
 
       # Release feed index is GENERATED, never hand-maintained (#1008). Same anti-rot

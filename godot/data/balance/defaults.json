@@ -102,6 +102,8 @@
 			"action_safety_alarm": 0.03,
 			"action_paper_alarm": 3.0,
 			"action_audit_absorb": 1.0,
+			"upgrade_cat_alarm": 5.0,
+			"_upgrade_cat_alarm_note": "The cat_adoption upgrade raises global_alarm (a happier, more careful org) rather than writing doom directly -- ADR-0015. Value matches the hardcoded fallback it replaces, so behaviour is unchanged; it is here so the effect is tunable and visible at all. Silent-failure register sighting #2.",
 			"action_desperation_absorb": 25.0,
 			"action_lobby_pressure": 0.5,
 			"action_lobby_alarm": 0.5,
