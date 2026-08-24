@@ -364,7 +364,7 @@ DTSTART;VALUE=DATE:20260810
 DTEND;VALUE=DATE:20260811
 SUMMARY:[TASK] Book the half-day audit-mechanics workshop\, target window 
  opens
-DESCRIPTION:Owner: pip. Kind: task. Source: docs/rulings/RULINGS.md:251. p
+DESCRIPTION:Owner: pip. Kind: task. Source: docs/rulings/RULINGS.md:257. p
  doom1#984\, ruled 2026-07-27 18:11. Scheduled to precede the 2026-08-31 f
   -- Generated from tracked sources by scripts/generate_commitment_calenda
  r.py\; regenerate to update.
@@ -656,7 +656,7 @@ DTSTART;VALUE=DATE:20260811
 DTEND;VALUE=DATE:20260812
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:162. 6 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:168. 6 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: Rulings with no `mechanism:`. Pip's doctrine 
  (2026-08-11): what forces a -- Generated from tracked sources by scripts/
@@ -797,7 +797,7 @@ DTSTART;VALUE=DATE:20260812
 DTEND;VALUE=DATE:20260813
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:372. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:378. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `godot/scripts/core/capacity.gd:5` -- ## Ru
  led 2026-08-12 (coordination/DESIGN_2026-08-12_interrupt-resolution-varia
@@ -1208,7 +1208,7 @@ DTSTART;VALUE=DATE:20260813
 DTEND;VALUE=DATE:20260814
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:208. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:214. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `docs/CONTENT_DISTRIBUTION_SYSTEM.md:10` --
   > **SUPERSEDED\, not merely "outdated in spirit"\, as of 2026-08-13.** P
@@ -1744,7 +1744,7 @@ DTSTART;VALUE=DATE:20260814
 DTEND;VALUE=DATE:20260815
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:391. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:397. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `godot/tests/unit/simulation/test_events.gd
  :50` -- ## THE RATCHET WAS DELIBERATELY LOOSENED -- 2026-08-14\, ruled by
@@ -3225,7 +3225,7 @@ DTSTART;VALUE=DATE:20260820
 DTEND;VALUE=DATE:20260821
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:201. 5 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:207. 5 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `.github/workflows/guards.yml:3` -- # WHY T
  HIS FILE EXISTS (issue #1265\, ruled by Pip 2026-08-20) -- Generated from
@@ -4333,6 +4333,54 @@ DESCRIPTION:needs a declaration -- generate_release_horizon.py (unparsed)
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:fec858e7947a4598@commitments.pdoom1
+DTSTAMP:20260823T000000Z
+DTSTART;VALUE=DATE:20260823
+DTEND;VALUE=DATE:20260824
+SUMMARY:[UNPARSED] needs a declaration -- generate_release_manifest.py
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: scripts/generate_relea
+ se_manifest.py:114. 1 line(s) in scripts/generate_release_manifest.py men
+ tion this date and no COMMITMENT: declaration accounts for it. Either add
+  a declaration or the date is incidental. First line: 2026-08-23 "manufac
+ tured confidence" ruling\, a value meaning "I could not -- Generated from
+  tracked sources by scripts/generate_commitment_calendar.py\; regenerate 
+ to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- generate_release_manifest.py (unparsed)
+  -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:5c605d6b9859d212@commitments.pdoom1
+DTSTAMP:20260823T000000Z
+DTSTART;VALUE=DATE:20260823
+DTEND;VALUE=DATE:20260824
+SUMMARY:[UNPARSED] needs a declaration -- generate_release_metadata.py
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: scripts/generate_relea
+ se_metadata.py:166. 1 line(s) in scripts/generate_release_metadata.py men
+ tion this date and no COMMITMENT: declaration accounts for it. Either add
+  a declaration or the date is incidental. First line: RULING 2026-08-23 (
+ Pip\, "manufactured confidence"): a value meaning "I could -- Generated f
+ rom tracked sources by scripts/generate_commitment_calendar.py\; regenera
+ te to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- generate_release_metadata.py (unparsed)
+  -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:62eed08b24cad200@commitments.pdoom1
 DTSTAMP:20260823T000000Z
 DTSTART;VALUE=DATE:20260823
@@ -4512,12 +4560,11 @@ DTEND;VALUE=DATE:20260825
 SUMMARY:[UNPARSED] needs a declaration -- HANDOVER_2026-08-24_pdoom1_seat.
  md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/HANDOVER_2026-08-
- 24_pdoom1_seat.md:267. 1 line(s) in docs/HANDOVER_2026-08-24_pdoom1_seat.
- md mention this date and no COMMITMENT: declaration accounts for it. Eith
- er add a declaration or the date is incidental. First line: > wrote witho
- ut the user's authorisation.** *Window:* ~2 hours on 2026-08-24. -- Gener
- ated from tracked sources by scripts/generate_commitment_calendar.py\; re
- generate to update.
+ 24_pdoom1_seat.md:29. 4 line(s) in docs/HANDOVER_2026-08-24_pdoom1_seat.m
+ d mention this date and no COMMITMENT: declaration accounts for it. Eithe
+ r add a declaration or the date is incidental. First line: | Merged 2026-
+ 08-24 | **19** | -- Generated from tracked sources by scripts/generate_co
+ mmitment_calendar.py\; regenerate to update.
 CATEGORIES:UNPARSED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -4702,7 +4749,7 @@ DTSTART;VALUE=DATE:20260824
 DTEND;VALUE=DATE:20260825
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:75. 16 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:75. 17 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: | 2026-08-24 | a command's exit status must b
  e read from the command\, never through a pipe: $? after a pipeline is th
@@ -4979,12 +5026,11 @@ DTSTART;VALUE=DATE:20260824
 DTEND;VALUE=DATE:20260825
 SUMMARY:[UNPARSED] needs a declaration -- generate_release_manifest.py
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: scripts/generate_relea
- se_manifest.py:177. 1 line(s) in scripts/generate_release_manifest.py men
- tion this date and no COMMITMENT: declaration accounts for it. Either add
-  a declaration or the date is incidental. First line: This was the THIRD 
- copy of the same defect (2026-08-24): the excerpt reached a -- Generated 
- from tracked sources by scripts/generate_commitment_calendar.py\; regener
- ate to update.
+ se_manifest.py:43. 3 line(s) in scripts/generate_release_manifest.py ment
+ ion this date and no COMMITMENT: declaration accounts for it. Either add 
+ a declaration or the date is incidental. First line: literal until 2026-0
+ 8-24). Lists only platforms whose -- Generated from tracked sources by sc
+ ripts/generate_commitment_calendar.py\; regenerate to update.
 CATEGORIES:UNPARSED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -5003,7 +5049,7 @@ DTSTART;VALUE=DATE:20260824
 DTEND;VALUE=DATE:20260825
 SUMMARY:[UNPARSED] needs a declaration -- generate_release_metadata.py
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: scripts/generate_relea
- se_metadata.py:38. 5 line(s) in scripts/generate_release_metadata.py ment
+ se_metadata.py:64. 9 line(s) in scripts/generate_release_metadata.py ment
  ion this date and no COMMITMENT: declaration accounts for it. Either add 
  a declaration or the date is incidental. First line: # before 2026-08-24 
  and call them what they are. Never emitted again. -- Generated from track
@@ -5220,7 +5266,7 @@ DTSTART;VALUE=DATE:20260831
 DTEND;VALUE=DATE:20260901
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:380. 2 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:386. 2 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `godot/scripts/core/researcher.gd:150` -- #
   SEAM (ruled 2026-07-27\, review-by 2026-08-31): AUDITS ground-truth repo
@@ -6477,7 +6523,7 @@ DTSTART;VALUE=DATE:20270727
 DTEND;VALUE=DATE:20270728
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:293. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:299. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `docs/game-design/DESIGN_2026-08-24_diegeti
  c-opening.md:628` -- is ruled out today."* The doctrine has a **review cl

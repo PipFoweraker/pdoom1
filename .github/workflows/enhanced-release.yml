@@ -336,32 +336,49 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Generate release metadata
-        env:
-          RELEASE_VERSION: ${{ github.event.inputs.version || github.ref_name }}
-        run: |
-          VERSION="$RELEASE_VERSION"
-          echo "MEMO Generating metadata for $VERSION..."
-          python scripts/generate_release_metadata.py --version "$VERSION"
-
       # Fold build-status.json (with its tracking-issue URLs) into the SAME
       # artefact the website already consumes, rather than inventing a second
       # feed the site would have to learn about. It rides along into
       # `release-feeds`, which is both attached to the GitHub release and
       # deployed by deploy-feeds -- so the site gets it wherever it already
-      # reads the feed. Deliberately additive: it does not touch
-      # generate_release_metadata.py, which a concurrent lane is editing to stop
-      # advertising assets that do not exist.
+      # reads the feed.
+      #
+      # THIS NOW RUNS BEFORE THE GENERATOR, and the order is the point. #1307
+      # emits this file from its own job, which already walked the artefact tree
+      # and decided per platform whether a build exists. The feed generator
+      # ADOPTS that verdict via --build-status instead of scanning the artefacts
+      # a second time and forming its own opinion. Two scans of one artefact
+      # tree is two answers waiting to disagree; the scanner is authoritative
+      # and this is the wire that carries its answer.
       #
       # continue-on-error: a reporter failure must not cost us the feed. If the
-      # file is absent the site simply has no build-status document, which is
-      # the pre-v0.14.3 status quo, not a regression.
+      # file is absent the generator says so loudly and falls back to the
+      # Releases API, and failing that reports every platform UNKNOWN -- it
+      # never silently reverts to advertising all three.
       - name: Fold platform build status into the feed
         continue-on-error: true
         uses: actions/download-artifact@v8
         with:
           name: release-build-status
           path: public/releases/
+
+      # Why the generator needs telling at all (v0.14.3, 2026-08-24): macOS is a
+      # best-effort platform. Its export failed on a Windows .ico Godot cannot
+      # decode (#1305), build-mac uploaded nothing (`if-no-files-found: warn`,
+      # correctly), Windows/Linux published -- and the generator, which knew
+      # nothing about any of it, advertised PDoom-macOS-v0.14.3.zip from the
+      # naming convention alone. Live 404 in a public feed. The build pipeline
+      # had the answer the whole time; nothing carried it across the job
+      # boundary. --build-status is that wire.
+      - name: Generate release metadata
+        env:
+          RELEASE_VERSION: ${{ github.event.inputs.version || github.ref_name }}
+        run: |
+          VERSION="$RELEASE_VERSION"
+          echo "MEMO Generating metadata for $VERSION..."
+          python scripts/generate_release_metadata.py \
+            --version "$VERSION" \
+            --build-status public/releases/build-status.json
 
       - name: Upload metadata artifacts
         uses: actions/upload-artifact@v7
@@ -627,7 +644,22 @@ jobs:
           RELEASE_VERSION: ${{ github.event.inputs.version || github.ref_name }}
         run: |
           echo "SUCCESS Release $RELEASE_VERSION published successfully!"
-          echo "Game builds created for Windows, Linux, and macOS"
+          # The line that used to sit here read, unconditionally:
+          #   "Game builds created for Windows, Linux, and macOS"
+          # DESIGN_2026-08-24_release_lanes.md counts that as the third of four
+          # documents that asserted macOS shipped on v0.14.3 when it had not --
+          # the same defect as the feed and the manifest, in an echo.
+          #
+          # It is DELETED rather than replaced with a derived list. This job
+          # downloads no artefacts, so it would have to re-read or re-derive the
+          # platform set to say anything true, and the honest options are a
+          # heredoc (this workflow's manifest heredoc is exactly why
+          # scripts/generate_release_manifest.py exists -- untestable and
+          # silently fragile) or a fourth consumer of build-status.json for a
+          # log line nobody acts on. The truth already ships in the feed, the
+          # manifest and build-status.json, all three of which now agree. A
+          # notification that repeats it adds no information and one more place
+          # to drift.
           echo "Feeds generated and ready for website consumption"
 
       - name: Release Failure Notification

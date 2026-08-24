@@ -39,8 +39,19 @@ Field contract (superset of the old heredoc -- old consumers keep working):
                     truncated; the in-game notice tooltip shows it.
   download_page     NEW -- the release tag page URL (human download surface).
   assets            NEW -- [{name, size, sha256}] for every built zip.
-  data_batch_hash, schema_versions, engine, platforms, validation_passed,
-  build_pipeline, workflow_run, provenance -- unchanged from the heredoc.
+  platforms         DERIVED from `assets` (was a hardcoded three-element
+                    literal until 2026-08-24). Lists only platforms whose
+                    asset is actually present. Same name, same spelling
+                    ("macos"), honest value.
+  platform_status   NEW -- {platform: available|not_built|unknown}. Says WHY a
+                    platform is absent from `platforms`, so "not built" is
+                    distinguishable from "not checked".
+  validation_passed Scope note: this is the "Validate Historical Data &
+                    Schemas" job's outcome ONLY. It is not a statement that
+                    the release as a whole was verified -- on v0.14.3 it was
+                    true while the "Verify Release Download URLs" job failed.
+  data_batch_hash, schema_versions, engine, build_pipeline, workflow_run,
+  provenance -- unchanged from the heredoc.
 
 Run locally (loud failure is the point -- a bad manifest must fail the
 release, not ship):
@@ -53,9 +64,11 @@ import argparse
 import datetime
 import hashlib
 import json
+import os
 import re
 import sys
 from pathlib import Path
+from typing import Optional
 
 # Sibling import: this file lives in scripts/, next to the metadata generator
 # whose changelog extraction we reuse rather than duplicate.
@@ -67,7 +80,55 @@ from generate_release_metadata import (  # noqa: E402
     _ABSENT_MARKER,
     ReleaseMetadataGenerator,
     _ascii_safe,
+    platform_assets_for,
 )
+
+# manifest token <- PLATFORMS key. The manifest has always spelled it "macos"
+# while the feed uses "mac"; the field is a shipped contract, so the SPELLING
+# stays and only the DERIVATION changes.
+MANIFEST_PLATFORM_TOKENS = {"windows": "windows", "linux": "linux", "mac": "macos"}
+
+PLATFORM_AVAILABLE = "available"
+PLATFORM_NOT_BUILT = "not_built"
+PLATFORM_UNKNOWN = "unknown"
+
+
+def derive_platforms(version: str, assets: list, assets_resolved: bool):
+    """Enumerate the platforms this release ACTUALLY shipped, from its assets.
+
+    THE BUG THIS REPLACES (v0.14.3, 2026-08-24): `platforms` was the literal
+    ["windows", "linux", "macos"]. A hardcoded constant cannot be right by luck
+    or wrong by accident -- it is a constant wearing a measurement's clothes.
+    The published v0.14.3 manifest therefore CONTRADICTED ITSELF: `platforms`
+    claimed macOS while `assets`, enumerated from what actually shipped, listed
+    only the four Windows/Linux zips. One artifact, two answers, and the wrong
+    one is the machine-readable summary a consumer reaches for first.
+
+    A platform counts as shipped if EITHER its versioned zip or its unversioned
+    alias is present -- both names come from platform_assets_for(), the same
+    table the feed uses, so manifest and feed cannot disagree about what a
+    platform's asset is called.
+
+    Returns (platforms, platform_status). When the asset list was never
+    observed, every platform is `unknown` and `platforms` is empty: per the
+    2026-08-23 "manufactured confidence" ruling, a value meaning "I could not
+    tell" must not be rendered as one meaning "fine" -- and declaring three
+    platforms was exactly that.
+    """
+    names = {str(asset.get("name", "")) for asset in assets}
+    expected = platform_assets_for(version)
+    platforms = []
+    status = {}
+    for key, token in MANIFEST_PLATFORM_TOKENS.items():
+        if not assets_resolved:
+            status[token] = PLATFORM_UNKNOWN
+            continue
+        present = any(name in names for name in expected[key])
+        status[token] = PLATFORM_AVAILABLE if present else PLATFORM_NOT_BUILT
+        if present:
+            platforms.append(token)
+    return platforms, status
+
 
 _VERSION_RE = re.compile(r"^v?\d+\.\d+\.\d+([.-][0-9A-Za-z.-]+)?$")
 
@@ -205,10 +266,20 @@ def build_manifest(
     event: str = "",
     validation_passed: bool = True,
     build_date: str = "",
+    assets_resolved: Optional[bool] = None,
 ) -> dict:
-    """Pure assembly -- everything already read/validated by the caller."""
+    """Pure assembly -- everything already read/validated by the caller.
+
+    `assets_resolved` says whether the asset list was actually OBSERVED.
+    Default None infers it from the list being non-empty, so a caller that
+    forgets the argument gets `unknown` platforms rather than a declared three:
+    the forgetful path must under-claim, never over-claim.
+    """
     if not build_date:
         build_date = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    if assets_resolved is None:
+        assets_resolved = bool(assets)
+    platforms, platform_status = derive_platforms(version, assets, assets_resolved)
     return {
         "version": version,
         "build_date": build_date,
@@ -226,7 +297,20 @@ def build_manifest(
             "researchers": "1.0",
         },
         "engine": {"name": "Godot", "version": "4.5.1"},
-        "platforms": ["windows", "linux", "macos"],
+        # DERIVED from `assets`, never declared. See derive_platforms().
+        "platforms": platforms,
+        # The explicit half: `platforms` alone cannot distinguish "macOS was
+        # not built" from "nobody checked". This block can, and it is what a
+        # consumer should read before concluding anything about a gap.
+        "platform_status": platform_status,
+        # NOTE ON THE NAME (do not "fix" this by widening it): this is NOT
+        # "the release was verified". It is the outcome of the single
+        # "Validate Historical Data & Schemas" job, passed in from
+        # enhanced-release.yml. On the v0.14.3 run it was legitimately true --
+        # that job did pass -- while the job named "Verify Release Download
+        # URLs" FAILED. The value is honest about what it measures; only its
+        # name over-promises. Renaming a shipped field is forbidden here
+        # (add-only contract), so the scope is pinned in prose instead.
         "validation_passed": validation_passed,
         "build_pipeline": "github-actions",
         "workflow_run": workflow_run,
@@ -265,6 +349,12 @@ def main() -> int:
     league_seed = read_featured_seed(args.repo_root)
     highlights = extract_highlights(args.repo_root, version)
     assets = collect_assets(args.assets_dir)
+    # An EMPTY asset list means two different things -- "the artifact directory
+    # was never passed / does not exist" (a local dry run, or a misconfigured
+    # download step) versus "the directory is there and holds no zips". Only
+    # the second is an observation. Deciding it here, where the directory is
+    # actually in hand, keeps the ambiguity out of build_manifest().
+    assets_resolved = args.assets_dir is not None and args.assets_dir.exists()
 
     manifest = build_manifest(
         version=version,
@@ -280,6 +370,7 @@ def main() -> int:
         actor=args.actor,
         event=args.event,
         validation_passed=(args.validation_passed == "true"),
+        assets_resolved=assets_resolved,
     )
 
     body = json.dumps(manifest, indent=2, sort_keys=False)
@@ -299,6 +390,18 @@ def main() -> int:
         print(
             "[manifest] WARNING: no assets hashed (no --assets-dir?); manifest carries no integrity anchors"
         )
+
+    # Say the platform verdict out loud. A platform dropping out of a release
+    # is exactly the event that went unannounced on v0.14.3, so it gets a line
+    # here and a CI annotation -- never a silently shorter list.
+    print("[manifest] platforms=%s" % (",".join(manifest["platforms"]) or "NONE"))
+    for token, state in manifest["platform_status"].items():
+        if state == PLATFORM_AVAILABLE:
+            continue
+        message = "%s: %s did not ship (%s)" % (version, token, state)
+        print("[manifest] WARNING: %s" % message)
+        if os.environ.get("GITHUB_ACTIONS") == "true":
+            print("::warning::%s" % message)
     return 0
 
 

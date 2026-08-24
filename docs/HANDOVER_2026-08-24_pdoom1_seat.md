@@ -24,9 +24,10 @@ in the same paragraph. **If you split them, this document has failed.**
 | **v0.14.3** | **PUBLISHED**, 2026-08-24T04:37Z. Windows + Linux answer 200. **No macOS asset.** |
 | Board key | `(weekly-2026-w35, L6)` |
 | First real score since 2026-08-14 | **Rue**, 18:04:47, `"bubble gum factory -- mic ox"`, score 21 |
-| `main` | `161240be` |
-| Open PRs | **19 in pdoom1, 11 in pdoom1-website** |
-| Agent spend | **~3.8M output tokens across 21 runs** |
+| `main` | `ae270a90` |
+| Open PRs | **2 in pdoom1** (#1308 rebasing, #1291 coordination's), **10 in pdoom1-website** |
+| Merged 2026-08-24 | **19** |
+| Agent spend | **~4M output tokens across 22 runs** |
 | Repository settings changed by an agent | **none** |
 
 **Gate 5 passed.** Ladder L6, seed `weekly-2026-w35`, board key keyed on the
@@ -171,14 +172,116 @@ shipped anyway**, which is about consequence, not capability.*
       `...\scratchpad\COPY_2026-08-24_v0.14.3_outreach.md`, third revision,
       accurate as of now.
 - [ ] **Cut the macOS-restoring release.** Ruled. #1305 is the one-line fix.
-- [ ] **Nineteen pdoom1 PRs and eleven website PRs are open.** The merge queue
-      offer stands and was never taken up.
+- [x] ~~The merge queue~~ DRIVEN 2026-08-24: nineteen to two. See section 4b.
 - [ ] **Remove write access on pdoom1 for both non-admin accounts.** Measured:
       `tegabeta` 0 commits in both repos; `stevenhobartwork-create` 0 in pdoom1,
       4 in pdoom1-website. Nobody has ever used write on the repo where it means
       publishing binaries and reading every secret.
 - [ ] **Delete the five unreferenced `DH_*` secrets**, one an SSH private key,
       eleven months old, read by nothing.
+
+---
+
+## 4b. The merge run -- nineteen to two, and what it taught
+
+Driven serially at Pip's instruction. `main` moved `161240be -> ae270a90`.
+
+**MERGED:** #1313 #1305 #1288 #1286 #1287 #1292 #1294 #1295 #1300 #1312 #1306
+#1298 #1307 #1284 #1296 #1293 #1311.
+
+**THE RULE THAT MADE IT POSSIBLE:** generated indexes are **REGENERATED, never
+three-way merged.** Merging two regenerated files yields a file that is neither
+side's output and matches no source -- precisely the rot the
+generate-don't-hand-maintain pattern exists to prevent. The reconciler takes
+main's side (`--theirs`), re-runs the generators, and **aborts on any conflict
+outside the generated set.**
+
+**THE FIRST VERSION OF THAT RECONCILER WAS WRONG** and took `--ours`, keeping
+the PR's stale index. It left merges half-resolved: the local tree looked fine,
+`git commit` succeeded, and GitHub kept reporting CONFLICTING. Caught only by
+asserting `git merge-base --is-ancestor origin/main HEAD` -- **the exit codes
+never said so.** Any future reconciler must make that assertion, not trust the
+merge's return value.
+
+**IT REFUSED THREE TIMES AND WAS RIGHT EVERY TIME:**
+
+- **#1311 vs #1298** -- not a conflict, a **supersession**. #1298 collapsed FOUR
+  broken states into one sentence; #1311 gives six distinct bodies, adds
+  `load_from_path()` (making `FILE_MISSING` reachable from a test at all), and
+  adds an on-screen defect code plus a report affordance. Resolved by taking
+  #1311's file wholesale, verified by re-running the full gate: **1518 tests, 0
+  failures.**
+- **#1308 vs #1298** -- not a conflict, a **compose**. Both restructure
+  `generate_release_json` for "do not render absence as presence", one about
+  changelog prose and one about asset files. Neither subsumes the other. Sent
+  back to its author to rebase rather than resolved by hand -- a blind
+  resolution drops one side's guarantee silently.
+- **#1293** -- a real conflict in `scripts/generate_commitment_calendar.py`,
+  both sides adding a different generated artefact to `SCAN_EXCLUDE`. Both kept.
+
+**A MIRROR FOUND WHILE RESOLVING #1293, AND IT IS NOT FIRING YET.**
+`scripts/generate_rulings.py` maintains its **own independent** `SCAN_EXCLUDE`,
+and the two have diverged -- the rulings scanner omits `docs/TOOLS.md`,
+`docs/ACTION_TAXONOMY.md`, `docs/game-design/DQ_INDEX.md`, `docs/archive/` and
+both release artefacts.
+
+**It is NOT double-counting today** -- verified: no generated index appears as a
+source in `rulings.json`, and the single `RULING:` string in `docs/TOOLS.md` is
+prose *describing* the marker, not a declaration. **That safety is accidental.**
+`TOOLS.md` echoes only a tool's FIRST docstring line, and
+`check_release_ledger.py` carries a real `RULING:` declaration further down its
+own docstring. If the index generator ever widens what it copies, the rulings
+store double-counts silently. Documented in place; not fixed, because fixing it
+means deciding whether two lists should become one.
+
+---
+
+## 4c. Day close -- what is actually true at the end of it
+
+**THE GAME IS RELEASED, THE BOARD IS OPEN, AND SOMEBODY WHO IS NOT PIP HAS
+PLAYED IT.** Verified from outside, cache-busted, at day close:
+
+    pdoom1.com/leaderboard   1 entry -- "bubble gum factory -- mic oxe", 21, 2026-08-24T18:04:47
+    published-board.json     seed weekly-2026-w35 | epoch L6 | published 2026-08-24T10:39:07Z
+
+**The chain works end to end and it was broken at FOUR independent points this
+morning.** Merged -> tagged -> published -> downloaded -> played -> posted ->
+arrived -> displayed. The four:
+
+1. **The featured seed is a compiled-in const.** It rolled twice in the repo and
+   no published build ever carried either roll, so the league was dark for ten
+   days for that reason and no other.
+2. **`version.txt` held 0.14.3 with no tag and no release**, and every release
+   trigger fires on a tag push or a release publish -- so that state was the one
+   thing the whole apparatus could not see.
+3. **The feed advertised a macOS build that did not exist** -- a live 404 on the
+   day the download link was going out by email.
+4. **The site published a CLOSED board** (w32/L4, 11 entries, 17 August) while
+   the shipped client posted somewhere else entirely.
+
+**Nothing is on fire at close.** One PR open in pdoom1 and it is coordination's.
+
+## The thing worth carrying forward, if only one thing is
+
+Today's real catches did not come from rules, and they did not come from a
+single seat being careful. **They came from two seats checking each other.**
+
+The website seat corrected this one four times -- the empty-board reasoning, a
+false "can never appear" claim that had already reached code, a durability
+overclaim about the gate record, and a sequencing this seat had inverted. All
+four held. This seat corrected that one twice. Agents corrected both of us,
+including one that **refused an instruction from this seat** on the grounds that
+following it would introduce the fault it was fixing.
+
+**A mechanism only fires on the input it inspects. A second reader finds the
+SHAPE; a mechanism stops it RECURRING.** They are sequential, not alternatives,
+and today was almost entirely the first half.
+
+The corresponding gap, recorded and not built: **a ceremony performed across two
+sessions has no single record.** `check-blessing-consistency.py` compares four
+artefacts *within* the website repo, so two repositories recorded one blessing
+83 minutes apart and nothing noticed. **A cross-repo blessing record has no guard
+at all.** That is pdoom1's to build, because the ceremony is performed here.
 
 ---
 
@@ -276,5 +379,11 @@ this session:
 
 ---
 
-**Nothing is mid-flight. No agent is running. No repository setting was changed.
-The tag is pushed, the release is live, and a person has played it.**
+**UPDATED 2026-08-24, after the merge run.** The queue was driven serially from
+nineteen open PRs to two. `main` moved `161240be -> ae270a90`.
+
+**One agent is running:** #1308's rebase, composing its asset-absence work with
+#1298's changelog-absence work, which landed under it during the run.
+
+**No repository setting was changed. The tag is pushed, the release is live, and
+a person has played it.**

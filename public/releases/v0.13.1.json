@@ -4,13 +4,39 @@
   "release_date": "2026-07-25T22:23:46+10:00",
   "commit_hash": "409535dc0215d5e7bf4ff1b83025e8da98d7b4ef",
   "is_prerelease": false,
-  "changelog": "Release v0.13.1\n\nSee CHANGELOG.md for details.",
+  "changelog": null,
+  "changelog_status": "missing",
   "downloads": {
     "windows": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.13.1/PDoom-Windows-v0.13.1.zip",
     "linux": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.13.1/PDoom-Linux-v0.13.1.zip",
     "mac": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.13.1/PDoom-macOS-v0.13.1.zip",
     "source_zip": "https://github.com/PipFoweraker/pdoom1/archive/refs/tags/v0.13.1.zip",
     "source_tar": "https://github.com/PipFoweraker/pdoom1/archive/refs/tags/v0.13.1.tar.gz"
+  },
+  "platform_status": {
+    "windows": {
+      "status": "available",
+      "asset": "PDoom-Windows-v0.13.1.zip",
+      "evidence": "github-api",
+      "url": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.13.1/PDoom-Windows-v0.13.1.zip"
+    },
+    "linux": {
+      "status": "available",
+      "asset": "PDoom-Linux-v0.13.1.zip",
+      "evidence": "github-api",
+      "url": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.13.1/PDoom-Linux-v0.13.1.zip"
+    },
+    "mac": {
+      "status": "available",
+      "asset": "PDoom-macOS-v0.13.1.zip",
+      "evidence": "github-api",
+      "url": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.13.1/PDoom-macOS-v0.13.1.zip"
+    }
+  },
+  "asset_evidence": {
+    "source": "github-api",
+    "resolved": true,
+    "detail": "https://api.github.com/repos/PipFoweraker/pdoom1/releases/tags/v0.13.1"
   },
   "metadata": {
     "engine": "Godot 4.5.1",
