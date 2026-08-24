@@ -340,7 +340,7 @@ DTSTART;VALUE=DATE:20260810
 DTEND;VALUE=DATE:20260811
 SUMMARY:[TASK] Book the half-day audit-mechanics workshop\, target window 
  opens
-DESCRIPTION:Owner: pip. Kind: task. Source: docs/rulings/RULINGS.md:218. p
+DESCRIPTION:Owner: pip. Kind: task. Source: docs/rulings/RULINGS.md:224. p
  doom1#984\, ruled 2026-07-27 18:11. Scheduled to precede the 2026-08-31 f
   -- Generated from tracked sources by scripts/generate_commitment_calenda
  r.py\; regenerate to update.
@@ -607,7 +607,7 @@ DTSTART;VALUE=DATE:20260811
 DTEND;VALUE=DATE:20260812
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:133. 6 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:139. 6 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: Rulings with no `mechanism:`. Pip's doctrine 
  (2026-08-11): what forces a -- Generated from tracked sources by scripts/
@@ -748,7 +748,7 @@ DTSTART;VALUE=DATE:20260812
 DTEND;VALUE=DATE:20260813
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:331. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:337. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `godot/scripts/core/capacity.gd:5` -- ## Ru
  led 2026-08-12 (coordination/DESIGN_2026-08-12_interrupt-resolution-varia
@@ -1159,7 +1159,7 @@ DTSTART;VALUE=DATE:20260813
 DTEND;VALUE=DATE:20260814
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:177. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:183. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `docs/CONTENT_DISTRIBUTION_SYSTEM.md:10` --
   > **SUPERSEDED\, not merely "outdated in spirit"\, as of 2026-08-13.** P
@@ -1621,7 +1621,7 @@ DTSTART;VALUE=DATE:20260814
 DTEND;VALUE=DATE:20260815
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:350. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:356. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `godot/tests/unit/simulation/test_events.gd
  :50` -- ## THE RATCHET WAS DELIBERATELY LOOSENED -- 2026-08-14\, ruled by
@@ -2582,7 +2582,7 @@ DTSTART;VALUE=DATE:20260817
 DTEND;VALUE=DATE:20260818
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:75. 2 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
+ d:81. 2 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
  TMENT: declaration accounts for it. Either add a declaration or the date 
  is incidental. First line: | 2026-08-17 | published figures live in tooli
  ng\, not prose: the line item is the atom and every rendering is a projec
@@ -3102,7 +3102,7 @@ DTSTART;VALUE=DATE:20260820
 DTEND;VALUE=DATE:20260821
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:201. 3 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:207. 3 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `docs/art/A4_COLLAPSE_2026-08-20.md:3` -- *
  *2026-08-20\, `pdoom1` seat on New-Bort.** Ruled by Pip: canonicalise on 
@@ -3773,12 +3773,12 @@ DTSTART;VALUE=DATE:20260822
 DTEND;VALUE=DATE:20260823
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:94. 4 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
- TMENT: declaration accounts for it. Either add a declaration or the date 
- is incidental. First line: | 2026-08-22 | a mechanic that charges the pla
- yer and does nothing observable gets an unsubtle placeholder consequence 
- NOW rather than waiting for a b -- Generated from tracked sources by scri
- pts/generate_commitment_calendar.py\; regenerate to update.
+ d:100. 4 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ ITMENT: declaration accounts for it. Either add a declaration or the date
+  is incidental. First line: | 2026-08-22 | a mechanic that charges the pl
+ ayer and does nothing observable gets an unsubtle placeholder consequence
+  NOW rather than waiting for a b -- Generated from tracked sources by scr
+ ipts/generate_commitment_calendar.py\; regenerate to update.
 CATEGORIES:UNPARSED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -3866,7 +3866,7 @@ DTSTART;VALUE=DATE:20260823
 DTEND;VALUE=DATE:20260824
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:81. 4 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
+ d:87. 4 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
  TMENT: declaration accounts for it. Either add a declaration or the date 
  is incidental. First line: | 2026-08-23 | ladder debt is paid when it is 
  incurred\, not deferred to build time\, so a fresh epoch never inherits a
@@ -4105,11 +4105,11 @@ DTSTART;VALUE=DATE:20260824
 DTEND;VALUE=DATE:20260825
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:87. 4 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
+ d:73. 5 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
  TMENT: declaration accounts for it. Either add a declaration or the date 
- is incidental. First line: | 2026-08-24 | the featured seed names the ISO
-  week the league opens in\, so a league that slips is renamed to the week
-  it actually runs and the slip i -- Generated from tracked sources by scr
+ is incidental. First line: | 2026-08-24 | a command's exit status must be
+  read from the command\, never through a pipe: $? after a pipeline is the
+  RIGHTMOST command's status\, so -- Generated from tracked sources by scr
  ipts/generate_commitment_calendar.py\; regenerate to update.
 CATEGORIES:UNPARSED
 TRANSP:TRANSPARENT
@@ -4366,7 +4366,7 @@ DTSTART;VALUE=DATE:20260831
 DTEND;VALUE=DATE:20260901
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:339. 2 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:345. 2 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `godot/scripts/core/researcher.gd:150` -- #
   SEAM (ruled 2026-07-27\, review-by 2026-08-31): AUDITS ground-truth repo

@@ -3,7 +3,7 @@
   "repo": "pdoom1",
   "generated_from": "tracked files at HEAD",
   "convention": "docs/rulings/RULINGS_CONVENTION.md",
-  "count": 42,
+  "count": 43,
   "rulings": [
     {
       "id": "pdoom1:2026-07-04:12de8fc2",
@@ -550,6 +550,20 @@
       "supersedes": null,
       "superseded_by": null,
       "source": "tools/check_ladder_bump.py:38"
+    },
+    {
+      "id": "pdoom1:2026-08-24:c4c9f98a",
+      "date": "2026-08-24",
+      "ruling": "a command's exit status must be read from the command, never through a pipe: $? after a pipeline is the RIGHTMOST command's status, so `tool | tee`, `tool | head` and `tool | tail` all discard the tool's verdict and report the wrapper's success",
+      "summary": "",
+      "flavour": "ci-gates",
+      "kind": "declaration",
+      "status": "",
+      "by": "Pip",
+      "mechanism": "this workflow, and live-site-release-freshness.yml",
+      "supersedes": null,
+      "superseded_by": null,
+      "source": ".github/workflows/release-ledger.yml:102"
     },
     {
       "id": "pdoom1:2026-08-24:c1ce27d0",
