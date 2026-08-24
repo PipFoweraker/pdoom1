@@ -340,7 +340,7 @@ DTSTART;VALUE=DATE:20260810
 DTEND;VALUE=DATE:20260811
 SUMMARY:[TASK] Book the half-day audit-mechanics workshop\, target window 
  opens
-DESCRIPTION:Owner: pip. Kind: task. Source: docs/rulings/RULINGS.md:230. p
+DESCRIPTION:Owner: pip. Kind: task. Source: docs/rulings/RULINGS.md:231. p
  doom1#984\, ruled 2026-07-27 18:11. Scheduled to precede the 2026-08-31 f
   -- Generated from tracked sources by scripts/generate_commitment_calenda
  r.py\; regenerate to update.
@@ -411,6 +411,31 @@ BEGIN:VALARM
 ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:Read the Workshop 2 minute (ten rulings R1-R10) (task) -- pip
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:258c0560abed52a7@commitments.pdoom1
+DTSTAMP:20260810T000000Z
+DTSTART;VALUE=DATE:20260810
+DTEND;VALUE=DATE:20260811
+SUMMARY:[UNPARSED] needs a declaration -- DESIGN_2026-08-24_diegetic-openi
+ ng.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/game-design/DESIG
+ N_2026-08-24_diegetic-opening.md:308. 1 line(s) in docs/game-design/DESIG
+ N_2026-08-24_diegetic-opening.md mention this date and no COMMITMENT: dec
+ laration accounts for it. Either add a declaration or the date is inciden
+ tal. First line: minutes on 2026-08-10\, could not work out what to do."*
+  And the warning against reading the -- Generated from tracked sources by
+  scripts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- DESIGN_2026-08-24_diegetic-opening.md (
+ unparsed) -- unowned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
@@ -607,7 +632,7 @@ DTSTART;VALUE=DATE:20260811
 DTEND;VALUE=DATE:20260812
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:142. 6 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:143. 6 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: Rulings with no `mechanism:`. Pip's doctrine 
  (2026-08-11): what forces a -- Generated from tracked sources by scripts/
@@ -748,7 +773,7 @@ DTSTART;VALUE=DATE:20260812
 DTEND;VALUE=DATE:20260813
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:343. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:351. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `godot/scripts/core/capacity.gd:5` -- ## Ru
  led 2026-08-12 (coordination/DESIGN_2026-08-12_interrupt-resolution-varia
@@ -1159,7 +1184,7 @@ DTSTART;VALUE=DATE:20260813
 DTEND;VALUE=DATE:20260814
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:187. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:188. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `docs/CONTENT_DISTRIBUTION_SYSTEM.md:10` --
   > **SUPERSEDED\, not merely "outdated in spirit"\, as of 2026-08-13.** P
@@ -1646,7 +1671,7 @@ DTSTART;VALUE=DATE:20260814
 DTEND;VALUE=DATE:20260815
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:362. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:370. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `godot/tests/unit/simulation/test_events.gd
  :50` -- ## THE RATCHET WAS DELIBERATELY LOOSENED -- 2026-08-14\, ruled by
@@ -3127,7 +3152,7 @@ DTSTART;VALUE=DATE:20260820
 DTEND;VALUE=DATE:20260821
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:213. 3 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:214. 3 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `docs/art/A4_COLLAPSE_2026-08-20.md:3` -- *
  *2026-08-20\, `pdoom1` seat on New-Bort.** Ruled by Pip: canonicalise on 
@@ -4195,6 +4220,31 @@ DESCRIPTION:Reflective review: release / league cycle (review) -- pip
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:4ec0101800122f7a@commitments.pdoom1
+DTSTAMP:20260824T000000Z
+DTSTART;VALUE=DATE:20260824
+DTEND;VALUE=DATE:20260825
+SUMMARY:[UNPARSED] needs a declaration -- DESIGN_2026-08-24_diegetic-openi
+ ng.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/game-design/DESIG
+ N_2026-08-24_diegetic-opening.md:4. 2 line(s) in docs/game-design/DESIGN_
+ 2026-08-24_diegetic-opening.md mention this date and no COMMITMENT: decla
+ ration accounts for it. Either add a declaration or the date is incidenta
+ l. First line: > 2026-08-24 for Pip from voice-memo atoms M24-002 .. M24-
+ 009 (memo `084241`)\, which are -- Generated from tracked sources by scri
+ pts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- DESIGN_2026-08-24_diegetic-opening.md (
+ unparsed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:d6fa2c81462ff40d@commitments.pdoom1
 DTSTAMP:20260824T000000Z
 DTSTART;VALUE=DATE:20260824
@@ -4321,7 +4371,7 @@ DTSTART;VALUE=DATE:20260824
 DTEND;VALUE=DATE:20260825
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:75. 5 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
+ d:75. 6 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
  TMENT: declaration accounts for it. Either add a declaration or the date 
  is incidental. First line: | 2026-08-24 | a command's exit status must be
   read from the command\, never through a pipe: $? after a pipeline is the
@@ -4605,7 +4655,7 @@ DTSTART;VALUE=DATE:20260831
 DTEND;VALUE=DATE:20260901
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:351. 2 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:359. 2 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `godot/scripts/core/researcher.gd:150` -- #
   SEAM (ruled 2026-07-27\, review-by 2026-08-31): AUDITS ground-truth repo
@@ -5804,6 +5854,54 @@ ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:ADR-0018 render-only office doctrine: standing review (review)
   -- pdoom1-seat
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:7b89f8ac922acd7a@commitments.pdoom1
+DTSTAMP:20270727T000000Z
+DTSTART;VALUE=DATE:20270727
+DTEND;VALUE=DATE:20270728
+SUMMARY:[UNPARSED] needs a declaration -- DESIGN_2026-08-24_diegetic-openi
+ ng.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/game-design/DESIG
+ N_2026-08-24_diegetic-opening.md:628. 1 line(s) in docs/game-design/DESIG
+ N_2026-08-24_diegetic-opening.md mention this date and no COMMITMENT: dec
+ laration accounts for it. Either add a declaration or the date is inciden
+ tal. First line: is ruled out today."* The doctrine has a **review clause
+  dated 2027-07-27** and that review is -- Generated from tracked sources 
+ by scripts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- DESIGN_2026-08-24_diegetic-opening.md (
+ unparsed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:6751ccd7cb530ad1@commitments.pdoom1
+DTSTAMP:20270727T000000Z
+DTSTART;VALUE=DATE:20270727
+DTEND;VALUE=DATE:20270728
+SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
+ d:273. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ ITMENT: declaration accounts for it. Either add a declaration or the date
+  is incidental. First line: - `docs/game-design/DESIGN_2026-08-24_diegeti
+ c-opening.md:628` -- is ruled out today."* The doctrine has a **review cl
+ ause dated 2027-07-27** and that -- Generated from tracked sources by scr
+ ipts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- RULINGS.md (unparsed) -- unowned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT

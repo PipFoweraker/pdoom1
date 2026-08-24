@@ -3,7 +3,7 @@
   "repo": "pdoom1",
   "generated_from": "tracked files at HEAD",
   "convention": "docs/rulings/RULINGS_CONVENTION.md",
-  "count": 46,
+  "count": 47,
   "rulings": [
     {
       "id": "pdoom1:2026-07-04:12de8fc2",
@@ -608,6 +608,20 @@
       "source": ".github/workflows/release-ledger.yml:102"
     },
     {
+      "id": "pdoom1:2026-08-24:9847c4c9",
+      "date": "2026-08-24",
+      "ruling": "the diegetic-opening redesign (M24-002..009) must not be ladder- or epoch-breaking",
+      "summary": "",
+      "flavour": "ladder-epochs",
+      "kind": "declaration",
+      "status": "",
+      "by": "Pip",
+      "mechanism": "`tools/check_ladder_bump.py`",
+      "supersedes": null,
+      "superseded_by": null,
+      "source": "docs/game-design/DESIGN_2026-08-24_diegetic-opening.md:16"
+    },
+    {
       "id": "pdoom1:2026-08-24:c1ce27d0",
       "date": "2026-08-24",
       "ruling": "the featured seed names the ISO week the league opens in, so a league that slips is renamed to the week it actually runs and the slip is recorded in the log, never hidden in the label",
@@ -1002,6 +1016,34 @@
     {
       "source": "docs/game-design/DESIGN_2026-08-15_causality-violation.md:395",
       "text": "with an icon. **His own earlier ruling says no.** On 2026-07-31 he ruled that"
+    },
+    {
+      "source": "docs/game-design/DESIGN_2026-08-24_diegetic-opening.md:242",
+      "text": "| How do interrupts trade against the committed queue? | **Still open.** Variants A/B/C written and never ruled. | `coordination/DESIGN_2026-08-12_interrupt-resolution-variants.md` |"
+    },
+    {
+      "source": "docs/game-design/DESIGN_2026-08-24_diegetic-opening.md:3",
+      "text": "> **Status: design document. Nothing ruled, nothing built, no code written.** Assembled"
+    },
+    {
+      "source": "docs/game-design/DESIGN_2026-08-24_diegetic-opening.md:493",
+      "text": "occupies. **Pip already ruled this** (`DESIGN_2026-08-10` s3), and #1202 item 4 names it as a"
+    },
+    {
+      "source": "docs/game-design/DESIGN_2026-08-24_diegetic-opening.md:628",
+      "text": "is ruled out today.\"* The doctrine has a **review clause dated 2027-07-27** and that review is"
+    },
+    {
+      "source": "docs/game-design/DESIGN_2026-08-24_diegetic-opening.md:739",
+      "text": "**Its two questions are still open and neither was ever ruled:** (1) A, B or C; (2) *\"Does an"
+    },
+    {
+      "source": "docs/game-design/DESIGN_2026-08-24_diegetic-opening.md:866",
+      "text": "9. **A variable attention grant.** Already ruled and already commented in"
+    },
+    {
+      "source": "docs/game-design/DESIGN_2026-08-24_diegetic-opening.md:927",
+      "text": "| 1 | **Lift `OfficeFloor` out of `WatchScreen`** into a region registered as neither plan-only nor watch-only | `main_ui.gd`, `watch_screen.gd`, `screen_mode.gd`, `main.tscn` | Already ruled by Pip ("
     },
     {
       "source": "docs/game-design/DESIGN_PHILOSOPHY.md:423",

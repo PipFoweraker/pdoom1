@@ -5,7 +5,7 @@
 > `python scripts/generate_rulings.py`. The convention, and why it looks
 > like this, is argued in `docs/rulings/RULINGS_CONVENTION.md`.
 
-**46 ruling(s)** across **13 flavour(s)**. **228** prose ruling(s) not yet declared.
+**47 ruling(s)** across **13 flavour(s)**. **235** prose ruling(s) not yet declared.
 
 ## One index, five sources
 
@@ -16,7 +16,7 @@ flattening either into one line would delete what makes it worth having.
 
 | kind | n | what it is | where |
 |---|---:|---|---|
-| `declaration` | 20 | a `RULING:` line written next to what it governs | anywhere |
+| `declaration` | 21 | a `RULING:` line written next to what it governs | anywhere |
 | `adr` | 20 | a full architecture argument, summarised here | `docs/game-design/decisions/` |
 | `session` | 3 | a transcript or workshop ruling set, pointed at | `docs/SPOKEN_*`, `*RULINGS*` |
 | `card` | 3 | the input a ruling was made from | `docs/decision-cards/` |
@@ -88,6 +88,7 @@ flavour it belongs to and read what was already decided there.
 |---|---|---|---|
 | 2026-08-23 | ~~ladder debt is paid when it is incurred, not deferred to build time, so a fresh epoch never inherits a forked board key~~ (superseded by `pdoom1:2026-08-23:fa830705`) | `tools/check_ladder_bump.py --owed` | `tools/check_ladder_bump.py:38` |
 | 2026-08-23 | ladder debt is DECLARED when incurred and PAID at the release that ships it; deferring is legal, forgetting is not, and the epoch must never fork on an ordinary gameplay PR | `tools/check_ladder_bump.py --owed, run at cut time` | `tools/check_ladder_bump.py:40` |
+| 2026-08-24 | the diegetic-opening redesign (M24-002..009) must not be ladder- or epoch-breaking | ``tools/check_ladder_bump.py`` | `docs/game-design/DESIGN_2026-08-24_diegetic-opening.md:16` |
 
 ### `league-seeds`
 
@@ -266,6 +267,13 @@ is not.
 - `docs/game-design/DESIGN_2026-08-15_backlog-as-teacher.md:292` -- **Proposal (this seat, not ruled).** The cleanest way to hold all of this is a
 - `docs/game-design/DESIGN_2026-08-15_backlog-as-teacher.md:3` -- > **Status: design thesis, captured. Not an ADR, nothing ruled.** Dictated by
 - `docs/game-design/DESIGN_2026-08-15_causality-violation.md:395` -- with an icon. **His own earlier ruling says no.** On 2026-07-31 he ruled that
+- `docs/game-design/DESIGN_2026-08-24_diegetic-opening.md:242` -- | How do interrupts trade against the committed queue? | **Still open.** Variants A/B/C written and never ruled. | `coordination/DESIGN_2026-08-12_interrupt-resolution-variants.md` |
+- `docs/game-design/DESIGN_2026-08-24_diegetic-opening.md:3` -- > **Status: design document. Nothing ruled, nothing built, no code written.** Assembled
+- `docs/game-design/DESIGN_2026-08-24_diegetic-opening.md:493` -- occupies. **Pip already ruled this** (`DESIGN_2026-08-10` s3), and #1202 item 4 names it as a
+- `docs/game-design/DESIGN_2026-08-24_diegetic-opening.md:628` -- is ruled out today."* The doctrine has a **review clause dated 2027-07-27** and that review is
+- `docs/game-design/DESIGN_2026-08-24_diegetic-opening.md:739` -- **Its two questions are still open and neither was ever ruled:** (1) A, B or C; (2) *"Does an
+- `docs/game-design/DESIGN_2026-08-24_diegetic-opening.md:866` -- 9. **A variable attention grant.** Already ruled and already commented in
+- `docs/game-design/DESIGN_2026-08-24_diegetic-opening.md:927` -- | 1 | **Lift `OfficeFloor` out of `WatchScreen`** into a region registered as neither plan-only nor watch-only | `main_ui.gd`, `watch_screen.gd`, `screen_mode.gd`, `main.tscn` | Already ruled by Pip (
 - `docs/game-design/DESIGN_PHILOSOPHY.md:423` -- **The founder currency is named `Attention`** (ruled 2026-07-13): Pip's own canon
 - `docs/game-design/DESIGN_PHILOSOPHY.md:56` -- race enters the seed timeline. The two collisions ruled: 2017 run-start holds (fixed
 - `docs/game-design/DESPERATION_LEVER_PRICING.md:3` -- **Ruled by Pip, 2026-08-22:** *"we need to give the mechanical inertness a definite
