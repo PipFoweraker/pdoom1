@@ -596,15 +596,15 @@
   ],
   "undeclared": [
     {
-      "source": "CHANGELOG.md:164",
+      "source": "CHANGELOG.md:210",
       "text": "was retimed to one-turn-one-month and the ruled promotions were applied (#1137),"
     },
     {
-      "source": "CHANGELOG.md:195",
+      "source": "CHANGELOG.md:241",
       "text": "and the ruled promotions applied (#1137), against Pip's rulings of 2026-08-04."
     },
     {
-      "source": "CHANGELOG.md:203",
+      "source": "CHANGELOG.md:249",
       "text": "- **The last player-facing \"AP\" is gone**, and one number format is ruled across"
     },
     {

@@ -15,6 +15,52 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 > claimed. `scripts/check_release_notes.py --changelog-structure` now blocks
 > a second `[Unreleased]` heading from appearing again.
 
+## [0.14.3] - 2026-08-23 -- Things That Charged You And Did Nothing
+
+A pass over things that took your money, or your attention, and gave nothing
+back for it -- an acquired startup's engineers who drew salary and never worked,
+a lever that quoted a doom figure it never applied, an $80,000 counter-offer
+that changed nothing, and a feedback button that saved a file to your disk and
+asked you to email it.
+
+### Added
+- Counter-offers retain a named researcher, at a permanent payroll cost (#1225 item 4)
+- The onboarding bill and visa obligation are previewed before you commit (#1225 item 5)
+- Ad campaigns emit a monthly report whether or not anyone applied, and name what
+  the campaign cost when it closes (#1225 item 3)
+- A signed-build path: tooling exists and is tested, awaiting the certificate (#1038)
+- `docs/TRUST.md`, generated from source -- every point the game reaches outside
+  its own process (#1038)
+
+### Changed
+- Compute engineers are real staff rather than an integer counter (#1247). They
+  used to appear on the employee screen and never load into the sim -- consuming
+  stationery and producing nothing.
+- The header stops calling committed Attention "queued", and hiring says days (#1223)
+- The music conductor takes a nudge, and a pick made mid-crossfade is no longer
+  dropped (#1249)
+- The game ships with its own icon instead of the default engine one -- visible in
+  the taskbar, alt-tab, and the Windows publisher warning
+- The featured league seed is `weekly-2026-w35` on ladder epoch `L6`. The seed
+  names the ISO week the league opens in; the rolls to `w34` (23 Aug) and `w35`
+  (24 Aug) were made in the repository but never reached a published build, so
+  players stayed on `weekly-2026-w33` / `L5`. This is the build that carries them
+  across. The slip is recorded rather than papered over.
+
+### Fixed
+- The game-over screen stops blaming crises the player actually survived (#1248)
+- The desperation lever applies real safety absorption instead of a printed
+  figure (#967) -- the button now does what its text says
+- An offer at or below a previously rejected figure is refused rather than
+  silently accepted (#1225 item 2)
+- Send Feedback (N) offers three one-click ways to actually send it. It used to
+  save a file to your disk and ask you to email it.
+- The weekly-seed fallback generator computed a non-ISO week and would have
+  emitted `weekly-2027-w1` on 1 January 2027, where the ISO week is
+  `weekly-2026-w53`. Wrong year, wrong week, and unpadded -- and `w1` and `w01`
+  are different board keys. Unreachable while the seed override is set, and now
+  correct if it ever is not.
+
 ## [Unreleased]
 
 ### Fixed
