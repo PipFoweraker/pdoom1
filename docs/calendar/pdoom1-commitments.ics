@@ -4099,6 +4099,29 @@ DESCRIPTION:needs a declaration -- RELEASE_LINKING_TO_0.20.md (unparsed) -
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:fa80b6d63a32c33b@commitments.pdoom1
+DTSTAMP:20260824T000000Z
+DTSTART;VALUE=DATE:20260824
+DTEND;VALUE=DATE:20260825
+SUMMARY:[UNPARSED] needs a declaration -- RELEASE_PLATFORMS.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/RELEASE_PLATFORMS
+ .md:460. 1 line(s) in docs/RELEASE_PLATFORMS.md mention this date and no 
+ COMMITMENT: declaration accounts for it. Either add a declaration or the 
+ date is incidental. First line: ## Addendum 2026-08-24 -- the first relea
+ se that shipped no macOS asset -- Generated from tracked sources by scrip
+ ts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- RELEASE_PLATFORMS.md (unparsed) -- unow
+ ned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:b73be9bb1fec79d5@commitments.pdoom1
 DTSTAMP:20260824T000000Z
 DTSTART;VALUE=DATE:20260824
@@ -4141,6 +4164,29 @@ BEGIN:VALARM
 ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- UNTAGGED.md (unparsed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:041f85d62ecfe7dd@commitments.pdoom1
+DTSTAMP:20260824T000000Z
+DTSTART;VALUE=DATE:20260824
+DTEND;VALUE=DATE:20260825
+SUMMARY:[UNPARSED] needs a declaration -- check_export_icons.py
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/check_export_ico
+ ns.py:4. 1 line(s) in tools/check_export_icons.py mention this date and n
+ o COMMITMENT: declaration accounts for it. Either add a declaration or th
+ e date is incidental. First line: WHY THIS EXISTS (v0.14.3\, 2026-08-24) 
+ -- Generated from tracked sources by scripts/generate_commitment_calendar
+ .py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- check_export_icons.py (unparsed) -- uno
+ wned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT

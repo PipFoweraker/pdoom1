@@ -13,7 +13,7 @@ Horizon: **2026-08-09** (the prose scan reports dates at or after this; roll it
 forward deliberately in `COMMITMENTS.md`, never automatically -- a clock-reading
 generator goes stale overnight and trains people to ignore the check).
 
-**53 declared, 4 release-train, 172 UNPARSED, 0 malformed.**
+**53 declared, 4 release-train, 174 UNPARSED, 0 malformed.**
 
 ## Declared commitments
 
@@ -388,6 +388,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-23 | `tools/check_release_ledger.py` | 386 | "to 0.14.3 at 07:47 on 2026-08-23 with the seed still reading " |
 | 2026-08-23 | `tools/sign_release.py` | 6 | WHY THIS EXISTS, 2026-08-23 |
 | 2026-08-23 | `tools/sign_release.py` | 131 | That is what is deployed here (2026-08-23, version 10.0.28000.2526). |
+| 2026-08-24 | `docs/RELEASE_PLATFORMS.md` | 460 | ## Addendum 2026-08-24 -- the first release that shipped no macOS asset |
 | 2026-08-24 | `docs/design/LEAGUE_CUTOVER_PLAYBOOK.md` | 41 | at L4, and is pinned for reflective review on/after 2026-08-24. |
 | 2026-08-24 | `docs/releases/RELEASE_LINKING_TO_0.20.md` | 4 | Written 2026-08-24 off the mechanical sweep in `RELEASE_LEDGER.md`, which is |
 | 2026-08-24 | `docs/releases/RELEASE_LINKING_TO_0.20.md` | 92 | 2026-08-24, **ISO week 35**. The live const reads `weekly-2026-w34`. If the next |
@@ -402,6 +403,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-24 | `docs/rulings/RULINGS.md` | 323 | - `docs/releases/RELEASE_LINKING_TO_0.20.md:175` -- Under the atomise protocol clause 3 (ruled 2026-08-24: *"do not build an atom |
 | 2026-08-24 | `pdoom1#808` | 0 | Reflective review (on/after 2026-08-24): release/league cycle nomenclature + cadence |
 | 2026-08-24 | `pdoom1#811` | 0 | Workshop 3 (mechanics) -- Mon 07-27 W-3a / Tue 07-28 build / Wed 07-29 W-3b-W-4: crisp parts, brutal decisions |
+| 2026-08-24 | `tools/check_export_icons.py` | 4 | WHY THIS EXISTS (v0.14.3, 2026-08-24) |
 | 2026-08-24 | `tools/check_release_ledger.py` | 8 | On 2026-08-24 the repo held ``version.txt = 0.14.3``, a proven build on disk, |
 | 2026-08-24 | `tools/check_release_ledger.py` | 34 | RULING: 2026-08-24 -- every value version.txt has ever held must have a matching git tag, or a declared exemption; a bump with no tag is a defect the  |
 | 2026-08-24 | `tools/check_release_ledger.py` | 60 | 2026-08-24: *"do not build an atom store unless a named party will rule it"*), |
