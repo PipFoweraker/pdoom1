@@ -3,7 +3,7 @@
   "repo": "pdoom1",
   "generated_from": "tracked files at HEAD",
   "convention": "docs/rulings/RULINGS_CONVENTION.md",
-  "count": 47,
+  "count": 49,
   "rulings": [
     {
       "id": "pdoom1:2026-07-04:12de8fc2",
@@ -650,6 +650,34 @@
       "source": "godot/tests/unit/test_iso_week_seed.gd:24"
     },
     {
+      "id": "pdoom1:2026-08-24:f6ea4303",
+      "date": "2026-08-24",
+      "ruling": "an environment no workflow references is either clutter or a lie, and which one depends entirely on what it is called; a safety-vocabulary name with no reference is a finding, any other name is reported and not gated",
+      "summary": "",
+      "flavour": "guard-doctrine",
+      "kind": "declaration",
+      "status": "",
+      "by": "Pip",
+      "mechanism": "tools/check_environments.py in .github/workflows/guards.yml",
+      "supersedes": null,
+      "superseded_by": null,
+      "source": "tools/check_environments.py:51"
+    },
+    {
+      "id": "pdoom1:2026-08-24:0ef5abab",
+      "date": "2026-08-24",
+      "ruling": "a guard wired only to pre-commit is not installed; every local hook must either run in a workflow or carry a declared waiver naming what covers it instead",
+      "summary": "",
+      "flavour": "guard-doctrine",
+      "kind": "declaration",
+      "status": "",
+      "by": "Pip",
+      "mechanism": "tools/check_guard_parity.py --check in .github/workflows/guards.yml",
+      "supersedes": null,
+      "superseded_by": null,
+      "source": "tools/check_guard_parity.py:47"
+    },
+    {
       "id": "pdoom1:2026-08-24:5b478ae8",
       "date": "2026-08-24",
       "ruling": "every value version.txt has ever held must have a matching git tag, or a declared exemption; a bump with no tag is a defect the machine reports, not a thing a human is expected to remember",
@@ -665,6 +693,10 @@
     }
   ],
   "undeclared": [
+    {
+      "source": ".github/workflows/guards.yml:3",
+      "text": "# WHY THIS FILE EXISTS (issue #1265, ruled by Pip 2026-08-20)"
+    },
     {
       "source": "CHANGELOG.md:251",
       "text": "was retimed to one-turn-one-month and the ruled promotions were applied (#1137),"
@@ -1564,6 +1596,10 @@
     {
       "source": "tools/assets/provenance_unknown_pin.json:2",
       "text": "\"_why\": \"Pinned unknown set. Ruled by Pip 2026-08-11: keep the unattributable assets, record them honestly, and let a mechanism force the question later rather than a document.\","
+    },
+    {
+      "source": "tools/check_guard_parity.py:6",
+      "text": "WHY THIS EXISTS (issue #1265, ruled by Pip 2026-08-20)"
     },
     {
       "source": "tools/check_release_ledger.py:30",
