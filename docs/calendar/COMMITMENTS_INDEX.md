@@ -13,7 +13,7 @@ Horizon: **2026-08-09** (the prose scan reports dates at or after this; roll it
 forward deliberately in `COMMITMENTS.md`, never automatically -- a clock-reading
 generator goes stale overnight and trains people to ignore the check).
 
-**53 declared, 4 release-train, 203 UNPARSED, 0 malformed.**
+**53 declared, 4 release-train, 204 UNPARSED, 0 malformed.**
 
 ## Declared commitments
 
@@ -337,7 +337,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-20 | `tools/art_review/collapse_px_keys.py` | 4 | ORPHANS A4. Ruled by Pip 2026-08-20: canonicalise on the write path AND collapse |
 | 2026-08-20 | `tools/assets/backfill_provenance.py` | 496 | # WHERE A CONTRIBUTOR'S NAME COMES FROM (2026-08-20) |
 | 2026-08-20 | `tools/check_guard_parity.py` | 6 | WHY THIS EXISTS (issue #1265, ruled by Pip 2026-08-20) |
-| 2026-08-20 | `tools/print_doc.py` | 199 | # Acrobat's own /t switch, BEFORE the shell verb. Measured 2026-08-20 on |
+| 2026-08-20 | `tools/print_doc.py` | 263 | # Acrobat's own /t switch, BEFORE the shell verb. Measured 2026-08-20 on |
 | 2026-08-21 | `CLAUDE.md` | 36 | 2026-08-21 (#1259). |
 | 2026-08-21 | `docs/CLAIM_AUDIT_2026-08-21.md` | 14 | overdue** when this ran (2026-08-21, ~10:15-11:00 AEST). |
 | 2026-08-21 | `docs/CLAIM_AUDIT_2026-08-21.md` | 29 | 2026-08-21. Commit subjects are the headline surface this repo actually |
@@ -419,6 +419,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-23 | `tools/check_release_ledger.py` | 30 | This is the ruled ``manufactured confidence`` shape (Pip, 2026-08-23 16:42): |
 | 2026-08-23 | `tools/check_release_ledger.py` | 53 | question it could not ask. That is the 2026-08-23 ruling, applied to the tool |
 | 2026-08-23 | `tools/check_release_ledger.py` | 386 | "to 0.14.3 at 07:47 on 2026-08-23 with the seed still reading " |
+| 2026-08-23 | `tools/print_doc.py` | 54 | MEASURED 2026-08-23 through this tool's own --pdf-only path, default 12.5pt: |
 | 2026-08-23 | `tools/sign_release.py` | 6 | WHY THIS EXISTS, 2026-08-23 |
 | 2026-08-23 | `tools/sign_release.py` | 131 | That is what is deployed here (2026-08-23, version 10.0.28000.2526). |
 | 2026-08-24 | `docs/HANDOVER_2026-08-24_pdoom1_seat.md` | 267 | > wrote without the user's authorisation.** *Window:* ~2 hours on 2026-08-24. |

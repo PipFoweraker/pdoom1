@@ -17,6 +17,7 @@ the PDF goes to the printer. No Word, no browser window, no manual Ctrl-P.
     python tools/print_doc.py sheet.html --pdf-only         # render, do not print
     python tools/print_doc.py sheet.html --printer "Brother HL-L2460DW series"
     python tools/print_doc.py docs/NOTES.md --base-size 14  # bigger, for walking
+    python tools/print_doc.py RUNSHEET.md --sides simplex   # clipboard: NEVER duplex
 
     python tools/print_doc.py --list-printers
 
@@ -46,10 +47,29 @@ h2 { font-size: %(h2)spt; margin: 7mm 0 2mm; padding: 1.6mm 2.5mm;
      background: #1a1a1a; color: #fff; page-break-after: avoid; }
 h3 { font-size: %(h3)spt; margin: 4.5mm 0 1.5mm; page-break-after: avoid; }
 p, li, td, th { font-size: %(base)spt; }
-table { border-collapse: collapse; width: 100%%; margin: 2.5mm 0 4mm; }
-th, td { border: 1px solid #444; padding: 2.2mm 2.6mm; text-align: left; vertical-align: top; }
+/* table-layout:fixed is LOAD-BEARING, not cosmetic, and it is what enforces the
+   11pt floor at render time. Without it a wide table overflows the content box
+   and Chromium shrinks the ENTIRE PAGE to fit -- uniformly, so every size scales
+   together and the result reads as a deliberate layout rather than a fault.
+   MEASURED 2026-08-23 through this tool's own --pdf-only path, default 12.5pt:
+       docs/POSTMORTEM_2026-08-07_CAPTURE.md        12.49pt  scale 1.00
+       docs/game-design/ADR_DQ_AUDIT_2026-08-03.md  12.34pt  scale 0.99
+       docs/game-design/WS3A_DAYLOG_2026-07-27.md   11.62pt  scale 0.93
+       godot/docs/qa/SHUTDOWN_HYGIENE_2026-07-16.md  8.33pt  scale 0.67
+       docs/TOOLS.md                                 8.37pt  scale 0.67
+   The last two are UNDER the 11pt floor main() calls not negotiable -- the floor
+   was applied to the HTML and then undone at render time, silently.
+   Margins are specified in mm and do NOT shrink with it, so the margin-to-type
+   ratio blows out; the paper was never wide, the ink got small.
+   Same fix and same reasoning as coordination/tools/walkpack/build_walkpack.py
+   at 43cb364. */
+table { border-collapse: collapse; width: 100%%; margin: 2.5mm 0 4mm;
+        table-layout: fixed; }
+th, td { border: 1px solid #444; padding: 2.2mm 2.6mm; text-align: left; vertical-align: top;
+         overflow-wrap: anywhere; }
 th { background: #e8e8e8; font-weight: 700; }
-code, pre { font-family: Consolas, "Courier New", monospace; font-size: %(mono)spt; }
+code, pre { font-family: Consolas, "Courier New", monospace; font-size: %(mono)spt;
+            overflow-wrap: anywhere; }
 code { background: #eee; padding: 0.3mm 1mm; }
 pre { background: #f2f2f2; padding: 2.5mm 3mm; border: 1px solid #ccc;
       white-space: pre-wrap; word-wrap: break-word; }
@@ -182,13 +202,57 @@ def default_printer_name() -> str | None:
         return None
 
 
-def send_to_printer(pdf: Path, printer: str | None) -> None:
+def print_settings_for(sides: str, paper: str) -> str:
+    """Build the SumatraPDF -print-settings string. Per JOB, never per queue.
+
+    PRINT_AND_PROCESS_REFERENCE.md (coordination, bc7daf8) rules both halves:
+
+      paper=A4   The queue default is per-seat and NOT canonical -- measured
+                 `Letter` on the G-seat and `A4` on the D-seat. A script may not
+                 assume either, so every job carries the size. Until this
+                 existed, this tool sent no settings at all, and the @page rule
+                 above declaring A4 was overridden by whatever the driver
+                 defaulted to: the document said A4 and the paper came out
+                 Letter, silently.
+
+      sides      A CORRECTNESS rule, not a preference.
+                   duplex  -- essays, memos, sitreps, postmortems. Read as a
+                              booklet, and it halves the paper.
+                   simplex -- checklists and runsheets. They live on a
+                              clipboard, and a back face you cannot see while
+                              the front is clipped HIDES HALF THE CHECKLIST.
+                 Default is duplex because that is this tool's usual input.
+                 Anything that gets ticked while clipped needs --sides simplex,
+                 and NO heuristic here guesses it -- guessing wrong is the exact
+                 failure the rule exists to prevent.
+
+    Mirrors print_settings_for() in coordination/tools/walkpack/build_walkpack.py
+    minus its page-range argument, which this tool has no --reverse to feed.
+    """
+    parts = []
+    if sides == "simplex":
+        parts.append("simplex")
+    elif sides == "short":
+        parts.append("duplexshort")
+    else:
+        parts.append("duplexlong")
+    if paper:
+        parts.append("paper=%s" % paper)
+    return ",".join(parts)
+
+
+def send_to_printer(
+    pdf: Path, printer: str | None, sides: str = "duplex", paper: str = "A4"
+) -> None:
+    settings = print_settings_for(sides, paper)
     sumatra = find_silent_printer()
     if sumatra:
         # -silent: no window, no dialog, no focus change. Exactly what we want.
-        cmd = [str(sumatra), "-silent"]
+        cmd = [str(sumatra), "-silent", "-exit-when-done"]
         cmd += ["-print-to", printer] if printer else ["-print-to-default"]
+        cmd += ["-print-settings", settings]
         cmd.append(str(pdf.resolve()))
+        print("[print] settings: %s" % settings)
         res = subprocess.run(cmd, capture_output=True, text=True, timeout=120)
         if res.returncode != 0:
             raise SystemExit(
@@ -208,6 +272,11 @@ def send_to_printer(pdf: Path, printer: str | None) -> None:
     if acro:
         target = printer or default_printer_name()
         if target:
+            # Acrobat's /t has no per-job duplex or paper control -- it takes
+            # the queue default, which is per-seat and not canonical. So this
+            # path CANNOT honour the settings above. Say so, rather than let a
+            # clipboard checklist come back duplexed without a word.
+            print("[warn] Acrobat fallback cannot set %s -- queue default applies." % settings)
             cmd = [str(acro), "/n", "/t", str(pdf.resolve()), target]
             subprocess.run(cmd, capture_output=True, text=True, timeout=180)
             # Acrobat's exit code is not a reliable success signal either, so the
@@ -218,6 +287,7 @@ def send_to_printer(pdf: Path, printer: str | None) -> None:
             return
 
     print("[warn] neither SumatraPDF nor Acrobat found -- falling back to the shell verb.")
+    print("       It cannot set %s either; the queue default applies." % settings)
     print("       MEASURED UNRELIABLE on Pip's machine: it can exit 0 and print nothing.")
     if printer:
         ps = (
@@ -246,6 +316,20 @@ def main() -> int:
     ap.add_argument("--out", help="where to write the PDF")
     ap.add_argument(
         "--base-size", type=float, default=12.5, help="body point size (floor 11; default 12.5)"
+    )
+    ap.add_argument(
+        "--sides",
+        choices=("duplex", "simplex", "short"),
+        default="duplex",
+        help="duplex (default; essays, memos, sitreps -- read as a booklet) | "
+        "simplex (checklists and runsheets: they live on a clipboard, and a back "
+        "face you cannot see hides half the checklist) | short (duplexshort)",
+    )
+    ap.add_argument(
+        "--paper",
+        default="A4",
+        help="paper size sent WITH THE JOB (default A4). The queue default is "
+        "per-seat and not canonical -- do not rely on it.",
     )
     ap.add_argument("--list-printers", action="store_true")
     args = ap.parse_args()
@@ -297,7 +381,7 @@ def main() -> int:
         print("[OK] --pdf-only: not printed.")
         return 0
 
-    send_to_printer(pdf_path, args.printer)
+    send_to_printer(pdf_path, args.printer, args.sides, args.paper)
     print("[OK] sent to %s" % (args.printer or "the default printer"))
     print("     If nothing comes out, check the queue -- Windows fails printing silently.")
     return 0

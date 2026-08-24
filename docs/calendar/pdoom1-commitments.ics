@@ -3340,7 +3340,7 @@ DTSTAMP:20260820T000000Z
 DTSTART;VALUE=DATE:20260820
 DTEND;VALUE=DATE:20260821
 SUMMARY:[UNPARSED] needs a declaration -- print_doc.py
-DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/print_doc.py:199
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/print_doc.py:263
  . 1 line(s) in tools/print_doc.py mention this date and no COMMITMENT: de
  claration accounts for it. Either add a declaration or the date is incide
  ntal. First line: # Acrobat's own /t switch\, BEFORE the shell verb. Meas
@@ -4259,6 +4259,28 @@ ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- check_release_ledger.py (unparsed) -- u
  nowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:62eed08b24cad200@commitments.pdoom1
+DTSTAMP:20260823T000000Z
+DTSTART;VALUE=DATE:20260823
+DTEND;VALUE=DATE:20260824
+SUMMARY:[UNPARSED] needs a declaration -- print_doc.py
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/print_doc.py:54.
+  1 line(s) in tools/print_doc.py mention this date and no COMMITMENT: dec
+ laration accounts for it. Either add a declaration or the date is inciden
+ tal. First line: MEASURED 2026-08-23 through this tool's own --pdf-only p
+ ath\, default 12.5pt: -- Generated from tracked sources by scripts/genera
+ te_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- print_doc.py (unparsed) -- unowned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
