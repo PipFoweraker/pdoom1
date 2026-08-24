@@ -5,7 +5,7 @@
 > `python scripts/generate_rulings.py`. The convention, and why it looks
 > like this, is argued in `docs/rulings/RULINGS_CONVENTION.md`.
 
-**39 ruling(s)** across **10 flavour(s)**. **222** prose ruling(s) not yet declared.
+**41 ruling(s)** across **11 flavour(s)**. **224** prose ruling(s) not yet declared.
 
 ## One index, five sources
 
@@ -16,7 +16,7 @@ flattening either into one line would delete what makes it worth having.
 
 | kind | n | what it is | where |
 |---|---:|---|---|
-| `declaration` | 14 | a `RULING:` line written next to what it governs | anywhere |
+| `declaration` | 16 | a `RULING:` line written next to what it governs | anywhere |
 | `adr` | 19 | a full architecture argument, summarised here | `docs/game-design/decisions/` |
 | `session` | 3 | a transcript or workshop ruling set, pointed at | `docs/SPOKEN_*`, `*RULINGS*` |
 | `card` | 3 | the input a ruling was made from | `docs/decision-cards/` |
@@ -73,6 +73,13 @@ flavour it belongs to and read what was already decided there.
 | 2026-08-15 | the ruling road is cross-repo from day one, federated: each repo scans itself and emits rulings.json, an aggregator reads them, nothing writes back | `scripts/generate_rulings.py` | `docs/rulings/LEDGER.md:10` |
 | 2026-08-15 | naming a mechanism is OPTIONAL on a ruling, and the generated index reports which rulings have none | `scripts/generate_rulings.py` | `docs/rulings/LEDGER.md:11` |
 | 2026-08-17 | published figures live in tooling, not prose: the line item is the atom and every rendering is a projection | `tools/render_budget.py --check` | `tools/render_budget.py:12` |
+
+### `guard-doctrine`
+
+| date | ruling | mechanism | source |
+|---|---|---|---|
+| 2026-08-24 | an environment no workflow references is either clutter or a lie, and which one depends entirely on what it is called; a safety-vocabulary name with no reference is a finding, any other name is reported and not gated | `tools/check_environments.py in .github/workflows/guards.yml` | `tools/check_environments.py:51` |
+| 2026-08-24 | a guard wired only to pre-commit is not installed; every local hook must either run in a workflow or carry a declared waiver naming what covers it instead | `tools/check_guard_parity.py --check in .github/workflows/guards.yml` | `tools/check_guard_parity.py:47` |
 
 ### `ladder-epochs` (only one so far)
 
@@ -155,6 +162,7 @@ Found by heuristic scan. These are a WORK LIST, not rulings: each needs a
 than dropped because an index that silently omits looks complete when it
 is not.
 
+- `.github/workflows/guards.yml:3` -- # WHY THIS FILE EXISTS (issue #1265, ruled by Pip 2026-08-20)
 - `CHANGELOG.md:164` -- was retimed to one-turn-one-month and the ruled promotions were applied (#1137),
 - `CHANGELOG.md:195` -- and the ruled promotions applied (#1137), against Pip's rulings of 2026-08-04.
 - `CHANGELOG.md:203` -- - **The last player-facing "AP" is gone**, and one number format is ruled across
@@ -369,6 +377,7 @@ is not.
 - `tools/assets/check_provenance.py:60` -- this estate has already ruled carries no information.
 - `tools/assets/manifests/new_subjects.json:115` -- "prompt_tail": "an almost perfectly flat-on frontal view of a wall of bureaucratic paperwork, shot square to the wall with minimal perspective so the picture plane and the wall plane are nearly parall
 - `tools/assets/provenance_unknown_pin.json:2` -- "_why": "Pinned unknown set. Ruled by Pip 2026-08-11: keep the unattributable assets, record them honestly, and let a mechanism force the question later rather than a document.",
+- `tools/check_guard_parity.py:6` -- WHY THIS EXISTS (issue #1265, ruled by Pip 2026-08-20)
 - `tools/rule.py:153` -- description="Capture a ruling, after showing what was already ruled in its flavour."
 - `tools/rule.py:159` -- ap.add_argument("--by", default="Pip", help="who ruled (default: Pip)")
 - `tools/triage_undeclared_rulings.py:15` -- ruling, a doc explaining that something was ruled elsewhere, a tool's docstring
