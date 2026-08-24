@@ -428,8 +428,8 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-23 | `tools/sign_release.py` | 131 | That is what is deployed here (2026-08-23, version 10.0.28000.2526). |
 | 2026-08-24 | `docs/HANDOVER_2026-08-24_pdoom1_seat.md` | 29 | \| Merged 2026-08-24 \| **19** \| |
 | 2026-08-24 | `docs/HANDOVER_2026-08-24_pdoom1_seat.md` | 175 | - [x] ~~The merge queue~~ DRIVEN 2026-08-24: nineteen to two. See section 4b. |
-| 2026-08-24 | `docs/HANDOVER_2026-08-24_pdoom1_seat.md` | 321 | > wrote without the user's authorisation.** *Window:* ~2 hours on 2026-08-24. |
-| 2026-08-24 | `docs/HANDOVER_2026-08-24_pdoom1_seat.md` | 333 | **UPDATED 2026-08-24, after the merge run.** The queue was driven serially from |
+| 2026-08-24 | `docs/HANDOVER_2026-08-24_pdoom1_seat.md` | 370 | > wrote without the user's authorisation.** *Window:* ~2 hours on 2026-08-24. |
+| 2026-08-24 | `docs/HANDOVER_2026-08-24_pdoom1_seat.md` | 382 | **UPDATED 2026-08-24, after the merge run.** The queue was driven serially from |
 | 2026-08-24 | `docs/LEADERBOARD_WEBSITE_INTEGRATION.md` | 208 | **The server-side fix is the real fix, and it landed in #1272 (2026-08-24):** |
 | 2026-08-24 | `docs/LEADERBOARD_WEBSITE_INTEGRATION.md` | 257 | ### Coordination ask -- status after #1272 (2026-08-24) |
 | 2026-08-24 | `docs/RELEASE_NOMENCLATURE.md` | 51 | **The coupling runs one way only** (ruling of 2026-08-24; the declaration lives |
