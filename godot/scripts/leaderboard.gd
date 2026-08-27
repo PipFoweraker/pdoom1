@@ -5,29 +5,79 @@ extends Node
 
 class_name Leaderboard
 
-# --- Remote board name budget (MEASURED, not assumed) -------------------------
-# The remote score API stores at most this many BYTES of a submitted name and
-# cuts the rest with a byte-wise substr. Measured on 2026-08-08 by reading the
-# live (weekly-2026-w32, L4) board: Pip's lab went up as the 41-byte
-# "GRIM (Global Risk Intervention Mechanism)" and came back as the 40-byte
-# "GRIM (Global Risk Intervention Mechanism" -- amputated mid-word, closing
-# bracket eaten, on the public board.
+# --- Identity budget: DERIVED from the input caps, never picked ---------------
 #
-# BYTES rather than characters on purpose: a byte-wise server cut can also split
-# a multi-byte UTF-8 codepoint and store an invalid string. The client fits the
-# value itself (see fit_board_name) so the server's cut never fires at all.
+# THE RULE THIS ENCODES: a name is never silently altered between the field the
+# player types it into and the public board. Either it fits, or the field would
+# not accept the keystroke in the first place.
 #
-# score_api.php lives on the server and is in no repo here, so raising this
-# limit or adding a field is a server change -- routed through coordination,
-# not decided here.
-const BOARD_NAME_MAX_BYTES := 40
-const BOARD_NAME_CUT_MARK := "..."
+# WHAT WENT WRONG TWICE. This block used to say "score_api.php lives on the
+# server and is in no repo here", and set the budget to a MEASURED 40 bytes.
+# The comment was false: the API is `server/leaderboard/score_api.php` in this
+# repository and the 40 was our own `substr($s, 0, 40)`. Mistaking a self-imposed
+# cap for an external law, #1176 spent its effort dividing 40 fairly between the
+# two names instead of asking why it was 40 -- and the live w33 board ended up
+# publishing "Bureau of Catastrophe... -- Pip", the lab having paid for the
+# operator, with the literal "..." stored as data.
+#
+# NOTHING NEEDED 40. Storage is flat JSON (MAX_BODY 8192 per POST, MAX_ENTRIES
+# 100 per board); the in-game board Label already ellipsises at any length
+# (leaderboard_screen.gd:678), so DISPLAY never needed short DATA; no website
+# consumer in this repo states a column width. And 40 was contradicted by our
+# own product: LabNameGenerator ships curated names up to 50 characters --
+# including the very "GRIM (Global Risk Intervention Mechanism)" (41 bytes) that
+# started the investigation.
+#
+# SO THE BUDGET IS DERIVED. It is exactly the worst case the two input fields
+# can emit, which makes "the player is never edited" a fact of arithmetic rather
+# than a hope, and makes any future change to a field cap fail loudly here
+# instead of quietly on the board:
+#
+#     lab (<= LAB_NAME_MAX_CHARS) + " -- " + operator (<= OPERATOR_NAME_MAX_CHARS)
+#
+# at MAX_UTF8_BYTES_PER_CHAR, the most bytes one codepoint can occupy -- so the
+# worst case holds even if every character the player types is astral-plane.
+# fit_board_name() therefore CANNOT fire on anything the UI can produce. It
+# survives only as a backstop for values that never came from a field (an edited
+# save file, a corrupt local row), and its contract is still tested as such.
+#
+# BYTES rather than characters: the wire budget stays byte-denominated because
+# the server's cut is byte-denominated, and a byte budget derived at 4 bytes per
+# character is strictly safe against a character-denominated field cap.
+
+# The lab field. 50 is not a preference: it is LabNameGenerator's longest
+# curated output ("WELP (Worldwide Emergency Longtermist Partnership)" and the
+# institute three-parter both land on exactly 50), pinned by
+# test_the_generator_never_rolls_a_name_the_lab_field_cannot_hold. A pool entry
+# that outgrows this fails that test rather than the player's board row.
+const LAB_NAME_MAX_CHARS := 50
+# The operator field. Unchanged from the value pregame_setup.tscn has always
+# used; it has never been the half under pressure.
+const OPERATOR_NAME_MAX_CHARS := 30
+# Maximum bytes a single UTF-8 codepoint can occupy. The budget is computed at
+# this worst case so a field cap counted in CHARACTERS can never overflow a
+# budget counted in BYTES, whatever script the player writes in.
+const MAX_UTF8_BYTES_PER_CHAR := 4
 
 # Separator between the lab and the operator in the single board field. ASCII
 # double-hyphen per the house rule (issue #744), and NOT parentheses: the one
 # real lab name we have -- "GRIM (Global Risk Intervention Mechanism)" --
 # already contains brackets, so "LAB (OPERATOR)" would nest them.
 const BOARD_NAME_SEPARATOR := " -- "
+# Byte cost of BOARD_NAME_SEPARATOR. Spelled as a literal because a const
+# initialiser cannot call to_utf8_buffer(); pinned equal by
+# test_the_budget_is_derived_from_the_input_caps_not_chosen.
+const BOARD_NAME_SEPARATOR_BYTES := 4
+
+# MUST stay equal to $MAX_NAME_BYTES in server/leaderboard/score_api.php.
+# tools/check_board_name_budget.py fails the commit if the two drift -- the two
+# numbers disagreeing IS the bug this change exists to fix.
+const BOARD_NAME_MAX_BYTES := (
+	LAB_NAME_MAX_CHARS * MAX_UTF8_BYTES_PER_CHAR
+	+ BOARD_NAME_SEPARATOR_BYTES
+	+ OPERATOR_NAME_MAX_CHARS * MAX_UTF8_BYTES_PER_CHAR)
+
+const BOARD_NAME_CUT_MARK := "..."
 
 static func compose_board_name(lab: String, operator_name: String) -> String:
 	"""Both names inside the ONE field the server actually stores.
@@ -44,20 +94,24 @@ static func compose_board_name(lab: String, operator_name: String) -> String:
 	  2. `--`, not parentheses. The one real lab name we have,
 	     "GRIM (Global Risk Intervention Mechanism)", already contains
 	     brackets, so `LAB (OPERATOR)` nests them.
-	  3. NEITHER half may erase the other. The operator exists to break lab-name
-	     collisions -- Pip 2026-08-10, "we're going to get a LOT of colliding
-	     labs" -- so it cannot be the half that silently vanishes; and a board
-	     row with no lab is not what the column is for. The operator is capped
-	     at half the composable budget and the lab takes the remainder, so a
-	     long name shortens itself rather than the other one.
+	  3. NEITHER half may erase the other, and NEITHER half pays for the other.
+	     Each name gets its OWN allowance, sized at its own field cap, so the
+	     two are independent: adding a maximum-length operator cannot shorten
+	     the lab by a single character. #1176 gave the operator half the budget
+	     and the lab the remainder, which read as fair and was not -- with the
+	     budget too small for either, the lab was simply the half that lost, and
+	     the live w33 board said "Bureau of Catastrophe... -- Pip".
 
-	Fitting is CLIENT-SIDE and mandatory, not cosmetic. Measured the same day:
-	a submission whose byte-wise cut at 40 splits a UTF-8 codepoint takes the
-	ENTIRE board to zero rows while the server answers ok:true -- PHP
-	json_encode() returns false on malformed UTF-8, so the board file is
-	truncated and rewritten with nothing. Composition is what first puts
-	PLAYER-TYPED text into that byte-cut field, so this is the guard that keeps
-	an accented operator name from destroying a public board."""
+	NO NAME FROM A FIELD REACHES THE FITTING BELOW. The budget is derived from
+	the two field caps (see BOARD_NAME_MAX_BYTES), so a lab at its cap plus an
+	operator at its cap is exactly the budget, in the worst encoding. The fits
+	are backstops for values that never came from a field -- an edited save, a
+	corrupt local row -- and they matter because of a measured catastrophe: a
+	submission whose byte-wise server cut splits a UTF-8 codepoint takes the
+	ENTIRE board to zero rows while the server answers ok:true (PHP
+	json_encode() returns false on malformed UTF-8, so the file is truncated and
+	rewritten with nothing). That is fixed at source in score_api.php now; this
+	stays as the client half of the same guard."""
 	var lab_clean := _collapse_separator(lab.strip_edges())
 	var op_clean := _collapse_separator(operator_name.strip_edges())
 	# No operator -> byte-identical to what this client already submits. Every
@@ -66,9 +120,14 @@ static func compose_board_name(lab: String, operator_name: String) -> String:
 		return fit_board_name(lab_clean)
 	if lab_clean == "":
 		return fit_board_name(op_clean)
-	var composable: int = BOARD_NAME_MAX_BYTES - BOARD_NAME_SEPARATOR.to_utf8_buffer().size()
-	var op_fitted := fit_board_name(op_clean, int(composable / 2))
-	var lab_fitted := fit_board_name(lab_clean, composable - op_fitted.to_utf8_buffer().size())
+	# Each half's own allowance, from its own field cap. The operator can never
+	# claim more than its field could have produced, so whatever it leaves over
+	# is guaranteed to be at least the lab's full allowance.
+	var op_fitted := fit_board_name(
+		op_clean, OPERATOR_NAME_MAX_CHARS * MAX_UTF8_BYTES_PER_CHAR)
+	var lab_budget: int = (BOARD_NAME_MAX_BYTES - BOARD_NAME_SEPARATOR_BYTES
+		- op_fitted.to_utf8_buffer().size())
+	var lab_fitted := fit_board_name(lab_clean, lab_budget)
 	return lab_fitted + BOARD_NAME_SEPARATOR + op_fitted
 
 static func _collapse_separator(s: String) -> String:

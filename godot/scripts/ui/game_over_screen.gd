@@ -532,6 +532,12 @@ func _show_default_identity_prompt(entry, game_seed: String, flow: String) -> vo
 	name_label.text = "Operator:"  # nomenclature ruling (#957): the player is the Operator
 	name_label.custom_minimum_size = Vector2(80, 0)
 	var name_edit := LineEdit.new()
+	# Same cap as the pregame field, from the same constant. These are two doors
+	# into ONE pair of values: this prompt used to build bare LineEdits with no
+	# max_length, so a name typed here was unbounded while the identical name
+	# typed at pregame was capped -- and the unbounded one was then silently cut
+	# the next time the pregame screen loaded it.
+	name_edit.max_length = Leaderboard.OPERATOR_NAME_MAX_CHARS
 	name_edit.text = GameConfig.player_name
 	name_edit.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	name_row.add_child(name_label)
@@ -543,11 +549,15 @@ func _show_default_identity_prompt(entry, game_seed: String, flow: String) -> vo
 	lab_label.text = "Lab:"
 	lab_label.custom_minimum_size = Vector2(80, 0)
 	var lab_edit := LineEdit.new()
+	lab_edit.max_length = Leaderboard.LAB_NAME_MAX_CHARS
 	lab_edit.text = GameConfig.lab_name
 	lab_edit.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var reroll := Button.new()
 	reroll.text = "Reroll"
-	reroll.tooltip_text = "Roll a generated lab name until one fits"
+	# "until one fits" was true when the board budget was smaller than the
+	# generator's own names. The field now holds the longest name the generator
+	# can roll, so fitting is no longer something the player has to shop for.
+	reroll.tooltip_text = "Roll a different generated lab name"
 	# UI-side RNG only -- never the seeded run RNG (ADR-0006).
 	var reroll_rng := RandomNumberGenerator.new()
 	reroll_rng.randomize()

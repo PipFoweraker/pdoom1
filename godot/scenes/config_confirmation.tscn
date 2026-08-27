@@ -95,6 +95,8 @@ size_flags_horizontal = 3
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 18
 text = "Researcher"
+clip_text = true
+text_overrun_behavior = 3
 
 [node name="LabNameRow" type="HBoxContainer" parent="Panel/VBox/FieldsContainer"]
 layout_mode = 2
@@ -112,6 +114,8 @@ size_flags_horizontal = 3
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 18
 text = "AI Safety Lab"
+clip_text = true
+text_overrun_behavior = 3
 
 [node name="SeedRow" type="HBoxContainer" parent="Panel/VBox/FieldsContainer"]
 layout_mode = 2

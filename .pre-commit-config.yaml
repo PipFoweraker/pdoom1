@@ -82,6 +82,21 @@ repos:
         # indistinguishable from success on the server side. This checks the
         # layer that failed. Proven to fail on a deliberate break, not just pass.
 
+      - id: board-name-budget
+        name: Client and server agree on the leaderboard name budget
+        entry: python tools/check_board_name_budget.py
+        language: system
+        pass_filenames: false
+        files: ^(godot/scripts/leaderboard\.gd|server/leaderboard/score_api\.php)$
+        # The budget lived in two files with no way to notice each other: the
+        # PHP cut player_name at 40 bytes, the client copied 40 from a
+        # MEASUREMENT of the deployed server, and its comment insisted the PHP
+        # "is in no repo here" -- it is, two directories away. Believing the
+        # number external, the client divided it instead of raising it, and the
+        # live w33 board published "Bureau of Catastrophe... -- Pip" with the
+        # "..." stored as data. Proven to fail on a deliberate drift, not just
+        # to pass.
+
       - id: check-pyc-files
         name: Check for .pyc files
         entry: python -c "import sys; sys.exit(1 if any('.pyc' in arg for arg in sys.argv[1:]) else 0)"

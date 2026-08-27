@@ -35,10 +35,27 @@ func _ready():
 	_name_rng.randomize()
 	print("[PreGameSetup] Initializing...")
 
+	# Cap the identity fields at the point of entry, from the SAME constants the
+	# board budget is derived from (leaderboard.gd). A name must never be
+	# silently altered between what the player types and what the board shows:
+	# the field simply stops accepting the keystroke, which the player can see,
+	# and the derived budget guarantees whatever it does accept ships intact.
+	# Set BEFORE the assignments below -- max_length applies to programmatic
+	# text too, so ordering decides whether a stored value survives the load.
+	player_name_input.max_length = Leaderboard.OPERATOR_NAME_MAX_CHARS
+	lab_name_input.max_length = Leaderboard.LAB_NAME_MAX_CHARS
+
 	# Load values from GameConfig
 	player_name_input.text = GameConfig.player_name
 	lab_name_input.text = GameConfig.lab_name
 	seed_input.text = GameConfig.game_seed
+	# Read BACK what the fields accepted. A value stored before these caps
+	# existed (the game-over prompt used to build unbounded LineEdits) would
+	# otherwise leave the field showing one name while GameConfig held a longer
+	# one -- the player sees the short name and submits the long one. What is
+	# on screen is the truth from here on.
+	GameConfig.player_name = player_name_input.text
+	GameConfig.lab_name = lab_name_input.text
 	# ONE LADDER while the player base is small (Pip's ruling, 2026-07-31, #1058).
 	# Difficulty appears NOWHERE in the leaderboard submission or the board key --
 	# an Easy run and a Hard run post to the same (seed, epoch) board with nothing
@@ -204,12 +221,19 @@ func _on_org_type_selected(index: int):
 
 func _on_random_lab_name_pressed():
 	"""Generate a random lab name"""
-	var random_name = LabNameGenerator.generate(_name_rng)
-	lab_name_input.text = random_name
-	GameConfig.lab_name = random_name
+	# MEASURED in headless Godot 4.5.1: LineEdit.set_text() enforces max_length,
+	# and a programmatic assignment does NOT emit text_changed. Assigning the raw
+	# generated string to GameConfig as well therefore left the field showing a
+	# truncated name while the config held the full one -- the player saw one lab
+	# and submitted another, until they touched the field and the short one won.
+	# GameConfig is taken from the FIELD, so the two cannot disagree. (The cap is
+	# now the generator's own longest output, so nothing is cut here today; this
+	# is the structure that keeps it true if either number ever moves.)
+	lab_name_input.text = LabNameGenerator.generate(_name_rng)
+	GameConfig.lab_name = lab_name_input.text
 	_update_launch_button()
 
-	print("[PreGameSetup] Generated random lab name: ", random_name)
+	print("[PreGameSetup] Generated random lab name: ", GameConfig.lab_name)
 
 func _on_weekly_seed_pressed():
 	"""Clear seed to use weekly challenge seed"""

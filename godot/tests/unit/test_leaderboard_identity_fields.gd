@@ -15,32 +15,45 @@ extends GutTest
 ## cannot identify a person; and one player running several labs over several
 ## months is a feature, so a single conflated field destroys that permanently.
 ##
-## Second measured defect: the remote board stores 40 bytes and cuts the rest.
-## The live (weekly-2026-w32, L4) board holds Pip's lab as
-##     "GRIM (Global Risk Intervention Mechanism"
-## -- exactly 40 bytes, amputated mid-word with the closing bracket eaten, from
-## a 41-byte submission. pdoom1 cannot change the server, so the client fits the
-## value deliberately and the server's cut never fires.
+## Second defect, and the reason this file exists a second time. The live
+## (weekly-2026-w33, L4) board held Pip's lab as
+##     "Bureau of Catastrophe... -- Pip"
+## -- the literal "..." was IN THE STORED VALUE. #1176 fitted the composed name
+## client-side to a 40-byte budget and split that budget between the two names,
+## so the lab paid for the operator and a player learned his lab's public name
+## by reading the board.
 ##
-## THIRD defect, measured 2026-08-10 against the DEPLOYED api.pdoom1.com on a
-## throwaway board (never the live one). #1176 stopped short of the wire because
-## the server's tolerance was unmeasured. Measured, it is this:
+## THE MISDIAGNOSIS. #1176 recorded the 40 as an external law -- leaderboard.gd
+## said in terms "score_api.php lives on the server and is in no repo here".
+## That is FALSE. The API is `server/leaderboard/score_api.php` IN THIS REPO and
+## the 40 was our own `substr($s, 0, 40)` on line 110. Having mistaken a
+## self-imposed cap for an immovable one, #1176 spent its effort dividing the
+## budget fairly instead of asking why it was 40.
 ##
-##   * the limit is 40 BYTES, not characters. 41 ASCII bytes -> 40 stored;
-##     40 ASCII bytes -> stored untouched.
-##   * an unknown extra key (`operator_name`, and a nonsense control key) is
-##     ACCEPTED with HTTP 200 and then SILENTLY DROPPED -- absent on read-back.
-##     So the feared rejection does not happen, but a separate key delivers
-##     nothing, which is why both names now travel COMPOSED in the one field.
-##   * a name whose byte-wise cut at 40 SPLITS a UTF-8 codepoint DESTROYS THE
-##     WHOLE BOARD. Measured: a 7-row board went to 0 rows while the server
-##     answered {"ok":true,"added":true,"rank":7}. An over-40 multibyte name
-##     whose cut lands ON a codepoint boundary is stored normally, so the
-##     trigger is precisely the split, not merely being non-ASCII.
+## Nothing needed 40:
+##   * storage is flat JSON -- MAX_BODY 8192 per POST, MAX_ENTRIES 100 per board;
+##   * the in-game board Label already ellipsises at ANY length
+##     (leaderboard_screen.gd:678), so display never needed short DATA;
+##   * no website consumer states a column width anywhere in this repo;
+##   * and 40 was contradicted by our own product -- LabNameGenerator ships
+##     curated names up to 50 characters, including the very
+##     "GRIM (Global Risk Intervention Mechanism)" (41) that started this.
 ##
-## That last one turns fit_board_name from a cosmetic nicety into a board
-## INTEGRITY guard, and it is why composition must fit CLIENT-SIDE: composing
-## puts player-typed text into the byte-cut field for the first time.
+## THE FIX these tests pin: the budget is DERIVED from the input caps rather
+## than picked, so "the player's name is never edited" is arithmetic and not
+## hope. See Leaderboard.BOARD_NAME_MAX_BYTES.
+##
+## The 2026-08-10 measurements against the deployed API still stand and are
+## still pinned below:
+##   * an unknown extra key (`operator_name`) is ACCEPTED with HTTP 200 and then
+##     SILENTLY DROPPED by $ALLOWED_FIELDS -- absent on read-back. A separate key
+##     delivers nothing, which is why both names travel COMPOSED in one field.
+##   * a name whose byte-wise cut SPLITS a UTF-8 codepoint DESTROYS THE WHOLE
+##     BOARD. Measured: a 7-row board went to 0 rows while the server answered
+##     {"ok":true,"added":true,"rank":7} -- PHP json_encode() returns false on
+##     malformed UTF-8, so the file was ftruncate(0)'d and written with nothing.
+##     Fixed at source in this change (codepoint-safe cut + an encode guard that
+##     refuses to write), and still guarded client-side here.
 ##
 ## What these tests still do NOT assert: that a separate `operator_name` KEY
 ## reaches the server. Measured to be dropped; that is a coordination ask.
@@ -50,7 +63,14 @@ extends GutTest
 const LIVE_AMPUTATED := "GRIM (Global Risk Intervention Mechanism"
 const LIVE_FULL_LAB := "GRIM (Global Risk Intervention Mechanism)"
 
+# The w33 symptom, byte for byte: what the public board actually showed after
+# #1176. The "..." is stored data, not a rendering artefact.
+const LIVE_W33_COMPOSED := "Bureau of Catastrophe... -- Pip"
+const LIVE_W33_FULL_LAB := "Bureau of Catastrophe Deferral"
+
 const GAME_OVER_SRC := "res://scripts/ui/game_over_screen.gd"
+const PREGAME_SRC := "res://scripts/ui/pregame_setup.gd"
+const PREGAME_SCENE_SRC := "res://scenes/pregame_setup.tscn"
 
 
 func _read(path: String) -> String:
@@ -63,17 +83,82 @@ func _read(path: String) -> String:
 	return text
 
 
-# ---- the measured truncation limit ------------------------------------------
+# ---- the budget is derived, not picked ---------------------------------------
 
-func test_measured_limit_matches_the_live_board():
-	# Provenance of the number: measured off the live board on 2026-08-08, not
-	# taken on trust. 41 bytes submitted, 40 bytes stored.
+func test_the_historical_evidence_is_still_recorded():
+	# Provenance of the OLD number, kept so nobody re-derives 40 from folklore:
+	# measured off the live board on 2026-08-08. 41 bytes submitted, 40 stored.
 	assert_eq(LIVE_AMPUTATED.to_utf8_buffer().size(), 40,
-		"the live amputated row is 40 bytes -- that IS the limit")
+		"the live amputated row is 40 bytes -- that WAS the server's own cut")
 	assert_eq(LIVE_FULL_LAB.to_utf8_buffer().size(), 41,
 		"the submission was 41 bytes; the server ate exactly one")
-	assert_eq(Leaderboard.BOARD_NAME_MAX_BYTES, 40,
-		"the client must encode the MEASURED limit, not an assumed one")
+
+
+func test_the_budget_is_derived_from_the_input_caps_not_chosen():
+	# THE structural fix. A hand-picked number is what let a self-imposed 40 pass
+	# for a law of nature for two issues running. This budget cannot be picked:
+	# it is exactly the worst case the two input fields can emit, so any future
+	# edit to a field cap must move the budget with it or fail here.
+	assert_eq(Leaderboard.BOARD_NAME_SEPARATOR.to_utf8_buffer().size(), 4,
+		"the derivation below hard-codes the separator's byte cost")
+	var worst_case: int = (
+		Leaderboard.LAB_NAME_MAX_CHARS * Leaderboard.MAX_UTF8_BYTES_PER_CHAR
+		+ Leaderboard.BOARD_NAME_SEPARATOR.to_utf8_buffer().size()
+		+ Leaderboard.OPERATOR_NAME_MAX_CHARS * Leaderboard.MAX_UTF8_BYTES_PER_CHAR)
+	assert_eq(Leaderboard.BOARD_NAME_MAX_BYTES, worst_case,
+		("the board budget must BE the worst case the input fields can produce "
+		+ "(%d chars lab + separator + %d chars operator, at the 4 bytes a UTF-8 "
+		+ "codepoint can occupy), so no typed name is ever edited")
+			% [Leaderboard.LAB_NAME_MAX_CHARS, Leaderboard.OPERATOR_NAME_MAX_CHARS])
+
+
+func test_no_name_the_input_fields_can_hold_is_ever_altered():
+	# The PRINCIPLE, executable: what the player types is what is published.
+	# Worst case in every direction -- both fields full, every character a
+	# 4-byte astral codepoint (an emoji-free 4-byte char; the ASCII house rule
+	# governs OUR strings, not what a player may type into their own name).
+	var wide := char(0x10330)  # GOTHIC LETTER AHSA: 4 UTF-8 bytes
+	var cases := [
+		[LIVE_W33_FULL_LAB, "Pip"],
+		[LIVE_FULL_LAB, "Pip"],
+		["A".repeat(Leaderboard.LAB_NAME_MAX_CHARS),
+			"B".repeat(Leaderboard.OPERATOR_NAME_MAX_CHARS)],
+		[wide.repeat(Leaderboard.LAB_NAME_MAX_CHARS),
+			wide.repeat(Leaderboard.OPERATOR_NAME_MAX_CHARS)],
+	]
+	for pair in cases:
+		var lab: String = pair[0]
+		var op: String = pair[1]
+		var composed: String = Leaderboard.compose_board_name(lab, op)
+		assert_eq(composed, lab + Leaderboard.BOARD_NAME_SEPARATOR + op,
+			("a name inside the field caps must be published EXACTLY as typed; "
+			+ "lab=%d chars op=%d chars") % [lab.length(), op.length()])
+		assert_false(composed.contains(Leaderboard.BOARD_NAME_CUT_MARK),
+			"nothing inside the input caps may ever carry a cut mark")
+
+
+func test_the_live_w33_symptom_cannot_recur():
+	# Names the reported defect directly. "Bureau of Catastrophe... -- Pip" was
+	# on the public board; the lab had paid for the operator.
+	var composed: String = Leaderboard.compose_board_name(LIVE_W33_FULL_LAB, "Pip")
+	assert_eq(composed, "Bureau of Catastrophe Deferral -- Pip",
+		"the lab must reach the board whole when the operator is present")
+	assert_ne(composed, LIVE_W33_COMPOSED,
+		"reproduced the exact string that is on the live w33 board")
+
+
+func test_an_operator_never_costs_the_lab_a_single_character():
+	# The unfairness in #1176's split, pinned: adding an operator shortened the
+	# lab. Whatever the lab publishes alone, it must still publish alongside a
+	# maximum-length operator.
+	var max_op := "O".repeat(Leaderboard.OPERATOR_NAME_MAX_CHARS)
+	for lab in [LIVE_W33_FULL_LAB, LIVE_FULL_LAB, "GRIM",
+			"A".repeat(Leaderboard.LAB_NAME_MAX_CHARS)]:
+		var alone: String = Leaderboard.compose_board_name(lab, "")
+		var with_op: String = Leaderboard.compose_board_name(lab, max_op)
+		assert_true(with_op.begins_with(alone),
+			("adding an operator shortened the lab: alone='%s' with_op='%s' -- "
+			+ "the operator must never be paid for out of the lab") % [alone, with_op])
 
 
 func test_fit_board_name_never_exceeds_the_limit():
@@ -102,28 +187,34 @@ func test_fit_board_name_passes_short_names_through_untouched():
 
 
 func test_the_live_amputation_is_never_reproduced():
-	# The real defect, named: this exact output is what is on the public board.
+	# The original w32 defect, named. This lab is 41 bytes; it now travels whole,
+	# because the budget was the thing that was wrong.
 	var fitted: String = Leaderboard.fit_board_name(LIVE_FULL_LAB)
 	assert_ne(fitted, LIVE_AMPUTATED,
 		"fit_board_name reproduced the live mid-word amputation")
-	assert_true(fitted.ends_with(Leaderboard.BOARD_NAME_CUT_MARK),
-		"a cut name must be LEGIBLY cut (ends with '%s'), not silently amputated"
-			% Leaderboard.BOARD_NAME_CUT_MARK)
-	assert_false(fitted.begins_with(LIVE_AMPUTATED),
-		"the fitted name must not merely re-mark the same mid-word cut")
+	assert_eq(fitted, LIVE_FULL_LAB,
+		"the lab that started this investigation must now publish INTACT -- "
+		+ "a legible cut was the #1176 answer; not cutting at all is the fix")
 
 
 func test_cut_names_break_on_a_word_boundary_when_one_is_available():
-	var fitted: String = Leaderboard.fit_board_name(LIVE_FULL_LAB)
-	# "Mechanism)" is dropped whole rather than sliced into "Mechani".
-	assert_eq(fitted, "GRIM (Global Risk Intervention...",
+	# fit_board_name is a BACKSTOP now (nothing from a field can reach it), but
+	# its contract still holds for values that never came from a field.
+	var raw := "Institute for the Study of Extremely Long Organisational Names "
+	var fitted: String = Leaderboard.fit_board_name(raw.repeat(8))
+	assert_true(fitted.ends_with(Leaderboard.BOARD_NAME_CUT_MARK),
+		"a cut name must be LEGIBLY cut, not silently amputated")
+	var body := fitted.trim_suffix(Leaderboard.BOARD_NAME_CUT_MARK)
+	assert_true(raw.repeat(8).begins_with(body),
+		"the surviving prefix must be a real prefix of the original")
+	assert_true(raw.repeat(8).substr(body.length(), 1) == " ",
 		"a name with spaces must cut at a space, not through a word")
 
 
 func test_a_single_unbroken_word_still_gets_cut_rather_than_dropped():
 	# Boundary: no space to break on. Dropping to empty would lose the identity
 	# entirely, so a hard cut with the mark is correct here.
-	var fitted: String = Leaderboard.fit_board_name("A".repeat(200))
+	var fitted: String = Leaderboard.fit_board_name("A".repeat(500))
 	assert_true(fitted.to_utf8_buffer().size() <= Leaderboard.BOARD_NAME_MAX_BYTES)
 	assert_true(fitted.length() > 10, "an unbroken word must survive, not vanish")
 	assert_true(fitted.ends_with(Leaderboard.BOARD_NAME_CUT_MARK))
@@ -242,14 +333,16 @@ func test_wire_dict_carries_the_full_contract_fields():
 # The server drops unknown keys (measured), so the only way the operator reaches
 # a public board today is inside `player_name`.
 
-## Reproduce the server's own cut, exactly: PHP substr($s, 0, 40) is BYTE-wise.
-## Returns true when the result is still valid UTF-8 -- i.e. when the submission
-## would NOT wipe the board.
-func _survives_server_substr(name: String) -> bool:
+## The byte-wise cut the OLD server did: PHP substr($s, 0, N). Returns true when
+## the result is still valid UTF-8 -- i.e. when the submission would NOT wipe the
+## board. `cut_at` is a parameter because the calibration test below pins the
+## helper against the 2026-08-10 measurements, which were taken at 40, while the
+## guard tests run it at the budget the client actually targets today.
+func _survives_server_substr(name: String, cut_at: int = Leaderboard.BOARD_NAME_MAX_BYTES) -> bool:
 	var bytes := name.to_utf8_buffer()
-	if bytes.size() <= Leaderboard.BOARD_NAME_MAX_BYTES:
+	if bytes.size() <= cut_at:
 		return true  # substr is a no-op; nothing to split
-	var cut := bytes.slice(0, Leaderboard.BOARD_NAME_MAX_BYTES)
+	var cut := bytes.slice(0, cut_at)
 	# Validity by BYTE ROUND-TRIP, not by an empty-string check: Godot's
 	# get_string_from_utf8 substitutes replacement characters for a split
 	# codepoint rather than failing, so decoding alone silently "succeeds".
@@ -313,14 +406,20 @@ func test_a_composed_name_can_never_wipe_the_board():
 						composed.to_utf8_buffer().size()])
 
 
+const MEASURED_2026_08_10_CUT := 40  # the server's own substr at the time
+
 func test_the_multibyte_split_really_is_the_wipe_trigger():
 	# Calibrates the helper above against the two measured outcomes, so a future
 	# reader can see the guard is testing the real boundary and not a proxy.
+	# Pinned at the cut that was actually measured (40), not at today's budget:
+	# these two strings ARE the 2026-08-10 experiment.
 	# Cut lands ON a codepoint boundary (21 x 2-byte = 42 bytes) -> board survived.
-	assert_true(_survives_server_substr(char(0x00E9).repeat(21)),
+	assert_true(_survives_server_substr(
+			char(0x00E9).repeat(21), MEASURED_2026_08_10_CUT),
 		"an over-40 multibyte name cut on a boundary was stored normally")
 	# Cut lands INSIDE a codepoint (39 ASCII + 1 x 2-byte = 41 bytes) -> board died.
-	assert_false(_survives_server_substr("C".repeat(39) + char(0x00E9)),
+	assert_false(_survives_server_substr(
+			"C".repeat(39) + char(0x00E9), MEASURED_2026_08_10_CUT),
 		"the measured wipe case must be recognised as unsafe")
 
 
@@ -349,12 +448,17 @@ func test_a_name_containing_the_separator_cannot_forge_a_second_name():
 
 
 func test_a_cut_half_is_legibly_cut():
-	# Same rule as fit_board_name: an amputation that reads as a typo is the
-	# defect. If a half had to be shortened, it says so.
-	var composed: String = Leaderboard.compose_board_name(LIVE_FULL_LAB, "Pip")
+	# Backstop contract: a half that CANNOT have come from a field (500 chars --
+	# ten times the lab cap, so an edited save or a corrupt local row) is still
+	# cut legibly rather than amputated. No field can reach this path; the test
+	# above (test_no_name_the_input_fields_can_hold_is_ever_altered) is what
+	# proves the player never does.
+	var composed: String = Leaderboard.compose_board_name("Lab " + "X".repeat(500), "Pip")
 	assert_true(composed.contains(Leaderboard.BOARD_NAME_CUT_MARK),
 		"a lab that had to be shortened must show the '%s' mark, not be amputated"
 			% Leaderboard.BOARD_NAME_CUT_MARK)
+	assert_true(composed.ends_with(Leaderboard.BOARD_NAME_SEPARATOR + "Pip"),
+		"the operator survives whole even when the lab had to be cut")
 	assert_false(composed.contains(LIVE_AMPUTATED),
 		"must never reproduce the live mid-word amputation")
 
@@ -460,3 +564,113 @@ func test_prompt_retrofit_applies_both_names_to_the_pending_entry():
 	var body := src.substr(idx, 1200)
 	assert_true(body.contains("operator_name"),
 		"the claimed operator name must be retrofitted onto the pending entry")
+
+
+# ---- the input side: what the player CAN type is what ships -------------------
+#
+# The budget above is only honest if the fields cannot emit more than it. These
+# tests are the other half of the derivation.
+
+func test_the_generator_never_rolls_a_name_the_lab_field_cannot_hold():
+	# The trap that made 40 obviously wrong, now pinned the other way round:
+	# LabNameGenerator's own curated pools reach 50 characters
+	# ("WELP (Worldwide Emergency Longtermist Partnership)" and the institute
+	# three-parter both hit exactly 50). If a future pool entry outgrows the lab
+	# field, the Roll button starts handing players names their own field cannot
+	# hold -- so it fails HERE, at the pool, not silently at the board.
+	var rng := RandomNumberGenerator.new()
+	var longest := ""
+	for s in range(4000):
+		rng.seed = s
+		var rolled := LabNameGenerator.generate(rng)
+		if rolled.length() > longest.length():
+			longest = rolled
+	assert_true(longest.length() <= Leaderboard.LAB_NAME_MAX_CHARS,
+		("LabNameGenerator rolled a %d-character name ('%s') but the lab field "
+		+ "holds %d -- raise LAB_NAME_MAX_CHARS (and with it the derived board "
+		+ "budget) or shorten the pool entry")
+			% [longest.length(), longest, Leaderboard.LAB_NAME_MAX_CHARS])
+	# Guard the guard: if the sweep stopped finding long names the test is inert.
+	assert_true(longest.length() >= 40,
+		"the sweep should reach the long curated names; got only %d chars"
+			% longest.length())
+
+
+func test_the_pregame_fields_are_capped_from_the_shared_constants():
+	# The caps must be DERIVED from the same constants the budget is, not typed
+	# separately into a .tscn where they can drift. A literal in the scene is
+	# exactly how 30-char fields ended up feeding a 40-byte budget while the
+	# generator produced 50-char names -- three numbers, no relationship.
+	var src := _read(PREGAME_SRC)
+	assert_true(src.contains("lab_name_input.max_length = Leaderboard.LAB_NAME_MAX_CHARS"),
+		"the lab field must take its cap from Leaderboard.LAB_NAME_MAX_CHARS")
+	assert_true(src.contains("player_name_input.max_length = Leaderboard.OPERATOR_NAME_MAX_CHARS"),
+		"the operator field must take its cap from Leaderboard.OPERATOR_NAME_MAX_CHARS")
+
+
+func test_the_scene_cap_agrees_with_the_constant_it_mirrors():
+	# The .tscn value is what the editor and a designer see. It is allowed to
+	# exist, but it may not disagree with the runtime cap.
+	var scene := _read(PREGAME_SCENE_SRC)
+	var expected := {
+		"LabNameRow": Leaderboard.LAB_NAME_MAX_CHARS,
+		"PlayerNameRow": Leaderboard.OPERATOR_NAME_MAX_CHARS,
+	}
+	for row in expected:
+		var header := ("[node name=\"LineEdit\" type=\"LineEdit\" "
+			+ "parent=\"Panel/VBox/FieldsContainer/%s\"]") % row
+		var idx := scene.find(header)
+		assert_true(idx >= 0, "could not find the %s LineEdit in the scene" % row)
+		var block := scene.substr(idx, 400)
+		assert_true(block.contains("max_length = %d" % expected[row]),
+			("the %s LineEdit in pregame_setup.tscn must declare max_length = %d "
+			+ "to match the constant _ready() applies at runtime")
+				% [row, expected[row]])
+
+
+func test_the_game_over_identity_prompt_caps_the_same_as_pregame():
+	# Two doors into the same two values. The game-over prompt built bare
+	# LineEdit.new()s with NO max_length at all, so a name typed there was
+	# unbounded while the same name typed at pregame was capped -- and the
+	# unbounded one then got silently cut the next time pregame loaded it.
+	var src := _read(GAME_OVER_SRC)
+	assert_true(src.contains("lab_edit.max_length = Leaderboard.LAB_NAME_MAX_CHARS"),
+		"the game-over Lab field must carry the same cap as the pregame one")
+	assert_true(src.contains("name_edit.max_length = Leaderboard.OPERATOR_NAME_MAX_CHARS"),
+		"the game-over Operator field must carry the same cap as the pregame one")
+
+
+func test_a_generated_name_cannot_desync_the_field_from_the_config():
+	# MEASURED in headless Godot: LineEdit.set_text() ENFORCES max_length, and
+	# setting `text` programmatically does NOT emit text_changed. So
+	#     lab_name_input.text = random_name
+	#     GameConfig.lab_name = random_name
+	# left the field showing a truncated name while GameConfig held the full one
+	# -- the player saw one lab and submitted another, until they touched the
+	# field, at which point the shorter one silently won. GameConfig must be set
+	# from what the FIELD accepted, so the two can never disagree.
+	var src := _read(PREGAME_SRC)
+	assert_false(src.contains("GameConfig.lab_name = random_name"),
+		("GameConfig must not be set from the raw generated string -- read back "
+		+ "what the field accepted, so what the player SEES is what ships"))
+	assert_true(src.contains("GameConfig.lab_name = lab_name_input.text"),
+		"the config must take the lab name back from the field itself")
+
+
+func test_the_confirmation_screen_survives_the_longest_allowed_name():
+	# Consequence of raising the lab cap to 50: this screen shows the raw name in
+	# a Label with size_flags_horizontal = 3 and, until now, no clipping and no
+	# overrun behaviour -- so its minimum size grew with the text and pushed the
+	# row wider than the anchored Panel. The in-game board Label already did the
+	# right thing (leaderboard_screen.gd:678); this one had been carried by the
+	# 30-char cap alone.
+	var scene := _read("res://scenes/config_confirmation.tscn")
+	for row in ["PlayerNameRow", "LabNameRow"]:
+		var idx := scene.find("ValueLabel\" type=\"Label\" parent=\"Panel/VBox/FieldsContainer/%s\"" % row)
+		assert_true(idx >= 0, "could not find the %s ValueLabel" % row)
+		var block := scene.substr(idx, 400)
+		# 3 == TextServer.OVERRUN_TRIM_ELLIPSIS
+		assert_true(block.contains("text_overrun_behavior = 3"),
+			"%s ValueLabel must ellipsise a long name, not overflow the panel" % row)
+		assert_true(block.contains("clip_text = true"),
+			"%s ValueLabel must not grow its minimum size with the name" % row)

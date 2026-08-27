@@ -145,7 +145,7 @@ python scripts/export_leaderboards.py --verbose
 | Field | Type | Description |
 |-------|------|-------------|
 | `score` | int | Turns survived (primary ranking metric) |
-| `player_name` | string | **Misnamed: this carries the LAB name, and since 2026-08-10 the operator too, composed as `Lab -- Operator`.** Max 40 BYTES -- the server cuts the rest with a byte-wise `substr` and says nothing. A cut that splits a codepoint WIPES THE BOARD; see below. |
+| `player_name` | string | **Misnamed: this carries the LAB name, and since 2026-08-10 the operator too, composed as `Lab -- Operator`.** Max 324 BYTES, derived from the input-field caps (see below) -- large enough that a name typed in the game is never cut at all. |
 | `date` | ISO datetime | When score was achieved |
 | `level_reached` | int | Final turn number (same as score) |
 | `game_mode` | string | Economic model version |
@@ -159,28 +159,86 @@ python scripts/export_leaderboards.py --verbose
 | `research_papers_published` | int | Papers published during game |
 | `technical_debt_accumulated` | int | Technical debt accrued |
 
-### Name budget: 40 bytes, measured
+### Name budget: 324 bytes, DERIVED (was 40, and 40 was arbitrary)
 
-The limit was **measured, not assumed**. On 2026-08-08 the live
-`(weekly-2026-w32, L4)` board held this row:
+**The rule: a name is never silently altered between the field the player types
+it into and the public board.** Either it fits, or the field does not accept the
+keystroke.
+
+#### What 40 was, and why it was wrong
+
+The old limit was measured off the deployed API and recorded as an external
+constraint. On 2026-08-08 the live `(weekly-2026-w32, L4)` board held:
 
 ```
 "GRIM (Global Risk Intervention Mechanism"    <- 40 bytes, as stored
 "GRIM (Global Risk Intervention Mechanism)"   <- 41 bytes, as submitted
 ```
 
-The server ate exactly one byte and gave no signal. The cut is byte-wise, so a
-non-ASCII name can also be split mid-codepoint and stored as invalid UTF-8.
+Measuring it was right. Concluding it was **immovable** was not.
+`godot/scripts/leaderboard.gd` stated in terms that `score_api.php` "lives on the
+server and is in no repo here". **That was false** -- it is
+`server/leaderboard/score_api.php`, in this repository, and the 40 was our own
+`substr($s, 0, 40)`. Believing the number external, the client divided it between
+the two names instead of raising it, and the live `weekly-2026-w33` board
+published:
 
-Confirmed again on 2026-08-10 by direct probe of the deployed API on a throwaway
-board: 41 ASCII bytes submitted -> 40 stored; 40 ASCII bytes -> stored untouched.
-The unit is **bytes, not characters**.
+```
+"Bureau of Catastrophe... -- Pip"
+```
 
-`Leaderboard.fit_board_name()` (`godot/scripts/leaderboard.gd`) fits the value
-before submission -- word-boundary cut plus a visible `...` mark -- so the
-server's `substr` never fires.
+The literal `...` was **stored data**. A player learned his lab's public name by
+reading the board.
 
-### A split codepoint DESTROYS THE BOARD (measured 2026-08-10)
+Nothing ever needed 40:
+
+- **Storage** is flat JSON -- `MAX_BODY` 8192 per POST, `MAX_ENTRIES` 100 per
+  board. A few hundred bytes of name is noise.
+- **Display** already coped: the in-game board Label sets
+  `OVERRUN_TRIM_ELLIPSIS` (`leaderboard_screen.gd:678`), so it ellipsises at any
+  length. Display needing short *rendering* never meant storage needing short
+  *data*.
+- **No website consumer** in this repo states a column width.
+- And 40 **contradicted our own product**: `LabNameGenerator` ships curated lab
+  names up to 50 characters -- including the very
+  `GRIM (Global Risk Intervention Mechanism)` (41 bytes) the investigation was
+  named after.
+
+#### What the budget is now
+
+Not chosen -- **derived**, so that "the player is never edited" is arithmetic
+rather than intention:
+
+```
+BOARD_NAME_MAX_BYTES = (LAB_NAME_MAX_CHARS + OPERATOR_NAME_MAX_CHARS)
+                       * MAX_UTF8_BYTES_PER_CHAR
+                       + BOARD_NAME_SEPARATOR_BYTES
+                     = (50 + 30) * 4 + 4
+                     = 324
+```
+
+- **50** is `LabNameGenerator`'s own longest curated output, not a preference.
+  A pool entry that outgrows it fails
+  `test_the_generator_never_rolls_a_name_the_lab_field_cannot_hold`, at the pool,
+  rather than silently on someone's board row.
+- **4** is the most bytes one UTF-8 codepoint can occupy, so a field cap counted
+  in CHARACTERS can never overflow a budget counted in BYTES, in any script.
+
+Consequently `Leaderboard.fit_board_name()` **cannot fire on anything the UI can
+produce**. It remains as a backstop for values that never came from a field (an
+edited save, a corrupt local row), and its word-boundary-plus-`...` contract is
+still tested as such.
+
+The caps are applied where the names are typed -- `pregame_setup.gd:_ready()`
+and the game-over identity prompt -- from these same constants, so the field
+stops accepting characters visibly rather than editing the name later.
+
+`tools/check_board_name_budget.py` (pre-commit) fails the commit if
+`$MAX_NAME_BYTES` in the PHP and `BOARD_NAME_MAX_BYTES` in the GDScript ever
+drift apart, or if the budget is re-frozen into a literal. The two numbers
+disagreeing, with nothing comparing them, is the whole defect class.
+
+### A split codepoint DESTROYED THE BOARD (measured 2026-08-10; fixed at source)
 
 This is the severe one, and it was found by probing rather than reading.
 
@@ -201,12 +259,24 @@ The trigger is **precisely the split**, not merely being non-ASCII: an over-40
 multi-byte name whose cut lands ON a codepoint boundary (21 x 2-byte = 42 bytes)
 was stored normally in the same probe run.
 
-Consequence for this repo: `fit_board_name()` is a **board-integrity guard**, not
-a cosmetic nicety. Any client that submits an unfitted player-typed name can wipe
-a public league board by accident.
+**Both halves of this are now fixed in `score_api.php`, in this repo:**
 
-`score_api.php` as deployed is not writable from here. **The server-side fix is
-the real fix** -- see the coordination ask below.
+1. `fit_name_bytes()` replaces `substr()` -- it walks back off any partial
+   codepoint, so a cut can never emit malformed UTF-8. (No `mbstring`
+   dependency; Dreamhost shared PHP is not guaranteed to have it.)
+2. The writer **encodes before it truncates**. If `json_encode()` ever returns
+   `false`, the board file on disk is left untouched and the caller gets a 500
+   instead of a cheerful `{"ok":true}` over an emptied league.
+
+Either guard alone would have prevented the measured wipe; a public board is
+worth both.
+
+**DEPLOY GATE:** `score_api.php` is uploaded by hand
+(`server/leaderboard/README.md`). Until the new file is on `api.pdoom1.com` the
+deployed server is still the old 40-byte byte-wise one, so the upload must land
+**before** a game build that sends longer names. Verify with
+`curl "https://api.pdoom1.com/score_api.php?seed=...&version=..."` against a
+throwaway board, never the live one.
 
 ### Two identity values, one wire field (shipped 2026-08-10)
 
@@ -239,9 +309,13 @@ Format rules, each forced by a real constraint:
 - **`--`, not parentheses.** The one real lab name we have,
   `GRIM (Global Risk Intervention Mechanism)`, already contains brackets, so
   `LAB (OPERATOR)` would nest them.
-- **Neither half may erase the other.** The operator is capped at half the
-  composable budget; the lab takes the remainder. The operator exists to break
-  lab-name collisions, so it must not be the half that silently vanishes.
+- **Neither half may erase the other, and neither pays for the other.** Each
+  name gets its OWN allowance, sized at its own field cap, so adding a
+  maximum-length operator cannot shorten the lab by a single character. The
+  earlier rule -- operator gets half, lab takes the remainder -- read as fair and
+  was not: with the budget too small for either, the lab was simply the half
+  that lost, which is how `Bureau of Catastrophe... -- Pip` reached the public
+  board.
 - **No operator -> unchanged output.** Legacy rows and anonymous players submit
   exactly as they did before: no separator, no empty parenthetical, and no
   back-filled identity on read (`from_dict` defaults `operator_name` to `""`).
@@ -252,15 +326,31 @@ operator on the wire twice and desync the day the server whitelists it.
 
 ### Coordination ask (pdoom1-website / API)
 
-Not decided or changed in this repo. In priority order:
+The first framing of this list assumed none of it was reachable from here. Two
+of the three were: `server/leaderboard/score_api.php` is in this repo and is the
+file that gets uploaded.
 
-1. **Fix the board-wipe.** Guard the write: either cut on a character boundary
-   (`mb_substr($s, 0, 40, 'UTF-8')`) or refuse to overwrite the board when
-   `json_encode()` returns `false`. Today one malformed name destroys a league.
-2. **Whitelist `operator_name`** in `$ALLOWED_FIELDS` and render it as a second
-   column, so the two names stop sharing 40 bytes.
-3. **Raise the 40-byte limit**, and **return the stored value** in the POST
-   response so the client can tell the player what actually landed.
+**Done in this repo, pending a manual upload:**
+
+1. ~~**Fix the board-wipe.**~~ Done both ways -- `fit_name_bytes()` never emits a
+   split codepoint, and the writer encodes before truncating so a failed
+   `json_encode()` cannot blank a league.
+2. ~~**Raise the 40-byte limit.**~~ Done: `$MAX_NAME_BYTES = 324`, derived from
+   the client's input-field caps and drift-gated by
+   `tools/check_board_name_budget.py`.
+
+**Still genuinely a coordination ask:**
+
+3. **Whitelist `operator_name`** in `$ALLOWED_FIELDS` and render it as a second
+   column. Composition inside `player_name` is a workaround for a single-field
+   schema, not the right shape: two names in one string cannot be sorted,
+   filtered or de-duplicated separately, and any lab name containing ` -- ` has
+   to be mangled on the way out (`_collapse_separator`). Structured is better
+   whenever the website is ready for a second column.
+4. **Return the stored value** in the POST response, so the client can show the
+   player what actually landed rather than inferring it. With the budget derived
+   this should now always equal what was sent -- which makes it a cheap
+   end-to-end assertion rather than a display feature.
 
 ---
 

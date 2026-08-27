@@ -66,6 +66,23 @@ an API change is `pdoom1-website` territory, routed through coordination, not
 solved in this repo. The live board also already holds rows whose `player_name`
 is a lab name, so adding a field is a migration, not an edit.
 
+> **CORRECTION (2026-08-18).** The sentence above is wrong in the way that
+> mattered most, and the error propagated: "an API change is `pdoom1-website`
+> territory, not solved in this repo" became a comment in
+> `godot/scripts/leaderboard.gd` asserting `score_api.php` "is in no repo here",
+> and from there became the reason #1176 divided the 40-byte budget between the
+> two names instead of raising it. The API **is** in this repo, at
+> `server/leaderboard/score_api.php`, and the 40 was our own `substr($s, 0, 40)`.
+>
+> The cost of the wrong belief: the live `weekly-2026-w33` board published
+> `"Bureau of Catastrophe... -- Pip"`, with the `...` stored as data.
+>
+> The budget is now derived from the input-field caps rather than measured off a
+> server (324 bytes), and `tools/check_board_name_budget.py` gates the client and
+> server numbers against each other. Deploying `score_api.php` is still a manual
+> upload, which is the grain of truth the sentence above was built on -- but a
+> manual deploy is not the same thing as another team's decision.
+
 ### The generalisation worth testing on Saturday
 
 Three defects tonight share one shape: **a field whose name and contents

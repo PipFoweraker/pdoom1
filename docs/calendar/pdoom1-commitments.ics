@@ -389,11 +389,11 @@ DTEND;VALUE=DATE:20260811
 SUMMARY:[UNPARSED] needs a declaration -- LEADERBOARD_WEBSITE_INTEGRATION.
  md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/LEADERBOARD_WEBSI
- TE_INTEGRATION.md:148. 5 line(s) in docs/LEADERBOARD_WEBSITE_INTEGRATION.
+ TE_INTEGRATION.md:148. 4 line(s) in docs/LEADERBOARD_WEBSITE_INTEGRATION.
  md mention this date and no COMMITMENT: declaration accounts for it. Eith
  er add a declaration or the date is incidental. First line: | `player_nam
  e` | string | **Misnamed: this carries the LAB name\, and since 2026-08-1
- 0 the operator too\, composed as `Lab -- Operator`.** Max 40 BYTES -- Gen
+ 0 the operator too\, composed as `Lab -- Operator`.** Max 324 BYTE -- Gen
  erated from tracked sources by scripts/generate_commitment_calendar.py\; 
  regenerate to update.
 CATEGORIES:UNPARSED
@@ -1462,6 +1462,31 @@ BEGIN:VALARM
 ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- position.md (unparsed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:905c5dd6a1def939@commitments.pdoom1
+DTSTAMP:20260818T000000Z
+DTSTART;VALUE=DATE:20260818
+DTEND;VALUE=DATE:20260819
+SUMMARY:[UNPARSED] needs a declaration -- POSTMORTEM_SATURDAY_ITEMS_2026-0
+ 8-08.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/POSTMORTEM_SATURD
+ AY_ITEMS_2026-08-08.md:69. 1 line(s) in docs/POSTMORTEM_SATURDAY_ITEMS_20
+ 26-08-08.md mention this date and no COMMITMENT: declaration accounts for
+  it. Either add a declaration or the date is incidental. First line: > **
+ CORRECTION (2026-08-18).** The sentence above is wrong in the way that --
+  Generated from tracked sources by scripts/generate_commitment_calendar.p
+ y\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- POSTMORTEM_SATURDAY_ITEMS_2026-08-08.md
+  (unparsed) -- unowned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT

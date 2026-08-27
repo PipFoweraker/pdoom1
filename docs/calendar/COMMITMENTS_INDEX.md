@@ -13,7 +13,7 @@ Horizon: **2026-08-09** (the prose scan reports dates at or after this; roll it
 forward deliberately in `COMMITMENTS.md`, never automatically -- a clock-reading
 generator goes stale overnight and trains people to ignore the check).
 
-**48 declared, 4 release-train, 59 UNPARSED, 0 malformed.**
+**48 declared, 4 release-train, 60 UNPARSED, 0 malformed.**
 
 ## Declared commitments
 
@@ -105,11 +105,10 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-10 | `docs/LAPTOP_DEBIAN_SETUP.md` | 22 | **Where memos land today, measured 2026-08-10, not assumed:** |
 | 2026-08-10 | `docs/LAPTOP_DEBIAN_SETUP.md` | 62 | replicate through git. Measured on 2026-08-10: **2,713 entries, 2,704 carrying a |
 | 2026-08-10 | `docs/LAPTOP_DEBIAN_SETUP.md` | 134 | external player did, by accident, on 2026-08-10 (`Kaur, Chen & Lindqvist`, score |
-| 2026-08-10 | `docs/LEADERBOARD_WEBSITE_INTEGRATION.md` | 148 | \| `player_name` \| string \| **Misnamed: this carries the LAB name, and since 2026-08-10 the operator too, composed as `Lab -- Operator`.** Max 40 BYTES |
-| 2026-08-10 | `docs/LEADERBOARD_WEBSITE_INTEGRATION.md` | 175 | Confirmed again on 2026-08-10 by direct probe of the deployed API on a throwaway |
-| 2026-08-10 | `docs/LEADERBOARD_WEBSITE_INTEGRATION.md` | 183 | ### A split codepoint DESTROYS THE BOARD (measured 2026-08-10) |
-| 2026-08-10 | `docs/LEADERBOARD_WEBSITE_INTEGRATION.md` | 211 | ### Two identity values, one wire field (shipped 2026-08-10) |
-| 2026-08-10 | `docs/LEADERBOARD_WEBSITE_INTEGRATION.md` | 215 | may run several labs over time. He restated it on 2026-08-10 after a second real |
+| 2026-08-10 | `docs/LEADERBOARD_WEBSITE_INTEGRATION.md` | 148 | \| `player_name` \| string \| **Misnamed: this carries the LAB name, and since 2026-08-10 the operator too, composed as `Lab -- Operator`.** Max 324 BYTE |
+| 2026-08-10 | `docs/LEADERBOARD_WEBSITE_INTEGRATION.md` | 241 | ### A split codepoint DESTROYED THE BOARD (measured 2026-08-10; fixed at source) |
+| 2026-08-10 | `docs/LEADERBOARD_WEBSITE_INTEGRATION.md` | 281 | ### Two identity values, one wire field (shipped 2026-08-10) |
+| 2026-08-10 | `docs/LEADERBOARD_WEBSITE_INTEGRATION.md` | 285 | may run several labs over time. He restated it on 2026-08-10 after a second real |
 | 2026-08-10 | `docs/PRIVACY_POSTURE.md` | 25 | **HOW the two names are published (measured, PR #1176, 2026-08-10).** Both names |
 | 2026-08-10 | `pdoom1#984` | 0 | Half-day workshop: audit mechanics deep-dive (next epoch) -- something amazing under the smell |
 | 2026-08-10 | `tools/check_self_merge_eligibility.py` | 18 | 2026-08-10 and, until this file existed, they **promised eligibility and checked |
@@ -168,6 +167,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-15 | `tools/art_review/serve_review.py` | 1585 | // Built 2026-08-15 from a measurement, not a preference: the first mass review |
 | 2026-08-16 | `docs/workshop-2/position.md` | 547 | **On 2026-08-16**, ask for three run IDs -- one per guard -- each showing the |
 | 2026-08-16 | `docs/workshop-2/position.md` | 647 | 2026-08-16. |
+| 2026-08-18 | `docs/POSTMORTEM_SATURDAY_ITEMS_2026-08-08.md` | 69 | > **CORRECTION (2026-08-18).** The sentence above is wrong in the way that |
 | 2026-08-24 | `docs/design/LEAGUE_CUTOVER_PLAYBOOK.md` | 41 | at L4, and is pinned for reflective review on/after 2026-08-24. |
 | 2026-08-24 | `pdoom1#808` | 0 | Reflective review (on/after 2026-08-24): release/league cycle nomenclature + cadence |
 | 2026-08-24 | `pdoom1#811` | 0 | Workshop 3 (mechanics) -- Mon 07-27 W-3a / Tue 07-28 build / Wed 07-29 W-3b-W-4: crisp parts, brutal decisions |
