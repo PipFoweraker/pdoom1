@@ -205,9 +205,9 @@ than dropped because an index that silently omits looks complete when it
 is not.
 
 - `.github/workflows/guards.yml:3` -- # WHY THIS FILE EXISTS (issue #1265, ruled by Pip 2026-08-20)
-- `CHANGELOG.md:287` -- was retimed to one-turn-one-month and the ruled promotions were applied (#1137),
-- `CHANGELOG.md:318` -- and the ruled promotions applied (#1137), against Pip's rulings of 2026-08-04.
-- `CHANGELOG.md:326` -- - **The last player-facing "AP" is gone**, and one number format is ruled across
+- `CHANGELOG.md:290` -- was retimed to one-turn-one-month and the ruled promotions were applied (#1137),
+- `CHANGELOG.md:321` -- and the ruled promotions applied (#1137), against Pip's rulings of 2026-08-04.
+- `CHANGELOG.md:329` -- - **The last player-facing "AP" is gone**, and one number format is ruled across
 - `CLAUDE.md:226` -- quarterly pins to v0.15; league/content cadence is MONTHLY (ruled 2026-07-21).
 - `CLAUDE.md:254` -- `UNDECLARED`, never dropped. **Cross-repo by design** (ruled 2026-08-15):
 - `art_source/pixellab_2026-07-26_cat_sweep/MANIFEST.md:3` -- Execution of Pip's locked recipe (ruled 2026-07-26, "go cat sweep 8 dir now"):

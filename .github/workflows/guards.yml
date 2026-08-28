@@ -152,6 +152,25 @@ jobs:
           guard "credential-check" python tools/assets/check_credentials.py
           guard "font-size-ssot-check" python tools/check_font_sizes.py
 
+          # --- the last three, closed 2026-08-29 -----------------------------------
+          # These were the residue the guard-parity census kept reporting after the
+          # thirteen above were wired: local-only, therefore not installed anywhere
+          # that had not run `pre-commit install`, and skippable with --no-verify.
+          #
+          # export-icon-check is the one with a body count. On 2026-08-23 the macOS
+          # preset acquired `application/icon=...pdoom1.ico`, Godot has no .ico
+          # decoder, the export died 1.4s into bundle assembly, and v0.14.3 shipped
+          # with no macOS build at all -- the release the guard existed to prevent.
+          # It was in pre-commit at the time and did not run, which is the whole
+          # argument for this section rather than a restatement of it.
+          #
+          # All three are offline, deterministic and sub-second; none needs Godot.
+          # Each is invoked with the flag that GATES, not merely the flag that runs
+          # -- the census reports a tool present under a different flag as PARTIAL.
+          guard "release-horizon-check" python tools/generate_release_horizon.py --check
+          guard "export-icon-check" python tools/check_export_icons.py
+          guard "patch-notes-cover-shipped-version" python tools/check_patch_notes.py --quiet
+
           # --- the environments audit ---------------------------------------------
           # CI-only by construction: it calls the GitHub API, and a pre-commit hook that
           # makes a network call is slow, fails offline, and teaches people to skip
