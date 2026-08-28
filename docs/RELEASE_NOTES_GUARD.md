@@ -49,8 +49,48 @@ Consequences worth stating plainly:
 | Gate | Runs | Checks | Blocking |
 | --- | --- | --- | --- |
 | pre-commit `changelog-structure-check` | on `CHANGELOG.md` commits | RN001, RN002. Offline. | yes (RN001) |
+| `quality-checks.yml` | on every PR to main, and on push to main | RN001, RN002 + RN003/RN005 on the `version.txt` section | yes |
 | `pre-release-checks.yml` | on `v*.*.*` tag push | RN001, RN002 + RN003/RN004 on the CHANGELOG section | yes |
 | `enhanced-release.yml`, before `action-gh-release` | on `v*.*.*` tag push | RN003, RN004 on `release_notes.txt` | **yes -- this is the one that stops a bad body being published** |
+
+### The PR-time row was added on 2026-08-29, and here is what it cost to learn
+
+v0.14.4 was tagged on 2026-08-28 and then sat unpublished. RN003 failed on the
+tag, in both release workflows, because the `[0.14.4]` bullet cited `#1071`
+while `#1071` was open. The gate was right. What was wrong was **when it could
+first speak**:
+
+- pre-commit runs `--changelog-structure`, which is RN001/RN002 **only**;
+- RN003 has to ask GitHub for issue state, and pre-commit is offline by design
+  (`--offline` exists precisely to skip RN003/RN004);
+- both workflows that did run RN003 triggered on `push: tags: v*.*.*`.
+
+So between writing the bullet and cutting the tag there was **no moment at
+which this repo could tell you the citation was wrong**. The first feedback
+arrived after the tag existed, which means every mistake of this class
+necessarily cost a tag rewrite. That is a gap in the *schedule* of the checks,
+not a lapse by whoever wrote the bullet.
+
+Both halves are demonstrable on the pre-fix text, and the pair is the point:
+
+```
+$ git show 9f7a3c78:CHANGELOG.md > OLD.md
+$ sed -n "/\[0.14.4\]/,/^## /p" OLD.md | head -n -1 > old_body.txt
+
+$ python scripts/check_release_notes.py --body old_body.txt --offline
+[OK] release notes check passed (0 warning(s))          <-- the pre-commit shape
+
+$ python scripts/check_release_notes.py --body old_body.txt
+[FAIL] RN003: cites #1071 but that issue is OPEN        <-- the same text, online
+```
+
+The offline mode reports **OK on the exact text that stopped the release**. It
+is not broken -- it is answering a smaller question, correctly -- but it is why
+"the hook passed" was never evidence here.
+
+The tag-time gates stay. They check the exact bytes about to be published,
+which is a different and stronger question than checking the file. The PR-time
+row is the same question asked early enough to be fixed without moving a tag.
 
 ## What is checked mechanically
 

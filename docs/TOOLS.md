@@ -33,7 +33,7 @@ Declared with a `Layer:` line in a tool's module docstring; `--` = undeclared.
 | build_all_platforms.py | -- | Build P(Doom) for all platforms (Windows, Linux, macOS). | ci:enhanced-release.yml; test:test_build_all_platforms.py; test:test_generate_release_metadata.py; tool:check_platform_builds.py; tool:generate_release_metadata.py |
 | check_no_emoji.py | PROVE | Blocking no-emoji / ASCII enforcement for the Godot tree (issue #744). | pre-commit; ci:guards.yml |
 | check_platform_builds.py | VERIFY (unrecognised) | Detect, per platform, whether a release's build artefacts actually EXIST. | ci:enhanced-release.yml; test:test_generate_release_metadata.py; test:test_platform_build_status.py; tool:generate_release_metadata.py |
-| check_release_notes.py | -- | Guard against a release note that announces something we did not ship. | pre-commit; ci:enhanced-release.yml; ci:pre-release-checks.yml; test:test_release_notes_guard.py |
+| check_release_notes.py | -- | Guard against a release note that announces something we did not ship. | pre-commit; ci:enhanced-release.yml; ci:pre-release-checks.yml; ci:quality-checks.yml; test:test_release_notes_guard.py |
 | check_site_release_freshness.py | -- | Is pdoom1.com advertising the release we actually published? | ci:live-site-release-freshness.yml |
 | check_style_guide.py | -- | Style Guide Enforcement Check | pre-commit; tool:check_guard_parity.py |
 | ci_health_integration.py | -- | CI/CD Health Integration - GitHub Actions Integration | ci:enhanced-cicd-pipeline.yml; ci:quality-checks.yml |
