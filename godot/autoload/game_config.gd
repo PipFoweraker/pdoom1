@@ -201,7 +201,7 @@ var welcome_seen: bool = false
 # runtime file read) because version.txt lives outside res:// and the leaderboard
 # board-key derives from this value, so it must resolve identically in exported
 # builds where a res:// text read is not guaranteed to be packed.
-const CURRENT_VERSION: String = "0.14.3"
+const CURRENT_VERSION: String = "0.14.4"
 
 # Cold-open intro content version (#801). Independent of CURRENT_VERSION on purpose:
 # ordinary patch releases must NOT re-trigger the intro. Bump this ONLY when the

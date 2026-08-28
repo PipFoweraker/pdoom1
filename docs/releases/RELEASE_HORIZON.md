@@ -13,7 +13,7 @@ replaces (issue #1152).
 | 2. FORECAST | a plan, revisable | Pip | no -- `../ROADMAP.md` |
 | 3. NOT FORECASTABLE | a consequence of gameplay change | nobody, in advance | floor only |
 
-Current inputs: `version.txt` = **0.14.3**, `ladder_version.txt` = **L6**.
+Current inputs: `version.txt` = **0.14.4**, `ladder_version.txt` = **L6**.
 
 ---
 
