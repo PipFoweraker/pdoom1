@@ -110,11 +110,11 @@ DTSTART;VALUE=DATE:20260809
 DTEND;VALUE=DATE:20260810
 SUMMARY:[UNPARSED] needs a declaration -- RELEASE_NOTES_GUARD.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/RELEASE_NOTES_GUA
- RD.md:65. 1 line(s) in docs/RELEASE_NOTES_GUARD.md mention this date and 
- no COMMITMENT: declaration accounts for it. Either add a declaration or t
- he date is incidental. First line: RN005 is the disclosure escape checked
-  in the other direction\, added 2026-08-09 -- Generated from tracked sour
- ces by scripts/generate_commitment_calendar.py\; regenerate to update.
+ RD.md:105. 1 line(s) in docs/RELEASE_NOTES_GUARD.md mention this date and
+  no COMMITMENT: declaration accounts for it. Either add a declaration or 
+ the date is incidental. First line: RN005 is the disclosure escape checke
+ d in the other direction\, added 2026-08-09 -- Generated from tracked sou
+ rces by scripts/generate_commitment_calendar.py\; regenerate to update.
 CATEGORIES:UNPARSED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -5197,6 +5197,52 @@ ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- RELEASE_LINKING_TO_0.20.md (unparsed) -
  - unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:122781cd5b851345@commitments.pdoom1
+DTSTAMP:20260828T000000Z
+DTSTART;VALUE=DATE:20260828
+DTEND;VALUE=DATE:20260829
+SUMMARY:[UNPARSED] needs a declaration -- RELEASE_NOTES_GUARD.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/RELEASE_NOTES_GUA
+ RD.md:58. 1 line(s) in docs/RELEASE_NOTES_GUARD.md mention this date and 
+ no COMMITMENT: declaration accounts for it. Either add a declaration or t
+ he date is incidental. First line: v0.14.4 was tagged on 2026-08-28 and t
+ hen sat unpublished. RN003 failed on the -- Generated from tracked source
+ s by scripts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- RELEASE_NOTES_GUARD.md (unparsed) -- un
+ owned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2996992eec4602f2@commitments.pdoom1
+DTSTAMP:20260829T000000Z
+DTSTART;VALUE=DATE:20260829
+DTEND;VALUE=DATE:20260830
+SUMMARY:[UNPARSED] needs a declaration -- RELEASE_NOTES_GUARD.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/RELEASE_NOTES_GUA
+ RD.md:56. 1 line(s) in docs/RELEASE_NOTES_GUARD.md mention this date and 
+ no COMMITMENT: declaration accounts for it. Either add a declaration or t
+ he date is incidental. First line: ### The PR-time row was added on 2026-
+ 08-29\, and here is what it cost to learn -- Generated from tracked sourc
+ es by scripts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- RELEASE_NOTES_GUARD.md (unparsed) -- un
+ owned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT

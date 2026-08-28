@@ -13,7 +13,7 @@ Horizon: **2026-08-09** (the prose scan reports dates at or after this; roll it
 forward deliberately in `COMMITMENTS.md`, never automatically -- a clock-reading
 generator goes stale overnight and trains people to ignore the check).
 
-**53 declared, 4 release-train, 214 UNPARSED, 0 malformed.**
+**53 declared, 4 release-train, 216 UNPARSED, 0 malformed.**
 
 ## Declared commitments
 
@@ -96,7 +96,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-09 | `coordination#49` | 0 | pdoom-data seat: six items for the MONDAY print stack -- the history rewrite is DEFERRED by Pip pending a rule, the rest are yes/no |
 | 2026-08-09 | `coordination#50` | 0 | Does a print stack/queue exist? Pip wants queue + revise + supersession + collection-on-receipt -- and thinks a watched folder unlocks working remotel |
 | 2026-08-09 | `docs/POSTMORTEM_2026-08-07_CAPTURE.md` | 911 | *Written 2026-08-07 for reading on Sunday 2026-08-09. Every command in this |
-| 2026-08-09 | `docs/RELEASE_NOTES_GUARD.md` | 65 | RN005 is the disclosure escape checked in the other direction, added 2026-08-09 |
+| 2026-08-09 | `docs/RELEASE_NOTES_GUARD.md` | 105 | RN005 is the disclosure escape checked in the other direction, added 2026-08-09 |
 | 2026-08-09 | `docs/deployment/RELEASE_FLOW_MAP_2026-08-24.md` | 560 | 2026-08-09 and that the POST returns 204 either way. Settle: |
 | 2026-08-09 | `docs/design/LEAGUE_CUTOVER_PLAYBOOK.md` | 6 | because Pip asked, 2026-08-09: |
 | 2026-08-09 | `docs/game-design/BUILD_VS_LADDER_VERSION_SPLIT.md` | 325 | ### 4.2a AS BUILT (2026-08-09, issue #1178) -- and where this section was wrong |
@@ -514,7 +514,9 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-24 | `tools/generate_release_horizon.py` | 130 | # table as it stood on 2026-08-24 (v0.15 -> Sep 2026) and from the monthly-train |
 | 2026-08-24 | `tools/generate_release_horizon.py` | 330 | "in (ruling 2026-08-24; pinned by `godot/tests/unit/test_iso_week_seed.gd`", |
 | 2026-08-24 | `tools/generate_release_horizon.py` | 540 | # 2026-08-24, on this very generator. |
+| 2026-08-28 | `docs/RELEASE_NOTES_GUARD.md` | 58 | v0.14.4 was tagged on 2026-08-28 and then sat unpublished. RN003 failed on the |
 | 2026-08-28 | `docs/releases/RELEASE_LINKING_TO_0.20.md` | 93 | league opens on Friday 2026-08-28 -- also week 35 -- then by the 2026-07-30 |
+| 2026-08-29 | `docs/RELEASE_NOTES_GUARD.md` | 56 | ### The PR-time row was added on 2026-08-29, and here is what it cost to learn |
 | 2026-08-31 | `docs/rulings/RULINGS.md` | 387 | - `godot/scripts/core/researcher.gd:150` -- # SEAM (ruled 2026-07-27, review-by 2026-08-31): AUDITS ground-truth reported vs actual. |
 | 2026-08-31 | `docs/rulings/RULINGS.md` | 392 | - `godot/scripts/core/turn_manager.gd:313` -- SEAM (ruled 2026-07-27, review-by 2026-08-31): AUDITS ground-truth reported vs actual. |
 | 2026-08-31 | `docs/rulings/UNDECLARED_TRIAGE.md` | 221 | - # SEAM (ruled 2026-07-27, review-by 2026-08-31): AUDITS ground-truth reported vs actual. |
