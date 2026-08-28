@@ -47,11 +47,21 @@
     {
       "id": "time",
       "label": "Partial recovery of Pip's time",
-      "min_usd": 9000,
-      "goal_usd": 12000,
+      "min_usd": 8275,
+      "goal_usd": 9600,
       "provenance": "own_labour",
-      "basis": "One focused day a week for twelve months. $9,000 prices the day near $170, well under what his operations and governance work commands. Deliberate, and better noticed than not.",
+      "basis": "One focused day a week for twelve months, NET OF MANIFUND'S 5% FEE. $8275 prices the day near $159, well under what his operations and governance work commands. Deliberate, and better noticed than not. REDUCED FROM $9000 on 2026-08-25 by Pip's ruling: the platform fee comes out of his own line, not out of anyone else's and not out of the published ask, so the bottom figure stays $14,500. At the goal tier the same rule takes this line from $12000 to $9600.",
       "settled_by": null
+    },
+    {
+      "id": "platform-fee",
+      "label": "Manifund platform and fiscal-sponsorship fee, 5%",
+      "min_usd": 725,
+      "goal_usd": 2400,
+      "provenance": "measured",
+      "basis": "Manifund charges a 5% operations and fiscal-sponsorship fee on the donation amount. Read off Manifund's own site by Pip on 2026-08-25. 5% of the $14,500 minimum is $725; 5% of the $48,000 goal is $2400. This is money the campaign raises and the project never receives, so it belongs in the column a reader adds up rather than hidden in a rounding gap.",
+      "settled_by": "The first payout statement, which will show the fee actually withheld.",
+      "softest_number": "A published rate, not an invoice. The provenance vocabulary has no value for 'the counterparty's own published schedule', and `measured` is the closest honest fit -- but no payout has occurred and no fee has yet been withheld from anything."
     },
     {
       "id": "developer",
@@ -113,16 +123,17 @@
       "id": "five-hundred",
       "what": "The minimum-tier line items sum to $14,000 against a published minimum of $14,500.",
       "size_usd": 500,
-      "explanation": "Rounding from the evening the figure was set, not a hidden line item.",
+      "explanation": "Rounding from the evening the figure was set, not a hidden line item. UNCHANGED by the 2026-08-25 platform-fee correction: the fee was given its own line and absorbed out of `time`, specifically so this gap would not have to move and could not be used to hide it.",
       "handling": "Name it. A reader who adds the column and finds it short with no acknowledgement concludes the table was reverse-engineered from the ask; one who finds it already flagged concludes the opposite.",
       "_computed": "The renderer RECOMPUTES this gap from line_items and refuses to publish if the stated size disagrees. It cannot go stale."
     },
     {
       "id": "platform-cut",
-      "what": "Whether Manifund takes a platform fee is unknown and unasked.",
-      "size_usd": null,
-      "explanation": "If there is a fee, the gap above is larger than $500.",
-      "handling": "Better that Pip finds out than that a funder does. Read the platform rules; this does not require asking a person."
+      "what": "Manifund charges a 5% operations and fiscal-sponsorship fee on the donation amount. MEASURED 2026-08-25 by Pip, read off Manifund's own site. At the $14,500 minimum the fee is $725 and the project receives $13775; at the $48,000 goal it is $2400 and the project receives $45600.",
+      "size_usd": 725,
+      "explanation": "RESOLVED. This entry previously read 'unknown and unasked' and warned that if a fee existed the rounding gap would be larger than $500. A fee exists. It is NOT absorbed into the gap: Pip ruled on 2026-08-25 that the fee comes off HIS OWN line so the published figures and every other line item are untouched, and the $500 rounding gap is unchanged at both tiers.",
+      "handling": "State the fee in the copy rather than letting a reader discover it. A funder who adds the column against the published ask and finds 5% unexplained concludes the table was reverse-engineered; one who finds the fee named and absorbed by the applicant's own line concludes the opposite. Source: manifund.org, read 2026-08-25.",
+      "_measured_by": "pip 2026-08-25, memo 970a1ff4 08:53 -- 'Manifund charges a 5% operation and fiscal sponsorship fee of the donation amount. Just read that off the website.'"
     }
   ],
   "constraints": [
