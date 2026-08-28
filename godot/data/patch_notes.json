@@ -1,6 +1,26 @@
 {
   "versions": [
     {
+      "version": "0.14.4",
+      "date": "2026-08-29",
+      "title": "The Door That Was Not There",
+      "highlights": [
+        "macOS is back. v0.14.3 was the first release in this game's history to ship no Mac build at all -- the export died on a Windows icon file the engine cannot decode, and reported nothing but a bare failure",
+        "When the patch notes do not appear, the game now tells you WHICH of five things went wrong, gives you a code you can quote, and offers a way to report it -- instead of one reassuring sentence that was only true in one of the five cases"
+      ],
+      "sections": {
+        "added": [
+          "A report affordance on the What's New screen, reachable with (R). It exists only when something is actually broken, so its absence is itself a statement that nothing is wrong."
+        ],
+        "changed": [
+          "Every state of the What's New screen carries its own words, its own reference code, and its own consequence. A missing file, a corrupt file and a genuinely quiet release used to be indistinguishable (#1311)."
+        ],
+        "fixed": [
+          "The macOS build exports again. The macOS preset had been pointed at a .ico file, which the engine has no decoder for; it now uses the same PNG it used through v0.14.2 (#1305)."
+        ]
+      }
+    },
+    {
       "version": "0.14.3",
       "date": "2026-08-23",
       "title": "Things That Charged You And Did Nothing",

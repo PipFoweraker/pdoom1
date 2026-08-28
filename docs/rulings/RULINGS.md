@@ -5,7 +5,7 @@
 > `python scripts/generate_rulings.py`. The convention, and why it looks
 > like this, is argued in `docs/rulings/RULINGS_CONVENTION.md`.
 
-**57 ruling(s)** across **16 flavour(s)**. **240** prose ruling(s) not yet declared.
+**57 ruling(s)** across **16 flavour(s)**. **241** prose ruling(s) not yet declared.
 
 ## One index, five sources
 
@@ -205,9 +205,9 @@ than dropped because an index that silently omits looks complete when it
 is not.
 
 - `.github/workflows/guards.yml:3` -- # WHY THIS FILE EXISTS (issue #1265, ruled by Pip 2026-08-20)
-- `CHANGELOG.md:251` -- was retimed to one-turn-one-month and the ruled promotions were applied (#1137),
-- `CHANGELOG.md:282` -- and the ruled promotions applied (#1137), against Pip's rulings of 2026-08-04.
-- `CHANGELOG.md:290` -- - **The last player-facing "AP" is gone**, and one number format is ruled across
+- `CHANGELOG.md:287` -- was retimed to one-turn-one-month and the ruled promotions were applied (#1137),
+- `CHANGELOG.md:318` -- and the ruled promotions applied (#1137), against Pip's rulings of 2026-08-04.
+- `CHANGELOG.md:326` -- - **The last player-facing "AP" is gone**, and one number format is ruled across
 - `CLAUDE.md:226` -- quarterly pins to v0.15; league/content cadence is MONTHLY (ruled 2026-07-21).
 - `CLAUDE.md:254` -- `UNDECLARED`, never dropped. **Cross-repo by design** (ruled 2026-08-15):
 - `art_source/pixellab_2026-07-26_cat_sweep/MANIFEST.md:3` -- Execution of Pip's locked recipe (ruled 2026-07-26, "go cat sweep 8 dir now"):
@@ -258,6 +258,7 @@ is not.
 - `docs/calendar/github_snapshot.json:2237` -- "title": "Ladder eligibility must be visible BEFORE the run starts, not delivered at death (ruled by Pip 2026-08-07)",
 - `docs/content/ROLE_CREATIVE_DIRECTOR.md:16` -- > pipeline pushes to, not the home of the process"*. Pip ruled **`pull`** on
 - `docs/copy/MANIFUND_SUBMITTED_2026-07-29.md:181` -- Compatible with the ruled model (monthly Theme/Epoch, weekly Seed rotation
+- `docs/copy/budget.json:134` -- "explanation": "RESOLVED. This entry previously read 'unknown and unasked' and warned that if a fee existed the rounding gap would be larger than $500. A fee exists. It is NOT absorbed into the gap: P
 - `docs/decision-cards/2026-08-02_pdoom-data-contract.md:130` -- - The future draw-down is already ruled: ADR-0016 monthly world-update packs
 - `docs/design/ASSET_PROVENANCE_SCOPE_2026-08-06.md:119` -- a very plausible guess. It is still a guess, and `coordination#32` already ruled
 - `docs/design/PHASE_GUARD_AUDIT_2026-08-06.md:10` -- This is **not** about #1134. PR #1143 (retire the feature) is the ruled fix for the
@@ -372,7 +373,7 @@ is not.
 - `godot/data/asset_provenance.json:5138` -- "why": "Ruled by Pip 2026-08-19 (D2). ADR-0019 has no provenance field and this manifest answered only WHAT made an asset, never WHO is owed credit for it. A human contributor is in prospect, which ma
 - `godot/data/asset_provenance.json:5150` -- "why": "Ruled by Pip 2026-08-19 (D2). ADR-0019 has no provenance field and this manifest answered only WHAT made an asset, never WHO is owed credit for it. A human contributor is in prospect, which ma
 - `godot/data/office/props_manifest.json:15` -- "style_tags": "office quality tiers this art serves, from the canonical ladder [\"scummy\", \"decent\", \"premium\"] (ruled 2026-07-26; see docs/game-design/SEED_ASSET_REGISTRY_AND_VERDICTS.md). Tag o
-- `godot/data/patch_notes.json:123` -- "WHY THE BOARD FORKED: the historical event deck was retimed to one turn = one month, and the ruled event promotions were applied. Different events now fire on the same seed, so an L4 run is not compa
+- `godot/data/patch_notes.json:143` -- "WHY THE BOARD FORKED: the historical event deck was retimed to one turn = one month, and the ruled event promotions were applied. Different events now fire on the same seed, so an L4 run is not compa
 - `godot/scripts/core/build_info.gd:22` -- ## Alpha-tools era switch (#1079 fallout, ruled 2026-08-05). While this is true the ALPHA
 - `godot/scripts/core/build_info.gd:94` -- ## doom"). That consequence was flagged when #1079 merged and never ruled on; this is the
 - `godot/scripts/core/capacity.gd:5` -- ## Ruled 2026-08-12 (coordination/DESIGN_2026-08-12_interrupt-resolution-variants.md,

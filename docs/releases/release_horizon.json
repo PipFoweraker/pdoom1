@@ -2,7 +2,7 @@
   "schema": "pdoom.release-horizon/0.1",
   "generated_by": "tools/generate_release_horizon.py",
   "ruler": "Pip Foweraker, interim",
-  "current_version": "0.14.3",
+  "current_version": "0.14.4",
   "ladder_floor": 6,
   "ladder_floor_label": ">= L6",
   "ladder_forecastable": false,

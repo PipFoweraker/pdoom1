@@ -15,6 +15,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 > claimed. `scripts/check_release_notes.py --changelog-structure` now blocks
 > a second `[Unreleased]` heading from appearing again.
 
+## [0.14.4] - 2026-08-29 -- The Door That Was Not There
+
+A repair release, cut ahead of the monthly train for one reason: v0.14.3 was the
+first release in this game's history to ship no macOS build. The export died
+1.4 seconds into bundle assembly on a Windows `.ico` the engine has no decoder
+for, printed one line, and the pipeline published Windows and Linux without it.
+Mac players were sent to a door that was not there.
+
+The second item is the same shape at a smaller scale: a screen that rendered a
+packaging failure, a corruption and a quiet release in identical reassuring
+words.
+
+### Added
+- A report affordance on the What's New screen, reachable with `(R)`. It is
+  built on demand rather than declared in the scene, so it exists only on paths
+  where something is actually wrong -- an absent button is itself a statement.
+
+### Changed
+- Every state of the What's New screen carries its own player-facing words, its
+  own quotable reference code, and its own consequence (#1311). The six
+  outcomes live in one match statement, and
+  `godot/tests/unit/test_whats_new_states.gd` fails if any two rows share a body
+  or a code.
+
+### Fixed
+- The macOS build exports again (#1305). The macOS preset had acquired
+  `application/icon="res://assets/images/pdoom1.ico"`; Godot has no `.ico`
+  decoder, and the preset now points at the same PNG it used through v0.14.2.
+  macOS remains best-effort per #1071.
+
+### Not in this release
+- The `score_api.php` truncation fix (#1296) is server-side and **has not been
+  deployed** to `api.pdoom1.com`. No client change in this build affects it; the
+  only `godot/` edit in that commit was a comment correction with no reachable
+  behaviour change.
+
 ## [0.14.3] - 2026-08-23 -- Things That Charged You And Did Nothing
 
 A pass over things that took your money, or your attention, and gave nothing
