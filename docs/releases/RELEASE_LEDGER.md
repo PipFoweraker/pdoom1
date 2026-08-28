@@ -16,10 +16,5 @@ One row per value `version.txt` has ever held, with the ladder epoch and feature
 | 0.14.0 | 2026-08-07 | L4 | weekly-2026-w32 | v0.14.0 | 2026-08-07 |
 | 0.14.1 | 2026-08-08 | L4 | weekly-2026-w32 | v0.14.1 | 2026-08-07 |
 | 0.14.2 | 2026-08-21 | L5 | weekly-2026-w33 | v0.14.2 | 2026-08-21 |
-| 0.14.3 | 2026-08-23 | L6 | weekly-2026-w33 | **NONE** | **ABSENT** |
-
-## Untagged and undeclared
-
-- 0.14.3 bumped 2026-08-23 (dd3039fd) has NO TAG and no declaration
-
-To settle one, either push the tag (which arms `enhanced-release.yml` and publishes the release with assets), or add an `UNTAGGED: <version> -- <reason>` line to `docs/releases/UNTAGGED.md`.
+| 0.14.3 | 2026-08-23 | L6 | weekly-2026-w33 | v0.14.3 | 2026-08-24 |
+| 0.14.4 | 2026-08-29 | L6 | weekly-2026-w35 | v0.14.4 | 2026-08-28 |

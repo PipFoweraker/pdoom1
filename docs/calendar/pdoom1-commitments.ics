@@ -4955,7 +4955,7 @@ DTSTART;VALUE=DATE:20260824
 DTEND;VALUE=DATE:20260825
 SUMMARY:[UNPARSED] needs a declaration -- check_release_ledger.py
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/check_release_le
- dger.py:8. 4 line(s) in tools/check_release_ledger.py mention this date a
+ dger.py:8. 5 line(s) in tools/check_release_ledger.py mention this date a
  nd no COMMITMENT: declaration accounts for it. Either add a declaration o
  r the date is incidental. First line: On 2026-08-24 the repo held ``versi
  on.txt = 0.14.3``\, a proven build on disk\, -- Generated from tracked so
@@ -5223,6 +5223,29 @@ DESCRIPTION:needs a declaration -- RELEASE_NOTES_GUARD.md (unparsed) -- un
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:1378267438ba7c3e@commitments.pdoom1
+DTSTAMP:20260828T000000Z
+DTSTART;VALUE=DATE:20260828
+DTEND;VALUE=DATE:20260829
+SUMMARY:[UNPARSED] needs a declaration -- check_release_ledger.py
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/check_release_le
+ dger.py:450. 1 line(s) in tools/check_release_ledger.py mention this date
+  and no COMMITMENT: declaration accounts for it. Either add a declaration
+  or the date is incidental. First line: # reason on 2026-08-28 (v0.14.4 b
+ umped\, tagged\, never published) was -- Generated from tracked sources b
+ y scripts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- check_release_ledger.py (unparsed) -- u
+ nowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:2996992eec4602f2@commitments.pdoom1
 DTSTAMP:20260829T000000Z
 DTSTART;VALUE=DATE:20260829
@@ -5243,6 +5266,29 @@ ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- RELEASE_NOTES_GUARD.md (unparsed) -- un
  owned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:308d88c3537d82fb@commitments.pdoom1
+DTSTAMP:20260829T000000Z
+DTSTART;VALUE=DATE:20260829
+DTEND;VALUE=DATE:20260830
+SUMMARY:[UNPARSED] needs a declaration -- check_release_ledger.py
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/check_release_le
+ dger.py:436. 2 line(s) in tools/check_release_ledger.py mention this date
+  and no COMMITMENT: declaration accounts for it. Either add a declaration
+  or the date is incidental. First line: # Exactly ONE trailing newline\, 
+ and this is load-bearing (2026-08-29). -- Generated from tracked sources 
+ by scripts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- check_release_ledger.py (unparsed) -- u
+ nowned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
