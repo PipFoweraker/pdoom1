@@ -60,7 +60,7 @@ jobs:
       - name: ASCII Compliance Check
         id: ascii-check
         run: |
-          echo "🔤 Checking ASCII compliance..."
+          echo "[ASCII] Checking ASCII compliance..."
           python scripts/intelligent_ascii_converter.py --dry-run
           if [ $? -eq 0 ]; then
             echo "SUCCESS ASCII compliance: PASSED"
@@ -72,7 +72,7 @@ jobs:
       - name: Import Structure Validation
         id: import-check
         run: |
-          echo "📦 Validating import structure..."
+          echo "[IMPORTS] Validating import structure..."
           echo "INFO  Project migrated to Godot - Python import checks skipped"
           echo "SUCCESS Using Godot GDScript instead of Python modules"
           echo "SUCCESS Import structure: SKIPPED (Godot project)"
@@ -80,7 +80,7 @@ jobs:
       - name: Version Consistency Check
         id: version-check
         run: |
-          echo "🏷 Checking version consistency..."
+          echo "[VERSION] Checking version consistency..."
           # Check Godot project version
           if grep -q 'config/version=' godot/project.godot; then
             VERSION=$(grep 'config/version=' godot/project.godot | cut -d'"' -f2)
@@ -94,7 +94,7 @@ jobs:
       - name: File Structure Validation
         id: structure-check
         run: |
-          echo "📂 Validating file structure..."
+          echo "[FILES] Validating file structure..."
           # Godot project structure
           required_files=(
             "godot/project.godot"
@@ -162,7 +162,7 @@ jobs:
       - name: Type Annotation Coverage
         id: type-coverage
         run: |
-          echo "🏷 Checking type annotation coverage..."
+          echo "[TYPES] Checking type annotation coverage..."
           # TODO: Implement type annotation coverage checker
           echo "type_coverage=85" >> $GITHUB_OUTPUT
 
@@ -254,24 +254,52 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+          pip install -r requirements-dev.txt
 
+      # WHAT THIS STEP USED TO BE (2026-08-29).
+      #
+      #   timeout 120 python -m unittest discover tests -v \
+      #     || echo "INFO: Some Python tests may fail (expected during Godot migration)"
+      #   echo "SUCCESS: Test suite check complete"
+      #
+      # The `|| echo` swallowed every failure and the unconditional
+      # "SUCCESS" line printed regardless, so this step reported success on
+      # every run it has ever made, whatever the tests did. It was a hollow
+      # runner -- the shape the Godot test runner and the guard-parity census
+      # already name in their own docstrings -- sitting in the one place that
+      # claimed to run the Python suite. (Their paths are deliberately NOT
+      # written here: the tools-index generator greps workflow files for
+      # `scripts/*.py` and `tools/*.py` and would record a mention in a comment
+      # as a CI invocation, putting a false `ci:` marker in docs/TOOLS.md.
+      # Verified -- naming them cost two wrong rows before this was reworded.)
+      #
+      # It was also true, in its way. 67 of the 90 files under tests/ were
+      # pygame-era leftovers that could not import (`src/` has not existed since
+      # PR #530 archived it), so a real gate here WOULD have been red -- which is
+      # presumably why the `|| echo` went in. Those 67 files are deleted in this
+      # same change; every one was byte-identical to a copy already sitting in
+      # archive/legacy-pygame/tests/, so nothing was lost. What remains actually
+      # runs, so the gate can be real.
       - name: Run Test Suite
         id: test-suite
         run: |
-          echo "🧪 Running test suite..."
-          # Project migrated to Godot - Python unit tests skipped
-          # Godot tests run via godot-tests.yml workflow
-          if [ -d "tests" ] && [ "$(find tests -name 'test_*.py' 2>/dev/null | wc -l)" -gt 0 ]; then
-            timeout 120 python -m unittest discover tests -v || echo "INFO: Some Python tests may fail (expected during Godot migration)"
-          else
-            echo "INFO: No Python tests found - using Godot GUT tests instead"
-          fi
-          echo "SUCCESS: Test suite check complete"
+          echo "Running the Python automation test suite (blocking)."
+          echo "Godot/GDScript tests are a separate tier -- see godot-tests.yml."
+          echo ""
+          echo "tests/test_ascii_compliance.py is EXCLUDED and that is a known debt,"
+          echo "not a passing test: it fails on 52 documentation files carrying"
+          echo "~3,700 non-ASCII characters, which is a real violation of the"
+          echo "ASCII-only rule (#744) that accumulated while nothing ran it."
+          echo "About 1,056 of those are box-drawing characters inside diagrams,"
+          echo "so the repair needs judgement and its own reviewable change --"
+          echo "tracked in #1331. Removing this --ignore is that issue's done."
+          echo ""
+          python -m pytest tests/ -q --ignore=tests/test_ascii_compliance.py
 
       - name: Performance Benchmark
         id: performance
         run: |
-          echo "⚡ Running performance benchmarks..."
+          echo "[PERF] Running performance benchmarks..."
           # Project migrated to Godot - Python benchmarks skipped
           # Game performance tested via Godot's built-in profiler
           echo "INFO: Python performance benchmarks skipped (project uses Godot)"
@@ -279,7 +307,7 @@ jobs:
 
       - name: Memory Usage Check
         run: |
-          echo "💾 Checking memory usage..."
+          echo "[MEMORY] Checking memory usage..."
           # Project migrated to Godot - Python memory checks skipped
           # Memory profiling done via Godot's built-in monitors
           echo "INFO: Python memory checks skipped (project uses Godot)"
@@ -324,7 +352,7 @@ jobs:
     steps:
       - name: Generate Pipeline Summary
         run: |
-          echo "🏁 CI/CD Pipeline Summary"
+          echo "[SUMMARY] CI/CD Pipeline Summary"
           echo "========================="
           echo ""
           echo "CLIPBOARD Stage Results:"
