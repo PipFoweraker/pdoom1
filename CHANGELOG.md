@@ -43,7 +43,10 @@ words.
 - The macOS build exports again (#1305). The macOS preset had acquired
   `application/icon="res://assets/images/pdoom1.ico"`; Godot has no `.ico`
   decoder, and the preset now points at the same PNG it used through v0.14.2.
-  macOS remains best-effort per #1071.
+  What this restores is the EXPORT, not a verified run: no macOS build produced
+  by this pipeline has ever been launched on a Mac and watched to work, which is
+  what #1071 asks for, so #1071 is still OPEN and macOS stays best-effort. The
+  door exists again; nobody has walked through it.
 
 ### Not in this release
 - The `score_api.php` truncation fix (#1296) is server-side and **has not been

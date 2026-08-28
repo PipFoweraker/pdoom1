@@ -83,11 +83,11 @@ Declared with a `Layer:` line in a tool's module docstring; `--` = undeclared.
 | check_balance_keys.py | PROVE | Census the Balance surface in BOTH directions, because nothing else does. | pre-commit; ci:guards.yml |
 | check_class_cache.py | PROVE | check_class_cache.py -- catch a STALE global script class cache before it eats a playtest. | pre-commit; make; test:test_check_class_cache.py |
 | check_environments.py | PROVE | Flag GitHub environments that no workflow references -- and say which are LIES. | ci:guards.yml |
-| check_export_icons.py | -- | Every export preset's application/icon is a format that platform can decode. | pre-commit |
+| check_export_icons.py | -- | Every export preset's application/icon is a format that platform can decode. | pre-commit; ci:guards.yml |
 | check_font_sizes.py | PROVE | check_font_sizes.py -- count what the font-size SSOT still cannot reach. | pre-commit; ci:guards.yml |
 | check_guard_parity.py | PROVE | Census every pre-commit hook against the workflows, and fail on a guard CI cannot see. | ci:guards.yml |
 | check_ladder_bump.py | PROVE | Guard: did this diff need a ladder_version bump (or get one it did not need)? | ci:quality-checks.yml; test:test_check_ladder_bump.py; test:test_check_self_merge_eligibility.py; tool:sync_version.py |
-| check_patch_notes.py | -- | check_patch_notes.py -- the shipped version must have patch notes to show. | pre-commit; test:test_check_patch_notes.py |
+| check_patch_notes.py | -- | check_patch_notes.py -- the shipped version must have patch notes to show. | pre-commit; ci:guards.yml; test:test_check_patch_notes.py |
 | check_refusal_classification.py | PROVE | check_refusal_classification.py -- every NEW player-facing refusal must say whether it | pre-commit; ci:quality-checks.yml |
 | check_release_ledger.py | PROVE | Guard: has every version we bumped to actually been tagged and released? | ci:release-ledger.yml; tool:generate_commitment_calendar.py |
 | check_review_js.py | -- | Syntax-check the JavaScript that serve_review.py serves to the browser. | pre-commit; ci:guards.yml |
@@ -98,7 +98,7 @@ Declared with a `Layer:` line in a tool's module docstring; `--` = undeclared.
 | commit.py | -- | Commit wrapper that absorbs the "hook reformatted a file then aborted" dance. | make; test:test_find_dead_code.py; tool:find_dead_code.py |
 | find_dead_code.py | -- | find_dead_code.py -- report-only dead-path scanner for P(Doom)1. | test:test_find_dead_code.py; tool:generate_tools_index.py |
 | generate_cat_placeholders.py | -- | Generate placeholder cat images for different doom levels. | tool:backfill_provenance.py |
-| generate_release_horizon.py | -- | Generate the release horizon: which version ships when, on which seed, and | pre-commit; test:test_generate_release_horizon.py; tool:generate_commitment_calendar.py |
+| generate_release_horizon.py | -- | Generate the release horizon: which version ships when, on which seed, and | pre-commit; ci:guards.yml; test:test_generate_release_horizon.py; tool:generate_commitment_calendar.py |
 | generate_trust_declaration.py | -- | Generate docs/TRUST.md -- what the game reaches for, derived from the source. | pre-commit; ci:guards.yml |
 | ingest_recordings.py | -- | Pull fresh OBS recordings into the repo's working area. | human (docstring usage) |
 | phase2_setup.py | -- | Phase 2: Events System Setup | human (docstring usage) |
@@ -232,7 +232,6 @@ DISCUSSING CI); the rest are the hollow-runner shape -- read them.
 - `tools/assets/build_share_set.py` -- docstring mentions CI; no workflow calls it
 - `tools/capture_cinematic.py` -- docstring mentions CI; no workflow calls it
 - `tools/check_class_cache.py` -- docstring mentions CI; no workflow calls it
-- `tools/check_export_icons.py` -- docstring mentions CI; no workflow calls it
 - `tools/check_guard_parity.py` -- docstring mentions pre-commit; no pre-commit hook calls it
 - `tools/check_release_ledger.py` -- docstring mentions pre-commit; no pre-commit hook calls it
 - `tools/commit.py` -- docstring mentions pre-commit; no pre-commit hook calls it
