@@ -401,8 +401,8 @@ is not.
 - `godot/tests/unit/test_no_debug_event_injection.gd:9` -- ## the hard lock repeatably in a release build (2026-08-06) and ruled the feature out:
 - `godot/tests/unit/test_number_format_policy.gd:2` -- ## Locks the number-format policy ruled in #1087 (docs/NUMBER_FORMATS.md).
 - `godot/tests/unit/test_prop_manifest.gd:96` -- # style_tags restricted to the canonical quality-tier ladder (ruled 2026-07-26).
-- `public/releases/releases.json:159` -- "changelog": "Ladder epoch **L3 -> L4** -- this is a FORKING release. The historical event deck\nwas retimed to one-turn-one-month and the ruled promotions were applied (#1137),\nwhich changes which e
-- `public/releases/releases.json:50` -- "tag_message": "P(Doom) v0.14.3 -- ladder epoch L6\n\nLadder L6. Featured seed weekly-2026-w35. Board key (weekly-2026-w35, L6).\n\nFORKING RELEASE, and the fork happened before this build. L6 was cut
+- `public/releases/releases.json:100` -- "tag_message": "P(Doom) v0.14.3 -- ladder epoch L6\n\nLadder L6. Featured seed weekly-2026-w35. Board key (weekly-2026-w35, L6).\n\nFORKING RELEASE, and the fork happened before this build. L6 was cut
+- `public/releases/releases.json:209` -- "changelog": "Ladder epoch **L3 -> L4** -- this is a FORKING release. The historical event deck\nwas retimed to one-turn-one-month and the ruled promotions were applied (#1137),\nwhich changes which e
 - `public/releases/v0.14.3.json:45` -- "tag_message": "P(Doom) v0.14.3 -- ladder epoch L6\n\nLadder L6. Featured seed weekly-2026-w35. Board key (weekly-2026-w35, L6).\n\nFORKING RELEASE, and the fork happened before this build. L6 was cut
 - `scripts/generate_rulings.py:164` -- # CONSOLIDATION, ruled by Pip 2026-08-21.
 - `scripts/generate_rulings.py:9` -- (`ruled by Pip`, `Pip ruled`, `ruled 2026-..`) scattered across .py docstrings,

@@ -221,6 +221,25 @@ def stale_waivers(rows):
     return [r for r in rows if r["waiver"] and r["verdict"] in ("yes", "partial")]
 
 
+def partials(rows):
+    """Rows whose tool IS invoked by a workflow, but never with the flag that gates.
+
+    A waived hook is excluded for the same reason it is excluded from gaps(): the
+    waiver is the declaration that something else covers it.
+    """
+    return [r for r in rows if r["local"] and r["verdict"] == "partial" and not r["waiver"]]
+
+
+def exit_code(rows) -> int:
+    """The --check verdict for a census.
+
+    Pure and separate from main() so the self-test can prove each failing
+    direction fires, rather than proving only that a passing tree passes. A
+    gate whose failing direction has never been exercised is a counter.
+    """
+    return 1 if (gaps(rows) or stale_waivers(rows) or partials(rows)) else 0
+
+
 def render(rows, markdown: bool) -> None:
     sym = {"yes": "YES", "partial": "PARTIAL", "no": "NO", "n/a": "-"}
     if markdown:
@@ -335,6 +354,51 @@ def self_test() -> int:
             all(w in by_id for w in WAIVERS),
             repr([w for w in WAIVERS if w not in by_id]),
         )
+        ric = by_id.get("release-index-check")
+        check(
+            "release-index-check -- the PARTIAL from #1297 -- now reads YES",
+            ric is not None and ric["verdict"] == "yes",
+            repr(ric and ric["verdict"]),
+        )
+        check(
+            "and the real tree therefore exits 0",
+            exit_code(rows) == 0,
+        )
+
+    # THE NEWLY ARMED DIRECTION (2026-08-29). PARTIAL fails --check as of #1297
+    # section 2, and a rule armed while nothing violates it is a rule nobody has
+    # watched fail. These synthetic rows are the proof, and they are built by hand
+    # rather than found in the tree precisely because the tree is clean.
+    def _row(verdict, waiver=None):
+        return {
+            "hook": "synthetic",
+            "tool": "scripts/gen_thing.py",
+            "flag": "--check",
+            "local": True,
+            "verdict": verdict,
+            "where": ["wrongmode.yml"],
+            "waiver": waiver,
+        }
+
+    check(
+        "a PARTIAL row FAILS --check (this is the direction armed for #1297)",
+        exit_code([_row("partial")]) == 1,
+    )
+    # A waived PARTIAL still fails, but through the OTHER rule, and that is the
+    # right answer rather than an accident: stale_waivers() already treats a
+    # waiver on a hook CI now invokes as stale, because the waiver's whole claim
+    # is that CI cannot see the tool. partials() excludes waived rows only so the
+    # same row is not reported twice under two headings.
+    check(
+        "a WAIVED partial still fails -- as a STALE WAIVER, not as a partial",
+        exit_code([_row("partial", waiver="covered elsewhere")]) == 1
+        and not partials([_row("partial", waiver="covered elsewhere")])
+        and stale_waivers([_row("partial", waiver="covered elsewhere")]),
+    )
+    check(
+        "a YES row passes, so the rule is not simply always-fail",
+        exit_code([_row("yes")]) == 0,
+    )
 
     print("SELF-TEST %s" % ("PASSED" if ok else "FAILED"))
     return 0 if ok else 1
@@ -370,15 +434,24 @@ def main(argv) -> int:
     rows = census(workflows)
     render(rows, args.markdown)
 
-    # PARTIAL is REPORTED LOUDLY AND DOES NOT FAIL, on purpose. The one live instance
-    # (release-index-check) is red on main today -- public/releases says v0.14.0 while
-    # v0.14.2 is tagged -- so gating it would arrive red, and a gate that is red on
-    # arrival gets disabled inside a week. Promote PARTIAL to a failure once the feed is
-    # regenerated (issue #1297 section 2). Until then the census names it every run,
-    # which is the difference between a known gap and a hidden one.
+    # PARTIAL NOW FAILS --check (armed 2026-08-29, issue #1297 section 2).
+    #
+    # It used to report and not fail, on purpose: the one live instance,
+    # release-index-check, was red on main, and a gate that is red on arrival gets
+    # disabled inside a week. That deferral had a stated condition -- "promote
+    # PARTIAL to a failure once the feed is regenerated" -- and this is that.
+    # The feed was regenerated and release-index-check is wired into guards.yml
+    # with `--check`, the flag that gates, so it now reads YES and this list is
+    # empty at the moment of arming.
+    #
+    # Arming it with nothing to catch is the point. PARTIAL is the verdict a
+    # filename grep gets wrong: the tool IS in a workflow, under a flag that does
+    # not gate. That reads as covered to every cheaper instrument, so the next
+    # instance would be invisible in exactly the way this one was for months.
+    # A rule armed while the list is empty cannot arrive red.
     missing = gaps(rows)
     stale = stale_waivers(rows)
-    partial = [r for r in rows if r["local"] and r["verdict"] == "partial"]
+    partial = partials(rows)
     waived = [r for r in rows if r["waiver"] and r["verdict"] == "no"]
 
     print()
@@ -423,10 +496,25 @@ def main(argv) -> int:
         for r in stale:
             print("    %-28s (CI: %s)" % (r["hook"], ", ".join(r["where"])))
         rc = 1
+    if partial:
+        print()
+        print("[guard-parity] FAIL: %d guard(s) run in CI but never as a gate." % len(partial))
+        print("  The tool is invoked by a workflow under a flag that does something else")
+        print("  -- generating, printing, reporting -- so a filename grep says covered")
+        print("  while nothing can fail. Invoke it with the gating flag in a workflow,")
+        print("  or add a WAIVER saying what covers the gate instead.")
+        for r in partial:
+            print(
+                "    %-28s %s %s  (CI: %s)"
+                % (r["hook"], r["tool"], r["flag"], ", ".join(r["where"]))
+            )
+        rc = 1
     if rc == 0:
         print()
-        print("[guard-parity] OK: no guard runs in pre-commit and nowhere else.")
-    return rc
+        print("[guard-parity] OK: every gated hook runs in CI with the flag that gates it.")
+    # Returned from the same pure function the self-test exercises, so what this
+    # command reports and what the self-test proves cannot drift apart.
+    return exit_code(rows)
 
 
 if __name__ == "__main__":

@@ -49,7 +49,7 @@ Declared with a `Layer:` line in a tool's module docstring; `--` = undeclared.
 | generate_dq_index.py | GENERATE | Generate docs/game-design/DQ_INDEX.md from WORKSHOP_2_BACKLOG.md. | pre-commit; ci:guards.yml; tool:enforce_standards.py; tool:generate_credits.py; tool:generate_release_metadata.py; tool:intelligent_ascii_converter.py; tool:check_guard_parity.py |
 | generate_mechanics_docs.py | GENERATE | Generate mechanics documentation from game code. | ci:docs-sync.yml |
 | generate_release_manifest.py | GENERATE | Generate release_manifest.json -- the machine-readable release descriptor. | ci:enhanced-release.yml; test:test_generate_release_manifest.py; test:test_generate_release_metadata.py |
-| generate_release_metadata.py | GENERATE | Generate release metadata for website integration. | pre-commit; ci:enhanced-release.yml; test:test_generate_release_manifest.py; test:test_generate_release_metadata.py; tool:generate_release_manifest.py |
+| generate_release_metadata.py | GENERATE | Generate release metadata for website integration. | pre-commit; ci:enhanced-release.yml; ci:guards.yml; test:test_generate_release_manifest.py; test:test_generate_release_metadata.py; tool:generate_release_manifest.py |
 | generate_rulings.py | GENERATE | Generate the rulings index + the cross-repo rulings.json from RULING: declarations. | pre-commit; ci:guards.yml; tool:generate_commitment_calendar.py; tool:check_credentials.py; tool:rule.py; tool:triage_undeclared_rulings.py |
 | generate_tools_index.py | GENERATE | Generate docs/TOOLS.md -- the index of the dev tooling in scripts/ and tools/. | pre-commit; ci:guards.yml; test:test_generate_tools_index.py |
 | health_automation.py | -- | Project Health Automation Suite - BLITZ MODE | human (docstring usage) |
@@ -63,7 +63,7 @@ Declared with a `Layer:` line in a tool's module docstring; `--` = undeclared.
 | project_health.py | -- | P(Doom) Project Health Dashboard - BLITZ MODE IMPLEMENTATION | make; ci:enhanced-cicd-pipeline.yml; ci:quality-checks.yml |
 | repo-status.py | -- | P(Doom) Ecosystem Repository Status Dashboard | NONE FOUND |
 | report_missing_build_issue.py | REPORT (unrecognised) | File / update ONE ROLLING tracking issue per platform whose build is missing. | ci:enhanced-release.yml; test:test_platform_build_status.py; tool:check_platform_builds.py |
-| run_godot_tests.py | PROVE | Run Godot GUT (Godot Unit Test) tests from command line. | make; ci:godot-tests.yml; ci:guards.yml; test:test_find_dead_code.py; test:test_generate_tools_index.py; test:test_run_godot_tests_outcomes.py; tool:check_agent_env.py |
+| run_godot_tests.py | PROVE | Run Godot GUT (Godot Unit Test) tests from command line. | make; ci:godot-tests.yml; ci:guards.yml; test:test_find_dead_code.py; test:test_generate_tools_index.py; test:test_run_godot_tests_outcomes.py; tool:generate_release_metadata.py; tool:check_agent_env.py |
 | setup-token.py | -- | GitHub Token Setup Helper for VS Code Users | NONE FOUND |
 | sync_website_docs.py | -- | Sync documentation from pdoom1 repo to website export format. | ci:docs-sync.yml |
 | test_before_push.py | -- | Test Before Push - Local Development Workflow | human (docstring usage) |
@@ -80,7 +80,7 @@ Declared with a `Layer:` line in a tool's module docstring; `--` = undeclared.
 | build_release.py | PROVE | build_release.py -- export a P(Doom) build FROM A VERIFIED-CLEAN STATE. | ci:enhanced-release.yml; test:test_build_all_platforms.py; test:test_build_release_paths.py; tool:build_all_platforms.py; tool:check_agent_env.py; tool:find_dead_code.py |
 | capture_cinematic.py | -- | Cinematic capture harness for P(Doom)1 -- deterministic scene footage -> mp4/gif. | test:test_find_dead_code.py; tool:find_dead_code.py |
 | check_agent_env.py | PROVE | Guard: is CLAUDE.md still describing THIS machine? | make |
-| check_balance_keys.py | PROVE | Census the Balance surface in BOTH directions, because nothing else does. | pre-commit; ci:guards.yml |
+| check_balance_keys.py | PROVE | Census the Balance surface in BOTH directions, because nothing else does. | pre-commit; ci:guards.yml; tool:generate_release_metadata.py |
 | check_class_cache.py | PROVE | check_class_cache.py -- catch a STALE global script class cache before it eats a playtest. | pre-commit; make; test:test_check_class_cache.py |
 | check_environments.py | PROVE | Flag GitHub environments that no workflow references -- and say which are LIES. | ci:guards.yml |
 | check_export_icons.py | -- | Every export preset's application/icon is a format that platform can decode. | pre-commit; ci:guards.yml |
@@ -89,7 +89,7 @@ Declared with a `Layer:` line in a tool's module docstring; `--` = undeclared.
 | check_ladder_bump.py | PROVE | Guard: did this diff need a ladder_version bump (or get one it did not need)? | ci:quality-checks.yml; test:test_check_ladder_bump.py; test:test_check_self_merge_eligibility.py; tool:sync_version.py |
 | check_patch_notes.py | -- | check_patch_notes.py -- the shipped version must have patch notes to show. | pre-commit; ci:guards.yml; test:test_check_patch_notes.py |
 | check_refusal_classification.py | PROVE | check_refusal_classification.py -- every NEW player-facing refusal must say whether it | pre-commit; ci:quality-checks.yml |
-| check_release_ledger.py | PROVE | Guard: has every version we bumped to actually been tagged and released? | ci:release-ledger.yml; tool:generate_commitment_calendar.py |
+| check_release_ledger.py | PROVE | Guard: has every version we bumped to actually been tagged and released? | ci:release-ledger.yml; tool:generate_commitment_calendar.py; tool:generate_release_metadata.py |
 | check_review_js.py | -- | Syntax-check the JavaScript that serve_review.py serves to the browser. | pre-commit; ci:guards.yml |
 | check_scene_nav.py | PROVE | check_scene_nav.py -- enforce the single-scene-navigation-chokepoint invariant. | pre-commit; ci:guards.yml; ci:quality-checks.yml; tool:enforce_standards.py; tool:check_guard_parity.py |
 | check_self_merge_eligibility.py | PROVE | Guard: does this PR actually qualify for the self-merge class it claims? | ci:self-merge-eligibility.yml; test:test_check_self_merge_eligibility.py |

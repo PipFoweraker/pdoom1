@@ -491,9 +491,24 @@ class ReleaseMetadataGenerator:
             )
             date = result.stdout.strip()
 
-            # Get commit hash
+            # Get commit hash.
+            #
+            # `tag^{commit}`, not the bare `tag`, and the suffix is the whole
+            # point (2026-08-29). Every release tag in this repo is ANNOTATED,
+            # and `git rev-parse <annotated tag>` returns the TAG OBJECT's sha,
+            # which is not a commit and does not appear in `git log`. The field
+            # it lands in is called `commit_hash` and is published to the
+            # website in public/releases/<tag>.json, so the feed has been
+            # naming an object that is not the thing the field claims.
+            #
+            #   git rev-parse v0.14.3            -> 8319ab38  (the tag object)
+            #   git rev-parse v0.14.3^{commit}   -> b9f55260  (the commit)
+            #   git rev-list -n1 v0.14.3         -> b9f55260
+            #
+            # `^{commit}` peels a tag object to the commit it points at, and is
+            # a no-op on a lightweight tag, so this is correct for both kinds.
             result = subprocess.run(
-                ["git", "rev-parse", tag],
+                ["git", "rev-parse", tag + "^{commit}"],
                 cwd=self.repo_root,
                 capture_output=True,
                 text=True,
@@ -885,6 +900,55 @@ class ReleaseMetadataGenerator:
         return release_files
 
 
+def _run_self_test(generator: "ReleaseMetadataGenerator", repo_root: Path) -> int:
+    """Prove --check still returns all THREE answers, against the real index.
+
+    Only the TAG LIST is varied between the three cases, so the only difference
+    is the thing under test. Added 2026-08-29, the day --check became a CI gate:
+    its first run in CI reported a measured failure on a correct feed because the
+    checkout had no tags, and nothing existed that would have caught that.
+    """
+    import contextlib
+    import io
+
+    real_tags = generator.get_all_release_tags()
+    original = generator.get_all_release_tags
+    results = {}
+    try:
+        for label, tags in (
+            ("fresh", real_tags),
+            ("no tags visible", []),
+            ("tags visible but stale", real_tags[:-1]),
+        ):
+            generator.get_all_release_tags = lambda t=tags: t
+            with contextlib.redirect_stdout(io.StringIO()):
+                results[label] = _run_check(generator, repo_root)
+    finally:
+        generator.get_all_release_tags = original
+
+    expected = {"fresh": 0, "no tags visible": 2, "tags visible but stale": 1}
+    ok = True
+    print("[self-test] %d release tag(s) visible in this checkout." % len(real_tags))
+    if len(real_tags) < 2:
+        print("[self-test] DID NOT COMPLETE -- needs at least 2 tags to build the stale case.")
+        return 2
+    for label, want in expected.items():
+        got = results[label]
+        if got == want:
+            print("  [ok] %-24s -> exit %d" % (label, got))
+        else:
+            ok = False
+            print("SELF-TEST FAIL: %-24s -> exit %d, wanted %d" % (label, got, want))
+
+    if ok:
+        print("[self-test] PASSED: fresh=0, could-not-measure=2, stale=1 are all reachable.")
+        print("            'no tags visible' is the shallow-clone case. It must NOT be 1:")
+        print("            a checkout that cannot see tags has not measured the index.")
+    else:
+        print("[self-test] FAILED")
+    return 0 if ok else 1
+
+
 def _run_check(generator: "ReleaseMetadataGenerator", repo_root: Path) -> int:
     """Compare the TRACKED releases index against the git tags. Write nothing.
 
@@ -905,6 +969,30 @@ def _run_check(generator: "ReleaseMetadataGenerator", repo_root: Path) -> int:
     except (OSError, json.JSONDecodeError) as exc:
         print(f"[check] UNREADABLE {index_path}: {exc}")
         return 1
+
+    # THREE OUTCOMES, NOT TWO (added 2026-08-29, the day this became a CI gate).
+    #
+    # get_all_release_tags() returns [] both when a repo genuinely has no release
+    # tags and when the CHECKOUT CANNOT SEE THEM. A shallow clone fetches no tags,
+    # and actions/checkout is shallow by default. Collapsing those two into one
+    # answer made this command assert, in its first CI run, that all 27 entries in
+    # a correct index were "in index but not a git tag" and that latest_version
+    # should be None -- a measured verdict from a run that measured nothing, on a
+    # feed that was in fact perfectly fresh.
+    #
+    # A populated index plus zero visible tags is not evidence the index is wrong.
+    # It is evidence the question could not be asked. Exit 2 is this repo's answer
+    # for that (scripts/run_godot_tests.py, tools/check_balance_keys.py,
+    # tools/check_release_ledger.py), and .github/workflows/guards.yml already
+    # renders exit 2 as COULD NOT MEASURE rather than as a finding.
+    if not expected and tracked.get("releases"):
+        print("[check] DID NOT COMPLETE -- `git tag -l 'v*.*.*'` returned nothing, but")
+        print(f"        {index_path.name} lists {len(tracked['releases'])} release(s).")
+        print("        A checkout with no tags cannot answer whether the index is stale,")
+        print("        and this run establishes nothing either way.")
+        print("        In CI: give the checkout step `fetch-tags: true` (or fetch-depth: 0).")
+        print("        Locally: `git fetch --tags origin`.")
+        return 2
 
     actual = [str(r.get("version", "")) for r in tracked.get("releases", [])]
     problems: List[str] = []
@@ -1015,6 +1103,13 @@ def main():
         "asset file is found here.",
     )
     parser.add_argument(
+        "--self-test",
+        action="store_true",
+        help="Prove --check can still return all THREE of its answers (fresh / could "
+        "not measure / stale) against the real index. A gate whose failing "
+        "directions have never been exercised is a counter, not a gate.",
+    )
+    parser.add_argument(
         "--no-probe",
         action="store_true",
         help="Do not ask the GitHub Releases API which assets exist. With no other "
@@ -1029,6 +1124,9 @@ def main():
     repo_root = Path(__file__).parent.parent
 
     generator = ReleaseMetadataGenerator(repo_root)
+
+    if args.self_test:
+        sys.exit(_run_self_test(generator, repo_root))
 
     if args.check:
         sys.exit(_run_check(generator, repo_root))

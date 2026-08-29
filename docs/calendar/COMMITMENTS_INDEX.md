@@ -13,7 +13,7 @@ Horizon: **2026-08-09** (the prose scan reports dates at or after this; roll it
 forward deliberately in `COMMITMENTS.md`, never automatically -- a clock-reading
 generator goes stale overnight and trains people to ignore the check).
 
-**53 declared, 4 release-train, 218 UNPARSED, 0 malformed.**
+**53 declared, 4 release-train, 220 UNPARSED, 0 malformed.**
 
 ## Declared commitments
 
@@ -491,10 +491,10 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-24 | `scripts/generate_release_metadata.py` | 125 | # v0.14.3 (2026-08-24) was the second shape, and the convention was RIGHT this |
 | 2026-08-24 | `scripts/generate_release_metadata.py` | 374 | # on every entry of a pre-2026-08-24 index. That is the same call |
 | 2026-08-24 | `scripts/generate_release_metadata.py` | 462 | Used by --check to name the defect in an index generated before 2026-08-24, |
-| 2026-08-24 | `scripts/generate_release_metadata.py` | 525 | WHY (2026-08-24). This used to return |
-| 2026-08-24 | `scripts/generate_release_metadata.py` | 583 | absence. `changelog` / `changelog_status` (2026-08-24, #1298) covers |
-| 2026-08-24 | `scripts/generate_release_metadata.py` | 741 | # "<description>Release v0.13.1" for 14 releases before 2026-08-24. |
-| 2026-08-24 | `scripts/generate_release_metadata.py` | 928 | # Inspect the CHANGELOG FIELD, not just the tag list. Until 2026-08-24 this |
+| 2026-08-24 | `scripts/generate_release_metadata.py` | 540 | WHY (2026-08-24). This used to return |
+| 2026-08-24 | `scripts/generate_release_metadata.py` | 598 | absence. `changelog` / `changelog_status` (2026-08-24, #1298) covers |
+| 2026-08-24 | `scripts/generate_release_metadata.py` | 756 | # "<description>Release v0.13.1" for 14 releases before 2026-08-24. |
+| 2026-08-24 | `scripts/generate_release_metadata.py` | 1016 | # Inspect the CHANGELOG FIELD, not just the tag list. Until 2026-08-24 this |
 | 2026-08-24 | `tools/check_balance_keys.py` | 76 | WHY --self-test EXISTS (added 2026-08-24, issue #1265) |
 | 2026-08-24 | `tools/check_environments.py` | 6 | THE DEFECT CLASS (found 2026-08-24 across two repos in this estate) |
 | 2026-08-24 | `tools/check_environments.py` | 44 | built to prevent it on 2026-08-24 alone. |
@@ -519,6 +519,11 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-28 | `docs/releases/RELEASE_LINKING_TO_0.20.md` | 93 | league opens on Friday 2026-08-28 -- also week 35 -- then by the 2026-07-30 |
 | 2026-08-28 | `tools/check_release_ledger.py` | 450 | # reason on 2026-08-28 (v0.14.4 bumped, tagged, never published) was |
 | 2026-08-29 | `docs/RELEASE_NOTES_GUARD.md` | 56 | ### The PR-time row was added on 2026-08-29, and here is what it cost to learn |
+| 2026-08-29 | `scripts/generate_release_metadata.py` | 497 | # point (2026-08-29). Every release tag in this repo is ANNOTATED, |
+| 2026-08-29 | `scripts/generate_release_metadata.py` | 907 | is the thing under test. Added 2026-08-29, the day --check became a CI gate: |
+| 2026-08-29 | `scripts/generate_release_metadata.py` | 973 | # THREE OUTCOMES, NOT TWO (added 2026-08-29, the day this became a CI gate). |
+| 2026-08-29 | `tools/check_guard_parity.py` | 368 | # THE NEWLY ARMED DIRECTION (2026-08-29). PARTIAL fails --check as of #1297 |
+| 2026-08-29 | `tools/check_guard_parity.py` | 437 | # PARTIAL NOW FAILS --check (armed 2026-08-29, issue #1297 section 2). |
 | 2026-08-29 | `tools/check_release_ledger.py` | 436 | # Exactly ONE trailing newline, and this is load-bearing (2026-08-29). |
 | 2026-08-29 | `tools/check_release_ledger.py` | 448 | # run from 2026-08-24 to 2026-08-29 -- eight consecutive, mostly the 04:23 |
 | 2026-08-31 | `docs/rulings/RULINGS.md` | 387 | - `godot/scripts/core/researcher.gd:150` -- # SEAM (ruled 2026-07-27, review-by 2026-08-31): AUDITS ground-truth reported vs actual. |
