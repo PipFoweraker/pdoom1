@@ -124,7 +124,14 @@ jobs:
     # the rulings generator matches per-line; do not reflow it. (Naming that
     # generator's path here would make the generated dev-tools index list this
     # workflow as one of its callers, which would be false -- see docs/TOOLS.md.)
-    # RULING: 2026-08-22 -- a check that fails 100% of the time is not a check; chronic red trains the team to ignore red, so a permanently-failing gate must be either fixed or explicitly declared, never left standing -- flavour: ci-gates -- mechanism: tools/check_chronic_red.py, owed by issue #1279
+    # The same hazard bit for real on 2026-08-29. This ruling's `mechanism:` used
+    # to name the chronic-red checker BY PATH as a thing issue #1279 still owed,
+    # and on the day that tool was actually written, docs/TOOLS.md began listing
+    # docs-sync.yml among its CI callers -- which it is not. The mechanism now
+    # names the workflow that really runs it and carries no tools/ path at all.
+    # Nor does this comment, deliberately: writing the path here to explain the
+    # problem reproduced the problem, once, before it was reworded to this.
+    # RULING: 2026-08-22 -- a check that fails 100% of the time is not a check; chronic red trains the team to ignore red, so a permanently-failing gate must be either fixed or explicitly declared, never left standing -- flavour: ci-gates -- mechanism: the chronic-red census in guards.yml, which gates on this since 2026-08-29 (issue #1279)
     #
     # `pull-requests: write` and not `issues: write`: the endpoint is the
     # shared issue-comments endpoint, but this job runs ONLY on

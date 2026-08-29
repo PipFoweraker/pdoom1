@@ -5,7 +5,7 @@
 > `python scripts/generate_rulings.py`. The convention, and why it looks
 > like this, is argued in `docs/rulings/RULINGS_CONVENTION.md`.
 
-**57 ruling(s)** across **16 flavour(s)**. **241** prose ruling(s) not yet declared.
+**58 ruling(s)** across **16 flavour(s)**. **241** prose ruling(s) not yet declared.
 
 ## One index, five sources
 
@@ -16,7 +16,7 @@ flattening either into one line would delete what makes it worth having.
 
 | kind | n | what it is | where |
 |---|---:|---|---|
-| `declaration` | 31 | a `RULING:` line written next to what it governs | anywhere |
+| `declaration` | 32 | a `RULING:` line written next to what it governs | anywhere |
 | `adr` | 20 | a full architecture argument, summarised here | `docs/game-design/decisions/` |
 | `session` | 3 | a transcript or workshop ruling set, pointed at | `docs/SPOKEN_*`, `*RULINGS*` |
 | `card` | 3 | the input a ruling was made from | `docs/decision-cards/` |
@@ -71,7 +71,7 @@ flavour it belongs to and read what was already decided there.
 
 | date | ruling | mechanism | source |
 |---|---|---|---|
-| 2026-08-22 | a check that fails 100% of the time is not a check; chronic red trains the team to ignore red, so a permanently-failing gate must be either fixed or explicitly declared, never left standing | `tools/check_chronic_red.py, owed by issue #1279` | `.github/workflows/docs-sync.yml:127` |
+| 2026-08-22 | a check that fails 100% of the time is not a check; chronic red trains the team to ignore red, so a permanently-failing gate must be either fixed or explicitly declared, never left standing | `the chronic-red census in guards.yml, which gates on this since 2026-08-29 (issue #1279)` | `.github/workflows/docs-sync.yml:134` |
 | 2026-08-24 | a command's exit status must be read from the command, never through a pipe: $? after a pipeline is the RIGHTMOST command's status, so `tool | tee`, `tool | head` and `tool | tail` all discard the tool's verdict and report the wrapper's success | `this workflow, and live-site-release-freshness.yml` | `.github/workflows/release-ledger.yml:102` |
 | 2026-08-24 | a gate's verdict must be traced to a consumer before it is called a gate: a red that blocks no merge, gates no job, and reaches no human is theatre, and it costs attention as well as buying nothing | `this audit, and docs/deployment/RELEASE_FLOW_MAP_2026-08-24.md` | `docs/deployment/GATE_AUDIT_2026-08-24.md:949` |
 | 2026-08-24 | a workflow that writes anything must declare `permissions:`, because this repo's default workflow token is read-only and a write attempt without one 403s into either a permanent meaningless red or, under continue-on-error, a green that hides it | `gh api repos/PipFoweraker/pdoom1/actions/permissions/workflow` | `docs/deployment/GATE_AUDIT_2026-08-24.md:951` |
@@ -91,6 +91,7 @@ flavour it belongs to and read what was already decided there.
 |---|---|---|---|
 | 2026-08-24 | an environment no workflow references is either clutter or a lie, and which one depends entirely on what it is called; a safety-vocabulary name with no reference is a finding, any other name is reported and not gated | `tools/check_environments.py in .github/workflows/guards.yml` | `tools/check_environments.py:51` |
 | 2026-08-24 | a guard wired only to pre-commit is not installed; every local hook must either run in a workflow or carry a declared waiver naming what covers it instead | `tools/check_guard_parity.py --check in .github/workflows/guards.yml` | `tools/check_guard_parity.py:47` |
+| 2026-08-29 | a workflow red for three consecutive runs of the same trigger must be fixed or declared, because an undeclared chronic red makes every later red unreadable | `tools/check_chronic_red.py --check in .github/workflows/guards.yml` | `tools/check_chronic_red.py:47` |
 
 ### `ladder-epochs`
 
