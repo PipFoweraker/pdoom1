@@ -3,7 +3,7 @@
   "repo": "pdoom1",
   "generated_from": "tracked files at HEAD",
   "convention": "docs/rulings/RULINGS_CONVENTION.md",
-  "count": 57,
+  "count": 58,
   "rulings": [
     {
       "id": "pdoom1:2026-07-04:12de8fc2",
@@ -504,10 +504,10 @@
       "kind": "declaration",
       "status": "",
       "by": "Pip",
-      "mechanism": "tools/check_chronic_red.py, owed by issue #1279",
+      "mechanism": "the chronic-red census in guards.yml, which gates on this since 2026-08-29 (issue #1279)",
       "supersedes": null,
       "superseded_by": null,
-      "source": ".github/workflows/docs-sync.yml:127"
+      "source": ".github/workflows/docs-sync.yml:134"
     },
     {
       "id": "pdoom1:2026-08-22:8130f800",
@@ -802,6 +802,20 @@
       "supersedes": null,
       "superseded_by": null,
       "source": "tools/generate_release_horizon.py:37"
+    },
+    {
+      "id": "pdoom1:2026-08-29:73ef30e8",
+      "date": "2026-08-29",
+      "ruling": "a workflow red for three consecutive runs of the same trigger must be fixed or declared, because an undeclared chronic red makes every later red unreadable",
+      "summary": "",
+      "flavour": "guard-doctrine",
+      "kind": "declaration",
+      "status": "",
+      "by": "Pip",
+      "mechanism": "tools/check_chronic_red.py --check in .github/workflows/guards.yml",
+      "supersedes": null,
+      "superseded_by": null,
+      "source": "tools/check_chronic_red.py:47"
     }
   ],
   "undeclared": [

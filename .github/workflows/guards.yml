@@ -39,8 +39,15 @@ on:
 # lesson: an absent block cost a red run on a clean v0.14.0 release, and a gate that reds
 # on something it does not gate trains the reader to discount reds.
 # These guards only read the checkout. They post nothing, tag nothing, and write nothing.
+#
+# `actions: read` added 2026-08-29 for check_chronic_red.py, which asks the Actions
+# API for this repository's own recent run history. Read-only: it lists workflows and
+# their runs and never re-runs, cancels or dispatches one. Without it that guard
+# cannot ask the question, and it is built to exit 2 (COULD NOT MEASURE) rather than
+# report a clean bill of health from a call that failed.
 permissions:
   contents: read
+  actions: read
 
 jobs:
   guards:
@@ -216,6 +223,26 @@ jobs:
           # did not run, and saying "no findings" would be the defect it looks for.
           guard "environments self-test" python tools/check_environments.py --self-test
           guard "environments audit" python tools/check_environments.py
+
+          # --- the chronic-red census (issue #1279, added 2026-08-29) ---------------
+          # The one guard here whose subject is the OTHER guards. A workflow that has
+          # been red for three consecutive runs of the same trigger has stopped being
+          # a signal and become furniture, and it hides the next real red behind it.
+          # release-ledger.yml proved that in August: red for five days on an
+          # unsatisfiable gate, and its red for a GENUINE reason -- v0.14.4 tagged and
+          # never published -- arrived on 2026-08-28 looking exactly like the other
+          # seven.
+          #
+          # Also CI-only by construction, for the same reason as the environments
+          # audit above: it calls the GitHub API, and a pre-commit hook that makes a
+          # network call is slow, fails offline, and teaches people to skip hooks.
+          #
+          # It measures (workflow, EVENT) pairs, never workflows. docs-sync.yml is
+          # why: its overall streak is zero because its push runs pass, while its
+          # pull_request runs are 39-for-39 red (#1279). A per-workflow counter
+          # reports that workflow as healthy.
+          guard "chronic-red self-test" python tools/check_chronic_red.py --self-test
+          guard "chronic-red census" python tools/check_chronic_red.py --check
 
           {
             echo "## Guards"
