@@ -243,6 +243,25 @@ def fossils(rows, events_by_file):
     return out
 
 
+def verdict(rows, events_by_file=None) -> int:
+    """The --check answer for a census. Pure, so the self-test can prove each
+    failing direction fires rather than only that a clean tree passes.
+
+    Fossils count as failures as of 2026-08-30 (ruled by Pip; see
+    docs/CI_FOSSILS_2026-08-30.md). Listing them was the previous behaviour and
+    it was not enough: a fossil left in place is a permanently red row on the
+    Actions page, which is the training this tool exists to stop. The remedy is
+    to purge the frozen runs or restore the trigger -- never to declare it.
+    """
+    if (
+        undeclared(rows, events_by_file)
+        or stale_declarations(rows, events_by_file)
+        or fossils(rows, events_by_file)
+    ):
+        return 1
+    return 0
+
+
 def chronic(rows, events_by_file=None):
     """Rows at or over the streak threshold, EXCLUDING fossils.
 
@@ -331,8 +350,8 @@ def render(rows, events_by_file=None) -> None:
     if fossil_reasons:
         print()
         print("FOSSILS -- red, but the trigger cannot fire again, so it can never clear.")
-        print("Not chronic, and deliberately NOT something to declare: a declaration")
-        print("that can never go stale is the permanent register this file avoids.")
+        print("Not chronic, and NOT something to declare: a declaration for a fossil can")
+        print("never go stale, so the register of exceptions would only ever grow.")
         for key, why in sorted(fossil_reasons.items()):
             print("  %-48s %s" % (key, why))
 
@@ -462,6 +481,30 @@ def self_test() -> int:
             repr(real and real.get("guards.yml")),
         )
 
+    # FOSSILS NOW FAIL (ruled by Pip 2026-08-30, docs/CI_FOSSILS_2026-08-30.md).
+    # Listing them was the 2026-08-29 behaviour and it was not enough: a fossil
+    # left in place is a permanently red row on the Actions page, which is the
+    # training this whole tool exists to stop.
+    check(
+        "a fossil FAILS --check, rather than being listed and tolerated",
+        verdict(gone, events) == 1 and verdict(dropped, events) == 1,
+    )
+    # The passing case has to SATISFY the real DECLARED list, not sidestep it:
+    # a synthetic tree missing docs-sync.yml:pull_request makes that declaration
+    # read stale, which is correct behaviour and would make this case fail for a
+    # reason unrelated to fossils. So the clean tree includes it, chronic and
+    # declared, exactly as the real repository has it.
+    clean = census(
+        {
+            "live.yml:push": [("success", "2026-08-30")] * 5,
+            "docs-sync.yml:pull_request": [("failure", "2026-08-22")] * 39,
+        }
+    )
+    check(
+        "a tree with no fossils and every chronic red declared passes",
+        verdict(clean, {"live.yml": {"push"}, "docs-sync.yml": {"pull_request"}}) == 0,
+    )
+
     print("SELF-TEST %s" % ("PASSED" if ok else "FAILED"))
     return 0 if ok else 1
 
@@ -529,10 +572,27 @@ def main(argv) -> int:
         for key, reason in stale:
             print("    %-48s %s" % (key, reason))
         rc = 1
+    dead = fossils(rows, events_by_file)
+    if dead:
+        print()
+        print("[chronic-red] FAIL: %d fossil(s) -- red rows that can never clear." % len(dead))
+        print("  Ruled 2026-08-30: a fossil is REMOVED, never declared. A declaration for")
+        print("  one could never go stale, so the register of exceptions would only grow,")
+        print("  and meanwhile the Actions page keeps a red row that means nothing --")
+        print("  which is the training this check exists to stop.")
+        print("  Two remedies, both acceptable:")
+        print("    * delete the frozen runs, so the row goes away entirely; or")
+        print("    * restore the trigger, so the pair is live and its red means something.")
+        print("  See docs/CI_FOSSILS_2026-08-30.md for the 1,334 runs purged under it.")
+        for (key, streak, fails, total, newest), why in dead:
+            print("    %-48s %s (newest %s)" % (key, why, newest))
+        rc = 1
     if rc == 0:
         print()
-        print("[chronic-red] OK: every chronic red is declared, and every declaration bites.")
-    return rc
+        print("[chronic-red] OK: every chronic red is declared, no fossils, no stale entries.")
+    # Same pure function the self-test exercises, so the command's verdict and the
+    # proven verdict cannot drift apart.
+    return verdict(rows, events_by_file)
 
 
 if __name__ == "__main__":
