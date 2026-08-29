@@ -364,7 +364,7 @@ DTSTART;VALUE=DATE:20260810
 DTEND;VALUE=DATE:20260811
 SUMMARY:[TASK] Book the half-day audit-mechanics workshop\, target window 
  opens
-DESCRIPTION:Owner: pip. Kind: task. Source: docs/rulings/RULINGS.md:258. p
+DESCRIPTION:Owner: pip. Kind: task. Source: docs/rulings/RULINGS.md:259. p
  doom1#984\, ruled 2026-07-27 18:11. Scheduled to precede the 2026-08-31 f
   -- Generated from tracked sources by scripts/generate_commitment_calenda
  r.py\; regenerate to update.
@@ -656,7 +656,7 @@ DTSTART;VALUE=DATE:20260811
 DTEND;VALUE=DATE:20260812
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:169. 6 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:170. 6 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: Rulings with no `mechanism:`. Pip's doctrine 
  (2026-08-11): what forces a -- Generated from tracked sources by scripts/
@@ -797,7 +797,7 @@ DTSTART;VALUE=DATE:20260812
 DTEND;VALUE=DATE:20260813
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:380. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:381. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `godot/scripts/core/capacity.gd:5` -- ## Ru
  led 2026-08-12 (coordination/DESIGN_2026-08-12_interrupt-resolution-varia
@@ -1208,7 +1208,7 @@ DTSTART;VALUE=DATE:20260813
 DTEND;VALUE=DATE:20260814
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:215. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:216. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `docs/CONTENT_DISTRIBUTION_SYSTEM.md:10` --
   > **SUPERSEDED\, not merely "outdated in spirit"\, as of 2026-08-13.** P
@@ -1744,7 +1744,7 @@ DTSTART;VALUE=DATE:20260814
 DTEND;VALUE=DATE:20260815
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:399. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:400. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `godot/tests/unit/simulation/test_events.gd
  :50` -- ## THE RATCHET WAS DELIBERATELY LOOSENED -- 2026-08-14\, ruled by
@@ -3225,7 +3225,7 @@ DTSTART;VALUE=DATE:20260820
 DTEND;VALUE=DATE:20260821
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:208. 5 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:209. 5 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `.github/workflows/guards.yml:3` -- # WHY T
  HIS FILE EXISTS (issue #1265\, ruled by Pip 2026-08-20) -- Generated from
@@ -3965,7 +3965,7 @@ DTSTART;VALUE=DATE:20260822
 DTEND;VALUE=DATE:20260823
 SUMMARY:[UNPARSED] needs a declaration -- check_chronic_red.py
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/check_chronic_re
- d.py:97. 3 line(s) in tools/check_chronic_red.py mention this date and no
+ d.py:97. 4 line(s) in tools/check_chronic_red.py mention this date and no
   COMMITMENT: declaration accounts for it. Either add a declaration or the
   date is incidental. First line: "docs/mechanics/** -- so no qualifying P
  R has run since 2026-08-22 and the " -- Generated from tracked sources by
@@ -4475,6 +4475,29 @@ BEGIN:VALARM
 ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:Reflective review: release / league cycle (review) -- pip
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:90cd0c03f10957f9@commitments.pdoom1
+DTSTAMP:20260824T000000Z
+DTSTART;VALUE=DATE:20260824
+DTEND;VALUE=DATE:20260825
+SUMMARY:[UNPARSED] needs a declaration -- CI_FOSSILS_2026-08-30.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/CI_FOSSILS_2026-0
+ 8-30.md:100. 1 line(s) in docs/CI_FOSSILS_2026-08-30.md mention this date
+  and no COMMITMENT: declaration accounts for it. Either add a declaration
+  or the date is incidental. First line: 04:23 UTC cron went green for the
+  first time since 2026-08-24. -- Generated from tracked sources by script
+ s/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- CI_FOSSILS_2026-08-30.md (unparsed) -- 
+ unowned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
@@ -5222,6 +5245,30 @@ DESCRIPTION:Rektango 17:30 -- the weekly anchor\, a hard stop (cadence) --
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:1895c879143989a0@commitments.pdoom1
+DTSTAMP:20260828T000000Z
+DTSTART;VALUE=DATE:20260828
+DTEND;VALUE=DATE:20260829
+SUMMARY:[UNPARSED] needs a declaration -- CI_FOSSILS_2026-08-30.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/CI_FOSSILS_2026-0
+ 8-30.md:143. 1 line(s) in docs/CI_FOSSILS_2026-08-30.md mention this date
+  and no COMMITMENT: declaration accounts for it. Either add a declaration
+  or the date is incidental. First line: gate\, so its red for a genuine r
+ eason on 2026-08-28 -- v0.14.4 tagged and never -- Generated from tracked
+  sources by scripts/generate_commitment_calendar.py\; regenerate to updat
+ e.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- CI_FOSSILS_2026-08-30.md (unparsed) -- 
+ unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:fd685d4c7d04e0a7@commitments.pdoom1
 DTSTAMP:20260828T000000Z
 DTSTART;VALUE=DATE:20260828
@@ -5315,6 +5362,30 @@ DESCRIPTION:needs a declaration -- check_release_ledger.py (unparsed) -- u
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:7d95bf693366071c@commitments.pdoom1
+DTSTAMP:20260829T000000Z
+DTSTART;VALUE=DATE:20260829
+DTEND;VALUE=DATE:20260830
+SUMMARY:[UNPARSED] needs a declaration -- CI_FOSSILS_2026-08-30.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/CI_FOSSILS_2026-0
+ 8-30.md:15. 2 line(s) in docs/CI_FOSSILS_2026-08-30.md mention this date 
+ and no COMMITMENT: declaration accounts for it. Either add a declaration 
+ or the date is incidental. First line: 2026-08-29 (#1336)\, after its fir
+ st version declared three of them as chronic -- -- Generated from tracked
+  sources by scripts/generate_commitment_calendar.py\; regenerate to updat
+ e.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- CI_FOSSILS_2026-08-30.md (unparsed) -- 
+ unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:0d7cebe3c6906478@commitments.pdoom1
 DTSTAMP:20260829T000000Z
 DTSTART;VALUE=DATE:20260829
@@ -5389,11 +5460,11 @@ DTSTART;VALUE=DATE:20260829
 DTEND;VALUE=DATE:20260830
 SUMMARY:[UNPARSED] needs a declaration -- check_chronic_red.py
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/check_chronic_re
- d.py:14. 9 line(s) in tools/check_chronic_red.py mention this date and no
-  COMMITMENT: declaration accounts for it. Either add a declaration or the
-  date is incidental. First line: 2026-08-24 to 2026-08-29 because its gen
- erator emitted a trailing blank line -- Generated from tracked sources by
-  scripts/generate_commitment_calendar.py\; regenerate to update.
+ d.py:14. 10 line(s) in tools/check_chronic_red.py mention this date and n
+ o COMMITMENT: declaration accounts for it. Either add a declaration or th
+ e date is incidental. First line: 2026-08-24 to 2026-08-29 because its ge
+ nerator emitted a trailing blank line -- Generated from tracked sources b
+ y scripts/generate_commitment_calendar.py\; regenerate to update.
 CATEGORIES:UNPARSED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -5476,6 +5547,76 @@ DESCRIPTION:needs a declaration -- generate_release_metadata.py (unparsed)
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:52dc5f20673e6242@commitments.pdoom1
+DTSTAMP:20260830T000000Z
+DTSTART;VALUE=DATE:20260830
+DTEND;VALUE=DATE:20260831
+SUMMARY:[UNPARSED] needs a declaration -- CI_FOSSILS_2026-08-30.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/CI_FOSSILS_2026-0
+ 8-30.md:3. 4 line(s) in docs/CI_FOSSILS_2026-08-30.md mention this date a
+ nd no COMMITMENT: declaration accounts for it. Either add a declaration o
+ r the date is incidental. First line: Written 2026-08-30\, immediately be
+ fore the deletion it records\, so that removing -- Generated from tracked
+  sources by scripts/generate_commitment_calendar.py\; regenerate to updat
+ e.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- CI_FOSSILS_2026-08-30.md (unparsed) -- 
+ unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:fbdf1a99cad5c671@commitments.pdoom1
+DTSTAMP:20260830T000000Z
+DTSTART;VALUE=DATE:20260830
+DTEND;VALUE=DATE:20260831
+SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
+ d:95. 4 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
+ TMENT: declaration accounts for it. Either add a declaration or the date 
+ is incidental. First line: | 2026-08-30 | a CI fossil must be removed ent
+ irely\, never declared: a red that cannot clear trains the team to discou
+ nt reds\, and a declaration for o -- Generated from tracked sources by sc
+ ripts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- RULINGS.md (unparsed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:58d019e4c8f03b99@commitments.pdoom1
+DTSTAMP:20260830T000000Z
+DTSTART;VALUE=DATE:20260830
+DTEND;VALUE=DATE:20260831
+SUMMARY:[UNPARSED] needs a declaration -- check_chronic_red.py
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/check_chronic_re
+ d.py:250. 4 line(s) in tools/check_chronic_red.py mention this date and n
+ o COMMITMENT: declaration accounts for it. Either add a declaration or th
+ e date is incidental. First line: Fossils count as failures as of 2026-08
+ -30 (ruled by Pip\; see -- Generated from tracked sources by scripts/gene
+ rate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- check_chronic_red.py (unparsed) -- unow
+ ned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:74ca38be8dd56115@commitments.pdoom1
 DTSTAMP:20260831T000000Z
 DTSTART;VALUE=DATE:20260831
@@ -5542,7 +5683,7 @@ DTSTART;VALUE=DATE:20260831
 DTEND;VALUE=DATE:20260901
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:388. 2 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:389. 2 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `godot/scripts/core/researcher.gd:150` -- #
   SEAM (ruled 2026-07-27\, review-by 2026-08-31): AUDITS ground-truth repo
@@ -6799,7 +6940,7 @@ DTSTART;VALUE=DATE:20270727
 DTEND;VALUE=DATE:20270728
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:301. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:302. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `docs/game-design/DESIGN_2026-08-24_diegeti
  c-opening.md:628` -- is ruled out today."* The doctrine has a **review cl

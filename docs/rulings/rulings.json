@@ -3,7 +3,7 @@
   "repo": "pdoom1",
   "generated_from": "tracked files at HEAD",
   "convention": "docs/rulings/RULINGS_CONVENTION.md",
-  "count": 58,
+  "count": 59,
   "rulings": [
     {
       "id": "pdoom1:2026-07-04:12de8fc2",
@@ -816,6 +816,20 @@
       "supersedes": null,
       "superseded_by": null,
       "source": "tools/check_chronic_red.py:47"
+    },
+    {
+      "id": "pdoom1:2026-08-30:1e0f5848",
+      "date": "2026-08-30",
+      "ruling": "a CI fossil must be removed entirely, never declared: a red that cannot clear trains the team to discount reds, and a declaration for one can never go stale, so the register of exceptions would grow forever",
+      "summary": "",
+      "flavour": "guard-doctrine",
+      "kind": "declaration",
+      "status": "",
+      "by": "Pip",
+      "mechanism": "tools/check_chronic_red.py --check fails on any fossil, so a new one must be purged or its trigger restored",
+      "supersedes": null,
+      "superseded_by": null,
+      "source": "docs/CI_FOSSILS_2026-08-30.md:27"
     }
   ],
   "undeclared": [
@@ -1738,6 +1752,18 @@
     {
       "source": "tools/assets/provenance_unknown_pin.json:2",
       "text": "\"_why\": \"Pinned unknown set. Ruled by Pip 2026-08-11: keep the unattributable assets, record them honestly, and let a mechanism force the question later rather than a document.\","
+    },
+    {
+      "source": "tools/check_chronic_red.py:250",
+      "text": "Fossils count as failures as of 2026-08-30 (ruled by Pip; see"
+    },
+    {
+      "source": "tools/check_chronic_red.py:484",
+      "text": "# FOSSILS NOW FAIL (ruled by Pip 2026-08-30, docs/CI_FOSSILS_2026-08-30.md)."
+    },
+    {
+      "source": "tools/check_chronic_red.py:579",
+      "text": "print(\"  Ruled 2026-08-30: a fossil is REMOVED, never declared. A declaration for\")"
     },
     {
       "source": "tools/check_guard_parity.py:6",

@@ -5,7 +5,7 @@
 > `python scripts/generate_rulings.py`. The convention, and why it looks
 > like this, is argued in `docs/rulings/RULINGS_CONVENTION.md`.
 
-**58 ruling(s)** across **16 flavour(s)**. **241** prose ruling(s) not yet declared.
+**59 ruling(s)** across **16 flavour(s)**. **244** prose ruling(s) not yet declared.
 
 ## One index, five sources
 
@@ -16,7 +16,7 @@ flattening either into one line would delete what makes it worth having.
 
 | kind | n | what it is | where |
 |---|---:|---|---|
-| `declaration` | 32 | a `RULING:` line written next to what it governs | anywhere |
+| `declaration` | 33 | a `RULING:` line written next to what it governs | anywhere |
 | `adr` | 20 | a full architecture argument, summarised here | `docs/game-design/decisions/` |
 | `session` | 3 | a transcript or workshop ruling set, pointed at | `docs/SPOKEN_*`, `*RULINGS*` |
 | `card` | 3 | the input a ruling was made from | `docs/decision-cards/` |
@@ -92,6 +92,7 @@ flavour it belongs to and read what was already decided there.
 | 2026-08-24 | an environment no workflow references is either clutter or a lie, and which one depends entirely on what it is called; a safety-vocabulary name with no reference is a finding, any other name is reported and not gated | `tools/check_environments.py in .github/workflows/guards.yml` | `tools/check_environments.py:51` |
 | 2026-08-24 | a guard wired only to pre-commit is not installed; every local hook must either run in a workflow or carry a declared waiver naming what covers it instead | `tools/check_guard_parity.py --check in .github/workflows/guards.yml` | `tools/check_guard_parity.py:47` |
 | 2026-08-29 | a workflow red for three consecutive runs of the same trigger must be fixed or declared, because an undeclared chronic red makes every later red unreadable | `tools/check_chronic_red.py --check in .github/workflows/guards.yml` | `tools/check_chronic_red.py:47` |
+| 2026-08-30 | a CI fossil must be removed entirely, never declared: a red that cannot clear trains the team to discount reds, and a declaration for one can never go stale, so the register of exceptions would grow forever | `tools/check_chronic_red.py --check fails on any fossil, so a new one must be purged or its trigger restored` | `docs/CI_FOSSILS_2026-08-30.md:27` |
 
 ### `ladder-epochs`
 
@@ -435,6 +436,9 @@ is not.
 - `tools/assets/check_provenance.py:60` -- this estate has already ruled carries no information.
 - `tools/assets/manifests/new_subjects.json:115` -- "prompt_tail": "an almost perfectly flat-on frontal view of a wall of bureaucratic paperwork, shot square to the wall with minimal perspective so the picture plane and the wall plane are nearly parall
 - `tools/assets/provenance_unknown_pin.json:2` -- "_why": "Pinned unknown set. Ruled by Pip 2026-08-11: keep the unattributable assets, record them honestly, and let a mechanism force the question later rather than a document.",
+- `tools/check_chronic_red.py:250` -- Fossils count as failures as of 2026-08-30 (ruled by Pip; see
+- `tools/check_chronic_red.py:484` -- # FOSSILS NOW FAIL (ruled by Pip 2026-08-30, docs/CI_FOSSILS_2026-08-30.md).
+- `tools/check_chronic_red.py:579` -- print("  Ruled 2026-08-30: a fossil is REMOVED, never declared. A declaration for")
 - `tools/check_guard_parity.py:6` -- WHY THIS EXISTS (issue #1265, ruled by Pip 2026-08-20)
 - `tools/check_release_ledger.py:30` -- This is the ruled ``manufactured confidence`` shape (Pip, 2026-08-23 16:42):
 - `tools/check_release_ledger.py:59` -- ``pdoom.releases/0.1``). Under the atomise protocol clause 3 (ruled by Pip,
