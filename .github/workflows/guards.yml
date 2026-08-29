@@ -55,6 +55,13 @@ jobs:
           # default. (check_ladder_bump.py, which does, lives in quality-checks.yml
           # with fetch-depth: 0.)
           fetch-depth: 1
+          # TAGS, THOUGH -- and depth 1 does not fetch them (2026-08-29).
+          # release-index-check compares public/releases/releases.json against
+          # `git tag -l 'v*.*.*'`. On the tagless shallow checkout this job used to
+          # get, that list came back EMPTY and the guard reported all 27 correct
+          # entries as bogus. Tag NAMES are all it needs -- it never walks history
+          # -- so this stays cheap and fetch-depth stays at 1 for everything else.
+          fetch-tags: true
 
       - name: Set up Python
         uses: actions/setup-python@v7
@@ -190,6 +197,14 @@ jobs:
           # only thing that checks is a hook CI cannot see.
           #
           # The feed is regenerated in this same change, so this arrives green.
+          #
+          # The self-test runs FIRST and exists because of what happened the first
+          # time this guard ran in CI: the checkout was shallow, `git tag` returned
+          # nothing, and the tool reported all 27 correct entries as bogus -- a
+          # measured verdict from a run that measured nothing. `--check` now exits 2
+          # (COULD NOT MEASURE) on a tagless checkout, and the self-test proves all
+          # three answers are still reachable rather than asserting it.
+          guard "release-index self-test" python scripts/generate_release_metadata.py --self-test
           guard "release-index-check" python scripts/generate_release_metadata.py --check
 
           # --- the environments audit ---------------------------------------------

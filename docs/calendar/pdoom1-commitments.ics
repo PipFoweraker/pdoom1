@@ -5321,7 +5321,7 @@ DTSTART;VALUE=DATE:20260829
 DTEND;VALUE=DATE:20260830
 SUMMARY:[UNPARSED] needs a declaration -- generate_release_metadata.py
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: scripts/generate_relea
- se_metadata.py:497. 1 line(s) in scripts/generate_release_metadata.py men
+ se_metadata.py:497. 3 line(s) in scripts/generate_release_metadata.py men
  tion this date and no COMMITMENT: declaration accounts for it. Either add
   a declaration or the date is incidental. First line: # point (2026-08-29
  ). Every release tag in this repo is ANNOTATED\, -- Generated from tracke

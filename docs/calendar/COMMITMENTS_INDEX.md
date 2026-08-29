@@ -494,7 +494,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-24 | `scripts/generate_release_metadata.py` | 540 | WHY (2026-08-24). This used to return |
 | 2026-08-24 | `scripts/generate_release_metadata.py` | 598 | absence. `changelog` / `changelog_status` (2026-08-24, #1298) covers |
 | 2026-08-24 | `scripts/generate_release_metadata.py` | 756 | # "<description>Release v0.13.1" for 14 releases before 2026-08-24. |
-| 2026-08-24 | `scripts/generate_release_metadata.py` | 943 | # Inspect the CHANGELOG FIELD, not just the tag list. Until 2026-08-24 this |
+| 2026-08-24 | `scripts/generate_release_metadata.py` | 1016 | # Inspect the CHANGELOG FIELD, not just the tag list. Until 2026-08-24 this |
 | 2026-08-24 | `tools/check_balance_keys.py` | 76 | WHY --self-test EXISTS (added 2026-08-24, issue #1265) |
 | 2026-08-24 | `tools/check_environments.py` | 6 | THE DEFECT CLASS (found 2026-08-24 across two repos in this estate) |
 | 2026-08-24 | `tools/check_environments.py` | 44 | built to prevent it on 2026-08-24 alone. |
@@ -520,6 +520,8 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-28 | `tools/check_release_ledger.py` | 450 | # reason on 2026-08-28 (v0.14.4 bumped, tagged, never published) was |
 | 2026-08-29 | `docs/RELEASE_NOTES_GUARD.md` | 56 | ### The PR-time row was added on 2026-08-29, and here is what it cost to learn |
 | 2026-08-29 | `scripts/generate_release_metadata.py` | 497 | # point (2026-08-29). Every release tag in this repo is ANNOTATED, |
+| 2026-08-29 | `scripts/generate_release_metadata.py` | 907 | is the thing under test. Added 2026-08-29, the day --check became a CI gate: |
+| 2026-08-29 | `scripts/generate_release_metadata.py` | 973 | # THREE OUTCOMES, NOT TWO (added 2026-08-29, the day this became a CI gate). |
 | 2026-08-29 | `tools/check_guard_parity.py` | 368 | # THE NEWLY ARMED DIRECTION (2026-08-29). PARTIAL fails --check as of #1297 |
 | 2026-08-29 | `tools/check_guard_parity.py` | 437 | # PARTIAL NOW FAILS --check (armed 2026-08-29, issue #1297 section 2). |
 | 2026-08-29 | `tools/check_release_ledger.py` | 436 | # Exactly ONE trailing newline, and this is load-bearing (2026-08-29). |
