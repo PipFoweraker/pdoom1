@@ -171,6 +171,27 @@ jobs:
           guard "export-icon-check" python tools/check_export_icons.py
           guard "patch-notes-cover-shipped-version" python tools/check_patch_notes.py --quiet
 
+          # --- the PARTIAL one, closed 2026-08-29 (issue #1297 section 2) -----------
+          # This is the subtlety a filename grep cannot see, and the reason the
+          # census reports three verdicts instead of two.
+          #
+          # scripts/generate_release_metadata.py DOES appear in enhanced-release.yml
+          # -- as `--version "$VERSION"`, which REGENERATES the feed. The gating flag
+          # is `--check`, and that ran in pre-commit and nowhere else. So a grep for
+          # the filename answered "covered" while the GATE was not covered at all,
+          # and the census called it PARTIAL rather than YES for exactly that reason.
+          #
+          # It was left unwired because it did not pass. It still did not pass on
+          # 2026-08-29: `public/releases/` was missing v0.14.4 entirely and its
+          # latest_version read v0.14.3, hours after v0.14.4 was published. That is
+          # the feed the website reads. The release workflow regenerates these files
+          # to upload as release ASSETS and never commits them back, so the in-repo
+          # copy goes stale on every single release and nothing noticed, because the
+          # only thing that checks is a hook CI cannot see.
+          #
+          # The feed is regenerated in this same change, so this arrives green.
+          guard "release-index-check" python scripts/generate_release_metadata.py --check
+
           # --- the environments audit ---------------------------------------------
           # CI-only by construction: it calls the GitHub API, and a pre-commit hook that
           # makes a network call is slow, fails offline, and teaches people to skip

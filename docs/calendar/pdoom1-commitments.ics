@@ -5269,6 +5269,29 @@ DESCRIPTION:needs a declaration -- RELEASE_NOTES_GUARD.md (unparsed) -- un
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:b53a8b76acb8cefe@commitments.pdoom1
+DTSTAMP:20260829T000000Z
+DTSTART;VALUE=DATE:20260829
+DTEND;VALUE=DATE:20260830
+SUMMARY:[UNPARSED] needs a declaration -- check_guard_parity.py
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/check_guard_pari
+ ty.py:368. 2 line(s) in tools/check_guard_parity.py mention this date and
+  no COMMITMENT: declaration accounts for it. Either add a declaration or 
+ the date is incidental. First line: # THE NEWLY ARMED DIRECTION (2026-08-
+ 29). PARTIAL fails --check as of #1297 -- Generated from tracked sources 
+ by scripts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- check_guard_parity.py (unparsed) -- uno
+ wned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:308d88c3537d82fb@commitments.pdoom1
 DTSTAMP:20260829T000000Z
 DTSTART;VALUE=DATE:20260829
@@ -5289,6 +5312,30 @@ ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- check_release_ledger.py (unparsed) -- u
  nowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:b52096adb3908425@commitments.pdoom1
+DTSTAMP:20260829T000000Z
+DTSTART;VALUE=DATE:20260829
+DTEND;VALUE=DATE:20260830
+SUMMARY:[UNPARSED] needs a declaration -- generate_release_metadata.py
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: scripts/generate_relea
+ se_metadata.py:497. 1 line(s) in scripts/generate_release_metadata.py men
+ tion this date and no COMMITMENT: declaration accounts for it. Either add
+  a declaration or the date is incidental. First line: # point (2026-08-29
+ ). Every release tag in this repo is ANNOTATED\, -- Generated from tracke
+ d sources by scripts/generate_commitment_calendar.py\; regenerate to upda
+ te.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- generate_release_metadata.py (unparsed)
+  -- unowned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT

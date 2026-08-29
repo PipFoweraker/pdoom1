@@ -491,9 +491,24 @@ class ReleaseMetadataGenerator:
             )
             date = result.stdout.strip()
 
-            # Get commit hash
+            # Get commit hash.
+            #
+            # `tag^{commit}`, not the bare `tag`, and the suffix is the whole
+            # point (2026-08-29). Every release tag in this repo is ANNOTATED,
+            # and `git rev-parse <annotated tag>` returns the TAG OBJECT's sha,
+            # which is not a commit and does not appear in `git log`. The field
+            # it lands in is called `commit_hash` and is published to the
+            # website in public/releases/<tag>.json, so the feed has been
+            # naming an object that is not the thing the field claims.
+            #
+            #   git rev-parse v0.14.3            -> 8319ab38  (the tag object)
+            #   git rev-parse v0.14.3^{commit}   -> b9f55260  (the commit)
+            #   git rev-list -n1 v0.14.3         -> b9f55260
+            #
+            # `^{commit}` peels a tag object to the commit it points at, and is
+            # a no-op on a lightweight tag, so this is correct for both kinds.
             result = subprocess.run(
-                ["git", "rev-parse", tag],
+                ["git", "rev-parse", tag + "^{commit}"],
                 cwd=self.repo_root,
                 capture_output=True,
                 text=True,

@@ -49,7 +49,7 @@ Declared with a `Layer:` line in a tool's module docstring; `--` = undeclared.
 | generate_dq_index.py | GENERATE | Generate docs/game-design/DQ_INDEX.md from WORKSHOP_2_BACKLOG.md. | pre-commit; ci:guards.yml; tool:enforce_standards.py; tool:generate_credits.py; tool:generate_release_metadata.py; tool:intelligent_ascii_converter.py; tool:check_guard_parity.py |
 | generate_mechanics_docs.py | GENERATE | Generate mechanics documentation from game code. | ci:docs-sync.yml |
 | generate_release_manifest.py | GENERATE | Generate release_manifest.json -- the machine-readable release descriptor. | ci:enhanced-release.yml; test:test_generate_release_manifest.py; test:test_generate_release_metadata.py |
-| generate_release_metadata.py | GENERATE | Generate release metadata for website integration. | pre-commit; ci:enhanced-release.yml; test:test_generate_release_manifest.py; test:test_generate_release_metadata.py; tool:generate_release_manifest.py |
+| generate_release_metadata.py | GENERATE | Generate release metadata for website integration. | pre-commit; ci:enhanced-release.yml; ci:guards.yml; test:test_generate_release_manifest.py; test:test_generate_release_metadata.py; tool:generate_release_manifest.py |
 | generate_rulings.py | GENERATE | Generate the rulings index + the cross-repo rulings.json from RULING: declarations. | pre-commit; ci:guards.yml; tool:generate_commitment_calendar.py; tool:check_credentials.py; tool:rule.py; tool:triage_undeclared_rulings.py |
 | generate_tools_index.py | GENERATE | Generate docs/TOOLS.md -- the index of the dev tooling in scripts/ and tools/. | pre-commit; ci:guards.yml; test:test_generate_tools_index.py |
 | health_automation.py | -- | Project Health Automation Suite - BLITZ MODE | human (docstring usage) |

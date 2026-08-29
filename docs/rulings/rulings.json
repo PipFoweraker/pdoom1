@@ -1594,12 +1594,12 @@
       "text": "# style_tags restricted to the canonical quality-tier ladder (ruled 2026-07-26)."
     },
     {
-      "source": "public/releases/releases.json:159",
-      "text": "\"changelog\": \"Ladder epoch **L3 -> L4** -- this is a FORKING release. The historical event deck\\nwas retimed to one-turn-one-month and the ruled promotions were applied (#1137),\\nwhich changes which e"
+      "source": "public/releases/releases.json:100",
+      "text": "\"tag_message\": \"P(Doom) v0.14.3 -- ladder epoch L6\\n\\nLadder L6. Featured seed weekly-2026-w35. Board key (weekly-2026-w35, L6).\\n\\nFORKING RELEASE, and the fork happened before this build. L6 was cut"
     },
     {
-      "source": "public/releases/releases.json:50",
-      "text": "\"tag_message\": \"P(Doom) v0.14.3 -- ladder epoch L6\\n\\nLadder L6. Featured seed weekly-2026-w35. Board key (weekly-2026-w35, L6).\\n\\nFORKING RELEASE, and the fork happened before this build. L6 was cut"
+      "source": "public/releases/releases.json:209",
+      "text": "\"changelog\": \"Ladder epoch **L3 -> L4** -- this is a FORKING release. The historical event deck\\nwas retimed to one-turn-one-month and the ruled promotions were applied (#1137),\\nwhich changes which e"
     },
     {
       "source": "public/releases/v0.14.3.json:45",

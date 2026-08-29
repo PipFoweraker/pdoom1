@@ -5,8 +5,22 @@
     <link>https://pdoom.net</link>
     <description>Latest releases of P(Doom) - AI Safety Strategy Game</description>
     <language>en-us</language>
-    <lastBuildDate>Mon, 24 Aug 2026 10:23:38 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 29 Aug 2026 00:50:02 +0000</lastBuildDate>
     <atom:link href="https://pdoom.net/releases/releases.rss" rel="self" type="application/rss+xml"/>
+    <item>
+      <title>P(Doom) v0.14.4</title>
+      <link>https://github.com/PipFoweraker/pdoom1/releases/tag/v0.14.4</link>
+      <description>A repair release, cut ahead of the monthly train for one reason: v0.14.3 was the
+first release in this game's history to ship no macOS build. The export died
+1.4 seconds into bundle assembly on a Windows `.ico` the engine has no decoder
+for, printed one line, and the pipeline published Windows and Linux without it.
+Mac players were sent to a door that was not there.
+
+The second item is the same shape at a smaller scale: a screen that rendered a
+packaging failure, a corruption and a quiet release...</description>
+      <pubDate>Sat, 29 Aug 2026 08:17:05 +1000</pubDate>
+      <guid isPermaLink="false">pdoom-release-v0.14.4</guid>
+    </item>
     <item>
       <title>P(Doom) v0.14.3</title>
       <link>https://github.com/PipFoweraker/pdoom1/releases/tag/v0.14.3</link>
@@ -20,7 +34,7 @@ asked you to email it.
 - Counter-offers retain a named researcher, at a permanent payroll cost.
   Item 4 of the hiring-panel set; #1225 is still OPEN.
 - The onboarding bill an...</description>
-      <pubDate>Mon, 24 Aug 2026 14:30:55 +1000</pubDate>
+      <pubDate>Mon, 24 Aug 2026 14:08:07 +1000</pubDate>
       <guid isPermaLink="false">pdoom-release-v0.14.3</guid>
     </item>
     <item>
@@ -121,13 +135,6 @@ player-facing record for this release and lists the rest of what it contained.
       <description>[no CHANGELOG.md section for v0.11.0 -- release notes were never written]</description>
       <pubDate>Mon, 08 Dec 2025 08:06:41 +1100</pubDate>
       <guid isPermaLink="false">pdoom-release-v0.11.0</guid>
-    </item>
-    <item>
-      <title>P(Doom) v0.10.6</title>
-      <link>https://github.com/PipFoweraker/pdoom1/releases/tag/v0.10.6</link>
-      <description>[no CHANGELOG.md section for v0.10.6 -- release notes were never written]</description>
-      <pubDate>Tue, 25 Nov 2025 17:44:13 +1100</pubDate>
-      <guid isPermaLink="false">pdoom-release-v0.10.6</guid>
     </item>
   </channel>
 </rss>
