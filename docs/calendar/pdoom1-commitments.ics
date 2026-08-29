@@ -5251,7 +5251,7 @@ DTSTART;VALUE=DATE:20260828
 DTEND;VALUE=DATE:20260829
 SUMMARY:[UNPARSED] needs a declaration -- CI_FOSSILS_2026-08-30.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/CI_FOSSILS_2026-0
- 8-30.md:119. 1 line(s) in docs/CI_FOSSILS_2026-08-30.md mention this date
+ 8-30.md:143. 1 line(s) in docs/CI_FOSSILS_2026-08-30.md mention this date
   and no COMMITMENT: declaration accounts for it. Either add a declaration
   or the date is incidental. First line: gate\, so its red for a genuine r
  eason on 2026-08-28 -- v0.14.4 tagged and never -- Generated from tracked

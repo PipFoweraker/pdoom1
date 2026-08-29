@@ -522,7 +522,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-24 | `tools/generate_release_horizon.py` | 130 | # table as it stood on 2026-08-24 (v0.15 -> Sep 2026) and from the monthly-train |
 | 2026-08-24 | `tools/generate_release_horizon.py` | 330 | "in (ruling 2026-08-24; pinned by `godot/tests/unit/test_iso_week_seed.gd`", |
 | 2026-08-24 | `tools/generate_release_horizon.py` | 540 | # 2026-08-24, on this very generator. |
-| 2026-08-28 | `docs/CI_FOSSILS_2026-08-30.md` | 119 | gate, so its red for a genuine reason on 2026-08-28 -- v0.14.4 tagged and never |
+| 2026-08-28 | `docs/CI_FOSSILS_2026-08-30.md` | 143 | gate, so its red for a genuine reason on 2026-08-28 -- v0.14.4 tagged and never |
 | 2026-08-28 | `docs/RELEASE_NOTES_GUARD.md` | 58 | v0.14.4 was tagged on 2026-08-28 and then sat unpublished. RN003 failed on the |
 | 2026-08-28 | `docs/releases/RELEASE_LINKING_TO_0.20.md` | 93 | league opens on Friday 2026-08-28 -- also week 35 -- then by the 2026-07-30 |
 | 2026-08-28 | `tools/check_chronic_red.py` | 16 | unsatisfiable. On 2026-08-28 it went red for the reason it was BUILT for -- |

@@ -99,12 +99,36 @@ survive this. Only the frozen run history goes.
 - `release-ledger.yml:schedule`, which cleared itself on 2026-08-29 when its
   04:23 UTC cron went green for the first time since 2026-08-24.
 
-## The state this leaves
+## The state this leaves -- measured after the deletion, not predicted
+
+    DELETED 1334, FAILED 0
+
+Both workflows were purged run by run; there is no "delete workflow" endpoint,
+so removing the last run is what retires the workflow.
+
+**`deploy-dreamhost.yml` no longer exists at all.** Its API endpoint now returns
+404, and it is gone from the Actions list, because a workflow with no file and no
+runs has nothing left to list:
+
+    gh api "repos/:owner/:repo/actions/workflows/189152497/runs?per_page=1"
+    -> {"message":"Not Found","status":"404"}
+
+**`dev-blog-automation.yml` still exists and has zero runs.** File,
+`workflow_dispatch` trigger and jobs intact; #1009 unaffected.
+
+    gh api "repos/:owner/:repo/actions/workflows/188929370/runs?per_page=1" \
+      --jq .total_count
+    -> 0
+
+And the census:
 
     python tools/check_chronic_red.py --check
 
-    before: 1 chronic (declared), 3 fossils
-    after:  1 chronic (declared), 0 fossils
+    before: exit 1 -- 1 chronic (declared), 3 fossils
+    after:  exit 0 -- 1 chronic (declared), 0 fossils, 0 stale
+
+The one remaining chronic red is `docs-sync.yml:pull_request`, which is exactly
+right: its trigger is live, so its red still means something.
 
 ## Why this is worth 1,334 deletions
 
