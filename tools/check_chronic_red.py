@@ -54,6 +54,15 @@ import json
 import subprocess
 import sys
 from collections import defaultdict
+from pathlib import Path
+
+try:
+    import yaml
+except ImportError:  # pragma: no cover -- pyyaml is in requirements.txt
+    yaml = None
+
+ROOT = Path(__file__).resolve().parents[1]
+WORKFLOW_DIR = ROOT / ".github" / "workflows"
 
 # How many consecutive failures of the SAME trigger before a red is "chronic".
 # Three, not two: two can be one bad change and its revert, which is a normal
@@ -90,35 +99,19 @@ DECLARED = {
         "touching those paths either goes green (delete this entry) or does not "
         "(reopen the real bug)."
     ),
-    "dev-blog-automation.yml:push": (
-        "Dormant and failing since 2026-07-28. Content generation, not a gate: "
-        "nothing ships or is blocked by it. Recorded here rather than fixed because "
-        "the decision it needs is whether the dev blog is still automated at all "
-        "(see docs/DEV_BLOG_DECISION_2026-08-21.md, which archived 49 pygame-era "
-        "entries), and that is Pip's call, not a CI repair."
-    ),
-    "dev-blog-automation.yml:pull_request": (
-        "The same workflow and the same pending decision as the push entry above, "
-        "listed separately because the unit of measurement here is (workflow, event) "
-        "and a declaration that covered a whole workflow would silence a trigger that "
-        "might be failing for its own unrelated reason -- which is exactly how "
-        "docs-sync.yml stayed invisible."
-    ),
-    "deploy-dreamhost.yml:push": (
-        "Red on every run in the window, newest 2026-06-26 -- over two months "
-        "stale, and the longest-standing red in the repository. Deployment, not a "
-        "gate. Needs someone to say whether this deploy path is still real before "
-        "anyone spends time on the failure itself."
-    ),
-    "release-ledger.yml:schedule": (
-        "Fixed on 2026-08-29 in the change that made its gate satisfiable at all "
-        "(the generator emitted a trailing blank line that end-of-file-fixer "
-        "stripped, so `--write` then commit could not produce a state `--check` "
-        "accepts). Its push and workflow_dispatch runs are green again; the 04:23 "
-        "UTC cron has not fired since. Expected to clear on the next scheduled run, "
-        "at which point this entry goes stale and --check will say so."
-    ),
 }
+
+# REMOVED 2026-08-29, hours after being written, by the rule it was written under.
+#
+# "release-ledger.yml:schedule" was declared here with the note that it was
+# "expected to clear on the next scheduled run, at which point this entry goes
+# stale and --check will say so." The 04:23 UTC cron then fired and passed --
+# the first green scheduled run since 2026-08-24 -- and --check said so.
+#
+# Left as a comment rather than deleted silently because it is the only worked
+# example of the shrink-only rule actually operating, and because a declaration
+# that names its own clearing condition and is then cleared by it is the shape
+# every entry above should be written in.
 
 
 def _gh_json(path: str):
@@ -187,28 +180,103 @@ def census(runs_by_key):
     return rows
 
 
-def chronic(rows):
-    """Rows at or over the streak threshold."""
-    return [r for r in rows if r[1] >= STREAK_THRESHOLD]
+def declared_events(workflow_dir=WORKFLOW_DIR):
+    """{filename: {event, ...}} for the workflow files that exist in the repo.
 
+    Returns None if the directory is unreadable, which callers must treat as
+    "cannot classify" rather than as "every pair is a fossil".
 
-def undeclared(rows):
-    return [r for r in chronic(rows) if r[0] not in DECLARED]
-
-
-def stale_declarations(rows):
-    """Declared keys that are no longer chronic, plus ones that no longer exist.
-
-    A declaration for a workflow/event pair the API never returns is also stale:
-    the workflow was deleted or renamed and the entry now excuses nothing.
+    NOTE THE `True` KEY. YAML 1.1 parses a bare `on:` as the BOOLEAN true, so
+    `cfg["on"]` raises KeyError on every GitHub workflow ever written and a
+    naive reader concludes that no workflow declares any trigger at all.
     """
-    chronic_keys = {r[0] for r in chronic(rows)}
+    if yaml is None or not workflow_dir.is_dir():
+        return None
+    out = {}
+    for path in sorted(workflow_dir.glob("*.yml")) + sorted(workflow_dir.glob("*.yaml")):
+        try:
+            cfg = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+        except yaml.YAMLError:
+            continue
+        triggers = cfg.get("on", cfg.get(True))
+        if isinstance(triggers, dict):
+            events = set(triggers)
+        elif isinstance(triggers, list):
+            events = set(triggers)
+        elif isinstance(triggers, str):
+            events = {triggers}
+        else:
+            events = set()
+        out[path.name] = events
+    return out
+
+
+def fossils(rows, events_by_file):
+    """Rows whose trigger can no longer fire, so their red can never clear.
+
+    Two kinds, and neither is a chronic red:
+
+      * the workflow FILE is gone. deploy-dreamhost.yml was deleted from this
+        repo on 2026-02-03 and the Actions API still serves its run history, so
+        it reads as 60-for-60 red forever. Nobody can fix a file that is not
+        there.
+      * the file is present but no longer declares that EVENT.
+        dev-blog-automation.yml was deliberately made workflow_dispatch-only on
+        2026-07-29 -- its push and pull_request triggers were REMOVED so that
+        autogenerated posts could not publish themselves. Its last push and
+        pull_request runs are from 2026-07-28, the day before, and are frozen.
+
+    Calling these chronic would be wrong twice over: it demands a fix that
+    cannot exist, and it forces a permanent DECLARED entry that can never go
+    stale -- which is precisely the permanent register of permanent reds the
+    shrink-only rule exists to prevent.
+    """
+    if events_by_file is None:
+        return []
+    out = []
+    for row in rows:
+        fname, _, event = row[0].partition(":")
+        if fname not in events_by_file:
+            out.append((row, "workflow file no longer in the repository"))
+        elif event not in events_by_file[fname] and event != "dynamic":
+            out.append((row, "workflow no longer declares the `%s` trigger" % event))
+    return out
+
+
+def chronic(rows, events_by_file=None):
+    """Rows at or over the streak threshold, EXCLUDING fossils.
+
+    A fossil's streak is frozen, not chronic: it records a trigger that cannot
+    fire again. See fossils() for why counting them would be wrong twice.
+    """
+    fossil_keys = {row[0] for row, _ in fossils(rows, events_by_file)}
+    return [r for r in rows if r[1] >= STREAK_THRESHOLD and r[0] not in fossil_keys]
+
+
+def undeclared(rows, events_by_file=None):
+    return [r for r in chronic(rows, events_by_file) if r[0] not in DECLARED]
+
+
+def stale_declarations(rows, events_by_file=None):
+    """Declared keys that no longer need a declaration.
+
+    Three ways that happens: the pair went green, the API stopped returning it,
+    or it turned out to be a fossil (a trigger that cannot fire, which nobody
+    should be asked to declare).
+    """
+    chronic_keys = {r[0] for r in chronic(rows, events_by_file)}
     seen_keys = {r[0] for r in rows}
+    fossil_reasons = {row[0]: why for row, why in fossils(rows, events_by_file)}
     out = []
     for key in DECLARED:
         if key in chronic_keys:
             continue
-        out.append((key, "no longer chronic" if key in seen_keys else "no such workflow/event"))
+        if key in fossil_reasons:
+            out.append((key, "fossil, not chronic -- %s" % fossil_reasons[key]))
+        elif key in seen_keys:
+            out.append((key, "no longer chronic"))
+        else:
+            out.append((key, "no such workflow/event"))
     return sorted(out)
 
 
@@ -242,8 +310,9 @@ def collect(window: int = RUN_WINDOW):
     return runs_by_key
 
 
-def render(rows) -> None:
+def render(rows, events_by_file=None) -> None:
     print("[chronic-red] %d (workflow, event) pair(s) with runs in the window." % len(rows))
+    fossil_reasons = {row[0]: why for row, why in fossils(rows, events_by_file)}
     print()
     print("%-6s %-9s %-40s %-16s %s" % ("STREAK", "FAIL/TOT", "WORKFLOW", "EVENT", "NEWEST"))
     for key, streak, fails, total, newest in rows:
@@ -251,12 +320,21 @@ def render(rows) -> None:
             continue
         fname, _, event = key.partition(":")
         mark = ""
-        if streak >= STREAK_THRESHOLD:
+        if key in fossil_reasons:
+            mark = "  FOSSIL"
+        elif streak >= STREAK_THRESHOLD:
             mark = "  DECLARED" if key in DECLARED else "  <== CHRONIC, UNDECLARED"
         print(
             "%-6d %-9s %-40s %-16s %s%s"
             % (streak, "%d/%d" % (fails, total), fname[:40], event[:16], newest, mark)
         )
+    if fossil_reasons:
+        print()
+        print("FOSSILS -- red, but the trigger cannot fire again, so it can never clear.")
+        print("Not chronic, and deliberately NOT something to declare: a declaration")
+        print("that can never go stale is the permanent register this file avoids.")
+        for key, why in sorted(fossil_reasons.items()):
+            print("  %-48s %s" % (key, why))
 
 
 def self_test() -> int:
@@ -335,6 +413,55 @@ def self_test() -> int:
         all(isinstance(v, str) and len(v) > 60 for v in DECLARED.values()),
     )
 
+    # FOSSILS (added 2026-08-29, after this tool's first live run declared three).
+    # A red whose trigger cannot fire again is frozen, not chronic.
+    events = {"live.yml": {"push", "workflow_dispatch"}}
+    gone = census({"deleted.yml:push": [("failure", "2026-06-26")] * 60})
+    check(
+        "a red for a workflow FILE that no longer exists is a fossil, not chronic",
+        chronic(gone, events) == [] and len(fossils(gone, events)) == 1,
+    )
+    dropped = census({"live.yml:pull_request": [("failure", "2026-07-28")] * 30})
+    check(
+        "a red on a trigger the workflow no longer DECLARES is a fossil too",
+        chronic(dropped, events) == [] and len(fossils(dropped, events)) == 1,
+    )
+    still_live = census({"live.yml:push": [("failure", "2026-08-29")] * 30})
+    check(
+        "and a red on a trigger that IS still declared stays chronic",
+        len(chronic(still_live, events)) == 1 and fossils(still_live, events) == [],
+    )
+    check(
+        "a fossil never needs declaring, so a declaration for one reads STALE",
+        any(
+            "fossil" in why
+            for _, why in stale_declarations(
+                census({k: [("failure", "2026-01-01")] * 9 for k in DECLARED}),
+                {"nothing.yml": {"push"}},
+            )
+        ),
+    )
+    check(
+        "unreadable workflow dir classifies nothing rather than fossilising everything",
+        fossils(still_live, None) == [] and len(chronic(still_live, None)) == 1,
+    )
+
+    # The YAML 1.1 trap, pinned because getting it wrong silently fossilises
+    # EVERY pair: `on:` parses as the boolean True, so cfg["on"] is a KeyError
+    # and a naive reader concludes no workflow declares any trigger.
+    if yaml is not None:
+        parsed = yaml.safe_load("name: x\non:\n  push:\n    branches: [main]\n")
+        check(
+            "a bare `on:` parses to the boolean True, not the string 'on'",
+            True in parsed and "on" not in parsed,
+        )
+        real = declared_events()
+        check(
+            "and declared_events() reads real triggers out of this repo anyway",
+            real is not None and "push" in real.get("guards.yml", set()),
+            repr(real and real.get("guards.yml")),
+        )
+
     print("SELF-TEST %s" % ("PASSED" if ok else "FAILED"))
     return 0 if ok else 1
 
@@ -361,16 +488,23 @@ def main(argv) -> int:
         return 2
 
     rows = census(runs_by_key)
-    render(rows)
+    events_by_file = declared_events()
+    if events_by_file is None:
+        print("[chronic-red] DID NOT COMPLETE -- cannot read .github/workflows/, so a")
+        print("  frozen trigger cannot be told from a live one and every fossil would")
+        print("  be reported as a chronic red demanding a fix that cannot exist.")
+        return 2
+    render(rows, events_by_file)
 
-    bad = undeclared(rows)
-    stale = stale_declarations(rows)
+    bad = undeclared(rows, events_by_file)
+    stale = stale_declarations(rows, events_by_file)
+    live = chronic(rows, events_by_file)
 
-    if chronic(rows):
+    if live:
         print()
         print(
             "[chronic-red] %d chronic pair(s); %d declared, %d not."
-            % (len(chronic(rows)), len(chronic(rows)) - len(bad), len(bad))
+            % (len(live), len(live) - len(bad), len(bad))
         )
 
     if not args.check:

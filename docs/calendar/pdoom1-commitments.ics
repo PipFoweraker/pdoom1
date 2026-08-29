@@ -3965,7 +3965,7 @@ DTSTART;VALUE=DATE:20260822
 DTEND;VALUE=DATE:20260823
 SUMMARY:[UNPARSED] needs a declaration -- check_chronic_red.py
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/check_chronic_re
- d.py:88. 3 line(s) in tools/check_chronic_red.py mention this date and no
+ d.py:97. 3 line(s) in tools/check_chronic_red.py mention this date and no
   COMMITMENT: declaration accounts for it. Either add a declaration or the
   date is incidental. First line: "docs/mechanics/** -- so no qualifying P
  R has run since 2026-08-22 and the " -- Generated from tracked sources by
@@ -4840,7 +4840,7 @@ DTSTART;VALUE=DATE:20260824
 DTEND;VALUE=DATE:20260825
 SUMMARY:[UNPARSED] needs a declaration -- check_chronic_red.py
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/check_chronic_re
- d.py:14. 1 line(s) in tools/check_chronic_red.py mention this date and no
+ d.py:14. 2 line(s) in tools/check_chronic_red.py mention this date and no
   COMMITMENT: declaration accounts for it. Either add a declaration or the
   date is incidental. First line: 2026-08-24 to 2026-08-29 because its gen
  erator emitted a trailing blank line -- Generated from tracked sources by
@@ -5389,7 +5389,7 @@ DTSTART;VALUE=DATE:20260829
 DTEND;VALUE=DATE:20260830
 SUMMARY:[UNPARSED] needs a declaration -- check_chronic_red.py
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/check_chronic_re
- d.py:14. 7 line(s) in tools/check_chronic_red.py mention this date and no
+ d.py:14. 9 line(s) in tools/check_chronic_red.py mention this date and no
   COMMITMENT: declaration accounts for it. Either add a declaration or the
   date is incidental. First line: 2026-08-24 to 2026-08-29 because its gen
  erator emitted a trailing blank line -- Generated from tracked sources by

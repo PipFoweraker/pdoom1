@@ -376,9 +376,9 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-22 | `docs/rulings/RULINGS.md` | 307 | - `docs/game-design/DESPERATION_LEVER_PRICING.md:3` -- **Ruled by Pip, 2026-08-22:** *"we need to give the mechanical inertness a definite |
 | 2026-08-22 | `docs/rulings/RULINGS.md` | 389 | - `godot/scripts/core/researcher.gd:190` -- # Ruled by Pip 2026-08-22 (#1247): "real STAFF, but they might not eg produce |
 | 2026-08-22 | `docs/rulings/RULINGS.md` | 401 | - `godot/tests/unit/test_compute_engineers_are_staff.gd:12` -- ## Ruled by Pip 2026-08-22: "real STAFF, but they might not eg produce as much |
-| 2026-08-22 | `tools/check_chronic_red.py` | 88 | "docs/mechanics/** -- so no qualifying PR has run since 2026-08-22 and the " |
-| 2026-08-22 | `tools/check_chronic_red.py` | 293 | "docs-sync.yml:push": [("success", "2026-08-22")] * 4, |
-| 2026-08-22 | `tools/check_chronic_red.py` | 294 | "docs-sync.yml:pull_request": [("failure", "2026-08-22")] * 39, |
+| 2026-08-22 | `tools/check_chronic_red.py` | 97 | "docs/mechanics/** -- so no qualifying PR has run since 2026-08-22 and the " |
+| 2026-08-22 | `tools/check_chronic_red.py` | 371 | "docs-sync.yml:push": [("success", "2026-08-22")] * 4, |
+| 2026-08-22 | `tools/check_chronic_red.py` | 372 | "docs-sync.yml:pull_request": [("failure", "2026-08-22")] * 39, |
 | 2026-08-22 | `tools/scan_closed_issue_debt.py` | 8 | Pip, 2026-08-22, on discovering that #775 was closed COMPLETED with one of its |
 | 2026-08-22 | `tools/scan_closed_issue_debt.py` | 24 | The first run, 2026-08-22, measured on 426 closed issues: |
 | 2026-08-22 | `tools/scan_closed_issue_debt.py` | 83 | # 2026-08-22 -- it raised UnicodeDecodeError on byte 0x8f mid-fetch, which |
@@ -500,6 +500,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-24 | `scripts/generate_release_metadata.py` | 1016 | # Inspect the CHANGELOG FIELD, not just the tag list. Until 2026-08-24 this |
 | 2026-08-24 | `tools/check_balance_keys.py` | 76 | WHY --self-test EXISTS (added 2026-08-24, issue #1265) |
 | 2026-08-24 | `tools/check_chronic_red.py` | 14 | 2026-08-24 to 2026-08-29 because its generator emitted a trailing blank line |
+| 2026-08-24 | `tools/check_chronic_red.py` | 109 | # the first green scheduled run since 2026-08-24 -- and --check said so. |
 | 2026-08-24 | `tools/check_environments.py` | 6 | THE DEFECT CLASS (found 2026-08-24 across two repos in this estate) |
 | 2026-08-24 | `tools/check_environments.py` | 44 | built to prevent it on 2026-08-24 alone. |
 | 2026-08-24 | `tools/check_environments.py` | 51 | RULING: 2026-08-24 -- an environment no workflow references is either clutter or a lie, and which one depends entirely on what it is called; a safety- |
@@ -533,10 +534,12 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-29 | `tools/check_chronic_red.py` | 14 | 2026-08-24 to 2026-08-29 because its generator emitted a trailing blank line |
 | 2026-08-29 | `tools/check_chronic_red.py` | 28 | 2026-08-29: its overall streak is ZERO, because its push-to-main runs pass. It |
 | 2026-08-29 | `tools/check_chronic_red.py` | 47 | RULING: 2026-08-29 -- a workflow red for three consecutive runs of the same trigger must be fixed or declared, because an undeclared chronic red makes |
-| 2026-08-29 | `tools/check_chronic_red.py` | 114 | "Fixed on 2026-08-29 in the change that made its gate satisfiable at all " |
-| 2026-08-29 | `tools/check_chronic_red.py` | 312 | fake = {"invented-workflow.yml:push": [("failure", "2026-08-29")] * 5} |
-| 2026-08-29 | `tools/check_chronic_red.py` | 320 | chronic(census({"x.yml:push": [("failure", "2026-08-29")] * 2})) == [], |
-| 2026-08-29 | `tools/check_chronic_red.py` | 324 | healthy = {k: [("success", "2026-08-29")] * 4 for k in DECLARED} |
+| 2026-08-29 | `tools/check_chronic_red.py` | 104 | # REMOVED 2026-08-29, hours after being written, by the rule it was written under. |
+| 2026-08-29 | `tools/check_chronic_red.py` | 390 | fake = {"invented-workflow.yml:push": [("failure", "2026-08-29")] * 5} |
+| 2026-08-29 | `tools/check_chronic_red.py` | 398 | chronic(census({"x.yml:push": [("failure", "2026-08-29")] * 2})) == [], |
+| 2026-08-29 | `tools/check_chronic_red.py` | 402 | healthy = {k: [("success", "2026-08-29")] * 4 for k in DECLARED} |
+| 2026-08-29 | `tools/check_chronic_red.py` | 416 | # FOSSILS (added 2026-08-29, after this tool's first live run declared three). |
+| 2026-08-29 | `tools/check_chronic_red.py` | 429 | still_live = census({"live.yml:push": [("failure", "2026-08-29")] * 30}) |
 | 2026-08-29 | `tools/check_guard_parity.py` | 368 | # THE NEWLY ARMED DIRECTION (2026-08-29). PARTIAL fails --check as of #1297 |
 | 2026-08-29 | `tools/check_guard_parity.py` | 437 | # PARTIAL NOW FAILS --check (armed 2026-08-29, issue #1297 section 2). |
 | 2026-08-29 | `tools/check_release_ledger.py` | 436 | # Exactly ONE trailing newline, and this is load-bearing (2026-08-29). |
