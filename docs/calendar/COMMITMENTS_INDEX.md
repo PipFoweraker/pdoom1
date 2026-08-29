@@ -13,7 +13,7 @@ Horizon: **2026-08-09** (the prose scan reports dates at or after this; roll it
 forward deliberately in `COMMITMENTS.md`, never automatically -- a clock-reading
 generator goes stale overnight and trains people to ignore the check).
 
-**53 declared, 4 release-train, 220 UNPARSED, 0 malformed.**
+**53 declared, 4 release-train, 221 UNPARSED, 0 malformed.**
 
 ## Declared commitments
 
@@ -518,6 +518,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-28 | `docs/RELEASE_NOTES_GUARD.md` | 58 | v0.14.4 was tagged on 2026-08-28 and then sat unpublished. RN003 failed on the |
 | 2026-08-28 | `docs/releases/RELEASE_LINKING_TO_0.20.md` | 93 | league opens on Friday 2026-08-28 -- also week 35 -- then by the 2026-07-30 |
 | 2026-08-28 | `tools/check_release_ledger.py` | 450 | # reason on 2026-08-28 (v0.14.4 bumped, tagged, never published) was |
+| 2026-08-29 | `CLAUDE.md` | 314 | entry said "the ENTIRE tree" until 2026-08-29, and that phrasing was used to |
 | 2026-08-29 | `docs/RELEASE_NOTES_GUARD.md` | 56 | ### The PR-time row was added on 2026-08-29, and here is what it cost to learn |
 | 2026-08-29 | `scripts/generate_release_metadata.py` | 497 | # point (2026-08-29). Every release tag in this repo is ANNOTATED, |
 | 2026-08-29 | `scripts/generate_release_metadata.py` | 907 | is the thing under test. Added 2026-08-29, the day --check became a CI gate: |
