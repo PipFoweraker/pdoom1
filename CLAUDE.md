@@ -303,7 +303,16 @@ genuine one-off exception `# scene-nav-allow`. Full story: `docs/LEADERBOARD_CRA
   (no more "unstamped"), exports, and PROVES a unique freshness marker is in the `.pck`
   before emitting. NEVER hand-run a raw `godot --export` (stale-cache risk; burned ~12
   cycles in v0.11.0).
-- **Godot packs the ENTIRE `godot/` tree into the `.pck` (referenced or not).**
+- **Godot packs the `godot/` tree into the `.pck` whether or not anything
+  REFERENCES a file -- but NOT whether or not the preset EXCLUDES it.** All three
+  presets carry the same line, and it is the half this note used to omit:
+  `exclude_filter="tests/*, addons/gut/*, tools/*, docs/*, *.md, *.py, *.bat,
+  *.ps1, *.sh, *.xml"`. So code, docs and the GUT addon are already out; the rule
+  below is about ART, which no filter excludes, and a stray `.png` under `godot/`
+  ships even if nothing points at it. Check `grep -n exclude_filter
+  godot/export_presets.cfg` before asserting a file adds `.pck` weight -- this
+  entry said "the ENTIRE tree" until 2026-08-29, and that phrasing was used to
+  justify a deletion on grounds that turned out to be false.
   Keep retired/source assets OUTSIDE `godot/` (`art_source/` for <=1MB art kept
   in git; masters >1MB go to the DreamObjects bucket per
   `docs/art/ART_MASTERS_POLICY.md` -- there is no local staging dir on this

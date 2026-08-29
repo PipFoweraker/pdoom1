@@ -5246,6 +5246,28 @@ DESCRIPTION:needs a declaration -- check_release_ledger.py (unparsed) -- u
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:0d7cebe3c6906478@commitments.pdoom1
+DTSTAMP:20260829T000000Z
+DTSTART;VALUE=DATE:20260829
+DTEND;VALUE=DATE:20260830
+SUMMARY:[UNPARSED] needs a declaration -- CLAUDE.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: CLAUDE.md:314. 1 line(
+ s) in CLAUDE.md mention this date and no COMMITMENT: declaration accounts
+  for it. Either add a declaration or the date is incidental. First line: 
+ entry said "the ENTIRE tree" until 2026-08-29\, and that phrasing was use
+ d to -- Generated from tracked sources by scripts/generate_commitment_cal
+ endar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- CLAUDE.md (unparsed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:2996992eec4602f2@commitments.pdoom1
 DTSTAMP:20260829T000000Z
 DTSTART;VALUE=DATE:20260829
