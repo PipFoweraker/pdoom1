@@ -444,7 +444,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-24 | `docs/RELEASE_NOMENCLATURE.md` | 51 | **The coupling runs one way only** (ruling of 2026-08-24; the declaration lives |
 | 2026-08-24 | `docs/RELEASE_PLATFORMS.md` | 444 | Added 2026-08-24, after **v0.14.3 published with no macOS asset**. The macOS |
 | 2026-08-24 | `docs/RELEASE_PLATFORMS.md` | 582 | ## Addendum 2026-08-24 -- the first release that shipped no macOS asset |
-| 2026-08-24 | `docs/VIDEO_SHOOT_2026-08-30.md` | 179 | 285 seconds, submitted 2026-08-24 from v0.14.3. |
+| 2026-08-24 | `docs/VIDEO_SHOOT_2026-08-30.md` | 181 | 285 seconds, submitted 2026-08-24 from v0.14.3. |
 | 2026-08-24 | `docs/deployment/DESIGN_2026-08-24_release_lanes.md` | 3 | **Status:** design document. No code changes accompany it. Written 2026-08-24 |
 | 2026-08-24 | `docs/deployment/GATE_AUDIT_2026-08-24.md` | 1 | # Gate audit -- 2026-08-24 |
 | 2026-08-24 | `docs/deployment/GATE_AUDIT_2026-08-24.md` | 394 | Merged 2026-08-24 to catch "a version was bumped and never tagged". It has run |
@@ -558,7 +558,8 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-30 | `docs/CI_FOSSILS_2026-08-30.md` | 27 | RULING: 2026-08-30 -- a CI fossil must be removed entirely, never declared: a red that cannot clear trains the team to discount reds, and a declaratio |
 | 2026-08-30 | `docs/CI_FOSSILS_2026-08-30.md` | 35 | Measured 2026-08-30, immediately before deletion: |
 | 2026-08-30 | `docs/VIDEO_SHOOT_2026-08-30.md` | 3 | Prepared 2026-08-30 while Pip was at the conference, for a same-night shoot. |
-| 2026-08-30 | `docs/VIDEO_SHOOT_2026-08-30.md` | 158 | Say these. Each one has a command that returns it, run today, 2026-08-30. |
+| 2026-08-30 | `docs/VIDEO_SHOOT_2026-08-30.md` | 149 | \| **ESC / the pause menu at any point mid-month** \| the pause menu does NOT pause the month. Found on the shipped v0.14.4 build on 2026-08-30: six day |
+| 2026-08-30 | `docs/VIDEO_SHOOT_2026-08-30.md` | 160 | Say these. Each one has a command that returns it, run today, 2026-08-30. |
 | 2026-08-30 | `docs/rulings/RULINGS.md` | 95 | \| 2026-08-30 \| a CI fossil must be removed entirely, never declared: a red that cannot clear trains the team to discount reds, and a declaration for o |
 | 2026-08-30 | `docs/rulings/RULINGS.md` | 439 | - `tools/check_chronic_red.py:250` -- Fossils count as failures as of 2026-08-30 (ruled by Pip; see |
 | 2026-08-30 | `docs/rulings/RULINGS.md` | 440 | - `tools/check_chronic_red.py:484` -- # FOSSILS NOW FAIL (ruled by Pip 2026-08-30, docs/CI_FOSSILS_2026-08-30.md). |
@@ -577,7 +578,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-09-04 | `docs/releases/RELEASE_LINKING_TO_0.20.md` | 128 | \| v0.15 \| Fri 2026-09-04 \| w36 \| `weekly-2026-w36` \| |
 | 2026-09-09 | `coordination#30` | 0 | AGENDA: tri-repo content workshop, 2026-08-06 -- six items, three need Pip, and A1 has deferred three times |
 | 2026-09-09 | `docs/ARCHITECTURE_FUNDERS.md` | 18 | - **Closes:** 2026-09-09 |
-| 2026-09-09 | `docs/VIDEO_SHOOT_2026-08-30.md` | 250 | **What is the ask at the end?** The Manifund campaign closes **2026-09-09**, nine |
+| 2026-09-09 | `docs/VIDEO_SHOOT_2026-08-30.md` | 252 | **What is the ask at the end?** The Manifund campaign closes **2026-09-09**, nine |
 | 2026-09-09 | `pdoom1#1061` | 0 | IP / trademark follow-up -- Australian lawyers, DUE Monday 2026-08-03 |
 | 2026-09-29 | `docs/calendar/COMMITMENTS.md` | 108 | - **GitHub milestones.** Four exist; the nearest due date is 2026-09-29 and one |
 | 2026-09-29 | `docs/game-design/WORKSHOP_3_PREP.md` | 544 | "Now" is v0.12 First Contact (created 2026-07-20, due 2026-09-29). [VERIFIED] |

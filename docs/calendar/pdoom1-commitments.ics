@@ -4887,7 +4887,7 @@ DTSTART;VALUE=DATE:20260824
 DTEND;VALUE=DATE:20260825
 SUMMARY:[UNPARSED] needs a declaration -- VIDEO_SHOOT_2026-08-30.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/VIDEO_SHOOT_2026-
- 08-30.md:179. 1 line(s) in docs/VIDEO_SHOOT_2026-08-30.md mention this da
+ 08-30.md:181. 1 line(s) in docs/VIDEO_SHOOT_2026-08-30.md mention this da
  te and no COMMITMENT: declaration accounts for it. Either add a declarati
  on or the date is incidental. First line: 285 seconds\, submitted 2026-08
  -24 from v0.14.3. -- Generated from tracked sources by scripts/generate_c
@@ -5670,7 +5670,7 @@ DTSTART;VALUE=DATE:20260830
 DTEND;VALUE=DATE:20260831
 SUMMARY:[UNPARSED] needs a declaration -- VIDEO_SHOOT_2026-08-30.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/VIDEO_SHOOT_2026-
- 08-30.md:3. 2 line(s) in docs/VIDEO_SHOOT_2026-08-30.md mention this date
+ 08-30.md:3. 3 line(s) in docs/VIDEO_SHOOT_2026-08-30.md mention this date
   and no COMMITMENT: declaration accounts for it. Either add a declaration
   or the date is incidental. First line: Prepared 2026-08-30 while Pip was
   at the conference\, for a same-night shoot. -- Generated from tracked so
@@ -6098,7 +6098,7 @@ DTSTART;VALUE=DATE:20260909
 DTEND;VALUE=DATE:20260910
 SUMMARY:[UNPARSED] needs a declaration -- VIDEO_SHOOT_2026-08-30.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/VIDEO_SHOOT_2026-
- 08-30.md:250. 1 line(s) in docs/VIDEO_SHOOT_2026-08-30.md mention this da
+ 08-30.md:252. 1 line(s) in docs/VIDEO_SHOOT_2026-08-30.md mention this da
  te and no COMMITMENT: declaration accounts for it. Either add a declarati
  on or the date is incidental. First line: **What is the ask at the end?**
   The Manifund campaign closes **2026-09-09**\, nine -- Generated from tra
