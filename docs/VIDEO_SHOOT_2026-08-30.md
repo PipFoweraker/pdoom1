@@ -21,6 +21,37 @@ It reads on camera as a game that does not work. CLAUDE.md describes the same
 symptom under the stale class cache, which is what cost a playtest in front of a
 first-time playtester on 2026-08-13.
 
+> **CORRECTION, added the same afternoon.** The paragraph above was written
+> before this issue was actually investigated, and it overstates the risk. Two
+> checks, both cheap, both run today:
+>
+> 1. **#1023's own leading hypothesis is falsified.** It proposes that
+>    `start_new_game()` was refused for want of `force=true`. That `force=true`
+>    landed on **2026-07-27** in #983 (`d36cff9d`), and
+>    `git merge-base --is-ancestor d36cff9d 3f408038` confirms it was already
+>    present in the exact commit the failure was observed on. Every fresh-boot
+>    path in `main_ui._boot_game()` passes it today -- resume, load and new game.
+> 2. **The symptom is covered by a passing regression test.**
+>    `godot/tests/unit/test_game_start_actionable.gd` (from #664) boots the REAL
+>    `main.tscn` through `_boot_game` and asserts the game either presents an
+>    initial event dialog or emits a non-empty action list with the buttons
+>    enabled -- which is precisely "no action buttons". In today's gate:
+>    `tests="1" failures="0" skipped="0"`.
+>
+> So #1023 is probably stale, and what remains is the third candidate its own
+> author listed and said to rule out FIRST: an artefact of running from source
+> with a warm `.godot`, which nobody has done in the month since.
+>
+> **What this means for tonight:** recording from source is very likely fine, as
+> long as you run the pre-flight. The shipped build is still the better choice,
+> but for the ordinary reason -- it is what a funder downloads -- rather than
+> because the source path is dangerous.
+>
+> **The limit of this evidence:** the regression test drives the boot path
+> in-engine under GUT. It is not a human clicking welcome -> config -> main on an
+> exported binary. Strong evidence, not proof. The decisive test is still the one
+> #1023 asks for and nobody has run: launch a built artifact and look.
+
 Two ways to be safe, in order of preference:
 
 **A. Record the SHIPPED v0.14.4 build.** No class cache is involved in an
