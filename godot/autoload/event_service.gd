@@ -390,10 +390,15 @@ func _transform_event(raw: Dictionary) -> Dictionary:
 		game_event["delivery_tier"] = "feed"
 		game_event["channel"] = "flavour"
 
-	# Add reactions if present (for UI display)
-	if raw.has("safety_researcher_reaction"):
+	# Add reactions if present (for UI display).
+	#
+	# The `!= null` half matters as much as the `has` half, and is the same
+	# idiom pdoom_impact already uses three lines below. pdoom-data keeps these
+	# keys and sets them to null when nobody was asked, so `has` alone copies a
+	# null through under a name that promises a sentence.
+	if raw.has("safety_researcher_reaction") and raw["safety_researcher_reaction"] != null:
 		game_event["safety_researcher_reaction"] = raw["safety_researcher_reaction"]
-	if raw.has("media_reaction"):
+	if raw.has("media_reaction") and raw["media_reaction"] != null:
 		game_event["media_reaction"] = raw["media_reaction"]
 
 	# Add pdoom_impact if present
@@ -537,9 +542,14 @@ func _generate_options(raw: Dictionary, category: String, significance: int) -> 
 	var absorb_effect: float = doom_effect * Balance.num("doom.streams.event_safety_absorb", 4.0)
 	var frontier_effect: float = doom_effect * Balance.num("doom.streams.event_frontier_gain", 60.0)
 
-	# Get reactions for flavor text
-	var safety_reaction = raw.get("safety_researcher_reaction", "")
-	var media_reaction = raw.get("media_reaction", "")
+	# Get reactions for flavor text.
+	#
+	# _reaction_text() rather than a bare .get(key, ""): pdoom-data serves null
+	# for a reaction nobody was asked for, and it KEEPS THE KEY. A present key
+	# holding null means the .get default never fires, so "" is not what comes
+	# back -- null is, and _format_reaction is typed String. See pdoom-data#96.
+	var safety_reaction: String = _reaction_text(raw, "safety_researcher_reaction")
+	var media_reaction: String = _reaction_text(raw, "media_reaction")
 
 	# Normalize category for matching
 	var cat_lower = category.to_lower()
@@ -776,6 +786,25 @@ func _apply_scaled_effects(effects: Dictionary, scale: float) -> Dictionary:
 	for key in effects:
 		scaled[key] = int(effects[key] * scale)
 	return scaled
+
+
+func _reaction_text(raw: Dictionary, key: String) -> String:
+	"""A reaction as a String, treating null and absent as the same empty thing.
+
+	pdoom-data made safety_researcher_reaction and media_reaction nullable
+	because they had been carrying invented text: 1,166 of its 1,194 events
+	drew from a five-element list by random.choice, so one sentence stood as
+	what safety researchers thought about hundreds of separate papers. Null now
+	means nobody was asked.
+
+	The key stays present, which is why `raw.get(key, "")` is not enough. A
+	default only fires on a MISSING key; a present key holding null returns the
+	null. This is the whole of the incompatibility.
+	"""
+	var value = raw.get(key)
+	if value == null:
+		return ""
+	return str(value)
 
 
 func _format_reaction(reaction: String) -> String:
