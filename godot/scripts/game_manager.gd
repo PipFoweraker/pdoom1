@@ -583,7 +583,9 @@ func end_turn():
 
 	# If game not over, start next turn
 	if not state.game_over:
-		await get_tree().create_timer(0.5).timeout
+		# `false` = process_always OFF. See the note on the month-playback timer in
+		# _run_month_playback(); this is the same defect on the turn-advance path.
+		await get_tree().create_timer(0.5, false).timeout
 		start_next_turn()
 	else:
 		ErrorHandler.info(
@@ -747,7 +749,26 @@ func _run_month_playback() -> void:
 	while month_playback_active and state != null and not state.game_over:
 		_tick_iters += 1
 		PerfLog.check_iterations("month_playback", _tick_iters, 400, {"turn": state.turn})
-		await get_tree().create_timer(day_tick_seconds).timeout
+		# THE SECOND ARGUMENT IS THE WHOLE FIX (#1341, found by Pip on the shipped
+		# v0.14.4 build, 2026-08-30).
+		#
+		# SceneTree.create_timer(time_sec, process_always = true, ...) -- and
+		# `process_always` DEFAULTS TO TRUE, which means the timer deliberately
+		# ignores SceneTree.paused. So this loop kept ticking through the pause
+		# menu. Measured from his launch log: between "[PauseMenu] Pausing game..."
+		# and "[PauseMenu] Resuming game..." six day-ticks completed and the month
+		# boundary was crossed, and the Month Review dialog then appeared over a
+		# still-open, still-click-eating, invisible pause menu.
+		#
+		# pause_menu.gd was never at fault: it sets get_tree().paused = true
+		# correctly, and this loop simply did not observe it.
+		#
+		# Passing `false` changes NOTHING while the tree is unpaused -- every
+		# normal run, every headless test, every replay -- so it cannot move
+		# determinism, the RNG stream or a scored outcome. It changes exactly one
+		# thing: the month stops advancing when the player opens the menu, which
+		# is what the menu already claimed to do.
+		await get_tree().create_timer(day_tick_seconds, false).timeout
 		if not month_playback_active or state == null or state.game_over:
 			break
 		# A4: last reading BEFORE the tick. If this tick turns out to be the boundary, this is

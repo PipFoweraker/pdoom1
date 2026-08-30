@@ -5641,6 +5641,29 @@ DESCRIPTION:needs a declaration -- CI_FOSSILS_2026-08-30.md (unparsed) --
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:62b739faa8048fec@commitments.pdoom1
+DTSTAMP:20260830T000000Z
+DTSTART;VALUE=DATE:20260830
+DTEND;VALUE=DATE:20260831
+SUMMARY:[UNPARSED] needs a declaration -- PAUSE_SEMANTICS_SWEEP.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/PAUSE_SEMANTICS_S
+ WEEP.md:3. 2 line(s) in docs/PAUSE_SEMANTICS_SWEEP.md mention this date a
+ nd no COMMITMENT: declaration accounts for it. Either add a declaration o
+ r the date is incidental. First line: Opened 2026-08-30\, the day #1341 w
+ as found on a shipped build. Scoped and -- Generated from tracked sources
+  by scripts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- PAUSE_SEMANTICS_SWEEP.md (unparsed) -- 
+ unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:fbdf1a99cad5c671@commitments.pdoom1
 DTSTAMP:20260830T000000Z
 DTSTART;VALUE=DATE:20260830
@@ -5931,6 +5954,57 @@ ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:Rektango 17:30 -- the weekly anchor\, a hard stop (cadence) --
   pip
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:324326ed16d12755@commitments.pdoom1
+DTSTAMP:20260904T000000Z
+DTSTART;VALUE=DATE:20260904
+DTEND;VALUE=DATE:20260905
+SUMMARY:[DEADLINE] Sweep the pause-semantics family: every create_timer\, 
+ tween and input-capture site that silently opts out of SceneTree.paused\,
+  plus a written statement of what pausing this game MEANS and a guard tha
+ t stops a new one landing
+DESCRIPTION:Owner: pip. Kind: deadline. Source: docs/PAUSE_SEMANTICS_SWEEP
+ .md:6. scoped in this file after #1341 shipped to players in v0.14.4\; Fr
+ iday at the latest because the league patch goes out then. -- Generated f
+ rom tracked sources by scripts/generate_commitment_calendar.py\; regenera
+ te to update.
+CATEGORIES:DEADLINE
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT328H
+DESCRIPTION:Sweep the pause-semantics family: every create_timer\, tween a
+ nd input-capture site that silently opts out of SceneTree.paused\, plus a
+  written statement of what pausing this game MEANS and a guard that stops
+  a new one landing (deadline) -- pip
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT160H
+DESCRIPTION:Sweep the pause-semantics family: every create_timer\, tween a
+ nd input-capture site that silently opts out of SceneTree.paused\, plus a
+  written statement of what pausing this game MEANS and a guard that stops
+  a new one landing (deadline) -- pip
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT40H
+DESCRIPTION:Sweep the pause-semantics family: every create_timer\, tween a
+ nd input-capture site that silently opts out of SceneTree.paused\, plus a
+  written statement of what pausing this game MEANS and a guard that stops
+  a new one landing (deadline) -- pip
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:Sweep the pause-semantics family: every create_timer\, tween a
+ nd input-capture site that silently opts out of SceneTree.paused\, plus a
+  written statement of what pausing this game MEANS and a guard that stops
+  a new one landing (deadline) -- pip
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
