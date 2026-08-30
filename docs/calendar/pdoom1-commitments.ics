@@ -1273,6 +1273,29 @@ DESCRIPTION:needs a declaration -- UNDECLARED_TRIAGE.md (unparsed) -- unow
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:501e228c3d49f1e0@commitments.pdoom1
+DTSTAMP:20260813T000000Z
+DTSTART;VALUE=DATE:20260813
+DTEND;VALUE=DATE:20260814
+SUMMARY:[UNPARSED] needs a declaration -- VIDEO_SHOOT_2026-08-30.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/VIDEO_SHOOT_2026-
+ 08-30.md:22. 1 line(s) in docs/VIDEO_SHOOT_2026-08-30.md mention this dat
+ e and no COMMITMENT: declaration accounts for it. Either add a declaratio
+ n or the date is incidental. First line: first-time playtester on 2026-08
+ -13. -- Generated from tracked sources by scripts/generate_commitment_cal
+ endar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- VIDEO_SHOOT_2026-08-30.md (unparsed) --
+  unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:08d66d9b47b25bbe@commitments.pdoom1
 DTSTAMP:20260813T000000Z
 DTSTART;VALUE=DATE:20260813
@@ -4240,6 +4263,30 @@ DESCRIPTION:needs a declaration -- SMELL_PASS_2026-08-23.md (unparsed) --
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:137058aaefbe9e19@commitments.pdoom1
+DTSTAMP:20260823T000000Z
+DTSTART;VALUE=DATE:20260823
+DTEND;VALUE=DATE:20260824
+SUMMARY:[UNPARSED] needs a declaration -- VIDEO_SHOOT_2026-08-30.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/VIDEO_SHOOT_2026-
+ 08-30.md:8. 1 line(s) in docs/VIDEO_SHOOT_2026-08-30.md mention this date
+  and no COMMITMENT: declaration accounts for it. Either add a declaration
+  or the date is incidental. First line: claims in it (`docs/archive/2026-
+ 08-23-architecture-funders/`)\, and a video is -- Generated from tracked 
+ sources by scripts/generate_commitment_calendar.py\; regenerate to update
+ .
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- VIDEO_SHOOT_2026-08-30.md (unparsed) --
+  unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:34118876d9fe2623@commitments.pdoom1
 DTSTAMP:20260823T000000Z
 DTSTART;VALUE=DATE:20260823
@@ -4831,6 +4878,29 @@ BEGIN:VALARM
 ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- UNTAGGED.md (unparsed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:74dc98db40560ebd@commitments.pdoom1
+DTSTAMP:20260824T000000Z
+DTSTART;VALUE=DATE:20260824
+DTEND;VALUE=DATE:20260825
+SUMMARY:[UNPARSED] needs a declaration -- VIDEO_SHOOT_2026-08-30.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/VIDEO_SHOOT_2026-
+ 08-30.md:148. 1 line(s) in docs/VIDEO_SHOOT_2026-08-30.md mention this da
+ te and no COMMITMENT: declaration accounts for it. Either add a declarati
+ on or the date is incidental. First line: 285 seconds\, submitted 2026-08
+ -24 from v0.14.3. -- Generated from tracked sources by scripts/generate_c
+ ommitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- VIDEO_SHOOT_2026-08-30.md (unparsed) --
+  unowned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
@@ -5594,6 +5664,29 @@ DESCRIPTION:needs a declaration -- RULINGS.md (unparsed) -- unowned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:52535ccc68a4cfb5@commitments.pdoom1
+DTSTAMP:20260830T000000Z
+DTSTART;VALUE=DATE:20260830
+DTEND;VALUE=DATE:20260831
+SUMMARY:[UNPARSED] needs a declaration -- VIDEO_SHOOT_2026-08-30.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/VIDEO_SHOOT_2026-
+ 08-30.md:3. 2 line(s) in docs/VIDEO_SHOOT_2026-08-30.md mention this date
+  and no COMMITMENT: declaration accounts for it. Either add a declaration
+  or the date is incidental. First line: Prepared 2026-08-30 while Pip was
+  at the conference\, for a same-night shoot. -- Generated from tracked so
+ urces by scripts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- VIDEO_SHOOT_2026-08-30.md (unparsed) --
+  unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:58d019e4c8f03b99@commitments.pdoom1
 DTSTAMP:20260830T000000Z
 DTSTART;VALUE=DATE:20260830
@@ -5996,6 +6089,30 @@ ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- ARCHITECTURE_FUNDERS.md (unparsed) -- u
  nowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:402411eb6872f444@commitments.pdoom1
+DTSTAMP:20260909T000000Z
+DTSTART;VALUE=DATE:20260909
+DTEND;VALUE=DATE:20260910
+SUMMARY:[UNPARSED] needs a declaration -- VIDEO_SHOOT_2026-08-30.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/VIDEO_SHOOT_2026-
+ 08-30.md:219. 1 line(s) in docs/VIDEO_SHOOT_2026-08-30.md mention this da
+ te and no COMMITMENT: declaration accounts for it. Either add a declarati
+ on or the date is incidental. First line: **What is the ask at the end?**
+  The Manifund campaign closes **2026-09-09**\, nine -- Generated from tra
+ cked sources by scripts/generate_commitment_calendar.py\; regenerate to u
+ pdate.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- VIDEO_SHOOT_2026-08-30.md (unparsed) --
+  unowned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
