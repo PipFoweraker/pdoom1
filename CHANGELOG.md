@@ -108,6 +108,19 @@ asked you to email it.
 ## [Unreleased]
 
 ### Fixed
+- **The pause menu did not pause the game.** Found by Pip on the shipped v0.14.4
+  build: he opened the menu to change the music volume, and six day-ticks and a
+  month boundary ran while it was open. The Month Review then appeared over a
+  still-open, invisible pause menu that was still swallowing clicks, so "begin
+  planning next month" would not respond. `SceneTree.create_timer()` defaults its
+  `process_always` argument to **true**, meaning the timer deliberately ignores
+  `SceneTree.paused`, and both of game_manager's gameplay-advancing awaits used
+  the default. The pause menu itself was never at fault. Fixed at both sites,
+  with a regression test proven to fail without the fix -- it reproduces the same
+  six ticks Pip saw. Behaviour is unchanged whenever the tree is not paused, so
+  no run, replay or scored outcome moves (#1341). The wider family -- 9 more
+  timers, 18 tweens that say nothing about pause, and the question of which
+  overlay owns input -- is scoped in `docs/PAUSE_SEMANTICS_SWEEP.md` (#1343).
 - **Every action reached through a submenu could fail in complete silence, and
   hiring is entirely on that path.** Reported from a live playtest, in the
   player's words: *"I can fail silently if I queue 19 fundraisings and then try

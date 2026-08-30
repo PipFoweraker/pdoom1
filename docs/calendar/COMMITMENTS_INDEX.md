@@ -13,7 +13,7 @@ Horizon: **2026-08-09** (the prose scan reports dates at or after this; roll it
 forward deliberately in `COMMITMENTS.md`, never automatically -- a clock-reading
 generator goes stale overnight and trains people to ignore the check).
 
-**53 declared, 4 release-train, 214 UNPARSED, 0 malformed.**
+**54 declared, 4 release-train, 215 UNPARSED, 0 malformed.**
 
 ## Declared commitments
 
@@ -51,6 +51,7 @@ generator goes stale overnight and trains people to ignore the check).
 | 2026-09-03 | cadence | Thursday dev (the working half of the cadence) | pip | 0 | `docs/calendar/COMMITMENTS.md:172` |
 | 2026-09-04 | cadence | Friday push -- an ordinary patch day, epoch-breaking changes only if player experience demands it | pip | 0 | `docs/calendar/COMMITMENTS.md:174` |
 | 2026-09-04 | cadence | Rektango 17:30 -- the weekly anchor, a hard stop | pip | 0 | `docs/calendar/COMMITMENTS.md:176` |
+| 2026-09-04 | deadline | Sweep the pause-semantics family: every create_timer, tween and input-capture site that silently opts out of SceneTree.paused, plus a written statement of what pausing this game MEANS and a guard that stops a new one landing | pip | 14, 7, 2, 0 | `docs/PAUSE_SEMANTICS_SWEEP.md:6` |
 | 2026-09-04 | release | Release train: v0.15 ships -- (unnamed) | pip | 7, 1, 0 | `docs/ROADMAP.md (Monthly Themes table)` |
 | 2026-09-09 | deadline | Manifund deadline | pip | 14, 7, 2, 0 | `docs/calendar/COMMITMENTS.md:186` |
 | 2026-09-10 | cadence | Thursday dev (the working half of the cadence) | pip | 0 | `docs/calendar/COMMITMENTS.md:172` |
@@ -515,6 +516,8 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-24 | `tools/generate_release_horizon.py` | 330 | "in (ruling 2026-08-24; pinned by `godot/tests/unit/test_iso_week_seed.gd`", |
 | 2026-08-24 | `tools/generate_release_horizon.py` | 540 | # 2026-08-24, on this very generator. |
 | 2026-08-28 | `docs/releases/RELEASE_LINKING_TO_0.20.md` | 93 | league opens on Friday 2026-08-28 -- also week 35 -- then by the 2026-07-30 |
+| 2026-08-30 | `docs/PAUSE_SEMANTICS_SWEEP.md` | 3 | Opened 2026-08-30, the day #1341 was found on a shipped build. Scoped and |
+| 2026-08-30 | `docs/PAUSE_SEMANTICS_SWEEP.md` | 31 | ## The measured surface, 2026-08-30 |
 | 2026-08-31 | `docs/rulings/RULINGS.md` | 387 | - `godot/scripts/core/researcher.gd:150` -- # SEAM (ruled 2026-07-27, review-by 2026-08-31): AUDITS ground-truth reported vs actual. |
 | 2026-08-31 | `docs/rulings/RULINGS.md` | 392 | - `godot/scripts/core/turn_manager.gd:313` -- SEAM (ruled 2026-07-27, review-by 2026-08-31): AUDITS ground-truth reported vs actual. |
 | 2026-08-31 | `docs/rulings/UNDECLARED_TRIAGE.md` | 221 | - # SEAM (ruled 2026-07-27, review-by 2026-08-31): AUDITS ground-truth reported vs actual. |
