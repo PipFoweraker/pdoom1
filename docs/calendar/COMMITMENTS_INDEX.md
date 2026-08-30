@@ -13,7 +13,7 @@ Horizon: **2026-08-09** (the prose scan reports dates at or after this; roll it
 forward deliberately in `COMMITMENTS.md`, never automatically -- a clock-reading
 generator goes stale overnight and trains people to ignore the check).
 
-**53 declared, 4 release-train, 237 UNPARSED, 0 malformed.**
+**54 declared, 4 release-train, 238 UNPARSED, 0 malformed.**
 
 ## Declared commitments
 
@@ -51,6 +51,7 @@ generator goes stale overnight and trains people to ignore the check).
 | 2026-09-03 | cadence | Thursday dev (the working half of the cadence) | pip | 0 | `docs/calendar/COMMITMENTS.md:172` |
 | 2026-09-04 | cadence | Friday push -- an ordinary patch day, epoch-breaking changes only if player experience demands it | pip | 0 | `docs/calendar/COMMITMENTS.md:174` |
 | 2026-09-04 | cadence | Rektango 17:30 -- the weekly anchor, a hard stop | pip | 0 | `docs/calendar/COMMITMENTS.md:176` |
+| 2026-09-04 | deadline | Sweep the pause-semantics family: every create_timer, tween and input-capture site that silently opts out of SceneTree.paused, plus a written statement of what pausing this game MEANS and a guard that stops a new one landing | pip | 14, 7, 2, 0 | `docs/PAUSE_SEMANTICS_SWEEP.md:6` |
 | 2026-09-04 | release | Release train: v0.15 ships -- (unnamed) | pip | 7, 1, 0 | `docs/ROADMAP.md (Monthly Themes table)` |
 | 2026-09-09 | deadline | Manifund deadline | pip | 14, 7, 2, 0 | `docs/calendar/COMMITMENTS.md:186` |
 | 2026-09-10 | cadence | Thursday dev (the working half of the cadence) | pip | 0 | `docs/calendar/COMMITMENTS.md:172` |
@@ -557,6 +558,8 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-30 | `docs/CI_FOSSILS_2026-08-30.md` | 21 | Pip, 2026-08-30, asked whether fossils should be relegated out of existence or |
 | 2026-08-30 | `docs/CI_FOSSILS_2026-08-30.md` | 27 | RULING: 2026-08-30 -- a CI fossil must be removed entirely, never declared: a red that cannot clear trains the team to discount reds, and a declaratio |
 | 2026-08-30 | `docs/CI_FOSSILS_2026-08-30.md` | 35 | Measured 2026-08-30, immediately before deletion: |
+| 2026-08-30 | `docs/PAUSE_SEMANTICS_SWEEP.md` | 3 | Opened 2026-08-30, the day #1341 was found on a shipped build. Scoped and |
+| 2026-08-30 | `docs/PAUSE_SEMANTICS_SWEEP.md` | 31 | ## The measured surface, 2026-08-30 |
 | 2026-08-30 | `docs/VIDEO_SHOOT_2026-08-30.md` | 3 | Prepared 2026-08-30 while Pip was at the conference, for a same-night shoot. |
 | 2026-08-30 | `docs/VIDEO_SHOOT_2026-08-30.md` | 149 | \| **ESC / the pause menu at any point mid-month** \| the pause menu does NOT pause the month. Found on the shipped v0.14.4 build on 2026-08-30: six day |
 | 2026-08-30 | `docs/VIDEO_SHOOT_2026-08-30.md` | 160 | Say these. Each one has a command that returns it, run today, 2026-08-30. |
