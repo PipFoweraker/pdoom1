@@ -146,6 +146,8 @@ places where the shipped build will contradict you or look broken.
 | **The Liability Ledger (`L`) as a hero shot** | layout is cramped and wrong; fine in passing, not as a feature | #601 |
 | **Firing an employee** | the screen exists but the player never reaches it | #1226 |
 | **Fanfare popups over events** | no dimming backdrop, so events leak under the popup | #603 |
+| **ESC / the pause menu at any point mid-month** | the pause menu does NOT pause the month. Found on the shipped v0.14.4 build on 2026-08-30: six day-ticks and a month boundary ran while the tree was paused. The Month Review dialog then appears over a still-open, still-click-eating, invisible menu, and "begin planning next month" will not take a click | **#1341** |
+| **The three scouting sub-actions as a hero shot** | `scout_read`, `scout_meetups` and `scout_shitpost` have no entry in `godot/data/icon_mapping.json`. Only the parent `scouting` is mapped, and that is an interim reused publicity icon (#811 item 1) | #811 |
 | **Claiming a tutorial or new-player help** | `docs/PLAYERGUIDE.md` marks the interactive tutorial and first-time help triggers as **planned, not implemented** | -- |
 
 **The last row is the important one.** It is the easiest sentence to say by
