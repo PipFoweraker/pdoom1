@@ -220,7 +220,9 @@ runtime -- the old Python bridge is gone). Python exists only for CI/tooling in
 ## Where things live
 - `docs/ARCHITECTURE.md` -- systems->code->ADR map. **READ FIRST.**
 - `docs/game-design/` -- `DESIGN_PHILOSOPHY.md` (the "why"), `decisions/`
-  (ADR-0001...0016 -- trust the files, the `decisions/README.md` index is stale),
+  (**ADR-0001...0020**; `decisions/README.md` is now **GENERATED** by
+  `scripts/generate_adr_index.py` and gated by pre-commit, so it is safe to read
+  -- this line said "0016" and "the index is stale" until 2026-09-07, both false),
   `WORKSHOP_2_BACKLOG.md`, `BUILD_BRIEF_*` build briefs.
 - `docs/ROADMAP.md` -- thin roadmap SSOT: GitHub milestones are the live "Now";
   quarterly pins to v0.15; league/content cadence is MONTHLY (ruled 2026-07-21).
@@ -229,7 +231,12 @@ runtime -- the old Python bridge is gone). Python exists only for CI/tooling in
   with `python scripts/generate_dq_index.py` after touching
   `WORKSHOP_2_BACKLOG.md` (pre-commit `--check` blocks stale commits). This is
   the anti-rot pattern: indexes are generated from source files, not
-  hand-maintained (the stale `decisions/README.md` is the failure mode).
+  hand-maintained. `decisions/README.md` used to be the failure mode -- it went
+  stale by hand twice (missing ADR-0018, pre-amendment statuses; see the
+  2026-08-03 ADR/DQ audit) and is now GENERATED and gated, so it is the pattern's
+  success case rather than its counterexample. **This very paragraph was itself
+  stale until 2026-09-07, which is the actual lesson: a hand-written note about
+  rot rots too.**
 - `docs/calendar/` -- the commitment calendar. **Every gate in this repo fires on
   a COMMIT; this is the only thing that fires on a DATE.** Writing a dated promise
   ANYWHERE (doc, issue body, `.gd` comment) means writing one line:

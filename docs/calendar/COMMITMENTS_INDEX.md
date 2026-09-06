@@ -13,7 +13,7 @@ Horizon: **2026-08-09** (the prose scan reports dates at or after this; roll it
 forward deliberately in `COMMITMENTS.md`, never automatically -- a clock-reading
 generator goes stale overnight and trains people to ignore the check).
 
-**54 declared, 4 release-train, 258 UNPARSED, 0 malformed.**
+**54 declared, 4 release-train, 259 UNPARSED, 0 malformed.**
 
 ## Declared commitments
 
@@ -239,7 +239,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-14 | `tools/check_review_js.py` | 6 | On 2026-08-14 the art review gallery was completely dead -- no verdicts, no |
 | 2026-08-14 | `tools/transcribe.py` | 24 | session, and the 2026-08-14 one drifts into unrelated personal browsing after |
 | 2026-08-14 | `tools/transcribe.py` | 70 | 2026-08-14 recording covers 495 of 506 logged decisions, so nearly every |
-| 2026-08-15 | `CLAUDE.md` | 254 | `UNDECLARED`, never dropped. **Cross-repo by design** (ruled 2026-08-15): |
+| 2026-08-15 | `CLAUDE.md` | 261 | `UNDECLARED`, never dropped. **Cross-repo by design** (ruled 2026-08-15): |
 | 2026-08-15 | `docs/GUARD_AUDIT_2026-08-19.md` | 38 | \| `tools/assets/check_credentials.py` \| signed C2PA credentials on shipped images \| Guards a loss its own docstring calls "invisible and irreversible" |
 | 2026-08-15 | `docs/art/A4_COLLAPSE_2026-08-20.md` | 44 | mind between the 2026-08-03 gallery sweep and the 2026-08-15 server sessions. In |
 | 2026-08-15 | `docs/art/HARVEST_PASS_PROPOSAL.md` | 4 | > and the evidence trail). Written 2026-08-15 as a proposal. Self-contained: |
@@ -270,7 +270,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-15 | `docs/rulings/RULINGS.md` | 68 | \| 2026-08-15 \| flaw:<thing> joins the harvest vocabulary as the negative counterpart to element:, because the sweeps are mostly negative and prose can |
 | 2026-08-15 | `docs/rulings/RULINGS.md` | 90 | \| 2026-08-15 \| the ruling road is cross-repo from day one, federated: each repo scans itself and emits rulings.json, an aggregator reads them, nothing |
 | 2026-08-15 | `docs/rulings/RULINGS.md` | 91 | \| 2026-08-15 \| naming a mechanism is OPTIONAL on a ruling, and the generated index reports which rulings have none \| `scripts/generate_rulings.py` \| ` |
-| 2026-08-15 | `docs/rulings/RULINGS.md` | 220 | - `CLAUDE.md:254` -- `UNDECLARED`, never dropped. **Cross-repo by design** (ruled 2026-08-15): |
+| 2026-08-15 | `docs/rulings/RULINGS.md` | 220 | - `CLAUDE.md:261` -- `UNDECLARED`, never dropped. **Cross-repo by design** (ruled 2026-08-15): |
 | 2026-08-15 | `docs/rulings/RULINGS.md` | 380 | - `godot/data/asset_provenance.json:5132` -- "why": "Ruled by Pip 2026-08-15. A signed credential outranks every heuristic and is the only evidence th |
 | 2026-08-15 | `docs/rulings/RULINGS.md` | 431 | - `tools/art_review/serve_review.py:205` -- "to element: -- ruled by Pip 2026-08-15 because the sweeps are mostly " |
 | 2026-08-15 | `docs/rulings/RULINGS.md` | 434 | - `tools/assets/backfill_provenance.py:479` -- "Ruled by Pip 2026-08-15. A signed credential outranks every heuristic and " |
@@ -560,7 +560,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-28 | `docs/releases/RELEASE_LINKING_TO_0.20.md` | 93 | league opens on Friday 2026-08-28 -- also week 35 -- then by the 2026-07-30 |
 | 2026-08-28 | `tools/check_chronic_red.py` | 16 | unsatisfiable. On 2026-08-28 it went red for the reason it was BUILT for -- |
 | 2026-08-28 | `tools/check_release_ledger.py` | 450 | # reason on 2026-08-28 (v0.14.4 bumped, tagged, never published) was |
-| 2026-08-29 | `CLAUDE.md` | 314 | entry said "the ENTIRE tree" until 2026-08-29, and that phrasing was used to |
+| 2026-08-29 | `CLAUDE.md` | 321 | entry said "the ENTIRE tree" until 2026-08-29, and that phrasing was used to |
 | 2026-08-29 | `docs/CI_FOSSILS_2026-08-30.md` | 15 | 2026-08-29 (#1336), after its first version declared three of them as chronic -- |
 | 2026-08-29 | `docs/CI_FOSSILS_2026-08-30.md` | 99 | - `release-ledger.yml:schedule`, which cleared itself on 2026-08-29 when its |
 | 2026-08-29 | `docs/RELEASE_NOTES_GUARD.md` | 56 | ### The PR-time row was added on 2026-08-29, and here is what it cost to learn |
@@ -619,6 +619,8 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-09-04 | `docs/TRIAGE_2026-09-07_backlog.md` | 260 | 2. **#1343** -- The pause-semantics sweep missed its 2026-09-04 date: re-commit to a new date, or descope it to the #1341 fix already shipped? |
 | 2026-09-04 | `docs/design/LEAGUE_CUTOVER_PLAYBOOK.md` | 705 | 2026-09-04 per `docs/ROADMAP.md`) runs without any phase in section 2 being |
 | 2026-09-04 | `docs/releases/RELEASE_LINKING_TO_0.20.md` | 128 | \| v0.15 \| Fri 2026-09-04 \| w36 \| `weekly-2026-w36` \| |
+| 2026-09-07 | `CLAUDE.md` | 225 | -- this line said "0016" and "the index is stale" until 2026-09-07, both false), |
+| 2026-09-07 | `CLAUDE.md` | 238 | stale until 2026-09-07, which is the actual lesson: a hand-written note about |
 | 2026-09-07 | `docs/BRANCH_DEBT_2026-09-07.md` | 1 | # Branch and worktree debt census -- 2026-09-07 |
 | 2026-09-07 | `docs/SICK_WEEK_2026-09-07_landing.md` | 1 | # Sick week, 2026-09-07 -- the landing document |
 | 2026-09-07 | `docs/SICK_WEEK_2026-09-07_landing.md` | 5 | Pip is ill from 2026-09-07 for several days. He approved autonomous running across |
