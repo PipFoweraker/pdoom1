@@ -5,7 +5,7 @@
 > `python scripts/generate_rulings.py`. The convention, and why it looks
 > like this, is argued in `docs/rulings/RULINGS_CONVENTION.md`.
 
-**59 ruling(s)** across **16 flavour(s)**. **244** prose ruling(s) not yet declared.
+**60 ruling(s)** across **17 flavour(s)**. **244** prose ruling(s) not yet declared.
 
 ## One index, five sources
 
@@ -16,7 +16,7 @@ flattening either into one line would delete what makes it worth having.
 
 | kind | n | what it is | where |
 |---|---:|---|---|
-| `declaration` | 33 | a `RULING:` line written next to what it governs | anywhere |
+| `declaration` | 34 | a `RULING:` line written next to what it governs | anywhere |
 | `adr` | 20 | a full architecture argument, summarised here | `docs/game-design/decisions/` |
 | `session` | 3 | a transcript or workshop ruling set, pointed at | `docs/SPOKEN_*`, `*RULINGS*` |
 | `card` | 3 | the input a ruling was made from | `docs/decision-cards/` |
@@ -66,6 +66,12 @@ flavour it belongs to and read what was already decided there.
 | date | ruling | mechanism | source |
 |---|---|---|---|
 | 2026-08-15 | flaw:<thing> joins the harvest vocabulary as the negative counterpart to element:, because the sweeps are mostly negative and prose cannot be counted | `tools/art_review/serve_review.py HARVEST_DOC, emitted to docs/art/NOMENCLATURE.md` | `docs/rulings/LEDGER.md:13` |
+
+### `autonomy` (only one so far)
+
+| date | ruling | mechanism | source |
+|---|---|---|---|
+| 2026-09-07 | while Pip is ill, autonomous lanes are restricted to work with a machine-checkable success criterion and reversible output; anything requiring his judgement is drafted as a decision card and parked, never guessed | `this file, read on return` | `docs/SICK_WEEK_2026-09-07_landing.md:10` |
 
 ### `ci-gates`
 

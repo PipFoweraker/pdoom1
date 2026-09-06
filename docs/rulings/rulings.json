@@ -3,7 +3,7 @@
   "repo": "pdoom1",
   "generated_from": "tracked files at HEAD",
   "convention": "docs/rulings/RULINGS_CONVENTION.md",
-  "count": 59,
+  "count": 60,
   "rulings": [
     {
       "id": "pdoom1:2026-07-04:12de8fc2",
@@ -830,6 +830,20 @@
       "supersedes": null,
       "superseded_by": null,
       "source": "docs/CI_FOSSILS_2026-08-30.md:27"
+    },
+    {
+      "id": "pdoom1:2026-09-07:f2ed7876",
+      "date": "2026-09-07",
+      "ruling": "while Pip is ill, autonomous lanes are restricted to work with a machine-checkable success criterion and reversible output; anything requiring his judgement is drafted as a decision card and parked, never guessed",
+      "summary": "",
+      "flavour": "autonomy",
+      "kind": "declaration",
+      "status": "",
+      "by": "Pip",
+      "mechanism": "this file, read on return",
+      "supersedes": null,
+      "superseded_by": null,
+      "source": "docs/SICK_WEEK_2026-09-07_landing.md:10"
     }
   ],
   "undeclared": [

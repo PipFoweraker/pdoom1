@@ -364,7 +364,7 @@ DTSTART;VALUE=DATE:20260810
 DTEND;VALUE=DATE:20260811
 SUMMARY:[TASK] Book the half-day audit-mechanics workshop\, target window 
  opens
-DESCRIPTION:Owner: pip. Kind: task. Source: docs/rulings/RULINGS.md:259. p
+DESCRIPTION:Owner: pip. Kind: task. Source: docs/rulings/RULINGS.md:265. p
  doom1#984\, ruled 2026-07-27 18:11. Scheduled to precede the 2026-08-31 f
   -- Generated from tracked sources by scripts/generate_commitment_calenda
  r.py\; regenerate to update.
@@ -656,7 +656,7 @@ DTSTART;VALUE=DATE:20260811
 DTEND;VALUE=DATE:20260812
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:170. 6 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:176. 6 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: Rulings with no `mechanism:`. Pip's doctrine 
  (2026-08-11): what forces a -- Generated from tracked sources by scripts/
@@ -797,7 +797,7 @@ DTSTART;VALUE=DATE:20260812
 DTEND;VALUE=DATE:20260813
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:381. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:387. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `godot/scripts/core/capacity.gd:5` -- ## Ru
  led 2026-08-12 (coordination/DESIGN_2026-08-12_interrupt-resolution-varia
@@ -1208,7 +1208,7 @@ DTSTART;VALUE=DATE:20260813
 DTEND;VALUE=DATE:20260814
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:216. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:222. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `docs/CONTENT_DISTRIBUTION_SYSTEM.md:10` --
   > **SUPERSEDED\, not merely "outdated in spirit"\, as of 2026-08-13.** P
@@ -1767,7 +1767,7 @@ DTSTART;VALUE=DATE:20260814
 DTEND;VALUE=DATE:20260815
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:400. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:406. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `godot/tests/unit/simulation/test_events.gd
  :50` -- ## THE RATCHET WAS DELIBERATELY LOOSENED -- 2026-08-14\, ruled by
@@ -2728,7 +2728,7 @@ DTSTART;VALUE=DATE:20260817
 DTEND;VALUE=DATE:20260818
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:86. 2 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
+ d:92. 2 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
  TMENT: declaration accounts for it. Either add a declaration or the date 
  is incidental. First line: | 2026-08-17 | published figures live in tooli
  ng\, not prose: the line item is the atom and every rendering is a projec
@@ -3248,7 +3248,7 @@ DTSTART;VALUE=DATE:20260820
 DTEND;VALUE=DATE:20260821
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:209. 5 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:215. 5 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `.github/workflows/guards.yml:3` -- # WHY T
  HIS FILE EXISTS (issue #1265\, ruled by Pip 2026-08-20) -- Generated from
@@ -3965,7 +3965,7 @@ DTSTART;VALUE=DATE:20260822
 DTEND;VALUE=DATE:20260823
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:74. 5 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
+ d:80. 5 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
  TMENT: declaration accounts for it. Either add a declaration or the date 
  is incidental. First line: | 2026-08-22 | a check that fails 100% of the 
  time is not a check\; chronic red trains the team to ignore red\, so a pe
@@ -4842,7 +4842,7 @@ DTSTART;VALUE=DATE:20260824
 DTEND;VALUE=DATE:20260825
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:75. 17 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:81. 17 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: | 2026-08-24 | a command's exit status must b
  e read from the command\, never through a pipe: $? after a pipeline is th
@@ -4856,6 +4856,29 @@ BEGIN:VALARM
 ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- RULINGS.md (unparsed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:704cf3f6cc142fe9@commitments.pdoom1
+DTSTAMP:20260824T000000Z
+DTSTART;VALUE=DATE:20260824
+DTEND;VALUE=DATE:20260825
+SUMMARY:[UNPARSED] needs a declaration -- SICK_WEEK_2026-09-07_landing.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/SICK_WEEK_2026-09
+ -07_landing.md:56. 1 line(s) in docs/SICK_WEEK_2026-09-07_landing.md ment
+ ion this date and no COMMITMENT: declaration accounts for it. Either add 
+ a declaration or the date is incidental. First line: 2026-08-24. -- Gener
+ ated from tracked sources by scripts/generate_commitment_calendar.py\; re
+ generate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- SICK_WEEK_2026-09-07_landing.md (unpars
+ ed) -- unowned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
@@ -5250,6 +5273,29 @@ DESCRIPTION:needs a declaration -- pdoom1#811 (unparsed) -- unowned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:3eea03b5b796bd0d@commitments.pdoom1
+DTSTAMP:20260825T000000Z
+DTSTART;VALUE=DATE:20260825
+DTEND;VALUE=DATE:20260826
+SUMMARY:[UNPARSED] needs a declaration -- SICK_WEEK_2026-09-07_landing.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/SICK_WEEK_2026-09
+ -07_landing.md:30. 2 line(s) in docs/SICK_WEEK_2026-09-07_landing.md ment
+ ion this date and no COMMITMENT: declaration accounts for it. Either add 
+ a declaration or the date is incidental. First line: The 2026-08-25 estat
+ e triage had already recorded this correctly -- Generated from tracked so
+ urces by scripts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- SICK_WEEK_2026-09-07_landing.md (unpars
+ ed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:e0f5335687032a4c@commitments.pdoom1
 DTSTAMP:20260827T000000Z
 DTSTART;VALUE=DATE:20260827
@@ -5386,6 +5432,30 @@ DESCRIPTION:needs a declaration -- RELEASE_NOTES_GUARD.md (unparsed) -- un
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:943e157ebb244b2c@commitments.pdoom1
+DTSTAMP:20260828T000000Z
+DTSTART;VALUE=DATE:20260828
+DTEND;VALUE=DATE:20260829
+SUMMARY:[UNPARSED] needs a declaration -- SICK_WEEK_2026-09-07_landing.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/SICK_WEEK_2026-09
+ -07_landing.md:113. 1 line(s) in docs/SICK_WEEK_2026-09-07_landing.md men
+ tion this date and no COMMITMENT: declaration accounts for it. Either add
+  a declaration or the date is incidental. First line: - Latest RELEASE is
+  v0.14.4\, tagged 2026-08-28. **The v0.15 train was due 2026-09-04 -- Gen
+ erated from tracked sources by scripts/generate_commitment_calendar.py\; 
+ regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- SICK_WEEK_2026-09-07_landing.md (unpars
+ ed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:d5d0bb8bebc59fee@commitments.pdoom1
 DTSTAMP:20260828T000000Z
 DTSTART;VALUE=DATE:20260828
@@ -5507,7 +5577,7 @@ DTSTART;VALUE=DATE:20260829
 DTEND;VALUE=DATE:20260830
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:74. 2 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
+ d:80. 2 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
  TMENT: declaration accounts for it. Either add a declaration or the date 
  is incidental. First line: | 2026-08-22 | a check that fails 100% of the 
  time is not a check\; chronic red trains the team to ignore red\, so a pe
@@ -5670,12 +5740,12 @@ DTSTART;VALUE=DATE:20260830
 DTEND;VALUE=DATE:20260831
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:95. 4 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
- TMENT: declaration accounts for it. Either add a declaration or the date 
- is incidental. First line: | 2026-08-30 | a CI fossil must be removed ent
- irely\, never declared: a red that cannot clear trains the team to discou
- nt reds\, and a declaration for o -- Generated from tracked sources by sc
- ripts/generate_commitment_calendar.py\; regenerate to update.
+ d:101. 4 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ ITMENT: declaration accounts for it. Either add a declaration or the date
+  is incidental. First line: | 2026-08-30 | a CI fossil must be removed en
+ tirely\, never declared: a red that cannot clear trains the team to disco
+ unt reds\, and a declaration for o -- Generated from tracked sources by s
+ cripts/generate_commitment_calendar.py\; regenerate to update.
 CATEGORIES:UNPARSED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -5684,6 +5754,30 @@ BEGIN:VALARM
 ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- RULINGS.md (unparsed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:134ec7eb98a21647@commitments.pdoom1
+DTSTAMP:20260830T000000Z
+DTSTART;VALUE=DATE:20260830
+DTEND;VALUE=DATE:20260831
+SUMMARY:[UNPARSED] needs a declaration -- SICK_WEEK_2026-09-07_landing.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/SICK_WEEK_2026-09
+ -07_landing.md:112. 2 line(s) in docs/SICK_WEEK_2026-09-07_landing.md men
+ tion this date and no COMMITMENT: declaration accounts for it. Either add
+  a declaration or the date is incidental. First line: - `main` at `82fa10
+ a1`\, 2026-08-30. Version **0.14.4**\, ladder epoch **L6**. -- Generated 
+ from tracked sources by scripts/generate_commitment_calendar.py\; regener
+ ate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- SICK_WEEK_2026-09-07_landing.md (unpars
+ ed) -- unowned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
@@ -5799,7 +5893,7 @@ DTSTART;VALUE=DATE:20260831
 DTEND;VALUE=DATE:20260901
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:389. 2 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:395. 2 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `godot/scripts/core/researcher.gd:150` -- #
   SEAM (ruled 2026-07-27\, review-by 2026-08-31): AUDITS ground-truth repo
@@ -6085,6 +6179,30 @@ DESCRIPTION:needs a declaration -- RELEASE_LINKING_TO_0.20.md (unparsed) -
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:7075792d4c5c7de1@commitments.pdoom1
+DTSTAMP:20260904T000000Z
+DTSTART;VALUE=DATE:20260904
+DTEND;VALUE=DATE:20260905
+SUMMARY:[UNPARSED] needs a declaration -- SICK_WEEK_2026-09-07_landing.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/SICK_WEEK_2026-09
+ -07_landing.md:113. 1 line(s) in docs/SICK_WEEK_2026-09-07_landing.md men
+ tion this date and no COMMITMENT: declaration accounts for it. Either add
+  a declaration or the date is incidental. First line: - Latest RELEASE is
+  v0.14.4\, tagged 2026-08-28. **The v0.15 train was due 2026-09-04 -- Gen
+ erated from tracked sources by scripts/generate_commitment_calendar.py\; 
+ regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- SICK_WEEK_2026-09-07_landing.md (unpars
+ ed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:36b2a579c57f51a9@commitments.pdoom1
 DTSTAMP:20260904T000000Z
 DTSTART;VALUE=DATE:20260904
@@ -6105,6 +6223,52 @@ BEGIN:VALARM
 ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- coordination#48 (unparsed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:083c6a963b73b1ea@commitments.pdoom1
+DTSTAMP:20260907T000000Z
+DTSTART;VALUE=DATE:20260907
+DTEND;VALUE=DATE:20260908
+SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
+ d:74. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
+ TMENT: declaration accounts for it. Either add a declaration or the date 
+ is incidental. First line: | 2026-09-07 | while Pip is ill\, autonomous l
+ anes are restricted to work with a machine-checkable success criterion an
+ d reversible output\; anything re -- Generated from tracked sources by sc
+ ripts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- RULINGS.md (unparsed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:bda8df4a0feca4c8@commitments.pdoom1
+DTSTAMP:20260907T000000Z
+DTSTART;VALUE=DATE:20260907
+DTEND;VALUE=DATE:20260908
+SUMMARY:[UNPARSED] needs a declaration -- SICK_WEEK_2026-09-07_landing.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/SICK_WEEK_2026-09
+ -07_landing.md:1. 4 line(s) in docs/SICK_WEEK_2026-09-07_landing.md menti
+ on this date and no COMMITMENT: declaration accounts for it. Either add a
+  declaration or the date is incidental. First line: # Sick week\, 2026-09
+ -07 -- the landing document -- Generated from tracked sources by scripts/
+ generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- SICK_WEEK_2026-09-07_landing.md (unpars
+ ed) -- unowned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
@@ -6163,6 +6327,29 @@ ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- ARCHITECTURE_FUNDERS.md (unparsed) -- u
  nowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2d0a176510c41b3a@commitments.pdoom1
+DTSTAMP:20260909T000000Z
+DTSTART;VALUE=DATE:20260909
+DTEND;VALUE=DATE:20260910
+SUMMARY:[UNPARSED] needs a declaration -- SICK_WEEK_2026-09-07_landing.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/SICK_WEEK_2026-09
+ -07_landing.md:51. 1 line(s) in docs/SICK_WEEK_2026-09-07_landing.md ment
+ ion this date and no COMMITMENT: declaration accounts for it. Either add 
+ a declaration or the date is incidental. First line: **Manifund closed 20
+ 26-09-09 and was deferred.** -- Generated from tracked sources by scripts
+ /generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- SICK_WEEK_2026-09-07_landing.md (unpars
+ ed) -- unowned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
@@ -7131,7 +7318,7 @@ DTSTART;VALUE=DATE:20270727
 DTEND;VALUE=DATE:20270728
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:302. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:308. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `docs/game-design/DESIGN_2026-08-24_diegeti
  c-opening.md:628` -- is ruled out today."* The doctrine has a **review cl
