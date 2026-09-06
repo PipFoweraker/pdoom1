@@ -13,7 +13,7 @@ Horizon: **2026-08-09** (the prose scan reports dates at or after this; roll it
 forward deliberately in `COMMITMENTS.md`, never automatically -- a clock-reading
 generator goes stale overnight and trains people to ignore the check).
 
-**54 declared, 4 release-train, 246 UNPARSED, 0 malformed.**
+**54 declared, 4 release-train, 258 UNPARSED, 0 malformed.**
 
 ## Declared commitments
 
@@ -96,6 +96,14 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-09 | `coordination#47` | 0 | WORKSHOP 2 OPEN: the weekend deployment postmortem -- pdoom-data chairs, Phase 1 seals due 11:00 AEST, Pip absent by design |
 | 2026-08-09 | `coordination#49` | 0 | pdoom-data seat: six items for the MONDAY print stack -- the history rewrite is DEFERRED by Pip pending a rule, the rest are yes/no |
 | 2026-08-09 | `coordination#50` | 0 | Does a print stack/queue exist? Pip wants queue + revise + supersession + collection-on-receipt -- and thinks a watched folder unlocks working remotel |
+| 2026-08-09 | `docs/BRANCH_DEBT_2026-09-07.md` | 195 | \| `copy-review-pack-2026-08-09` \| ahead=0 AND PR #1195 merged, ancestor confirmed \| 2026-08-09 \| |
+| 2026-08-09 | `docs/BRANCH_DEBT_2026-09-07.md` | 195 | \| `copy-review-pack-2026-08-09` \| ahead=0 AND PR #1195 merged, ancestor confirmed \| 2026-08-09 \| |
+| 2026-08-09 | `docs/BRANCH_DEBT_2026-09-07.md` | 207 | \| `ci/freshness-force-alarm` \| PR #1189 merged, ancestor confirmed \| 2026-08-09 \| |
+| 2026-08-09 | `docs/BRANCH_DEBT_2026-09-07.md` | 210 | \| `docs/league-cutover-playbook` \| PR #1190 merged, ancestor confirmed \| 2026-08-09 \| |
+| 2026-08-09 | `docs/BRANCH_DEBT_2026-09-07.md` | 248 | \| `docs/week-2026-08-10-plan` (local; also on `origin`; also has worktree `wt-weekplan`, a Temp husk) \| 1 \| 2026-08-09/10 \| adds `docs/design/WEEK_202 |
+| 2026-08-09 | `docs/BRANCH_DEBT_2026-09-07.md` | 254 | \| `fix/changelog-honesty-1165` (origin only, PR #1187 CLOSED not merged) \| 1 \| 2026-08-09 \| adds `scripts/check_changelog_claims.py` (does not exist o |
+| 2026-08-09 | `docs/BRANCH_DEBT_2026-09-07.md` | 255 | \| `fix/ladder-bump-guard-1178` (origin only, PR #1185 CLOSED not merged) \| 1 \| 2026-08-09 \| main's `tools/check_ladder_bump.py` already has `--self-te |
+| 2026-08-09 | `docs/BRANCH_DEBT_2026-09-07.md` | 256 | \| `fix/sim-timeout-flag-1181` (origin only, PR #1186 CLOSED not merged) \| 1 \| 2026-08-09 \| main's `scripts/run_godot_tests.py` already has `DID NOT CO |
 | 2026-08-09 | `docs/POSTMORTEM_2026-08-07_CAPTURE.md` | 911 | *Written 2026-08-07 for reading on Sunday 2026-08-09. Every command in this |
 | 2026-08-09 | `docs/RELEASE_NOTES_GUARD.md` | 105 | RN005 is the disclosure escape checked in the other direction, added 2026-08-09 |
 | 2026-08-09 | `docs/deployment/RELEASE_FLOW_MAP_2026-08-24.md` | 560 | 2026-08-09 and that the POST returns 204 either way. Settle: |
@@ -108,6 +116,15 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-09 | `pdoom1#1193` | 0 | #1137's event retiming made a simulated run ~38% more expensive -- is that the intended event density? |
 | 2026-08-10 | `coordination#17` | 0 | pdoom1-website seat check-in, and a proposal: run a CONTENT workshop across the three sister repos |
 | 2026-08-10 | `coordination#35` | 0 | Pip is out this evening through Rektango -- last synchronous window today. Post your asks ranked, or say you have none |
+| 2026-08-10 | `docs/BRANCH_DEBT_2026-09-07.md` | 197 | \| `monday-stack-2026-08-10` (LOCAL branch -- see the ORIGIN branch of the same name in HAS UNIQUE WORK, they differ) \| ahead=0, tip is content of merg |
+| 2026-08-10 | `docs/BRANCH_DEBT_2026-09-07.md` | 197 | \| `monday-stack-2026-08-10` (LOCAL branch -- see the ORIGIN branch of the same name in HAS UNIQUE WORK, they differ) \| ahead=0, tip is content of merg |
+| 2026-08-10 | `docs/BRANCH_DEBT_2026-09-07.md` | 209 | \| `docs/laptop-debian-setup` \| PR #1199 merged, ancestor confirmed \| 2026-08-10 \| |
+| 2026-08-10 | `docs/BRANCH_DEBT_2026-09-07.md` | 247 | \| `origin/monday-stack-2026-08-10` (REMOTE -- distinct from the local branch of the same name, which is fully merged, see SAFE table) \| 1 \| 2026-08-10 |
+| 2026-08-10 | `docs/BRANCH_DEBT_2026-09-07.md` | 247 | \| `origin/monday-stack-2026-08-10` (REMOTE -- distinct from the local branch of the same name, which is fully merged, see SAFE table) \| 1 \| 2026-08-10 |
+| 2026-08-10 | `docs/BRANCH_DEBT_2026-09-07.md` | 248 | \| `docs/week-2026-08-10-plan` (local; also on `origin`; also has worktree `wt-weekplan`, a Temp husk) \| 1 \| 2026-08-09/10 \| adds `docs/design/WEEK_202 |
+| 2026-08-10 | `docs/BRANCH_DEBT_2026-09-07.md` | 248 | \| `docs/week-2026-08-10-plan` (local; also on `origin`; also has worktree `wt-weekplan`, a Temp husk) \| 1 \| 2026-08-09/10 \| adds `docs/design/WEEK_202 |
+| 2026-08-10 | `docs/BRANCH_DEBT_2026-09-07.md` | 250 | \| `jira-export-2026-08-10` \| 1 \| 2026-08-10 \| one file, `docs/jira/export_2026-08-10.jsonl` (209 lines) -- a data dump, low mechanical risk either way |
+| 2026-08-10 | `docs/BRANCH_DEBT_2026-09-07.md` | 250 | \| `jira-export-2026-08-10` \| 1 \| 2026-08-10 \| one file, `docs/jira/export_2026-08-10.jsonl` (209 lines) -- a data dump, low mechanical risk either way |
 | 2026-08-10 | `docs/LAPTOP_DEBIAN_SETUP.md` | 3 | **Status:** written 2026-08-10, before the machine arrived. The Linux isolation |
 | 2026-08-10 | `docs/LAPTOP_DEBIAN_SETUP.md` | 22 | **Where memos land today, measured 2026-08-10, not assumed:** |
 | 2026-08-10 | `docs/LAPTOP_DEBIAN_SETUP.md` | 62 | replicate through git. Measured on 2026-08-10: **2,713 entries, 2,704 carrying a |
@@ -118,6 +135,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-10 | `docs/LEADERBOARD_WEBSITE_INTEGRATION.md` | 215 | ### Two identity values, one wire field (shipped 2026-08-10) |
 | 2026-08-10 | `docs/LEADERBOARD_WEBSITE_INTEGRATION.md` | 219 | may run several labs over time. He restated it on 2026-08-10 after a second real |
 | 2026-08-10 | `docs/PRIVACY_POSTURE.md` | 25 | **HOW the two names are published (measured, PR #1176, 2026-08-10).** Both names |
+| 2026-08-10 | `docs/TRIAGE_2026-09-07_backlog.md` | 198 | \| **#984** \| Workshop "target window: week of 2026-08-10" \| ~4 weeks past \| |
 | 2026-08-10 | `docs/game-design/DESIGN_2026-08-24_diegetic-opening.md` | 308 | minutes on 2026-08-10, could not work out what to do."* And the warning against reading the |
 | 2026-08-10 | `pdoom1#984` | 0 | Half-day workshop: audit mechanics deep-dive (next epoch) -- something amazing under the smell |
 | 2026-08-10 | `tools/check_self_merge_eligibility.py` | 18 | 2026-08-10 and, until this file existed, they **promised eligibility and checked |
@@ -193,6 +211,8 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-13 | `tools/check_agent_env.py` | 300 | reaches for the bare command -- which is the 2026-08-13 failure verbatim. |
 | 2026-08-13 | `tools/check_agent_env.py` | 328 | "the 2026-08-13 broken-build playtest", |
 | 2026-08-13 | `tools/check_class_cache.py` | 6 | WHY (2026-08-13, cost a first-time playtester's session): |
+| 2026-08-14 | `docs/BRANCH_DEBT_2026-09-07.md` | 194 | \| `feat/art-review-v3-vocabulary` \| ahead=0 (also confirmed via `git branch --merged origin/main`) \| 2026-08-14 \| |
+| 2026-08-14 | `docs/BRANCH_DEBT_2026-09-07.md` | 218 | \| `origin/feat/art-review-v3-vocabulary` (remote copy) \| `git branch -r --merged origin/main` lists it directly \| 2026-08-14 \| |
 | 2026-08-14 | `docs/HANDOVER_2026-08-24_pdoom1_seat.md` | 26 | \| First real score since 2026-08-14 \| **Rue**, 18:04:47, `"bubble gum factory -- mic ox"`, score 21 \| |
 | 2026-08-14 | `docs/art/A4_COLLAPSE_2026-08-20.md` | 33 | them, so the 2026-08-14/15 sweeps left **1,863 files carrying two verdicts each**. |
 | 2026-08-14 | `docs/art/HARVEST_PASS_PROPOSAL.md` | 49 | 2026-08-14 sweep contains the multi-pass workflow being invented in real time: |
@@ -372,6 +392,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-21 | `tools/check_ladder_bump.py` | 441 | # is a DEBT, and until 2026-08-21 it printed identically to `none`. |
 | 2026-08-21 | `tools/generate_release_horizon.py` | 27 | L5  2026-08-21  38528c22  v0.14.2   <- PATCH bump, ladder cut |
 | 2026-08-21 | `tools/reset_player_state.py` | 158 | Until 2026-08-21 this function skipped any destination that already existed |
+| 2026-08-22 | `docs/BRANCH_DEBT_2026-09-07.md` | 269 | \| Exact trigger and timing of the Temp-folder file wipe \| Pattern is consistent with a Windows Temp-cleanup/AV sweep but no log was inspected for this |
 | 2026-08-22 | `docs/game-design/DESPERATION_LEVER_PRICING.md` | 3 | **Ruled by Pip, 2026-08-22:** *"we need to give the mechanical inertness a definite |
 | 2026-08-22 | `docs/rulings/RULINGS.md` | 80 | \| 2026-08-22 \| a check that fails 100% of the time is not a check; chronic red trains the team to ignore red, so a permanently-failing gate must be ei |
 | 2026-08-22 | `docs/rulings/RULINGS.md` | 122 | \| 2026-08-22 \| a mechanic that charges the player and does nothing observable gets an unsubtle placeholder consequence NOW rather than waiting for a b |
@@ -435,6 +456,9 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-23 | `tools/print_doc.py` | 54 | MEASURED 2026-08-23 through this tool's own --pdf-only path, default 12.5pt: |
 | 2026-08-23 | `tools/sign_release.py` | 6 | WHY THIS EXISTS, 2026-08-23 |
 | 2026-08-23 | `tools/sign_release.py` | 131 | That is what is deployed here (2026-08-23, version 10.0.28000.2526). |
+| 2026-08-24 | `docs/BRANCH_DEBT_2026-09-07.md` | 246 | \| `origin/budget/rulings-2026-08-24` \| 2 \| 2026-08-24 \| has OPEN PR #1291 already -- low loss-risk \| |
+| 2026-08-24 | `docs/BRANCH_DEBT_2026-09-07.md` | 246 | \| `origin/budget/rulings-2026-08-24` \| 2 \| 2026-08-24 \| has OPEN PR #1291 already -- low loss-risk \| |
+| 2026-08-24 | `docs/BRANCH_DEBT_2026-09-07.md` | 285 | `budget/rulings-2026-08-24`) already tracked by an open PR and therefore |
 | 2026-08-24 | `docs/CI_FOSSILS_2026-08-30.md` | 100 | 04:23 UTC cron went green for the first time since 2026-08-24. |
 | 2026-08-24 | `docs/HANDOVER_2026-08-24_pdoom1_seat.md` | 29 | \| Merged 2026-08-24 \| **19** \| |
 | 2026-08-24 | `docs/HANDOVER_2026-08-24_pdoom1_seat.md` | 175 | - [x] ~~The merge queue~~ DRIVEN 2026-08-24: nineteen to two. See section 4b. |
@@ -446,6 +470,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-24 | `docs/RELEASE_PLATFORMS.md` | 444 | Added 2026-08-24, after **v0.14.3 published with no macOS asset**. The macOS |
 | 2026-08-24 | `docs/RELEASE_PLATFORMS.md` | 582 | ## Addendum 2026-08-24 -- the first release that shipped no macOS asset |
 | 2026-08-24 | `docs/SICK_WEEK_2026-09-07_landing.md` | 56 | 2026-08-24. |
+| 2026-08-24 | `docs/TRIAGE_2026-09-07_backlog.md` | 200 | \| **#808** \| "do this review ON OR AFTER 2026-08-24" \| Now actionable -- this one has ripened, not rotted \| |
 | 2026-08-24 | `docs/VIDEO_SHOOT_2026-08-30.md` | 181 | 285 seconds, submitted 2026-08-24 from v0.14.3. |
 | 2026-08-24 | `docs/deployment/DESIGN_2026-08-24_release_lanes.md` | 3 | **Status:** design document. No code changes accompany it. Written 2026-08-24 |
 | 2026-08-24 | `docs/deployment/GATE_AUDIT_2026-08-24.md` | 1 | # Gate audit -- 2026-08-24 |
@@ -558,6 +583,10 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-29 | `tools/check_guard_parity.py` | 437 | # PARTIAL NOW FAILS --check (armed 2026-08-29, issue #1297 section 2). |
 | 2026-08-29 | `tools/check_release_ledger.py` | 436 | # Exactly ONE trailing newline, and this is load-bearing (2026-08-29). |
 | 2026-08-29 | `tools/check_release_ledger.py` | 448 | # run from 2026-08-24 to 2026-08-29 -- eight consecutive, mostly the 04:23 |
+| 2026-08-30 | `docs/BRANCH_DEBT_2026-09-07.md` | 11 | `coordination/SEAT_2026-08-30_pdoom1-branches.md` (2026-08-30, debian-laptop, |
+| 2026-08-30 | `docs/BRANCH_DEBT_2026-09-07.md` | 57 | six branches deleted on 2026-08-30, and the sheer number of MERGED PRs found |
+| 2026-08-30 | `docs/BRANCH_DEBT_2026-09-07.md` | 245 | \| `origin/fix/null-reaction-guard` \| 1 \| **2026-08-30** (newest of any unmerged item found) \| has OPEN PR #1339 already -- low loss-risk, just needs r |
+| 2026-08-30 | `docs/BRANCH_DEBT_2026-09-07.md` | 267 | \| `fix/exploit-001-fire-desk`, `fix/identity-truncation`, `chore/dead-code-sweep`, `fix/adr-0015-doom-literals` (the four "protected" branches from th |
 | 2026-08-30 | `docs/CI_FOSSILS_2026-08-30.md` | 3 | Written 2026-08-30, immediately before the deletion it records, so that removing |
 | 2026-08-30 | `docs/CI_FOSSILS_2026-08-30.md` | 21 | Pip, 2026-08-30, asked whether fossils should be relegated out of existence or |
 | 2026-08-30 | `docs/CI_FOSSILS_2026-08-30.md` | 27 | RULING: 2026-08-30 -- a CI fossil must be removed entirely, never declared: a red that cannot clear trains the team to discount reds, and a declaratio |
@@ -582,14 +611,23 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-31 | `docs/rulings/UNDECLARED_TRIAGE.md` | 221 | - # SEAM (ruled 2026-07-27, review-by 2026-08-31): AUDITS ground-truth reported vs actual. |
 | 2026-08-31 | `docs/rulings/UNDECLARED_TRIAGE.md` | 227 | - SEAM (ruled 2026-07-27, review-by 2026-08-31): AUDITS ground-truth reported vs actual. |
 | 2026-08-31 | `pdoom1#984` | 0 | Half-day workshop: audit mechanics deep-dive (next epoch) -- something amazing under the smell |
+| 2026-09-02 | `docs/TRIAGE_2026-09-07_backlog.md` | 3 | Read while Pip was ill (2026-09-02..07). Read-only pass: nothing was closed, |
 | 2026-09-04 | `coordination#48` | 0 | League cutover timing contract: pdoom1 can publish in 5m30s and cannot tell you when pdoom1.com will agree -- what do you need to pre-announce? |
 | 2026-09-04 | `docs/SICK_WEEK_2026-09-07_landing.md` | 136 | - Latest RELEASE is v0.14.4, tagged 2026-08-28. **The v0.15 train was due 2026-09-04 |
+| 2026-09-04 | `docs/TRIAGE_2026-09-07_backlog.md` | 30 | `COMMITMENT<colon> 2026-09-04` (cited, not declared); today is 2026-09-07. |
+| 2026-09-04 | `docs/TRIAGE_2026-09-07_backlog.md` | 196 | \| **#1343** \| `COMMITMENT<colon> 2026-09-04` (cited, not declared) pause-semantics sweep, "for the league patch" \| **3 days overdue** \| |
+| 2026-09-04 | `docs/TRIAGE_2026-09-07_backlog.md` | 260 | 2. **#1343** -- The pause-semantics sweep missed its 2026-09-04 date: re-commit to a new date, or descope it to the #1341 fix already shipped? |
 | 2026-09-04 | `docs/design/LEAGUE_CUTOVER_PLAYBOOK.md` | 705 | 2026-09-04 per `docs/ROADMAP.md`) runs without any phase in section 2 being |
 | 2026-09-04 | `docs/releases/RELEASE_LINKING_TO_0.20.md` | 128 | \| v0.15 \| Fri 2026-09-04 \| w36 \| `weekly-2026-w36` \| |
+| 2026-09-07 | `docs/BRANCH_DEBT_2026-09-07.md` | 1 | # Branch and worktree debt census -- 2026-09-07 |
 | 2026-09-07 | `docs/SICK_WEEK_2026-09-07_landing.md` | 1 | # Sick week, 2026-09-07 -- the landing document |
 | 2026-09-07 | `docs/SICK_WEEK_2026-09-07_landing.md` | 5 | Pip is ill from 2026-09-07 for several days. He approved autonomous running across |
 | 2026-09-07 | `docs/SICK_WEEK_2026-09-07_landing.md` | 10 | RULING: 2026-09-07 -- while Pip is ill, autonomous lanes are restricted to work with a machine-checkable success criterion and reversible output; anyt |
 | 2026-09-07 | `docs/SICK_WEEK_2026-09-07_landing.md` | 133 | ## (e) Standing state you will want, measured 2026-09-07 |
+| 2026-09-07 | `docs/TRIAGE_2026-09-07_backlog.md` | 1 | # Backlog triage, 2026-09-07 -- 213 open issues |
+| 2026-09-07 | `docs/TRIAGE_2026-09-07_backlog.md` | 14 | git log -1 --format=%H          # 66534ee4, 2026-09-07 01:13 +1000 |
+| 2026-09-07 | `docs/TRIAGE_2026-09-07_backlog.md` | 30 | `COMMITMENT<colon> 2026-09-04` (cited, not declared); today is 2026-09-07. |
+| 2026-09-07 | `docs/TRIAGE_2026-09-07_backlog.md` | 194 | \| Issue \| Its own date \| Days past as of 2026-09-07 \| |
 | 2026-09-07 | `docs/rulings/RULINGS.md` | 74 | \| 2026-09-07 \| while Pip is ill, autonomous lanes are restricted to work with a machine-checkable success criterion and reversible output; anything re |
 | 2026-09-09 | `coordination#30` | 0 | AGENDA: tri-repo content workshop, 2026-08-06 -- six items, three need Pip, and A1 has deferred three times |
 | 2026-09-09 | `docs/ARCHITECTURE_FUNDERS.md` | 18 | - **Closes:** 2026-09-09 |
