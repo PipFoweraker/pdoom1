@@ -4,7 +4,7 @@ date: 2026-06-30
 deciders: Pip
 -->
 
-# ADR-0003: Runtime — migrate from pygame/Python to Godot 4.5.1 / GDScript
+# ADR-0003: Runtime  --  migrate from pygame/Python to Godot 4.5.1 / GDScript
 
 - **Status:** Accepted (record of a migration completed earlier; formalised here)
 - **Date:** 2026-06-30 (migration code-complete ~November 2025; pygame debris archived June 2026)
@@ -19,7 +19,7 @@ to `archive/legacy-pygame/` and `archive/legacy-python-src/` (`a84ec29`, with st
 June 2026); it is no longer imported by live code.
 
 Because the migration's *cleanup* lagged the *code* by months, many docs and CI steps continued to
-describe the pygame runtime long after it was dead — the single largest source of documentation drift
+describe the pygame runtime long after it was dead  --  the single largest source of documentation drift
 in the repo.
 
 ## Decision

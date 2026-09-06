@@ -248,10 +248,10 @@ is not.
 - `docs/art/NOTE_2026-08-15_colour-as-identity.md:3` -- > **Status: captured intent, nothing ruled.** Dictated by Pip on the morning of
 - `docs/art/NOTE_2026-08-15_colour-as-identity.md:65` -- These are already ruled elsewhere and any colour-identity system inherits them:
 - `docs/art/PROP_MANIFEST.md:32` -- | `style_tags` | office quality tiers this art serves, from the canonical ladder `"scummy"` / `"decent"` / `"premium"` (ruled 2026-07-26; `docs/game-design/SEED_ASSET_REGISTRY_AND_VERDICTS.md`). Tier-
-- `docs/art/SPRITE_GENERATION_PLAN.md:7` -- ## Design foundation (RULED 2026-07-16 -- see WORKSHOP_2_BACKLOG "Character sprite system")
+- `docs/art/SPRITE_GENERATION_PLAN.md:7` -- ## Design foundation (RULED 2026-07-16  --  see WORKSHOP_2_BACKLOG "Character sprite system")
 - `docs/art/audit_2026-08-13/PROVENANCE_COMPLETENESS.md:638` -- identical byte length is not ruled out.
 - `docs/art/audit_2026-08-13/RETENTION_ANALYSIS.md:251` -- byte in the tree** -- the biggest files are precisely the ones nobody has ruled on.
-- `docs/balance/DIAL5_ATTENTION_SCARCITY_PROPOSALS.md:101` -- - **C is orthogonal** -- a time multiplier that rides on top of whatever supply/demand shape you pick. Nearly free to ratify (direction already ruled), most gated on "wait for a month to complete" for
+- `docs/balance/DIAL5_ATTENTION_SCARCITY_PROPOSALS.md:101` -- - **C is orthogonal**  --  a time multiplier that rides on top of whatever supply/demand shape you pick. Nearly free to ratify (direction already ruled), most gated on "wait for a month to complete" f
 - `docs/balance/DIAL5_ATTENTION_SCARCITY_PROPOSALS.md:109` -- **One-sentence rationale:** Keep the ruled ~20-decisions/month canon intact but make roughly half of it spoken-for (admin overhead + priced doors/approvals/audits), so the reserve you hold back become
 - `docs/balance/DIAL5_ATTENTION_SCARCITY_PROPOSALS.md:25` -- **Interactions.** Cleanest possible change (one constant). But it **collides with a ruled grain**: WORKSHOP_2_BACKLOG "L1 spec inputs" fixes the founder unit at *"decisions, ~20/month"*, and DESIGN_PH
 - `docs/balance/DIAL5_ATTENTION_SCARCITY_PROPOSALS.md:60` -- **Cost of being wrong.** If the ramp is too steep, the endgame is unplayable regardless of office quality (founder drowns before delegation can catch up); too shallow and scarcity never arrives, leavi
