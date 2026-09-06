@@ -9,6 +9,15 @@ deciding rather than rediscovering.
 
 RULING: 2026-09-07 -- while Pip is ill, autonomous lanes are restricted to work with a machine-checkable success criterion and reversible output; anything requiring his judgement is drafted as a decision card and parked, never guessed -- flavour: autonomy -- mechanism: this file, read on return
 
+**The one sentence to take from this week, if you take nothing else: the thing that
+proves a claim is produced locally, and pushing it is a separate act nobody is prompted
+to perform.** Two seats held load-bearing artefacts on single disks in the same week --
+`fix/identity-truncation`, which is the only fix for a live bug and exists on exactly one
+machine (section (d.0)), and the website seat's measurement commit that settled a
+disputed claim, which sat local and unpushed. Neither was carelessness. Both are the same
+missing mechanism, and it is a prompt rather than a sweep. Section (d.0) is the one with
+a possible deadline attached.
+
 ---
 
 ## (a) Decisions he made on the way out, and what actually happened

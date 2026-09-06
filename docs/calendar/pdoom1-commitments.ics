@@ -5011,7 +5011,7 @@ DTSTART;VALUE=DATE:20260824
 DTEND;VALUE=DATE:20260825
 SUMMARY:[UNPARSED] needs a declaration -- SICK_WEEK_2026-09-07_landing.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/SICK_WEEK_2026-09
- -07_landing.md:56. 1 line(s) in docs/SICK_WEEK_2026-09-07_landing.md ment
+ -07_landing.md:65. 1 line(s) in docs/SICK_WEEK_2026-09-07_landing.md ment
  ion this date and no COMMITMENT: declaration accounts for it. Either add 
  a declaration or the date is incidental. First line: 2026-08-24. -- Gener
  ated from tracked sources by scripts/generate_commitment_calendar.py\; re
@@ -5449,7 +5449,7 @@ DTSTART;VALUE=DATE:20260825
 DTEND;VALUE=DATE:20260826
 SUMMARY:[UNPARSED] needs a declaration -- SICK_WEEK_2026-09-07_landing.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/SICK_WEEK_2026-09
- -07_landing.md:30. 2 line(s) in docs/SICK_WEEK_2026-09-07_landing.md ment
+ -07_landing.md:39. 2 line(s) in docs/SICK_WEEK_2026-09-07_landing.md ment
  ion this date and no COMMITMENT: declaration accounts for it. Either add 
  a declaration or the date is incidental. First line: The 2026-08-25 estat
  e triage had already recorded this correctly -- Generated from tracked so
@@ -5608,7 +5608,7 @@ DTSTART;VALUE=DATE:20260828
 DTEND;VALUE=DATE:20260829
 SUMMARY:[UNPARSED] needs a declaration -- SICK_WEEK_2026-09-07_landing.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/SICK_WEEK_2026-09
- -07_landing.md:168. 1 line(s) in docs/SICK_WEEK_2026-09-07_landing.md men
+ -07_landing.md:177. 1 line(s) in docs/SICK_WEEK_2026-09-07_landing.md men
  tion this date and no COMMITMENT: declaration accounts for it. Either add
   a declaration or the date is incidental. First line: - Latest RELEASE is
   v0.14.4\, tagged 2026-08-28. **The v0.15 train was due 2026-09-04 -- Gen
@@ -5957,7 +5957,7 @@ DTSTART;VALUE=DATE:20260830
 DTEND;VALUE=DATE:20260831
 SUMMARY:[UNPARSED] needs a declaration -- SICK_WEEK_2026-09-07_landing.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/SICK_WEEK_2026-09
- -07_landing.md:167. 2 line(s) in docs/SICK_WEEK_2026-09-07_landing.md men
+ -07_landing.md:176. 2 line(s) in docs/SICK_WEEK_2026-09-07_landing.md men
  tion this date and no COMMITMENT: declaration accounts for it. Either add
   a declaration or the date is incidental. First line: - `main` at `82fa10
  a1`\, 2026-08-30. Version **0.14.4**\, ladder epoch **L6**. -- Generated 
@@ -6403,7 +6403,7 @@ DTSTART;VALUE=DATE:20260904
 DTEND;VALUE=DATE:20260905
 SUMMARY:[UNPARSED] needs a declaration -- SICK_WEEK_2026-09-07_landing.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/SICK_WEEK_2026-09
- -07_landing.md:168. 1 line(s) in docs/SICK_WEEK_2026-09-07_landing.md men
+ -07_landing.md:177. 1 line(s) in docs/SICK_WEEK_2026-09-07_landing.md men
  tion this date and no COMMITMENT: declaration accounts for it. Either add
   a declaration or the date is incidental. First line: - Latest RELEASE is
   v0.14.4\, tagged 2026-08-28. **The v0.15 train was due 2026-09-04 -- Gen
@@ -6624,7 +6624,7 @@ DTSTART;VALUE=DATE:20260909
 DTEND;VALUE=DATE:20260910
 SUMMARY:[UNPARSED] needs a declaration -- SICK_WEEK_2026-09-07_landing.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/SICK_WEEK_2026-09
- -07_landing.md:51. 1 line(s) in docs/SICK_WEEK_2026-09-07_landing.md ment
+ -07_landing.md:60. 1 line(s) in docs/SICK_WEEK_2026-09-07_landing.md ment
  ion this date and no COMMITMENT: declaration accounts for it. Either add 
  a declaration or the date is incidental. First line: **Manifund closed 20
  26-09-09 and was deferred.** -- Generated from tracked sources by scripts

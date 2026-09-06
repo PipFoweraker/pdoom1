@@ -469,7 +469,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-24 | `docs/RELEASE_NOMENCLATURE.md` | 51 | **The coupling runs one way only** (ruling of 2026-08-24; the declaration lives |
 | 2026-08-24 | `docs/RELEASE_PLATFORMS.md` | 444 | Added 2026-08-24, after **v0.14.3 published with no macOS asset**. The macOS |
 | 2026-08-24 | `docs/RELEASE_PLATFORMS.md` | 582 | ## Addendum 2026-08-24 -- the first release that shipped no macOS asset |
-| 2026-08-24 | `docs/SICK_WEEK_2026-09-07_landing.md` | 56 | 2026-08-24. |
+| 2026-08-24 | `docs/SICK_WEEK_2026-09-07_landing.md` | 65 | 2026-08-24. |
 | 2026-08-24 | `docs/TRIAGE_2026-09-07_backlog.md` | 200 | \| **#808** \| "do this review ON OR AFTER 2026-08-24" \| Now actionable -- this one has ripened, not rotted \| |
 | 2026-08-24 | `docs/VIDEO_SHOOT_2026-08-30.md` | 181 | 285 seconds, submitted 2026-08-24 from v0.14.3. |
 | 2026-08-24 | `docs/deployment/DESIGN_2026-08-24_release_lanes.md` | 3 | **Status:** design document. No code changes accompany it. Written 2026-08-24 |
@@ -552,11 +552,11 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-24 | `tools/generate_release_horizon.py` | 130 | # table as it stood on 2026-08-24 (v0.15 -> Sep 2026) and from the monthly-train |
 | 2026-08-24 | `tools/generate_release_horizon.py` | 330 | "in (ruling 2026-08-24; pinned by `godot/tests/unit/test_iso_week_seed.gd`", |
 | 2026-08-24 | `tools/generate_release_horizon.py` | 540 | # 2026-08-24, on this very generator. |
-| 2026-08-25 | `docs/SICK_WEEK_2026-09-07_landing.md` | 30 | The 2026-08-25 estate triage had already recorded this correctly |
-| 2026-08-25 | `docs/SICK_WEEK_2026-09-07_landing.md` | 38 | The 2026-08-25 triage ranked `certes/docs/strategy/` as **rank 1 of 23 repos**: nine |
+| 2026-08-25 | `docs/SICK_WEEK_2026-09-07_landing.md` | 39 | The 2026-08-25 estate triage had already recorded this correctly |
+| 2026-08-25 | `docs/SICK_WEEK_2026-09-07_landing.md` | 47 | The 2026-08-25 triage ranked `certes/docs/strategy/` as **rank 1 of 23 repos**: nine |
 | 2026-08-28 | `docs/CI_FOSSILS_2026-08-30.md` | 143 | gate, so its red for a genuine reason on 2026-08-28 -- v0.14.4 tagged and never |
 | 2026-08-28 | `docs/RELEASE_NOTES_GUARD.md` | 58 | v0.14.4 was tagged on 2026-08-28 and then sat unpublished. RN003 failed on the |
-| 2026-08-28 | `docs/SICK_WEEK_2026-09-07_landing.md` | 168 | - Latest RELEASE is v0.14.4, tagged 2026-08-28. **The v0.15 train was due 2026-09-04 |
+| 2026-08-28 | `docs/SICK_WEEK_2026-09-07_landing.md` | 177 | - Latest RELEASE is v0.14.4, tagged 2026-08-28. **The v0.15 train was due 2026-09-04 |
 | 2026-08-28 | `docs/releases/RELEASE_LINKING_TO_0.20.md` | 93 | league opens on Friday 2026-08-28 -- also week 35 -- then by the 2026-07-30 |
 | 2026-08-28 | `tools/check_chronic_red.py` | 16 | unsatisfiable. On 2026-08-28 it went red for the reason it was BUILT for -- |
 | 2026-08-28 | `tools/check_release_ledger.py` | 450 | # reason on 2026-08-28 (v0.14.4 bumped, tagged, never published) was |
@@ -593,8 +593,8 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-30 | `docs/CI_FOSSILS_2026-08-30.md` | 35 | Measured 2026-08-30, immediately before deletion: |
 | 2026-08-30 | `docs/PAUSE_SEMANTICS_SWEEP.md` | 3 | Opened 2026-08-30, the day #1341 was found on a shipped build. Scoped and |
 | 2026-08-30 | `docs/PAUSE_SEMANTICS_SWEEP.md` | 31 | ## The measured surface, 2026-08-30 |
-| 2026-08-30 | `docs/SICK_WEEK_2026-09-07_landing.md` | 167 | - `main` at `82fa10a1`, 2026-08-30. Version **0.14.4**, ladder epoch **L6**. |
-| 2026-08-30 | `docs/SICK_WEEK_2026-09-07_landing.md` | 173 | - PR **#1339** is green on all 13 checks and MERGEABLE, idle since 2026-08-30. It stops |
+| 2026-08-30 | `docs/SICK_WEEK_2026-09-07_landing.md` | 176 | - `main` at `82fa10a1`, 2026-08-30. Version **0.14.4**, ladder epoch **L6**. |
+| 2026-08-30 | `docs/SICK_WEEK_2026-09-07_landing.md` | 182 | - PR **#1339** is green on all 13 checks and MERGEABLE, idle since 2026-08-30. It stops |
 | 2026-08-30 | `docs/VIDEO_SHOOT_2026-08-30.md` | 3 | Prepared 2026-08-30 while Pip was at the conference, for a same-night shoot. |
 | 2026-08-30 | `docs/VIDEO_SHOOT_2026-08-30.md` | 149 | \| **ESC / the pause menu at any point mid-month** \| the pause menu does NOT pause the month. Found on the shipped v0.14.4 build on 2026-08-30: six day |
 | 2026-08-30 | `docs/VIDEO_SHOOT_2026-08-30.md` | 160 | Say these. Each one has a command that returns it, run today, 2026-08-30. |
@@ -613,7 +613,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-31 | `pdoom1#984` | 0 | Half-day workshop: audit mechanics deep-dive (next epoch) -- something amazing under the smell |
 | 2026-09-02 | `docs/TRIAGE_2026-09-07_backlog.md` | 3 | Read while Pip was ill (2026-09-02..07). Read-only pass: nothing was closed, |
 | 2026-09-04 | `coordination#48` | 0 | League cutover timing contract: pdoom1 can publish in 5m30s and cannot tell you when pdoom1.com will agree -- what do you need to pre-announce? |
-| 2026-09-04 | `docs/SICK_WEEK_2026-09-07_landing.md` | 168 | - Latest RELEASE is v0.14.4, tagged 2026-08-28. **The v0.15 train was due 2026-09-04 |
+| 2026-09-04 | `docs/SICK_WEEK_2026-09-07_landing.md` | 177 | - Latest RELEASE is v0.14.4, tagged 2026-08-28. **The v0.15 train was due 2026-09-04 |
 | 2026-09-04 | `docs/TRIAGE_2026-09-07_backlog.md` | 30 | `COMMITMENT<colon> 2026-09-04` (cited, not declared); today is 2026-09-07. |
 | 2026-09-04 | `docs/TRIAGE_2026-09-07_backlog.md` | 196 | \| **#1343** \| `COMMITMENT<colon> 2026-09-04` (cited, not declared) pause-semantics sweep, "for the league patch" \| **3 days overdue** \| |
 | 2026-09-04 | `docs/TRIAGE_2026-09-07_backlog.md` | 260 | 2. **#1343** -- The pause-semantics sweep missed its 2026-09-04 date: re-commit to a new date, or descope it to the #1341 fix already shipped? |
@@ -623,7 +623,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-09-07 | `docs/SICK_WEEK_2026-09-07_landing.md` | 1 | # Sick week, 2026-09-07 -- the landing document |
 | 2026-09-07 | `docs/SICK_WEEK_2026-09-07_landing.md` | 5 | Pip is ill from 2026-09-07 for several days. He approved autonomous running across |
 | 2026-09-07 | `docs/SICK_WEEK_2026-09-07_landing.md` | 10 | RULING: 2026-09-07 -- while Pip is ill, autonomous lanes are restricted to work with a machine-checkable success criterion and reversible output; anyt |
-| 2026-09-07 | `docs/SICK_WEEK_2026-09-07_landing.md` | 165 | ## (e) Standing state you will want, measured 2026-09-07 |
+| 2026-09-07 | `docs/SICK_WEEK_2026-09-07_landing.md` | 174 | ## (e) Standing state you will want, measured 2026-09-07 |
 | 2026-09-07 | `docs/TRIAGE_2026-09-07_backlog.md` | 1 | # Backlog triage, 2026-09-07 -- 213 open issues |
 | 2026-09-07 | `docs/TRIAGE_2026-09-07_backlog.md` | 14 | git log -1 --format=%H          # 66534ee4, 2026-09-07 01:13 +1000 |
 | 2026-09-07 | `docs/TRIAGE_2026-09-07_backlog.md` | 30 | `COMMITMENT<colon> 2026-09-04` (cited, not declared); today is 2026-09-07. |
@@ -631,7 +631,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-09-07 | `docs/rulings/RULINGS.md` | 74 | \| 2026-09-07 \| while Pip is ill, autonomous lanes are restricted to work with a machine-checkable success criterion and reversible output; anything re |
 | 2026-09-09 | `coordination#30` | 0 | AGENDA: tri-repo content workshop, 2026-08-06 -- six items, three need Pip, and A1 has deferred three times |
 | 2026-09-09 | `docs/ARCHITECTURE_FUNDERS.md` | 18 | - **Closes:** 2026-09-09 |
-| 2026-09-09 | `docs/SICK_WEEK_2026-09-07_landing.md` | 51 | **Manifund closed 2026-09-09 and was deferred.** |
+| 2026-09-09 | `docs/SICK_WEEK_2026-09-07_landing.md` | 60 | **Manifund closed 2026-09-09 and was deferred.** |
 | 2026-09-09 | `docs/VIDEO_SHOOT_2026-08-30.md` | 252 | **What is the ask at the end?** The Manifund campaign closes **2026-09-09**, nine |
 | 2026-09-09 | `pdoom1#1061` | 0 | IP / trademark follow-up -- Australian lawyers, DUE Monday 2026-08-03 |
 | 2026-09-29 | `docs/calendar/COMMITMENTS.md` | 108 | - **GitHub milestones.** Four exist; the nearest due date is 2026-09-29 and one |
