@@ -122,9 +122,47 @@ is run against with `--apply`. A green guard currently recommends running a brok
 tree verified clean beforehand and restored afterwards (the run created
 `project_health_history.db`; it was removed).
 
+### The 156,804 is a local artefact, and the workflow's stated reason is wrong
+
+This was filed as NOT MEASURED in the first version of this document. It is now measured,
+and it falsifies the justification printed in the workflow.
+
+`project_health.py:97` counts "linting issues", and line 102 is
+`self.project_root.rglob("*.py")` with **no exclusions** beyond `venv` and `__pycache__`.
+Bucketing every file it actually reads:
+
+    files the counter reads                            18,918
+      .claude/worktrees/  (OTHER CHECKOUTS of this repo) 18,242   96.4%
+      archive/legacy-pygame                                 461    2.4%
+      scripts/ + tools/   (live)                            169    0.9%
+      tests/              (live)                             24    0.1%
+      other                                                  22    0.1%
+
+**96.4% of the corpus is `.claude/worktrees/` -- roughly twenty full checkouts of this same
+repository, sitting on this machine, each counted again.** And that directory is
+**gitignored** (`.gitignore:188`), so it does not exist in a CI clone at all.
+
+Running the counter's own three rules over live code only (excluding worktrees and
+archive): **215 files, 3,131 issues.** That is roughly **50x smaller** than 156,804.
+
+Two consequences:
+
+1. **The workflow's swallow message -- "linting issues in legacy Python files" -- is
+   wrong.** `archive/legacy-pygame/` is 2.4% of the files. The number is dominated by local
+   agent worktrees, which are an artefact of this machine and of this working style, not
+   repo debt of any kind.
+2. **The gate would still fail in CI** (3,131 is still far above the threshold of 100), but
+   at a completely different magnitude and for a different reason than the one recorded.
+   Anyone reasoning from 156,804 is reasoning from a number that cannot occur in CI.
+
+Worth noting what the counter calls a linting issue: any line over 120 characters, any
+`TODO`/`FIXME`, and **any line matching `print\s*\(`**. For a repo whose tooling is
+command-line Python, that penalises a CLI for printing. It is a heuristic wearing a
+linter's name, which is its own reason not to gate on it.
+
+It also reads 18,000 gitignored files on every invocation, which is why it is slow.
+
 **NOT MEASURED:**
-- Whether G3's 156,804 lint count is dominated by `archive/legacy-pygame/`. The workflow
-  message asserts it; nobody has re-derived it.
 - Whether these exit codes match what the same commands produce **in CI**, where the
   environment differs. G3's dirty-tree blocker is the one most likely to behave
   differently, and the reasoning above says it fires there too, but that is an inference
