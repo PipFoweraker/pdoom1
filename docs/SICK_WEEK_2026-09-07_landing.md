@@ -107,6 +107,38 @@ print flushes; anything outward-facing (emails, posts, third-party comments, spe
 **Bluesky and all social posting are RED for the week** -- Pip's own explicit call,
 relayed via the coordination seat, not an inference drawn by any agent.
 
+## (d.0) The one item where work can still be LOST, not merely delayed
+
+Everything else in this week's batch is reversible. This is not.
+
+`fix/identity-truncation` (`50d918be`) exists on **exactly one disk**: the debian-laptop
+checkout at `/home/pip/Repos/pdoom1`. Confirmed two ways -- `SEAT_2026-08-30_pdoom1-branches.md`
+opens "Sun 30 August 2026, executed on debian-laptop", and `git cat-file -t 50d918be` in
+this checkout returns *"Not a valid object name"*, so the commit is **absent from this
+repository's object store**, not merely unbranched. It is not on origin.
+
+Its bug is **still live on today's main**: `godot/scripts/leaderboard.gd:26` still
+hardcodes `BOARD_NAME_MAX_BYTES := 40`, and `game_over_screen.gd` still has no
+`max_length` on its identity `LineEdit`s.
+
+**NOT MEASURED, and it decides whether this is a decision or a deadline: whether the
+debian laptop is the machine leaving around 15 September.** Nobody has established it. Do
+not read this as safe because it is written calmly. If that laptop is the one leaving,
+someone should push that branch to origin before it goes, and no seat on this machine can
+do it -- the object does not exist here to push.
+
+Mitigating: `SEAT_2026-08-30_pdoom1-branches.md` section 4 already carries a worked plan
+(cherry-pick in three tiers; the `score_api.php` third must be re-done, not taken). The
+risk is purely custodial, not analytical.
+
+### The pattern underneath it
+
+Two seats held load-bearing work on single machines in the same week: this branch, and
+the website seat's `a693a666` -- the measurement that settled the quotation-marks
+question -- which sat local and unpushed. That is not coincidence. It is what happens when
+the artefact that proves a claim is produced locally and pushing is a separate act nobody
+is prompted to perform. It wants a mechanism, not a reminder.
+
 ## (d.1) The estate-level decision batch lives elsewhere -- read it with this file
 
 `coordination/DECISIONS-NEEDED_2026-09-07.md` is the SINGLE batch across all four
