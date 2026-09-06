@@ -6491,6 +6491,29 @@ DESCRIPTION:needs a declaration -- BRANCH_DEBT_2026-09-07.md (unparsed) --
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:2480fbff77205df3@commitments.pdoom1
+DTSTAMP:20260907T000000Z
+DTSTART;VALUE=DATE:20260907
+DTEND;VALUE=DATE:20260908
+SUMMARY:[UNPARSED] needs a declaration -- GUARD_EXIT_CODES_2026-09-07.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/GUARD_EXIT_CODES_
+ 2026-09-07.md:1. 1 line(s) in docs/GUARD_EXIT_CODES_2026-09-07.md mention
+  this date and no COMMITMENT: declaration accounts for it. Either add a d
+ eclaration or the date is incidental. First line: # The six soft-failed g
+ uards\, actually run -- 2026-09-07 -- Generated from tracked sources by s
+ cripts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- GUARD_EXIT_CODES_2026-09-07.md (unparse
+ d) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:083c6a963b73b1ea@commitments.pdoom1
 DTSTAMP:20260907T000000Z
 DTSTART;VALUE=DATE:20260907
