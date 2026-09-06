@@ -531,7 +531,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-25 | `docs/SICK_WEEK_2026-09-07_landing.md` | 38 | The 2026-08-25 triage ranked `certes/docs/strategy/` as **rank 1 of 23 repos**: nine |
 | 2026-08-28 | `docs/CI_FOSSILS_2026-08-30.md` | 143 | gate, so its red for a genuine reason on 2026-08-28 -- v0.14.4 tagged and never |
 | 2026-08-28 | `docs/RELEASE_NOTES_GUARD.md` | 58 | v0.14.4 was tagged on 2026-08-28 and then sat unpublished. RN003 failed on the |
-| 2026-08-28 | `docs/SICK_WEEK_2026-09-07_landing.md` | 113 | - Latest RELEASE is v0.14.4, tagged 2026-08-28. **The v0.15 train was due 2026-09-04 |
+| 2026-08-28 | `docs/SICK_WEEK_2026-09-07_landing.md` | 136 | - Latest RELEASE is v0.14.4, tagged 2026-08-28. **The v0.15 train was due 2026-09-04 |
 | 2026-08-28 | `docs/releases/RELEASE_LINKING_TO_0.20.md` | 93 | league opens on Friday 2026-08-28 -- also week 35 -- then by the 2026-07-30 |
 | 2026-08-28 | `tools/check_chronic_red.py` | 16 | unsatisfiable. On 2026-08-28 it went red for the reason it was BUILT for -- |
 | 2026-08-28 | `tools/check_release_ledger.py` | 450 | # reason on 2026-08-28 (v0.14.4 bumped, tagged, never published) was |
@@ -564,8 +564,8 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-30 | `docs/CI_FOSSILS_2026-08-30.md` | 35 | Measured 2026-08-30, immediately before deletion: |
 | 2026-08-30 | `docs/PAUSE_SEMANTICS_SWEEP.md` | 3 | Opened 2026-08-30, the day #1341 was found on a shipped build. Scoped and |
 | 2026-08-30 | `docs/PAUSE_SEMANTICS_SWEEP.md` | 31 | ## The measured surface, 2026-08-30 |
-| 2026-08-30 | `docs/SICK_WEEK_2026-09-07_landing.md` | 112 | - `main` at `82fa10a1`, 2026-08-30. Version **0.14.4**, ladder epoch **L6**. |
-| 2026-08-30 | `docs/SICK_WEEK_2026-09-07_landing.md` | 118 | - PR **#1339** is green on all 13 checks and MERGEABLE, idle since 2026-08-30. It stops |
+| 2026-08-30 | `docs/SICK_WEEK_2026-09-07_landing.md` | 135 | - `main` at `82fa10a1`, 2026-08-30. Version **0.14.4**, ladder epoch **L6**. |
+| 2026-08-30 | `docs/SICK_WEEK_2026-09-07_landing.md` | 141 | - PR **#1339** is green on all 13 checks and MERGEABLE, idle since 2026-08-30. It stops |
 | 2026-08-30 | `docs/VIDEO_SHOOT_2026-08-30.md` | 3 | Prepared 2026-08-30 while Pip was at the conference, for a same-night shoot. |
 | 2026-08-30 | `docs/VIDEO_SHOOT_2026-08-30.md` | 149 | \| **ESC / the pause menu at any point mid-month** \| the pause menu does NOT pause the month. Found on the shipped v0.14.4 build on 2026-08-30: six day |
 | 2026-08-30 | `docs/VIDEO_SHOOT_2026-08-30.md` | 160 | Say these. Each one has a command that returns it, run today, 2026-08-30. |
@@ -583,13 +583,13 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-31 | `docs/rulings/UNDECLARED_TRIAGE.md` | 227 | - SEAM (ruled 2026-07-27, review-by 2026-08-31): AUDITS ground-truth reported vs actual. |
 | 2026-08-31 | `pdoom1#984` | 0 | Half-day workshop: audit mechanics deep-dive (next epoch) -- something amazing under the smell |
 | 2026-09-04 | `coordination#48` | 0 | League cutover timing contract: pdoom1 can publish in 5m30s and cannot tell you when pdoom1.com will agree -- what do you need to pre-announce? |
-| 2026-09-04 | `docs/SICK_WEEK_2026-09-07_landing.md` | 113 | - Latest RELEASE is v0.14.4, tagged 2026-08-28. **The v0.15 train was due 2026-09-04 |
+| 2026-09-04 | `docs/SICK_WEEK_2026-09-07_landing.md` | 136 | - Latest RELEASE is v0.14.4, tagged 2026-08-28. **The v0.15 train was due 2026-09-04 |
 | 2026-09-04 | `docs/design/LEAGUE_CUTOVER_PLAYBOOK.md` | 705 | 2026-09-04 per `docs/ROADMAP.md`) runs without any phase in section 2 being |
 | 2026-09-04 | `docs/releases/RELEASE_LINKING_TO_0.20.md` | 128 | \| v0.15 \| Fri 2026-09-04 \| w36 \| `weekly-2026-w36` \| |
 | 2026-09-07 | `docs/SICK_WEEK_2026-09-07_landing.md` | 1 | # Sick week, 2026-09-07 -- the landing document |
 | 2026-09-07 | `docs/SICK_WEEK_2026-09-07_landing.md` | 5 | Pip is ill from 2026-09-07 for several days. He approved autonomous running across |
 | 2026-09-07 | `docs/SICK_WEEK_2026-09-07_landing.md` | 10 | RULING: 2026-09-07 -- while Pip is ill, autonomous lanes are restricted to work with a machine-checkable success criterion and reversible output; anyt |
-| 2026-09-07 | `docs/SICK_WEEK_2026-09-07_landing.md` | 110 | ## (e) Standing state you will want, measured 2026-09-07 |
+| 2026-09-07 | `docs/SICK_WEEK_2026-09-07_landing.md` | 133 | ## (e) Standing state you will want, measured 2026-09-07 |
 | 2026-09-07 | `docs/rulings/RULINGS.md` | 74 | \| 2026-09-07 \| while Pip is ill, autonomous lanes are restricted to work with a machine-checkable success criterion and reversible output; anything re |
 | 2026-09-09 | `coordination#30` | 0 | AGENDA: tri-repo content workshop, 2026-08-06 -- six items, three need Pip, and A1 has deferred three times |
 | 2026-09-09 | `docs/ARCHITECTURE_FUNDERS.md` | 18 | - **Closes:** 2026-09-09 |

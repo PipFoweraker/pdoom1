@@ -104,6 +104,29 @@ queue-length, so a starved flush becomes loud rather than silent.
 **RED list, not touched unattended by any seat:** releases and tags; anything writing
 to the real player profile or the live leaderboard; merges of player-facing behaviour;
 print flushes; anything outward-facing (emails, posts, third-party comments, spending).
+**Bluesky and all social posting are RED for the week** -- Pip's own explicit call,
+relayed via the coordination seat, not an inference drawn by any agent.
+
+## (d.1) The estate-level decision batch lives elsewhere -- read it with this file
+
+`coordination/DECISIONS-NEEDED_2026-09-07.md` is the SINGLE batch across all four
+seats, one question per entry, each stating the default already taken and what being
+wrong costs. pdoom1's five entries are numbers 6 to 10 there: Manifund, the slipped
+v0.15 train, whether #1341 warrants a hotpatch, whether PR #1339 should have been
+merged unattended, and the standing instruction not to close #1071.
+
+**The single highest-value five minutes available to a human this week** is in that
+batch as entry 10: launch the v0.14.4 macOS zip and find out whether it runs. No agent
+can establish it. Staff are expected **Monday 8 and Tuesday 9**, which is the only
+human-verification window before Pip is back.
+
+Correction adopted from the website seat, worth carrying because it inverts an
+intuition: the site is currently **under**-claiming on macOS, not over-claiming. Its
+download button is derived at runtime from the release assets and is therefore honest
+by its declared standard ("an asset is attached"), while hardcoded FAQ prose still says
+there is no Mac build. The page contradicts itself. Separately, that weak standard is
+not the same proposition as #1071's "has ever been verified to run", which is why
+entry 10 exists.
 
 ---
 

@@ -5438,7 +5438,7 @@ DTSTART;VALUE=DATE:20260828
 DTEND;VALUE=DATE:20260829
 SUMMARY:[UNPARSED] needs a declaration -- SICK_WEEK_2026-09-07_landing.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/SICK_WEEK_2026-09
- -07_landing.md:113. 1 line(s) in docs/SICK_WEEK_2026-09-07_landing.md men
+ -07_landing.md:136. 1 line(s) in docs/SICK_WEEK_2026-09-07_landing.md men
  tion this date and no COMMITMENT: declaration accounts for it. Either add
   a declaration or the date is incidental. First line: - Latest RELEASE is
   v0.14.4\, tagged 2026-08-28. **The v0.15 train was due 2026-09-04 -- Gen
@@ -5763,7 +5763,7 @@ DTSTART;VALUE=DATE:20260830
 DTEND;VALUE=DATE:20260831
 SUMMARY:[UNPARSED] needs a declaration -- SICK_WEEK_2026-09-07_landing.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/SICK_WEEK_2026-09
- -07_landing.md:112. 2 line(s) in docs/SICK_WEEK_2026-09-07_landing.md men
+ -07_landing.md:135. 2 line(s) in docs/SICK_WEEK_2026-09-07_landing.md men
  tion this date and no COMMITMENT: declaration accounts for it. Either add
   a declaration or the date is incidental. First line: - `main` at `82fa10
  a1`\, 2026-08-30. Version **0.14.4**\, ladder epoch **L6**. -- Generated 
@@ -6185,7 +6185,7 @@ DTSTART;VALUE=DATE:20260904
 DTEND;VALUE=DATE:20260905
 SUMMARY:[UNPARSED] needs a declaration -- SICK_WEEK_2026-09-07_landing.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/SICK_WEEK_2026-09
- -07_landing.md:113. 1 line(s) in docs/SICK_WEEK_2026-09-07_landing.md men
+ -07_landing.md:136. 1 line(s) in docs/SICK_WEEK_2026-09-07_landing.md men
  tion this date and no COMMITMENT: declaration accounts for it. Either add
   a declaration or the date is incidental. First line: - Latest RELEASE is
   v0.14.4\, tagged 2026-08-28. **The v0.15 train was due 2026-09-04 -- Gen
