@@ -13,7 +13,7 @@ Horizon: **2026-08-09** (the prose scan reports dates at or after this; roll it
 forward deliberately in `COMMITMENTS.md`, never automatically -- a clock-reading
 generator goes stale overnight and trains people to ignore the check).
 
-**54 declared, 4 release-train, 258 UNPARSED, 0 malformed.**
+**54 declared, 4 release-train, 259 UNPARSED, 0 malformed.**
 
 ## Declared commitments
 
@@ -620,6 +620,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-09-04 | `docs/design/LEAGUE_CUTOVER_PLAYBOOK.md` | 705 | 2026-09-04 per `docs/ROADMAP.md`) runs without any phase in section 2 being |
 | 2026-09-04 | `docs/releases/RELEASE_LINKING_TO_0.20.md` | 128 | \| v0.15 \| Fri 2026-09-04 \| w36 \| `weekly-2026-w36` \| |
 | 2026-09-07 | `docs/BRANCH_DEBT_2026-09-07.md` | 1 | # Branch and worktree debt census -- 2026-09-07 |
+| 2026-09-07 | `docs/GUARD_EXIT_CODES_2026-09-07.md` | 1 | # The six soft-failed guards, actually run -- 2026-09-07 |
 | 2026-09-07 | `docs/SICK_WEEK_2026-09-07_landing.md` | 1 | # Sick week, 2026-09-07 -- the landing document |
 | 2026-09-07 | `docs/SICK_WEEK_2026-09-07_landing.md` | 5 | Pip is ill from 2026-09-07 for several days. He approved autonomous running across |
 | 2026-09-07 | `docs/SICK_WEEK_2026-09-07_landing.md` | 10 | RULING: 2026-09-07 -- while Pip is ill, autonomous lanes are restricted to work with a machine-checkable success criterion and reversible output; anyt |
