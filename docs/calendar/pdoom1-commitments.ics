@@ -2181,7 +2181,7 @@ DTSTAMP:20260815T000000Z
 DTSTART;VALUE=DATE:20260815
 DTEND;VALUE=DATE:20260816
 SUMMARY:[UNPARSED] needs a declaration -- CLAUDE.md
-DESCRIPTION:Owner: unowned. Kind: unparsed. Source: CLAUDE.md:254. 1 line(
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: CLAUDE.md:261. 1 line(
  s) in CLAUDE.md mention this date and no COMMITMENT: declaration accounts
   for it. Either add a declaration or the date is incidental. First line: 
  `UNDECLARED`\, never dropped. **Cross-repo by design** (ruled 2026-08-15)
@@ -5701,7 +5701,7 @@ DTSTAMP:20260829T000000Z
 DTSTART;VALUE=DATE:20260829
 DTEND;VALUE=DATE:20260830
 SUMMARY:[UNPARSED] needs a declaration -- CLAUDE.md
-DESCRIPTION:Owner: unowned. Kind: unparsed. Source: CLAUDE.md:314. 1 line(
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: CLAUDE.md:321. 1 line(
  s) in CLAUDE.md mention this date and no COMMITMENT: declaration accounts
   for it. Either add a declaration or the date is incidental. First line: 
  entry said "the ENTIRE tree" until 2026-08-29\, and that phrasing was use
@@ -6488,6 +6488,28 @@ ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- BRANCH_DEBT_2026-09-07.md (unparsed) --
   unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:4dce3f9d4685af95@commitments.pdoom1
+DTSTAMP:20260907T000000Z
+DTSTART;VALUE=DATE:20260907
+DTEND;VALUE=DATE:20260908
+SUMMARY:[UNPARSED] needs a declaration -- CLAUDE.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: CLAUDE.md:225. 2 line(
+ s) in CLAUDE.md mention this date and no COMMITMENT: declaration accounts
+  for it. Either add a declaration or the date is incidental. First line: 
+ -- this line said "0016" and "the index is stale" until 2026-09-07\, both
+  false)\, -- Generated from tracked sources by scripts/generate_commitmen
+ t_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- CLAUDE.md (unparsed) -- unowned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
