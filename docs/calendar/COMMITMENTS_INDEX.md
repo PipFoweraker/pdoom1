@@ -13,7 +13,7 @@ Horizon: **2026-08-09** (the prose scan reports dates at or after this; roll it
 forward deliberately in `COMMITMENTS.md`, never automatically -- a clock-reading
 generator goes stale overnight and trains people to ignore the check).
 
-**54 declared, 4 release-train, 260 UNPARSED, 0 malformed.**
+**54 declared, 4 release-train, 263 UNPARSED, 0 malformed.**
 
 ## Declared commitments
 
@@ -638,8 +638,14 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-09-29 | `docs/game-design/WORKSHOP_3_PREP.md` | 544 | "Now" is v0.12 First Contact (created 2026-07-20, due 2026-09-29). [VERIFIED] |
 | 2026-10-02 | `docs/releases/RELEASE_LINKING_TO_0.20.md` | 129 | \| v0.16 \| Fri 2026-10-02 \| w40 \| `weekly-2026-w40` \| |
 | 2026-10-23 | `tools/assets/generate_images.py` | 38 | # Default OpenAI model. gpt-image-1 retires 2026-10-23, so gpt-image-1.5 is the |
+| 2026-10-26 | `RELEASING.md` | 4 | 2026-10-26, issues #1269 and #1299). Hold to this -- and since 2026-10-26 the |
+| 2026-10-26 | `RELEASING.md` | 4 | 2026-10-26, issues #1269 and #1299). Hold to this -- and since 2026-10-26 the |
+| 2026-10-26 | `docs/RELEASE_NOTES_GUARD.md` | 53 | \| `enhanced-release.yml` `preflight` job (was `pre-release-checks.yml` until 2026-10-26, #1299) \| on `v*.*.*` tag push, before any build \| RN001, RN00 |
+| 2026-10-26 | `docs/RELEASE_NOTES_GUARD.md` | 53 | \| `enhanced-release.yml` `preflight` job (was `pre-release-checks.yml` until 2026-10-26, #1299) \| on `v*.*.*` tag push, before any build \| RN001, RN00 |
 | 2026-10-26 | `docs/RELEASE_PLATFORMS.md` | 78 | > **[!] Superseded 2026-10-26 (#1071).** GodotSteam is no longer in the Godot |
 | 2026-10-26 | `docs/STEAM_INTEGRATION_SUMMARY.md` | 3 | > **[!] Parked 2026-10-26 (#1071).** The GodotSteam addon, `steam_manager.gd` |
+| 2026-10-26 | `docs/design/LEAGUE_CUTOVER_PLAYBOOK.md` | 159 | \| S7 \| **CHANGELOG section for the version exists.** \| The release `preflight` job hard-fails on a tag whose version is absent from `CHANGELOG.md`, an |
+| 2026-10-26 | `docs/design/LEAGUE_CUTOVER_PLAYBOOK.md` | 598 | \| `CHANGELOG.md` has no section for the version \| the `preflight` job in `enhanced-release.yml` will fail the tag anyway (and, since 2026-10-26, stop  |
 | 2026-11-06 | `docs/releases/RELEASE_LINKING_TO_0.20.md` | 130 | \| v0.17 \| Fri 2026-11-06 \| w45 \| `weekly-2026-w45` \| |
 | 2026-12-04 | `docs/releases/RELEASE_LINKING_TO_0.20.md` | 131 | \| v0.18 \| Fri 2026-12-04 \| w49 \| `weekly-2026-w49` \| |
 | 2026-12-31 | `docs/releases/RELEASE_LINKING_TO_0.20.md` | 147 | 2026-12-31. So the correct seed carries the year **2026** on a date in 2027. |

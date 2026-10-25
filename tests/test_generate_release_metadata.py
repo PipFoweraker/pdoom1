@@ -302,7 +302,10 @@ class ManifestCallerTests(unittest.TestCase):
 
 
 class WorkflowGateAgreementTests(unittest.TestCase):
-    """pre-release-checks.yml must ask the SAME question as the extractor.
+    """The release preflight must ask the SAME question as the extractor.
+
+    The gate lived in pre-release-checks.yml until 2026-10-26, when it was folded
+    into enhanced-release.yml as the blocking preflight job (#1299).
 
     It used to run `grep -q "$TAG_VERSION" CHANGELOG.md` -- unanchored and
     unbracketed, so any mention of the bare string anywhere in CHANGELOG.md's 1800+
@@ -312,7 +315,7 @@ class WorkflowGateAgreementTests(unittest.TestCase):
     carried the placeholder.
     """
 
-    WORKFLOW = REPO_ROOT / ".github" / "workflows" / "pre-release-checks.yml"
+    WORKFLOW = REPO_ROOT / ".github" / "workflows" / "enhanced-release.yml"
 
     def test_changelog_gate_is_anchored(self):
         text = self.WORKFLOW.read_text(encoding="utf-8")
