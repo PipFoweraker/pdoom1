@@ -99,7 +99,7 @@ Where the key comes from in code:
 - The local board file is `user://leaderboards/leaderboard_<seed>__<L-version>.json`
   (`godot/scripts/leaderboard.gd`).
 - Rebuilding the key from `CURRENT_VERSION` (the build string) anywhere is a
-  fork bug; Gate 5 check 4 exists to catch it.
+  fork bug; [Gate 3: SEED BLESSING] check 4 exists to catch it.
 
 **Why this matters more than it sounds.** The score API answers a request for a
 board that has never existed with `ok: true` and an empty list -- no error. That
@@ -144,7 +144,9 @@ never reaches a published build is skipped, not reused (`weekly-2026-w34` was
 never published; see the v0.14.3 gate record).
 
 Changing the seed is a **code change** (`FEATURED_SEED_OVERRIDE`), so it must be
-merged and inside the cut BEFORE [Gate 5]. After [Gate 2: THE FREEZE] it means a
+merged BEFORE [Gate 3: SEED BLESSING], which since the 2026-10-26 reorder (#1025)
+comes before the release-branch cut, so the cut carries it. After
+[Gate 4: THE FREEZE] it means a cherry-pick to `release/v0.X`, a re-blessing and a
 re-cut.
 
 **When the epoch moves, does the seed move too?** Both precedents exist and both
@@ -185,11 +187,11 @@ happy for players to compete against?** Yes -> bless in place. No -> roll.
 There is no third option, because **nobody filters a live board.** Removing
 entries is editing standings, and a board that can be edited is no longer a record
 of what happened (*"filtering standings is editing them"* -- quoted in
-`docs/rituals/gate_5_seed_blessing.md`). If something must not be on the opening
+`docs/rituals/gate_6_board_opens.md`). If something must not be on the opening
 board, the league opens on a different key -- and since the epoch only moves for
 rules, "get those runs off the board" and "roll the seed" are the same sentence.
 
-Worked example (2026-07-31): Gate 4 proving runs sat on `(weekly-2026-w30, L3)`;
+Worked example (2026-07-31, old numbering): Gate 4 (PROVEN BUILD) proving runs sat on `(weekly-2026-w30, L3)`;
 Pip ruled they should not open the league; rules unchanged so L3 stayed; the seed
 rolled to `weekly-2026-w31`.
 
@@ -246,7 +248,7 @@ pre-stage / at-cutover split for an epoch cut.
 ## 6. What may reach a ranked board
 
 A board key being stable and a board being comparable are different claims.
-Gate 5 check 8 covers the second.
+[Gate 3: SEED BLESSING] check 8 covers the second.
 
 ```
  +-------------------------+     +---------------------------+
@@ -277,18 +279,19 @@ Gate 5 check 8 covers the second.
 
 ## 7. Where the website sits in the gate rail
 
-*(Rewritten: the website copy predates the 2026-07-31 ritual sheets.)*
+*(Rewritten: the website copy predates the 2026-07-31 ritual sheets. Order and
+numbers as reordered 2026-10-26, #1025.)*
 
 | Gate | Website involvement |
 |---|---|
 | 1 LAST POUR | none |
-| 2 THE FREEZE | none |
-| 3 PACK BLESSED | none |
-| 4 PROVEN BUILD | none (release-URL checks were moved OFF this gate) |
-| **5 SEED BLESSING** | **Check 7: the website serves a board for `(seed, L<N>)` and it is empty.** Spoken as an ATTESTATION with a name and time attached, not as a fact -- the old clause "the board-key forks clean" was cut because the person saying it could not verify it. |
-| **6 BOARD OPENS** | Check 4: one real run travels client -> backend -> board. Checks 1-2 verify the published download URLs and release feed. The website then publishes the board. |
+| 2 PACK BLESSED | none |
+| 3 SEED BLESSING | none -- the seed is blessed from this repository alone; the board attestation moved to Gate 6 in the reorder |
+| 4 THE FREEZE | none |
+| 5 PROVEN BUILD | none (release-URL checks were moved OFF this gate). Proving runs now play the league seed, so a proving run submitted globally lands on the league board early. |
+| **6 BOARD OPENS** | **Check 7: the website serves a board for `(seed, L<N>)` and it is empty**, taken before check 4. Spoken as an ATTESTATION with a name and time attached, not as a fact -- the old clause "the board-key forks clean" was cut because the person saying it could not verify it. Check 4: one real run travels client -> backend -> board. Checks 1-2 verify the published download URLs and release feed. The website then publishes the board. |
 
-What the website side must be able to attest at Gate 5 (from the website copy,
+What the website side must be able to attest at Gate 6 (from the website copy,
 still the right list):
 
 1. The API accepts the epoch key.
@@ -418,8 +421,8 @@ The broader plan for putting dev notes and tools on the website is
 | Website copy said | Now |
 |---|---|
 | Examples at `L3`, seed `weekly-2026-w31` | Ladder is at L6; examples updated; volatile values replaced by commands (section 1) |
-| Gate 5's website line is "board-key fork verified clean" | That clause was cut from the ritual sheet the same day; Gate 5 check 7 is a named attestation (section 7) |
-| Gate 6 website involvement: "display points at the live board" | Gate 6 now owns URL checks and the end-to-end real-run check |
+| Gate 5's website line is "board-key fork verified clean" | That clause was cut from the ritual sheet the same day and became a named attestation; since the 2026-10-26 reorder it is [Gate 6: BOARD OPENS] check 7, and SEED BLESSING is Gate 3 (section 7) |
+| Gate 6 website involvement: "display points at the live board" | Gate 6 now owns URL checks, the empty-board attestation and the end-to-end real-run check |
 | pdoom1 publishes no machine-readable epoch artifact | False since v0.14.1: `release_manifest.json` carries `ladder_version` and `league_seed` (section 8) |
 | (silent) | Seed naming rule (ISO week of opening), held-vs-rolled precedents, ladder-debt rule, blocking `check_ladder_bump.py` (section 3) |
 | (silent) | Hard-cutover ruling (#823), what may reach a ranked board, dev-assisted runs marked not excluded (sections 5, 6) |

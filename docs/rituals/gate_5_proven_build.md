@@ -1,6 +1,8 @@
-# [Gate 4: PROVEN BUILD]
+# [Gate 5: PROVEN BUILD]
 
-**When:** Thursday. Re-cut Friday if anything landed after. Legacy: G3.
+**When:** after [Gate 4: THE FREEZE]; re-cut as often as anything lands on the
+release branch after it. Legacy: G3. Numbered Gate 4 before the 2026-10-26
+reorder (#1025).
 
 The release artifact exists, proves it is fresh, and a human has played it.
 
@@ -57,9 +59,11 @@ change touched.
 
 ## Entry criteria
 
-- [Gate 2: THE FREEZE] PASSED, and the frozen SHA (or its superseding
-  league-critical SHA) is recorded.
-- [Gate 3: PACK BLESSED] spoken on one of its two branches.
+- [Gate 4: THE FREEZE] PASSED, and the frozen SHA (or its superseding
+  league-critical SHA) is recorded. The cut is built from the head of
+  `release/v0.X`, never from `main` (`RELEASING.md`).
+- [Gate 2: PACK BLESSED] spoken on one of its two branches, and
+  [Gate 3: SEED BLESSING] PASSED with its seed written down.
 - Working tree clean; no agent is touching it. **No agent touches the
   working tree while a human is building from it** -- read-only or
   `isolation: "worktree"`. This rule was bought on 2026-07-30, when an
@@ -70,11 +74,14 @@ change touched.
 ## Mechanical checks
 
 ```
+git fetch origin && git switch --detach origin/release/v0.X
 python tools/sync_version.py --check
 python scripts/run_godot_tests.py --quick --ci-mode --min-tests 300
 python tools/build_release.py                  # NEVER a raw godot --export
 grep -n "^## " CHANGELOG.md | head -3          # heading carries the literal version
 git rev-parse HEAD                             # the cut's base SHA -- record it
+git rev-parse origin/release/v0.X              # ...and it must equal this
+grep -n "FEATURED_SEED_OVERRIDE: String" godot/autoload/game_config.gd   # the seed inside the cut
 ```
 
 | # | Check | Kind | Runnable now? |
@@ -87,6 +94,26 @@ git rev-parse HEAD                             # the cut's base SHA -- record it
 | 6 | Cut number and base SHA written down | mechanical | yes |
 | 7 | Release-URL verification | mechanical | **NO -- see below** |
 | 8 | **The machine that proved it is a clean machine** | mechanical | yes |
+| 9 | The seed inside the cut is the seed blessed at [Gate 3] | mechanical (const at the cut's base SHA vs the blessed seed) | yes |
+
+Check 6 now also asserts the base SHA IS the release-branch head: a cut from
+any other commit is a build of something nobody froze.
+
+Check 9 moved here from [Gate 3: SEED BLESSING] on 2026-10-26 (it was that
+sheet's check 3, "that const value is the one inside the blessed cut"). Once
+the seed is blessed before the freeze, there is no cut at blessing time; this
+is the first moment the question "will players post to the seed we spoke?" can
+be answered about the artifact rather than about a branch. [Gate 4] check 6
+asked it of the branch; this asks it of the cut. A re-cut re-asks it.
+
+**Proving runs now play the blessed seed.** Under the old order the seed was
+rolled after this gate, so proving runs landed on a board the league never
+opened on. Now the build carries the league seed, so a proving run that is
+submitted globally lands on the league board before it opens. Keep global
+submission off on the proving machine (decline the consent prompt after
+`reset_player_state.py`); [Gate 6]'s empty-board attestation (check 7) is
+the backstop, and a board that is not empty there is a decision for the
+Commissioner, not a cleanup task.
 
 Check 8 was added 2026-07-31, and the reason is specific rather than
 hygienic.
@@ -147,7 +174,8 @@ sheet rule: a check that can only run later belongs to a later gate.
 ## The incantation
 
 > *"This is cut <k>, from <SHA>; every earlier cut is dead. The build is
-> fresh and proves it. The version speaks with one voice. A human has
+> fresh and proves it. The version speaks with one voice. The seed inside it
+> is the seed we blessed. A human has
 > played the thing we ship, not the thing we meant -- **and the machine that
 > proved it is a clean machine.**"*
 
@@ -159,10 +187,15 @@ sheet rule: a check that can only run later belongs to a later gate.
 | "every earlier cut is dead" | declaration -- the re-cut discipline (#1039) | declaration |
 | "The build is fresh and proves it" | check 1 -- the marker verification | mechanical |
 | "The version speaks with one voice" | checks 2 and 4 | mechanical |
+| "The seed inside it is the seed we blessed" | check 9 -- the const at the cut's base SHA | mechanical |
 | "A human has played the thing we ship, not the thing we meant" | check 5 | human judgement, no substitute |
 | "and the machine that proved it is a clean machine" | check 8 -- `reset_player_state.py`, then confirmed by eye | mechanical |
 
-Changed: added the cut sentence. Everything else is playbook v0 verbatim.
+Changed 2026-10-26: added *"The seed inside it is the seed we blessed"*, the
+clause [Gate 3] spoke as *"and it is inside the build we cut"* before the
+reorder, moved here with its check.
+
+Changed earlier: added the cut sentence. Everything else is playbook v0 verbatim.
 
 Left alone, deliberately: all three original sentences. They are the
 best-calibrated lines in the ceremony -- each maps to exactly one check,
@@ -188,13 +221,19 @@ the incantation, only in the checks; it moves to [Gate 6].
   blessed, only re-cut later at the same cost.
 - **The playtest finds a bug.** This is the expected outcome, not the
   exception. Triage against the freeze rules:
-  - league-critical -> fix, merge past the freeze (legal), record the new
-    base SHA, **re-cut**, and re-run check 5 over at least the surface the
+  - league-critical -> fix on `main`, cherry-pick to `release/v0.X` past
+    the freeze (legal; `RELEASING.md` command 2), record the new base SHA,
+    **re-cut**, and re-run check 5 over at least the surface the
     change touched. This is what happened for #1039 and #1051.
   - not league-critical -> file it, label it `ship:hotpatch-48h` or
     `ship:next-release`, and continue. Pip's ruling on where the line sits:
     *"they're all massively player experience changing. Violating the UI's
     consistency is critical."*
+- **The seed inside the cut is not the blessed seed (check 9).** You do not
+  have a proven build of the league. Do not bless a different seed to match.
+  Fix the const on `main`, cherry-pick it to `release/v0.X`, re-check
+  [Gate 4] check 6 on the new head, and **re-cut**. This is the exact "two
+  builds, same epoch, different play" lie that nothing downstream can detect.
 - **The playtest finds something unexplained.** Not automatically a stop.
   #1023 -- the boot ghost -- was left open, honestly unexplained, after
   five clean launches across three bisect paths. Record the mechanism you

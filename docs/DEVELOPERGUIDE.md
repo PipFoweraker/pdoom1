@@ -160,15 +160,19 @@ crash class structurally impossible from any call site. Full write-up:
 > Current as of 2026-10-26. Full guide with diagrams:
 > [`docs/dev/RELEASE_GATES.md`](dev/RELEASE_GATES.md).
 
-Every league release passes six named gates, in order: [Gate 1: LAST POUR],
-[Gate 2: THE FREEZE], [Gate 3: PACK BLESSED], [Gate 4: PROVEN BUILD],
-[Gate 5: SEED BLESSING], [Gate 6: BOARD OPENS]. Each gate is a set of literal
-commands plus a sentence Pip speaks only when every clause is backed by a check.
+Every league release passes six named gates, in order -- *decide, lock,
+prove, open* (ruled 2026-10-26, #1025): [Gate 1: LAST POUR],
+[Gate 2: PACK BLESSED], [Gate 3: SEED BLESSING], [Gate 4: THE FREEZE] (the
+`release/v0.X` cut, plus a windowed check that a run actually starts),
+[Gate 5: PROVEN BUILD], [Gate 6: BOARD OPENS]. Records dated before 2026-10-26
+use the old numbers; the mapping is in `docs/rituals/README.md`. Each gate is
+a set of literal commands plus a sentence Pip speaks only when every clause is
+backed by a check.
 
 ```
 +--------+   +--------+   +--------+   +--------+   +--------+   +--------+
-| 1 POUR |-->| 2      |-->| 3 PACK |-->| 4      |-->| 5 SEED |-->| 6 BOARD|
-|        |   | FREEZE |   |        |   | PROVEN |   |        |   |  OPENS |
+| 1 POUR |-->| 2 PACK |-->| 3 SEED |-->| 4      |-->| 5      |-->| 6 BOARD|
+|        |   |        |   |        |   | FREEZE |   | PROVEN |   |  OPENS |
 +--------+   +--------+   +--------+   +--------+   +--------+   +--------+
 ```
 
@@ -176,8 +180,9 @@ commands plus a sentence Pip speaks only when every clause is backed by a check.
 - Board key, seeds, epochs, bless vs roll:
   [`docs/league/LEAGUE_CYCLE_HANDBOOK.md`](league/LEAGUE_CYCLE_HANDBOOK.md).
 - Branches, tags, hotpatch criteria: [`RELEASING.md`](../RELEASING.md).
-- Open decision: #1025 (does the freeze come before anyone has launched the
-  build?) -- laid out in `RELEASE_GATES.md` section 6.
+- Gate order: #1025, RULED 2026-10-26 -- laid out in `RELEASE_GATES.md`
+  section 6. A playtest window for other testers between the cut and the tag
+  is wanted, not scheduled (#1355).
 
 ---
 

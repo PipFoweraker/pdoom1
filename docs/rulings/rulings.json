@@ -880,15 +880,27 @@
       "text": "> **SUPERSEDED, not merely \"outdated in spirit\", as of 2026-08-13.** Pip ruled"
     },
     {
+      "source": "docs/DEVELOPERGUIDE.md:164",
+      "text": "prove, open* (ruled 2026-10-26, #1025): [Gate 1: LAST POUR],"
+    },
+    {
+      "source": "docs/DEVELOPERGUIDE.md:183",
+      "text": "- Gate order: #1025, RULED 2026-10-26 -- laid out in `RELEASE_GATES.md`"
+    },
+    {
       "source": "docs/DEV_BLOG_DECISION_2026-08-21.md:155",
       "text": "Pip ruled **option A**: archive the pygame-era entries, keep the 2026-07-22 post."
     },
     {
-      "source": "docs/GLOSSARY.md:278",
+      "source": "docs/GLOSSARY.md:283",
       "text": "Naming (ruled 2026-07-29, Pip): gates are written name-first with a 1-6"
     },
     {
-      "source": "docs/GLOSSARY.md:477",
+      "source": "docs/GLOSSARY.md:285",
+      "text": "(ruled 2026-10-26, #1025, `docs/rulings/DECISIONS_2026-10-26_return.md`"
+    },
+    {
+      "source": "docs/GLOSSARY.md:487",
       "text": "## Observed inconsistency (flagged, not ruled)"
     },
     {
@@ -1092,12 +1104,8 @@
       "text": "| K8 | `coordination` | File **one issue per Block A item**, labelled `broadcast`, same day, per the agenda -- and note that A1 ruled without a transport (`pdoom1#1115`) is a specification, not a deli"
     },
     {
-      "source": "docs/dev/RELEASE_GATES.md:221",
-      "text": "| 4. Split Gate 4 | Adds a seventh checkpoint, disturbs the numbering ruled on 2026-07-29 | Same catch as option 2 | More ceremony for the same check; renumbering confuses records and sheets |"
-    },
-    {
-      "source": "docs/dev/RELEASE_GATES.md:246",
-      "text": "**One thing to weigh alongside it.** On 2026-10-26 Pip ruled that the"
+      "source": "docs/dev/RELEASE_GATES.md:170",
+      "text": "## 6. Issue #1025 -- the gate order (RULED 2026-10-26)"
     },
     {
       "source": "docs/game-design/ADR_DQ_AUDIT_2026-08-03.md:106",
@@ -1468,23 +1476,23 @@
       "text": "**The seed.** Ruled 2026-08-24 (`league-seeds`, declared at"
     },
     {
-      "source": "docs/league/LEAGUE_CYCLE_HANDBOOK.md:162",
+      "source": "docs/league/LEAGUE_CYCLE_HANDBOOK.md:164",
       "text": "ladder bump or a `Ladder-Impact: none -- <reason>` line. Ruled 2026-08-23"
     },
     {
-      "source": "docs/league/LEAGUE_CYCLE_HANDBOOK.md:193",
+      "source": "docs/league/LEAGUE_CYCLE_HANDBOOK.md:195",
       "text": "Pip ruled they should not open the league; rules unchanged so L3 stayed; the seed"
     },
     {
-      "source": "docs/league/LEAGUE_CYCLE_HANDBOOK.md:199",
+      "source": "docs/league/LEAGUE_CYCLE_HANDBOOK.md:201",
       "text": "board you just ruled must open empty. And **never verify by \"the GET returned"
     },
     {
-      "source": "docs/league/LEAGUE_CYCLE_HANDBOOK.md:213",
+      "source": "docs/league/LEAGUE_CYCLE_HANDBOOK.md:215",
       "text": "Ruled 2026-10-26 (`league-seeds`, #823): **leagues use a hard cutover, not layered"
     },
     {
-      "source": "docs/league/LEAGUE_CYCLE_HANDBOOK.md:272",
+      "source": "docs/league/LEAGUE_CYCLE_HANDBOOK.md:274",
       "text": "- Dev-assisted runs: ruled 2026-10-26 (`league-integrity`) that they are MARKED on"
     },
     {
@@ -1522,6 +1530,22 @@
     {
       "source": "docs/releases/RELEASE_LINKING_TO_0.20.md:175",
       "text": "Under the atomise protocol clause 3 (ruled 2026-08-24: *\"do not build an atom"
+    },
+    {
+      "source": "docs/rituals/README.md:8",
+      "text": "The order is *decide, lock, prove, open* (ruled 2026-10-26, #1025;"
+    },
+    {
+      "source": "docs/rituals/README.md:85",
+      "text": "Carried so far: the reorder and the Freeze's boot check, ruled 2026-10-26"
+    },
+    {
+      "source": "docs/rituals/gate_3_seed_blessing.md:14",
+      "text": "Ruled 2026-10-26 (#1025, `docs/rulings/DECISIONS_2026-10-26_return.md` item 6):"
+    },
+    {
+      "source": "docs/rituals/gate_4_the_freeze.md:14",
+      "text": "Ruled 2026-10-26 (#1025, `docs/rulings/DECISIONS_2026-10-26_return.md`"
     },
     {
       "source": "docs/rituals/records/GATE_RECORD_2026-08-24_v0.14.3.md:20",

@@ -1,8 +1,8 @@
 # The release / league gates -- a plain-language guide
 
 **Who this is for:** anyone (including Pip, back after months away) who needs to
-know what the six league-week gates are, why they exist, and what is still
-undecided about them. It explains; it does not legislate.
+know what the six league-week gates are, why they exist, and how their order
+was decided. It explains; it does not legislate.
 
 **Where the authority lives -- this page never overrides it:**
 
@@ -59,29 +59,34 @@ Roles are defined in `docs/rituals/README.md`, section "Authority".
 
 ## 3. The six gates at a glance
 
-Gates are written name-first with their number (`[Gate 4: PROVEN BUILD]`), per
-Pip's 2026-07-29 ruling. The old playbook numbered them G0-G5; Gate N = G(N-1).
+Gates are written name-first with their number (`[Gate 5: PROVEN BUILD]`), per
+Pip's 2026-07-29 ruling. Since 2026-10-26 (#1025) they run in the order
+**decide, lock, prove, open**; the names are unchanged and the numbers follow
+the new order. Records dated before 2026-10-26 use the old numbers -- the
+mapping table is in `docs/rituals/README.md`.
 
 ```
- WEDNESDAY                  WED PM -> THU AM            THURSDAY (re-cut Fri)
+ DECIDE (main still open)
 +----------------------+   +----------------------+   +----------------------+
-| [Gate 1] LAST POUR   |   | [Gate 2] THE FREEZE  |   | [Gate 3] PACK BLESSED|
-| ~1200                |-->| Wed PM               |-->| Wed EOD / Thu AM     |
-| last mechanics PR    |   | main frozen at a SHA;|   | league content pack  |
-| enters review; every |   | ladder value final;  |   | read + clean of      |
-| open PR is MERGE or  |   | tests counted        |   | printed doom -- or   |
-| PARK                 |   |                      |   | "there is no pack"   |
+| [Gate 1] LAST POUR   |   | [Gate 2] PACK BLESSED|   | [Gate 3] SEED        |
+| Wed ~1200            |-->| Wed EOD / Thu AM     |-->| BLESSING             |
+| last mechanics PR    |   | league content pack  |   | seed spoken; the     |
+| enters review; every |   | read + clean of      |   | seed const is MERGED |
+| open PR is MERGE or  |   | printed doom -- or   |   | on the line about to |
+| PARK                 |   | "there is no pack"   |   | be cut; key (seed,L) |
 +----------------------+   +----------------------+   +----------------------+
                                                                   |
           +-------------------------------------------------------+
           v
+ LOCK                       PROVE                      OPEN
 +----------------------+   +----------------------+   +----------------------+
-| [Gate 4] PROVEN BUILD|   | [Gate 5] SEED        |   | [Gate 6] BOARD OPENS |
-| Thu (re-cut Fri)     |-->| BLESSING  Fri ~1645  |-->| Fri ~1700            |
-| release artifact     |   | seed spoken; the     |   | downloads answer;    |
-| built, proven fresh, |   | client's seed const  |   | feed names this      |
-| PLAYED by a human on |   | matches it; board    |   | build; one real run  |
-| a clean machine      |   | key = (seed, L<N>)   |   | reaches the board    |
+| [Gate 4] THE FREEZE  |   | [Gate 5] PROVEN BUILD|   | [Gate 6] BOARD OPENS |
+| cut release/v0.X at  |-->| built from the branch|-->| Fri ~1700            |
+| a SHA; ladder final; |   | head, proven fresh,  |   | tag + workflow green;|
+| branch carries the   |   | carries the blessed  |   | downloads answer;    |
+| blessed seed; tests  |   | seed, PLAYED by a    |   | board attested empty;|
+| counted; a run STARTS|   | human, clean machine |   | one real run arrives |
+| (windowed boot)      |   |                      |   |                      |
 +----------------------+   +----------------------+   +----------------------+
                                                                   |
                                                                   v
@@ -89,9 +94,10 @@ Pip's 2026-07-29 ruling. The old playbook numbered them G0-G5; Gate N = G(N-1).
                                                        window; retro slot
 ```
 
-The weekday labels come from the v0 playbook, written for a weekly league.
-In practice the gates have been run at RELEASE time rather than on a fixed
-Wednesday-Friday: the v0.14.3 record shows Gates 5 and 6 performed on Monday
+The weekday labels come from the v0 playbook, written for a weekly league, and
+the slots for Gates 3-5 were not re-ruled with the reorder. In practice the
+gates have been run at RELEASE time rather than on a fixed Wednesday-Friday:
+the v0.14.3 record shows SEED BLESSING and BOARD OPENS performed on Monday
 2026-08-24. Read the days as an ordering, not a calendar.
 
 ## 4. Gate by gate: what it checks, who, and what it protects against
@@ -99,11 +105,11 @@ Wednesday-Friday: the v0.14.3 record shows Gates 5 and 6 performed on Monday
 | Gate | What it checks (summary; commands live in the sheet) | Who | Protects against |
 |---|---|---|---|
 | **1 LAST POUR** | Open-PR list snapshotted to a timestamped file; every PR marked MERGE or PARK; none unaccounted; nothing parked is labelled league-critical | Clerk prepares table, Commissioner rules each row | Work sneaking into the month without a decision; "what was open at the pour?" becoming a memory instead of a fact |
-| **2 THE FREEZE** | Frozen commit SHA recorded; `sync_version.py --check` exits 0; fast gate green above the 300-test floor; `ladder_version.txt` declared final; `check_ladder_bump.py` findings read | Commissioner only | Rules changing after the league's ruleset is fixed; version/ladder drift forking the board key; a "green" CI that ran zero tests (#640) |
-| **3 PACK BLESSED** | Branch A (no pack): prove the schedule is structurally empty. Branch B (pack): loader validates, zero printed-doom deltas, ladder bumped, every card read by Pip | Commissioner reads every card | Unread or doom-printing content shipping; a gate being silently skipped when its subject does not exist |
-| **4 PROVEN BUILD** | `build_release.py` proves its freshness marker is in the `.pck`; version agrees; changelog heading; cut number + base SHA recorded; machine reset to a clean player state; **a human plays the built artifact** | Commissioner plays; Bureau must not touch the working tree | Shipping "the thing we meant" instead of "the thing we ship": stale export caches, presentation bugs no headless test can see (#1039 found four), a playtest of the wrong config (the Crisis-Mode scare) |
-| **5 SEED BLESSING** | Ladder value read aloud; `FEATURED_SEED_OVERRIDE` matches the seed spoken AND is inside the cut; board key derives from `get_board_version()`; no non-Standard config can reach the board; website board attested by a named person | Commissioner speaks; website state is someone else's attestation | Blessed seed and posted seed diverging; the key re-coupling to the build string; Easy/Sandbox runs landing on the ranked board (#1058, #1060) |
-| **6 BOARD OPENS** | Every advertised download URL answers 200; release feed's "latest" is this release; release body teaches no dead keybind; one real run travels client -> backend -> board; announcement posted | Commissioner | A league whose download 404s; a feed calling an old build "latest" (#1008); an empty board that is really a broken chain |
+| **2 PACK BLESSED** | Branch A (no pack): prove the schedule is structurally empty. Branch B (pack): loader validates, zero printed-doom deltas, ladder bumped on `main` before the freeze, every card read by Pip | Commissioner reads every card | Unread or doom-printing content shipping; a gate being silently skipped when its subject does not exist |
+| **3 SEED BLESSING** | Ladder value read aloud; `FEATURED_SEED_OVERRIDE` matches the seed spoken AND is merged on the line the freeze will cut from; board key derives from `get_board_version()`; no non-Standard config can reach the board | Commissioner speaks | Blessed seed and posted seed diverging; the key re-coupling to the build string; Easy/Sandbox runs landing on the ranked board (#1058, #1060) |
+| **4 THE FREEZE** | `release/v0.X` cut and pushed, SHA recorded; `sync_version.py --check` exits 0; fast gate green above the 300-test floor; ladder declared final and equal to the one blessed; the branch carries the blessed seed; `check_ladder_bump.py` findings read; **class-cache pre-flight, then a windowed launch where a run actually starts** | Commissioner only | Rules changing after the league's ruleset is fixed; version/ladder drift forking the board key; a "green" CI that ran zero tests (#640); a freeze spoken over a build that does not start (#1023) |
+| **5 PROVEN BUILD** | Built from the release-branch head; `build_release.py` proves its freshness marker is in the `.pck`; version agrees; changelog heading; cut number + base SHA recorded; **the seed inside the cut is the blessed seed**; machine reset to a clean player state; **a human plays the built artifact** | Commissioner plays; Bureau must not touch the working tree | Shipping "the thing we meant" instead of "the thing we ship": stale export caches, presentation bugs no headless test can see (#1039 found four), a playtest of the wrong config (the Crisis-Mode scare), a cut that does not carry the blessed seed |
+| **6 BOARD OPENS** | Tag pushed and release workflow green; every advertised download URL answers 200; release feed's "latest" is this release; release body teaches no dead keybind; website board attested empty by a named person; one real run travels client -> backend -> board; announcement posted | Commissioner; website state is someone else's attestation | A league whose download 404s; a feed calling an old build "latest" (#1008); an empty board that is really a broken chain; opening on a board proving runs already dirtied |
 
 Three rules from `docs/rituals/README.md` explain most of the design:
 
@@ -112,8 +118,9 @@ Three rules from `docs/rituals/README.md` explain most of the design:
 | 1. Every clause maps to a check.   No check -> cut it, or label it as a   |
 |                                    stated judgement.                      |
 | 2. A check must be runnable at the moment the line is spoken.             |
-|    (That is why release-URL checking moved from Gate 4 to Gate 6: the    |
-|    tag does not exist yet at Gate 4.)                                     |
+|    (That is why release-URL checking moved from PROVEN BUILD to BOARD    |
+|    OPENS -- no tag exists at the build -- and why "the seed is inside    |
+|    the cut" moved from SEED BLESSING to PROVEN BUILD in the reorder.)    |
 | 3. A FALSE line has a named next step. Each sheet has a "When a line is  |
 |    FALSE" section.                                                        |
 +--------------------------------------------------------------------------+
@@ -121,135 +128,127 @@ Three rules from `docs/rituals/README.md` explain most of the design:
 
 ## 5. The re-cut loop (the part that surprises people)
 
-A build is not patched; it is re-cut. Anything league-critical that merges after
-the freeze kills every earlier cut and sends you back through Gate 4 -- including
-the human playtest, at least over the surface the change touched.
+A build is not patched; it is re-cut. Anything league-critical that lands after
+the freeze (on `main` first, then cherry-picked to `release/v0.X`) kills every
+earlier cut and sends you back through Gate 5 -- including the human playtest,
+at least over the surface the change touched.
 
 ```
-          +---------------------------+
-          | [Gate 2] FREEZE at SHA-1  |
-          +-------------+-------------+
-                        |
-                        v
-          +---------------------------+
-   +----->| [Gate 4] cut k from SHA-n |
-   |      | build, prove, PLAY        |
-   |      +-------------+-------------+
-   |                    |
-   |          playtest finds a bug?
-   |            /               \
-   |         yes                 no
-   |          |                   |
-   |          v                   v
-   |   league-critical?     +-------------------+
-   |     /        \         | [Gate 5] SEED     |
-   |   yes         no ----->| BLESSING on cut k |
-   |    |    (file it as    +-------------------+
-   |    |    hotpatch-48h /
-   |    |    next-release, continue)
-   |    v
-   |  fix merges past the freeze (legal);
+          +-------------------------------+
+          | [Gate 4] FREEZE: release/v0.X |
+          | cut at SHA-1                  |
+          +---------------+---------------+
+                          |
+                          v
+          +-------------------------------+
+   +----->| [Gate 5] cut k from SHA-n     |
+   |      | (release branch head)         |
+   |      | build, prove, PLAY            |
+   |      +---------------+---------------+
+   |                      |
+   |            playtest finds a bug?
+   |              /               \
+   |           yes                 no
+   |            |                   |
+   |            v                   v
+   |     league-critical?     +-------------------+
+   |       /        \         | [Gate 6] BOARD    |
+   |     yes         no ----->| OPENS on cut k    |
+   |      |    (file it as    +-------------------+
+   |      |    hotpatch-48h /
+   |      |    next-release, continue)
+   |      v
+   |  fix lands on main, cherry-picked to
+   |  release/v0.X (legal past the freeze);
    |  record new SHA-n; cut k+1 kills cut k
-   +----+
+   +------+
 ```
 
 Why so strict: two builds reporting the same ladder epoch while playing
 differently is a lie nothing downstream can detect (#1039).
 
-## 6. The open question: issue #1025 -- should the freeze come before a launch?
+## 6. Issue #1025 -- the gate order (RULED 2026-10-26)
 
-**Status: PENDING a decision by Pip.** Nothing on this page changes the gate
-order. Per `docs/rituals/README.md`, gate wording, checks and ordering change
-only by a Council of Elders vote, recorded under #1025.
+**Status: RULED.** Pip chose the order *decide, lock, prove, open*. The
+ruling text, verbatim (2026-10-26):
 
-### What went wrong
+> gates reorder to decide, lock, prove, open: Last Pour,
+> Pack Blessed, Seed Blessing, then The Freeze (= the release-branch cut, plus
+> a windowed check that a run actually starts), then Proven Build, then Board
+> Opens; gate names stay, numbers follow the new order
+
+Source: `docs/rulings/DECISIONS_2026-10-26_return.md`, item 6 (PR #1350). The
+ritual sheets in `docs/rituals/` were amended to match; each moved sheet lists
+the checks that moved with it.
+
+### What went wrong under the old order
 
 ```
  2026-07-29                                                  2026-07-30
  --------------------------------------------------------------------------->
       ~22:13                 22:28                           Thursday
         |                      |                                 |
-  a launch shows a full   [Gate 2] FREEZE                  [Gate 4] PROVEN
-  UI with NO game state   declared. Every                  BUILD: the first
-  (#1023, the "boot       check passed --                  time anyone is
-  ghost")                 because no check                 REQUIRED to have
+  a launch shows a full   THE FREEZE (then                 PROVEN BUILD
+  UI with NO game state   Gate 2) declared.                (then Gate 4): the
+  (#1023, the "boot       Every check passed               first time anyone
+  ghost")                 -- because no check              is REQUIRED to have
                           asks "does it run?"              launched the thing
 ```
 
-The freeze checks the ladder, the version and the tests. None of those ask
-whether the game starts. So content can be frozen that no human has ever
-launched. Nothing said at the freeze was untrue -- the gate did its job; the
-question is whether its job is the right one.
+The freeze checked the ladder, the version and the tests. None of those asked
+whether the game starts, so content could be frozen that no human had ever
+launched. Separately, the seed was blessed AFTER the proven build, so changing
+the seed const meant a re-merge and a re-cut (it happened on 2026-07-30).
 
-It is mild, not urgent: Gate 4 still catches a broken build before any board
-opens, and league-critical fixes are explicitly allowed past the freeze. The cost
-is rework and a freeze spoken over a corpse, not a wrong league.
-
-### The four options from the issue
+### The old order and the new one
 
 ```
- OPTION 1: LEAVE IT
- +--------+   +--------+   +--------+   +----------------+   +--------+   +--------+
- | Gate 1 |-->| Gate 2 |-->| Gate 3 |-->| Gate 4 (build  |-->| Gate 5 |-->| Gate 6 |
- |        |   | (law)  |   |        |   | + play)        |   |        |   |        |
- +--------+   +--------+   +--------+   +----------------+   +--------+   +--------+
+ BEFORE (2026-07-29 .. 2026-10-25)
+ +-------+   +--------+   +-------+   +--------+   +-------+   +-------+
+ | 1     |-->| 2      |-->| 3     |-->| 4      |-->| 5     |-->| 6     |
+ | POUR  |   | FREEZE |   | PACK  |   | PROVEN |   | SEED  |   | BOARD |
+ +-------+   +--------+   +-------+   +--------+   +-------+   +-------+
 
- OPTION 2: ADD A SMOKE CHECK TO GATE 2  (one clause, run from source, no build)
- +--------+   +----------------+   +--------+   +--------+   +--------+   +--------+
- | Gate 1 |-->| Gate 2 (law +  |-->| Gate 3 |-->| Gate 4 |-->| Gate 5 |-->| Gate 6 |
- |        |   | "a run exists")|   |        |   |        |   |        |   |        |
- +--------+   +----------------+   +--------+   +--------+   +--------+   +--------+
-
- OPTION 3: REORDER  (proven build before the freeze)
- +--------+   +----------------+   +--------+   +--------+   +--------+   +--------+
- | Gate 1 |-->| PROVEN BUILD   |-->| FREEZE |-->| Gate 3 |-->| Gate 5 |-->| Gate 6 |
- |        |   | (moved earlier)|   |        |   |        |   |        |   |        |
- +--------+   +----------------+   +--------+   +--------+   +--------+   +--------+
-
- OPTION 4: SPLIT GATE 4  (cheap boots-check early, full playtest where it is)
- +--------+   +--------+   +-------+   +--------+   +----------------+   +--------+
- | Gate 1 |-->| Gate 2 |-->| BOOTS |-->| Gate 3 |-->| Gate 4 (full   |-->| 5 / 6  |
- |        |   |        |   | check |   |        |   | build + play)  |   |        |
- +--------+   +--------+   +-------+   +--------+   +----------------+   +--------+
+ NOW (from 2026-10-26): decide, lock, prove, open
+ +-------+   +-------+   +-------+   +----------+   +--------+   +-------+
+ | 1     |-->| 2     |-->| 3     |-->| 4 FREEZE |-->| 5      |-->| 6     |
+ | POUR  |   | PACK  |   | SEED  |   | = branch |   | PROVEN |   | BOARD |
+ |       |   |       |   |       |   | cut + a  |   |        |   |       |
+ |       |   |       |   |       |   | run      |   |        |   |       |
+ |       |   |       |   |       |   | starts   |   |        |   |       |
+ +-------+   +-------+   +-------+   +----------+   +--------+   +-------+
+  \_________ decide ________/          lock          prove        open
 ```
 
-| Option | Cost | Benefit | Risk |
-|---|---|---|---|
-| 1. Leave it | Zero | Keeps Gate 2 purely about law | A freeze can keep being spoken over a build that does not start |
-| 2. Smoke check in Gate 2 | One clause, a few minutes: launch from source, start a run, see turn 1 live | Catches the #1023 class before the freeze; no build day needed | The check must be worded tightly or it passes on a corpse (see below) |
-| 3. Reorder | Build work moves earlier, likely onto the day the playbook keeps clear | Cleanest in principle | Every post-freeze league-critical fix re-cuts anyway, so the early build is often wasted |
-| 4. Split Gate 4 | Adds a seventh checkpoint, disturbs the numbering ruled on 2026-07-29 | Same catch as option 2 | More ceremony for the same check; renumbering confuses records and sheets |
+What the new order buys:
 
-### Recommendation (for Pip to accept or reject)
+1. **The seed is decided before anything is built.** A wrong seed const is a
+   one-line PR, not a re-cut, and the release branch is cut with the blessed
+   seed already in it.
+2. **The freeze is the release-branch cut** (`RELEASING.md`): `main` keeps
+   moving; `release/v0.X` takes only hotpatch-criteria cherry-picks.
+3. **The freeze includes a boot check.** The clause *"...and the thing
+   launches: a run exists, not a screen that resembles one"*, drafted in the
+   old freeze sheet's PENDING VOTE box, is adopted. It runs after the
+   class-cache pre-flight (`python3 tools/check_class_cache.py --repair`, per
+   `CLAUDE.md` -- a stale cache produces the same "UI but no game" picture)
+   and it must be a WINDOWED launch: #1023's suspected mechanism was a
+   windowed-only `_ready()` abort that headless runs cannot see.
 
-**Option 2.** It is the smallest change that removes the specific surprise, it
-needs no build, and options 2 and 4 put the *same* check at the *same* moment --
-option 4 just pays for it with a new gate and a renumbering. Option 3 buys little,
-because the re-cut loop in section 5 means a build made before the freeze is
-routinely thrown away.
+What it costs, recorded so nobody rediscovers it:
 
-If option 2 carries, the candidate clause is already drafted in
-`gate_2_the_freeze.md` (PENDING VOTE box). Two details matter:
+- **Checks that were no longer runnable at their new position moved** (rule 2
+  above). From SEED BLESSING: "the seed is inside the cut" -> PROVEN BUILD
+  (with a branch-level repeat at THE FREEZE); "tag pushed, release workflow
+  green" and the named website-board attestation -> BOARD OPENS.
+- **Proving runs now play the league seed.** A proving run submitted globally
+  lands on the league board before it opens; the PROVEN BUILD sheet says to
+  keep global submission off on the proving machine, and BOARD OPENS checks
+  the board is empty before its own test run.
 
-1. **The wording.** *"...and the thing launches: a run exists, not a screen that
-   resembles one."* `main.tscn` once shipped placeholder text (`Phase: Not
-   Started`, `Turn 1`) that made a dead UI and a live game look identical, so
-   "the game looks fine" would have passed on the corpse.
-2. **Run the class-cache pre-flight first** (`python3 tools/check_class_cache.py
-   --repair`, then `godot --path godot`), per `CLAUDE.md`. A stale class cache in
-   the checkout produces exactly the same "UI but no game" picture (2026-08-13);
-   without the pre-flight, the smoke check can fail for a reason that has nothing
-   to do with what is being frozen. And it must be a windowed launch: #1023's
-   suspected mechanism was a windowed-only `_ready()` abort that headless runs
-   cannot see.
-
-**One thing to weigh alongside it.** On 2026-10-26 Pip ruled that the
-release-branch model in `RELEASING.md` is adopted for real (`release/v0.X` per
-epoch, tags only from release branches); guards for it are being built separately
-under #1269. Under that model the natural "freeze" is the release-branch cut. That
-does not change the recommendation -- the smoke check would simply run on the
-release branch head -- but the Council may want to decide #1025 and the
-freeze-equals-branch-cut question together, so the Gate 2 sheet is amended once.
+**Wanted later, not yet scheduled:** a playtest window for testers other than
+Pip between the release-branch cut and the tag -- a release candidate friends
+play for some days. Tracked in #1355.
 
 ---
 

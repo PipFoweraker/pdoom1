@@ -1,6 +1,7 @@
 # [Gate 6: BOARD OPENS]
 
-**When:** Friday evening. Legacy: G5.
+**When:** Friday evening. Legacy: G5. Number unchanged by the 2026-10-26
+reorder (#1025); its entry gate is now [Gate 5: PROVEN BUILD].
 
 The league is live, the announcement is posted, and the hotpatch window is
 armed.
@@ -9,8 +10,11 @@ armed.
 
 ## Entry criteria
 
-- [Gate 5: SEED BLESSING] PASSED, seed spoken, ladder stamped.
-- The tag is pushed and the release assets are uploaded. This is the first
+- [Gate 5: PROVEN BUILD] PASSED on the cut that is actually going out, with
+  its cut number recorded. the seed and ladder blessed at
+  [Gate 3: SEED BLESSING] are inside it ([Gate 5] check 9).
+- Pip has pushed the tag from `release/v0.X` and the release assets are
+  uploaded. This is the first
   moment in the week when that is true, which is why this gate now owns the
   release-URL check.
 - The site news stub was pre-staged (Wednesday) and only needs the numbers.
@@ -22,6 +26,7 @@ gh release view v<X.Y.Z> --json tagName,assets,url
 python scripts/generate_release_metadata.py --version v<X.Y.Z> --verify
 python scripts/verify_release_urls.py --file public/releases/v<X.Y.Z>.json
 python scripts/verify_release_urls.py --sweep public/releases/releases.json
+gh run list --workflow enhanced-release.yml --limit 3   # the tag's release run
 ```
 
 | # | Check | Kind | Runnable now? |
@@ -32,10 +37,20 @@ python scripts/verify_release_urls.py --sweep public/releases/releases.json
 | 4 | A real run reaches the live board | mechanical, end to end | yes |
 | 5 | Announcement posted, carrying seed and ladder | mechanical | yes |
 | 6 | Hotpatch watch window armed (Sat AM) | declaration | yes |
+| 7 | The website serves a board for `(seed, L<N>)` and it is empty (before check 4's run) | mechanical but **NOT from this repo** | attestation -- see below |
+| 8 | Tag pushed, release workflow green (preflight, build, publish) | mechanical | yes |
 
-Check 1 is the #998 fail-loud check, moved here from [Gate 4] because at
-[Gate 4] time the tag does not exist and the check can only be run against
-the previous release -- proving nothing while looking green. `--file` is
+Checks 7 and 8 moved here from [Gate 3: SEED BLESSING] on 2026-10-26 (they
+were its checks 7 and 6). Once the seed is blessed before the freeze, neither
+is runnable there: no tag or workflow exists, and "the board is empty" is a
+claim about the moment it opens -- the [Gate 5] proving playtest now runs on
+the league seed and can land on it in between. Take check 7 BEFORE check 4,
+which puts a run on the board on purpose.
+
+Check 1 is the #998 fail-loud check, moved here from [Gate 5: PROVEN BUILD]
+(numbered Gate 4 then) because at that gate the tag does not exist and the
+check can only be run against the previous release -- proving nothing while
+looking green. `--file` is
 blocking and exits non-zero on any non-200.
 
 Check 2 exists because the release feed called v0.9.0 "latest" from
@@ -59,7 +74,8 @@ short, submitted deliberately; then look for it on the board.
 ## The incantation
 
 > *"Every advertised door answers. The feed names this build and no other.
-> One run has travelled the whole way and arrived. The board is open. Doom
+> The board was attested empty by <NAME> at <TIME>. One run has travelled the
+> whole way and arrived. The board is open. Doom
 > is patient. Play."*
 
 ## Per-line provenance
@@ -68,15 +84,20 @@ short, submitted deliberately; then look for it on the board.
 |---|---|---|
 | "Every advertised door answers" | check 1 -- `verify_release_urls.py --file` | mechanical |
 | "The feed names this build and no other" | check 2 -- `--sweep` | mechanical |
+| "The board was attested empty by <NAME> at <TIME>" | check 7 -- somebody else's observation, named | **attestation, not verification** |
 | "One run has travelled the whole way and arrived" | check 4 | mechanical, end to end |
 | "The board is open." | the act of opening | speech act |
 | "Doom is patient. Play." | nothing, and correctly nothing | the payload |
 
-Changed: three verifiable clauses added in front. Playbook v0's [Gate 6]
-had checks with no corresponding words -- the announcement and the URL
-sweep were listed but never spoken -- which is the inverse of [Gate 5]'s
-problem and just as bad: a check nobody says is a check nobody misses when
-it is skipped.
+Changed 2026-10-26: the attestation clause moved here from
+[Gate 3: SEED BLESSING] with its check (it read *"The board itself is
+attested by <NAME> at <TIME>"* there).
+
+Changed 2026-07-31: three verifiable clauses added in front. Playbook v0's
+[Gate 6] had checks with no corresponding words -- the announcement and the
+URL sweep were listed but never spoken -- which is the inverse of
+[Gate 3: SEED BLESSING]'s problem and just as bad: a check nobody says is a
+check nobody misses when it is skipped.
 
 Left alone, and it must stay exactly this: *"The board is open. Doom is
 patient. Play."* It is the only line in the ceremony aimed at players
@@ -110,6 +131,15 @@ target -- ceremonial surface, mechanical spine.
   Related and worth knowing: until #1051, a player who stopped playing had
   no exit but alt-F4, submitted nothing, and left no trace -- *"I as dev
   don't see the player quitting, just the ones that finish the game."*
+- **The website has no board, or a dirty one (check 7).** Hold the opening.
+  A live board cannot be tidied after the fact -- *"filtering standings is
+  editing them"* -- so an already-dirty board is a decision for the
+  Commissioner, not a cleanup task. If proving runs from [Gate 5] are what
+  dirtied it, that is the cost the reorder carries; record it.
+- **Release workflow red (check 8).** Do not announce. The preflight is a
+  blocking gate (`RELEASING.md`): red means nothing published, so check 1
+  will fail too. Fix the cause and let Pip re-tag; never hand-upload around
+  it.
 - **Announcement blocked** (site down, no time). The board can be open
   without an announcement; say so, and post when able. Do not delay the
   board for prose. Devblog length and polish are on the sacrificial list;
@@ -140,6 +170,11 @@ target -- ceremonial surface, mechanical spine.
 
 ## Not verifiable from here
 
+- **That the website publishes a board for `(SEED, L<N>)`, that it is
+  empty, and that it accepts posts (check 7).** Owner: the website side.
+  Required form: a named person, a timestamp, and what they actually looked
+  at -- not "it's fine". The incantation carries the name because an
+  unattributed attestation is indistinguishable from an assumption.
 - **Board rendering, sorting and de-duplication on the website.** Owner:
   the website side. Check 4 proves a run arrives; it does not prove the
   board displays it correctly.
