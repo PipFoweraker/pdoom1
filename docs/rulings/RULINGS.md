@@ -5,7 +5,7 @@
 > `python scripts/generate_rulings.py`. The convention, and why it looks
 > like this, is argued in `docs/rulings/RULINGS_CONVENTION.md`.
 
-**60 ruling(s)** across **17 flavour(s)**. **244** prose ruling(s) not yet declared.
+**79 ruling(s)** across **27 flavour(s)**. **246** prose ruling(s) not yet declared.
 
 ## One index, five sources
 
@@ -16,7 +16,7 @@ flattening either into one line would delete what makes it worth having.
 
 | kind | n | what it is | where |
 |---|---:|---|---|
-| `declaration` | 34 | a `RULING:` line written next to what it governs | anywhere |
+| `declaration` | 53 | a `RULING:` line written next to what it governs | anywhere |
 | `adr` | 20 | a full architecture argument, summarised here | `docs/game-design/decisions/` |
 | `session` | 3 | a transcript or workshop ruling set, pointed at | `docs/SPOKEN_*`, `*RULINGS*` |
 | `card` | 3 | the input a ruling was made from | `docs/decision-cards/` |
@@ -60,12 +60,20 @@ flavour it belongs to and read what was already decided there.
 | 2026-08-19 | New-Bort is the working machine and hosts new archives and images; the generated masters are NOT transferred to it but coordinated on an external drive or the upstream system, so a verdict whose art is absent is the designed steady state and orphan keys are never pruned | `this reporting line, and tools/art_review/ORPHANS_2026-08-15.md A1/A2` | `tools/art_review/build_full_gallery.py:808` |
 | 2026-08-19 | every asset record names its author as well as its origin, with a named agent only where a source already in the repo names one and `unattributed` everywhere else, never inferred | `backfill_provenance.py --apply-authors, and classify() stamping it on a full re-run` | `tools/assets/backfill_provenance.py:555` |
 | 2026-08-19 | the provenance guard compares against the git blob, not the working tree, and runs in pre-commit and CI; a guard wired to nothing is a document | `.pre-commit-config.yaml provenance-check + quality-checks.yml, both running --self-test first` | `tools/assets/check_provenance.py:65` |
+| 2026-10-26 | yes to pairing with a human visual designer in response to the AI-art concern; Pip is hiring one | `#1015` | `docs/rulings/DECISIONS_2026-10-26_return.md:75` |
+| 2026-10-26 | add a sixth provenance origin value, authored_art, for human-made art from contributing artists | `#1257` | `docs/rulings/DECISIONS_2026-10-26_return.md:83` |
 
 ### `art-review-vocabulary` (only one so far)
 
 | date | ruling | mechanism | source |
 |---|---|---|---|
 | 2026-08-15 | flaw:<thing> joins the harvest vocabulary as the negative counterpart to element:, because the sweeps are mostly negative and prose cannot be counted | `tools/art_review/serve_review.py HARVEST_DOC, emitted to docs/art/NOMENCLATURE.md` | `docs/rulings/LEDGER.md:13` |
+
+### `attention-economy` (only one so far)
+
+| date | ruling | mechanism | source |
+|---|---|---|---|
+| 2026-10-26 | overbooking Attention gets teeth (forced cancel-or-pay) instead of a flat reject | `#822` | `docs/rulings/DECISIONS_2026-10-26_return.md:67` |
 
 ### `autonomy` (only one so far)
 
@@ -82,6 +90,13 @@ flavour it belongs to and read what was already decided there.
 | 2026-08-24 | a gate's verdict must be traced to a consumer before it is called a gate: a red that blocks no merge, gates no job, and reaches no human is theatre, and it costs attention as well as buying nothing | `this audit, and docs/deployment/RELEASE_FLOW_MAP_2026-08-24.md` | `docs/deployment/GATE_AUDIT_2026-08-24.md:949` |
 | 2026-08-24 | a workflow that writes anything must declare `permissions:`, because this repo's default workflow token is read-only and a write attempt without one 403s into either a permanent meaningless red or, under continue-on-error, a green that hides it | `gh api repos/PipFoweraker/pdoom1/actions/permissions/workflow` | `docs/deployment/GATE_AUDIT_2026-08-24.md:951` |
 | 2026-08-24 | two workflows firing on the same event with no dependency between them are not parallel, they are racing to a verdict nobody joins: on the first v0.14.3 tag pre-release-checks found RN003 at t+21s and enhanced-release found the same defect at t+4m39s after a full three-platform build, so the cheap gate bought nothing | `docs/deployment/RELEASE_FLOW_MAP_2026-08-24.md` | `docs/deployment/RELEASE_FLOW_MAP_2026-08-24.md:568` |
+| 2026-10-26 | pre-release checks become a blocking gate on the release workflow; a red check stops the publish | `to be built under #1299` | `docs/rulings/DECISIONS_2026-10-26_return.md:41` |
+
+### `creative-harvest` (only one so far)
+
+| date | ruling | mechanism | source |
+|---|---|---|---|
+| 2026-10-26 | approve creative-harvest items 1-3 and 5-12 of #950; item 4 (the 2026-07-30 anniversary beat) expired unbuilt | `#950` | `docs/rulings/DECISIONS_2026-10-26_return.md:92` |
 
 ### `estate-process`
 
@@ -90,6 +105,7 @@ flavour it belongs to and read what was already decided there.
 | 2026-08-15 | the ruling road is cross-repo from day one, federated: each repo scans itself and emits rulings.json, an aggregator reads them, nothing writes back | `scripts/generate_rulings.py` | `docs/rulings/LEDGER.md:10` |
 | 2026-08-15 | naming a mechanism is OPTIONAL on a ruling, and the generated index reports which rulings have none | `scripts/generate_rulings.py` | `docs/rulings/LEDGER.md:11` |
 | 2026-08-17 | published figures live in tooling, not prose: the line item is the atom and every rendering is a projection | `tools/render_budget.py --check` | `tools/render_budget.py:12` |
+| 2026-10-26 | pdoom1 owns the league-cycle handbook; the website receives published versions according to protocol and never holds the master copy | `to be built under #1266` | `docs/rulings/DECISIONS_2026-10-26_return.md:46` |
 
 ### `guard-doctrine`
 
@@ -99,6 +115,19 @@ flavour it belongs to and read what was already decided there.
 | 2026-08-24 | a guard wired only to pre-commit is not installed; every local hook must either run in a workflow or carry a declared waiver naming what covers it instead | `tools/check_guard_parity.py --check in .github/workflows/guards.yml` | `tools/check_guard_parity.py:47` |
 | 2026-08-29 | a workflow red for three consecutive runs of the same trigger must be fixed or declared, because an undeclared chronic red makes every later red unreadable | `tools/check_chronic_red.py --check in .github/workflows/guards.yml` | `tools/check_chronic_red.py:47` |
 | 2026-08-30 | a CI fossil must be removed entirely, never declared: a red that cannot clear trains the team to discount reds, and a declaration for one can never go stale, so the register of exceptions would grow forever | `tools/check_chronic_red.py --check fails on any fossil, so a new one must be purged or its trigger restored` | `docs/CI_FOSSILS_2026-08-30.md:27` |
+| 2026-10-26 | the P6 worktree rule gets a mechanical check rather than being deleted | `#1258` | `docs/rulings/DECISIONS_2026-10-26_return.md:85` |
+
+### `hiring` (only one so far)
+
+| date | ruling | mechanism | source |
+|---|---|---|---|
+| 2026-10-26 | the hiring candidate-pool cap scales with reputation instead of the fixed MAX_CANDIDATES=6 | `#961` | `docs/rulings/DECISIONS_2026-10-26_return.md:53` |
+
+### `lab-names` (only one so far)
+
+| date | ruling | mechanism | source |
+|---|---|---|---|
+| 2026-10-26 | the lab-name field is randomised by default, not opt-in | `#958` | `docs/rulings/DECISIONS_2026-10-26_return.md:60` |
 
 ### `ladder-epochs`
 
@@ -107,6 +136,13 @@ flavour it belongs to and read what was already decided there.
 | 2026-08-23 | ~~ladder debt is paid when it is incurred, not deferred to build time, so a fresh epoch never inherits a forked board key~~ (superseded by `pdoom1:2026-08-23:fa830705`) | `tools/check_ladder_bump.py --owed` | `tools/check_ladder_bump.py:38` |
 | 2026-08-23 | ladder debt is DECLARED when incurred and PAID at the release that ships it; deferring is legal, forgetting is not, and the epoch must never fork on an ordinary gameplay PR | `tools/check_ladder_bump.py --owed, run at cut time` | `tools/check_ladder_bump.py:40` |
 | 2026-08-24 | the diegetic-opening redesign (M24-002..009) must not be ladder- or epoch-breaking | ``tools/check_ladder_bump.py`` | `docs/game-design/DESIGN_2026-08-24_diegetic-opening.md:16` |
+| 2026-10-26 | v0.14.5 ships on ladder epoch L6 (no bump); the fresh L7 board is cut at the start of the November 2026 release campaign, which also pays #1280's declared-but-unpaid bump | `tools/check_ladder_bump.py --owed` | `docs/rulings/DECISIONS_2026-10-26_return.md:19` |
+
+### `league-integrity` (only one so far)
+
+| date | ruling | mechanism | source |
+|---|---|---|---|
+| 2026-10-26 | dev-assisted runs are MARKED on submitted scores, never excluded | `#1012` | `docs/rulings/DECISIONS_2026-10-26_return.md:65` |
 
 ### `league-seeds`
 
@@ -114,6 +150,13 @@ flavour it belongs to and read what was already decided there.
 |---|---|---|---|
 | 2026-08-24 | the featured seed names the ISO week the league opens in, so a league that slips is renamed to the week it actually runs and the slip is recorded in the log, never hidden in the label | `godot/autoload/game_config.gd get_weekly_seed` | `godot/autoload/game_config.gd:550` |
 | 2026-08-24 | the featured seed names the ISO week the league opens in | `godot/tests/unit/test_iso_week_seed.gd` | `godot/tests/unit/test_iso_week_seed.gd:24` |
+| 2026-10-26 | leagues use a hard cutover, not layered overlapping lifespans | `#823` | `docs/rulings/DECISIONS_2026-10-26_return.md:69` |
+
+### `localisation` (only one so far)
+
+| date | ruling | mechanism | source |
+|---|---|---|---|
+| 2026-10-26 | Chinese localisation before the end of 2026 remains a goal | `#1142` | `docs/rulings/DECISIONS_2026-10-26_return.md:80` |
 
 ### `mechanical-inertness` (only one so far)
 
@@ -139,12 +182,20 @@ flavour it belongs to and read what was already decided there.
 |---|---|---|---|
 | 2026-08-24 | every value version.txt has ever held must have a matching git tag, or a declared exemption; a bump with no tag is a defect the machine reports, not a thing a human is expected to remember | `tools/check_release_ledger.py` | `tools/check_release_ledger.py:34` |
 | 2026-08-24 | a minor version bump ALWAYS cuts the ladder, and the ladder MAY ALSO cut mid-version whenever gameplay forks; therefore ladder epochs >= minor versions, always, and the ladder epoch is NEVER forecastable | `tools/generate_release_horizon.py` | `tools/generate_release_horizon.py:37` |
+| 2026-10-26 | adopt the release-branch model in RELEASING.md for real (release/v0.X cut per epoch, tags only from release branches), enforced by mechanical guards rather than prose | `guards to be built under #1269` | `docs/rulings/DECISIONS_2026-10-26_return.md:33` |
 
-### `releases` (only one so far)
+### `releases`
 
 | date | ruling | mechanism | source |
 |---|---|---|---|
 | 2026-08-24 | a release must be verified before it is published, not after: verify-release-urls runs downstream of create-github-release, so on v0.14.3 the macOS 404 was proven at 04:37:34 against a release that had been public since 04:37:16, and there is no un-publish | `.github/workflows/enhanced-release.yml, and docs/deployment/RELEASE_FLOW_MAP_2026-08-24.md` | `docs/deployment/RELEASE_FLOW_MAP_2026-08-24.md:566` |
+| 2026-10-26 | only Pip creates release tags | `GitHub ruleset 21258734 (refs/tags/v*, creation/deletion/non-fast-forward, bypass: Admin role, Pip the only admin)` | `docs/rulings/DECISIONS_2026-10-26_return.md:35` |
+
+### `research` (only one so far)
+
+| date | ruling | mechanism | source |
+|---|---|---|---|
+| 2026-10-26 | Research Quality (Rushed/Standard/Thorough) moves off the Plan screen to research-project level | `#1090` | `docs/rulings/DECISIONS_2026-10-26_return.md:56` |
 
 ### `session-record`
 
@@ -165,11 +216,29 @@ flavour it belongs to and read what was already decided there.
 | 2026-08-24 | a best-effort platform build that fails must be TRACKED, not merely warned about: the release still publishes for the platforms that built, and the absence becomes ONE rolling per-platform issue plus a machine-readable build-status.json field the website reads, so a download page says "build coming" with a link instead of advertising a URL that 404s or pointing at an older release | `scripts/check_platform_builds.py + scripts/report_missing_build_issue.py, run by the platform-build-status job below` | `.github/workflows/enhanced-release.yml:240` |
 | 2026-08-24 | a player-facing surface must not collapse distinct failures into one reassuring sentence: each cause gets its own words, its own consequence and its own way for the player to report it | `this table and godot/tests/unit/test_whats_new_states.gd, which fails if any two rows share a body or a code` | `godot/scripts/ui/whats_new_modal.gd:87` |
 
+### `staff-surfaces` (only one so far)
+
+| date | ruling | mechanism | source |
+|---|---|---|---|
+| 2026-10-26 | keep both the 15-perk catalogue and quirks-as-perks for now, and ask QA testers which reads better during November | `#903` | `docs/rulings/DECISIONS_2026-10-26_return.md:58` |
+
 ### `ui-legibility` (only one so far)
 
 | date | ruling | mechanism | source |
 |---|---|---|---|
 | 2026-08-17 | the game has ONE font-size lever (theme/base_theme.tres default_font_size, registered as the project theme) and a raw size override is a deviation that has to earn its line | `tools/check_font_sizes.py` | `tools/check_font_sizes.py:16` |
+
+### `upgrades` (only one so far)
+
+| date | ruling | mechanism | source |
+|---|---|---|---|
+| 2026-10-26 | next epoch is now for the three parked upgrade mechanics (chairs attrition, board oversight/payroll UI, ethicist headcount) | `#1004` | `docs/rulings/DECISIONS_2026-10-26_return.md:72` |
+
+### `visual-direction` (only one so far)
+
+| date | ruling | mechanism | source |
+|---|---|---|---|
+| 2026-10-26 | the CRT/terminal aesthetic is unparked | `#529` | `docs/rulings/DECISIONS_2026-10-26_return.md:87` |
 
 ## Nothing will re-ask these
 
@@ -371,6 +440,8 @@ is not.
 - `docs/releases/RELEASE_LINKING_TO_0.20.md:111` -- Whichever is ruled, it should then be **mechanised**: derive the expected seed
 - `docs/releases/RELEASE_LINKING_TO_0.20.md:175` -- Under the atomise protocol clause 3 (ruled 2026-08-24: *"do not build an atom
 - `docs/rituals/records/GATE_RECORD_2026-08-24_v0.14.3.md:20` -- morning of 2026-08-24, during ISO week 35. Pip ruled that the seed names the ISO
+- `docs/rulings/DECISIONS_2026-10-26_return.md:31` -- COMMITMENT: 2026-10-31 -- #1343 pause-semantics sweep: state what 'paused' means and bring the 9 timers, 18 tweens and 47 input surfaces under it -- owner: pdoom1-seat -- kind: deadline -- note: ruled
+- `docs/rulings/DECISIONS_2026-10-26_return.md:54` -- COMMITMENT: 2026-11-30 -- Revisit hiring and midgame mechanics (candidate-pool scaling first) as midgame calibration starts -- owner: pip -- kind: review -- note: ruled 2026-10-26 with #961; window is
 - `docs/strategy/IP_AND_OPENNESS_PREMORTEM.md:443` -- except keeping the data backbone clean (already ruled).
 - `docs/strategy/IP_AND_OPENNESS_PREMORTEM.md:87` -- community reads retraction as betrayal. Pip has already ruled against
 - `godot/assets/images/events/README.md:26` -- **They are GRANDFATHERED. Pip ruled 2026-08-03 that already-packed assets stay
