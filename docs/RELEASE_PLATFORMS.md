@@ -75,6 +75,14 @@ and confirmed present: `windows_release_x86_64.exe` (+ console variant),
 `macos.zip`. Nothing needed to be downloaded on the night; the "we can't build
 Mac" claim was false at the moment it was made.
 
+> **[!] Superseded 2026-10-26 (#1071).** GodotSteam is no longer in the Godot
+> project. Nothing in the game called it, and its macOS `.framework` (committed
+> from a Windows checkout, so `Versions/Current` was a plain directory instead of
+> a symlink) failed to sign on every Mac export. The whole addon, plus
+> `steam_manager.gd` and `steam_appid.txt`, now lives in `vendor/godotsteam/`,
+> outside `godot/`, so Godot neither loads nor exports it. Builds ship no native
+> libraries at all. The section below describes the state before the move.
+
 **GodotSteam native libraries.** `godot/addons/godotsteam/godotsteam.gdextension`
 declares libraries per platform, and every declared binary is committed in the
 repo (directory listing, 2026-07-31):

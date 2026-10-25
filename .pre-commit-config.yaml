@@ -370,6 +370,7 @@ exclude: |
       archived/.*|
       legacy/.*|
       docs/archive/.*|
+      vendor/.*|
       \.git/.*|
       \.mypy_cache/.*|
       \.pytest_cache/.*

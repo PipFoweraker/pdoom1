@@ -13,7 +13,6 @@ HOW TO RUN
 WHATS IN HERE
    PDoom.x86_64   the game
    PDoom.pck      the game data (must stay next to the executable)
-   *.so           Steam integration libraries (keep them here)
 
 HEADS UP
    The Linux build is not extensively tested yet -- expect rough edges.

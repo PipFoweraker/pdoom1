@@ -4941,7 +4941,7 @@ DTSTART;VALUE=DATE:20260824
 DTEND;VALUE=DATE:20260825
 SUMMARY:[UNPARSED] needs a declaration -- RELEASE_PLATFORMS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/RELEASE_PLATFORMS
- .md:444. 2 line(s) in docs/RELEASE_PLATFORMS.md mention this date and no 
+ .md:452. 2 line(s) in docs/RELEASE_PLATFORMS.md mention this date and no 
  COMMITMENT: declaration accounts for it. Either add a declaration or the 
  date is incidental. First line: Added 2026-08-24\, after **v0.14.3 publis
  hed with no macOS asset**. The macOS -- Generated from tracked sources by
@@ -7266,6 +7266,53 @@ ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- generate_images.py (unparsed) -- unowne
  d
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:b8cc601d655ae0e1@commitments.pdoom1
+DTSTAMP:20261026T000000Z
+DTSTART;VALUE=DATE:20261026
+DTEND;VALUE=DATE:20261027
+SUMMARY:[UNPARSED] needs a declaration -- RELEASE_PLATFORMS.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/RELEASE_PLATFORMS
+ .md:78. 1 line(s) in docs/RELEASE_PLATFORMS.md mention this date and no C
+ OMMITMENT: declaration accounts for it. Either add a declaration or the d
+ ate is incidental. First line: > **[!] Superseded 2026-10-26 (#1071).** G
+ odotSteam is no longer in the Godot -- Generated from tracked sources by 
+ scripts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- RELEASE_PLATFORMS.md (unparsed) -- unow
+ ned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:9204038d46a9dbad@commitments.pdoom1
+DTSTAMP:20261026T000000Z
+DTSTART;VALUE=DATE:20261026
+DTEND;VALUE=DATE:20261027
+SUMMARY:[UNPARSED] needs a declaration -- STEAM_INTEGRATION_SUMMARY.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/STEAM_INTEGRATION
+ _SUMMARY.md:3. 1 line(s) in docs/STEAM_INTEGRATION_SUMMARY.md mention thi
+ s date and no COMMITMENT: declaration accounts for it. Either add a decla
+ ration or the date is incidental. First line: > **[!] Parked 2026-10-26 (
+ #1071).** The GodotSteam addon\, `steam_manager.gd` -- Generated from tra
+ cked sources by scripts/generate_commitment_calendar.py\; regenerate to u
+ pdate.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- STEAM_INTEGRATION_SUMMARY.md (unparsed)
+  -- unowned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT

@@ -13,7 +13,7 @@ Horizon: **2026-08-09** (the prose scan reports dates at or after this; roll it
 forward deliberately in `COMMITMENTS.md`, never automatically -- a clock-reading
 generator goes stale overnight and trains people to ignore the check).
 
-**54 declared, 4 release-train, 258 UNPARSED, 0 malformed.**
+**54 declared, 4 release-train, 260 UNPARSED, 0 malformed.**
 
 ## Declared commitments
 
@@ -467,8 +467,8 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-24 | `docs/LEADERBOARD_WEBSITE_INTEGRATION.md` | 208 | **The server-side fix is the real fix, and it landed in #1272 (2026-08-24):** |
 | 2026-08-24 | `docs/LEADERBOARD_WEBSITE_INTEGRATION.md` | 257 | ### Coordination ask -- status after #1272 (2026-08-24) |
 | 2026-08-24 | `docs/RELEASE_NOMENCLATURE.md` | 51 | **The coupling runs one way only** (ruling of 2026-08-24; the declaration lives |
-| 2026-08-24 | `docs/RELEASE_PLATFORMS.md` | 444 | Added 2026-08-24, after **v0.14.3 published with no macOS asset**. The macOS |
-| 2026-08-24 | `docs/RELEASE_PLATFORMS.md` | 582 | ## Addendum 2026-08-24 -- the first release that shipped no macOS asset |
+| 2026-08-24 | `docs/RELEASE_PLATFORMS.md` | 452 | Added 2026-08-24, after **v0.14.3 published with no macOS asset**. The macOS |
+| 2026-08-24 | `docs/RELEASE_PLATFORMS.md` | 590 | ## Addendum 2026-08-24 -- the first release that shipped no macOS asset |
 | 2026-08-24 | `docs/SICK_WEEK_2026-09-07_landing.md` | 65 | 2026-08-24. |
 | 2026-08-24 | `docs/TRIAGE_2026-09-07_backlog.md` | 200 | \| **#808** \| "do this review ON OR AFTER 2026-08-24" \| Now actionable -- this one has ripened, not rotted \| |
 | 2026-08-24 | `docs/VIDEO_SHOOT_2026-08-30.md` | 181 | 285 seconds, submitted 2026-08-24 from v0.14.3. |
@@ -638,6 +638,8 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-09-29 | `docs/game-design/WORKSHOP_3_PREP.md` | 544 | "Now" is v0.12 First Contact (created 2026-07-20, due 2026-09-29). [VERIFIED] |
 | 2026-10-02 | `docs/releases/RELEASE_LINKING_TO_0.20.md` | 129 | \| v0.16 \| Fri 2026-10-02 \| w40 \| `weekly-2026-w40` \| |
 | 2026-10-23 | `tools/assets/generate_images.py` | 38 | # Default OpenAI model. gpt-image-1 retires 2026-10-23, so gpt-image-1.5 is the |
+| 2026-10-26 | `docs/RELEASE_PLATFORMS.md` | 78 | > **[!] Superseded 2026-10-26 (#1071).** GodotSteam is no longer in the Godot |
+| 2026-10-26 | `docs/STEAM_INTEGRATION_SUMMARY.md` | 3 | > **[!] Parked 2026-10-26 (#1071).** The GodotSteam addon, `steam_manager.gd` |
 | 2026-11-06 | `docs/releases/RELEASE_LINKING_TO_0.20.md` | 130 | \| v0.17 \| Fri 2026-11-06 \| w45 \| `weekly-2026-w45` \| |
 | 2026-12-04 | `docs/releases/RELEASE_LINKING_TO_0.20.md` | 131 | \| v0.18 \| Fri 2026-12-04 \| w49 \| `weekly-2026-w49` \| |
 | 2026-12-31 | `docs/releases/RELEASE_LINKING_TO_0.20.md` | 147 | 2026-12-31. So the correct seed carries the year **2026** on a date in 2027. |
