@@ -1,5 +1,11 @@
 # Steam Integration - Quick Start Guide
 
+> **[!] Parked 2026-10-26 (#1071).** The GodotSteam addon, `steam_manager.gd`
+> and `steam_appid.txt` were moved from `godot/` to `vendor/godotsteam/` so
+> they stop breaking the macOS build. Paths below that name `godot/...` now
+> live there. To resume Steam work, move them back AND fix the macOS
+> `.framework` layout first (see `vendor/godotsteam/PARKED.md`).
+
 > **[!] Status corrected 2026-08-04 after an audit.** Phase 2 below is PARTLY
 > DONE, and the done part is inert -- which is worse than not started, because
 > the repo now looks Steam-ready and is not:
