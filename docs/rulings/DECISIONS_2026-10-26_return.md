@@ -39,9 +39,15 @@ campaign gets a clean board as a launch moment instead of two resets in a month.
    ruleset cannot tell the two apart. Agents must never push a `v*` tag.
 5. **#1299 pre-release checks.**
    RULING: 2026-10-26 -- pre-release checks become a blocking gate on the release workflow; a red check stops the publish -- flavour: ci-gates -- mechanism: to be built under #1299
-6. **#1025 gate order.** PENDING -- Pip asked for the explanation to go into the
-   developer guide with diagrams, plus a lightweight plan for putting dev notes
-   and tools on the website.
+6. **#1025 gate order.** Pip asked for the explanation to go into the
+   developer guide with diagrams (`docs/dev/RELEASE_GATES.md`, PR #1351), plus a
+   lightweight plan for putting dev notes and tools on the website. Having read
+   the three proposed orders, he chose Idea A ("decide, lock, prove, open").
+   RULING: 2026-10-26 -- gates reorder to decide, lock, prove, open: Last Pour, Pack Blessed, Seed Blessing, then The Freeze (= the release-branch cut, plus a windowed check that a run actually starts), then Proven Build, then Board Opens; gate names stay, numbers follow the new order -- flavour: league-gates -- mechanism: docs/rituals gate sheets + docs/dev/RELEASE_GATES.md, amended under #1025 (replaces the gate numbering in the undeclared 2026-07-29 naming ruling, docs/GLOSSARY.md)
+   Wanted later, not yet scheduled: a playtest window for testers other than Pip
+   between the release-branch cut and the tag (a release candidate that friends
+   play for some days). Pip aims to run at least one week ahead in his dev cycle
+   as the game gains momentum. Tracked in #1355.
 7. **#1266 / #1267 league-cycle handbook.**
    RULING: 2026-10-26 -- pdoom1 owns the league-cycle handbook; the website receives published versions according to protocol and never holds the master copy -- flavour: estate-process -- mechanism: to be built under #1266
    Create a pdoom1 handbook if the website's (`pdoom1-website/docs/LEAGUE_CYCLE_HANDBOOK.md`,

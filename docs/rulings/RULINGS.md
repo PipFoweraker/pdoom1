@@ -5,7 +5,7 @@
 > `python scripts/generate_rulings.py`. The convention, and why it looks
 > like this, is argued in `docs/rulings/RULINGS_CONVENTION.md`.
 
-**79 ruling(s)** across **27 flavour(s)**. **246** prose ruling(s) not yet declared.
+**80 ruling(s)** across **28 flavour(s)**. **246** prose ruling(s) not yet declared.
 
 ## One index, five sources
 
@@ -16,7 +16,7 @@ flattening either into one line would delete what makes it worth having.
 
 | kind | n | what it is | where |
 |---|---:|---|---|
-| `declaration` | 53 | a `RULING:` line written next to what it governs | anywhere |
+| `declaration` | 54 | a `RULING:` line written next to what it governs | anywhere |
 | `adr` | 20 | a full architecture argument, summarised here | `docs/game-design/decisions/` |
 | `session` | 3 | a transcript or workshop ruling set, pointed at | `docs/SPOKEN_*`, `*RULINGS*` |
 | `card` | 3 | the input a ruling was made from | `docs/decision-cards/` |
@@ -60,8 +60,8 @@ flavour it belongs to and read what was already decided there.
 | 2026-08-19 | New-Bort is the working machine and hosts new archives and images; the generated masters are NOT transferred to it but coordinated on an external drive or the upstream system, so a verdict whose art is absent is the designed steady state and orphan keys are never pruned | `this reporting line, and tools/art_review/ORPHANS_2026-08-15.md A1/A2` | `tools/art_review/build_full_gallery.py:808` |
 | 2026-08-19 | every asset record names its author as well as its origin, with a named agent only where a source already in the repo names one and `unattributed` everywhere else, never inferred | `backfill_provenance.py --apply-authors, and classify() stamping it on a full re-run` | `tools/assets/backfill_provenance.py:555` |
 | 2026-08-19 | the provenance guard compares against the git blob, not the working tree, and runs in pre-commit and CI; a guard wired to nothing is a document | `.pre-commit-config.yaml provenance-check + quality-checks.yml, both running --self-test first` | `tools/assets/check_provenance.py:65` |
-| 2026-10-26 | yes to pairing with a human visual designer in response to the AI-art concern; Pip is hiring one | `#1015` | `docs/rulings/DECISIONS_2026-10-26_return.md:75` |
-| 2026-10-26 | add a sixth provenance origin value, authored_art, for human-made art from contributing artists | `#1257` | `docs/rulings/DECISIONS_2026-10-26_return.md:83` |
+| 2026-10-26 | yes to pairing with a human visual designer in response to the AI-art concern; Pip is hiring one | `#1015` | `docs/rulings/DECISIONS_2026-10-26_return.md:81` |
+| 2026-10-26 | add a sixth provenance origin value, authored_art, for human-made art from contributing artists | `#1257` | `docs/rulings/DECISIONS_2026-10-26_return.md:89` |
 
 ### `art-review-vocabulary` (only one so far)
 
@@ -73,7 +73,7 @@ flavour it belongs to and read what was already decided there.
 
 | date | ruling | mechanism | source |
 |---|---|---|---|
-| 2026-10-26 | overbooking Attention gets teeth (forced cancel-or-pay) instead of a flat reject | `#822` | `docs/rulings/DECISIONS_2026-10-26_return.md:67` |
+| 2026-10-26 | overbooking Attention gets teeth (forced cancel-or-pay) instead of a flat reject | `#822` | `docs/rulings/DECISIONS_2026-10-26_return.md:73` |
 
 ### `autonomy` (only one so far)
 
@@ -96,7 +96,7 @@ flavour it belongs to and read what was already decided there.
 
 | date | ruling | mechanism | source |
 |---|---|---|---|
-| 2026-10-26 | approve creative-harvest items 1-3 and 5-12 of #950; item 4 (the 2026-07-30 anniversary beat) expired unbuilt | `#950` | `docs/rulings/DECISIONS_2026-10-26_return.md:92` |
+| 2026-10-26 | approve creative-harvest items 1-3 and 5-12 of #950; item 4 (the 2026-07-30 anniversary beat) expired unbuilt | `#950` | `docs/rulings/DECISIONS_2026-10-26_return.md:98` |
 
 ### `estate-process`
 
@@ -105,7 +105,7 @@ flavour it belongs to and read what was already decided there.
 | 2026-08-15 | the ruling road is cross-repo from day one, federated: each repo scans itself and emits rulings.json, an aggregator reads them, nothing writes back | `scripts/generate_rulings.py` | `docs/rulings/LEDGER.md:10` |
 | 2026-08-15 | naming a mechanism is OPTIONAL on a ruling, and the generated index reports which rulings have none | `scripts/generate_rulings.py` | `docs/rulings/LEDGER.md:11` |
 | 2026-08-17 | published figures live in tooling, not prose: the line item is the atom and every rendering is a projection | `tools/render_budget.py --check` | `tools/render_budget.py:12` |
-| 2026-10-26 | pdoom1 owns the league-cycle handbook; the website receives published versions according to protocol and never holds the master copy | `to be built under #1266` | `docs/rulings/DECISIONS_2026-10-26_return.md:46` |
+| 2026-10-26 | pdoom1 owns the league-cycle handbook; the website receives published versions according to protocol and never holds the master copy | `to be built under #1266` | `docs/rulings/DECISIONS_2026-10-26_return.md:52` |
 
 ### `guard-doctrine`
 
@@ -115,19 +115,19 @@ flavour it belongs to and read what was already decided there.
 | 2026-08-24 | a guard wired only to pre-commit is not installed; every local hook must either run in a workflow or carry a declared waiver naming what covers it instead | `tools/check_guard_parity.py --check in .github/workflows/guards.yml` | `tools/check_guard_parity.py:47` |
 | 2026-08-29 | a workflow red for three consecutive runs of the same trigger must be fixed or declared, because an undeclared chronic red makes every later red unreadable | `tools/check_chronic_red.py --check in .github/workflows/guards.yml` | `tools/check_chronic_red.py:47` |
 | 2026-08-30 | a CI fossil must be removed entirely, never declared: a red that cannot clear trains the team to discount reds, and a declaration for one can never go stale, so the register of exceptions would grow forever | `tools/check_chronic_red.py --check fails on any fossil, so a new one must be purged or its trigger restored` | `docs/CI_FOSSILS_2026-08-30.md:27` |
-| 2026-10-26 | the P6 worktree rule gets a mechanical check rather than being deleted | `#1258` | `docs/rulings/DECISIONS_2026-10-26_return.md:85` |
+| 2026-10-26 | the P6 worktree rule gets a mechanical check rather than being deleted | `#1258` | `docs/rulings/DECISIONS_2026-10-26_return.md:91` |
 
 ### `hiring` (only one so far)
 
 | date | ruling | mechanism | source |
 |---|---|---|---|
-| 2026-10-26 | the hiring candidate-pool cap scales with reputation instead of the fixed MAX_CANDIDATES=6 | `#961` | `docs/rulings/DECISIONS_2026-10-26_return.md:53` |
+| 2026-10-26 | the hiring candidate-pool cap scales with reputation instead of the fixed MAX_CANDIDATES=6 | `#961` | `docs/rulings/DECISIONS_2026-10-26_return.md:59` |
 
 ### `lab-names` (only one so far)
 
 | date | ruling | mechanism | source |
 |---|---|---|---|
-| 2026-10-26 | the lab-name field is randomised by default, not opt-in | `#958` | `docs/rulings/DECISIONS_2026-10-26_return.md:60` |
+| 2026-10-26 | the lab-name field is randomised by default, not opt-in | `#958` | `docs/rulings/DECISIONS_2026-10-26_return.md:66` |
 
 ### `ladder-epochs`
 
@@ -138,11 +138,17 @@ flavour it belongs to and read what was already decided there.
 | 2026-08-24 | the diegetic-opening redesign (M24-002..009) must not be ladder- or epoch-breaking | ``tools/check_ladder_bump.py`` | `docs/game-design/DESIGN_2026-08-24_diegetic-opening.md:16` |
 | 2026-10-26 | v0.14.5 ships on ladder epoch L6 (no bump); the fresh L7 board is cut at the start of the November 2026 release campaign, which also pays #1280's declared-but-unpaid bump | `tools/check_ladder_bump.py --owed` | `docs/rulings/DECISIONS_2026-10-26_return.md:19` |
 
+### `league-gates` (only one so far)
+
+| date | ruling | mechanism | source |
+|---|---|---|---|
+| 2026-10-26 | gates reorder to decide, lock, prove, open: Last Pour, Pack Blessed, Seed Blessing, then The Freeze (= the release-branch cut, plus a windowed check that a run actually starts), then Proven Build, then Board Opens; gate names stay, numbers follow the new order | `docs/rituals gate sheets + docs/dev/RELEASE_GATES.md, amended under #1025 (replaces the gate numbering in the undeclared 2026-07-29 naming ruling, docs/GLOSSARY.md)` | `docs/rulings/DECISIONS_2026-10-26_return.md:46` |
+
 ### `league-integrity` (only one so far)
 
 | date | ruling | mechanism | source |
 |---|---|---|---|
-| 2026-10-26 | dev-assisted runs are MARKED on submitted scores, never excluded | `#1012` | `docs/rulings/DECISIONS_2026-10-26_return.md:65` |
+| 2026-10-26 | dev-assisted runs are MARKED on submitted scores, never excluded | `#1012` | `docs/rulings/DECISIONS_2026-10-26_return.md:71` |
 
 ### `league-seeds`
 
@@ -150,13 +156,13 @@ flavour it belongs to and read what was already decided there.
 |---|---|---|---|
 | 2026-08-24 | the featured seed names the ISO week the league opens in, so a league that slips is renamed to the week it actually runs and the slip is recorded in the log, never hidden in the label | `godot/autoload/game_config.gd get_weekly_seed` | `godot/autoload/game_config.gd:550` |
 | 2026-08-24 | the featured seed names the ISO week the league opens in | `godot/tests/unit/test_iso_week_seed.gd` | `godot/tests/unit/test_iso_week_seed.gd:24` |
-| 2026-10-26 | leagues use a hard cutover, not layered overlapping lifespans | `#823` | `docs/rulings/DECISIONS_2026-10-26_return.md:69` |
+| 2026-10-26 | leagues use a hard cutover, not layered overlapping lifespans | `#823` | `docs/rulings/DECISIONS_2026-10-26_return.md:75` |
 
 ### `localisation` (only one so far)
 
 | date | ruling | mechanism | source |
 |---|---|---|---|
-| 2026-10-26 | Chinese localisation before the end of 2026 remains a goal | `#1142` | `docs/rulings/DECISIONS_2026-10-26_return.md:80` |
+| 2026-10-26 | Chinese localisation before the end of 2026 remains a goal | `#1142` | `docs/rulings/DECISIONS_2026-10-26_return.md:86` |
 
 ### `mechanical-inertness` (only one so far)
 
@@ -195,7 +201,7 @@ flavour it belongs to and read what was already decided there.
 
 | date | ruling | mechanism | source |
 |---|---|---|---|
-| 2026-10-26 | Research Quality (Rushed/Standard/Thorough) moves off the Plan screen to research-project level | `#1090` | `docs/rulings/DECISIONS_2026-10-26_return.md:56` |
+| 2026-10-26 | Research Quality (Rushed/Standard/Thorough) moves off the Plan screen to research-project level | `#1090` | `docs/rulings/DECISIONS_2026-10-26_return.md:62` |
 
 ### `session-record`
 
@@ -220,7 +226,7 @@ flavour it belongs to and read what was already decided there.
 
 | date | ruling | mechanism | source |
 |---|---|---|---|
-| 2026-10-26 | keep both the 15-perk catalogue and quirks-as-perks for now, and ask QA testers which reads better during November | `#903` | `docs/rulings/DECISIONS_2026-10-26_return.md:58` |
+| 2026-10-26 | keep both the 15-perk catalogue and quirks-as-perks for now, and ask QA testers which reads better during November | `#903` | `docs/rulings/DECISIONS_2026-10-26_return.md:64` |
 
 ### `ui-legibility` (only one so far)
 
@@ -232,13 +238,13 @@ flavour it belongs to and read what was already decided there.
 
 | date | ruling | mechanism | source |
 |---|---|---|---|
-| 2026-10-26 | next epoch is now for the three parked upgrade mechanics (chairs attrition, board oversight/payroll UI, ethicist headcount) | `#1004` | `docs/rulings/DECISIONS_2026-10-26_return.md:72` |
+| 2026-10-26 | next epoch is now for the three parked upgrade mechanics (chairs attrition, board oversight/payroll UI, ethicist headcount) | `#1004` | `docs/rulings/DECISIONS_2026-10-26_return.md:78` |
 
 ### `visual-direction` (only one so far)
 
 | date | ruling | mechanism | source |
 |---|---|---|---|
-| 2026-10-26 | the CRT/terminal aesthetic is unparked | `#529` | `docs/rulings/DECISIONS_2026-10-26_return.md:87` |
+| 2026-10-26 | the CRT/terminal aesthetic is unparked | `#529` | `docs/rulings/DECISIONS_2026-10-26_return.md:93` |
 
 ## Nothing will re-ask these
 
@@ -441,7 +447,7 @@ is not.
 - `docs/releases/RELEASE_LINKING_TO_0.20.md:175` -- Under the atomise protocol clause 3 (ruled 2026-08-24: *"do not build an atom
 - `docs/rituals/records/GATE_RECORD_2026-08-24_v0.14.3.md:20` -- morning of 2026-08-24, during ISO week 35. Pip ruled that the seed names the ISO
 - `docs/rulings/DECISIONS_2026-10-26_return.md:31` -- COMMITMENT: 2026-10-31 -- #1343 pause-semantics sweep: state what 'paused' means and bring the 9 timers, 18 tweens and 47 input surfaces under it -- owner: pdoom1-seat -- kind: deadline -- note: ruled
-- `docs/rulings/DECISIONS_2026-10-26_return.md:54` -- COMMITMENT: 2026-11-30 -- Revisit hiring and midgame mechanics (candidate-pool scaling first) as midgame calibration starts -- owner: pip -- kind: review -- note: ruled 2026-10-26 with #961; window is
+- `docs/rulings/DECISIONS_2026-10-26_return.md:60` -- COMMITMENT: 2026-11-30 -- Revisit hiring and midgame mechanics (candidate-pool scaling first) as midgame calibration starts -- owner: pip -- kind: review -- note: ruled 2026-10-26 with #961; window is
 - `docs/strategy/IP_AND_OPENNESS_PREMORTEM.md:443` -- except keeping the data backbone clean (already ruled).
 - `docs/strategy/IP_AND_OPENNESS_PREMORTEM.md:87` -- community reads retraction as betrayal. Pip has already ruled against
 - `godot/assets/images/events/README.md:26` -- **They are GRANDFATHERED. Pip ruled 2026-08-03 that already-packed assets stay

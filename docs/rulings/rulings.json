@@ -3,7 +3,7 @@
   "repo": "pdoom1",
   "generated_from": "tracked files at HEAD",
   "convention": "docs/rulings/RULINGS_CONVENTION.md",
-  "count": 79,
+  "count": 80,
   "rulings": [
     {
       "id": "pdoom1:2026-07-04:12de8fc2",
@@ -902,6 +902,20 @@
       "source": "docs/rulings/DECISIONS_2026-10-26_return.md:41"
     },
     {
+      "id": "pdoom1:2026-10-26:b0316df7",
+      "date": "2026-10-26",
+      "ruling": "gates reorder to decide, lock, prove, open: Last Pour, Pack Blessed, Seed Blessing, then The Freeze (= the release-branch cut, plus a windowed check that a run actually starts), then Proven Build, then Board Opens; gate names stay, numbers follow the new order",
+      "summary": "",
+      "flavour": "league-gates",
+      "kind": "declaration",
+      "status": "",
+      "by": "Pip",
+      "mechanism": "docs/rituals gate sheets + docs/dev/RELEASE_GATES.md, amended under #1025 (replaces the gate numbering in the undeclared 2026-07-29 naming ruling, docs/GLOSSARY.md)",
+      "supersedes": null,
+      "superseded_by": null,
+      "source": "docs/rulings/DECISIONS_2026-10-26_return.md:46"
+    },
+    {
       "id": "pdoom1:2026-10-26:fb0313d0",
       "date": "2026-10-26",
       "ruling": "pdoom1 owns the league-cycle handbook; the website receives published versions according to protocol and never holds the master copy",
@@ -913,7 +927,7 @@
       "mechanism": "to be built under #1266",
       "supersedes": null,
       "superseded_by": null,
-      "source": "docs/rulings/DECISIONS_2026-10-26_return.md:46"
+      "source": "docs/rulings/DECISIONS_2026-10-26_return.md:52"
     },
     {
       "id": "pdoom1:2026-10-26:460bc38f",
@@ -927,7 +941,7 @@
       "mechanism": "#961",
       "supersedes": null,
       "superseded_by": null,
-      "source": "docs/rulings/DECISIONS_2026-10-26_return.md:53"
+      "source": "docs/rulings/DECISIONS_2026-10-26_return.md:59"
     },
     {
       "id": "pdoom1:2026-10-26:de7b4286",
@@ -941,7 +955,7 @@
       "mechanism": "#1090",
       "supersedes": null,
       "superseded_by": null,
-      "source": "docs/rulings/DECISIONS_2026-10-26_return.md:56"
+      "source": "docs/rulings/DECISIONS_2026-10-26_return.md:62"
     },
     {
       "id": "pdoom1:2026-10-26:25f5caf0",
@@ -955,7 +969,7 @@
       "mechanism": "#903",
       "supersedes": null,
       "superseded_by": null,
-      "source": "docs/rulings/DECISIONS_2026-10-26_return.md:58"
+      "source": "docs/rulings/DECISIONS_2026-10-26_return.md:64"
     },
     {
       "id": "pdoom1:2026-10-26:ec84311f",
@@ -969,7 +983,7 @@
       "mechanism": "#958",
       "supersedes": null,
       "superseded_by": null,
-      "source": "docs/rulings/DECISIONS_2026-10-26_return.md:60"
+      "source": "docs/rulings/DECISIONS_2026-10-26_return.md:66"
     },
     {
       "id": "pdoom1:2026-10-26:494896ec",
@@ -983,7 +997,7 @@
       "mechanism": "#1012",
       "supersedes": null,
       "superseded_by": null,
-      "source": "docs/rulings/DECISIONS_2026-10-26_return.md:65"
+      "source": "docs/rulings/DECISIONS_2026-10-26_return.md:71"
     },
     {
       "id": "pdoom1:2026-10-26:e4b23ee3",
@@ -997,7 +1011,7 @@
       "mechanism": "#822",
       "supersedes": null,
       "superseded_by": null,
-      "source": "docs/rulings/DECISIONS_2026-10-26_return.md:67"
+      "source": "docs/rulings/DECISIONS_2026-10-26_return.md:73"
     },
     {
       "id": "pdoom1:2026-10-26:0993d632",
@@ -1011,7 +1025,7 @@
       "mechanism": "#823",
       "supersedes": null,
       "superseded_by": null,
-      "source": "docs/rulings/DECISIONS_2026-10-26_return.md:69"
+      "source": "docs/rulings/DECISIONS_2026-10-26_return.md:75"
     },
     {
       "id": "pdoom1:2026-10-26:9754f729",
@@ -1025,7 +1039,7 @@
       "mechanism": "#1004",
       "supersedes": null,
       "superseded_by": null,
-      "source": "docs/rulings/DECISIONS_2026-10-26_return.md:72"
+      "source": "docs/rulings/DECISIONS_2026-10-26_return.md:78"
     },
     {
       "id": "pdoom1:2026-10-26:f3c4fadb",
@@ -1039,7 +1053,7 @@
       "mechanism": "#1015",
       "supersedes": null,
       "superseded_by": null,
-      "source": "docs/rulings/DECISIONS_2026-10-26_return.md:75"
+      "source": "docs/rulings/DECISIONS_2026-10-26_return.md:81"
     },
     {
       "id": "pdoom1:2026-10-26:c202fed2",
@@ -1053,7 +1067,7 @@
       "mechanism": "#1142",
       "supersedes": null,
       "superseded_by": null,
-      "source": "docs/rulings/DECISIONS_2026-10-26_return.md:80"
+      "source": "docs/rulings/DECISIONS_2026-10-26_return.md:86"
     },
     {
       "id": "pdoom1:2026-10-26:6ee25a55",
@@ -1067,7 +1081,7 @@
       "mechanism": "#1257",
       "supersedes": null,
       "superseded_by": null,
-      "source": "docs/rulings/DECISIONS_2026-10-26_return.md:83"
+      "source": "docs/rulings/DECISIONS_2026-10-26_return.md:89"
     },
     {
       "id": "pdoom1:2026-10-26:a4dc2915",
@@ -1081,7 +1095,7 @@
       "mechanism": "#1258",
       "supersedes": null,
       "superseded_by": null,
-      "source": "docs/rulings/DECISIONS_2026-10-26_return.md:85"
+      "source": "docs/rulings/DECISIONS_2026-10-26_return.md:91"
     },
     {
       "id": "pdoom1:2026-10-26:c64cb6bf",
@@ -1095,7 +1109,7 @@
       "mechanism": "#529",
       "supersedes": null,
       "superseded_by": null,
-      "source": "docs/rulings/DECISIONS_2026-10-26_return.md:87"
+      "source": "docs/rulings/DECISIONS_2026-10-26_return.md:93"
     },
     {
       "id": "pdoom1:2026-10-26:458a2639",
@@ -1109,7 +1123,7 @@
       "mechanism": "#950",
       "supersedes": null,
       "superseded_by": null,
-      "source": "docs/rulings/DECISIONS_2026-10-26_return.md:92"
+      "source": "docs/rulings/DECISIONS_2026-10-26_return.md:98"
     }
   ],
   "undeclared": [
@@ -1754,7 +1768,7 @@
       "text": "COMMITMENT: 2026-10-31 -- #1343 pause-semantics sweep: state what 'paused' means and bring the 9 timers, 18 tweens and 47 input surfaces under it -- owner: pdoom1-seat -- kind: deadline -- note: ruled"
     },
     {
-      "source": "docs/rulings/DECISIONS_2026-10-26_return.md:54",
+      "source": "docs/rulings/DECISIONS_2026-10-26_return.md:60",
       "text": "COMMITMENT: 2026-11-30 -- Revisit hiring and midgame mechanics (candidate-pool scaling first) as midgame calibration starts -- owner: pip -- kind: review -- note: ruled 2026-10-26 with #961; window is"
     },
     {
