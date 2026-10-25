@@ -5,7 +5,7 @@
 > `python scripts/generate_rulings.py`. The convention, and why it looks
 > like this, is argued in `docs/rulings/RULINGS_CONVENTION.md`.
 
-**60 ruling(s)** across **17 flavour(s)**. **244** prose ruling(s) not yet declared.
+**60 ruling(s)** across **17 flavour(s)**. **255** prose ruling(s) not yet declared.
 
 ## One index, five sources
 
@@ -273,6 +273,8 @@ is not.
 - `docs/design/PHASE_GUARD_AUDIT_2026-08-06.md:109` -- All three are removed by **PR #1143**, which is the ruled fix. Nothing here duplicates that
 - `docs/design/UPDATER_DESIGN.md:55` -- auto pck-swap patcher (unbuilt). Ruled 2026-07-23: hash-in-manifest over
 - `docs/design/WORKSHOP_TRI_REPO_PREP_2026-08-06.md:552` -- | K8 | `coordination` | File **one issue per Block A item**, labelled `broadcast`, same day, per the agenda -- and note that A1 ruled without a transport (`pdoom1#1115`) is a specification, not a deli
+- `docs/dev/RELEASE_GATES.md:221` -- | 4. Split Gate 4 | Adds a seventh checkpoint, disturbs the numbering ruled on 2026-07-29 | Same catch as option 2 | More ceremony for the same check; renumbering confuses records and sheets |
+- `docs/dev/RELEASE_GATES.md:246` -- **One thing to weigh alongside it.** On 2026-10-26 Pip ruled that the
 - `docs/game-design/ADR_DQ_AUDIT_2026-08-03.md:106` -- 3. **League cadence RULED monthly (2026-07-21)** (backlog:405-408) -- recorded
 - `docs/game-design/ADR_DQ_AUDIT_2026-08-03.md:110` -- model RULED** (backlog:171-177), **DQ-24 five demand categories RULED**
 - `docs/game-design/ADR_DQ_AUDIT_2026-08-03.md:112` -- (backlog:723-730), **two-screen PLAN/WATCH model RULED** (backlog:686+),
@@ -363,6 +365,15 @@ is not.
 - `docs/game-design/decisions/ADR-0018-render-only-office-doctrine.md:161` -- Camera2D enters consideration only when a ruled office tier exceeds one
 - `docs/game-design/decisions/ADR-0019-pull-from-demand-asset-pipeline.md:193` -- magenta cat shipped deliberately, as policy. Auto-stripping is ruled OUT,
 - `docs/game-design/decisions/ADR-0019-pull-from-demand-asset-pipeline.md:231` -- RULED by Pip, 2026-08-03, when this was raised as the one assumption the ADR
+- `docs/league/LEAGUE_CYCLE_HANDBOOK.md:135` -- | OPENS in (ruled 2026-08-24) |      | from a version number.      |
+- `docs/league/LEAGUE_CYCLE_HANDBOOK.md:139` -- **The seed.** Ruled 2026-08-24 (`league-seeds`, declared at
+- `docs/league/LEAGUE_CYCLE_HANDBOOK.md:162` -- ladder bump or a `Ladder-Impact: none -- <reason>` line. Ruled 2026-08-23
+- `docs/league/LEAGUE_CYCLE_HANDBOOK.md:193` -- Pip ruled they should not open the league; rules unchanged so L3 stayed; the seed
+- `docs/league/LEAGUE_CYCLE_HANDBOOK.md:199` -- board you just ruled must open empty. And **never verify by "the GET returned
+- `docs/league/LEAGUE_CYCLE_HANDBOOK.md:213` -- Ruled 2026-10-26 (`league-seeds`, #823): **leagues use a hard cutover, not layered
+- `docs/league/LEAGUE_CYCLE_HANDBOOK.md:272` -- - Dev-assisted runs: ruled 2026-10-26 (`league-integrity`) that they are MARKED on
+- `docs/league/LEAGUE_CYCLE_HANDBOOK.md:3` -- **This is the MASTER copy.** Ruled by Pip on 2026-10-26 (#1266, #1267; recorded
+- `docs/league/LEAGUE_CYCLE_HANDBOOK.md:62` -- - Ruled 2026-10-26 (`ladder-epochs`): v0.14.5 ships on L6 with no bump; a fresh
 - `docs/playtest/PLAYTEST_EXTRACT_2026-07-31.md:6` -- - **Status:** EXTRACTED BY CLAUDE 2026-07-31, **not yet ruled on by Pip.** The
 - `docs/qa/PLAYTEST_READINESS_2026-07-15.md:88` -- (button overlap, text clipping, theme glitches) are not ruled out by this check.
 - `docs/release-body-v0.14.0-CORRECTED.md:35` -- and the ruled promotions applied (#1137), against Pip's rulings of 2026-08-04.

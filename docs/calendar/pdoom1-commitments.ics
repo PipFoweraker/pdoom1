@@ -870,7 +870,7 @@ DTSTART;VALUE=DATE:20260812
 DTEND;VALUE=DATE:20260813
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:387. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:398. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `godot/scripts/core/capacity.gd:5` -- ## Ru
  led 2026-08-12 (coordination/DESIGN_2026-08-12_interrupt-resolution-varia
@@ -1201,6 +1201,28 @@ ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- PROVENANCE_COMPLETENESS.md (unparsed) -
  - unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:28a7601dcf5b39e5@commitments.pdoom1
+DTSTAMP:20260813T000000Z
+DTSTART;VALUE=DATE:20260813
+DTEND;VALUE=DATE:20260814
+SUMMARY:[UNPARSED] needs a declaration -- RELEASE_GATES.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/dev/RELEASE_GATES
+ .md:240. 1 line(s) in docs/dev/RELEASE_GATES.md mention this date and no 
+ COMMITMENT: declaration accounts for it. Either add a declaration or the 
+ date is incidental. First line: the checkout produces exactly the same "U
+ I but no game" picture (2026-08-13)\; -- Generated from tracked sources b
+ y scripts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- RELEASE_GATES.md (unparsed) -- unowned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
@@ -1864,7 +1886,7 @@ DTSTART;VALUE=DATE:20260814
 DTEND;VALUE=DATE:20260815
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:406. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:417. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `godot/tests/unit/simulation/test_events.gd
  :50` -- ## THE RATCHET WAS DELIBERATELY LOOSENED -- 2026-08-14\, ruled by
@@ -3732,6 +3754,29 @@ DESCRIPTION:needs a declaration -- DEV_BLOG_DECISION_2026-08-21.md (unpars
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:f1d3f16dd3932590@commitments.pdoom1
+DTSTAMP:20260821T000000Z
+DTSTART;VALUE=DATE:20260821
+DTEND;VALUE=DATE:20260822
+SUMMARY:[UNPARSED] needs a declaration -- LEAGUE_CYCLE_HANDBOOK.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/league/LEAGUE_CYC
+ LE_HANDBOOK.md:320. 1 line(s) in docs/league/LEAGUE_CYCLE_HANDBOOK.md men
+ tion this date and no COMMITMENT: declaration accounts for it. Either add
+  a declaration or the date is incidental. First line: this on 2026-08-21.
+  -- Generated from tracked sources by scripts/generate_commitment_calenda
+ r.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- LEAGUE_CYCLE_HANDBOOK.md (unparsed) -- 
+ unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:4e1f21f9077551a5@commitments.pdoom1
 DTSTAMP:20260821T000000Z
 DTSTART;VALUE=DATE:20260821
@@ -4244,6 +4289,30 @@ DESCRIPTION:needs a declaration -- CODE_SIGNING.md (unparsed) -- unowned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:c0aa820aadbb33c7@commitments.pdoom1
+DTSTAMP:20260823T000000Z
+DTSTART;VALUE=DATE:20260823
+DTEND;VALUE=DATE:20260824
+SUMMARY:[UNPARSED] needs a declaration -- LEAGUE_CYCLE_HANDBOOK.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/league/LEAGUE_CYC
+ LE_HANDBOOK.md:162. 1 line(s) in docs/league/LEAGUE_CYCLE_HANDBOOK.md men
+ tion this date and no COMMITMENT: declaration accounts for it. Either add
+  a declaration or the date is incidental. First line: ladder bump or a `L
+ adder-Impact: none -- <reason>` line. Ruled 2026-08-23 -- Generated from 
+ tracked sources by scripts/generate_commitment_calendar.py\; regenerate t
+ o update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- LEAGUE_CYCLE_HANDBOOK.md (unparsed) -- 
+ unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:ab73cd6fcd8a697c@commitments.pdoom1
 DTSTAMP:20260823T000000Z
 DTSTART;VALUE=DATE:20260823
@@ -4322,7 +4391,7 @@ DTSTART;VALUE=DATE:20260823
 DTEND;VALUE=DATE:20260824
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:52. 8 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
+ d:52. 9 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
  TMENT: declaration accounts for it. Either add a declaration or the date 
  is incidental. First line: | 2026-08-23 | ADR-0020 -- Machine actor ident
  ity: a bot acts under its own name\, or the attribution record is fiction
@@ -4865,6 +4934,30 @@ DESCRIPTION:needs a declaration -- LEAGUE_CUTOVER_PLAYBOOK.md (unparsed) -
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:72c59a1e67d5aa7a@commitments.pdoom1
+DTSTAMP:20260824T000000Z
+DTSTART;VALUE=DATE:20260824
+DTEND;VALUE=DATE:20260825
+SUMMARY:[UNPARSED] needs a declaration -- LEAGUE_CYCLE_HANDBOOK.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/league/LEAGUE_CYC
+ LE_HANDBOOK.md:57. 4 line(s) in docs/league/LEAGUE_CYCLE_HANDBOOK.md ment
+ ion this date and no COMMITMENT: declaration accounts for it. Either add 
+ a declaration or the date is incidental. First line: 2026-08-24 (gate rec
+ ord: `docs/rituals/records/GATE_RECORD_2026-08-24_v0.14.3.md`). -- Genera
+ ted from tracked sources by scripts/generate_commitment_calendar.py\; reg
+ enerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- LEAGUE_CYCLE_HANDBOOK.md (unparsed) -- 
+ unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:88257a9c86e90e44@commitments.pdoom1
 DTSTAMP:20260824T000000Z
 DTSTART;VALUE=DATE:20260824
@@ -4885,6 +4978,28 @@ ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- RELEASE_FLOW_MAP_2026-08-24.md (unparse
  d) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:7aec50b6c5a10ba9@commitments.pdoom1
+DTSTAMP:20260824T000000Z
+DTSTART;VALUE=DATE:20260824
+DTEND;VALUE=DATE:20260825
+SUMMARY:[UNPARSED] needs a declaration -- RELEASE_GATES.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/dev/RELEASE_GATES
+ .md:95. 1 line(s) in docs/dev/RELEASE_GATES.md mention this date and no C
+ OMMITMENT: declaration accounts for it. Either add a declaration or the d
+ ate is incidental. First line: 2026-08-24. Read the days as an ordering\,
+  not a calendar. -- Generated from tracked sources by scripts/generate_co
+ mmitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- RELEASE_GATES.md (unparsed) -- unowned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
@@ -4988,7 +5103,7 @@ DTSTART;VALUE=DATE:20260824
 DTEND;VALUE=DATE:20260825
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:81. 17 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:81. 19 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: | 2026-08-24 | a command's exit status must b
  e read from the command\, never through a pipe: $? after a pipeline is th
@@ -6087,7 +6202,7 @@ DTSTART;VALUE=DATE:20260831
 DTEND;VALUE=DATE:20260901
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:395. 2 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:406. 2 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `godot/scripts/core/researcher.gd:150` -- #
   SEAM (ruled 2026-07-27\, review-by 2026-08-31): AUDITS ground-truth repo
@@ -7269,6 +7384,74 @@ DESCRIPTION:needs a declaration -- generate_images.py (unparsed) -- unowne
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:fea646524aa9a523@commitments.pdoom1
+DTSTAMP:20261026T000000Z
+DTSTART;VALUE=DATE:20261026
+DTEND;VALUE=DATE:20261027
+SUMMARY:[UNPARSED] needs a declaration -- DEVELOPERGUIDE.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/DEVELOPERGUIDE.md
+ :160. 1 line(s) in docs/DEVELOPERGUIDE.md mention this date and no COMMIT
+ MENT: declaration accounts for it. Either add a declaration or the date i
+ s incidental. First line: > Current as of 2026-10-26. Full guide with dia
+ grams: -- Generated from tracked sources by scripts/generate_commitment_c
+ alendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- DEVELOPERGUIDE.md (unparsed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:e20959e5d178a5b3@commitments.pdoom1
+DTSTAMP:20261026T000000Z
+DTSTART;VALUE=DATE:20261026
+DTEND;VALUE=DATE:20261027
+SUMMARY:[UNPARSED] needs a declaration -- LEAGUE_CYCLE_HANDBOOK.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/league/LEAGUE_CYC
+ LE_HANDBOOK.md:3. 12 line(s) in docs/league/LEAGUE_CYCLE_HANDBOOK.md ment
+ ion this date and no COMMITMENT: declaration accounts for it. Either add 
+ a declaration or the date is incidental. First line: **This is the MASTER
+  copy.** Ruled by Pip on 2026-10-26 (#1266\, #1267\; recorded -- Generate
+ d from tracked sources by scripts/generate_commitment_calendar.py\; regen
+ erate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- LEAGUE_CYCLE_HANDBOOK.md (unparsed) -- 
+ unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:400e5556d3d5a571@commitments.pdoom1
+DTSTAMP:20261026T000000Z
+DTSTART;VALUE=DATE:20261026
+DTEND;VALUE=DATE:20261027
+SUMMARY:[UNPARSED] needs a declaration -- RELEASE_GATES.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/dev/RELEASE_GATES
+ .md:246. 1 line(s) in docs/dev/RELEASE_GATES.md mention this date and no 
+ COMMITMENT: declaration accounts for it. Either add a declaration or the 
+ date is incidental. First line: **One thing to weigh alongside it.** On 2
+ 026-10-26 Pip ruled that the -- Generated from tracked sources by scripts
+ /generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- RELEASE_GATES.md (unparsed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:b8cc601d655ae0e1@commitments.pdoom1
 DTSTAMP:20261026T000000Z
 DTSTART;VALUE=DATE:20261026
@@ -7289,6 +7472,29 @@ ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- RELEASE_PLATFORMS.md (unparsed) -- unow
  ned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:4897797fa0730f24@commitments.pdoom1
+DTSTAMP:20261026T000000Z
+DTSTART;VALUE=DATE:20261026
+DTEND;VALUE=DATE:20261027
+SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
+ d:277. 5 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ ITMENT: declaration accounts for it. Either add a declaration or the date
+  is incidental. First line: - `docs/dev/RELEASE_GATES.md:246` -- **One th
+ ing to weigh alongside it.** On 2026-10-26 Pip ruled that the -- Generate
+ d from tracked sources by scripts/generate_commitment_calendar.py\; regen
+ erate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- RULINGS.md (unparsed) -- unowned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
@@ -7313,6 +7519,30 @@ ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- STEAM_INTEGRATION_SUMMARY.md (unparsed)
   -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:38313778cf0d5122@commitments.pdoom1
+DTSTAMP:20261026T000000Z
+DTSTART;VALUE=DATE:20261026
+DTEND;VALUE=DATE:20261027
+SUMMARY:[UNPARSED] needs a declaration -- WEBSITE_DEV_NOTES_PLAN.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/dev/WEBSITE_DEV_N
+ OTES_PLAN.md:3. 3 line(s) in docs/dev/WEBSITE_DEV_NOTES_PLAN.md mention t
+ his date and no COMMITMENT: declaration accounts for it. Either add a dec
+ laration or the date is incidental. First line: **Status: PROPOSAL for Pi
+ p.** Asked for on 2026-10-26 under #1025 ("come up with -- Generated from
+  tracked sources by scripts/generate_commitment_calendar.py\; regenerate 
+ to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- WEBSITE_DEV_NOTES_PLAN.md (unparsed) --
+  unowned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
@@ -7653,7 +7883,7 @@ DTSTART;VALUE=DATE:20270727
 DTEND;VALUE=DATE:20270728
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:308. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:310. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `docs/game-design/DESIGN_2026-08-24_diegeti
  c-opening.md:628` -- is ruled out today."* The doctrine has a **review cl

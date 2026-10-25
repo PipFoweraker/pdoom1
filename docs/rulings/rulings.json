@@ -1092,6 +1092,14 @@
       "text": "| K8 | `coordination` | File **one issue per Block A item**, labelled `broadcast`, same day, per the agenda -- and note that A1 ruled without a transport (`pdoom1#1115`) is a specification, not a deli"
     },
     {
+      "source": "docs/dev/RELEASE_GATES.md:221",
+      "text": "| 4. Split Gate 4 | Adds a seventh checkpoint, disturbs the numbering ruled on 2026-07-29 | Same catch as option 2 | More ceremony for the same check; renumbering confuses records and sheets |"
+    },
+    {
+      "source": "docs/dev/RELEASE_GATES.md:246",
+      "text": "**One thing to weigh alongside it.** On 2026-10-26 Pip ruled that the"
+    },
+    {
       "source": "docs/game-design/ADR_DQ_AUDIT_2026-08-03.md:106",
       "text": "3. **League cadence RULED monthly (2026-07-21)** (backlog:405-408) -- recorded"
     },
@@ -1450,6 +1458,42 @@
     {
       "source": "docs/game-design/decisions/ADR-0019-pull-from-demand-asset-pipeline.md:231",
       "text": "RULED by Pip, 2026-08-03, when this was raised as the one assumption the ADR"
+    },
+    {
+      "source": "docs/league/LEAGUE_CYCLE_HANDBOOK.md:135",
+      "text": "| OPENS in (ruled 2026-08-24) |      | from a version number.      |"
+    },
+    {
+      "source": "docs/league/LEAGUE_CYCLE_HANDBOOK.md:139",
+      "text": "**The seed.** Ruled 2026-08-24 (`league-seeds`, declared at"
+    },
+    {
+      "source": "docs/league/LEAGUE_CYCLE_HANDBOOK.md:162",
+      "text": "ladder bump or a `Ladder-Impact: none -- <reason>` line. Ruled 2026-08-23"
+    },
+    {
+      "source": "docs/league/LEAGUE_CYCLE_HANDBOOK.md:193",
+      "text": "Pip ruled they should not open the league; rules unchanged so L3 stayed; the seed"
+    },
+    {
+      "source": "docs/league/LEAGUE_CYCLE_HANDBOOK.md:199",
+      "text": "board you just ruled must open empty. And **never verify by \"the GET returned"
+    },
+    {
+      "source": "docs/league/LEAGUE_CYCLE_HANDBOOK.md:213",
+      "text": "Ruled 2026-10-26 (`league-seeds`, #823): **leagues use a hard cutover, not layered"
+    },
+    {
+      "source": "docs/league/LEAGUE_CYCLE_HANDBOOK.md:272",
+      "text": "- Dev-assisted runs: ruled 2026-10-26 (`league-integrity`) that they are MARKED on"
+    },
+    {
+      "source": "docs/league/LEAGUE_CYCLE_HANDBOOK.md:3",
+      "text": "**This is the MASTER copy.** Ruled by Pip on 2026-10-26 (#1266, #1267; recorded"
+    },
+    {
+      "source": "docs/league/LEAGUE_CYCLE_HANDBOOK.md:62",
+      "text": "- Ruled 2026-10-26 (`ladder-epochs`): v0.14.5 ships on L6 with no bump; a fresh"
     },
     {
       "source": "docs/playtest/PLAYTEST_EXTRACT_2026-07-31.md:6",

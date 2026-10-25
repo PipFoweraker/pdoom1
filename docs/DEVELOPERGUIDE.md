@@ -24,6 +24,7 @@ For **installation and troubleshooting**, see the [README](../README.md).
 
 ## Table of Contents
 - [Development Setup](#development-setup) (Line 28)
+- [Release and League Gates](#release-and-league-gates-current) (current -- see `docs/dev/RELEASE_GATES.md`)
 - [Health Monitoring Infrastructure](#health-monitoring-infrastructure) (Line 60)
 - [Enhanced Settings System Architecture](#enhanced-settings-system-architecture) (Line 90)
 - [Custom Sound Overrides (sounds/)](#custom-sound-overrides-sounds) (Line 100)
@@ -151,6 +152,32 @@ crash class structurally impossible from any call site. Full write-up:
   exports, and PROVES a freshness marker is in the `.pck` before emitting. NEVER
   hand-run a raw `godot --export` (stale-cache risk -- it burned ~12 cycles in
   v0.11.0).
+
+---
+
+## Release and League Gates (current)
+
+> Current as of 2026-10-26. Full guide with diagrams:
+> [`docs/dev/RELEASE_GATES.md`](dev/RELEASE_GATES.md).
+
+Every league release passes six named gates, in order: [Gate 1: LAST POUR],
+[Gate 2: THE FREEZE], [Gate 3: PACK BLESSED], [Gate 4: PROVEN BUILD],
+[Gate 5: SEED BLESSING], [Gate 6: BOARD OPENS]. Each gate is a set of literal
+commands plus a sentence Pip speaks only when every clause is backed by a check.
+
+```
++--------+   +--------+   +--------+   +--------+   +--------+   +--------+
+| 1 POUR |-->| 2      |-->| 3 PACK |-->| 4      |-->| 5 SEED |-->| 6 BOARD|
+|        |   | FREEZE |   |        |   | PROVEN |   |        |   |  OPENS |
++--------+   +--------+   +--------+   +--------+   +--------+   +--------+
+```
+
+- Procedures (read FROM these at the gate): `docs/rituals/`.
+- Board key, seeds, epochs, bless vs roll:
+  [`docs/league/LEAGUE_CYCLE_HANDBOOK.md`](league/LEAGUE_CYCLE_HANDBOOK.md).
+- Branches, tags, hotpatch criteria: [`RELEASING.md`](../RELEASING.md).
+- Open decision: #1025 (does the freeze come before anyone has launched the
+  build?) -- laid out in `RELEASE_GATES.md` section 6.
 
 ---
 
