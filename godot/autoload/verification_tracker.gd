@@ -48,7 +48,20 @@ var game_version: String = ""
 # identical hashes (score-integrity: the fingerprint math is unchanged).
 var ladder_version: String = ""
 
-# Debug mode (enables verbose logging)
+# Debug mode (enables verbose logging: one print per action, event, response, window,
+# RNG roll and turn end). LOGGING ONLY -- it is read by nothing but the `if debug_mode:
+# print(...)` blocks below and never enters the hash chain or the replay log, so the
+# fingerprint is identical with it on or off (pinned by
+# test_verification_determinism.gd::test_debug_mode_does_not_change_hash).
+#
+# OPT-IN, default OFF in editor and release builds (#1193). GameManager used to switch it
+# on unconditionally for every game, which made it the bulk of the simulation tier's
+# multi-million-line stdout. Turn it on for a session with either:
+#   godot --path godot -- --verify-debug      (user arg, after the `--`)
+#   PDOOM1_VERIFY_DEBUG=1 godot --path godot
+# or call enable_debug() from code/tests.
+const DEBUG_USER_ARG := "--verify-debug"
+const DEBUG_ENV_VAR := "PDOOM1_VERIFY_DEBUG"
 var debug_mode: bool = false
 
 # Ordered replayable input sequence (ADR-0006: the input string is the canonical run
@@ -66,6 +79,19 @@ var event_schedule: Array = []
 # baseline seed represents). L1 stamps it alongside (seed, game_version) so the artifact
 # carries which league it was produced in -- cross-version/cross-league boards (DQ-3) read it.
 var league_id: String = ""
+
+
+func _ready() -> void:
+	if debug_requested(OS.get_cmdline_user_args(), OS.get_environment(DEBUG_ENV_VAR)):
+		enable_debug()
+
+
+static func debug_requested(user_args: PackedStringArray, env_value: String) -> bool:
+	"""True when the session opted in to verbose tracker logging (#1193).
+	Pure function of its inputs so the opt-in rule is testable without a relaunch."""
+	if DEBUG_USER_ARG in user_args:
+		return true
+	return env_value.strip_edges().to_lower() in ["1", "true", "yes", "on"]
 
 
 func start_tracking(seed: String, version: String = "unknown", schedule: Array = [], league: String = "", ladder: String = ""):
