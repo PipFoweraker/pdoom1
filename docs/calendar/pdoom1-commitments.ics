@@ -2204,7 +2204,7 @@ DTSTAMP:20260815T000000Z
 DTSTART;VALUE=DATE:20260815
 DTEND;VALUE=DATE:20260816
 SUMMARY:[UNPARSED] needs a declaration -- CLAUDE.md
-DESCRIPTION:Owner: unowned. Kind: unparsed. Source: CLAUDE.md:254. 1 line(
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: CLAUDE.md:263. 1 line(
  s) in CLAUDE.md mention this date and no COMMITMENT: declaration accounts
   for it. Either add a declaration or the date is incidental. First line: 
  `UNDECLARED`\, never dropped. **Cross-repo by design** (ruled 2026-08-15)
@@ -5841,7 +5841,7 @@ DTSTAMP:20260829T000000Z
 DTSTART;VALUE=DATE:20260829
 DTEND;VALUE=DATE:20260830
 SUMMARY:[UNPARSED] needs a declaration -- CLAUDE.md
-DESCRIPTION:Owner: unowned. Kind: unparsed. Source: CLAUDE.md:314. 1 line(
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: CLAUDE.md:323. 1 line(
  s) in CLAUDE.md mention this date and no COMMITMENT: declaration accounts
   for it. Either add a declaration or the date is incidental. First line: 
  entry said "the ENTIRE tree" until 2026-08-29\, and that phrasing was use
@@ -7890,6 +7890,28 @@ ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- gate_6_board_opens.md (unparsed) -- uno
  wned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:20755ac5cbd6bf19@commitments.pdoom1
+DTSTAMP:20261028T000000Z
+DTSTART;VALUE=DATE:20261028
+DTEND;VALUE=DATE:20261029
+SUMMARY:[UNPARSED] needs a declaration -- CLAUDE.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: CLAUDE.md:49. 2 line(s
+ ) in CLAUDE.md mention this date and no COMMITMENT: declaration accounts 
+ for it. Either add a declaration or the date is incidental. First line: t
+ ier USED to emit ~13M `print()` lines (measured 2026-10-28\; 99.6% from -
+ - Generated from tracked sources by scripts/generate_commitment_calendar.
+ py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- CLAUDE.md (unparsed) -- unowned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
