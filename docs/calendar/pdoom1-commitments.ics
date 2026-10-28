@@ -8408,7 +8408,7 @@ DTSTART;VALUE=DATE:20270727
 DTEND;VALUE=DATE:20270728
 SUMMARY:[REVIEW] ADR-0018 render-only office doctrine: standing review
 DESCRIPTION:Owner: pdoom1-seat. Kind: review. Source: docs/calendar/COMMIT
- MENTS.md:190. the ADR states office gameplay foreclosed by default must C
+ MENTS.md:192. the ADR states office gameplay foreclosed by default must C
  LEAR this review rather than tack on. Eleven months out\, which is exactl
  y the horizon a person cannot hold. -- Generated from tracked sources by 
  scripts/generate_commitment_calendar.py\; regenerate to update.
@@ -8481,6 +8481,50 @@ BEGIN:VALARM
 ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- RULINGS.md (unparsed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:61e247269c8c55b6@commitments.pdoom1
+DTSTAMP:20271028T000000Z
+DTSTART;VALUE=DATE:20271028
+DTEND;VALUE=DATE:20271029
+SUMMARY:[EXPIRY] CROSS_REPO_TOKEN expires: the release workflow can no lon
+ ger tell pdoom1-website about a new version
+DESCRIPTION:Owner: pip. Kind: expiry. Source: docs/calendar/COMMITMENTS.md
+ :190. fine-grained PAT\, pdoom1-website only\, Contents read/write\, crea
+ ted 2026-10-28. Its predecessor (created 2025-09-15) lapsed unnoticed and
+  v0.14.5's website sync failed HTTP 401. Renew at github.com/settings/per
+ sonal-access-tokens\, then update the secret via the repo's Settings > Se
+ crets page (gh secret set via a Claude `!` command cannot prompt and stor
+ es an empty value). -- Generated from tracked sources by scripts/generate
+ _commitment_calendar.py\; regenerate to update.
+CATEGORIES:EXPIRY
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT712H
+DESCRIPTION:CROSS_REPO_TOKEN expires: the release workflow can no longer t
+ ell pdoom1-website about a new version (expiry) -- pip
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT328H
+DESCRIPTION:CROSS_REPO_TOKEN expires: the release workflow can no longer t
+ ell pdoom1-website about a new version (expiry) -- pip
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT64H
+DESCRIPTION:CROSS_REPO_TOKEN expires: the release workflow can no longer t
+ ell pdoom1-website about a new version (expiry) -- pip
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:CROSS_REPO_TOKEN expires: the release workflow can no longer t
+ ell pdoom1-website about a new version (expiry) -- pip
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT

@@ -13,7 +13,7 @@ Horizon: **2026-08-09** (the prose scan reports dates at or after this; roll it
 forward deliberately in `COMMITMENTS.md`, never automatically -- a clock-reading
 generator goes stale overnight and trains people to ignore the check).
 
-**59 declared, 4 release-train, 287 UNPARSED, 0 malformed.**
+**60 declared, 4 release-train, 287 UNPARSED, 0 malformed.**
 
 ## Declared commitments
 
@@ -81,7 +81,8 @@ generator goes stale overnight and trains people to ignore the check).
 | 2026-12-04 | release | Release train: v0.18 ships -- (unnamed) | pip | 7, 1, 0 | `docs/ROADMAP.md (Monthly Themes table)` |
 | 2026-12-19 | review | Read the 49 archived pygame-era dev-blog entries end to end and write the retrospective post: what the pygame era actually cost, what survived the port to Godot, and what the agent-written progress reports got wrong about their own importance | pip | 14, 3, 0 | `docs/DEV_BLOG_DECISION_2026-08-21.md:174` |
 | 2026-12-31 | deadline | Chinese localisation of the game | pip | 14, 7, 2, 0 | `docs/rulings/DECISIONS_2026-10-26_return.md:87` |
-| 2027-07-27 | review | ADR-0018 render-only office doctrine: standing review | pdoom1-seat | 14, 3, 0 | `docs/calendar/COMMITMENTS.md:190` |
+| 2027-07-27 | review | ADR-0018 render-only office doctrine: standing review | pdoom1-seat | 14, 3, 0 | `docs/calendar/COMMITMENTS.md:192` |
+| 2027-10-28 | expiry | CROSS_REPO_TOKEN expires: the release workflow can no longer tell pdoom1-website about a new version | pip | 30, 14, 3, 0 | `docs/calendar/COMMITMENTS.md:190` |
 
 ## UNPARSED -- a date in the written record with no declaration
 
