@@ -22,11 +22,14 @@ name: Guards
 #                               warn-only without --strict. In CI it could return exactly
 #                               one answer forever, which is the thing this PR is against.
 
+# release/** added 2026-10-26 (#1269): the version-bump commit on a release branch
+# is exactly what release-horizon-check, patch-notes-cover-shipped-version and the
+# index checks exist to catch, and it never passes through main first.
 on:
   pull_request:
-    branches: [ main ]
+    branches: [ main, 'release/**' ]
   push:
-    branches: [ main ]
+    branches: [ main, 'release/**' ]
   # Forcible, for the reason quality-checks.yml already learned the hard way: a PR that
   # touches .github/workflows/ can have its pull_request-triggered runs suppressed, and a
   # gate you cannot invoke on demand is only as good as the events that happen to fire it.
@@ -136,6 +139,11 @@ jobs:
           guard "scene-nav self-test" python tools/check_scene_nav.py --self-test
           # Pre-existing self-tests for tools whose GATE had no CI presence.
           guard "credential-check self-test" python tools/assets/check_credentials.py --self-test
+          # The release-branch guard runs for real only at tag time (enhanced-release.yml
+          # preflight). Proving it on every PR means a decayed detector is found here,
+          # not on release night. Both are hermetic: throwaway repos, no network.
+          guard "release-branch self-test" python tools/check_release_branch.py --self-test
+          guard "release-branch unit tests" python -m unittest tests.test_check_release_branch
 
           # --- the thirteen guards that ran in pre-commit and nowhere else ---------
           guard "no-emoji" python scripts/check_no_emoji.py

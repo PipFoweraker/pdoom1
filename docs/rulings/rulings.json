@@ -605,7 +605,7 @@
       "mechanism": "scripts/check_platform_builds.py + scripts/report_missing_build_issue.py, run by the platform-build-status job below",
       "supersedes": null,
       "superseded_by": null,
-      "source": ".github/workflows/enhanced-release.yml:240"
+      "source": ".github/workflows/enhanced-release.yml:452"
     },
     {
       "id": "pdoom1:2026-08-24:c4c9f98a",
