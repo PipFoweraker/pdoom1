@@ -551,7 +551,7 @@ func increment_games_played() -> void:
 ##
 ## Precedent, and the reason this is a rule rather than a preference: on
 ## 2026-07-30 the const still read `weekly-2026-w30` and was corrected to
-## `weekly-2026-w31` BEFORE that cut (docs/rituals/gate_5_seed_blessing.md).
+## `weekly-2026-w31` BEFORE that cut (docs/rituals/gate_3_seed_blessing.md).
 ## A stale week number has always been treated here as a defect to fix before
 ## cutting, because a board key cannot be tidied afterwards -- "filtering
 ## standings is editing them".

@@ -1,7 +1,7 @@
 # RELEASE PLATFORMS -- what we can build, and what we have proven
 
 **Status:** written 2026-07-31, from facts re-verified on Pip's Windows machine
-that day. Companion to `docs/rituals/gate_4_proven_build.md` (the cut) and
+that day. Companion to `docs/rituals/gate_5_proven_build.md` (the cut) and
 `docs/rituals/gate_6_board_opens.md` (the doors). This sheet owns the question
 those two do not: *which platforms, from which machine, and who proved it runs.*
 
@@ -139,8 +139,9 @@ reports success while packing a half-imported tree. The freshness marker check
 would not necessarily catch that, because the marker only proves *the marker
 file* made it into the pack, not that every other resource did.
 
-The same rule applies to anything else touching the tree. `[Gate 4]` already
-states it for agents; it applies to a second build with equal force.
+The same rule applies to anything else touching the tree.
+`[Gate 5: PROVEN BUILD]` already states it for agents; it applies to a second
+build with equal force.
 
 ```
 # 0. Preconditions, once, before any of the three.
@@ -264,7 +265,7 @@ for any release cut solely on Pip's Windows box:
 
 | Platform | "We built it" | "A human proved it runs" |
 |---|---|---|
-| Windows | yes -- `build_release.py` exits 0 having proven its marker in the pack | yes, if `[Gate 4]` check 5 was performed (the human playtest of the built artifact) |
+| Windows | yes -- `build_release.py` exits 0 having proven its marker in the pack | yes, if `[Gate 5: PROVEN BUILD]` check 5 was performed (the human playtest of the built artifact) |
 | Linux | yes | **no.** Nobody has launched it. Say so. |
 | macOS | yes | **no.** Nobody has launched it, and see Gatekeeper below. |
 

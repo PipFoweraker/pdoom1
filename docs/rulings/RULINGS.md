@@ -5,7 +5,7 @@
 > `python scripts/generate_rulings.py`. The convention, and why it looks
 > like this, is argued in `docs/rulings/RULINGS_CONVENTION.md`.
 
-**80 ruling(s)** across **28 flavour(s)**. **246** prose ruling(s) not yet declared.
+**81 ruling(s)** across **28 flavour(s)**. **263** prose ruling(s) not yet declared.
 
 ## One index, five sources
 
@@ -16,7 +16,7 @@ flattening either into one line would delete what makes it worth having.
 
 | kind | n | what it is | where |
 |---|---:|---|---|
-| `declaration` | 54 | a `RULING:` line written next to what it governs | anywhere |
+| `declaration` | 55 | a `RULING:` line written next to what it governs | anywhere |
 | `adr` | 20 | a full architecture argument, summarised here | `docs/game-design/decisions/` |
 | `session` | 3 | a transcript or workshop ruling set, pointed at | `docs/SPOKEN_*`, `*RULINGS*` |
 | `card` | 3 | the input a ruling was made from | `docs/decision-cards/` |
@@ -144,11 +144,12 @@ flavour it belongs to and read what was already decided there.
 |---|---|---|---|
 | 2026-10-26 | gates reorder to decide, lock, prove, open: Last Pour, Pack Blessed, Seed Blessing, then The Freeze (= the release-branch cut, plus a windowed check that a run actually starts), then Proven Build, then Board Opens; gate names stay, numbers follow the new order | `docs/rituals gate sheets + docs/dev/RELEASE_GATES.md, amended under #1025 (replaces the gate numbering in the undeclared 2026-07-29 naming ruling, docs/GLOSSARY.md)` | `docs/rulings/DECISIONS_2026-10-26_return.md:46` |
 
-### `league-integrity` (only one so far)
+### `league-integrity`
 
 | date | ruling | mechanism | source |
 |---|---|---|---|
 | 2026-10-26 | dev-assisted runs are MARKED on submitted scores, never excluded | `#1012` | `docs/rulings/DECISIONS_2026-10-26_return.md:71` |
+| 2026-10-29 | global score submission stays OFF on the machine used to prove a release build, because proving runs now play the league seed before the board opens | `docs/rituals/gate_6_board_opens.md check 7 (empty-board attestation)` | `docs/rituals/gate_5_proven_build.md:118` |
 
 ### `league-seeds`
 
@@ -295,9 +296,12 @@ is not.
 - `CLAUDE.md:254` -- `UNDECLARED`, never dropped. **Cross-repo by design** (ruled 2026-08-15):
 - `art_source/pixellab_2026-07-26_cat_sweep/MANIFEST.md:3` -- Execution of Pip's locked recipe (ruled 2026-07-26, "go cat sweep 8 dir now"):
 - `docs/CONTENT_DISTRIBUTION_SYSTEM.md:10` -- > **SUPERSEDED, not merely "outdated in spirit", as of 2026-08-13.** Pip ruled
+- `docs/DEVELOPERGUIDE.md:164` -- prove, open* (ruled 2026-10-26, #1025): [Gate 1: LAST POUR],
+- `docs/DEVELOPERGUIDE.md:183` -- - Gate order: #1025, RULED 2026-10-26 -- laid out in `RELEASE_GATES.md`
 - `docs/DEV_BLOG_DECISION_2026-08-21.md:155` -- Pip ruled **option A**: archive the pygame-era entries, keep the 2026-07-22 post.
-- `docs/GLOSSARY.md:278` -- Naming (ruled 2026-07-29, Pip): gates are written name-first with a 1-6
-- `docs/GLOSSARY.md:477` -- ## Observed inconsistency (flagged, not ruled)
+- `docs/GLOSSARY.md:283` -- Naming (ruled 2026-07-29, Pip): gates are written name-first with a 1-6
+- `docs/GLOSSARY.md:285` -- (ruled 2026-10-26, #1025, `docs/rulings/DECISIONS_2026-10-26_return.md`
+- `docs/GLOSSARY.md:487` -- ## Observed inconsistency (flagged, not ruled)
 - `docs/HANDOVER_2026-08-06_EVENING.md:43` -- He ruled on it Tuesday and it was never built. B1 and B2 refer to the proposals in
 - `docs/HANDOVER_2026-08-24_pdoom1_seat.md:141` -- immediately with an offer to revert; he ruled keep. The changes were verified
 - `docs/HANDOVER_2026-08-24_pdoom1_seat.md:45` -- ## 2. What was ruled today
@@ -348,6 +352,7 @@ is not.
 - `docs/design/PHASE_GUARD_AUDIT_2026-08-06.md:109` -- All three are removed by **PR #1143**, which is the ruled fix. Nothing here duplicates that
 - `docs/design/UPDATER_DESIGN.md:55` -- auto pck-swap patcher (unbuilt). Ruled 2026-07-23: hash-in-manifest over
 - `docs/design/WORKSHOP_TRI_REPO_PREP_2026-08-06.md:552` -- | K8 | `coordination` | File **one issue per Block A item**, labelled `broadcast`, same day, per the agenda -- and note that A1 ruled without a transport (`pdoom1#1115`) is a specification, not a deli
+- `docs/dev/RELEASE_GATES.md:170` -- ## 6. Issue #1025 -- the gate order (RULED 2026-10-26)
 - `docs/game-design/ADR_DQ_AUDIT_2026-08-03.md:106` -- 3. **League cadence RULED monthly (2026-07-21)** (backlog:405-408) -- recorded
 - `docs/game-design/ADR_DQ_AUDIT_2026-08-03.md:110` -- model RULED** (backlog:171-177), **DQ-24 five demand categories RULED**
 - `docs/game-design/ADR_DQ_AUDIT_2026-08-03.md:112` -- (backlog:723-730), **two-screen PLAN/WATCH model RULED** (backlog:686+),
@@ -438,6 +443,15 @@ is not.
 - `docs/game-design/decisions/ADR-0018-render-only-office-doctrine.md:161` -- Camera2D enters consideration only when a ruled office tier exceeds one
 - `docs/game-design/decisions/ADR-0019-pull-from-demand-asset-pipeline.md:193` -- magenta cat shipped deliberately, as policy. Auto-stripping is ruled OUT,
 - `docs/game-design/decisions/ADR-0019-pull-from-demand-asset-pipeline.md:231` -- RULED by Pip, 2026-08-03, when this was raised as the one assumption the ADR
+- `docs/league/LEAGUE_CYCLE_HANDBOOK.md:135` -- | OPENS in (ruled 2026-08-24) |      | from a version number.      |
+- `docs/league/LEAGUE_CYCLE_HANDBOOK.md:139` -- **The seed.** Ruled 2026-08-24 (`league-seeds`, declared at
+- `docs/league/LEAGUE_CYCLE_HANDBOOK.md:164` -- ladder bump or a `Ladder-Impact: none -- <reason>` line. Ruled 2026-08-23
+- `docs/league/LEAGUE_CYCLE_HANDBOOK.md:195` -- Pip ruled they should not open the league; rules unchanged so L3 stayed; the seed
+- `docs/league/LEAGUE_CYCLE_HANDBOOK.md:201` -- board you just ruled must open empty. And **never verify by "the GET returned
+- `docs/league/LEAGUE_CYCLE_HANDBOOK.md:215` -- Ruled 2026-10-26 (`league-seeds`, #823): **leagues use a hard cutover, not layered
+- `docs/league/LEAGUE_CYCLE_HANDBOOK.md:274` -- - Dev-assisted runs: ruled 2026-10-26 (`league-integrity`) that they are MARKED on
+- `docs/league/LEAGUE_CYCLE_HANDBOOK.md:3` -- **This is the MASTER copy.** Ruled by Pip on 2026-10-26 (#1266, #1267; recorded
+- `docs/league/LEAGUE_CYCLE_HANDBOOK.md:62` -- - Ruled 2026-10-26 (`ladder-epochs`): v0.14.5 ships on L6 with no bump; a fresh
 - `docs/playtest/PLAYTEST_EXTRACT_2026-07-31.md:6` -- - **Status:** EXTRACTED BY CLAUDE 2026-07-31, **not yet ruled on by Pip.** The
 - `docs/qa/PLAYTEST_READINESS_2026-07-15.md:88` -- (button overlap, text clipping, theme glitches) are not ruled out by this check.
 - `docs/release-body-v0.14.0-CORRECTED.md:35` -- and the ruled promotions applied (#1137), against Pip's rulings of 2026-08-04.
@@ -445,6 +459,10 @@ is not.
 - `docs/release-body-v0.14.0-CORRECTED.md:43` -- - **The last player-facing "AP" is gone**, and one number format is ruled across
 - `docs/releases/RELEASE_LINKING_TO_0.20.md:111` -- Whichever is ruled, it should then be **mechanised**: derive the expected seed
 - `docs/releases/RELEASE_LINKING_TO_0.20.md:175` -- Under the atomise protocol clause 3 (ruled 2026-08-24: *"do not build an atom
+- `docs/rituals/README.md:8` -- The order is *decide, lock, prove, open* (ruled 2026-10-26, #1025;
+- `docs/rituals/README.md:85` -- Carried so far: the reorder and the Freeze's boot check, ruled 2026-10-26
+- `docs/rituals/gate_3_seed_blessing.md:14` -- Ruled 2026-10-26 (#1025, `docs/rulings/DECISIONS_2026-10-26_return.md` item 6):
+- `docs/rituals/gate_4_the_freeze.md:14` -- Ruled 2026-10-26 (#1025, `docs/rulings/DECISIONS_2026-10-26_return.md`
 - `docs/rituals/records/GATE_RECORD_2026-08-24_v0.14.3.md:20` -- morning of 2026-08-24, during ISO week 35. Pip ruled that the seed names the ISO
 - `docs/rulings/DECISIONS_2026-10-26_return.md:31` -- COMMITMENT: 2026-10-31 -- #1343 pause-semantics sweep: state what 'paused' means and bring the 9 timers, 18 tweens and 47 input surfaces under it -- owner: pdoom1-seat -- kind: deadline -- note: ruled
 - `docs/rulings/DECISIONS_2026-10-26_return.md:60` -- COMMITMENT: 2026-11-30 -- Revisit hiring and midgame mechanics (candidate-pool scaling first) as midgame calibration starts -- owner: pip -- kind: review -- note: ruled 2026-10-26 with #961; window is
