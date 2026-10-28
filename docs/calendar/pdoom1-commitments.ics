@@ -388,7 +388,7 @@ DTSTART;VALUE=DATE:20260810
 DTEND;VALUE=DATE:20260811
 SUMMARY:[TASK] Book the half-day audit-mechanics workshop\, target window 
  opens
-DESCRIPTION:Owner: pip. Kind: task. Source: docs/rulings/RULINGS.md:265. p
+DESCRIPTION:Owner: pip. Kind: task. Source: docs/rulings/RULINGS.md:340. p
  doom1#984\, ruled 2026-07-27 18:11. Scheduled to precede the 2026-08-31 f
   -- Generated from tracked sources by scripts/generate_commitment_calenda
  r.py\; regenerate to update.
@@ -729,7 +729,7 @@ DTSTART;VALUE=DATE:20260811
 DTEND;VALUE=DATE:20260812
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:176. 6 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:251. 6 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: Rulings with no `mechanism:`. Pip's doctrine 
  (2026-08-11): what forces a -- Generated from tracked sources by scripts/
@@ -870,7 +870,7 @@ DTSTART;VALUE=DATE:20260812
 DTEND;VALUE=DATE:20260813
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:387. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:464. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `godot/scripts/core/capacity.gd:5` -- ## Ru
  led 2026-08-12 (coordination/DESIGN_2026-08-12_interrupt-resolution-varia
@@ -1281,7 +1281,7 @@ DTSTART;VALUE=DATE:20260813
 DTEND;VALUE=DATE:20260814
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:222. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:297. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `docs/CONTENT_DISTRIBUTION_SYSTEM.md:10` --
   > **SUPERSEDED\, not merely "outdated in spirit"\, as of 2026-08-13.** P
@@ -1864,7 +1864,7 @@ DTSTART;VALUE=DATE:20260814
 DTEND;VALUE=DATE:20260815
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:406. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:483. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `godot/tests/unit/simulation/test_events.gd
  :50` -- ## THE RATCHET WAS DELIBERATELY LOOSENED -- 2026-08-14\, ruled by
@@ -2825,12 +2825,12 @@ DTSTART;VALUE=DATE:20260817
 DTEND;VALUE=DATE:20260818
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:92. 2 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
- TMENT: declaration accounts for it. Either add a declaration or the date 
- is incidental. First line: | 2026-08-17 | published figures live in tooli
- ng\, not prose: the line item is the atom and every rendering is a projec
- tion | `tools/render_budget.py - -- Generated from tracked sources by scr
- ipts/generate_commitment_calendar.py\; regenerate to update.
+ d:107. 2 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ ITMENT: declaration accounts for it. Either add a declaration or the date
+  is incidental. First line: | 2026-08-17 | published figures live in tool
+ ing\, not prose: the line item is the atom and every rendering is a proje
+ ction | `tools/render_budget.py - -- Generated from tracked sources by sc
+ ripts/generate_commitment_calendar.py\; regenerate to update.
 CATEGORIES:UNPARSED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -3345,7 +3345,7 @@ DTSTART;VALUE=DATE:20260820
 DTEND;VALUE=DATE:20260821
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:215. 5 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:290. 5 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `.github/workflows/guards.yml:3` -- # WHY T
  HIS FILE EXISTS (issue #1265\, ruled by Pip 2026-08-20) -- Generated from
@@ -4087,7 +4087,7 @@ DTSTART;VALUE=DATE:20260822
 DTEND;VALUE=DATE:20260823
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:80. 5 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
+ d:88. 5 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
  TMENT: declaration accounts for it. Either add a declaration or the date 
  is incidental. First line: | 2026-08-22 | a check that fails 100% of the 
  time is not a check\; chronic red trains the team to ignore red\, so a pe
@@ -4694,6 +4694,30 @@ DESCRIPTION:needs a declaration -- CI_FOSSILS_2026-08-30.md (unparsed) --
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:10c1e8f6086a0597@commitments.pdoom1
+DTSTAMP:20260824T000000Z
+DTSTART;VALUE=DATE:20260824
+DTEND;VALUE=DATE:20260825
+SUMMARY:[UNPARSED] needs a declaration -- DECISIONS_2026-10-26_return.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/DECISIONS
+ _2026-10-26_return.md:36. 1 line(s) in docs/rulings/DECISIONS_2026-10-26_
+ return.md mention this date and no COMMITMENT: declaration accounts for i
+ t. Either add a declaration or the date is incidental. First line: The ru
+ leset already existed (created 2026-08-24) and was verified active on -- 
+ Generated from tracked sources by scripts/generate_commitment_calendar.py
+ \; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- DECISIONS_2026-10-26_return.md (unparse
+ d) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:4ec0101800122f7a@commitments.pdoom1
 DTSTAMP:20260824T000000Z
 DTSTART;VALUE=DATE:20260824
@@ -4988,7 +5012,7 @@ DTSTART;VALUE=DATE:20260824
 DTEND;VALUE=DATE:20260825
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:81. 17 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:89. 17 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: | 2026-08-24 | a command's exit status must b
  e read from the command\, never through a pipe: $? after a pipeline is th
@@ -5747,7 +5771,7 @@ DTSTART;VALUE=DATE:20260829
 DTEND;VALUE=DATE:20260830
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:80. 2 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
+ d:88. 2 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
  TMENT: declaration accounts for it. Either add a declaration or the date 
  is incidental. First line: | 2026-08-22 | a check that fails 100% of the 
  time is not a check\; chronic red trains the team to ignore red\, so a pe
@@ -5934,7 +5958,7 @@ DTSTART;VALUE=DATE:20260830
 DTEND;VALUE=DATE:20260831
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:101. 4 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:117. 4 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: | 2026-08-30 | a CI fossil must be removed en
  tirely\, never declared: a red that cannot clear trains the team to disco
@@ -6087,7 +6111,7 @@ DTSTART;VALUE=DATE:20260831
 DTEND;VALUE=DATE:20260901
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:395. 2 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:472. 2 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `godot/scripts/core/researcher.gd:150` -- #
   SEAM (ruled 2026-07-27\, review-by 2026-08-31): AUDITS ground-truth repo
@@ -6497,7 +6521,7 @@ DTSTART;VALUE=DATE:20260907
 DTEND;VALUE=DATE:20260908
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:74. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
+ d:82. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
  TMENT: declaration accounts for it. Either add a declaration or the date 
  is incidental. First line: | 2026-09-07 | while Pip is ill\, autonomous l
  anes are restricted to work with a machine-checkable success criterion an
@@ -7269,6 +7293,29 @@ DESCRIPTION:needs a declaration -- generate_images.py (unparsed) -- unowne
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:90067c4075452252@commitments.pdoom1
+DTSTAMP:20261026T000000Z
+DTSTART;VALUE=DATE:20261026
+DTEND;VALUE=DATE:20261027
+SUMMARY:[UNPARSED] needs a declaration -- DECISIONS_2026-10-26_return.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/DECISIONS
+ _2026-10-26_return.md:1. 24 line(s) in docs/rulings/DECISIONS_2026-10-26_
+ return.md mention this date and no COMMITMENT: declaration accounts for i
+ t. Either add a declaration or the date is incidental. First line: # Deci
+ sions\, 2026-10-26 -- Pip's return batch -- Generated from tracked source
+ s by scripts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- DECISIONS_2026-10-26_return.md (unparse
+ d) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:b8cc601d655ae0e1@commitments.pdoom1
 DTSTAMP:20261026T000000Z
 DTSTART;VALUE=DATE:20261026
@@ -7289,6 +7336,29 @@ ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- RELEASE_PLATFORMS.md (unparsed) -- unow
  ned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:4897797fa0730f24@commitments.pdoom1
+DTSTAMP:20261026T000000Z
+DTSTART;VALUE=DATE:20261026
+DTEND;VALUE=DATE:20261027
+SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
+ d:63. 20 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ ITMENT: declaration accounts for it. Either add a declaration or the date
+  is incidental. First line: | 2026-10-26 | yes to pairing with a human vi
+ sual designer in response to the AI-art concern\; Pip is hiring one | `#1
+ 015` | `docs/rulings/DECISIONS_20 -- Generated from tracked sources by sc
+ ripts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- RULINGS.md (unparsed) -- unowned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
@@ -7313,6 +7383,93 @@ ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- STEAM_INTEGRATION_SUMMARY.md (unparsed)
   -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:079a9b09f820fd7b@commitments.pdoom1
+DTSTAMP:20261031T000000Z
+DTSTART;VALUE=DATE:20261031
+DTEND;VALUE=DATE:20261101
+SUMMARY:[DEADLINE] #1343 pause-semantics sweep: state what 'paused' means 
+ and bring the 9 timers\, 18 tweens and 47 input surfaces under it
+DESCRIPTION:Owner: pdoom1-seat. Kind: deadline. Source: docs/rulings/DECIS
+ IONS_2026-10-26_return.md:31. ruled by Pip 2026-10-26\, replacing the mis
+ sed 2026-09-04 date -- Generated from tracked sources by scripts/generate
+ _commitment_calendar.py\; regenerate to update.
+CATEGORIES:DEADLINE
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT328H
+DESCRIPTION:#1343 pause-semantics sweep: state what 'paused' means and bri
+ ng the 9 timers\, 18 tweens and 47 input surfaces under it (deadline) -- 
+ pdoom1-seat
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT160H
+DESCRIPTION:#1343 pause-semantics sweep: state what 'paused' means and bri
+ ng the 9 timers\, 18 tweens and 47 input surfaces under it (deadline) -- 
+ pdoom1-seat
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT40H
+DESCRIPTION:#1343 pause-semantics sweep: state what 'paused' means and bri
+ ng the 9 timers\, 18 tweens and 47 input surfaces under it (deadline) -- 
+ pdoom1-seat
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:#1343 pause-semantics sweep: state what 'paused' means and bri
+ ng the 9 timers\, 18 tweens and 47 input surfaces under it (deadline) -- 
+ pdoom1-seat
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:079a9b09f820fd7b@commitments.pdoom1
+DTSTAMP:20261031T000000Z
+DTSTART;VALUE=DATE:20261031
+DTEND;VALUE=DATE:20261101
+SUMMARY:[DEADLINE] #1343 pause-semantics sweep: state what 'paused' means 
+ and bring the 9 timers\, 18 tweens and 47 input surfaces under it
+DESCRIPTION:Owner: pdoom1-seat. Kind: deadline. Source: docs/rulings/RULIN
+ GS.md:449. ruled -- Generated from tracked sources by scripts/generate_co
+ mmitment_calendar.py\; regenerate to update.
+CATEGORIES:DEADLINE
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT328H
+DESCRIPTION:#1343 pause-semantics sweep: state what 'paused' means and bri
+ ng the 9 timers\, 18 tweens and 47 input surfaces under it (deadline) -- 
+ pdoom1-seat
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT160H
+DESCRIPTION:#1343 pause-semantics sweep: state what 'paused' means and bri
+ ng the 9 timers\, 18 tweens and 47 input surfaces under it (deadline) -- 
+ pdoom1-seat
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT40H
+DESCRIPTION:#1343 pause-semantics sweep: state what 'paused' means and bri
+ ng the 9 timers\, 18 tweens and 47 input surfaces under it (deadline) -- 
+ pdoom1-seat
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:#1343 pause-semantics sweep: state what 'paused' means and bri
+ ng the 9 timers\, 18 tweens and 47 input surfaces under it (deadline) -- 
+ pdoom1-seat
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
@@ -7370,6 +7527,73 @@ ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- RELEASE_LINKING_TO_0.20.md (unparsed) -
  - unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:048525b015a858ba@commitments.pdoom1
+DTSTAMP:20261130T000000Z
+DTSTART;VALUE=DATE:20261130
+DTEND;VALUE=DATE:20261201
+SUMMARY:[REVIEW] Revisit hiring and midgame mechanics (candidate-pool scal
+ ing first) as midgame calibration starts
+DESCRIPTION:Owner: pip. Kind: review. Source: docs/rulings/DECISIONS_2026-
+ 10-26_return.md:60. ruled 2026-10-26 with #961\; window is November-Decem
+ ber -- Generated from tracked sources by scripts/generate_commitment_cale
+ ndar.py\; regenerate to update.
+CATEGORIES:REVIEW
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT328H
+DESCRIPTION:Revisit hiring and midgame mechanics (candidate-pool scaling f
+ irst) as midgame calibration starts (review) -- pip
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT64H
+DESCRIPTION:Revisit hiring and midgame mechanics (candidate-pool scaling f
+ irst) as midgame calibration starts (review) -- pip
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:Revisit hiring and midgame mechanics (candidate-pool scaling f
+ irst) as midgame calibration starts (review) -- pip
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:048525b015a858ba@commitments.pdoom1
+DTSTAMP:20261130T000000Z
+DTSTART;VALUE=DATE:20261130
+DTEND;VALUE=DATE:20261201
+SUMMARY:[REVIEW] Revisit hiring and midgame mechanics (candidate-pool scal
+ ing first) as midgame calibration starts
+DESCRIPTION:Owner: pip. Kind: review. Source: docs/rulings/RULINGS.md:450.
+  ruled 2026-10-26 with #961\; window is -- Generated from tracked sources
+  by scripts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:REVIEW
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT328H
+DESCRIPTION:Revisit hiring and midgame mechanics (candidate-pool scaling f
+ irst) as midgame calibration starts (review) -- pip
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT64H
+DESCRIPTION:Revisit hiring and midgame mechanics (candidate-pool scaling f
+ irst) as midgame calibration starts (review) -- pip
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:Revisit hiring and midgame mechanics (candidate-pool scaling f
+ irst) as midgame calibration starts (review) -- pip
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
@@ -7466,6 +7690,41 @@ DESCRIPTION:Read the 49 archived pygame-era dev-blog entries end to end an
  d write the retrospective post: what the pygame era actually cost\, what 
  survived the port to Godot\, and what the agent-written progress reports 
  got wrong about their own importance (review) -- pip
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:5141f103fe6b3716@commitments.pdoom1
+DTSTAMP:20261231T000000Z
+DTSTART;VALUE=DATE:20261231
+DTEND;VALUE=DATE:20270101
+SUMMARY:[DEADLINE] Chinese localisation of the game
+DESCRIPTION:Owner: pip. Kind: deadline. Source: docs/rulings/DECISIONS_202
+ 6-10-26_return.md:87. #1142\, reaffirmed 2026-10-26\; scope still undecid
+ ed -- Generated from tracked sources by scripts/generate_commitment_calen
+ dar.py\; regenerate to update.
+CATEGORIES:DEADLINE
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT328H
+DESCRIPTION:Chinese localisation of the game (deadline) -- pip
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT160H
+DESCRIPTION:Chinese localisation of the game (deadline) -- pip
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT40H
+DESCRIPTION:Chinese localisation of the game (deadline) -- pip
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:Chinese localisation of the game (deadline) -- pip
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
@@ -7653,7 +7912,7 @@ DTSTART;VALUE=DATE:20270727
 DTEND;VALUE=DATE:20270728
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:308. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:383. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `docs/game-design/DESIGN_2026-08-24_diegeti
  c-opening.md:628` -- is ruled out today."* The doctrine has a **review cl
