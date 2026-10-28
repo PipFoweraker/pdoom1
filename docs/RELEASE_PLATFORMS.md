@@ -1,7 +1,7 @@
 # RELEASE PLATFORMS -- what we can build, and what we have proven
 
 **Status:** written 2026-07-31, from facts re-verified on Pip's Windows machine
-that day. Companion to `docs/rituals/gate_4_proven_build.md` (the cut) and
+that day. Companion to `docs/rituals/gate_5_proven_build.md` (the cut) and
 `docs/rituals/gate_6_board_opens.md` (the doors). This sheet owns the question
 those two do not: *which platforms, from which machine, and who proved it runs.*
 
@@ -75,6 +75,14 @@ and confirmed present: `windows_release_x86_64.exe` (+ console variant),
 `macos.zip`. Nothing needed to be downloaded on the night; the "we can't build
 Mac" claim was false at the moment it was made.
 
+> **[!] Superseded 2026-10-26 (#1071).** GodotSteam is no longer in the Godot
+> project. Nothing in the game called it, and its macOS `.framework` (committed
+> from a Windows checkout, so `Versions/Current` was a plain directory instead of
+> a symlink) failed to sign on every Mac export. The whole addon, plus
+> `steam_manager.gd` and `steam_appid.txt`, now lives in `vendor/godotsteam/`,
+> outside `godot/`, so Godot neither loads nor exports it. Builds ship no native
+> libraries at all. The section below describes the state before the move.
+
 **GodotSteam native libraries.** `godot/addons/godotsteam/godotsteam.gdextension`
 declares libraries per platform, and every declared binary is committed in the
 repo (directory listing, 2026-07-31):
@@ -131,8 +139,9 @@ reports success while packing a half-imported tree. The freshness marker check
 would not necessarily catch that, because the marker only proves *the marker
 file* made it into the pack, not that every other resource did.
 
-The same rule applies to anything else touching the tree. `[Gate 4]` already
-states it for agents; it applies to a second build with equal force.
+The same rule applies to anything else touching the tree.
+`[Gate 5: PROVEN BUILD]` already states it for agents; it applies to a second
+build with equal force.
 
 ```
 # 0. Preconditions, once, before any of the three.
@@ -256,7 +265,7 @@ for any release cut solely on Pip's Windows box:
 
 | Platform | "We built it" | "A human proved it runs" |
 |---|---|---|
-| Windows | yes -- `build_release.py` exits 0 having proven its marker in the pack | yes, if `[Gate 4]` check 5 was performed (the human playtest of the built artifact) |
+| Windows | yes -- `build_release.py` exits 0 having proven its marker in the pack | yes, if `[Gate 5: PROVEN BUILD]` check 5 was performed (the human playtest of the built artifact) |
 | Linux | yes | **no.** Nobody has launched it. Say so. |
 | macOS | yes | **no.** Nobody has launched it, and see Gatekeeper below. |
 

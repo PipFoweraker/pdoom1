@@ -72,7 +72,7 @@ class DocumentationRuleTest(unittest.TestCase):
             "requirements.txt",
             "requirements-dev.txt",
             "godot/build_stamp.txt",
-            "godot/steam_appid.txt",
+            "vendor/godotsteam/steam_appid.txt",
         ):
             self.assertFalse(sme.is_documentation(path), path)
 
