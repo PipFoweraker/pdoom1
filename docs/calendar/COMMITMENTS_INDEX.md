@@ -13,7 +13,7 @@ Horizon: **2026-08-09** (the prose scan reports dates at or after this; roll it
 forward deliberately in `COMMITMENTS.md`, never automatically -- a clock-reading
 generator goes stale overnight and trains people to ignore the check).
 
-**59 declared, 4 release-train, 284 UNPARSED, 0 malformed.**
+**59 declared, 4 release-train, 287 UNPARSED, 0 malformed.**
 
 ## Declared commitments
 
@@ -658,6 +658,8 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-10-25 | `docs/GLOSSARY.md` | 290 | \| Written from 2026-10-26 \| 2026-07-29 .. 2026-10-25 \| Legacy in the playbook \| |
 | 2026-10-25 | `docs/dev/RELEASE_GATES.md` | 206 | BEFORE (2026-07-29 .. 2026-10-25) |
 | 2026-10-25 | `docs/rituals/README.md` | 31 | \| Name \| Now (from 2026-10-26) \| 2026-07-29 .. 2026-10-25 \| Playbook v0 \| |
+| 2026-10-26 | `RELEASING.md` | 4 | 2026-10-26, issues #1269 and #1299). Hold to this -- and since 2026-10-26 the |
+| 2026-10-26 | `RELEASING.md` | 4 | 2026-10-26, issues #1269 and #1299). Hold to this -- and since 2026-10-26 the |
 | 2026-10-26 | `docs/DEVELOPERGUIDE.md` | 160 | > Current as of 2026-10-26. Full guide with diagrams: |
 | 2026-10-26 | `docs/DEVELOPERGUIDE.md` | 164 | prove, open* (ruled 2026-10-26, #1025): [Gate 1: LAST POUR], |
 | 2026-10-26 | `docs/DEVELOPERGUIDE.md` | 167 | [Gate 5: PROVEN BUILD], [Gate 6: BOARD OPENS]. Records dated before 2026-10-26 |
@@ -666,8 +668,12 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-10-26 | `docs/GLOSSARY.md` | 285 | (ruled 2026-10-26, #1025, `docs/rulings/DECISIONS_2026-10-26_return.md` |
 | 2026-10-26 | `docs/GLOSSARY.md` | 288 | and records dated before 2026-10-26 use the 2026-07-29 numbers, so: |
 | 2026-10-26 | `docs/GLOSSARY.md` | 290 | \| Written from 2026-10-26 \| 2026-07-29 .. 2026-10-25 \| Legacy in the playbook \| |
+| 2026-10-26 | `docs/RELEASE_NOTES_GUARD.md` | 53 | \| `enhanced-release.yml` `preflight` job (was `pre-release-checks.yml` until 2026-10-26, #1299) \| on `v*.*.*` tag push, before any build \| RN001, RN00 |
+| 2026-10-26 | `docs/RELEASE_NOTES_GUARD.md` | 53 | \| `enhanced-release.yml` `preflight` job (was `pre-release-checks.yml` until 2026-10-26, #1299) \| on `v*.*.*` tag push, before any build \| RN001, RN00 |
 | 2026-10-26 | `docs/RELEASE_PLATFORMS.md` | 78 | > **[!] Superseded 2026-10-26 (#1071).** GodotSteam is no longer in the Godot |
 | 2026-10-26 | `docs/STEAM_INTEGRATION_SUMMARY.md` | 3 | > **[!] Parked 2026-10-26 (#1071).** The GodotSteam addon, `steam_manager.gd` |
+| 2026-10-26 | `docs/design/LEAGUE_CUTOVER_PLAYBOOK.md` | 159 | \| S7 \| **CHANGELOG section for the version exists.** \| The release `preflight` job hard-fails on a tag whose version is absent from `CHANGELOG.md`, an |
+| 2026-10-26 | `docs/design/LEAGUE_CUTOVER_PLAYBOOK.md` | 598 | \| `CHANGELOG.md` has no section for the version \| the `preflight` job in `enhanced-release.yml` will fail the tag anyway (and, since 2026-10-26, stop  |
 | 2026-10-26 | `docs/dev/RELEASE_GATES.md` | 63 | Pip's 2026-07-29 ruling. Since 2026-10-26 (#1025) they run in the order |
 | 2026-10-26 | `docs/dev/RELEASE_GATES.md` | 65 | the new order. Records dated before 2026-10-26 use the old numbers -- the |
 | 2026-10-26 | `docs/dev/RELEASE_GATES.md` | 170 | ## 6. Issue #1025 -- the gate order (RULED 2026-10-26) |
@@ -743,7 +749,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-10-26 | `docs/rulings/RULINGS.md` | 63 | \| 2026-10-26 \| yes to pairing with a human visual designer in response to the AI-art concern; Pip is hiring one \| `#1015` \| `docs/rulings/DECISIONS_20 |
 | 2026-10-26 | `docs/rulings/RULINGS.md` | 64 | \| 2026-10-26 \| add a sixth provenance origin value, authored_art, for human-made art from contributing artists \| `#1257` \| `docs/rulings/DECISIONS_202 |
 | 2026-10-26 | `docs/rulings/RULINGS.md` | 76 | \| 2026-10-26 \| overbooking Attention gets teeth (forced cancel-or-pay) instead of a flat reject \| `#822` \| `docs/rulings/DECISIONS_2026-10-26_return.m |
-| 2026-10-26 | `docs/rulings/RULINGS.md` | 93 | \| 2026-10-26 \| pre-release checks become a blocking gate on the release workflow; a red check stops the publish \| `to be built under #1299` \| `docs/ru |
+| 2026-10-26 | `docs/rulings/RULINGS.md` | 93 | \| 2026-10-26 \| pre-release checks become a blocking gate on the release workflow; a red check stops the publish \| `the preflight job in .github/workfl |
 | 2026-10-26 | `docs/rulings/RULINGS.md` | 99 | \| 2026-10-26 \| approve creative-harvest items 1-3 and 5-12 of #950; item 4 (the 2026-07-30 anniversary beat) expired unbuilt \| `#950` \| `docs/rulings/ |
 | 2026-10-26 | `docs/rulings/RULINGS.md` | 108 | \| 2026-10-26 \| pdoom1 owns the league-cycle handbook; the website receives published versions according to protocol and never holds the master copy \|  |
 | 2026-10-26 | `docs/rulings/RULINGS.md` | 118 | \| 2026-10-26 \| the P6 worktree rule gets a mechanical check rather than being deleted \| `#1258` \| `docs/rulings/DECISIONS_2026-10-26_return.md:91` \| |

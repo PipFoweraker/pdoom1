@@ -30,7 +30,7 @@ campaign gets a clean board as a launch moment instead of two resets in a month.
 2. **#1343 pause-semantics sweep.**
    COMMITMENT: 2026-10-31 -- #1343 pause-semantics sweep: state what 'paused' means and bring the 9 timers, 18 tweens and 47 input surfaces under it -- owner: pdoom1-seat -- kind: deadline -- note: ruled by Pip 2026-10-26, replacing the missed 2026-09-04 date
 3. **#1269 release branches.**
-   RULING: 2026-10-26 -- adopt the release-branch model in RELEASING.md for real (release/v0.X cut per epoch, tags only from release branches), enforced by mechanical guards rather than prose -- flavour: release-cadence -- mechanism: guards to be built under #1269
+   RULING: 2026-10-26 -- adopt the release-branch model in RELEASING.md for real (release/v0.X cut per epoch, tags only from release branches), enforced by mechanical guards rather than prose -- flavour: release-cadence -- mechanism: tools/check_release_branch.py in the preflight job of .github/workflows/enhanced-release.yml (#1269)
 4. **#1290 tag protection.**
    RULING: 2026-10-26 -- only Pip creates release tags -- flavour: releases -- mechanism: GitHub ruleset 21258734 (refs/tags/v*, creation/deletion/non-fast-forward, bypass: Admin role, Pip the only admin)
    The ruleset already existed (created 2026-08-24) and was verified active on
@@ -38,7 +38,7 @@ campaign gets a clean board as a launch moment instead of two resets in a month.
    Caveat: an agent using Pip's own `gh` token *is* Pip to GitHub, so the
    ruleset cannot tell the two apart. Agents must never push a `v*` tag.
 5. **#1299 pre-release checks.**
-   RULING: 2026-10-26 -- pre-release checks become a blocking gate on the release workflow; a red check stops the publish -- flavour: ci-gates -- mechanism: to be built under #1299
+   RULING: 2026-10-26 -- pre-release checks become a blocking gate on the release workflow; a red check stops the publish -- flavour: ci-gates -- mechanism: the preflight job in .github/workflows/enhanced-release.yml, which build and publish both need (#1299)
 6. **#1025 gate order.** Pip asked for the explanation to go into the
    developer guide with diagrams (`docs/dev/RELEASE_GATES.md`, PR #1351), plus a
    lightweight plan for putting dev notes and tools on the website. Having read

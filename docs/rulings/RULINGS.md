@@ -90,7 +90,7 @@ flavour it belongs to and read what was already decided there.
 | 2026-08-24 | a gate's verdict must be traced to a consumer before it is called a gate: a red that blocks no merge, gates no job, and reaches no human is theatre, and it costs attention as well as buying nothing | `this audit, and docs/deployment/RELEASE_FLOW_MAP_2026-08-24.md` | `docs/deployment/GATE_AUDIT_2026-08-24.md:949` |
 | 2026-08-24 | a workflow that writes anything must declare `permissions:`, because this repo's default workflow token is read-only and a write attempt without one 403s into either a permanent meaningless red or, under continue-on-error, a green that hides it | `gh api repos/PipFoweraker/pdoom1/actions/permissions/workflow` | `docs/deployment/GATE_AUDIT_2026-08-24.md:951` |
 | 2026-08-24 | two workflows firing on the same event with no dependency between them are not parallel, they are racing to a verdict nobody joins: on the first v0.14.3 tag pre-release-checks found RN003 at t+21s and enhanced-release found the same defect at t+4m39s after a full three-platform build, so the cheap gate bought nothing | `docs/deployment/RELEASE_FLOW_MAP_2026-08-24.md` | `docs/deployment/RELEASE_FLOW_MAP_2026-08-24.md:568` |
-| 2026-10-26 | pre-release checks become a blocking gate on the release workflow; a red check stops the publish | `to be built under #1299` | `docs/rulings/DECISIONS_2026-10-26_return.md:41` |
+| 2026-10-26 | pre-release checks become a blocking gate on the release workflow; a red check stops the publish | `the preflight job in .github/workflows/enhanced-release.yml, which build and publish both need (#1299)` | `docs/rulings/DECISIONS_2026-10-26_return.md:41` |
 
 ### `creative-harvest` (only one so far)
 
@@ -189,7 +189,7 @@ flavour it belongs to and read what was already decided there.
 |---|---|---|---|
 | 2026-08-24 | every value version.txt has ever held must have a matching git tag, or a declared exemption; a bump with no tag is a defect the machine reports, not a thing a human is expected to remember | `tools/check_release_ledger.py` | `tools/check_release_ledger.py:34` |
 | 2026-08-24 | a minor version bump ALWAYS cuts the ladder, and the ladder MAY ALSO cut mid-version whenever gameplay forks; therefore ladder epochs >= minor versions, always, and the ladder epoch is NEVER forecastable | `tools/generate_release_horizon.py` | `tools/generate_release_horizon.py:37` |
-| 2026-10-26 | adopt the release-branch model in RELEASING.md for real (release/v0.X cut per epoch, tags only from release branches), enforced by mechanical guards rather than prose | `guards to be built under #1269` | `docs/rulings/DECISIONS_2026-10-26_return.md:33` |
+| 2026-10-26 | adopt the release-branch model in RELEASING.md for real (release/v0.X cut per epoch, tags only from release branches), enforced by mechanical guards rather than prose | `tools/check_release_branch.py in the preflight job of .github/workflows/enhanced-release.yml (#1269)` | `docs/rulings/DECISIONS_2026-10-26_return.md:33` |
 
 ### `releases`
 
@@ -220,7 +220,7 @@ flavour it belongs to and read what was already decided there.
 | date | ruling | mechanism | source |
 |---|---|---|---|
 | 2026-08-23 | silent failures are a named defect class and the counter is instrumentation, never vigilance; a failure representable in its own success type must be made countable rather than watched for | `this register, and the census/aggregate/differential counters it names` | `docs/design/SILENT_FAILURE_REGISTER.md:116` |
-| 2026-08-24 | a best-effort platform build that fails must be TRACKED, not merely warned about: the release still publishes for the platforms that built, and the absence becomes ONE rolling per-platform issue plus a machine-readable build-status.json field the website reads, so a download page says "build coming" with a link instead of advertising a URL that 404s or pointing at an older release | `scripts/check_platform_builds.py + scripts/report_missing_build_issue.py, run by the platform-build-status job below` | `.github/workflows/enhanced-release.yml:240` |
+| 2026-08-24 | a best-effort platform build that fails must be TRACKED, not merely warned about: the release still publishes for the platforms that built, and the absence becomes ONE rolling per-platform issue plus a machine-readable build-status.json field the website reads, so a download page says "build coming" with a link instead of advertising a URL that 404s or pointing at an older release | `scripts/check_platform_builds.py + scripts/report_missing_build_issue.py, run by the platform-build-status job below` | `.github/workflows/enhanced-release.yml:452` |
 | 2026-08-24 | a player-facing surface must not collapse distinct failures into one reassuring sentence: each cause gets its own words, its own consequence and its own way for the player to report it | `this table and godot/tests/unit/test_whats_new_states.gd, which fails if any two rows share a body or a code` | `godot/scripts/ui/whats_new_modal.gd:87` |
 
 ### `staff-surfaces` (only one so far)

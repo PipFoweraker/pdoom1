@@ -1,8 +1,14 @@
 name: Godot Tests
 
+# release/** (2026-10-26, #1269): release branches are where hotpatches are
+# cherry-picked and where tags are cut, and a cherry-pick can resolve a conflict
+# into a broken build that main never had. Tests must run where the tag comes
+# from, not only where the fix first landed. The push path filter still applies:
+# the version-bump commit touches godot/project.godot (via sync_version.py), so
+# the commit that gets tagged is always tested.
 on:
   push:
-    branches: [main]
+    branches: [main, 'release/**']
     paths:
       - 'godot/**/*.gd'
       - 'godot/**/*.tscn'
@@ -12,7 +18,7 @@ on:
   # Run on ALL PRs to main (no path filter) so the required "Unit Tests" /
   # "GDScript Syntax Check" status checks always report and can gate merges.
   pull_request:
-    branches: [main]
+    branches: [main, 'release/**']
 
 jobs:
   syntax-check:
