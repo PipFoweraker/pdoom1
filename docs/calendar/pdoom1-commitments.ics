@@ -7542,6 +7542,31 @@ DESCRIPTION:needs a declaration -- GLOSSARY.md (unparsed) -- unowned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:aec62f34dca571b8@commitments.pdoom1
+DTSTAMP:20261026T000000Z
+DTSTART;VALUE=DATE:20261026
+DTEND;VALUE=DATE:20261027
+SUMMARY:[UNPARSED] needs a declaration -- LEAGUE_CUTOVER_PLAYBOOK.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/design/LEAGUE_CUT
+ OVER_PLAYBOOK.md:159. 2 line(s) in docs/design/LEAGUE_CUTOVER_PLAYBOOK.md
+  mention this date and no COMMITMENT: declaration accounts for it. Either
+  add a declaration or the date is incidental. First line: | S7 | **CHANGE
+ LOG section for the version exists.** | The release `preflight` job hard-
+ fails on a tag whose version is absent from `CHANGELOG.md`\, an -- Genera
+ ted from tracked sources by scripts/generate_commitment_calendar.py\; reg
+ enerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- LEAGUE_CUTOVER_PLAYBOOK.md (unparsed) -
+ - unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:e20959e5d178a5b3@commitments.pdoom1
 DTSTAMP:20261026T000000Z
 DTSTART;VALUE=DATE:20261026
@@ -7610,6 +7635,30 @@ DESCRIPTION:needs a declaration -- RELEASE_GATES.md (unparsed) -- unowned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:496ae727c9573732@commitments.pdoom1
+DTSTAMP:20261026T000000Z
+DTSTART;VALUE=DATE:20261026
+DTEND;VALUE=DATE:20261027
+SUMMARY:[UNPARSED] needs a declaration -- RELEASE_NOTES_GUARD.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/RELEASE_NOTES_GUA
+ RD.md:53. 2 line(s) in docs/RELEASE_NOTES_GUARD.md mention this date and 
+ no COMMITMENT: declaration accounts for it. Either add a declaration or t
+ he date is incidental. First line: | `enhanced-release.yml` `preflight` j
+ ob (was `pre-release-checks.yml` until 2026-10-26\, #1299) | on `v*.*.*` 
+ tag push\, before any build | RN001\, RN00 -- Generated from tracked sour
+ ces by scripts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- RELEASE_NOTES_GUARD.md (unparsed) -- un
+ owned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:b8cc601d655ae0e1@commitments.pdoom1
 DTSTAMP:20261026T000000Z
 DTSTART;VALUE=DATE:20261026
@@ -7630,6 +7679,28 @@ ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- RELEASE_PLATFORMS.md (unparsed) -- unow
  ned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:5d484e8e1795419d@commitments.pdoom1
+DTSTAMP:20261026T000000Z
+DTSTART;VALUE=DATE:20261026
+DTEND;VALUE=DATE:20261027
+SUMMARY:[UNPARSED] needs a declaration -- RELEASING.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: RELEASING.md:4. 2 line
+ (s) in RELEASING.md mention this date and no COMMITMENT: declaration acco
+ unts for it. Either add a declaration or the date is incidental. First li
+ ne: 2026-10-26\, issues #1269 and #1299). Hold to this -- and since 2026-
+ 10-26 the -- Generated from tracked sources by scripts/generate_commitmen
+ t_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- RELEASING.md (unparsed) -- unowned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT

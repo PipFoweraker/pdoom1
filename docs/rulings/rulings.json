@@ -605,7 +605,7 @@
       "mechanism": "scripts/check_platform_builds.py + scripts/report_missing_build_issue.py, run by the platform-build-status job below",
       "supersedes": null,
       "superseded_by": null,
-      "source": ".github/workflows/enhanced-release.yml:240"
+      "source": ".github/workflows/enhanced-release.yml:452"
     },
     {
       "id": "pdoom1:2026-08-24:c4c9f98a",
@@ -868,7 +868,7 @@
       "kind": "declaration",
       "status": "",
       "by": "Pip",
-      "mechanism": "guards to be built under #1269",
+      "mechanism": "tools/check_release_branch.py in the preflight job of .github/workflows/enhanced-release.yml (#1269)",
       "supersedes": null,
       "superseded_by": null,
       "source": "docs/rulings/DECISIONS_2026-10-26_return.md:33"
@@ -896,7 +896,7 @@
       "kind": "declaration",
       "status": "",
       "by": "Pip",
-      "mechanism": "to be built under #1299",
+      "mechanism": "the preflight job in .github/workflows/enhanced-release.yml, which build and publish both need (#1299)",
       "supersedes": null,
       "superseded_by": null,
       "source": "docs/rulings/DECISIONS_2026-10-26_return.md:41"

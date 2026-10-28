@@ -4,19 +4,42 @@ on:
   push:
     tags:
       - 'v*.*.*'
+  # MANUAL DISPATCH (2026-10-26, #1299/#1269). Two modes:
+  #   * preflight_only=true (THE DEFAULT): run the preflight job and stop. This
+  #     is the dry run that used to live in pre-release-checks.yml's dispatch.
+  #     Dispatch it on the release branch BEFORE tagging:
+  #       gh workflow run enhanced-release.yml --ref release/v0.14 -f version=v0.14.5
+  #   * preflight_only=false: a real publish. The preflight guard then REQUIRES
+  #     the tag to exist and to be the commit being built, so dispatch it ON the
+  #     tag: `--ref v0.14.5 -f version=v0.14.5 -f preflight_only=false`. A
+  #     dispatch from a branch head cannot publish under an existing tag's name.
+  # The default is the safe one on purpose: forgetting a checkbox must produce a
+  # dry run, never a publication.
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version to release (e.g., v0.10.2)'
+        description: 'Release tag (e.g., v0.14.5) -- must match version.txt'
         required: true
         type: string
+      preflight_only:
+        description: 'Dry run: run the preflight gate only, build and publish nothing'
+        required: false
+        type: boolean
+        default: true
       prerelease:
         description: 'Mark as pre-release'
         required: false
         type: boolean
         default: false
+      # skip_validation skips EXACTLY ONE THING: a failing validate-data job
+      # (scripts/validate_historical_data.py). It does NOT skip preflight -- no
+      # input does. The preflight gate has no bypass: a design choice made in
+      # the #1299 PR, not part of the ruling -- Pip may overrule it.
+      # When it is used, build-godot emits a ::warning:: annotation and the
+      # manifest records validation_passed=false, so the bypass is visible on
+      # the run page and in the published artefact.
       skip_validation:
-        description: 'Skip validation (emergency only!)'
+        description: 'EMERGENCY: publish despite a failing historical-data validation job (does NOT skip preflight)'
         required: false
         type: boolean
         default: false
@@ -26,9 +49,183 @@ permissions:
   issues: write
 
 jobs:
+  # PREFLIGHT -- THE BLOCKING GATE (issues #1299 and #1269).
+  #
+  # Until 2026-10-26 these checks lived in a separate pre-release-checks.yml that
+  # fired on the same tag push as this workflow. GitHub has no cross-workflow
+  # `needs:`, so the two raced and nothing joined them: v0.14.4 PUBLISHED while
+  # its pre-release check was red on RN003 (#1325), and on v0.14.3 the cheap
+  # check found the defect at t+21s while this workflow found the same defect
+  # after a full three-platform build at t+4m39s
+  # (docs/deployment/RELEASE_FLOW_MAP_2026-08-24.md section 6.3, Option C).
+  #
+  # Now they are a job here, and validate-data, build-godot and
+  # create-github-release all `needs:` it. A red preflight means nothing builds
+  # and nothing publishes. It has NO bypass input: every check it runs is cheap
+  # to satisfy with a commit on the release branch and a new tag, and an escape
+  # hatch on the gate is how the gate becomes advisory again.
+  #
+  # The ruling is declared once, in docs/rulings/DECISIONS_2026-10-26_return.md
+  # (PR #1350); this job is its mechanism. The no-bypass choice is this PR's.
+  preflight:
+    name: Preflight (release branch, version, CHANGELOG, release notes)
+    runs-on: ubuntu-latest
+    # Stated, not inherited: the failure step files an issue. A reporter that
+    # 403s is the v0.14.3 failure (see platform-build-status below).
+    permissions:
+      contents: read
+      issues: write
+    env:
+      # SECURITY: user-influenced (dispatch input / tag name) -- read via env,
+      # never templated into script text.
+      RELEASE_VERSION: ${{ github.event.inputs.version || github.ref_name }}
+      PREFLIGHT_ONLY: ${{ github.event_name == 'workflow_dispatch' && inputs.preflight_only }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+        with:
+          # Full history, every branch, every tag: the release-branch guard asks
+          # whether this commit is an ancestor of origin/release/v<M>.<m>, and the
+          # #1165 guard ties citations to <previous tag>..<this tag>. A shallow
+          # clone can answer neither (the branch guard exits 2 on one, by design).
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.11'
+
+      # #1269. The detector proves it can still return every answer BEFORE it is
+      # trusted with this tag, so a decayed guard reports as a decayed guard
+      # rather than as a clean release.
+      - name: Release-branch guard self-test
+        run: python tools/check_release_branch.py --self-test
+
+      # #1269. RB001-RB005: tag is v<M>.<m>.<p>[-pre]; version.txt at this commit
+      # equals the tag; origin/release/v<M>.<m> exists; this commit is reachable
+      # from it; and (on a publish) the tag exists and IS this commit. A dry run
+      # (preflight_only) skips only the last "tag must exist" requirement, so it
+      # can run before Pip tags.
+      - name: Release-branch guard (tag must come from release/v<M>.<m>)
+        # Every check runs even after an earlier one fails, so one red run
+        # reports the whole list instead of one finding per re-tag.
+        if: ${{ !cancelled() }}
+        run: |
+          if [ "$PREFLIGHT_ONLY" = "true" ]; then
+            python tools/check_release_branch.py --tag "$RELEASE_VERSION" --github
+          else
+            python tools/check_release_branch.py --tag "$RELEASE_VERSION" --github --require-tag
+          fi
+        shell: bash
+
+      # Moved verbatim from pre-release-checks.yml, with one fix: the version is
+      # derived from RELEASE_VERSION (dispatch input or tag), not from GITHUB_REF,
+      # which under a dispatch from a branch is `refs/heads/...` and would have
+      # produced a nonsense version.
+      #
+      # ANCHORED ON PURPOSE (2026-08-24). This was `grep -q "$TAG_VERSION"` --
+      # unanchored and unbracketed, so ANY mention of the bare string anywhere in
+      # CHANGELOG.md's 1800+ lines satisfied it. This form asks the SAME question
+      # the extractor asks: is there a section heading to extract? It is also the
+      # only check anywhere that stops a release body reading "See CHANGELOG.md
+      # for details": the extractor below falls back to that stub and the body
+      # guard passes it (RELEASE_FLOW_MAP_2026-08-24.md, Option D table).
+      - name: Check CHANGELOG updated
+        if: ${{ !cancelled() }}
+        run: |
+          TAG_VERSION="${RELEASE_VERSION#v}"
+          echo "Checking if CHANGELOG.md has a section heading for version $TAG_VERSION..."
+
+          if grep -q "^## \[$TAG_VERSION\]" CHANGELOG.md; then
+            echo "SUCCESS CHANGELOG.md has a '## [$TAG_VERSION]' section"
+          else
+            echo "ERROR ERROR: CHANGELOG.md has no '## [$TAG_VERSION]' section heading"
+            echo "A passing mention of $TAG_VERSION elsewhere in the file is NOT enough --"
+            echo "the release body is extracted from the section heading, so without one"
+            echo "the published notes fall back to a placeholder."
+            echo "Please add a '## [$TAG_VERSION]' section to CHANGELOG.md before releasing!"
+            exit 1
+          fi
+        shell: bash
+
+      # Early, cheap half of the #1165 guard: structural corruption in
+      # CHANGELOG.md, plus the citations in this version's section (RN003 -- the
+      # check that was red on v0.14.4 while it published). The release-body check
+      # in create-github-release is still the authoritative one -- it runs
+      # against the bytes that get published, this one against the FILE.
+      - name: Release notes guard (structure + citations)
+        if: ${{ !cancelled() }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG_VERSION="${RELEASE_VERSION#v}"
+          python scripts/check_release_notes.py --changelog-structure
+          python scripts/check_release_notes.py --version "$TAG_VERSION"
+        shell: bash
+
+      - name: Check version in project.godot
+        if: ${{ !cancelled() }}
+        run: |
+          TAG_VERSION="${RELEASE_VERSION#v}"
+          echo "Checking project.godot version..."
+
+          if grep -q "config/version=\"$TAG_VERSION\"" godot/project.godot; then
+            echo "SUCCESS project.godot version matches tag"
+          else
+            echo "ERROR WARNING: project.godot version does not match tag v$TAG_VERSION"
+            exit 1
+          fi
+        shell: bash
+
+      # Kept from pre-release-checks.yml so no check is dropped. Be honest about
+      # it: on a fresh checkout where no earlier step writes, it cannot go red
+      # (GATE_AUDIT_2026-08-24.md F11). It earns its place only if a future step
+      # above starts writing into the tree.
+      - name: Check for uncommitted changes
+        if: ${{ !cancelled() }}
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "ERROR ERROR: Uncommitted changes found!"
+            git status
+            exit 1
+          else
+            echo "SUCCESS No uncommitted changes"
+          fi
+
+      - name: Preflight summary
+        if: always()
+        run: |
+          {
+            echo "## Preflight: ${RELEASE_VERSION}"
+            echo ""
+            echo "- commit: \`${GITHUB_SHA}\`"
+            echo "- ref: \`${GITHUB_REF}\`"
+            echo "- mode: $([ "$PREFLIGHT_ONLY" = "true" ] && echo 'DRY RUN (preflight only -- nothing builds or publishes)' || echo 'release')"
+            echo "- result: ${{ job.status }}"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      # A dry run that goes red is the gate working, not an incident: no issue.
+      - name: File an issue -- the release was STOPPED
+        if: failure() && env.PREFLIGHT_ONLY != 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const tagName = process.env.RELEASE_VERSION;
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `[!] Release preflight failed: ${tagName} -- NOT published`,
+              body: `## Release preflight failed for ${tagName}\n\nThe preflight job in enhanced-release.yml went red, so **nothing was built and nothing was published** (#1299). Read the failing step in the [workflow run](${context.payload.repository.html_url}/actions/runs/${context.runId}).\n\n**What each step means:**\n- *Release-branch guard* (RB001-RB005, #1269): the tag must be cut from \`release/vMAJOR.MINOR\` on origin, and \`version.txt\` at the tagged commit must equal the tag.\n- *Check CHANGELOG updated*: \`CHANGELOG.md\` needs a \`## [VERSION]\` section heading.\n- *Release notes guard*: RN001-RN005 from \`scripts/check_release_notes.py\` (an OPEN issue cited in the section is RN003).\n- *Check version in project.godot*: run \`python tools/sync_version.py\`.\n\n**To recover:** fix it on the release branch, bump to the next patch version, and tag that. See RELEASING.md.`,
+              labels: ['release', 'build-failed']
+            });
+
   validate-data:
     name: Validate Historical Data & Schemas
     runs-on: ubuntu-latest
+    needs: preflight
+    # A dry run stops after preflight. On a tag push `inputs` is empty, so this
+    # is true and the release proceeds.
+    if: ${{ !inputs.preflight_only }}
     outputs:
       validation_status: ${{ steps.validate.outputs.status }}
       validation_hash: ${{ steps.validate.outputs.hash }}
@@ -129,9 +326,24 @@ jobs:
   build-godot:
     name: Build Godot Game (All Platforms)
     runs-on: ubuntu-latest
-    needs: validate-data
+    # `preflight` is listed explicitly even though validate-data already needs
+    # it: the gate should be visible on the job that builds, not inferred. No
+    # status function appears in `if:`, so GitHub's implicit success() applies
+    # -- a red or skipped preflight skips this job, skip_validation or not.
+    needs: [preflight, validate-data]
     if: needs.validate-data.outputs.validation_status == 'success' || inputs.skip_validation
     steps:
+      - name: Announce the skip_validation bypass (loud on purpose)
+        if: inputs.skip_validation && needs.validate-data.outputs.validation_status != 'success'
+        run: |
+          echo "::warning title=skip_validation used::Historical-data validation FAILED and this release is proceeding because skip_validation=true was dispatched by ${GITHUB_ACTOR}. The manifest will record validation_passed=false. Preflight was NOT skipped."
+          {
+            echo "## [!] skip_validation bypass in use"
+            echo ""
+            echo "validate-data failed; publishing anyway by explicit dispatch input from \`${GITHUB_ACTOR}\`."
+            echo "The preflight gate still ran and passed."
+          } >> "$GITHUB_STEP_SUMMARY"
+
       - uses: actions/checkout@v7
 
       - name: Setup Godot
@@ -453,7 +665,8 @@ jobs:
   create-github-release:
     name: Create GitHub Release
     runs-on: ubuntu-latest
-    needs: [validate-data, build-godot, generate-feeds, create-release-manifest]
+    # preflight listed explicitly: this is the job that publishes.
+    needs: [preflight, validate-data, build-godot, generate-feeds, create-release-manifest]
     steps:
       - uses: actions/checkout@v7
         with:
