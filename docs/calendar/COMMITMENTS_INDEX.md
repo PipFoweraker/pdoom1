@@ -13,7 +13,7 @@ Horizon: **2026-08-09** (the prose scan reports dates at or after this; roll it
 forward deliberately in `COMMITMENTS.md`, never automatically -- a clock-reading
 generator goes stale overnight and trains people to ignore the check).
 
-**59 declared, 4 release-train, 287 UNPARSED, 0 malformed.**
+**59 declared, 4 release-train, 290 UNPARSED, 0 malformed.**
 
 ## Declared commitments
 
@@ -417,7 +417,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-23 | `docs/ARCHITECTURE.md` | 11 | > Partners") was **retired 2026-08-23**: it advertised an annual funding ladder that was |
 | 2026-08-23 | `docs/ARCHITECTURE.md` | 14 | > [`archive/2026-08-23-architecture-funders/`](archive/2026-08-23-architecture-funders/ARCHITECTURE_FUNDERS.md). |
 | 2026-08-23 | `docs/ARCHITECTURE.md` | 14 | > [`archive/2026-08-23-architecture-funders/`](archive/2026-08-23-architecture-funders/ARCHITECTURE_FUNDERS.md). |
-| 2026-08-23 | `docs/ARCHITECTURE.md` | 357 | path~~ **Resolved 2026-08-23:** the funder pitch is archived (see the banner at the top of |
+| 2026-08-23 | `docs/ARCHITECTURE.md` | 358 | path~~ **Resolved 2026-08-23:** the funder pitch is archived (see the banner at the top of |
 | 2026-08-23 | `docs/ARCHITECTURE_FUNDERS.md` | 3 | > **RETIRED 2026-08-23.** The funder-facing architecture pitch that lived at this path |
 | 2026-08-23 | `docs/ARCHITECTURE_FUNDERS.md` | 8 | > [`docs/archive/2026-08-23-architecture-funders/ARCHITECTURE_FUNDERS.md`](archive/2026-08-23-architecture-funders/ARCHITECTURE_FUNDERS.md). |
 | 2026-08-23 | `docs/ARCHITECTURE_FUNDERS.md` | 8 | > [`docs/archive/2026-08-23-architecture-funders/ARCHITECTURE_FUNDERS.md`](archive/2026-08-23-architecture-funders/ARCHITECTURE_FUNDERS.md). |
@@ -609,12 +609,13 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-30 | `docs/CI_FOSSILS_2026-08-30.md` | 27 | RULING: 2026-08-30 -- a CI fossil must be removed entirely, never declared: a red that cannot clear trains the team to discount reds, and a declaratio |
 | 2026-08-30 | `docs/CI_FOSSILS_2026-08-30.md` | 35 | Measured 2026-08-30, immediately before deletion: |
 | 2026-08-30 | `docs/PAUSE_SEMANTICS_SWEEP.md` | 3 | Opened 2026-08-30, the day #1341 was found on a shipped build. Scoped and |
-| 2026-08-30 | `docs/PAUSE_SEMANTICS_SWEEP.md` | 31 | ## The measured surface, 2026-08-30 |
+| 2026-08-30 | `docs/PAUSE_SEMANTICS_SWEEP.md` | 35 | ## The measured surface, 2026-08-30 |
 | 2026-08-30 | `docs/SICK_WEEK_2026-09-07_landing.md` | 176 | - `main` at `82fa10a1`, 2026-08-30. Version **0.14.4**, ladder epoch **L6**. |
 | 2026-08-30 | `docs/SICK_WEEK_2026-09-07_landing.md` | 182 | - PR **#1339** is green on all 13 checks and MERGEABLE, idle since 2026-08-30. It stops |
 | 2026-08-30 | `docs/VIDEO_SHOOT_2026-08-30.md` | 3 | Prepared 2026-08-30 while Pip was at the conference, for a same-night shoot. |
 | 2026-08-30 | `docs/VIDEO_SHOOT_2026-08-30.md` | 149 | \| **ESC / the pause menu at any point mid-month** \| the pause menu does NOT pause the month. Found on the shipped v0.14.4 build on 2026-08-30: six day |
 | 2026-08-30 | `docs/VIDEO_SHOOT_2026-08-30.md` | 160 | Say these. Each one has a command that returns it, run today, 2026-08-30. |
+| 2026-08-30 | `docs/design/PAUSE_SEMANTICS.md` | 69 | \| Surface \| #1343 said (2026-08-30) \| Measured 2026-10-29 \| Note \| |
 | 2026-08-30 | `docs/rulings/RULINGS.md` | 117 | \| 2026-08-30 \| a CI fossil must be removed entirely, never declared: a red that cannot clear trains the team to discount reds, and a declaration for o |
 | 2026-08-30 | `docs/rulings/RULINGS.md` | 540 | - `tools/check_chronic_red.py:250` -- Fossils count as failures as of 2026-08-30 (ruled by Pip; see |
 | 2026-08-30 | `docs/rulings/RULINGS.md` | 541 | - `tools/check_chronic_red.py:484` -- # FOSSILS NOW FAIL (ruled by Pip 2026-08-30, docs/CI_FOSSILS_2026-08-30.md). |
@@ -778,6 +779,9 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-10-26 | `docs/rulings/RULINGS.md` | 463 | - `docs/rituals/README.md:85` -- Carried so far: the reorder and the Freeze's boot check, ruled 2026-10-26 |
 | 2026-10-26 | `docs/rulings/RULINGS.md` | 464 | - `docs/rituals/gate_3_seed_blessing.md:14` -- Ruled 2026-10-26 (#1025, `docs/rulings/DECISIONS_2026-10-26_return.md` item 6): |
 | 2026-10-26 | `docs/rulings/RULINGS.md` | 465 | - `docs/rituals/gate_4_the_freeze.md:14` -- Ruled 2026-10-26 (#1025, `docs/rulings/DECISIONS_2026-10-26_return.md` |
+| 2026-10-29 | `docs/PAUSE_SEMANTICS_SWEEP.md` | 8 | **Status (2026-10-29, #1343):** the definition, the re-measured inventory, the |
+| 2026-10-29 | `docs/design/PAUSE_SEMANTICS.md` | 58 | ## The inventory, re-measured on `origin/main` 20e41e12 (2026-10-29) |
+| 2026-10-29 | `docs/design/PAUSE_SEMANTICS.md` | 69 | \| Surface \| #1343 said (2026-08-30) \| Measured 2026-10-29 \| Note \| |
 | 2026-10-29 | `docs/rituals/gate_5_proven_build.md` | 118 | RULING: 2026-10-29 -- global score submission stays OFF on the machine used to prove a release build, because proving runs now play the league seed be |
 | 2026-10-29 | `docs/rulings/RULINGS.md` | 152 | \| 2026-10-29 \| global score submission stays OFF on the machine used to prove a release build, because proving runs now play the league seed before th |
 | 2026-11-06 | `docs/releases/RELEASE_LINKING_TO_0.20.md` | 130 | \| v0.17 \| Fri 2026-11-06 \| w45 \| `weekly-2026-w45` \| |

@@ -284,6 +284,15 @@ repos:
         files: '\.gd$'
         pass_filenames: true
 
+      # #1343: SceneTree.create_timer() DEFAULTS to ignoring the pause menu (#1341).
+      # Every call must pass process_always explicitly. docs/design/PAUSE_SEMANTICS.md
+      - id: pause-timer-check
+        name: create_timer calls state their pause intent explicitly
+        entry: python tools/check_pause_timers.py
+        language: system
+        files: '\.gd$'
+        pass_filenames: true
+
       - id: refusal-classification-check
         name: Player-facing refusals say whether they are a rule or a stub
         entry: python tools/check_refusal_classification.py

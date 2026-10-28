@@ -6045,6 +6045,29 @@ DESCRIPTION:needs a declaration -- CI_FOSSILS_2026-08-30.md (unparsed) --
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:618547bd1da4a71a@commitments.pdoom1
+DTSTAMP:20260830T000000Z
+DTSTART;VALUE=DATE:20260830
+DTEND;VALUE=DATE:20260831
+SUMMARY:[UNPARSED] needs a declaration -- PAUSE_SEMANTICS.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/design/PAUSE_SEMA
+ NTICS.md:69. 1 line(s) in docs/design/PAUSE_SEMANTICS.md mention this dat
+ e and no COMMITMENT: declaration accounts for it. Either add a declaratio
+ n or the date is incidental. First line: | Surface | #1343 said (2026-08-
+ 30) | Measured 2026-10-29 | Note | -- Generated from tracked sources by s
+ cripts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- PAUSE_SEMANTICS.md (unparsed) -- unowne
+ d
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:62b739faa8048fec@commitments.pdoom1
 DTSTAMP:20260830T000000Z
 DTSTART;VALUE=DATE:20260830
@@ -7890,6 +7913,53 @@ ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- gate_6_board_opens.md (unparsed) -- uno
  wned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:3c9a3d3d685ec51d@commitments.pdoom1
+DTSTAMP:20261029T000000Z
+DTSTART;VALUE=DATE:20261029
+DTEND;VALUE=DATE:20261030
+SUMMARY:[UNPARSED] needs a declaration -- PAUSE_SEMANTICS.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/design/PAUSE_SEMA
+ NTICS.md:58. 2 line(s) in docs/design/PAUSE_SEMANTICS.md mention this dat
+ e and no COMMITMENT: declaration accounts for it. Either add a declaratio
+ n or the date is incidental. First line: ## The inventory\, re-measured o
+ n `origin/main` 20e41e12 (2026-10-29) -- Generated from tracked sources b
+ y scripts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- PAUSE_SEMANTICS.md (unparsed) -- unowne
+ d
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:52a56c1780337884@commitments.pdoom1
+DTSTAMP:20261029T000000Z
+DTSTART;VALUE=DATE:20261029
+DTEND;VALUE=DATE:20261030
+SUMMARY:[UNPARSED] needs a declaration -- PAUSE_SEMANTICS_SWEEP.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/PAUSE_SEMANTICS_S
+ WEEP.md:8. 1 line(s) in docs/PAUSE_SEMANTICS_SWEEP.md mention this date a
+ nd no COMMITMENT: declaration accounts for it. Either add a declaration o
+ r the date is incidental. First line: **Status (2026-10-29\, #1343):** th
+ e definition\, the re-measured inventory\, the -- Generated from tracked 
+ sources by scripts/generate_commitment_calendar.py\; regenerate to update
+ .
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- PAUSE_SEMANTICS_SWEEP.md (unparsed) -- 
+ unowned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT

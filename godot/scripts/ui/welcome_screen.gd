@@ -245,12 +245,12 @@ func _setup_onboarding_overlays():
 		# does not also fire (now or on the next launch).
 		GameConfig.mark_patch_notes_seen()
 		# Delay slightly to ensure UI is ready
-		await get_tree().create_timer(0.3).timeout
+		await get_tree().create_timer(0.3, false).timeout
 		welcome_overlay.show_overlay()  # marks welcome_seen (persisted show-once)
 	elif GameConfig.has_unseen_patch_notes():
 		print("[WelcomeScreen] New version detected! Showing What's New modal...")
 		# Delay slightly to ensure UI is ready
-		await get_tree().create_timer(0.3).timeout
+		await get_tree().create_timer(0.3, false).timeout
 		whats_new_modal.show_modal(true)  # true = mark as seen
 
 func _setup_launch_notices():
