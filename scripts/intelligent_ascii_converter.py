@@ -103,12 +103,12 @@ class IntelligentASCIIConverter:
             "\u2015": " -- ",  # HORIZONTAL BAR -> spaced double dash
             "\u2026": "...",  # ELLIPSIS -> three dots
             # Quotation marks - standard ASCII quotes
-            "\u201c": """,        # LEFT DOUBLE QUOTATION
-            '\u201d': """,  # RIGHT DOUBLE QUOTATION
-            "\u2018": """,        # LEFT SINGLE QUOTATION
-            '\u2019': """,  # RIGHT SINGLE QUOTATION
-            "\u00ab": """,        # LEFT ANGLE QUOTATION
-            '\u00bb': """,  # RIGHT ANGLE QUOTATION
+            "\u201c": '"',  # LEFT DOUBLE QUOTATION
+            "\u201d": '"',  # RIGHT DOUBLE QUOTATION
+            "\u2018": "'",  # LEFT SINGLE QUOTATION
+            "\u2019": "'",  # RIGHT SINGLE QUOTATION
+            "\u00ab": '"',  # LEFT ANGLE QUOTATION
+            "\u00bb": '"',  # RIGHT ANGLE QUOTATION
             # List markers - clean alternatives
             "\u2022": "* ",  # BULLET -> asterisk with space
             "\u2023": "* ",  # TRIANGULAR BULLET -> asterisk
