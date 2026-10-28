@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 > claimed. `scripts/check_release_notes.py --changelog-structure` now blocks
 > a second `[Unreleased]` heading from appearing again.
 
-## [0.14.5] - 2026-10-26 -- The Pause That Pauses
+## [0.14.5] - 2026-10-29 -- The Pause That Pauses
 
 A hotpatch for friends. Two things stood between a new player and a fair first
 session: a pause menu that did not stop the clock, and a macOS build carrying a
@@ -27,6 +27,10 @@ library nothing used, packaged in a shape that could not be signed.
   month boundary could pass behind the open menu, and the Month Review then
   drew underneath it and stopped taking clicks. Both timers now respect pause;
   `godot/tests/unit/test_pause_stops_month_playback.gd` pins it.
+- An event with no researcher reaction now shows no reaction, instead of
+  printing a null (#1327). The upstream historical-events data is moving to
+  an explicit null for reactions it never had, and this build reads that
+  correctly before the change arrives. The bundled events are unchanged.
 
 ### Removed
 - GodotSteam, from every build (#1348). No game code ever called Steam. Its

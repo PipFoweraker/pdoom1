@@ -2,7 +2,7 @@
   "versions": [
     {
       "version": "0.14.5",
-      "date": "2026-10-26",
+      "date": "2026-10-29",
       "title": "The Pause That Pauses",
       "highlights": [
         "The pause menu now actually pauses. Before, the month kept playing behind it -- days ticked, the month could end, and the review screen could open underneath the menu and refuse your clicks",
@@ -10,7 +10,8 @@
       ],
       "sections": {
         "fixed": [
-          "Pausing stops the clock. Month playback and turn advance used timers that ignored pause; both now respect it (#1341)."
+          "Pausing stops the clock. Month playback and turn advance used timers that ignored pause; both now respect it (#1341).",
+          "An event with no researcher reaction shows no reaction line, instead of an empty or null one (#1327)."
         ],
         "changed": [
           "Steam integration libraries are gone from every platform. Nothing in the game used them, and on macOS they broke the app's signing (#1348)."
