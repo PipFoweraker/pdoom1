@@ -1,6 +1,25 @@
 {
   "versions": [
     {
+      "version": "0.14.5",
+      "date": "2026-10-29",
+      "title": "The Pause That Pauses",
+      "highlights": [
+        "The pause menu now actually pauses. Before, the month kept playing behind it -- days ticked, the month could end, and the review screen could open underneath the menu and refuse your clicks",
+        "The macOS build no longer carries an unused Steam library that could not be signed. If you are on a Mac, please tell us whether it launches -- nobody has confirmed that yet"
+      ],
+      "sections": {
+        "fixed": [
+          "Pausing stops the clock. Month playback and turn advance used timers that ignored pause; both now respect it (#1341).",
+          "An event with no researcher reaction shows no reaction line, instead of an empty or null one (#1327).",
+          "The game no longer floods its log with a line for every action and dice roll. Scores are unaffected (#1354)."
+        ],
+        "changed": [
+          "Steam integration libraries are gone from every platform. Nothing in the game used them, and on macOS they broke the app's signing (#1348)."
+        ]
+      }
+    },
+    {
       "version": "0.14.4",
       "date": "2026-08-29",
       "title": "The Door That Was Not There",
