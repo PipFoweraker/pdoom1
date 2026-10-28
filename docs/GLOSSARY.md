@@ -158,7 +158,7 @@ Two distinct nouns share this word -- disambiguate before acting:
    **pck**.
 2. **The league / world-update pack** -- ADR-0016 content: a month's curated
    real-world events authored as ADR-0005 schedule entries, plus league notes.
-   The playbook's [Gate 3: PACK BLESSED] is "the 0016 league pack is authored, schema-valid,
+   The playbook's [Gate 2: PACK BLESSED] is "the 0016 league pack is authored, schema-valid,
    and born clean of printed doom".
 
 Source (1): `docs/game-design/DISTRIBUTION_AND_PATCHING.md:9-13,29-43`
@@ -167,22 +167,27 @@ Source (2): `docs/game-design/decisions/ADR-0016-league-metabolism.md:22-27`,
 
 ### pack (verb)
 To author the month's league pack content (the Wednesday "FREEZE + pack"
-beat), gated by [Gate 3: PACK BLESSED]. Note it does NOT mean "run the exporter" -- that is
+beat), gated by [Gate 2: PACK BLESSED]. Note it does NOT mean "run the exporter" -- that is
 **cut** / `build_release.py`.
 
 Source: `docs/game-design/LEAGUE_WEEK_PLAYBOOK.md:22-23,61-67,99`
 
 ### freeze
-The [Gate 2: THE FREEZE] stage gate (Wednesday PM): main freezes for mechanics. After the
-freeze, only pack content, art, docs, and bugfixes labelled league-critical
-may merge. `ladder_version.txt` is final for the league at this line.
+The [Gate 4: THE FREEZE] stage gate: the release branch `release/v0.X` is cut,
+plus a windowed check that a run actually starts. Since the 2026-10-26 reorder
+(#1025) it comes after the pack and the seed are blessed. After the freeze the
+release branch takes only cherry-picked fixes that meet the hotpatch criteria in
+`RELEASING.md`; `main` moves on to the next month. (Playbook v0 froze `main`
+itself, Wednesday PM, with pack content still allowed to merge.)
+`ladder_version.txt` is final for the league at this line.
 Incantation: *"No new law crosses this line. What is merged is the month.
 What is parked is the next."*
 
 Why it bites: merging a mechanics PR past the freeze changes the ruleset the
 league is about to open on, after the ladder value was declared final.
 
-Source: `docs/game-design/LEAGUE_WEEK_PLAYBOOK.md:54-61`
+Source: `docs/game-design/LEAGUE_WEEK_PLAYBOOK.md:54-61`,
+`docs/rituals/gate_4_the_freeze.md`
 
 ### cut / the proven build
 Producing the release artifact via `python tools/build_release.py` -- never a
@@ -190,7 +195,7 @@ raw `godot --export`. The tool nukes `godot/.godot` first, plants a
 uniquely-named marker file, exports, and PROVES that marker is present in the
 `.pck` before emitting; a missing marker exits non-zero and loud. This exists
 because Godot's `exported/` cache can silently pack a STALE scene while
-reporting success (~12 test cycles burned on v0.11.0). [Gate 4: PROVEN BUILD] pairs the proven
+reporting success (~12 test cycles burned on v0.11.0). [Gate 5: PROVEN BUILD] pairs the proven
 build with `sync_version.py --check` green and a human playtest of the built
 artifact, not the editor.
 
@@ -276,26 +281,31 @@ never PASSED. Saying a line you have not verified is named the cardinal sin
 of the ceremony.
 
 Naming (ruled 2026-07-29, Pip): gates are written name-first with a 1-6
-sequence number, in ASCII chrome, e.g. `[Gate 4: PROVEN BUILD]`. The playbook
-still uses the older zero-indexed G0-G5 letters, so the mapping is:
+sequence number, in ASCII chrome, e.g. `[Gate 5: PROVEN BUILD]`. Order
+(ruled 2026-10-26, #1025, `docs/rulings/DECISIONS_2026-10-26_return.md`
+item 6): *decide, lock, prove, open* -- the names stay and the numbers follow
+the new order. The playbook still uses the older zero-indexed G0-G5 letters,
+and records dated before 2026-10-26 use the 2026-07-29 numbers, so:
 
-| Written from 2026-07-29 | Legacy in the playbook |
-|---|---|
-| [Gate 1: LAST POUR] -- last mechanics merge enters review | G0 |
-| [Gate 2: THE FREEZE] | G1 |
-| [Gate 3: PACK BLESSED] | G2 |
-| [Gate 4: PROVEN BUILD] | G3 |
-| [Gate 5: SEED BLESSING] -- seed drawn, ladder stamped, board-key fork verified clean | G4 |
-| [Gate 6: BOARD OPENS] | G5 |
+| Written from 2026-10-26 | 2026-07-29 .. 2026-10-25 | Legacy in the playbook |
+|---|---|---|
+| [Gate 1: LAST POUR] -- last mechanics merge enters review | Gate 1 | G0 |
+| [Gate 2: PACK BLESSED] | Gate 3 | G2 |
+| [Gate 3: SEED BLESSING] -- seed drawn and committed before the cut | Gate 5 | G4 |
+| [Gate 4: THE FREEZE] -- release-branch cut, plus a run actually starts | Gate 2 | G1 |
+| [Gate 5: PROVEN BUILD] | Gate 4 | G3 |
+| [Gate 6: BOARD OPENS] | Gate 6 | G5 |
 
 Why it bites: the legacy scheme is zero-indexed, so a bare "Gate 1" is
-ambiguous between the FIRST gate (G0 LAST POUR) and G1 (THE FREEZE). The
-sequence numbers above are ceremony order, and the name is always carried
-alongside so the number can never be the only disambiguator.
+ambiguous between the FIRST gate (G0 LAST POUR) and G1 (THE FREEZE) -- and
+since the reorder a bare "Gate 4" means THE FREEZE now and PROVEN BUILD in
+any older record. The sequence numbers above are ceremony order, and the name
+is always carried alongside so the number can never be the only
+disambiguator.
 
-Three checks are explicitly NOT allowed to slip: [Gate 3: PACK BLESSED]'s
-clean-of-printed-doom, [Gate 4: PROVEN BUILD]'s proven build, and
-[Gate 5: SEED BLESSING]'s board-key check.
+Three checks are explicitly NOT allowed to slip: [Gate 2: PACK BLESSED]'s
+clean-of-printed-doom, [Gate 5: PROVEN BUILD]'s proven build, and
+[Gate 3: SEED BLESSING]'s board-key check.
 
 Source: `docs/game-design/LEAGUE_WEEK_PLAYBOOK.md:28-45,117-124`;
 naming ruling is conversational (2026-07-29), not yet reflected in the playbook
@@ -465,7 +475,7 @@ Source: `docs/game-design/LEAGUE_WEEK_PLAYBOOK.md:26,47-52,119`,
 ### printed doom (ADR-0015 / "born clean")
 No action or event may write doom directly -- they write intermediaries
 (lab frontier capability, safety absorption) and doom is recomputed from
-streams. Pack content is checked "born clean of printed doom" at [Gate 3: PACK BLESSED]
+streams. Pack content is checked "born clean of printed doom" at [Gate 2: PACK BLESSED]
 by grep;
 that check is on the not-allowed-to-slip list.
 
