@@ -115,6 +115,8 @@ submission off on the proving machine (decline the consent prompt after
 the backstop, and a board that is not empty there is a decision for the
 Commissioner, not a cleanup task.
 
+RULING: 2026-10-29 -- global score submission stays OFF on the machine used to prove a release build, because proving runs now play the league seed before the board opens -- flavour: league-integrity -- mechanism: docs/rituals/gate_6_board_opens.md check 7 (empty-board attestation)
+
 Check 8 was added 2026-07-31, and the reason is specific rather than
 hygienic.
 
