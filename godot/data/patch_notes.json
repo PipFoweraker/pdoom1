@@ -11,7 +11,8 @@
       "sections": {
         "fixed": [
           "Pausing stops the clock. Month playback and turn advance used timers that ignored pause; both now respect it (#1341).",
-          "An event with no researcher reaction shows no reaction line, instead of an empty or null one (#1327)."
+          "An event with no researcher reaction shows no reaction line, instead of an empty or null one (#1327).",
+          "The game no longer floods its log with a line for every action and dice roll. Scores are unaffected (#1354)."
         ],
         "changed": [
           "Steam integration libraries are gone from every platform. Nothing in the game used them, and on macOS they broke the app's signing (#1348)."

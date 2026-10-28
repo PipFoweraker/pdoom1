@@ -31,6 +31,10 @@ library nothing used, packaged in a shape that could not be signed.
   printing a null (#1327). The upstream historical-events data is moving to
   an explicit null for reactions it never had, and this build reads that
   correctly before the change arrives. The bundled events are unchanged.
+- The game no longer writes a log line for every action, event and random
+  roll (#1354). A score-verification debug mode was switched on for every
+  game; it is now off unless asked for with `--verify-debug`. Scores and
+  their verification hashes are unchanged.
 
 ### Removed
 - GodotSteam, from every build (#1348). No game code ever called Steam. Its
