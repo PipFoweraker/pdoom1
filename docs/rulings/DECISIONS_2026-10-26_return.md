@@ -92,7 +92,23 @@ campaign gets a clean board as a launch moment instead of two resets in a month.
 22. **#529 CRT / terminal aesthetic.**
     RULING: 2026-10-26 -- the CRT/terminal aesthetic is unparked -- flavour: visual-direction -- mechanism: #529
 23. **#786 credits.** PENDING -- Pip asked what decision is being asked.
-24. **#889, #984, #1210 workshops.** Put on the calendar. Dates PENDING Pip's
-    confirmation of the proposed slots.
+24. **#889, #984, #1210 workshops.** Put on the calendar. Proposed slots
+    confirmed by Pip on 2026-10-30 ("workshop dates all seem good"):
+    COMMITMENT: 2026-11-05 -- first-ten-turns onboarding workshop, half-day -- owner: pip -- kind: task -- note: #1210, before the November campaign
+    COMMITMENT: 2026-11-19 -- audit-mechanics deep-dive workshop, half-day -- owner: pip -- kind: task -- note: #984
+    COMMITMENT: 2026-12-02 -- Architecture Week starts (week of Wed 2026-12-02) -- owner: pip -- kind: task -- note: #889, after the campaign
 25. **#950 creative harvest.**
     RULING: 2026-10-26 -- approve creative-harvest items 1-3 and 5-12 of #950; item 4 (the 2026-07-30 anniversary beat) expired unbuilt -- flavour: creative-harvest -- mechanism: #950
+
+---
+
+## Added 2026-10-30
+
+26. **#1193 event density / passive-lab survival.** Measured on 8 seeds
+    before and after #1137: a passive lab now lasts ~27% longer (2825 -> 3585
+    total turns), with events per turn up only ~5%. Pip, 2026-10-30: fine --
+    a longer do-nothing baseline leaves more room for the player's choices to
+    move the simulation.
+    RULING: 2026-10-30 -- a passive (do-nothing) lab surviving longer after #1137 is intended: the longer baseline gives players more room to influence the simulation -- flavour: balance-baseline -- mechanism: #1193
+27. **Time budget to Christmas.** Pip plans about 4 hours a day on pdoom1
+    from 2026-10-30 until Christmas week.
