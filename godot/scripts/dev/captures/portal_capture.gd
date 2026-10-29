@@ -84,8 +84,9 @@ func _ready() -> void:
 
 	if self_quit_seconds > 0.0:
 		# Sim-time timer: under Movie Maker this counts fixed-fps frames, so
-		# self_quit_seconds seconds of footage, not wall-clock.
-		var t := get_tree().create_timer(self_quit_seconds)
+		# self_quit_seconds seconds of footage, not wall-clock. process_always=true
+		# (#1343): a dev capture harness must exit on schedule whatever the tree does.
+		var t := get_tree().create_timer(self_quit_seconds, true)
 		t.timeout.connect(func() -> void: get_tree().quit())
 
 

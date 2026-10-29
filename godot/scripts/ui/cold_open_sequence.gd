@@ -185,7 +185,7 @@ func _ready() -> void:
 	_build_ui()
 	# Begin fully black, then drive the beats.
 	_black.modulate.a = 1.0
-	await get_tree().create_timer(OPENING_BLACK_HOLD).timeout
+	await get_tree().create_timer(OPENING_BLACK_HOLD, false).timeout
 	_play_next_beat()
 
 
@@ -659,7 +659,7 @@ func _on_keypad_digit(digit: String) -> void:
 	_update_dots()
 	if _entered_digits.length() >= 4:
 		# Any 4 digits unlock (Editor's benevolent hand).
-		await get_tree().create_timer(0.15).timeout
+		await get_tree().create_timer(0.15, false).timeout
 		_on_unlock()
 
 

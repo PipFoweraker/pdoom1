@@ -68,9 +68,14 @@ func _create_notification(data: Dictionary):
 	tween.tween_property(notif_panel, "position", slide_in_pos, SLIDE_DURATION).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 
 	# Wait out the duration, or leave early if the player clicks the toast.
+	# process_always=false (#1343, docs/design/PAUSE_SEMANTICS.md): a message the
+	# player is meant to read must not spend its lifetime behind the pause menu. The
+	# slide tweens above/below are bound to this (pausable) node and already freeze;
+	# with the engine default this clock kept counting, so a toast raised just
+	# before ESC came back from the menu already expired and slid straight out.
 	var waited := 0.0
 	while waited < float(data["duration"]):
-		await get_tree().create_timer(0.1).timeout
+		await get_tree().create_timer(0.1, false).timeout
 		waited += 0.1
 		if not is_instance_valid(notif_panel):
 			active_notifications.erase(notif_panel)

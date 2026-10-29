@@ -3,7 +3,7 @@
   "repo": "pdoom1",
   "generated_from": "tracked files at HEAD",
   "convention": "docs/rulings/RULINGS_CONVENTION.md",
-  "count": 81,
+  "count": 82,
   "rulings": [
     {
       "id": "pdoom1:2026-07-04:12de8fc2",
@@ -1138,6 +1138,20 @@
       "supersedes": null,
       "superseded_by": null,
       "source": "docs/rituals/gate_5_proven_build.md:118"
+    },
+    {
+      "id": "pdoom1:2026-10-30:5d47877d",
+      "date": "2026-10-30",
+      "ruling": "\"paused\" means the player has stepped out of the game: simulation, gameplay input, animations and on-screen messages stop; only the pause menu, what it controls, music, scene transitions and capture/diagnostic tools keep running",
+      "summary": "",
+      "flavour": "pause-semantics",
+      "kind": "declaration",
+      "status": "",
+      "by": "Pip",
+      "mechanism": "tools/check_pause_timers.py",
+      "supersedes": null,
+      "superseded_by": null,
+      "source": "docs/design/PAUSE_SEMANTICS.md:10"
     }
   ],
   "undeclared": [
@@ -2006,11 +2020,11 @@
       "text": "# style_tags restricted to the canonical quality-tier ladder (ruled 2026-07-26)."
     },
     {
-      "source": "public/releases/releases.json:100",
+      "source": "public/releases/releases.json:150",
       "text": "\"tag_message\": \"P(Doom) v0.14.3 -- ladder epoch L6\\n\\nLadder L6. Featured seed weekly-2026-w35. Board key (weekly-2026-w35, L6).\\n\\nFORKING RELEASE, and the fork happened before this build. L6 was cut"
     },
     {
-      "source": "public/releases/releases.json:209",
+      "source": "public/releases/releases.json:259",
       "text": "\"changelog\": \"Ladder epoch **L3 -> L4** -- this is a FORKING release. The historical event deck\\nwas retimed to one-turn-one-month and the ruled promotions were applied (#1137),\\nwhich changes which e"
     },
     {

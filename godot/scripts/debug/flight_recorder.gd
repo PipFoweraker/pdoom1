@@ -53,6 +53,12 @@ func _live_gm() -> Node:
 
 func _ready() -> void:
 	layer = OVERLAY_LAYER
+	# Capture works while paused (#1028, #1343; docs/design/PAUSE_SEMANTICS.md). The
+	# capture itself is read-only -- screenshot + serialized snapshot + a typed note --
+	# but the note popup is a LineEdit, and a LineEdit under a paused (inherited)
+	# process mode takes no typing. KeybindManager now dispatches F6 while paused, so
+	# without this the popup would open inert behind the pause menu.
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	if not BuildInfo.is_dev_build():
 		visible = false
 		return
