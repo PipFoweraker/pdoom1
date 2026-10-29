@@ -187,6 +187,8 @@ COMMITMENT: 2026-09-09 -- Manifund deadline -- owner: pip -- kind: deadline -- c
 
 COMMITMENT: 2026-10-23 -- gpt-image-1 retires; the art pipeline's default model needs migrating -- owner: pdoom1-seat -- kind: expiry -- covers: docs/art/ASSET_PIPELINE.md, docs/art/PROMPT_RECIPES_2026-07-29.md, docs/art/VISUAL_ASSET_OPTIONS_2026-07-16.md, docs/design/ART_RUN_2026-08-07.md, docs/design/ASSET_PROVENANCE_SCOPE_2026-08-06.md -- note: a dormant pipeline that stops working on a date nobody is watching is the same shape as #1070.
 
+COMMITMENT: 2027-10-28 -- CROSS_REPO_TOKEN expires: the release workflow can no longer tell pdoom1-website about a new version -- owner: pip -- kind: expiry -- lead: 30d,14d,3d,0d -- covers: .github/workflows/sync-game-version.yml -- note: fine-grained PAT, pdoom1-website only, Contents read/write, created 2026-10-28. Its predecessor (created 2025-09-15) lapsed unnoticed and v0.14.5's website sync failed HTTP 401. Renew at github.com/settings/personal-access-tokens, then update the secret via the repo's Settings > Secrets page (gh secret set via a Claude `!` command cannot prompt and stores an empty value).
+
 COMMITMENT: 2027-07-27 -- ADR-0018 render-only office doctrine: standing review -- owner: pdoom1-seat -- kind: review -- covers: docs/game-design/decisions/ADR-0018-render-only-office-doctrine.md, docs/game-design/ADR_DQ_AUDIT_2026-08-03.md, docs/game-design/WS3A_DAYLOG_2026-07-27.md -- note: the ADR states office gameplay foreclosed by default must CLEAR this review rather than tack on. Eleven months out, which is exactly the horizon a person cannot hold.
 
 ---
