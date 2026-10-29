@@ -13,7 +13,7 @@ Horizon: **2026-08-09** (the prose scan reports dates at or after this; roll it
 forward deliberately in `COMMITMENTS.md`, never automatically -- a clock-reading
 generator goes stale overnight and trains people to ignore the check).
 
-**60 declared, 4 release-train, 287 UNPARSED, 0 malformed.**
+**60 declared, 4 release-train, 288 UNPARSED, 0 malformed.**
 
 ## Declared commitments
 
@@ -172,7 +172,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-12 | `docs/rulings/UNDECLARED_TRIAGE.md` | 205 | - ## Ruled 2026-08-12 (coordination/DESIGN_2026-08-12_interrupt-resolution-variants.md, |
 | 2026-08-12 | `tools/assets/backfill_provenance.py` | 691 | 2026-08-12 (`ab85ed0b`, #1196) one day after the guard landed, and nobody saw |
 | 2026-08-13 | `CLAUDE.md` | 12 | - **Never a bare `godot --path godot`.** That is what was typed on 2026-08-13 |
-| 2026-08-13 | `CLAUDE.md` | 67 | - **STALE cache is the worse half of that trap (2026-08-13, cost a playtest).** |
+| 2026-08-13 | `CLAUDE.md` | 70 | - **STALE cache is the worse half of that trap (2026-08-13, cost a playtest).** |
 | 2026-08-13 | `coordination#32` | 0 | Asset provenance is UNMET, not at-risk: the Manifund obligation has no capture mechanism in pdoom1 -- blocking party pdoom1, return date 2026-08-13 |
 | 2026-08-13 | `coordination#35` | 0 | Pip is out this evening through Rektango -- last synchronous window today. Post your asks ranked, or say you have none |
 | 2026-08-13 | `docs/CLAIM_AUDIT_2026-08-06.md` | 500 | audit against pdoom1's output for the week of 2026-08-13 finds a WRONG rate at or |
@@ -246,7 +246,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-14 | `tools/check_review_js.py` | 6 | On 2026-08-14 the art review gallery was completely dead -- no verdicts, no |
 | 2026-08-14 | `tools/transcribe.py` | 24 | session, and the 2026-08-14 one drifts into unrelated personal browsing after |
 | 2026-08-14 | `tools/transcribe.py` | 70 | 2026-08-14 recording covers 495 of 506 logged decisions, so nearly every |
-| 2026-08-15 | `CLAUDE.md` | 254 | `UNDECLARED`, never dropped. **Cross-repo by design** (ruled 2026-08-15): |
+| 2026-08-15 | `CLAUDE.md` | 263 | `UNDECLARED`, never dropped. **Cross-repo by design** (ruled 2026-08-15): |
 | 2026-08-15 | `docs/GUARD_AUDIT_2026-08-19.md` | 38 | \| `tools/assets/check_credentials.py` \| signed C2PA credentials on shipped images \| Guards a loss its own docstring calls "invisible and irreversible" |
 | 2026-08-15 | `docs/art/A4_COLLAPSE_2026-08-20.md` | 44 | mind between the 2026-08-03 gallery sweep and the 2026-08-15 server sessions. In |
 | 2026-08-15 | `docs/art/HARVEST_PASS_PROPOSAL.md` | 4 | > and the evidence trail). Written 2026-08-15 as a proposal. Self-contained: |
@@ -277,7 +277,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-15 | `docs/rulings/RULINGS.md` | 70 | \| 2026-08-15 \| flaw:<thing> joins the harvest vocabulary as the negative counterpart to element:, because the sweeps are mostly negative and prose can |
 | 2026-08-15 | `docs/rulings/RULINGS.md` | 105 | \| 2026-08-15 \| the ruling road is cross-repo from day one, federated: each repo scans itself and emits rulings.json, an aggregator reads them, nothing |
 | 2026-08-15 | `docs/rulings/RULINGS.md` | 106 | \| 2026-08-15 \| naming a mechanism is OPTIONAL on a ruling, and the generated index reports which rulings have none \| `scripts/generate_rulings.py` \| ` |
-| 2026-08-15 | `docs/rulings/RULINGS.md` | 296 | - `CLAUDE.md:254` -- `UNDECLARED`, never dropped. **Cross-repo by design** (ruled 2026-08-15): |
+| 2026-08-15 | `docs/rulings/RULINGS.md` | 296 | - `CLAUDE.md:263` -- `UNDECLARED`, never dropped. **Cross-repo by design** (ruled 2026-08-15): |
 | 2026-08-15 | `docs/rulings/RULINGS.md` | 475 | - `godot/data/asset_provenance.json:5132` -- "why": "Ruled by Pip 2026-08-15. A signed credential outranks every heuristic and is the only evidence th |
 | 2026-08-15 | `docs/rulings/RULINGS.md` | 526 | - `tools/art_review/serve_review.py:205` -- "to element: -- ruled by Pip 2026-08-15 because the sweeps are mostly " |
 | 2026-08-15 | `docs/rulings/RULINGS.md` | 529 | - `tools/assets/backfill_provenance.py:479` -- "Ruled by Pip 2026-08-15. A signed credential outranks every heuristic and " |
@@ -578,7 +578,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-28 | `docs/releases/RELEASE_LINKING_TO_0.20.md` | 93 | league opens on Friday 2026-08-28 -- also week 35 -- then by the 2026-07-30 |
 | 2026-08-28 | `tools/check_chronic_red.py` | 16 | unsatisfiable. On 2026-08-28 it went red for the reason it was BUILT for -- |
 | 2026-08-28 | `tools/check_release_ledger.py` | 450 | # reason on 2026-08-28 (v0.14.4 bumped, tagged, never published) was |
-| 2026-08-29 | `CLAUDE.md` | 314 | entry said "the ENTIRE tree" until 2026-08-29, and that phrasing was used to |
+| 2026-08-29 | `CLAUDE.md` | 323 | entry said "the ENTIRE tree" until 2026-08-29, and that phrasing was used to |
 | 2026-08-29 | `docs/CI_FOSSILS_2026-08-30.md` | 15 | 2026-08-29 (#1336), after its first version declared three of them as chronic -- |
 | 2026-08-29 | `docs/CI_FOSSILS_2026-08-30.md` | 99 | - `release-ledger.yml:schedule`, which cleared itself on 2026-08-29 when its |
 | 2026-08-29 | `docs/RELEASE_NOTES_GUARD.md` | 56 | ### The PR-time row was added on 2026-08-29, and here is what it cost to learn |
@@ -779,6 +779,8 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-10-26 | `docs/rulings/RULINGS.md` | 463 | - `docs/rituals/README.md:85` -- Carried so far: the reorder and the Freeze's boot check, ruled 2026-10-26 |
 | 2026-10-26 | `docs/rulings/RULINGS.md` | 464 | - `docs/rituals/gate_3_seed_blessing.md:14` -- Ruled 2026-10-26 (#1025, `docs/rulings/DECISIONS_2026-10-26_return.md` item 6): |
 | 2026-10-26 | `docs/rulings/RULINGS.md` | 465 | - `docs/rituals/gate_4_the_freeze.md:14` -- Ruled 2026-10-26 (#1025, `docs/rulings/DECISIONS_2026-10-26_return.md` |
+| 2026-10-28 | `CLAUDE.md` | 49 | tier USED to emit ~13M `print()` lines (measured 2026-10-28; 99.6% from |
+| 2026-10-28 | `CLAUDE.md` | 199 | this note used to say they never fire, but merging #1349 on 2026-10-28 |
 | 2026-10-29 | `docs/rituals/gate_5_proven_build.md` | 118 | RULING: 2026-10-29 -- global score submission stays OFF on the machine used to prove a release build, because proving runs now play the league seed be |
 | 2026-10-29 | `docs/rulings/RULINGS.md` | 152 | \| 2026-10-29 \| global score submission stays OFF on the machine used to prove a release build, because proving runs now play the league seed before th |
 | 2026-11-06 | `docs/releases/RELEASE_LINKING_TO_0.20.md` | 130 | \| v0.17 \| Fri 2026-11-06 \| w45 \| `weekly-2026-w45` \| |

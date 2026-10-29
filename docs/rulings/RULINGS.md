@@ -292,8 +292,8 @@ is not.
 - `CHANGELOG.md:335` -- was retimed to one-turn-one-month and the ruled promotions were applied (#1137),
 - `CHANGELOG.md:366` -- and the ruled promotions applied (#1137), against Pip's rulings of 2026-08-04.
 - `CHANGELOG.md:374` -- - **The last player-facing "AP" is gone**, and one number format is ruled across
-- `CLAUDE.md:226` -- quarterly pins to v0.15; league/content cadence is MONTHLY (ruled 2026-07-21).
-- `CLAUDE.md:254` -- `UNDECLARED`, never dropped. **Cross-repo by design** (ruled 2026-08-15):
+- `CLAUDE.md:235` -- quarterly pins to v0.15; league/content cadence is MONTHLY (ruled 2026-07-21).
+- `CLAUDE.md:263` -- `UNDECLARED`, never dropped. **Cross-repo by design** (ruled 2026-08-15):
 - `art_source/pixellab_2026-07-26_cat_sweep/MANIFEST.md:3` -- Execution of Pip's locked recipe (ruled 2026-07-26, "go cat sweep 8 dir now"):
 - `docs/CONTENT_DISTRIBUTION_SYSTEM.md:10` -- > **SUPERSEDED, not merely "outdated in spirit", as of 2026-08-13.** Pip ruled
 - `docs/DEVELOPERGUIDE.md:164` -- prove, open* (ruled 2026-10-26, #1025): [Gate 1: LAST POUR],

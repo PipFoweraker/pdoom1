@@ -46,7 +46,10 @@ runtime -- the old Python bridge is gone). Python exists only for CI/tooling in
   Windows across 5 runs (#1181). It is NOT an hour-long tier; if it behaves
   like one, read the next bullet.
 - **If the sim tier ever crawls locally, suspect stdout, not the tests.** The
-  tier emits ~4-5M `print()` lines, and Godot's per-line write cost depends
+  tier USED to emit ~13M `print()` lines (measured 2026-10-28; 99.6% from
+  VerificationTracker debug mode, forced on for every game until #1354 made it
+  opt-in via `--verify-debug` / `PDOOM1_VERIFY_DEBUG=1`; ~57k lines since). If
+  it floods again, count lines by `[Tag]` prefix first. Godot's per-line write cost depends
   wildly on what stdout is attached to -- 200k prints measured at 2.4s through
   a native pipe, 432s through a Git Bash `> file` redirect, ~2900s through
   `| cat`. The runner now owns the pipe itself, so run it directly; do NOT wrap
@@ -192,8 +195,14 @@ runtime -- the old Python bridge is gone). Python exists only for CI/tooling in
   accidental run no longer sprays transliterated churn across the tree. Still
   NEVER `git add -A` (the `.import`/`.uid` staging trap remains); if a worktree
   ever looks mass-modified, suspect that, not enforce-standards.
-- **Squash-merge does NOT fire closes-keywords here** -- after merging,
-  verify the linked issues closed; close stale ones manually.
+- **Squash-merge closes-keywords are UNRELIABLE here, in both directions** --
+  this note used to say they never fire, but merging #1349 on 2026-10-28
+  auto-closed #1071 (the "nobody has launched the Mac build" issue) because
+  the PR body contained the prose "If that closes #1071 before the tag..." --
+  GitHub parses a keyword ANYWHERE in the text, even in a hypothetical. Write
+  `Refs #N`; never put close/fix/resolve directly before `#N` in a PR body
+  unless the merge really should close it. After merging, check
+  `gh pr view N --json closingIssuesReferences` and reopen or close by hand.
 - **Verify your Edit paths land in YOUR worktree** -- three lanes in one
   week initially edited the wrong checkout. Absolute paths from prompts go
   stale after worktree switches.
