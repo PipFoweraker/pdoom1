@@ -4,8 +4,10 @@ The written statement #1343 asked for. Scope and history: `docs/PAUSE_SEMANTICS_
 (the measurement that opened the sweep) and #1341 (the bug that shipped). This file is
 the rule; the sweep doc is how we got here.
 
-Status: written by the pdoom1 seat for #1343, for Pip to accept or amend. It is a
-proposal until he does -- no `RULING:` line is declared here on his behalf.
+Status: written by the pdoom1 seat for #1343; accepted by Pip on 2026-10-30 ("1360 seems
+good to go"). The diagnostic-controls row stays undecided (#1028 option B).
+
+RULING: 2026-10-30 -- "paused" means the player has stepped out of the game: simulation, gameplay input, animations and on-screen messages stop; only the pause menu, what it controls, music, scene transitions and capture/diagnostic tools keep running -- flavour: pause-semantics -- mechanism: tools/check_pause_timers.py
 
 ## Two different pauses -- do not confuse them
 

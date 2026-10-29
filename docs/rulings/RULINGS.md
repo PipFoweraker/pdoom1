@@ -5,7 +5,7 @@
 > `python scripts/generate_rulings.py`. The convention, and why it looks
 > like this, is argued in `docs/rulings/RULINGS_CONVENTION.md`.
 
-**81 ruling(s)** across **28 flavour(s)**. **263** prose ruling(s) not yet declared.
+**82 ruling(s)** across **29 flavour(s)**. **263** prose ruling(s) not yet declared.
 
 ## One index, five sources
 
@@ -16,7 +16,7 @@ flattening either into one line would delete what makes it worth having.
 
 | kind | n | what it is | where |
 |---|---:|---|---|
-| `declaration` | 55 | a `RULING:` line written next to what it governs | anywhere |
+| `declaration` | 56 | a `RULING:` line written next to what it governs | anywhere |
 | `adr` | 20 | a full architecture argument, summarised here | `docs/game-design/decisions/` |
 | `session` | 3 | a transcript or workshop ruling set, pointed at | `docs/SPOKEN_*`, `*RULINGS*` |
 | `card` | 3 | the input a ruling was made from | `docs/decision-cards/` |
@@ -171,6 +171,12 @@ flavour it belongs to and read what was already decided there.
 |---|---|---|---|
 | 2026-08-22 | a mechanic that charges the player and does nothing observable gets an unsubtle placeholder consequence NOW rather than waiting for a balanced one; players need to suffer, and balance comes later | `this test file, and the fix-by dates on the inertness issues` | `godot/tests/unit/test_ad_campaign_is_visible.gd:11` |
 
+### `pause-semantics` (only one so far)
+
+| date | ruling | mechanism | source |
+|---|---|---|---|
+| 2026-10-30 | "paused" means the player has stepped out of the game: simulation, gameplay input, animations and on-screen messages stop; only the pause menu, what it controls, music, scene transitions and capture/diagnostic tools keep running | `tools/check_pause_timers.py` | `docs/design/PAUSE_SEMANTICS.md:10` |
+
 ### `player-feedback` (only one so far)
 
 | date | ruling | mechanism | source |
@@ -292,8 +298,8 @@ is not.
 - `CHANGELOG.md:335` -- was retimed to one-turn-one-month and the ruled promotions were applied (#1137),
 - `CHANGELOG.md:366` -- and the ruled promotions applied (#1137), against Pip's rulings of 2026-08-04.
 - `CHANGELOG.md:374` -- - **The last player-facing "AP" is gone**, and one number format is ruled across
-- `CLAUDE.md:226` -- quarterly pins to v0.15; league/content cadence is MONTHLY (ruled 2026-07-21).
-- `CLAUDE.md:254` -- `UNDECLARED`, never dropped. **Cross-repo by design** (ruled 2026-08-15):
+- `CLAUDE.md:235` -- quarterly pins to v0.15; league/content cadence is MONTHLY (ruled 2026-07-21).
+- `CLAUDE.md:263` -- `UNDECLARED`, never dropped. **Cross-repo by design** (ruled 2026-08-15):
 - `art_source/pixellab_2026-07-26_cat_sweep/MANIFEST.md:3` -- Execution of Pip's locked recipe (ruled 2026-07-26, "go cat sweep 8 dir now"):
 - `docs/CONTENT_DISTRIBUTION_SYSTEM.md:10` -- > **SUPERSEDED, not merely "outdated in spirit", as of 2026-08-13.** Pip ruled
 - `docs/DEVELOPERGUIDE.md:164` -- prove, open* (ruled 2026-10-26, #1025): [Gate 1: LAST POUR],
@@ -504,8 +510,8 @@ is not.
 - `godot/tests/unit/test_no_debug_event_injection.gd:9` -- ## the hard lock repeatably in a release build (2026-08-06) and ruled the feature out:
 - `godot/tests/unit/test_number_format_policy.gd:2` -- ## Locks the number-format policy ruled in #1087 (docs/NUMBER_FORMATS.md).
 - `godot/tests/unit/test_prop_manifest.gd:96` -- # style_tags restricted to the canonical quality-tier ladder (ruled 2026-07-26).
-- `public/releases/releases.json:100` -- "tag_message": "P(Doom) v0.14.3 -- ladder epoch L6\n\nLadder L6. Featured seed weekly-2026-w35. Board key (weekly-2026-w35, L6).\n\nFORKING RELEASE, and the fork happened before this build. L6 was cut
-- `public/releases/releases.json:209` -- "changelog": "Ladder epoch **L3 -> L4** -- this is a FORKING release. The historical event deck\nwas retimed to one-turn-one-month and the ruled promotions were applied (#1137),\nwhich changes which e
+- `public/releases/releases.json:150` -- "tag_message": "P(Doom) v0.14.3 -- ladder epoch L6\n\nLadder L6. Featured seed weekly-2026-w35. Board key (weekly-2026-w35, L6).\n\nFORKING RELEASE, and the fork happened before this build. L6 was cut
+- `public/releases/releases.json:259` -- "changelog": "Ladder epoch **L3 -> L4** -- this is a FORKING release. The historical event deck\nwas retimed to one-turn-one-month and the ruled promotions were applied (#1137),\nwhich changes which e
 - `public/releases/v0.14.3.json:45` -- "tag_message": "P(Doom) v0.14.3 -- ladder epoch L6\n\nLadder L6. Featured seed weekly-2026-w35. Board key (weekly-2026-w35, L6).\n\nFORKING RELEASE, and the fork happened before this build. L6 was cut
 - `scripts/generate_rulings.py:164` -- # CONSOLIDATION, ruled by Pip 2026-08-21.
 - `scripts/generate_rulings.py:9` -- (`ruled by Pip`, `Pip ruled`, `ruled 2026-..`) scattered across .py docstrings,
