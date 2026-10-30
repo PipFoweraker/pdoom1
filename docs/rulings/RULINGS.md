@@ -5,7 +5,7 @@
 > `python scripts/generate_rulings.py`. The convention, and why it looks
 > like this, is argued in `docs/rulings/RULINGS_CONVENTION.md`.
 
-**82 ruling(s)** across **29 flavour(s)**. **263** prose ruling(s) not yet declared.
+**83 ruling(s)** across **30 flavour(s)**. **263** prose ruling(s) not yet declared.
 
 ## One index, five sources
 
@@ -16,7 +16,7 @@ flattening either into one line would delete what makes it worth having.
 
 | kind | n | what it is | where |
 |---|---:|---|---|
-| `declaration` | 56 | a `RULING:` line written next to what it governs | anywhere |
+| `declaration` | 57 | a `RULING:` line written next to what it governs | anywhere |
 | `adr` | 20 | a full architecture argument, summarised here | `docs/game-design/decisions/` |
 | `session` | 3 | a transcript or workshop ruling set, pointed at | `docs/SPOKEN_*`, `*RULINGS*` |
 | `card` | 3 | the input a ruling was made from | `docs/decision-cards/` |
@@ -81,6 +81,12 @@ flavour it belongs to and read what was already decided there.
 |---|---|---|---|
 | 2026-09-07 | while Pip is ill, autonomous lanes are restricted to work with a machine-checkable success criterion and reversible output; anything requiring his judgement is drafted as a decision card and parked, never guessed | `this file, read on return` | `docs/SICK_WEEK_2026-09-07_landing.md:10` |
 
+### `balance-baseline` (only one so far)
+
+| date | ruling | mechanism | source |
+|---|---|---|---|
+| 2026-10-30 | a passive (do-nothing) lab surviving longer after #1137 is intended: the longer baseline gives players more room to influence the simulation | `#1193` | `docs/rulings/DECISIONS_2026-10-26_return.md:112` |
+
 ### `ci-gates`
 
 | date | ruling | mechanism | source |
@@ -96,7 +102,7 @@ flavour it belongs to and read what was already decided there.
 
 | date | ruling | mechanism | source |
 |---|---|---|---|
-| 2026-10-26 | approve creative-harvest items 1-3 and 5-12 of #950; item 4 (the 2026-07-30 anniversary beat) expired unbuilt | `#950` | `docs/rulings/DECISIONS_2026-10-26_return.md:98` |
+| 2026-10-26 | approve creative-harvest items 1-3 and 5-12 of #950; item 4 (the 2026-07-30 anniversary beat) expired unbuilt | `#950` | `docs/rulings/DECISIONS_2026-10-26_return.md:101` |
 
 ### `estate-process`
 
