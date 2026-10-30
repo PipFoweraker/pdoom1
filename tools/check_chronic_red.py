@@ -99,19 +99,17 @@ DECLARED = {
         "touching those paths either goes green (delete this entry) or does not "
         "(reopen the real bug)."
     ),
-    # 2026-10-30: this census runs INSIDE guards.yml, so once guards.yml itself
-    # reaches the threshold every later guards run fails on the census alone and
-    # the streak can never end. The original reds (2026-10-29) were a stale
-    # release index and then a stale rulings index, both fixed on main by
-    # d1f49a7a. These entries let one run go green; they then read STALE and
-    # are removed one at a time (pull_request went first, in #1365's follow-up;
-    # push follows once a push run on main has gone green).
-    "guards.yml:push": (
-        "Self-lock, 2026-10-30. Real causes fixed in d1f49a7a; every red since is "
-        "this census counting its own workflow. Clears itself: the first push run "
-        "after this lands goes green, the entry goes stale, delete it."
-    ),
 }
+
+# REMOVED 2026-10-30, the same day, by the same rule.
+#
+# "guards.yml:push" and "guards.yml:pull_request" were declared (#1365) because
+# this census runs inside guards.yml: after three real reds on 2026-10-29 every
+# later guards run failed on the census alone, so the streak could never end.
+# They had to come out one at a time -- pull_request in #1367, push here after
+# main's first green push run -- because a stale entry fails as surely as a
+# missing one. The structural risk remains: three consecutive guards reds on
+# one trigger re-arm the lock, and the way out is the same three steps.
 
 # REMOVED 2026-08-29, hours after being written, by the rule it was written under.
 #

@@ -6167,7 +6167,7 @@ DTSTART;VALUE=DATE:20260830
 DTEND;VALUE=DATE:20260831
 SUMMARY:[UNPARSED] needs a declaration -- check_chronic_red.py
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/check_chronic_re
- d.py:262. 4 line(s) in tools/check_chronic_red.py mention this date and n
+ d.py:260. 4 line(s) in tools/check_chronic_red.py mention this date and n
  o COMMITMENT: declaration accounts for it. Either add a declaration or th
  e date is incidental. First line: Fossils count as failures as of 2026-08
  -30 (ruled by Pip\; see -- Generated from tracked sources by scripts/gene
@@ -8014,11 +8014,11 @@ DTSTART;VALUE=DATE:20261029
 DTEND;VALUE=DATE:20261030
 SUMMARY:[UNPARSED] needs a declaration -- check_chronic_red.py
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/check_chronic_re
- d.py:104. 1 line(s) in tools/check_chronic_red.py mention this date and n
+ d.py:107. 1 line(s) in tools/check_chronic_red.py mention this date and n
  o COMMITMENT: declaration accounts for it. Either add a declaration or th
- e date is incidental. First line: # the streak can never end. The origina
- l reds (2026-10-29) were a stale -- Generated from tracked sources by scr
- ipts/generate_commitment_calendar.py\; regenerate to update.
+ e date is incidental. First line: # this census runs inside guards.yml: a
+ fter three real reds on 2026-10-29 every -- Generated from tracked source
+ s by scripts/generate_commitment_calendar.py\; regenerate to update.
 CATEGORIES:UNPARSED
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -8133,11 +8133,11 @@ DTSTART;VALUE=DATE:20261030
 DTEND;VALUE=DATE:20261031
 SUMMARY:[UNPARSED] needs a declaration -- check_chronic_red.py
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/check_chronic_re
- d.py:102. 3 line(s) in tools/check_chronic_red.py mention this date and n
+ d.py:104. 2 line(s) in tools/check_chronic_red.py mention this date and n
  o COMMITMENT: declaration accounts for it. Either add a declaration or th
- e date is incidental. First line: # 2026-10-30: this census runs INSIDE g
- uards.yml\, so once guards.yml itself -- Generated from tracked sources b
- y scripts/generate_commitment_calendar.py\; regenerate to update.
+ e date is incidental. First line: # REMOVED 2026-10-30\, the same day\, b
+ y the same rule. -- Generated from tracked sources by scripts/generate_co
+ mmitment_calendar.py\; regenerate to update.
 CATEGORIES:UNPARSED
 TRANSP:TRANSPARENT
 SEQUENCE:0
