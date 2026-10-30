@@ -13,7 +13,7 @@ Horizon: **2026-08-09** (the prose scan reports dates at or after this; roll it
 forward deliberately in `COMMITMENTS.md`, never automatically -- a clock-reading
 generator goes stale overnight and trains people to ignore the check).
 
-**63 declared, 4 release-train, 294 UNPARSED, 0 malformed.**
+**63 declared, 4 release-train, 296 UNPARSED, 0 malformed.**
 
 ## Declared commitments
 
@@ -411,9 +411,9 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-22 | `docs/rulings/RULINGS.md` | 503 | - `godot/scripts/core/researcher.gd:190` -- # Ruled by Pip 2026-08-22 (#1247): "real STAFF, but they might not eg produce |
 | 2026-08-22 | `docs/rulings/RULINGS.md` | 515 | - `godot/tests/unit/test_compute_engineers_are_staff.gd:12` -- ## Ruled by Pip 2026-08-22: "real STAFF, but they might not eg produce as much |
 | 2026-08-22 | `tools/check_chronic_red.py` | 97 | "docs/mechanics/** -- so no qualifying PR has run since 2026-08-22 and the " |
-| 2026-08-22 | `tools/check_chronic_red.py` | 390 | "docs-sync.yml:push": [("success", "2026-08-22")] * 4, |
-| 2026-08-22 | `tools/check_chronic_red.py` | 391 | "docs-sync.yml:pull_request": [("failure", "2026-08-22")] * 39, |
-| 2026-08-22 | `tools/check_chronic_red.py` | 500 | "docs-sync.yml:pull_request": [("failure", "2026-08-22")] * 39, |
+| 2026-08-22 | `tools/check_chronic_red.py` | 405 | "docs-sync.yml:push": [("success", "2026-08-22")] * 4, |
+| 2026-08-22 | `tools/check_chronic_red.py` | 406 | "docs-sync.yml:pull_request": [("failure", "2026-08-22")] * 39, |
+| 2026-08-22 | `tools/check_chronic_red.py` | 518 | clean_runs[key] = [("failure", "2026-08-22")] * 39 |
 | 2026-08-22 | `tools/scan_closed_issue_debt.py` | 8 | Pip, 2026-08-22, on discovering that #775 was closed COMPLETED with one of its |
 | 2026-08-22 | `tools/scan_closed_issue_debt.py` | 24 | The first run, 2026-08-22, measured on 426 closed issues: |
 | 2026-08-22 | `tools/scan_closed_issue_debt.py` | 83 | # 2026-08-22 -- it raised UnicodeDecodeError on byte 0x8f mid-fetch, which |
@@ -553,7 +553,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-24 | `scripts/generate_release_metadata.py` | 1016 | # Inspect the CHANGELOG FIELD, not just the tag list. Until 2026-08-24 this |
 | 2026-08-24 | `tools/check_balance_keys.py` | 76 | WHY --self-test EXISTS (added 2026-08-24, issue #1265) |
 | 2026-08-24 | `tools/check_chronic_red.py` | 14 | 2026-08-24 to 2026-08-29 because its generator emitted a trailing blank line |
-| 2026-08-24 | `tools/check_chronic_red.py` | 109 | # the first green scheduled run since 2026-08-24 -- and --check said so. |
+| 2026-08-24 | `tools/check_chronic_red.py` | 124 | # the first green scheduled run since 2026-08-24 -- and --check said so. |
 | 2026-08-24 | `tools/check_environments.py` | 6 | THE DEFECT CLASS (found 2026-08-24 across two repos in this estate) |
 | 2026-08-24 | `tools/check_environments.py` | 44 | built to prevent it on 2026-08-24 alone. |
 | 2026-08-24 | `tools/check_environments.py` | 51 | RULING: 2026-08-24 -- an environment no workflow references is either clutter or a lie, and which one depends entirely on what it is called; a safety- |
@@ -593,13 +593,13 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-29 | `tools/check_chronic_red.py` | 14 | 2026-08-24 to 2026-08-29 because its generator emitted a trailing blank line |
 | 2026-08-29 | `tools/check_chronic_red.py` | 28 | 2026-08-29: its overall streak is ZERO, because its push-to-main runs pass. It |
 | 2026-08-29 | `tools/check_chronic_red.py` | 47 | RULING: 2026-08-29 -- a workflow red for three consecutive runs of the same trigger must be fixed or declared, because an undeclared chronic red makes |
-| 2026-08-29 | `tools/check_chronic_red.py` | 104 | # REMOVED 2026-08-29, hours after being written, by the rule it was written under. |
-| 2026-08-29 | `tools/check_chronic_red.py` | 409 | fake = {"invented-workflow.yml:push": [("failure", "2026-08-29")] * 5} |
-| 2026-08-29 | `tools/check_chronic_red.py` | 417 | chronic(census({"x.yml:push": [("failure", "2026-08-29")] * 2})) == [], |
-| 2026-08-29 | `tools/check_chronic_red.py` | 421 | healthy = {k: [("success", "2026-08-29")] * 4 for k in DECLARED} |
-| 2026-08-29 | `tools/check_chronic_red.py` | 435 | # FOSSILS (added 2026-08-29, after this tool's first live run declared three). |
-| 2026-08-29 | `tools/check_chronic_red.py` | 448 | still_live = census({"live.yml:push": [("failure", "2026-08-29")] * 30}) |
-| 2026-08-29 | `tools/check_chronic_red.py` | 485 | # Listing them was the 2026-08-29 behaviour and it was not enough: a fossil |
+| 2026-08-29 | `tools/check_chronic_red.py` | 119 | # REMOVED 2026-08-29, hours after being written, by the rule it was written under. |
+| 2026-08-29 | `tools/check_chronic_red.py` | 424 | fake = {"invented-workflow.yml:push": [("failure", "2026-08-29")] * 5} |
+| 2026-08-29 | `tools/check_chronic_red.py` | 432 | chronic(census({"x.yml:push": [("failure", "2026-08-29")] * 2})) == [], |
+| 2026-08-29 | `tools/check_chronic_red.py` | 436 | healthy = {k: [("success", "2026-08-29")] * 4 for k in DECLARED} |
+| 2026-08-29 | `tools/check_chronic_red.py` | 450 | # FOSSILS (added 2026-08-29, after this tool's first live run declared three). |
+| 2026-08-29 | `tools/check_chronic_red.py` | 463 | still_live = census({"live.yml:push": [("failure", "2026-08-29")] * 30}) |
+| 2026-08-29 | `tools/check_chronic_red.py` | 500 | # Listing them was the 2026-08-29 behaviour and it was not enough: a fossil |
 | 2026-08-29 | `tools/check_guard_parity.py` | 368 | # THE NEWLY ARMED DIRECTION (2026-08-29). PARTIAL fails --check as of #1297 |
 | 2026-08-29 | `tools/check_guard_parity.py` | 437 | # PARTIAL NOW FAILS --check (armed 2026-08-29, issue #1297 section 2). |
 | 2026-08-29 | `tools/check_release_ledger.py` | 436 | # Exactly ONE trailing newline, and this is load-bearing (2026-08-29). |
@@ -621,13 +621,13 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-08-30 | `docs/VIDEO_SHOOT_2026-08-30.md` | 160 | Say these. Each one has a command that returns it, run today, 2026-08-30. |
 | 2026-08-30 | `docs/design/PAUSE_SEMANTICS.md` | 71 | \| Surface \| #1343 said (2026-08-30) \| Measured 2026-10-29 \| Note \| |
 | 2026-08-30 | `docs/rulings/RULINGS.md` | 123 | \| 2026-08-30 \| a CI fossil must be removed entirely, never declared: a red that cannot clear trains the team to discount reds, and a declaration for o |
-| 2026-08-30 | `docs/rulings/RULINGS.md` | 552 | - `tools/check_chronic_red.py:250` -- Fossils count as failures as of 2026-08-30 (ruled by Pip; see |
-| 2026-08-30 | `docs/rulings/RULINGS.md` | 553 | - `tools/check_chronic_red.py:484` -- # FOSSILS NOW FAIL (ruled by Pip 2026-08-30, docs/CI_FOSSILS_2026-08-30.md). |
-| 2026-08-30 | `docs/rulings/RULINGS.md` | 554 | - `tools/check_chronic_red.py:579` -- print("  Ruled 2026-08-30: a fossil is REMOVED, never declared. A declaration for") |
-| 2026-08-30 | `tools/check_chronic_red.py` | 250 | Fossils count as failures as of 2026-08-30 (ruled by Pip; see |
-| 2026-08-30 | `tools/check_chronic_red.py` | 484 | # FOSSILS NOW FAIL (ruled by Pip 2026-08-30, docs/CI_FOSSILS_2026-08-30.md). |
-| 2026-08-30 | `tools/check_chronic_red.py` | 499 | "live.yml:push": [("success", "2026-08-30")] * 5, |
-| 2026-08-30 | `tools/check_chronic_red.py` | 579 | print("  Ruled 2026-08-30: a fossil is REMOVED, never declared. A declaration for") |
+| 2026-08-30 | `docs/rulings/RULINGS.md` | 552 | - `tools/check_chronic_red.py:265` -- Fossils count as failures as of 2026-08-30 (ruled by Pip; see |
+| 2026-08-30 | `docs/rulings/RULINGS.md` | 553 | - `tools/check_chronic_red.py:499` -- # FOSSILS NOW FAIL (ruled by Pip 2026-08-30, docs/CI_FOSSILS_2026-08-30.md). |
+| 2026-08-30 | `docs/rulings/RULINGS.md` | 554 | - `tools/check_chronic_red.py:597` -- print("  Ruled 2026-08-30: a fossil is REMOVED, never declared. A declaration for") |
+| 2026-08-30 | `tools/check_chronic_red.py` | 265 | Fossils count as failures as of 2026-08-30 (ruled by Pip; see |
+| 2026-08-30 | `tools/check_chronic_red.py` | 499 | # FOSSILS NOW FAIL (ruled by Pip 2026-08-30, docs/CI_FOSSILS_2026-08-30.md). |
+| 2026-08-30 | `tools/check_chronic_red.py` | 514 | clean_runs = {"live.yml:push": [("success", "2026-08-30")] * 5} |
+| 2026-08-30 | `tools/check_chronic_red.py` | 597 | print("  Ruled 2026-08-30: a fossil is REMOVED, never declared. A declaration for") |
 | 2026-08-31 | `docs/rulings/RULINGS.md` | 502 | - `godot/scripts/core/researcher.gd:150` -- # SEAM (ruled 2026-07-27, review-by 2026-08-31): AUDITS ground-truth reported vs actual. |
 | 2026-08-31 | `docs/rulings/RULINGS.md` | 507 | - `godot/scripts/core/turn_manager.gd:313` -- SEAM (ruled 2026-07-27, review-by 2026-08-31): AUDITS ground-truth reported vs actual. |
 | 2026-08-31 | `docs/rulings/UNDECLARED_TRIAGE.md` | 221 | - # SEAM (ruled 2026-07-27, review-by 2026-08-31): AUDITS ground-truth reported vs actual. |
@@ -790,6 +790,7 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-10-29 | `docs/design/PAUSE_SEMANTICS.md` | 71 | \| Surface \| #1343 said (2026-08-30) \| Measured 2026-10-29 \| Note \| |
 | 2026-10-29 | `docs/rituals/gate_5_proven_build.md` | 118 | RULING: 2026-10-29 -- global score submission stays OFF on the machine used to prove a release build, because proving runs now play the league seed be |
 | 2026-10-29 | `docs/rulings/RULINGS.md` | 158 | \| 2026-10-29 \| global score submission stays OFF on the machine used to prove a release build, because proving runs now play the league seed before th |
+| 2026-10-29 | `tools/check_chronic_red.py` | 104 | # the streak can never end. The original reds (2026-10-29) were a stale |
 | 2026-10-30 | `docs/design/PAUSE_SEMANTICS.md` | 7 | Status: written by the pdoom1 seat for #1343; accepted by Pip on 2026-10-30 ("1360 seems |
 | 2026-10-30 | `docs/design/PAUSE_SEMANTICS.md` | 10 | RULING: 2026-10-30 -- "paused" means the player has stepped out of the game: simulation, gameplay input, animations and on-screen messages stop; only  |
 | 2026-10-30 | `docs/rulings/DECISIONS_2026-10-26_return.md` | 96 | confirmed by Pip on 2026-10-30 ("workshop dates all seem good"): |
@@ -799,6 +800,10 @@ keeps appearing. There is deliberately no silent ignore list.
 | 2026-10-30 | `docs/rulings/DECISIONS_2026-10-26_return.md` | 114 | from 2026-10-30 until Christmas week. |
 | 2026-10-30 | `docs/rulings/RULINGS.md` | 88 | \| 2026-10-30 \| a passive (do-nothing) lab surviving longer after #1137 is intended: the longer baseline gives players more room to influence the simul |
 | 2026-10-30 | `docs/rulings/RULINGS.md` | 184 | \| 2026-10-30 \| "paused" means the player has stepped out of the game: simulation, gameplay input, animations and on-screen messages stop; only the pau |
+| 2026-10-30 | `tools/check_chronic_red.py` | 102 | # 2026-10-30: this census runs INSIDE guards.yml, so once guards.yml itself |
+| 2026-10-30 | `tools/check_chronic_red.py` | 109 | "Self-lock, 2026-10-30. Real causes fixed in d1f49a7a; every red since is " |
+| 2026-10-30 | `tools/check_chronic_red.py` | 114 | "Self-lock, 2026-10-30, same as guards.yml:push. Clears itself: this PR's " |
+| 2026-10-30 | `tools/check_chronic_red.py` | 513 | # break this case (a hard-coded docs-sync-only tree did, 2026-10-30). |
 | 2026-11-06 | `docs/releases/RELEASE_LINKING_TO_0.20.md` | 130 | \| v0.17 \| Fri 2026-11-06 \| w45 \| `weekly-2026-w45` \| |
 | 2026-12-04 | `docs/releases/RELEASE_LINKING_TO_0.20.md` | 131 | \| v0.18 \| Fri 2026-12-04 \| w49 \| `weekly-2026-w49` \| |
 | 2026-12-31 | `docs/releases/RELEASE_LINKING_TO_0.20.md` | 147 | 2026-12-31. So the correct seed carries the year **2026** on a date in 2027. |

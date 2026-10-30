@@ -2166,15 +2166,15 @@
       "text": "\"_why\": \"Pinned unknown set. Ruled by Pip 2026-08-11: keep the unattributable assets, record them honestly, and let a mechanism force the question later rather than a document.\","
     },
     {
-      "source": "tools/check_chronic_red.py:250",
+      "source": "tools/check_chronic_red.py:265",
       "text": "Fossils count as failures as of 2026-08-30 (ruled by Pip; see"
     },
     {
-      "source": "tools/check_chronic_red.py:484",
+      "source": "tools/check_chronic_red.py:499",
       "text": "# FOSSILS NOW FAIL (ruled by Pip 2026-08-30, docs/CI_FOSSILS_2026-08-30.md)."
     },
     {
-      "source": "tools/check_chronic_red.py:579",
+      "source": "tools/check_chronic_red.py:597",
       "text": "print(\"  Ruled 2026-08-30: a fossil is REMOVED, never declared. A declaration for\")"
     },
     {

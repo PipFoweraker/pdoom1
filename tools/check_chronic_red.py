@@ -99,6 +99,21 @@ DECLARED = {
         "touching those paths either goes green (delete this entry) or does not "
         "(reopen the real bug)."
     ),
+    # 2026-10-30: this census runs INSIDE guards.yml, so once guards.yml itself
+    # reaches the threshold every later guards run fails on the census alone and
+    # the streak can never end. The original reds (2026-10-29) were a stale
+    # release index and then a stale rulings index, both fixed on main by
+    # d1f49a7a. These two entries let one run go green; they then read STALE and
+    # are removed in the follow-up PR.
+    "guards.yml:push": (
+        "Self-lock, 2026-10-30. Real causes fixed in d1f49a7a; every red since is "
+        "this census counting its own workflow. Clears itself: the first push run "
+        "after this lands goes green, the entry goes stale, delete it."
+    ),
+    "guards.yml:pull_request": (
+        "Self-lock, 2026-10-30, same as guards.yml:push. Clears itself: this PR's "
+        "own run goes green, the entry goes stale, delete it."
+    ),
 }
 
 # REMOVED 2026-08-29, hours after being written, by the rule it was written under.
@@ -494,15 +509,18 @@ def self_test() -> int:
     # read stale, which is correct behaviour and would make this case fail for a
     # reason unrelated to fossils. So the clean tree includes it, chronic and
     # declared, exactly as the real repository has it.
-    clean = census(
-        {
-            "live.yml:push": [("success", "2026-08-30")] * 5,
-            "docs-sync.yml:pull_request": [("failure", "2026-08-22")] * 39,
-        }
-    )
+    # Built from DECLARED itself, so adding or removing a declaration does not
+    # break this case (a hard-coded docs-sync-only tree did, 2026-10-30).
+    clean_runs = {"live.yml:push": [("success", "2026-08-30")] * 5}
+    clean_events = {"live.yml": {"push"}}
+    for key in DECLARED:
+        wf, ev = key.rsplit(":", 1)
+        clean_runs[key] = [("failure", "2026-08-22")] * 39
+        clean_events.setdefault(wf, set()).add(ev)
+    clean = census(clean_runs)
     check(
         "a tree with no fossils and every chronic red declared passes",
-        verdict(clean, {"live.yml": {"push"}, "docs-sync.yml": {"pull_request"}}) == 0,
+        verdict(clean, clean_events) == 0,
     )
 
     print("SELF-TEST %s" % ("PASSED" if ok else "FAILED"))
