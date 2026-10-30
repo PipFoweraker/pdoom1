@@ -3,7 +3,7 @@
   "repo": "pdoom1",
   "generated_from": "tracked files at HEAD",
   "convention": "docs/rulings/RULINGS_CONVENTION.md",
-  "count": 83,
+  "count": 84,
   "rulings": [
     {
       "id": "pdoom1:2026-07-04:12de8fc2",
@@ -1166,6 +1166,20 @@
       "supersedes": null,
       "superseded_by": null,
       "source": "docs/rulings/DECISIONS_2026-10-26_return.md:112"
+    },
+    {
+      "id": "pdoom1:2026-10-30:4d0e21aa",
+      "date": "2026-10-30",
+      "ruling": "Chinese localisation aims at the whole game over time, but the 2026-12-31 target is interface text only; if time runs short, cut to the fundamentals rather than slip",
+      "summary": "",
+      "flavour": "localisation",
+      "kind": "declaration",
+      "status": "",
+      "by": "Pip",
+      "mechanism": "#1142",
+      "supersedes": null,
+      "superseded_by": null,
+      "source": "docs/rulings/DECISIONS_2026-10-26_return.md:122"
     }
   ],
   "undeclared": [
@@ -1880,6 +1894,10 @@
     {
       "source": "docs/rulings/DECISIONS_2026-10-26_return.md:60",
       "text": "COMMITMENT: 2026-11-30 -- Revisit hiring and midgame mechanics (candidate-pool scaling first) as midgame calibration starts -- owner: pip -- kind: review -- note: ruled 2026-10-26 with #961; window is"
+    },
+    {
+      "source": "docs/rulings/DECISIONS_2026-10-26_return.md:87",
+      "text": "COMMITMENT: 2026-12-31 -- Chinese localisation of the game -- owner: pip -- kind: deadline -- note: #1142, reaffirmed 2026-10-26; scope ruled 2026-10-30 -- interface text only (item 29)"
     },
     {
       "source": "docs/strategy/IP_AND_OPENNESS_PREMORTEM.md:443",

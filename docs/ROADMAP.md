@@ -47,11 +47,19 @@ ladder epoch is not here at all**, and the next section says why.
 | Version | Ships | Theme | Headline |
 |---|---|---|---|
 | v0.13 | Jul 24 | Launch epoch (shipped) | hiring pipeline, onboarding cold-open, office visuals, league live, legibility + stability, v0.13.1 honesty pass |
-| v0.14 | Aug 7 | Per-tick & People (prov.) | per-tick resolution + people & money cohesion (roles / salary / manager / payroll) |
-| v0.15 | Sep 4 | (unnamed) | onboarding-as-mechanic + public-alpha hardening (leaderboard, install ping, bug reporter, test builds) |
-| v0.16 | Oct 2 | Sightings (prov.) | rivals begin -- Developments / procedural presence; wider event pool from pdoom-data |
-| v0.17 | Nov 6 | The World Shoots Back (prov.) | News feedline + rival midgame pressure (poaching, litigation, funding attacks); DQ-22 aggro built |
-| v0.18 | Dec 4 | (unnamed) | rival direct confrontation + News v1 + voice re-skin of event content |
+| v0.14 | Aug 7 | Per-tick & People (shipped) | per-tick resolution + people & money cohesion; hotpatched to v0.14.5 on 2026-10-29 |
+| v0.15 | Nov 27 | November campaign (pencilled) | campaign build: onboarding fixes from the 2026-11-05 workshop, leaderboard name truncation, fresh L7 board, signed macOS if Apple approves |
+| v0.16 | Jan 8 | Sightings (prov.) | rivals begin -- Developments / procedural presence; wider event pool from pdoom-data |
+| v0.17 | Feb 5 | The World Shoots Back (prov.) | News feedline + rival midgame pressure (poaching, litigation, funding attacks); DQ-22 aggro built |
+| v0.18 | Mar 5 | (unnamed) | rival direct confrontation + News v1 + voice re-skin of event content |
+
+**Re-based 2026-10-30.** The train stopped in September while Pip was ill
+(v0.15 never shipped on Sep 4; v0.14.5 shipped 2026-10-29 instead). The rows
+from v0.15 down move together, themes unchanged. v0.15 is the November campaign
+build, pencilled for Fri 2026-11-27 and re-decided on 2026-11-06
+(`docs/rulings/DECISIONS_2026-10-26_return.md` item 28). Jan 8 rather than
+Jan 1 because the first Friday is New Year's Day. Capacity for this stretch is
+about 4 hours a day until Christmas week (item 27), well above the basis above.
 
 **The Ladder column is gone (#1152), not corrected.** It used to read `L5`,
 `L6`, `L7`, `L8` down that table on a "one Theme = one Epoch" model the codebase
