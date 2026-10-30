@@ -6167,7 +6167,7 @@ DTSTART;VALUE=DATE:20260830
 DTEND;VALUE=DATE:20260831
 SUMMARY:[UNPARSED] needs a declaration -- check_chronic_red.py
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/check_chronic_re
- d.py:265. 4 line(s) in tools/check_chronic_red.py mention this date and n
+ d.py:262. 4 line(s) in tools/check_chronic_red.py mention this date and n
  o COMMITMENT: declaration accounts for it. Either add a declaration or th
  e date is incidental. First line: Fossils count as failures as of 2026-08
  -30 (ruled by Pip\; see -- Generated from tracked sources by scripts/gene
@@ -8133,7 +8133,7 @@ DTSTART;VALUE=DATE:20261030
 DTEND;VALUE=DATE:20261031
 SUMMARY:[UNPARSED] needs a declaration -- check_chronic_red.py
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/check_chronic_re
- d.py:102. 4 line(s) in tools/check_chronic_red.py mention this date and n
+ d.py:102. 3 line(s) in tools/check_chronic_red.py mention this date and n
  o COMMITMENT: declaration accounts for it. Either add a declaration or th
  e date is incidental. First line: # 2026-10-30: this census runs INSIDE g
  uards.yml\, so once guards.yml itself -- Generated from tracked sources b
