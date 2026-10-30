@@ -84,7 +84,7 @@ campaign gets a clean board as a launch moment instead of two resets in a month.
     unrelated music PR. Code-signing context lives in #917, #1038 and #1071.)
 19. **#1142 Chinese localisation.**
     RULING: 2026-10-26 -- Chinese localisation before the end of 2026 remains a goal -- flavour: localisation -- mechanism: #1142
-    COMMITMENT: 2026-12-31 -- Chinese localisation of the game -- owner: pip -- kind: deadline -- note: #1142, reaffirmed 2026-10-26; scope still undecided
+    COMMITMENT: 2026-12-31 -- Chinese localisation of the game -- owner: pip -- kind: deadline -- note: #1142, reaffirmed 2026-10-26; scope ruled 2026-10-30 -- interface text only (item 29)
 20. **#1257 authored art.**
     RULING: 2026-10-26 -- add a sixth provenance origin value, authored_art, for human-made art from contributing artists -- flavour: art-provenance -- mechanism: #1257
 21. **#1258 worktree rule.**
@@ -112,3 +112,11 @@ campaign gets a clean board as a launch moment instead of two resets in a month.
     RULING: 2026-10-30 -- a passive (do-nothing) lab surviving longer after #1137 is intended: the longer baseline gives players more room to influence the simulation -- flavour: balance-baseline -- mechanism: #1193
 27. **Time budget to Christmas.** Pip plans about 4 hours a day on pdoom1
     from 2026-10-30 until Christmas week.
+28. **November campaign launch date.** Pencilled for Fri 2026-11-27, possibly
+    earlier. Pip, 2026-10-30: "halfway between pencil and lock it in" -- he
+    expects a better read on his energy levels after this week, so the date is
+    re-decided then. The launch itself is on the calendar via the ROADMAP
+    release train (v0.15, Nov 27).
+    COMMITMENT: 2026-11-06 -- re-decide the November campaign launch date (pencilled Fri 2026-11-27, possibly earlier) once a week of energy calibration is in -- owner: pip -- kind: review -- note: item 28
+29. **Chinese localisation scope.**
+    RULING: 2026-10-30 -- Chinese localisation aims at the whole game over time, but the 2026-12-31 target is interface text only; if time runs short, cut to the fundamentals rather than slip -- flavour: localisation -- mechanism: #1142

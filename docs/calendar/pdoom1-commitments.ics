@@ -388,7 +388,7 @@ DTSTART;VALUE=DATE:20260810
 DTEND;VALUE=DATE:20260811
 SUMMARY:[TASK] Book the half-day audit-mechanics workshop\, target window 
  opens
-DESCRIPTION:Owner: pip. Kind: task. Source: docs/rulings/RULINGS.md:356. p
+DESCRIPTION:Owner: pip. Kind: task. Source: docs/rulings/RULINGS.md:357. p
  doom1#984\, ruled 2026-07-27 18:11. Scheduled to precede the 2026-08-31 f
   -- Generated from tracked sources by scripts/generate_commitment_calenda
  r.py\; regenerate to update.
@@ -729,7 +729,7 @@ DTSTART;VALUE=DATE:20260811
 DTEND;VALUE=DATE:20260812
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:264. 6 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:265. 6 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: Rulings with no `mechanism:`. Pip's doctrine 
  (2026-08-11): what forces a -- Generated from tracked sources by scripts/
@@ -870,7 +870,7 @@ DTSTART;VALUE=DATE:20260812
 DTEND;VALUE=DATE:20260813
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:494. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:496. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `godot/scripts/core/capacity.gd:5` -- ## Ru
  led 2026-08-12 (coordination/DESIGN_2026-08-12_interrupt-resolution-varia
@@ -1281,7 +1281,7 @@ DTSTART;VALUE=DATE:20260813
 DTEND;VALUE=DATE:20260814
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:310. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:311. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `docs/CONTENT_DISTRIBUTION_SYSTEM.md:10` --
   > **SUPERSEDED\, not merely "outdated in spirit"\, as of 2026-08-13.** P
@@ -1887,7 +1887,7 @@ DTSTART;VALUE=DATE:20260814
 DTEND;VALUE=DATE:20260815
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:513. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:515. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `godot/tests/unit/simulation/test_events.gd
  :50` -- ## THE RATCHET WAS DELIBERATELY LOOSENED -- 2026-08-14\, ruled by
@@ -3368,7 +3368,7 @@ DTSTART;VALUE=DATE:20260820
 DTEND;VALUE=DATE:20260821
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:303. 5 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:304. 5 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `.github/workflows/guards.yml:3` -- # WHY T
  HIS FILE EXISTS (issue #1265\, ruled by Pip 2026-08-20) -- Generated from
@@ -6250,7 +6250,7 @@ DTSTART;VALUE=DATE:20260831
 DTEND;VALUE=DATE:20260901
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:502. 2 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:504. 2 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `godot/scripts/core/researcher.gd:150` -- #
   SEAM (ruled 2026-07-27\, review-by 2026-08-31): AUDITS ground-truth repo
@@ -6480,36 +6480,6 @@ DESCRIPTION:Sweep the pause-semantics family: every create_timer\, tween a
  nd input-capture site that silently opts out of SceneTree.paused\, plus a
   written statement of what pausing this game MEANS and a guard that stops
   a new one landing (deadline) -- pip
-END:VALARM
-END:VEVENT
-BEGIN:VEVENT
-UID:db9b006a4517c6ee@commitments.pdoom1
-DTSTAMP:20260904T000000Z
-DTSTART;VALUE=DATE:20260904
-DTEND;VALUE=DATE:20260905
-SUMMARY:[RELEASE] Release train: v0.15 ships -- (unnamed)
-DESCRIPTION:Owner: pip. Kind: release. Source: docs/ROADMAP.md (Monthly Th
- emes table). Monthly release train\, first Friday. Derived from the roadm
- ap table\, not re-typed. -- Generated from tracked sources by scripts/gen
- erate_commitment_calendar.py\; regenerate to update.
-CATEGORIES:RELEASE
-TRANSP:TRANSPARENT
-SEQUENCE:0
-STATUS:CONFIRMED
-BEGIN:VALARM
-ACTION:DISPLAY
-TRIGGER:-PT160H
-DESCRIPTION:Release train: v0.15 ships -- (unnamed) (release) -- pip
-END:VALARM
-BEGIN:VALARM
-ACTION:DISPLAY
-TRIGGER:-PT16H
-DESCRIPTION:Release train: v0.15 ships -- (unnamed) (release) -- pip
-END:VALARM
-BEGIN:VALARM
-ACTION:DISPLAY
-TRIGGER:PT8H
-DESCRIPTION:Release train: v0.15 ships -- (unnamed) (release) -- pip
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
@@ -7253,39 +7223,6 @@ DESCRIPTION:Rektango 17:30 -- the weekly anchor\, a hard stop (cadence) --
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
-UID:e6c73f5e10ebe98c@commitments.pdoom1
-DTSTAMP:20261002T000000Z
-DTSTART;VALUE=DATE:20261002
-DTEND;VALUE=DATE:20261003
-SUMMARY:[RELEASE] Release train: v0.16 ships -- Sightings (prov.)
-DESCRIPTION:Owner: pip. Kind: release. Source: docs/ROADMAP.md (Monthly Th
- emes table). Monthly release train\, first Friday. Derived from the roadm
- ap table\, not re-typed. -- Generated from tracked sources by scripts/gen
- erate_commitment_calendar.py\; regenerate to update.
-CATEGORIES:RELEASE
-TRANSP:TRANSPARENT
-SEQUENCE:0
-STATUS:CONFIRMED
-BEGIN:VALARM
-ACTION:DISPLAY
-TRIGGER:-PT160H
-DESCRIPTION:Release train: v0.16 ships -- Sightings (prov.) (release) -- p
- ip
-END:VALARM
-BEGIN:VALARM
-ACTION:DISPLAY
-TRIGGER:-PT16H
-DESCRIPTION:Release train: v0.16 ships -- Sightings (prov.) (release) -- p
- ip
-END:VALARM
-BEGIN:VALARM
-ACTION:DISPLAY
-TRIGGER:PT8H
-DESCRIPTION:Release train: v0.16 ships -- Sightings (prov.) (release) -- p
- ip
-END:VALARM
-END:VEVENT
-BEGIN:VEVENT
 UID:9ff21bde5eea21e7@commitments.pdoom1
 DTSTAMP:20261002T000000Z
 DTSTART;VALUE=DATE:20261002
@@ -7985,6 +7922,29 @@ DESCRIPTION:needs a declaration -- PAUSE_SEMANTICS_SWEEP.md (unparsed) --
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:8c905bec216e1773@commitments.pdoom1
+DTSTAMP:20261029T000000Z
+DTSTART;VALUE=DATE:20261029
+DTEND;VALUE=DATE:20261030
+SUMMARY:[UNPARSED] needs a declaration -- ROADMAP.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/ROADMAP.md:50. 2 
+ line(s) in docs/ROADMAP.md mention this date and no COMMITMENT: declarati
+ on accounts for it. Either add a declaration or the date is incidental. F
+ irst line: | v0.14 | Aug 7 | Per-tick & People (shipped) | per-tick resol
+ ution + people & money cohesion\; hotpatched to v0.14.5 on 2026-10-29 | -
+ - Generated from tracked sources by scripts/generate_commitment_calendar.
+ py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- ROADMAP.md (unparsed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:e68d39a06b323fd7@commitments.pdoom1
 DTSTAMP:20261029T000000Z
 DTSTART;VALUE=DATE:20261029
@@ -8062,7 +8022,7 @@ DTSTART;VALUE=DATE:20261030
 DTEND;VALUE=DATE:20261031
 SUMMARY:[UNPARSED] needs a declaration -- DECISIONS_2026-10-26_return.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/DECISIONS
- _2026-10-26_return.md:96. 5 line(s) in docs/rulings/DECISIONS_2026-10-26_
+ _2026-10-26_return.md:96. 7 line(s) in docs/rulings/DECISIONS_2026-10-26_
  return.md mention this date and no COMMITMENT: declaration accounts for i
  t. Either add a declaration or the date is incidental. First line: confir
  med by Pip on 2026-10-30 ("workshop dates all seem good"): -- Generated f
@@ -8104,13 +8064,35 @@ DESCRIPTION:needs a declaration -- PAUSE_SEMANTICS.md (unparsed) -- unowne
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:e2b4e60eb28c3a04@commitments.pdoom1
+DTSTAMP:20261030T000000Z
+DTSTART;VALUE=DATE:20261030
+DTEND;VALUE=DATE:20261031
+SUMMARY:[UNPARSED] needs a declaration -- ROADMAP.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/ROADMAP.md:56. 1 
+ line(s) in docs/ROADMAP.md mention this date and no COMMITMENT: declarati
+ on accounts for it. Either add a declaration or the date is incidental. F
+ irst line: **Re-based 2026-10-30.** The train stopped in September while 
+ Pip was ill -- Generated from tracked sources by scripts/generate_commitm
+ ent_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- ROADMAP.md (unparsed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:3cb2bc74a700a192@commitments.pdoom1
 DTSTAMP:20261030T000000Z
 DTSTART;VALUE=DATE:20261030
 DTEND;VALUE=DATE:20261031
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:88. 2 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
+ d:88. 3 line(s) in docs/rulings/RULINGS.md mention this date and no COMMI
  TMENT: declaration accounts for it. Either add a declaration or the date 
  is incidental. First line: | 2026-10-30 | a passive (do-nothing) lab surv
  iving longer after #1137 is intended: the longer baseline gives players m
@@ -8201,7 +8183,7 @@ DTEND;VALUE=DATE:20261101
 SUMMARY:[DEADLINE] #1343 pause-semantics sweep: state what 'paused' means 
  and bring the 9 timers\, 18 tweens and 47 input surfaces under it
 DESCRIPTION:Owner: pdoom1-seat. Kind: deadline. Source: docs/rulings/RULIN
- GS.md:479. ruled -- Generated from tracked sources by scripts/generate_co
+ GS.md:480. ruled -- Generated from tracked sources by scripts/generate_co
  mmitment_calendar.py\; regenerate to update.
 CATEGORIES:DEADLINE
 TRANSP:TRANSPARENT
@@ -8262,37 +8244,62 @@ DESCRIPTION:first-ten-turns onboarding workshop\, half-day (task) -- pip
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
-UID:ff96f5d373044ea7@commitments.pdoom1
-DTSTAMP:20261106T000000Z
-DTSTART;VALUE=DATE:20261106
-DTEND;VALUE=DATE:20261107
-SUMMARY:[RELEASE] Release train: v0.17 ships -- The World Shoots Back (pro
- v.)
-DESCRIPTION:Owner: pip. Kind: release. Source: docs/ROADMAP.md (Monthly Th
- emes table). Monthly release train\, first Friday. Derived from the roadm
- ap table\, not re-typed. -- Generated from tracked sources by scripts/gen
- erate_commitment_calendar.py\; regenerate to update.
-CATEGORIES:RELEASE
+UID:561d9cd12c7be1e6@commitments.pdoom1
+DTSTAMP:20261105T000000Z
+DTSTART;VALUE=DATE:20261105
+DTEND;VALUE=DATE:20261106
+SUMMARY:[UNPARSED] needs a declaration -- ROADMAP.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/ROADMAP.md:51. 1 
+ line(s) in docs/ROADMAP.md mention this date and no COMMITMENT: declarati
+ on accounts for it. Either add a declaration or the date is incidental. F
+ irst line: | v0.15 | Nov 27 | November campaign (pencilled) | campaign bu
+ ild: onboarding fixes from the 2026-11-05 workshop\, leaderboard name tru
+ ncation\, fresh L -- Generated from tracked sources by scripts/generate_c
+ ommitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
 TRANSP:TRANSPARENT
 SEQUENCE:0
 STATUS:CONFIRMED
 BEGIN:VALARM
 ACTION:DISPLAY
-TRIGGER:-PT160H
-DESCRIPTION:Release train: v0.17 ships -- The World Shoots Back (prov.) (r
- elease) -- pip
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- ROADMAP.md (unparsed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:f5db056118c57413@commitments.pdoom1
+DTSTAMP:20261106T000000Z
+DTSTART;VALUE=DATE:20261106
+DTEND;VALUE=DATE:20261107
+SUMMARY:[REVIEW] re-decide the November campaign launch date (pencilled Fr
+ i 2026-11-27\, possibly earlier) once a week of energy calibration is in
+DESCRIPTION:Owner: pip. Kind: review. Source: docs/rulings/DECISIONS_2026-
+ 10-26_return.md:120. item 28 -- Generated from tracked sources by scripts
+ /generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:REVIEW
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT328H
+DESCRIPTION:re-decide the November campaign launch date (pencilled Fri 202
+ 6-11-27\, possibly earlier) once a week of energy calibration is in (revi
+ ew) -- pip
 END:VALARM
 BEGIN:VALARM
 ACTION:DISPLAY
-TRIGGER:-PT16H
-DESCRIPTION:Release train: v0.17 ships -- The World Shoots Back (prov.) (r
- elease) -- pip
+TRIGGER:-PT64H
+DESCRIPTION:re-decide the November campaign launch date (pencilled Fri 202
+ 6-11-27\, possibly earlier) once a week of energy calibration is in (revi
+ ew) -- pip
 END:VALARM
 BEGIN:VALARM
 ACTION:DISPLAY
 TRIGGER:PT8H
-DESCRIPTION:Release train: v0.17 ships -- The World Shoots Back (prov.) (r
- elease) -- pip
+DESCRIPTION:re-decide the November campaign launch date (pencilled Fri 202
+ 6-11-27\, possibly earlier) once a week of energy calibration is in (revi
+ ew) -- pip
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
@@ -8319,6 +8326,28 @@ DESCRIPTION:needs a declaration -- RELEASE_LINKING_TO_0.20.md (unparsed) -
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:4f0d08199a837626@commitments.pdoom1
+DTSTAMP:20261106T000000Z
+DTSTART;VALUE=DATE:20261106
+DTEND;VALUE=DATE:20261107
+SUMMARY:[UNPARSED] needs a declaration -- ROADMAP.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/ROADMAP.md:59. 1 
+ line(s) in docs/ROADMAP.md mention this date and no COMMITMENT: declarati
+ on accounts for it. Either add a declaration or the date is incidental. F
+ irst line: build\, pencilled for Fri 2026-11-27 and re-decided on 2026-11
+ -06 -- Generated from tracked sources by scripts/generate_commitment_cale
+ ndar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- ROADMAP.md (unparsed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:8717570d8f3d0e14@commitments.pdoom1
 DTSTAMP:20261119T000000Z
 DTSTART;VALUE=DATE:20261119
@@ -8340,6 +8369,86 @@ BEGIN:VALARM
 ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:audit-mechanics deep-dive workshop\, half-day (task) -- pip
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:76c34bb5ea3d8934@commitments.pdoom1
+DTSTAMP:20261127T000000Z
+DTSTART;VALUE=DATE:20261127
+DTEND;VALUE=DATE:20261128
+SUMMARY:[RELEASE] Release train: v0.15 ships -- November campaign (pencill
+ ed)
+DESCRIPTION:Owner: pip. Kind: release. Source: docs/ROADMAP.md (Monthly Th
+ emes table). Monthly release train\, first Friday. Derived from the roadm
+ ap table\, not re-typed. -- Generated from tracked sources by scripts/gen
+ erate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:RELEASE
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT160H
+DESCRIPTION:Release train: v0.15 ships -- November campaign (pencilled) (r
+ elease) -- pip
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT16H
+DESCRIPTION:Release train: v0.15 ships -- November campaign (pencilled) (r
+ elease) -- pip
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:Release train: v0.15 ships -- November campaign (pencilled) (r
+ elease) -- pip
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:06c3f033bfa38e65@commitments.pdoom1
+DTSTAMP:20261127T000000Z
+DTSTART;VALUE=DATE:20261127
+DTEND;VALUE=DATE:20261128
+SUMMARY:[UNPARSED] needs a declaration -- DECISIONS_2026-10-26_return.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/DECISIONS
+ _2026-10-26_return.md:115. 1 line(s) in docs/rulings/DECISIONS_2026-10-26
+ _return.md mention this date and no COMMITMENT: declaration accounts for 
+ it. Either add a declaration or the date is incidental. First line: 28. *
+ *November campaign launch date.** Pencilled for Fri 2026-11-27\, possibly
+  -- Generated from tracked sources by scripts/generate_commitment_calenda
+ r.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- DECISIONS_2026-10-26_return.md (unparse
+ d) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:682e61fdfab19fae@commitments.pdoom1
+DTSTAMP:20261127T000000Z
+DTSTART;VALUE=DATE:20261127
+DTEND;VALUE=DATE:20261128
+SUMMARY:[UNPARSED] needs a declaration -- ROADMAP.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/ROADMAP.md:59. 1 
+ line(s) in docs/ROADMAP.md mention this date and no COMMITMENT: declarati
+ on accounts for it. Either add a declaration or the date is incidental. F
+ irst line: build\, pencilled for Fri 2026-11-27 and re-decided on 2026-11
+ -06 -- Generated from tracked sources by scripts/generate_commitment_cale
+ ndar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- ROADMAP.md (unparsed) -- unowned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
@@ -8383,7 +8492,7 @@ DTSTART;VALUE=DATE:20261130
 DTEND;VALUE=DATE:20261201
 SUMMARY:[REVIEW] Revisit hiring and midgame mechanics (candidate-pool scal
  ing first) as midgame calibration starts
-DESCRIPTION:Owner: pip. Kind: review. Source: docs/rulings/RULINGS.md:480.
+DESCRIPTION:Owner: pip. Kind: review. Source: docs/rulings/RULINGS.md:481.
   ruled 2026-10-26 with #961\; window is -- Generated from tracked sources
   by scripts/generate_commitment_calendar.py\; regenerate to update.
 CATEGORIES:REVIEW
@@ -8433,36 +8542,6 @@ ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:Architecture Week starts (week of Wed 2026-12-02) (task) -- pi
  p
-END:VALARM
-END:VEVENT
-BEGIN:VEVENT
-UID:4b051dfbbf945dc6@commitments.pdoom1
-DTSTAMP:20261204T000000Z
-DTSTART;VALUE=DATE:20261204
-DTEND;VALUE=DATE:20261205
-SUMMARY:[RELEASE] Release train: v0.18 ships -- (unnamed)
-DESCRIPTION:Owner: pip. Kind: release. Source: docs/ROADMAP.md (Monthly Th
- emes table). Monthly release train\, first Friday. Derived from the roadm
- ap table\, not re-typed. -- Generated from tracked sources by scripts/gen
- erate_commitment_calendar.py\; regenerate to update.
-CATEGORIES:RELEASE
-TRANSP:TRANSPARENT
-SEQUENCE:0
-STATUS:CONFIRMED
-BEGIN:VALARM
-ACTION:DISPLAY
-TRIGGER:-PT160H
-DESCRIPTION:Release train: v0.18 ships -- (unnamed) (release) -- pip
-END:VALARM
-BEGIN:VALARM
-ACTION:DISPLAY
-TRIGGER:-PT16H
-DESCRIPTION:Release train: v0.18 ships -- (unnamed) (release) -- pip
-END:VALARM
-BEGIN:VALARM
-ACTION:DISPLAY
-TRIGGER:PT8H
-DESCRIPTION:Release train: v0.18 ships -- (unnamed) (release) -- pip
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
@@ -8538,9 +8617,44 @@ DTSTART;VALUE=DATE:20261231
 DTEND;VALUE=DATE:20270101
 SUMMARY:[DEADLINE] Chinese localisation of the game
 DESCRIPTION:Owner: pip. Kind: deadline. Source: docs/rulings/DECISIONS_202
- 6-10-26_return.md:87. #1142\, reaffirmed 2026-10-26\; scope still undecid
- ed -- Generated from tracked sources by scripts/generate_commitment_calen
- dar.py\; regenerate to update.
+ 6-10-26_return.md:87. #1142\, reaffirmed 2026-10-26\; scope ruled 2026-10
+ -30 -- interface text only (item 29) -- Generated from tracked sources by
+  scripts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:DEADLINE
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT328H
+DESCRIPTION:Chinese localisation of the game (deadline) -- pip
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT160H
+DESCRIPTION:Chinese localisation of the game (deadline) -- pip
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT40H
+DESCRIPTION:Chinese localisation of the game (deadline) -- pip
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:Chinese localisation of the game (deadline) -- pip
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:5141f103fe6b3716@commitments.pdoom1
+DTSTAMP:20261231T000000Z
+DTSTART;VALUE=DATE:20261231
+DTEND;VALUE=DATE:20270101
+SUMMARY:[DEADLINE] Chinese localisation of the game
+DESCRIPTION:Owner: pip. Kind: deadline. Source: docs/rulings/RULINGS.md:48
+ 2. #1142\, reaffirmed 2026-10-26\; scope ruled 2026-10-30 -- interface te
+ xt only (item 29) -- Generated from tracked sources by scripts/generate_c
+ ommitment_calendar.py\; regenerate to update.
 CATEGORIES:DEADLINE
 TRANSP:TRANSPARENT
 SEQUENCE:0
@@ -8639,6 +8753,39 @@ DESCRIPTION:needs a declaration -- generate_release_horizon.py (unparsed)
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:4d9743c0f5d16b10@commitments.pdoom1
+DTSTAMP:20270108T000000Z
+DTSTART;VALUE=DATE:20270108
+DTEND;VALUE=DATE:20270109
+SUMMARY:[RELEASE] Release train: v0.16 ships -- Sightings (prov.)
+DESCRIPTION:Owner: pip. Kind: release. Source: docs/ROADMAP.md (Monthly Th
+ emes table). Monthly release train\, first Friday. Derived from the roadm
+ ap table\, not re-typed. -- Generated from tracked sources by scripts/gen
+ erate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:RELEASE
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT160H
+DESCRIPTION:Release train: v0.16 ships -- Sightings (prov.) (release) -- p
+ ip
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT16H
+DESCRIPTION:Release train: v0.16 ships -- Sightings (prov.) (release) -- p
+ ip
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:Release train: v0.16 ships -- Sightings (prov.) (release) -- p
+ ip
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:28d8fddf788bbbf5@commitments.pdoom1
 DTSTAMP:20270108T000000Z
 DTSTART;VALUE=DATE:20270108
@@ -8663,6 +8810,40 @@ DESCRIPTION:needs a declaration -- RELEASE_LINKING_TO_0.20.md (unparsed) -
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:aa0150b02b802e18@commitments.pdoom1
+DTSTAMP:20270205T000000Z
+DTSTART;VALUE=DATE:20270205
+DTEND;VALUE=DATE:20270206
+SUMMARY:[RELEASE] Release train: v0.17 ships -- The World Shoots Back (pro
+ v.)
+DESCRIPTION:Owner: pip. Kind: release. Source: docs/ROADMAP.md (Monthly Th
+ emes table). Monthly release train\, first Friday. Derived from the roadm
+ ap table\, not re-typed. -- Generated from tracked sources by scripts/gen
+ erate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:RELEASE
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT160H
+DESCRIPTION:Release train: v0.17 ships -- The World Shoots Back (prov.) (r
+ elease) -- pip
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT16H
+DESCRIPTION:Release train: v0.17 ships -- The World Shoots Back (prov.) (r
+ elease) -- pip
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:Release train: v0.17 ships -- The World Shoots Back (prov.) (r
+ elease) -- pip
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:96f99d5baf5ca768@commitments.pdoom1
 DTSTAMP:20270205T000000Z
 DTSTART;VALUE=DATE:20270205
@@ -8683,6 +8864,36 @@ ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- RELEASE_LINKING_TO_0.20.md (unparsed) -
  - unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:af1cb1134cffb576@commitments.pdoom1
+DTSTAMP:20270305T000000Z
+DTSTART;VALUE=DATE:20270305
+DTEND;VALUE=DATE:20270306
+SUMMARY:[RELEASE] Release train: v0.18 ships -- (unnamed)
+DESCRIPTION:Owner: pip. Kind: release. Source: docs/ROADMAP.md (Monthly Th
+ emes table). Monthly release train\, first Friday. Derived from the roadm
+ ap table\, not re-typed. -- Generated from tracked sources by scripts/gen
+ erate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:RELEASE
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT160H
+DESCRIPTION:Release train: v0.18 ships -- (unnamed) (release) -- pip
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT16H
+DESCRIPTION:Release train: v0.18 ships -- (unnamed) (release) -- pip
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:Release train: v0.18 ships -- (unnamed) (release) -- pip
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
@@ -8751,7 +8962,7 @@ DTSTART;VALUE=DATE:20270727
 DTEND;VALUE=DATE:20270728
 SUMMARY:[UNPARSED] needs a declaration -- RULINGS.md
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/rulings/RULINGS.m
- d:400. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
+ d:401. 1 line(s) in docs/rulings/RULINGS.md mention this date and no COMM
  ITMENT: declaration accounts for it. Either add a declaration or the date
   is incidental. First line: - `docs/game-design/DESIGN_2026-08-24_diegeti
  c-opening.md:628` -- is ruled out today."* The doctrine has a **review cl

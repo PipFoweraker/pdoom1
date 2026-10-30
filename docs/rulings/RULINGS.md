@@ -5,7 +5,7 @@
 > `python scripts/generate_rulings.py`. The convention, and why it looks
 > like this, is argued in `docs/rulings/RULINGS_CONVENTION.md`.
 
-**83 ruling(s)** across **30 flavour(s)**. **263** prose ruling(s) not yet declared.
+**84 ruling(s)** across **30 flavour(s)**. **264** prose ruling(s) not yet declared.
 
 ## One index, five sources
 
@@ -16,7 +16,7 @@ flattening either into one line would delete what makes it worth having.
 
 | kind | n | what it is | where |
 |---|---:|---|---|
-| `declaration` | 57 | a `RULING:` line written next to what it governs | anywhere |
+| `declaration` | 58 | a `RULING:` line written next to what it governs | anywhere |
 | `adr` | 20 | a full architecture argument, summarised here | `docs/game-design/decisions/` |
 | `session` | 3 | a transcript or workshop ruling set, pointed at | `docs/SPOKEN_*`, `*RULINGS*` |
 | `card` | 3 | the input a ruling was made from | `docs/decision-cards/` |
@@ -165,11 +165,12 @@ flavour it belongs to and read what was already decided there.
 | 2026-08-24 | the featured seed names the ISO week the league opens in | `godot/tests/unit/test_iso_week_seed.gd` | `godot/tests/unit/test_iso_week_seed.gd:24` |
 | 2026-10-26 | leagues use a hard cutover, not layered overlapping lifespans | `#823` | `docs/rulings/DECISIONS_2026-10-26_return.md:75` |
 
-### `localisation` (only one so far)
+### `localisation`
 
 | date | ruling | mechanism | source |
 |---|---|---|---|
 | 2026-10-26 | Chinese localisation before the end of 2026 remains a goal | `#1142` | `docs/rulings/DECISIONS_2026-10-26_return.md:86` |
+| 2026-10-30 | Chinese localisation aims at the whole game over time, but the 2026-12-31 target is interface text only; if time runs short, cut to the fundamentals rather than slip | `#1142` | `docs/rulings/DECISIONS_2026-10-26_return.md:122` |
 
 ### `mechanical-inertness` (only one so far)
 
@@ -478,6 +479,7 @@ is not.
 - `docs/rituals/records/GATE_RECORD_2026-08-24_v0.14.3.md:20` -- morning of 2026-08-24, during ISO week 35. Pip ruled that the seed names the ISO
 - `docs/rulings/DECISIONS_2026-10-26_return.md:31` -- COMMITMENT: 2026-10-31 -- #1343 pause-semantics sweep: state what 'paused' means and bring the 9 timers, 18 tweens and 47 input surfaces under it -- owner: pdoom1-seat -- kind: deadline -- note: ruled
 - `docs/rulings/DECISIONS_2026-10-26_return.md:60` -- COMMITMENT: 2026-11-30 -- Revisit hiring and midgame mechanics (candidate-pool scaling first) as midgame calibration starts -- owner: pip -- kind: review -- note: ruled 2026-10-26 with #961; window is
+- `docs/rulings/DECISIONS_2026-10-26_return.md:87` -- COMMITMENT: 2026-12-31 -- Chinese localisation of the game -- owner: pip -- kind: deadline -- note: #1142, reaffirmed 2026-10-26; scope ruled 2026-10-30 -- interface text only (item 29)
 - `docs/strategy/IP_AND_OPENNESS_PREMORTEM.md:443` -- except keeping the data backbone clean (already ruled).
 - `docs/strategy/IP_AND_OPENNESS_PREMORTEM.md:87` -- community reads retraction as betrayal. Pip has already ruled against
 - `godot/assets/images/events/README.md:26` -- **They are GRANDFATHERED. Pip ruled 2026-08-03 that already-packed assets stay
