@@ -549,9 +549,9 @@ is not.
 - `tools/assets/check_provenance.py:60` -- this estate has already ruled carries no information.
 - `tools/assets/manifests/new_subjects.json:115` -- "prompt_tail": "an almost perfectly flat-on frontal view of a wall of bureaucratic paperwork, shot square to the wall with minimal perspective so the picture plane and the wall plane are nearly parall
 - `tools/assets/provenance_unknown_pin.json:2` -- "_why": "Pinned unknown set. Ruled by Pip 2026-08-11: keep the unattributable assets, record them honestly, and let a mechanism force the question later rather than a document.",
-- `tools/check_chronic_red.py:250` -- Fossils count as failures as of 2026-08-30 (ruled by Pip; see
-- `tools/check_chronic_red.py:484` -- # FOSSILS NOW FAIL (ruled by Pip 2026-08-30, docs/CI_FOSSILS_2026-08-30.md).
-- `tools/check_chronic_red.py:579` -- print("  Ruled 2026-08-30: a fossil is REMOVED, never declared. A declaration for")
+- `tools/check_chronic_red.py:265` -- Fossils count as failures as of 2026-08-30 (ruled by Pip; see
+- `tools/check_chronic_red.py:499` -- # FOSSILS NOW FAIL (ruled by Pip 2026-08-30, docs/CI_FOSSILS_2026-08-30.md).
+- `tools/check_chronic_red.py:597` -- print("  Ruled 2026-08-30: a fossil is REMOVED, never declared. A declaration for")
 - `tools/check_guard_parity.py:6` -- WHY THIS EXISTS (issue #1265, ruled by Pip 2026-08-20)
 - `tools/check_release_ledger.py:30` -- This is the ruled ``manufactured confidence`` shape (Pip, 2026-08-23 16:42):
 - `tools/check_release_ledger.py:59` -- ``pdoom.releases/0.1``). Under the atomise protocol clause 3 (ruled by Pip,

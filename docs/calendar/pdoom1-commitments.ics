@@ -6167,7 +6167,7 @@ DTSTART;VALUE=DATE:20260830
 DTEND;VALUE=DATE:20260831
 SUMMARY:[UNPARSED] needs a declaration -- check_chronic_red.py
 DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/check_chronic_re
- d.py:250. 4 line(s) in tools/check_chronic_red.py mention this date and n
+ d.py:265. 4 line(s) in tools/check_chronic_red.py mention this date and n
  o COMMITMENT: declaration accounts for it. Either add a declaration or th
  e date is incidental. First line: Fossils count as failures as of 2026-08
  -30 (ruled by Pip\; see -- Generated from tracked sources by scripts/gene
@@ -8008,6 +8008,29 @@ DESCRIPTION:needs a declaration -- RULINGS.md (unparsed) -- unowned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:3902d7c9eea083ae@commitments.pdoom1
+DTSTAMP:20261029T000000Z
+DTSTART;VALUE=DATE:20261029
+DTEND;VALUE=DATE:20261030
+SUMMARY:[UNPARSED] needs a declaration -- check_chronic_red.py
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/check_chronic_re
+ d.py:104. 1 line(s) in tools/check_chronic_red.py mention this date and n
+ o COMMITMENT: declaration accounts for it. Either add a declaration or th
+ e date is incidental. First line: # the streak can never end. The origina
+ l reds (2026-10-29) were a stale -- Generated from tracked sources by scr
+ ipts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- check_chronic_red.py (unparsed) -- unow
+ ned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:fb3b9202564ca8ab@commitments.pdoom1
 DTSTAMP:20261029T000000Z
 DTSTART;VALUE=DATE:20261029
@@ -8101,6 +8124,29 @@ BEGIN:VALARM
 ACTION:DISPLAY
 TRIGGER:PT8H
 DESCRIPTION:needs a declaration -- RULINGS.md (unparsed) -- unowned
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:70d1f9f1343abd37@commitments.pdoom1
+DTSTAMP:20261030T000000Z
+DTSTART;VALUE=DATE:20261030
+DTEND;VALUE=DATE:20261031
+SUMMARY:[UNPARSED] needs a declaration -- check_chronic_red.py
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: tools/check_chronic_re
+ d.py:102. 4 line(s) in tools/check_chronic_red.py mention this date and n
+ o COMMITMENT: declaration accounts for it. Either add a declaration or th
+ e date is incidental. First line: # 2026-10-30: this census runs INSIDE g
+ uards.yml\, so once guards.yml itself -- Generated from tracked sources b
+ y scripts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- check_chronic_red.py (unparsed) -- unow
+ ned
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
