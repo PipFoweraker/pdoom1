@@ -103,16 +103,13 @@ DECLARED = {
     # reaches the threshold every later guards run fails on the census alone and
     # the streak can never end. The original reds (2026-10-29) were a stale
     # release index and then a stale rulings index, both fixed on main by
-    # d1f49a7a. These two entries let one run go green; they then read STALE and
-    # are removed in the follow-up PR.
+    # d1f49a7a. These entries let one run go green; they then read STALE and
+    # are removed one at a time (pull_request went first, in #1365's follow-up;
+    # push follows once a push run on main has gone green).
     "guards.yml:push": (
         "Self-lock, 2026-10-30. Real causes fixed in d1f49a7a; every red since is "
         "this census counting its own workflow. Clears itself: the first push run "
         "after this lands goes green, the entry goes stale, delete it."
-    ),
-    "guards.yml:pull_request": (
-        "Self-lock, 2026-10-30, same as guards.yml:push. Clears itself: this PR's "
-        "own run goes green, the entry goes stale, delete it."
     ),
 }
 
