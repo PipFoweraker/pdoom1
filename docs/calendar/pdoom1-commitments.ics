@@ -900,6 +900,29 @@ DESCRIPTION:P9\, the pack's OWN falsifier: if none of P1-P8 started and no
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:5eff74aa2bd0a46a@commitments.pdoom1
+DTSTAMP:20260814T000000Z
+DTSTART;VALUE=DATE:20260814
+DTEND;VALUE=DATE:20260815
+SUMMARY:[UNPARSED] needs a declaration -- MAIN_UI_SEAM_MAP.md
+DESCRIPTION:Owner: unowned. Kind: unparsed. Source: docs/MAIN_UI_SEAM_MAP.
+ md:3. 2 line(s) in docs/MAIN_UI_SEAM_MAP.md mention this date and no COMM
+ ITMENT: declaration accounts for it. Either add a declaration or the date
+  is incidental. First line: **Status:** ACTIVE PLAN (2026-07-25\; **Wave 
+ 2 costed 2026-08-14\, section 6**). -- Generated from tracked sources by 
+ scripts/generate_commitment_calendar.py\; regenerate to update.
+CATEGORIES:UNPARSED
+TRANSP:TRANSPARENT
+SEQUENCE:0
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT8H
+DESCRIPTION:needs a declaration -- MAIN_UI_SEAM_MAP.md (unparsed) -- unown
+ ed
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:cc4a330ceec3ac6f@commitments.pdoom1
 DTSTAMP:20260814T000000Z
 DTSTART;VALUE=DATE:20260814

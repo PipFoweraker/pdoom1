@@ -1,9 +1,14 @@
 # main_ui.gd -- Seam Map + Refactor Plan
 
-**Status:** ACTIVE PLAN (2026-07-25). Steering artifact for the incremental
-de-monolithing of `godot/scripts/ui/main_ui.gd` (~3k lines). WS-3 build lanes and
-any agent touching `main_ui` MUST read this first and extract along these seams
-rather than piling onto the monolith.
+**Status:** ACTIVE PLAN (2026-07-25; **Wave 2 costed 2026-08-14, section 6**).
+Steering artifact for the incremental de-monolithing of
+`godot/scripts/ui/main_ui.gd`. WS-3 build lanes and any agent touching `main_ui`
+MUST read this first and extract along these seams rather than piling onto the
+monolith.
+
+**Size, measured 2026-08-14: 2305 lines, 82 functions.** (Sections 1-5 below were
+written against the ~3k-line version; CARVES 1-6 have since landed. The seam
+letters R1-R6 are still correct, the line counts in them are not.)
 
 **Governing decision (Pip, 2026-07-25):** NOT a big-bang "sortie." One targeted
 carve now (R4), a map for the rest, and incremental extraction distributed across
