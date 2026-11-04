@@ -295,8 +295,8 @@ func _ready():
 	employee_access_btn.custom_minimum_size = Vector2(0, 40)
 	employee_access_btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	employee_access_btn.add_theme_font_size_override("font_size", 16)
-	employee_access_btn.text = " Employees -- roster & morale"
-	employee_access_btn.tooltip_text = "Open the Employee management screen  (ESC returns here)"
+	employee_access_btn.text = " Employees -- roster & morale  [%s]" % KeybindManager.get_key_name("employee_screen")
+	employee_access_btn.tooltip_text = "Open the Employee management screen -- roster, warnings, and the Fire button  (ESC returns here)"
 	employee_access_btn.pressed.connect(_on_open_employee_screen)
 	right_zones.add_child(employee_access_btn)
 	right_zones.move_child(employee_access_btn, ledger_summary_btn.get_index() + 1)
@@ -1075,11 +1075,6 @@ func _on_commit_plan_button_pressed():
 	# Phase A: committing the plan is the PLAN->WATCH transition.
 	if screen_mode:
 		screen_mode.enter_watch()
-
-func _on_employee_tab_button_pressed():
-	"""Switch to employee management screen - DISABLED: employee info moving to main UI"""
-	# tab_manager.show_employee_screen()
-	pass
 
 func _on_open_employee_screen() -> void:
 	"""#602: open the full Employee screen via the TabManager. ESC (handled by TabManager)

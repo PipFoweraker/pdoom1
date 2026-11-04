@@ -90,10 +90,34 @@ static func hire_cap(state) -> int:
 
 
 ## Employed headcount that occupies a desk. Managers sit at desks too.
+##
+## EXPLOIT 001 (docs/EXPLOIT_REGISTER.md): this used to read get_total_staff(), which SWITCHES
+## FORMULA at zero researchers -- `researchers.size() + managers` while anyone is on the
+## roster, but `safety + capability + compute_engineers + managers` once the roster empties.
+## Compute engineers are therefore invisible to the cap right up until the last researcher
+## leaves, at which point they all appear at once: firing your way to an empty roster made
+## occupied desks JUMP (measured 2 -> 5 against a cap of 2) and soft-locked hiring for the
+## rest of the run. Counting the seated population directly is behaviour-identical whenever
+## a researcher exists -- the normal case -- and removes the discontinuity at zero.
 static func occupied_desks(state) -> int:
 	if state == null:
 		return 0
-	return int(state.get_total_staff()) if state.has_method("get_total_staff") else 0
+	if not ("researchers" in state):
+		# Lightweight test doubles with no roster array: fall back to whatever they report.
+		return int(state.get_total_staff()) if state.has_method("get_total_staff") else 0
+	var seated: int = state.researchers.size()
+	if "managers" in state:
+		seated += int(state.managers)
+	if state.researchers.is_empty():
+		# A legacy/scalar-only state never populated the Researcher array, so its headcount
+		# lives entirely in the counters. add_researcher/remove_researcher keep these in
+		# lockstep with the objects, so on an object-based run they are zero here and this
+		# adds nothing -- which is precisely what keeps the zero-roster case continuous.
+		if "safety_researchers" in state:
+			seated += int(state.safety_researchers)
+		if "capability_researchers" in state:
+			seated += int(state.capability_researchers)
+	return seated
 
 
 static func has_desk_space(state) -> bool:
