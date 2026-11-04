@@ -359,7 +359,16 @@ func purchase_upgrade(upgrade_id: String):
 		error_occurred.emit(result.get("message", "Upgrade purchase failed"))
 
 func fire_researcher(researcher_index: int, severance_cost: float):
-	"""Fire a researcher with severance payout"""
+	"""Fire a researcher with severance payout.
+
+	EXPLOIT 001 (docs/EXPLOIT_REGISTER.md): this used to be a bare state.remove_researcher() plus a
+	cash debit -- no DEPARTED transition, no ledger entry, no event -- so being fired was the
+	only way off the roster that left no trace, and it was the only departure the player
+	chooses. It now routes through HiringPipeline.depart(), the same path early attrition
+	uses, so a departure cannot be half-done depending on which door it came out of.
+	Severance is the cost that makes firing DIFFERENT; it is not a substitute for the
+	departure. Balance note: no number was retuned here -- firing now also mints the existing
+	staff_rider that every attrition departure already minted."""
 	if not is_initialized:
 		error_occurred.emit("Cannot fire employee: Game not initialized")
 		return
@@ -381,11 +390,18 @@ func fire_researcher(researcher_index: int, severance_cost: float):
 	var researcher = state.researchers[researcher_index]
 	var researcher_name = researcher.researcher_name
 
-	# Pay severance
+	# Pay severance -- the distinguishing cost of firing, on top of the departure.
 	state.money -= severance_cost
 
-	# Remove researcher
-	state.remove_researcher(researcher)
+	# The departure itself: DEPARTED transition + roster removal + the ADR-0003
+	# disgruntled-alumni rider, shared with the attrition path (never re-implemented here).
+	if state.hiring != null:
+		state.hiring.depart(state, researcher, "fired")
+	else:
+		# No pipeline on this state (lightweight doubles): still honour the transition and
+		# the removal rather than silently falling back to the old bare-removal behaviour.
+		researcher.transition_hire_state(Researcher.HireState.DEPARTED)
+		state.remove_researcher(researcher)
 
 	# Create result message
 	var result_message = "Fired %s. Severance paid: %s" % [
