@@ -349,7 +349,9 @@ func _begin_switch() -> void:
 	var tree := get_tree()
 	if tree == null:
 		return  # headless/teardown: no timer to hang the nudge on, and nothing to show it
-	await tree.create_timer(CONDUCTOR_NUDGE_DELAY).timeout
+	# process_always=true, deliberately (#1343): the track picker lives IN the pause
+	# menu, so this nudge has to fire while paused. Music keeps running when paused.
+	await tree.create_timer(CONDUCTOR_NUDGE_DELAY, true).timeout
 	# Still waiting after the delay -> say so. If the switch already landed,
 	# _switch_pending is false and the player never sees a flicker for a fast one.
 	if _switch_pending:

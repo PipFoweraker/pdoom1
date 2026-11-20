@@ -41,7 +41,6 @@ HOW TO RUN
 WHATS IN HERE
    PDoom.exe    the game
    PDoom.pck    the game data (must stay next to the exe)
-   *.dll        Steam integration libraries (keep them here)
 
 FEEDBACK
    Press N in game, or click "Send Feedback". Write anything -- a bug, an

@@ -127,9 +127,11 @@ func start_new_game(game_seed: String = "", force: bool = false):
 	# Placeholder until the league pipeline lands -- the run's start month is a stable id
 	# carried beside (seed, game_version) so cross-league boards (DQ-3) can key on it.
 	var league_id := "%04d-%02d" % [state.start_year, state.start_month]
-	VerificationTracker.enable_debug()  # Enable verbose logging
+	# Tracker debug logging is opt-in (#1193): --verify-debug / PDOOM1_VERIFY_DEBUG=1.
+	# It used to be forced ON here for every game; the print below now reports the
+	# real state instead of a hardcoded "ON".
 	VerificationTracker.start_tracking(game_seed, game_version, state.event_schedule, league_id, GameConfig.get_board_version())
-	print("[GameManager] Verification tracking enabled (debug mode: ON)")
+	print("[GameManager] Verification tracking enabled (debug logging: %s)" % ("ON" if VerificationTracker.debug_mode else "OFF"))
 
 	# Start baseline simulation in background if appropriate (Issue #372)
 	# This runs the "no-action" simulation for score comparison at game end

@@ -139,8 +139,8 @@ jobs:
       run: |
         VERSION="$(cat version.txt)"
         echo "Checking CHANGELOG section [$VERSION] for citations of still-open issues..."
-        echo "(RN003/RN005. The tag-time gates in pre-release-checks.yml and"
-        echo " enhanced-release.yml remain authoritative -- they check the exact"
+        echo "(RN003/RN005. The tag-time gates in enhanced-release.yml (preflight and"
+        echo " the release-body guard) remain authoritative -- they check the exact"
         echo " published bytes. This is the same question, asked early enough to"
         echo " be fixed without moving a tag.)"
         python scripts/check_release_notes.py --changelog-structure

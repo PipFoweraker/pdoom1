@@ -306,6 +306,7 @@ again.
 | Register new save/load state | `to_dict`/`from_dict` in [`game_state.gd`](../godot/scripts/core/game_state.gd) -- read the SERIALIZATION CONVENTION block first |
 | Change scoring | `score_tuple`/`compare_score` in [`game_state.gd`](../godot/scripts/core/game_state.gd) |
 | Navigate between scenes (menu/game/leaderboard) | `SceneTransition.go_to(path)` / `.reload()` in [`scene_transition.gd`](../godot/autoload/scene_transition.gd) -- **NEVER** `get_tree().change_scene_to_file()` directly (deferred-swap chokepoint; enforced by `tools/check_scene_nav.py`). Why: [`LEADERBOARD_CRASH_DIAGNOSIS.md`](LEADERBOARD_CRASH_DIAGNOSIS.md) |
+| Add a timer, tween or node that must (or must not) run behind the pause menu | [`design/PAUSE_SEMANTICS.md`](design/PAUSE_SEMANTICS.md) -- what "paused" means, layer by layer. Every `create_timer()` passes `process_always` explicitly (its engine default IGNORES the pause, #1341); enforced by `tools/check_pause_timers.py` |
 | Cut a Windows build | `python tools/build_release.py` (nukes `.godot`, stamps the build, PROVES the pack is fresh) -- never a raw `godot --export` (stale-cache trap) |
 | Bump the game version | edit `version.txt`, run `python tools/sync_version.py`; `--check` gates pre-commit + CI |
 
