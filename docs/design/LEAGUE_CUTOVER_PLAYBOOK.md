@@ -156,7 +156,7 @@ before it can be pre-staged.** The publish itself is a tag push plus 5m30s.
 | S4 | **`Godot Tests` green on the release branch.** | 6-9 min, and it is the long pole. Running it at cutover puts nine minutes of variance inside the announced window. | runs `31175769588`, `31194819397` |
 | S5 | **PLAYTEST THE ACTUAL RELEASE CANDIDATE BUILD.** See 2.3 -- this is the gate that was skipped and it cost `v0.14.1`. | | |
 | S6 | **The board key decided and blessed, and `pdoom1-website` told the exact string.** | `docs/LEAGUE_SEED_LEDGER.md` step 2 requires an explicit human blessing before any page may present a seed. Establishing one string on the night took three seats and a since-deleted probe. | `coordination#40`, 2026-08-07/08 |
-| S7 | **CHANGELOG section for the version exists.** | `pre-release-checks.yml` hard-fails on a tag whose version is absent from `CHANGELOG.md`. A cutover is a poor time to discover that. | `.github/workflows/pre-release-checks.yml`, step `Check CHANGELOG updated` |
+| S7 | **CHANGELOG section for the version exists.** | The release `preflight` job hard-fails on a tag whose version is absent from `CHANGELOG.md`, and since 2026-10-26 that stops the release (#1299). A cutover is a poor time to discover that. | `.github/workflows/enhanced-release.yml`, job `preflight`, step `Check CHANGELOG updated` (was `pre-release-checks.yml`) |
 | S8 | **The pre-announcement text agreed with `pdoom1-website`** and scheduled, with the go-live copy drafted but unpublished. Their surface, their call -- see section 5. | | |
 
 ### 2.2 Must happen AT cutover (the hard-and-fast part)
@@ -595,7 +595,7 @@ breaks.
 | `sync_version.py --check` reports drift | A silent version drift forks the board key -- fatal, per `CLAUDE.md` |
 | The ladder decision is unresolved -- the fork rule says YES and `ladder_version.txt` did not move, or vice versa | This is exactly `v0.14.0`'s F1: main carried a ladder-forking change on an unbumped ladder for 31 hours and every guard passed |
 | The release-candidate playtest could not reach the global leaderboard | 6.4. This shipped once. |
-| `CHANGELOG.md` has no section for the version | `pre-release-checks.yml` will fail the tag anyway; better to know first |
+| `CHANGELOG.md` has no section for the version | the `preflight` job in `enhanced-release.yml` will fail the tag anyway (and, since 2026-10-26, stop the release); better to know first |
 | The board key has not been blessed, or `pdoom1-website` has not been given the exact strings | `coordination#40`. A site presenting a closed epoch as live is worse than a late release |
 
 ### 7.2 ABORT THE ANNOUNCEMENT, not the release

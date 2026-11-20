@@ -50,7 +50,7 @@ Consequences worth stating plainly:
 | --- | --- | --- | --- |
 | pre-commit `changelog-structure-check` | on `CHANGELOG.md` commits | RN001, RN002. Offline. | yes (RN001) |
 | `quality-checks.yml` | on every PR to main, and on push to main | RN001, RN002 + RN003/RN005 on the `version.txt` section | yes |
-| `pre-release-checks.yml` | on `v*.*.*` tag push | RN001, RN002 + RN003/RN004 on the CHANGELOG section | yes |
+| `enhanced-release.yml` `preflight` job (was `pre-release-checks.yml` until 2026-10-26, #1299) | on `v*.*.*` tag push, before any build | RN001, RN002 + RN003/RN004 on the CHANGELOG section | **yes -- since 2026-10-26 it stops the build and the publish** (before that it ran in a separate workflow and could not, #1325) |
 | `enhanced-release.yml`, before `action-gh-release` | on `v*.*.*` tag push | RN003, RN004 on `release_notes.txt` | **yes -- this is the one that stops a bad body being published** |
 
 ### The PR-time row was added on 2026-08-29, and here is what it cost to learn

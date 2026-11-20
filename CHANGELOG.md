@@ -15,6 +15,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 > claimed. `scripts/check_release_notes.py --changelog-structure` now blocks
 > a second `[Unreleased]` heading from appearing again.
 
+## [0.14.5] - 2026-10-29 -- The Pause That Pauses
+
+A hotpatch for friends. Two things stood between a new player and a fair first
+session: a pause menu that did not stop the clock, and a macOS build carrying a
+library nothing used, packaged in a shape that could not be signed.
+
+### Fixed
+- The pause menu pauses the game (#1341). Month playback and turn advance ran
+  on engine timers that ignore pause by default, so on v0.14.4 six days and a
+  month boundary could pass behind the open menu, and the Month Review then
+  drew underneath it and stopped taking clicks. Both timers now respect pause;
+  `godot/tests/unit/test_pause_stops_month_playback.gd` pins it.
+- An event with no researcher reaction now shows no reaction, instead of
+  printing a null (#1327). The upstream historical-events data is moving to
+  an explicit null for reactions it never had, and this build reads that
+  correctly before the change arrives. The bundled events are unchanged.
+- The game no longer writes a log line for every action, event and random
+  roll (#1354). A score-verification debug mode was switched on for every
+  game; it is now off unless asked for with `--verify-debug`. Scores and
+  their verification hashes are unchanged.
+
+### Removed
+- GodotSteam, from every build (#1348). No game code ever called Steam. Its
+  macOS framework had been committed from a Windows checkout, which cannot
+  store the symlink a framework needs, and every macOS export since July
+  logged a signing failure on it and shipped it anyway. The Windows and Linux
+  zips no longer carry the Steam `.dll`/`.so` files either. The addon is parked
+  in `vendor/godotsteam/` for a later, deliberate return.
+- What this does NOT establish: that the macOS build launches. No macOS build
+  from this pipeline has yet been opened on a Mac and watched to work; #1071 is
+  still OPEN and macOS stays best-effort.
+
 ## [0.14.4] - 2026-08-29 -- The Door That Was Not There
 
 A repair release, cut ahead of the monthly train for one reason: v0.14.3 was the

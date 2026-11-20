@@ -42,7 +42,9 @@ func _ready() -> void:
 	_trip = _read_trip()
 	_build_ui()
 	set_process_unhandled_input(true)
-	await get_tree().create_timer(OPENING_BLACK_HOLD).timeout
+	# process_always=false: house default (#1343). This scene never hosts the pause
+	# menu, so it cannot be paused today; if it ever can, the beats should hold.
+	await get_tree().create_timer(OPENING_BLACK_HOLD, false).timeout
 	_reveal_next_line()
 
 
@@ -179,7 +181,7 @@ func _reveal_next_line() -> void:
 	_lines_box.add_child(label)
 	_line_index += 1
 	_fade_in_control(label, LINE_FADE_IN)
-	await get_tree().create_timer(LINE_FADE_IN + LINE_HOLD).timeout
+	await get_tree().create_timer(LINE_FADE_IN + LINE_HOLD, false).timeout
 	_reveal_next_line()
 
 

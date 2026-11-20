@@ -292,11 +292,11 @@ class TestAnalyzeGodot(unittest.TestCase):
         f = by_path(
             self.make(
                 {
-                    "godot/autoload/steam_manager.gd": "extends Node\n",
+                    "tools/find_dead_code.py": "# scanner\n",
                 }
             )
         )
-        self.assertNotIn("godot/autoload/steam_manager.gd", f)
+        self.assertNotIn("tools/find_dead_code.py", f)
 
     def test_external_exec_reference_keeps_scene_alive(self):
         # capture_cinematic.py runs a scene: that scene is not dead.

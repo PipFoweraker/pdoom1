@@ -80,16 +80,6 @@ THIRD_PARTY_PREFIXES = ("godot/addons/",)
 # challenge it. These are files a zero-reference scan WOULD flag but that the
 # PR #1118 sweep (or repo policy) established as deliberately alive.
 ALLOWLIST = {
-    "godot/autoload/steam_manager.gd": (
-        "Unfinished Steam scaffolding deliberately KEPT in PR #1118: not in "
-        "project.godot [autoload] and nothing references it, but "
-        "addons/godotsteam is installed and godot/steam_appid.txt exists. "
-        "Scaffolding, not a corpse."
-    ),
-    "godot/steam_appid.txt": (
-        "Companion to steam_manager.gd scaffolding (contains 480, Valve's "
-        "Spacewar test appid). Goes when the Steam decision is made."
-    ),
     "tools/find_dead_code.py": "This scanner.",
     "tests/test_find_dead_code.py": (
         "Unit tests for this scanner; collected by unittest discovery."
