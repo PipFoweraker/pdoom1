@@ -5,6 +5,10 @@ measured here; the work itself is due by Friday for the league patch.
 
 COMMITMENT: 2026-09-04 -- Sweep the pause-semantics family: every create_timer, tween and input-capture site that silently opts out of SceneTree.paused, plus a written statement of what pausing this game MEANS and a guard that stops a new one landing -- owner: pip -- kind: deadline -- note: scoped in this file after #1341 shipped to players in v0.14.4; Friday at the latest because the league patch goes out then.
 
+**Status (2026-10-29, #1343):** the definition, the re-measured inventory, the
+classification of every site and what is still open now live in
+`docs/design/PAUSE_SEMANTICS.md`. This file is kept as the original scoping record.
+
 ## The one-sentence problem
 
 **Nothing in this repository states what "paused" means, so every site that could

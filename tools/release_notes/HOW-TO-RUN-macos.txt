@@ -21,8 +21,8 @@ HOW TO RUN
       xattr -dr com.apple.quarantine "P(Doom).app"
 
 WHATS IN HERE
-   P(Doom).app    the game -- game data and Steam libraries live inside
-                  the app bundle, so there is nothing else to keep together
+   P(Doom).app    the game -- the game data lives inside the app bundle,
+                  so there is nothing else to keep together
 
 HEADS UP
    The macOS build is not extensively tested yet -- expect rough edges.

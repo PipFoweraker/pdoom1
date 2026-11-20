@@ -128,6 +128,13 @@ signal flight_recorder_requested
 signal ui_evolution_shot_requested
 
 func _ready():
+	# Keep dispatching while the tree is paused (#1028, #1343; docs/design/PAUSE_SEMANTICS.md).
+	# _input() below routes ONLY diagnostic/capture binds -- screenshot, log export,
+	# F3 readout, dev overlay, flight recorder, UI-evolution shot, admin -- never a
+	# gameplay action (those live in MainUI._input, which stays pausable). Inheriting
+	# PAUSABLE meant every one of them died the moment the pause menu opened: the one
+	# state you reach when something looks wrong, and the one you cannot capture.
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	load_keybinds()
 	print("[KeybindManager] Loaded profile: %s" % current_profile)
 

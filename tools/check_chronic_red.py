@@ -101,6 +101,16 @@ DECLARED = {
     ),
 }
 
+# REMOVED 2026-10-30, the same day, by the same rule.
+#
+# "guards.yml:push" and "guards.yml:pull_request" were declared (#1365) because
+# this census runs inside guards.yml: after three real reds on 2026-10-29 every
+# later guards run failed on the census alone, so the streak could never end.
+# They had to come out one at a time -- pull_request in #1367, push here after
+# main's first green push run -- because a stale entry fails as surely as a
+# missing one. The structural risk remains: three consecutive guards reds on
+# one trigger re-arm the lock, and the way out is the same three steps.
+
 # REMOVED 2026-08-29, hours after being written, by the rule it was written under.
 #
 # "release-ledger.yml:schedule" was declared here with the note that it was
@@ -494,15 +504,18 @@ def self_test() -> int:
     # read stale, which is correct behaviour and would make this case fail for a
     # reason unrelated to fossils. So the clean tree includes it, chronic and
     # declared, exactly as the real repository has it.
-    clean = census(
-        {
-            "live.yml:push": [("success", "2026-08-30")] * 5,
-            "docs-sync.yml:pull_request": [("failure", "2026-08-22")] * 39,
-        }
-    )
+    # Built from DECLARED itself, so adding or removing a declaration does not
+    # break this case (a hard-coded docs-sync-only tree did, 2026-10-30).
+    clean_runs = {"live.yml:push": [("success", "2026-08-30")] * 5}
+    clean_events = {"live.yml": {"push"}}
+    for key in DECLARED:
+        wf, ev = key.rsplit(":", 1)
+        clean_runs[key] = [("failure", "2026-08-22")] * 39
+        clean_events.setdefault(wf, set()).add(ev)
+    clean = census(clean_runs)
     check(
         "a tree with no fossils and every chronic red declared passes",
-        verdict(clean, {"live.yml": {"push"}, "docs-sync.yml": {"pull_request"}}) == 0,
+        verdict(clean, clean_events) == 0,
     )
 
     print("SELF-TEST %s" % ("PASSED" if ok else "FAILED"))

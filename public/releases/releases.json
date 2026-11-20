@@ -1,8 +1,58 @@
 {
-  "generated_at": "2026-08-29T00:50:02.450784+00:00",
-  "latest_version": "v0.14.4",
-  "latest_stable": "v0.14.4",
+  "generated_at": "2026-10-29T23:26:17.055486+00:00",
+  "latest_version": "v0.14.5",
+  "latest_stable": "v0.14.5",
   "releases": [
+    {
+      "version": "v0.14.5",
+      "version_number": "0.14.5",
+      "release_date": "2026-10-29T05:33:50+08:00",
+      "commit_hash": "fc40632fe500068ec9cc87acd86dc2cc3e231aa3",
+      "is_prerelease": false,
+      "changelog": "A hotpatch for friends. Two things stood between a new player and a fair first\nsession: a pause menu that did not stop the clock, and a macOS build carrying a\nlibrary nothing used, packaged in a shape that could not be signed.\n\n### Fixed\n- The pause menu pauses the game (#1341). Month playback and turn advance ran\n  on engine timers that ignore pause by default, so on v0.14.4 six days and a\n  month boundary could pass behind the open menu, and the Month Review then\n  drew underneath it and stopped taking clicks. Both timers now respect pause;\n  `godot/tests/unit/test_pause_stops_month_playback.gd` pins it.\n- An event with no researcher reaction now shows no reaction, instead of\n  printing a null (#1327). The upstream historical-events data is moving to\n  an explicit null for reactions it never had, and this build reads that\n  correctly before the change arrives. The bundled events are unchanged.\n- The game no longer writes a log line for every action, event and random\n  roll (#1354). A score-verification debug mode was switched on for every\n  game; it is now off unless asked for with `--verify-debug`. Scores and\n  their verification hashes are unchanged.\n\n### Removed\n- GodotSteam, from every build (#1348). No game code ever called Steam. Its\n  macOS framework had been committed from a Windows checkout, which cannot\n  store the symlink a framework needs, and every macOS export since July\n  logged a signing failure on it and shipped it anyway. The Windows and Linux\n  zips no longer carry the Steam `.dll`/`.so` files either. The addon is parked\n  in `vendor/godotsteam/` for a later, deliberate return.\n- What this does NOT establish: that the macOS build launches. No macOS build\n  from this pipeline has yet been opened on a Mac and watched to work; #1071 is\n  still OPEN and macOS stays best-effort.",
+      "changelog_status": "present",
+      "downloads": {
+        "windows": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.14.5/PDoom-Windows-v0.14.5.zip",
+        "linux": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.14.5/PDoom-Linux-v0.14.5.zip",
+        "mac": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.14.5/PDoom-macOS-v0.14.5.zip",
+        "source_zip": "https://github.com/PipFoweraker/pdoom1/archive/refs/tags/v0.14.5.zip",
+        "source_tar": "https://github.com/PipFoweraker/pdoom1/archive/refs/tags/v0.14.5.tar.gz"
+      },
+      "platform_status": {
+        "windows": {
+          "status": "available",
+          "asset": "PDoom-Windows-v0.14.5.zip",
+          "evidence": "github-api",
+          "url": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.14.5/PDoom-Windows-v0.14.5.zip"
+        },
+        "linux": {
+          "status": "available",
+          "asset": "PDoom-Linux-v0.14.5.zip",
+          "evidence": "github-api",
+          "url": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.14.5/PDoom-Linux-v0.14.5.zip"
+        },
+        "mac": {
+          "status": "available",
+          "asset": "PDoom-macOS-v0.14.5.zip",
+          "evidence": "github-api",
+          "url": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.14.5/PDoom-macOS-v0.14.5.zip"
+        }
+      },
+      "asset_evidence": {
+        "source": "github-api",
+        "resolved": true,
+        "detail": "https://api.github.com/repos/PipFoweraker/pdoom1/releases/tags/v0.14.5"
+      },
+      "metadata": {
+        "engine": "Godot 4.5.1",
+        "platforms": [
+          "Windows",
+          "Linux",
+          "macOS"
+        ],
+        "tag_message": "P(Doom) v0.14.5 -- The Pause That Pauses"
+      }
+    },
     {
       "version": "v0.14.4",
       "version_number": "0.14.4",
@@ -56,8 +106,8 @@
     {
       "version": "v0.14.3",
       "version_number": "0.14.3",
-      "release_date": "2026-08-24T14:08:07+10:00",
-      "commit_hash": "b9f5526061a641e79a4716f5fe979f2f739b006f",
+      "release_date": "2026-08-24T14:30:55+10:00",
+      "commit_hash": "161240bef1454851555ed042c640b67a0cf67d56",
       "is_prerelease": false,
       "changelog": "A pass over things that took your money, or your attention, and gave nothing\nback for it -- an acquired startup's engineers who drew salary and never worked,\na lever that quoted a doom figure it never applied, an $80,000 counter-offer\nthat changed nothing, and a feedback button that saved a file to your disk and\nasked you to email it.\n\n### Added\n- Counter-offers retain a named researcher, at a permanent payroll cost.\n  Item 4 of the hiring-panel set; #1225 is still OPEN.\n- The onboarding bill and visa obligation are previewed before you commit.\n  Item 5 of the hiring-panel set; #1225 is still OPEN.\n- Ad campaigns emit a monthly report whether or not anyone applied, and name what\n  the campaign cost when it closes. Item 3 of the hiring-panel set;\n  #1225 is still OPEN.\n- A signed-build path: tooling exists and is tested, awaiting the\n  certificate. #1038 is still OPEN.\n- `docs/TRUST.md`, generated from source -- every point the game reaches outside\n  its own process. #1038 is still OPEN.\n\n### Changed\n- Compute engineers are real staff rather than an integer counter (#1247). They\n  used to appear on the employee screen and never load into the sim -- consuming\n  stationery and producing nothing.\n- The header stops calling committed Attention \"queued\", and hiring says\n  days. #1223 is still OPEN.\n- The music conductor takes a nudge, and a pick made mid-crossfade is no longer\n  dropped (#1249)\n- The game ships with its own icon instead of the default engine one -- visible in\n  the taskbar, alt-tab, and the Windows publisher warning\n- The featured league seed is `weekly-2026-w35` on ladder epoch `L6`. The seed\n  names the ISO week the league opens in; the rolls to `w34` (23 Aug) and `w35`\n  (24 Aug) were made in the repository but never reached a published build, so\n  players stayed on `weekly-2026-w33` / `L5`. This is the build that carries them\n  across. The slip is recorded rather than papered over.\n\n### Fixed\n- The game-over screen stops blaming crises the player actually survived (#1248)\n- The desperation lever applies real safety absorption instead of a printed\n  figure (#967) -- the button now does what its text says\n- An offer at or below a previously rejected figure is refused rather than\n  silently accepted. Item 2 of the hiring-panel set; #1225 is still OPEN.\n- Send Feedback (N) offers three one-click ways to actually send it. It used to\n  save a file to your disk and ask you to email it.\n- The weekly-seed fallback generator computed a non-ISO week and would have\n  emitted `weekly-2027-w1` on 1 January 2027, where the ISO week is\n  `weekly-2026-w53`. Wrong year, wrong week, and unpadded -- and `w1` and `w01`\n  are different board keys. Unreachable while the seed override is set, and now\n  correct if it ever is not.",
       "changelog_status": "present",
@@ -1181,5 +1231,5 @@
       }
     }
   ],
-  "total_releases": 27
+  "total_releases": 28
 }

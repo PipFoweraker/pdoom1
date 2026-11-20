@@ -296,8 +296,10 @@ func show_error(message: String):
 	confirmation_label.modulate = Color.RED
 	confirmation_label.visible = true
 
-	# Hide error after 5 seconds
-	await get_tree().create_timer(5.0).timeout
+	# Hide error after 5 seconds -- of UNPAUSED time (#1343, "messages freeze" in
+	# docs/design/PAUSE_SEMANTICS.md): this panel is pausable, so an error must not
+	# expire unread while the pause menu is over it.
+	await get_tree().create_timer(5.0, false).timeout
 	if confirmation_label.modulate == Color.RED:  # Only hide if still showing error
 		confirmation_label.visible = false
 

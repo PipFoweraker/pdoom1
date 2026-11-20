@@ -55,7 +55,9 @@ func flash_error(message: String) -> void:
 	_error_toast.visible = true
 	_error_flash_seq += 1
 	var my_seq := _error_flash_seq
-	var timer := get_tree().create_timer(4.0)
+	# process_always=false (#1343): the toast must not expire while the pause menu
+	# covers it -- see docs/design/PAUSE_SEMANTICS.md, "messages freeze".
+	var timer := get_tree().create_timer(4.0, false)
 	timer.timeout.connect(func() -> void:
 		if is_instance_valid(_error_toast) and my_seq == _error_flash_seq:
 			_error_toast.visible = false)

@@ -1,9 +1,15 @@
-# [Gate 3: PACK BLESSED]
+# [Gate 2: PACK BLESSED]
 
-**When:** Wednesday EOD (target), Thursday AM at the latest. Legacy: G2.
+**When:** after [Gate 1: LAST POUR]; Wednesday EOD (target), Thursday AM at
+the latest. Legacy: G2. Numbered Gate 3 before the 2026-10-26 reorder (#1025).
 
 The ADR-0016 league pack is authored, schema-valid, and born clean of
 printed doom.
+
+Since the 2026-10-26 reorder this gate comes BEFORE [Gate 4: THE FREEZE].
+The pack is decided while `main` is still open, so the release-branch cut
+carries it. Pack content is part of seed identity (it forks the ladder), so it
+no longer merges past the freeze the way playbook v0 allowed.
 
 ---
 
@@ -46,7 +52,7 @@ Use when no pack file was authored for this league, for any reason --
 including "the loader does not exist yet".
 
 ### Entry criteria
-- [Gate 2: THE FREEZE] PASSED.
+- [Gate 1: LAST POUR] PASSED.
 - The Commissioner has decided, explicitly, that this league ships
   pack-free. A pack absent by accident is a FALSE line, not a null pack.
 
@@ -96,7 +102,8 @@ Use once the #1020 loader lands (candidate epoch v0.14).
   `VerificationTracker`, so replays still verify.
 - The ladder consequence has been faced: **every pack change forks the
   ladder** (pack content is part of seed identity), so this branch implies
-  a ladder bump, which implies [Gate 2] declared that value.
+  a ladder bump, merged on `main` before [Gate 4: THE FREEZE] declares the
+  value final.
 
 ### Mechanical checks
 
@@ -160,8 +167,11 @@ only check in the whole ceremony that is purely an act of attention.
   not-allowed-to-slip list. It also means a cause type escaped the
   input-only invariant, which is an ADR-0015 bug well above pack scope.
   Stop the pack, file it, ship pack-free (Branch A).
-- **Pack changed but the ladder did not.** Bump the ladder, which sends you
-  back through [Gate 2]'s check 4 and invalidates any existing build.
+- **Pack changed but the ladder did not.** Bump the ladder on `main` before
+  [Gate 4: THE FREEZE]. At this position no build exists yet, so nothing is
+  invalidated -- but [Gate 3: SEED BLESSING] speaks the ladder value, so a
+  bump after the blessing means re-blessing. A pack change after the Freeze
+  is a ladder fork on a cut release branch: start again from this gate.
 
 ## Not verifiable from here
 
