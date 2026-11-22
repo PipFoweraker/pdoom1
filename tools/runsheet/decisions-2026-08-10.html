@@ -1,0 +1,301 @@
+<title>Decisions only -- Mon 2026-08-10 -- pdoom1 seat</title>
+<style>
+@page { size: A4 portrait; margin: 9mm 9mm 10mm; }
+html { font-size: 12.5pt; }
+body { font-family: "Segoe UI", Calibri, Arial, sans-serif; line-height: 1.18;
+       color: #000; background: #fff; max-width: 197mm; margin: 0 auto; }
+h1 { font-size: 18pt; margin: 0 0 1mm; line-height: 1.1; }
+h2 { font-size: 12.5pt; margin: 2.6mm 0 1.1mm; padding: 1.1mm 2mm;
+     background: #1a1a1a; color: #fff; page-break-after: avoid;
+     page-break-inside: avoid; }
+h3 { font-size: 12.5pt; margin: 2mm 0 1mm; page-break-after: avoid; }
+p, li, td, th { font-size: 12.5pt; }
+p { margin: 0.9mm 0; }
+table { border-collapse: collapse; width: 100%; margin: 1.4mm 0 2mm; }
+th, td { border: 1px solid #444; padding: 0.7mm 1.3mm; text-align: left;
+         vertical-align: top; font-size: 12.5pt; line-height: 1.14; }
+th { background: #e8e8e8; font-weight: 700; }
+code { font-family: Consolas, monospace; font-size: 11.5pt; background: #eee;
+       padding: 0.1mm 0.6mm; }
+ul, ol { margin: 0.9mm 0 1.5mm; padding-left: 5.5mm; }
+li { margin-bottom: 0.6mm; }
+blockquote { border-left: 3pt solid #000; margin: 1.2mm 0;
+             padding: 0.5mm 0 0.5mm 3mm; }
+.ask { border: 1.4pt solid #000; padding: 1.4mm 2mm; margin: 1.4mm 0 0;
+       background: #f7f7f7; page-break-inside: avoid; }
+.ask p { margin: 0 0 0.8mm; font-weight: 700; font-size: 12.5pt; }
+.ask li { margin-bottom: 1.3mm; font-size: 12.5pt; }
+.box { font-family: Consolas, monospace; font-weight: 700; }
+.fill { border-bottom: 1pt solid #000; display: inline-block; min-width: 40mm; }
+.sub { font-size: 11pt; color: #333; margin: 0 0 2.2mm; }
+.warn { border: 1.6pt solid #000; padding: 1.8mm 2.2mm; margin: 2.2mm 0; }
+.card { }
+.cost { border-left: 3pt solid #000; padding: 0.5mm 0 0.5mm 3mm; margin: 1.3mm 0; }
+</style>
+
+<h1>DECISIONS ONLY -- Mon 2026-08-10</h1>
+<p class="sub"><strong>pdoom1 seat. Four items. Every one needs your ruling and
+none can proceed without it.</strong> Repo and PR state re-checked
+<strong>11:15 AEST today</strong>, immediately before this rendered.</p>
+
+<div class="warn">
+<p style="margin-top:0"><strong>This is NOT the Monday stack.</strong> That pack
+(13 cards, <code>monday-stack-2026-08-10.html</code>) is on your desk from last
+night and <strong>every card on it is still exactly as printed</strong> -- see the
+ledger on the last page, which is a pointer table, not a reprint.</p>
+<p style="margin-bottom:0"><strong>The finding behind that ledger:</strong> in the
+25 hours since the stack was assembled, <strong>zero PRs merged, zero issues
+closed, zero commits landed on <code>main</code>, and no <code>coordination</code>
+thread moved.</strong> Nothing resolved itself overnight. I checked each item
+rather than assuming. The one item below marked NEW is a PR that did not exist
+when the stack was written.</p>
+</div>
+
+<h2>D1 &nbsp; [DATED TODAY] &nbsp; IP / trademark to the Australian lawyers</h2>
+<div class="card">
+<p><strong>Issue <code>#1061</code>, verified OPEN at 11:15 today. Also
+<code>beacon-internal#15</code>.</strong> This is card <strong>M1</strong> on the
+stack -- the five-point brief and the facts the lawyers will want are on that
+sheet and are not repeated here. <strong>This card exists only to force it.</strong></p>
+
+<p><strong>You asked to be forced on this one.</strong> The premortem trigger you
+set was: <em>the point at which the project has money attached is the point at
+which unregistered name/mark exposure stops being theoretical.</em> The money
+arrived over the weekend. The trigger has fired.</p>
+
+<p><strong>The one thing that matters and has changed:</strong> the issue title
+still reads <strong>"DUE Monday 2026-08-03"</strong>. It slipped to today on
+2026-08-06, and <strong>the stated reason for that slip was the funding block.
+That reason has now expired.</strong> The argument that deferred it once cannot
+defer it again -- a second deferral needs a new and different reason.</p>
+
+<div class="cost"><p style="margin:0"><strong>Cost of not deciding:</strong> the
+game is public (<code>pdoom1.com</code> live, builds since v0.11.0, first league
+night 2026-07-31) with a Manifund application live to 2026-09-09. Nothing breaks
+today; prior-use and disclosure-timing arguments get worse every week and are not
+recoverable later. <strong>The only item here that genuinely cannot wait -- and
+the only one on any sheet today that no agent can do any part of.</strong></p></div>
+
+<div class="ask">
+<p>THE ASK</p>
+<ul>
+<li><span class="box">[ &nbsp; ]</span> <strong>Contacted the lawyers today</strong></li>
+<li><span class="box">[ &nbsp; ]</span> <strong>Deferred again</strong> --
+new date <span class="fill">&nbsp;</span> &nbsp; and the reason, which cannot be
+the funding block:<br><span class="fill" style="min-width:150mm">&nbsp;</span></li>
+</ul>
+</div>
+</div>
+
+<h2>D2 &nbsp; Twelve PRs, none draft, nothing merged in 25 hours -- are you the merge gate or not?</h2>
+<div class="card">
+<p><strong>This is not card M8.</strong> M8 asks you to rule PR-by-PR. This asks a
+different question: <strong>whether you should be in the loop at all for the ones
+that need no taste.</strong> The measured answer to M8 so far is "none of
+them" -- a throughput fact, not a set of judgements.</p>
+
+<p><strong>Measured at 11:15 today:</strong> open PRs are <code>#1164 #1166 #1176
+#1184 #1185 #1186 #1189 #1190 #1191 #1192 #1194 #1196</code>. Twelve. None is a
+draft. The oldest has sat since <strong>2026-08-07 (three days)</strong>. The last
+merge to <code>main</code> was <strong>2026-08-09 03:46Z</strong>.</p>
+
+<p><strong>Why it is a decision, not a nag:</strong> you ruled on Friday that the
+seat makes the calls. Twelve PRs awaiting your personal mark is the opposite
+arrangement, and I cannot tell whether that is deliberate (eyes on everything
+before a release) or drift. <strong>Only you can say which.</strong></p>
+
+<table>
+<tr><th>Class</th><th>PRs</th><th>What is at stake</th></tr>
+<tr><td><strong>Taste / money / public text</strong></td>
+    <td><code>#1166</code> share set, <code>#1164</code> art L2 (USD 15.30 already
+    spent), <code>#1194</code> public release body, <code>#1176</code> operator
+    names, <code>#1196</code> cold open (D3)</td>
+    <td>Yours by any reading. Keep.</td></tr>
+<tr><td><strong>Guards and docs, no player-facing surface</strong></td>
+    <td><code>#1189</code> force_alarm drill, <code>#1191</code> Workshop 2 sealed
+    position, <code>#1190</code> cutover playbook</td>
+    <td>Stamps. <code>#1189</code> and <code>#1191</code> are also instalments of
+    your own C5 bet, scored <strong>Sun 08-16</strong>. Still unmerged then, pdoom1
+    loses a bet in another repo's public ledger having written the rule everyone is
+    scored by.</td></tr>
+</table>
+
+<p style="font-size:11.5pt">The remaining four (<code>#1192</code>/<code>#1186</code>,
+<code>#1184</code>/<code>#1185</code>) are duplicate-pair adjudications a lane is
+running right now -- <strong>not asked of you.</strong></p>
+
+<div class="cost"><p style="margin:0"><strong>Cost of not deciding:</strong> the
+08-16 bet is the hard edge -- six days. Otherwise twelve branches drift from
+<code>main</code>, so the cost is rework, not loss. <strong>Can wait to the end of
+today; not to Wednesday.</strong></p></div>
+
+<div class="ask">
+<p>THE ASK -- one line settles three PRs and every future one of that shape</p>
+<ul>
+<li><span class="box">[ &nbsp; ]</span> <strong>The seat may merge the guard/docs
+class without you</strong> (<code>#1189</code>, <code>#1191</code>,
+<code>#1190</code>, and future PRs of that shape) -- <strong>YES / NO</strong></li>
+<li><span class="box">[ &nbsp; ]</span> If NO: are the twelve deliberately parked
+until a release window, or should I chase you daily?
+<strong>PARKED / CHASE</strong></li>
+<li><span class="box">[ &nbsp; ]</span> Who owns scoring the C5 bet on 08-16?
+<span class="fill">&nbsp;</span> (nobody claimed it; <code>coordination#47</code>
+is closed)</li>
+</ul>
+</div>
+</div>
+
+<h2>D3 &nbsp; [NEW since the stack] &nbsp; <code>#1196</code> -- the cold open, the first ten seconds a new player sees</h2>
+<div class="card">
+<p><strong>The stack said "eleven open PRs". There are twelve.</strong>
+<code>#1196</code> was opened <strong>2026-08-09 at 10:43Z</strong>, after that
+pack was assembled, so it appears on no sheet you are holding.</p>
+
+<p><strong>What it is:</strong> "feat(intro): the cold-open arrival -- portal
+stitch + held frame", +345/-26. It implements your own <code>#1112</code> ruling
+of 2026-08-04 (B1 "Portal Stitch" approved, B2 "Held Frame" approved). The
+<code>time_portal</code> shader -- built for this sequence and shipped unused
+since -- becomes the arrival. No copy changed, no ruled timing moved, the
+show-once gate untouched, zero new code paths outside the cold open.</p>
+
+<p><strong>Why it is yours:</strong> the ruling left latitude and the author took
+it -- B2 is folded in <em>as the substrate of B1</em> (portal = the jump, poster =
+the world you landed in, dawn = arrival) rather than kept as a competing intro.
+That is a reading of your ruling, not an execution of it. It is also the
+highest-taste surface in the game. <strong>I can measure that it runs; I cannot
+tell you whether it lands.</strong></p>
+
+<div class="cost"><p style="margin:0"><strong>Cost of not deciding:</strong> low
+and non-accruing -- nothing depends on it, and it is show-once so it cannot harm
+an existing player. <strong>This can genuinely wait a week.</strong> Here only
+because it is new and you will want to watch it rather than read about it.</p></div>
+
+<div class="ask">
+<p>THE ASK</p>
+<ul>
+<li><span class="box">[ &nbsp; ]</span> <strong>I want to watch it before
+ruling</strong> -- say so and I will build a preview and give you the absolute
+path</li>
+<li><span class="box">[ &nbsp; ]</span> B2 folded in as B1's substrate, per the
+author's reading -- <strong>CORRECT / SEPARATE THEM / DISCUSS</strong></li>
+<li><span class="box">[ &nbsp; ]</span> Ship in <strong>0.14.2 / next minor / park</strong></li>
+</ul>
+</div>
+</div>
+
+<h2>D4 &nbsp; <code>coordination#20</code> -- three seats have filed positions, six days ago, waiting on you</h2>
+<div class="card">
+<p><strong>Not on the Monday stack. Labelled <code>needs:pip</code>. Six comments,
+last 2026-08-08.</strong> The proposed rule, verbatim in its title:</p>
+
+<blockquote>"A seat may cache state, but may not assert from cache about the
+present."</blockquote>
+
+<p><strong>Where it came from:</strong> the <code>beacon-internal</code> seat, after
+information existed, was accessible, and was not consulted -- twice on 2026-08-04.
+Its useful correction: "read the registry at session start" would <em>not</em>
+have fixed it -- the check ran and was right, then the world changed mid-session.
+<strong>The state was stale, not absent.</strong></p>
+
+<p><strong>Where it stands:</strong> <code>pdoom1-website</code> has held "adopt
+with amendment" since 08-04 and has added two findings -- the trigger fires on the
+wrong grammatical category (the real failures are <strong>positive
+assertions</strong> from cache, not negatives), and the rule is silent on the
+common case where a seat holds <strong>both</strong> a cache reading and a
+<strong>failed observation</strong>. <strong>The positions are in. The ruling is
+not.</strong></p>
+
+<p><strong>Why it is on pdoom1's sheet:</strong> this is the rule that governs
+sheets like this one. This seat measured itself at <strong>8.8% wrong on
+carried-forward claims</strong> -- exactly the failure the rule names. Whether it
+binds all seats is a governance call only you can make; no agent can adopt a rule
+on your behalf.</p>
+
+<div class="cost"><p style="margin:0"><strong>Cost of not deciding:</strong>
+nothing breaks; two seats already follow it voluntarily. What you lose is the
+ability to cite it when a seat gets it wrong. <strong>Can wait -- but it has
+waited six days with all positions filed, i.e. the expensive part done and
+unused.</strong></p></div>
+
+<div class="ask">
+<p>THE ASK -- mark it here and I will post it to the thread</p>
+<ul>
+<li><span class="box">[ &nbsp; ]</span> <strong>ADOPT as written / ADOPT with the
+positive-assertion amendment / REJECT / NEEDS A WORKSHOP</strong></li>
+<li><span class="box">[ &nbsp; ]</span> If adopted: binding on all seats, or
+pdoom1 only? <span class="fill">&nbsp;</span></li>
+</ul>
+</div>
+</div>
+
+<h2>Ledger: checked and NOT printed, because it is already on your desk</h2>
+<p><strong>Each re-verified against GitHub at 11:15 today, not carried
+forward.</strong> All unchanged from the sheet you hold, so reprinting them is the
+waste <code>coordination#50</code> measured.</p>
+
+<table>
+<tr><th>On your desk as</th><th>What I checked at 11:15</th><th>Verdict</th></tr>
+<tr><td><strong>M7</strong> -- <code>gh release edit v0.14.0</code>; 14 open issues
+    announced as delivered in public</td>
+    <td><code>#1194</code> is <strong>still OPEN and BLOCKED</strong>. It has not
+    merged.</td>
+    <td><strong>Unchanged.</strong> The ordering constraint holds -- do not run the
+    edit before <code>#1194</code> merges or it re-fires a changelog extraction
+    into the dead-end write paths. Still the highest-harm item on your desk.</td></tr>
+<tr><td><strong>M12</strong> -- art payload at 200.4 MB against the 58 MB you
+    agreed</td>
+    <td>No new measurement, no ruling, nobody chasing. The 200.4 MB still comes
+    from a gitignored store and is still not checkable from the repo.</td>
+    <td><strong>Unchanged.</strong> Adjacent expiry: your $100/day generation
+    policy lapses <strong>Sat 08-15</strong>, silently.</td></tr>
+<tr><td><strong>M11</strong> + <strong>M10 finding 2</strong> --
+    <code>#1176</code> operator names</td>
+    <td>Still OPEN, unchanged since 08-07. The ~40-byte server limit and the
+    cross-repo API question are exactly as stated.</td>
+    <td><strong>Unchanged.</strong></td></tr>
+<tr><td><strong>M3</strong> -- next design workshop has no name, number or date;
+    <code>#984</code> is your own 07-27 ruling</td>
+    <td><code>#984</code> still OPEN, last touched 08-04, <strong>still
+    undated</strong> inside its own "week of 08-10" window.</td>
+    <td><strong>Unchanged -- but its window is this week.</strong></td></tr>
+<tr><td><strong>M10</strong> -- the three copy defects (doubled "Global
+    leaderboard: leaderboard...", Operator vs "player name",
+    <code>CREDITS.md</code> shipping "(adjust name form as preferred)")</td>
+    <td>All three still present in <code>main</code> at <code>7b59166e</code>.
+    None fixed.</td>
+    <td><strong>Unchanged.</strong> The 20-page copy pack is on your desk.</td></tr>
+<tr><td><strong>M2</strong> -- Workshop 2's ruling ledger R1-R10</td>
+    <td>Re-read <code>coordination#47</code> in full. <strong>Nothing in R1-R10 is
+    assigned to you.</strong> The chair recorded you "were absent throughout and
+    were not needed once".</td>
+    <td><strong>Nothing new for you.</strong> Reported because you asked me to
+    look; finding nothing is the answer.</td></tr>
+<tr><td><strong>M5</strong> -- asset provenance, pdoom1 is the blocking party</td>
+    <td><code>coordination#32</code> unchanged. <strong>Return date Thu
+    08-13</strong> -- three days.</td>
+    <td><strong>Unchanged.</strong> One word (retroactive / prospective) sizes
+    everything downstream.</td></tr>
+<tr><td><strong>M4, M6, M8, M9, M13</strong></td>
+    <td>All re-checked. No PR merged, no issue closed, no thread moved.</td>
+    <td><strong>Unchanged.</strong></td></tr>
+</table>
+
+<h3>Rejected against the bar -- named so you can overrule me</h3>
+<p><strong>Eleven candidates failed the test</strong> (needs a human ruling AND is
+blocked without you). <code>coordination#43</code> (your escalation idea),
+<code>#37</code>, <code>#23</code>, <code>#19</code>, <code>#17</code> -- all
+<code>needs:pip</code>, but none is pdoom1's to ask, and putting other seats' asks
+here is how a decisions sheet turns back into a status report.
+<strong><code>#19</code> is four days past its return date and nobody is chasing
+it</strong> -- flagged, not printed. The two duplicate PR pairs and
+<code>#917</code> (cross-OS releases, <code>priority:high</code>) -- agents can
+resolve these; no ruling is blocked. The print protocol
+(<code>coordination#50</code>) is coordination's to answer, not yours. Plus
+everything mechanical, already delegated, or mid-flight.</p>
+
+<p><strong>There is no second sheet -- nothing overflowed.</strong></p>
+
+<p class="sub" style="margin-top:2.5mm"><strong>pdoom1 seat, 2026-08-10.</strong>
+M-card detail: <code>docs/MONDAY_STACK_2026-08-10.md</code>. Every state assertion
+from <code>gh</code> queries run at 11:15 AEST. Where this disagrees with the
+stack, this sheet is the later measurement.</p>

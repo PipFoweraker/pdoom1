@@ -1,0 +1,174 @@
+<title>v0.14.1 release status -- Sat 2026-08-08</title>
+<style>
+  @page { margin: 18mm 16mm; }
+  body {
+    font: 11.5pt/1.5 Georgia, "Times New Roman", serif;
+    color: #111; background: #fff;
+    max-width: 44em; margin: 2rem auto; padding: 0 1.5rem;
+  }
+  h1 { font-size: 19pt; margin: 0 0 .2em; line-height: 1.2; }
+  h2 { font-size: 13pt; margin: 1.8em 0 .5em; padding-bottom: .2em;
+       border-bottom: 1.5px solid #111; page-break-after: avoid; }
+  p, li { orphans: 3; widows: 3; }
+  .sub { color: #444; font-size: 10pt; margin: 0 0 1.5em; }
+  .verdict {
+    border: 2.5px solid #111; padding: .9em 1.1em; margin: 1.4em 0;
+    page-break-inside: avoid;
+  }
+  .verdict p { margin: 0; font-size: 13pt; }
+  .verdict .small { font-size: 10pt; color: #333; margin-top: .5em; }
+  pre {
+    font: 9.5pt/1.4 "Consolas", "Courier New", monospace;
+    background: #f4f4f4; border-left: 3px solid #999;
+    padding: .7em .9em; overflow-x: auto; page-break-inside: avoid;
+  }
+  table { border-collapse: collapse; width: 100%; font-size: 10pt; margin: .8em 0;
+          page-break-inside: avoid; }
+  th, td { border: 1px solid #bbb; padding: .35em .55em; text-align: left;
+           vertical-align: top; }
+  th { background: #eee; }
+  ul { padding-left: 1.3em; }
+  li { margin: .35em 0; }
+  .tag { font: 8.5pt/1 monospace; border: 1px solid #111; padding: .15em .4em;
+         vertical-align: .1em; }
+  .note { font-size: 10pt; color: #333; font-style: italic; }
+  .who { font-size: 9pt; text-transform: uppercase; letter-spacing: .06em;
+         border: 1px solid #111; padding: .1em .45em; white-space: nowrap; }
+  hr { border: 0; border-top: 1px solid #ccc; margin: 2em 0; }
+  @media print { body { margin: 0; max-width: none; } a { text-decoration: none; } }
+</style>
+
+<h1>v0.14.1 &mdash; release reached the site</h1>
+<p class="sub">Status for Pip &middot; Saturday 2026-08-08 &middot; from the pdoom1 seat
+&middot; <strong>all times AEST</strong></p>
+
+<div class="verdict">
+  <p><strong>pdoom1.com serves v0.14.1. It has since about 02:26 this morning
+  &mdash; roughly 18 minutes after the release published.</strong></p>
+  <p class="small">Nothing is broken. Nothing needs your hand today. The rest of
+  this page is why that sentence took longer to establish than it should have,
+  and what is moving without you.</p>
+</div>
+
+<pre>live site : v0.14.1   platforms {windows: True, macos: True, linux: True}
+release   : v0.14.1   published 02:08 AEST, 12 assets, all uploaded</pre>
+
+<h2>I got this wrong overnight, twice, in writing</h2>
+
+<p>I told <span class="tag">coordination#40</span> in bold that the site was
+serving v0.14.0 and that holding the deploy overnight was a deliberate call.
+Neither half was true. Another seat ran the data update at 02:21 and deployed at
+02:24 and 02:26, while I was still reasoning about whether to.</p>
+
+<p><strong>How it happened:</strong> I checked pdoom1.com once, at about 01:55
+&mdash; before the release existed &mdash; and then quoted that single reading for
+eight hours as though it were current.</p>
+
+<p><strong>Why my own safety checks did not catch it:</strong> my dry-run deploy
+ran against commit <span class="tag">123b8735</span>. I put that hash in the
+handover. I never opened it to see what version it contained. It contained
+v0.14.1. I had the disproof on screen and read past it, because I had decided
+the question that mattered was whether the deploy wanted to delete anything.</p>
+
+<p>Correction posted publicly. That is the same failure this whole thread is
+about: not a broken pipeline, an expired fact that nothing re-checked.</p>
+
+<h2>What actually happened, by the clock</h2>
+
+<table>
+  <tr><th>AEST</th><th>Event</th></tr>
+  <tr><td>02:08</td><td>v0.14.1 published, 12 assets, all uploaded</td></tr>
+  <tr><td>02:21</td><td>Another seat ran the data update &rarr; site data says v0.14.1</td></tr>
+  <tr><td>02:24, 02:26</td><td>That seat deployed, by hand, twice. <strong>Site correct from here on</strong></td></tr>
+  <tr><td>02:50</td><td>My dry-run, against a tree that already held v0.14.1</td></tr>
+  <tr><td>09:57</td><td>My data-update run &mdash; a fresh commit, identical content. Redundant</td></tr>
+</table>
+
+<h2>Findings that still stand</h2>
+
+<p class="note">These came from reading workflow files and run history, not from
+the stale measurement, so the correction above does not touch them.</p>
+
+<ul>
+  <li><strong>The release-to-website signal has never worked, not once.</strong>
+  pdoom1 sends a notification at every release. The website has no listener for
+  it, and has never once run a job from one. The send always reports success
+  whether or not anything is listening, so our side could never tell.</li>
+
+  <li><strong>On the website, committing to main <em>is</em> deploying</strong>,
+  on a delay of up to six hours. Not directly &mdash; a routine 6-hourly job
+  completing is what fires the deploy, and that deploy runs no tests and checks
+  nothing about whether the job it followed succeeded.</li>
+
+  <li><strong>The delete risk is currently zero.</strong> The dry-run produced no
+  deletion lines across 2534 lines of output.</li>
+
+  <li><strong>A monitor pointed at a decoy.</strong> Our release job writes a
+  file into the website repo that sits outside the deploy path, so it cannot
+  change what a visitor sees. This morning I called it a dead end with no readers.
+  <strong>That was wrong, and the truth is worse:</strong> it has exactly one
+  reader &mdash; a daily check of ours that exists to notice when the site falls
+  behind a release. It watches the one file that cannot tell it. It would have
+  been green throughout the failure it appears to guard against.</li>
+</ul>
+
+<h2>What is moving right now, and who owns it</h2>
+
+<table>
+  <tr><th>Item</th><th>State</th><th>Whose</th></tr>
+  <tr>
+    <td><b>Website PR #289</b> &mdash; make the release event update the site
+    instead of a 6-hourly clock</td>
+    <td>Open. Checks were red, I fixed my own breakage, now clean</td>
+    <td><span class="who">theirs</span></td>
+  </tr>
+  <tr>
+    <td><b>Live-site freshness check</b> &mdash; a scheduled job that asks "is the
+    site serving the current release?", the thing whose absence let me be wrong
+    for eight hours</td>
+    <td><b>Done &mdash; PR #1182, open, checks green.</b> Proven to fail on a real
+    mismatch before it was proposed</td>
+    <td><span class="who">mine</span></td>
+  </tr>
+  <tr>
+    <td><b>Contradiction on the website's own cadence page</b> &mdash; a table
+    saying automated commits do not trigger a deploy, next to a check on the same
+    page correctly saying they do</td>
+    <td>Found and reported, not fixed</td>
+    <td><span class="who">theirs</span></td>
+  </tr>
+  <tr>
+    <td><b>The dead-end file</b>, and deploy-collision guards on their three other
+    deploy jobs</td>
+    <td>Named, deliberately not touched</td>
+    <td><span class="who">theirs</span></td>
+  </tr>
+  <tr>
+    <td><b>Your pdoom1 checkout is on a stray branch</b>, not main</td>
+    <td>Blocked &mdash; see below</td>
+    <td><span class="who">a human</span></td>
+  </tr>
+</table>
+
+<p><strong>The honest summary: most of it is not being brought into line today,
+because most of it is on the other side of a boundary.</strong> Everything marked
+"theirs" is a proposal sitting in the website's queue. I can open pull requests
+there; I do not merge them.</p>
+
+<p class="note">You own both repositories, so if you want #289 in, you can simply
+merge it &mdash; the "not mine to merge" rule is a working protocol between seats,
+not a permission wall.</p>
+
+<h2>The checkout problem resolved itself</h2>
+
+<p>Earlier today your pdoom1 checkout was stranded on a stray branch because a
+lane had uncommitted work I would not risk clobbering. <strong>That lane has since
+committed its own work and moved the checkout back to main.</strong> Nothing was
+lost and nothing is needed from you. The empty branch still exists and can be
+deleted whenever, or ignored.</p>
+
+<hr>
+
+<p class="note">Nothing on this page needs action today. The site is correct, the
+release is complete, and the open items are either waiting on somebody else's
+repository or on a lane finishing its own edit.</p>
