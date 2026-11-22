@@ -151,7 +151,7 @@
       "board_key_at_bump": "(weekly-2026-w33, L6)",
       "tag": "v0.14.3",
       "tag_state": "TAGGED",
-      "tag_commit": "b9f5526061a641e79a4716f5fe979f2f739b006f",
+      "tag_commit": "161240bef1454851555ed042c640b67a0cf67d56",
       "tag_matches_bump_or_later": true,
       "release_state": "PUBLISHED",
       "release_published_at": "2026-08-24T04:37:08Z",
@@ -172,6 +172,23 @@
       "tag_matches_bump_or_later": true,
       "release_state": "PUBLISHED",
       "release_published_at": "2026-08-28T22:23:47Z",
+      "declared_untagged": null
+    },
+    {
+      "version": "0.14.5",
+      "bump_commit": "20e41e1265ca134037e25dd7443a23f645a4034b",
+      "bump_commit_short": "20e41e12",
+      "bump_date": "2026-10-29T05:33:50+08:00",
+      "bump_subject": "release: prep v0.14.5 -- version, changelog, patch notes (ladder stays L6, dated 2026-10-29) (#1349)",
+      "ladder_epoch_at_bump": "L6",
+      "featured_seed_at_bump": "weekly-2026-w35",
+      "board_key_at_bump": "(weekly-2026-w35, L6)",
+      "tag": "v0.14.5",
+      "tag_state": "TAGGED",
+      "tag_commit": "fc40632fe500068ec9cc87acd86dc2cc3e231aa3",
+      "tag_matches_bump_or_later": true,
+      "release_state": "PUBLISHED",
+      "release_published_at": "2026-10-28T21:49:19Z",
       "declared_untagged": null
     }
   ]
