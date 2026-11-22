@@ -122,7 +122,6 @@ seeds for the Fridays in between are in
 
 | Version | Ships | Unit | Featured seed at open |
 |---|---|---|---|
-| **v0.15** | Fri 4 Sep 2026 | Epoch+Seed | `weekly-2026-w36` |
 | **v0.16** | Fri 2 Oct 2026 | Epoch+Seed | `weekly-2026-w40` |
 | **v0.17** | Fri 6 Nov 2026 | Epoch+Seed | `weekly-2026-w45` |
 | **v0.18** | Fri 4 Dec 2026 | Epoch+Seed | `weekly-2026-w49` |
@@ -130,7 +129,7 @@ seeds for the Fridays in between are in
 | **v0.20** | Fri 5 Feb 2027 | Epoch+Seed | `weekly-2027-w05` |
 
 **No ladder column, on purpose (tier 3, NOT FORECASTABLE).** Floor today:
-**`>= L6`**, ratcheting. A minor bump always cuts the ladder, and the ladder
+**`>= L7`**, ratcheting. A minor bump always cuts the ladder, and the ladder
 may also cut mid-version whenever gameplay forks -- so epochs >= minors and
 the next epoch number cannot be read off the next version number. What can
 be said, and is what a player needs: **A score set today stays comparable until the next MINOR version at the latest, and possibly sooner.**

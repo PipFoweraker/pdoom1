@@ -13,7 +13,7 @@ replaces (issue #1152).
 | 2. FORECAST | a plan, revisable | Pip | no -- `../ROADMAP.md` |
 | 3. NOT FORECASTABLE | a consequence of gameplay change | nobody, in advance | floor only |
 
-Current inputs: `version.txt` = **0.14.5**, `ladder_version.txt` = **L6**.
+Current inputs: `version.txt` = **0.15.0**, `ladder_version.txt` = **L7**.
 
 ---
 
@@ -29,7 +29,6 @@ cell moves with it.
 
 | Version | Ships | ISO week | Featured seed at open | Weekly seeds in cycle |
 |---|---|---|---|---|
-| v0.15 | 2026-09-04 | 2026-w36 | `weekly-2026-w36` | w36, w37, w38, w39 |
 | v0.16 | 2026-10-02 | 2026-w40 | `weekly-2026-w40` | w40, w41, w42, w43, w44 |
 | v0.17 | 2026-11-06 | 2026-w45 | `weekly-2026-w45` | w45, w46, w47, w48 |
 | v0.18 | 2026-12-04 | 2026-w49 | `weekly-2026-w49` | w49, w50, w51, w52 |
@@ -59,7 +58,7 @@ table of `../ROADMAP.md`, labelled as a forecast.
 
 ## Tier 3 -- NOT FORECASTABLE: the ladder epoch
 
-> **Floor: `>= L6`.** Every future epoch is at or above this number.
+> **Floor: `>= L7`.** Every future epoch is at or above this number.
 > The floor ratchets: it may rise, never fall. There is no row in this
 > file that predicts a specific epoch for a specific version, because no
 > such prediction can be made.

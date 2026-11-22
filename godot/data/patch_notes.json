@@ -1,6 +1,29 @@
 {
   "versions": [
     {
+      "version": "0.15.0",
+      "date": "2026-11-22",
+      "title": "The Desk That Was Spoken For",
+      "highlights": [
+        "New in Settings > Theme: three UI skins next to the default look -- Terminal, Paperwork and Mainframe (experimental). A skin applies the next time the game screen loads",
+        "You can no longer hire more people than you have desks by firing someone with offers still out",
+        "New leaderboard epoch (L7): runs from earlier builds are on a separate board"
+      ],
+      "sections": {
+        "added": [
+          "Three UI skins in Settings > Theme, with colours sampled from a friend's mockups. Mainframe is a light skin and some text is hard to read on it, so it is marked experimental (#1372)."
+        ],
+        "fixed": [
+          "Outstanding job offers count against your desks, an offer lapses if its desk is gone by the handshake, and firing leaves a ledger entry like any other departure (#1369).",
+          "The Employee screen opens on M again (#1369).",
+          "Messages no longer expire behind the pause menu, and screenshot and log keys work while paused (#1360)."
+        ],
+        "changed": [
+          "Two action icons use the newly picked art (#1363)."
+        ]
+      }
+    },
+    {
       "version": "0.14.5",
       "date": "2026-10-29",
       "title": "The Pause That Pauses",

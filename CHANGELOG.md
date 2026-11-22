@@ -15,7 +15,40 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 > claimed. `scripts/check_release_notes.py --changelog-structure` now blocks
 > a second `[Unreleased]` heading from appearing again.
 
-## [0.14.5] - 2026-10-29 -- The Pause That Pauses
+## [0.15.0] - 2026-11-22 -- The Desk That Was Spoken For
+
+A new ladder epoch, cut so a friend can play what is on `main` today. The board
+key moves from L6 to L7. Two reasons, either of which forces it: the hiring fix
+below changes how many people you can hire, and #1280's ad-campaign report
+shipped in v0.14.5 declaring a ladder bump that was never paid. Runs on L6 and
+L7 are not comparable, so they do not share a board.
+
+### Fixed
+- You can no longer hire more people than you have desks by firing someone with
+  offers still out (#1369). One free desk used to admit any number of offers;
+  outstanding offers now count against desks, an offer whose desk has gone by
+  the handshake lapses, and firing now goes through the same departure path as
+  every other exit, so it leaves a ledger entry and an event. The exploit test
+  fails 5 of 9 checks on v0.14.5 and passes on this build.
+- The Employee screen opens on **M** again (#1369). The keybind config version
+  moves to 7.
+- Pause now means the player has stepped out of the game (#1360). Toasts and
+  error messages no longer expire behind the pause menu; screenshot, log export
+  and the other diagnostic keys work while paused; and a scene change while
+  paused no longer leaves later scene changes silently dropped.
+
+### Added
+- Settings > Theme lists three UI skins next to the default look (#1372):
+  Terminal, Paperwork and Mainframe, with colours sampled from a friend's
+  PLAN-screen mockups. A skin changes panel colours, buttons, borders and the
+  typeface; it applies the next time the game screen loads. Mainframe is a light
+  skin and is labelled experimental: some text sits straight on the dark office
+  backdrop and turns dark-on-dark. The default look is unchanged.
+
+### Changed
+- Two action icons use the variants Pip picked in the October picker session
+  (#1363).
+
 
 A hotpatch for friends. Two things stood between a new player and a fair first
 session: a pause menu that did not stop the clock, and a macOS build carrying a
