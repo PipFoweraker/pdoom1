@@ -1186,11 +1186,11 @@
       "text": "- **The last player-facing \"AP\" is gone**, and one number format is ruled across"
     },
     {
-      "source": "CLAUDE.md:235",
+      "source": "CLAUDE.md:237",
       "text": "quarterly pins to v0.15; league/content cadence is MONTHLY (ruled 2026-07-21)."
     },
     {
-      "source": "CLAUDE.md:263",
+      "source": "CLAUDE.md:270",
       "text": "`UNDECLARED`, never dropped. **Cross-repo by design** (ruled 2026-08-15):"
     },
     {
@@ -1351,7 +1351,7 @@
     },
     {
       "source": "docs/art/SPRITE_GENERATION_PLAN.md:7",
-      "text": "## Design foundation (RULED 2026-07-16 -- see WORKSHOP_2_BACKLOG \"Character sprite system\")"
+      "text": "## Design foundation (RULED 2026-07-16  --  see WORKSHOP_2_BACKLOG \"Character sprite system\")"
     },
     {
       "source": "docs/art/audit_2026-08-13/PROVENANCE_COMPLETENESS.md:638",
@@ -1363,7 +1363,7 @@
     },
     {
       "source": "docs/balance/DIAL5_ATTENTION_SCARCITY_PROPOSALS.md:101",
-      "text": "- **C is orthogonal** -- a time multiplier that rides on top of whatever supply/demand shape you pick. Nearly free to ratify (direction already ruled), most gated on \"wait for a month to complete\" for"
+      "text": "- **C is orthogonal**  --  a time multiplier that rides on top of whatever supply/demand shape you pick. Nearly free to ratify (direction already ruled), most gated on \"wait for a month to complete\" f"
     },
     {
       "source": "docs/balance/DIAL5_ATTENTION_SCARCITY_PROPOSALS.md:109",
