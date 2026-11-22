@@ -1,0 +1,124 @@
+{
+ "image": "m5six.png",
+ "tokens": {
+  "bg_dark": {
+   "box": [
+    662,
+    300,
+    672,
+    700
+   ]
+  },
+  "panel_bg": {
+   "box": [
+    100,
+    915,
+    600,
+    940
+   ]
+  },
+  "panel_bg_deep": {
+   "box": [
+    1430,
+    250,
+    1890,
+    330
+   ]
+  },
+  "feed_bg": {
+   "box": [
+    1440,
+    860,
+    1880,
+    990
+   ]
+  },
+  "amber": {
+   "box": [
+    30,
+    28,
+    130,
+    56
+   ]
+  },
+  "amber_dim": {
+   "box": [
+    30,
+    130,
+    110,
+    142
+   ],
+   "mode": "fg"
+  },
+  "green": {
+   "box": [
+    828,
+    144,
+    856,
+    162
+   ]
+  },
+  "green_dim": {
+   "box": [
+    862,
+    142,
+    1102,
+    164
+   ],
+   "mode": "fg"
+  },
+  "text": {
+   "box": [
+    85,
+    160,
+    210,
+    178
+   ],
+   "mode": "fg"
+  },
+  "text_dim": {
+   "box": [
+    300,
+    160,
+    370,
+    178
+   ],
+   "mode": "fg"
+  },
+  "rule": {
+   "box": [
+    16,
+    300,
+    26,
+    700
+   ],
+   "mode": "fg"
+  },
+  "rule_bright": {
+   "box": [
+    660,
+    710,
+    1055,
+    716
+   ],
+   "mode": "fg"
+  }
+ },
+ "skin": {
+  "display_name": "Terminal (Alex F)",
+  "font_names": [
+   "Consolas",
+   "DejaVu Sans Mono",
+   "Courier New",
+   "monospace"
+  ],
+  "corner_radius": 0,
+  "border_width": 1,
+  "overrides": {
+   "green_dim": {
+    "hex": "#5f8048",
+    "hand": "every green pixel in F is a bright pip; dim green has no clean sample, darkened green by hand"
+   }
+  }
+ }
+}

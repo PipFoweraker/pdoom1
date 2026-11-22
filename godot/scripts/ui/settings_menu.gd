@@ -405,7 +405,8 @@ func _on_theme_changed(index: int):
 		var theme_name = themes[index]
 		print("[SettingsMenu] Theme changed to: ", theme_name)
 		ThemeManager.apply_theme(theme_name)
-		NotificationManager.info("Theme changed to " + ThemeManager.themes[theme_name].display_name)
+		NotificationManager.info("Theme changed to " + ThemeManager.themes[theme_name].display_name
+			+ " (the game screen picks it up next time it loads)")
 
 
 # --- Navigation ---

@@ -204,6 +204,13 @@ Declared with a `Layer:` line in a tool's module docstring; `--` = undeclared.
 | process_captures.py | -- | Turn raw strudel captures into game-ready looping ogg stems. | human (docstring usage) |
 | zoom_rhythm.py | -- | Zoom into a time window of a track and extract its rhythm as notation. | human (docstring usage) |
 
+## `tools/ui_skins/`
+
+| Tool | Layer | Purpose | Invoked by |
+|---|---|---|---|
+| build_skins.py | -- | build_skins.py -- turn tools/ui_skins/specs/*.json into godot/data/ui_skins.json. | human (docstring usage) |
+| sample_palette.py | -- | sample_palette.py -- read UI-skin colour tokens out of a mockup image, with provenance. | tool:build_skins.py |
+
 ## UNKNOWN -- no declaration, no usage hint, no discoverable caller
 
 11 tool(s) that nothing declares, documents, or calls. Each one is either
@@ -242,6 +249,7 @@ DISCUSSING CI); the rest are the hollow-runner shape -- read them.
 - `tools/find_dead_code.py` -- docstring mentions CI; no workflow calls it
 - `tools/music/analyze_refs.py` -- docstring mentions CI; no workflow calls it
 - `tools/reset_player_state.py` -- docstring mentions CI; no workflow calls it
+- `tools/ui_skins/build_skins.py` -- docstring mentions CI; no workflow calls it
 - `tools/write_build_stamp.py` -- docstring mentions CI; no workflow calls it
 
 ## Archived (`scripts/archive/` -- indexed by name only, excluded from caller scan)
@@ -255,6 +263,6 @@ DISCUSSING CI); the rest are the hollow-runner shape -- read them.
 
 ## Not indexed: HTML tools
 
-27 `.html` tool(s) under `tools/` (browser-opened, no docstring to parse): `tools/art_review/doom_overlay_preview.html`, `tools/art_review/hero_gallery_template.html`, `tools/art_review/icon_pass_2026-07-21.html`, `tools/art_review/icon_pass_verdicts_2026-07-21.html`, `tools/art_review/palette.html`, `tools/art_review/palette_swatches.html`, `tools/art_review/scene_wave2_2026-07-21.html`, `tools/art_review/style_review.html`, `tools/assets/review_generated.html`, `tools/music/commission_sheets.html`, `tools/music/jukebox.html`, `tools/music/listening_room.html`, `tools/music/stem_board.html`, `tools/runsheet/CEREMONY-ALL-GATES-2026-07-31.html`, `tools/runsheet/SUNDAY-postmortem-2026-08-07.html`, `tools/runsheet/chronicle-2026-08-06_07.html`, `tools/runsheet/commitments-2026-08.html`, `tools/runsheet/copy-review-2026-08-09.html`, `tools/runsheet/fri-2026-07-31-EVENING-1620.html`, `tools/runsheet/fri-2026-07-31-GATES-1700.html`, `tools/runsheet/fri-2026-07-31-TO-MIDNIGHT-1733.html`, `tools/runsheet/fri-2026-07-31-league-day.html`, `tools/runsheet/playtest_card.html`, `tools/runsheet/wed-thu-2026-07-29.html`, `tools/social_composer.html`, `tools/ui_comparison.html`, `tools/ui_mockup/wireframe.html`.
+30 `.html` tool(s) under `tools/` (browser-opened, no docstring to parse): `tools/art_review/doom_overlay_preview.html`, `tools/art_review/hero_gallery_template.html`, `tools/art_review/icon_pass_2026-07-21.html`, `tools/art_review/icon_pass_verdicts_2026-07-21.html`, `tools/art_review/palette.html`, `tools/art_review/palette_swatches.html`, `tools/art_review/scene_wave2_2026-07-21.html`, `tools/art_review/style_review.html`, `tools/assets/review_generated.html`, `tools/music/commission_sheets.html`, `tools/music/jukebox.html`, `tools/music/listening_room.html`, `tools/music/stem_board.html`, `tools/runsheet/CEREMONY-ALL-GATES-2026-07-31.html`, `tools/runsheet/SUNDAY-postmortem-2026-08-07.html`, `tools/runsheet/chronicle-2026-08-06_07.html`, `tools/runsheet/commitments-2026-08.html`, `tools/runsheet/copy-review-2026-08-09.html`, `tools/runsheet/decisions-2026-08-10.html`, `tools/runsheet/fri-2026-07-31-EVENING-1620.html`, `tools/runsheet/fri-2026-07-31-GATES-1700.html`, `tools/runsheet/fri-2026-07-31-TO-MIDNIGHT-1733.html`, `tools/runsheet/fri-2026-07-31-league-day.html`, `tools/runsheet/playtest_card.html`, `tools/runsheet/sat-2026-08-08-release-status.html`, `tools/runsheet/wed-thu-2026-07-29.html`, `tools/runsheet/week-2026-08-10-plan.html`, `tools/social_composer.html`, `tools/ui_comparison.html`, `tools/ui_mockup/wireframe.html`.
 
-Total: 155 active tools (11 GENERATE, 8 OBSERVE, 20 PROVE, 1 SWEEP, 115 undeclared); 11 in UNKNOWN; 6 archived.
+Total: 157 active tools (11 GENERATE, 8 OBSERVE, 20 PROVE, 1 SWEEP, 117 undeclared); 11 in UNKNOWN; 6 archived.
