@@ -1,0 +1,129 @@
+{
+ "image": "m5three.png",
+ "tokens": {
+  "bg_dark": {
+   "box": [
+    870,
+    600,
+    878,
+    900
+   ]
+  },
+  "panel_bg": {
+   "box": [
+    680,
+    750,
+    850,
+    880
+   ]
+  },
+  "panel_bg_deep": {
+   "box": [
+    30,
+    1050,
+    850,
+    1058
+   ]
+  },
+  "feed_bg": {
+   "box": [
+    1560,
+    620,
+    1890,
+    640
+   ]
+  },
+  "amber": {
+   "box": [
+    1560,
+    740,
+    1700,
+    775
+   ]
+  },
+  "amber_dim": {
+   "box": [
+    200,
+    30,
+    420,
+    180
+   ]
+  },
+  "green": {
+   "box": [
+    1040,
+    365,
+    1070,
+    385
+   ]
+  },
+  "green_dim": {
+   "box": [
+    1575,
+    520,
+    1700,
+    560
+   ]
+  },
+  "text": {
+   "box": [
+    778,
+    236,
+    852,
+    258
+   ],
+   "mode": "fg"
+  },
+  "text_dim": {
+   "box": [
+    90,
+    600,
+    250,
+    610
+   ]
+  },
+  "rule": {
+   "box": [
+    40,
+    232,
+    205,
+    236
+   ]
+  },
+  "rule_bright": {
+   "box": [
+    1580,
+    875,
+    1860,
+    880
+   ]
+  },
+  "bg_gradient": {
+   "box": [
+    866,
+    200,
+    876,
+    1060
+   ],
+   "mode": "gradient",
+   "stops": 3
+  }
+ },
+ "skin": {
+  "display_name": "Paperwork (Alex C)",
+  "font_names": [
+   "Bahnschrift",
+   "Segoe UI",
+   "DejaVu Sans",
+   "Arial"
+  ],
+  "corner_radius": 2,
+  "border_width": 2,
+  "overrides": {
+   "text_dim": {
+    "hex": "#c5a463",
+    "hand": "C's dim text sits on cream cards; for dark panels reuse the tan rule colour"
+   }
+  }
+ }
+}

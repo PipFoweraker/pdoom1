@@ -1,0 +1,125 @@
+{
+ "image": "m5two.png",
+ "tokens": {
+  "bg_dark": {
+   "box": [
+    2,
+    500,
+    30,
+    600
+   ]
+  },
+  "panel_bg": {
+   "box": [
+    560,
+    830,
+    1240,
+    900
+   ]
+  },
+  "panel_bg_deep": {
+   "box": [
+    60,
+    240,
+    500,
+    250
+   ]
+  },
+  "feed_bg": {
+   "box": [
+    1320,
+    935,
+    1860,
+    975
+   ]
+  },
+  "amber": {
+   "box": [
+    1310,
+    40,
+    1420,
+    75
+   ],
+   "mode": "fg"
+  },
+  "amber_dim": {
+   "box": [
+    1615,
+    1025,
+    1870,
+    1062
+   ]
+  },
+  "green": {
+   "box": [
+    866,
+    68,
+    960,
+    76
+   ]
+  },
+  "green_dim": {
+   "box": [
+    1042,
+    942,
+    1136,
+    968
+   ]
+  },
+  "text": {
+   "box": [
+    628,
+    318,
+    750,
+    336
+   ],
+   "mode": "fg"
+  },
+  "text_dim": {
+   "box": [
+    545,
+    575,
+    620,
+    592
+   ],
+   "mode": "fg"
+  },
+  "rule": {
+   "box": [
+    48,
+    140,
+    1270,
+    146
+   ]
+  },
+  "rule_bright": {
+   "box": [
+    545,
+    280,
+    1245,
+    296
+   ]
+  },
+  "bg_gradient": {
+   "box": [
+    2,
+    120,
+    30,
+    1000
+   ],
+   "mode": "gradient",
+   "stops": 3
+  }
+ },
+ "skin": {
+  "display_name": "Mainframe (Alex B)",
+  "font_names": [
+   "Segoe UI",
+   "DejaVu Sans",
+   "Arial"
+  ],
+  "corner_radius": 0,
+  "border_width": 2,
+  "overrides": {}
+ }
+}

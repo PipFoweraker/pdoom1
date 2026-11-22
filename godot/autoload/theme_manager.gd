@@ -275,6 +275,47 @@ func _initialize_default_themes():
 	high_contrast.styles["border_width"] = 3
 	themes["high_contrast"] = high_contrast
 
+	_register_skins()
+
+
+## UI skins (spike/ui-skins): palette + type + shape sets that DO reach the main screen,
+## via TerminalTheme (the code-built panels) and a root-Window Theme (stock controls).
+## Data-driven: godot/data/ui_skins.json. They join the same dropdown as the themes above.
+const SKINS_PATH := "res://data/ui_skins.json"
+var skins: Dictionary = {}
+
+
+func _register_skins() -> void:
+	var f := FileAccess.open(SKINS_PATH, FileAccess.READ)
+	if f == null:
+		return
+	var parsed = JSON.parse_string(f.get_as_text())
+	if not (parsed is Dictionary) or not parsed.has("skins"):
+		push_warning("[ThemeManager] %s has no 'skins' table" % SKINS_PATH)
+		return
+	for skin_id in parsed["skins"]:
+		var skin: Dictionary = parsed["skins"][skin_id]
+		skins[skin_id] = skin
+		var td := ThemeData.new(skin_id)
+		td.display_name = str(skin.get("display_name", skin_id))
+		themes[skin_id] = td
+
+
+func is_skin(theme_name: String) -> bool:
+	return skins.has(theme_name)
+
+
+func _apply_skin_layer(theme_name: String) -> void:
+	"""Point TerminalTheme's palette + the root Window theme at the chosen skin (or back to
+	default). Reaches everything BUILT after this call; already-built panels keep their
+	old styleboxes, so a live switch must be followed by a scene reload."""
+	if skins.has(theme_name):
+		TerminalTheme.apply_skin(theme_name, skins[theme_name])
+	else:
+		TerminalTheme.reset()
+	if is_inside_tree():
+		get_tree().root.theme = TerminalTheme.build_root_theme()
+
 ## Load theme configuration from file
 func load_theme_config():
 	var config = ConfigFile.new()
@@ -308,6 +349,7 @@ func apply_theme(theme_name: String):
 		return
 
 	current_theme = theme_name
+	_apply_skin_layer(theme_name)
 	theme_changed.emit(theme_name)
 	save_theme_config()
 

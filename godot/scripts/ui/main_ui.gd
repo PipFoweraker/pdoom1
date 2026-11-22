@@ -370,8 +370,7 @@ func _setup_plan_watch_scaffold() -> void:
 	# --- background: dark CRT phosphor field on its own layer (no layout disturbance) ---
 	var bg_layer := CanvasLayer.new()
 	bg_layer.layer = -10
-	var bg := ColorRect.new()
-	bg.color = TerminalTheme.BG_DARK
+	var bg := TerminalTheme.make_background()  # flat BG_DARK, or the skin's gradient
 	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
 	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	bg_layer.add_child(bg)
