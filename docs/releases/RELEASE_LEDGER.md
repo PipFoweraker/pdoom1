@@ -19,3 +19,4 @@ One row per value `version.txt` has ever held, with the ladder epoch and feature
 | 0.14.3 | 2026-08-23 | L6 | weekly-2026-w33 | v0.14.3 | 2026-08-24 |
 | 0.14.4 | 2026-08-29 | L6 | weekly-2026-w35 | v0.14.4 | 2026-08-28 |
 | 0.14.5 | 2026-10-29 | L6 | weekly-2026-w35 | v0.14.5 | 2026-10-28 |
+| 0.15.0 | 2026-11-22 | L7 | weekly-2026-w35 | v0.15.0 | 2026-11-22 |
