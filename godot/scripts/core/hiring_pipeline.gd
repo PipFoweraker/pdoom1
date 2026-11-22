@@ -274,6 +274,21 @@ func negotiation_read(state, candidate: Researcher, promises: Array = []) -> Dic
 	}
 
 
+## Offers in flight that will each need a desk if they land (EXPLOIT 001).
+func outstanding_offers() -> int:
+	var n := 0
+	for j in jobs:
+		if String(j.get("kind", "")) == KIND_OFFER:
+			n += 1
+	return n
+
+
+## Desks left once every promise already made is honoured. The cap the OFFER stage must
+## respect: seats taken PLUS offers outstanding, against hire_cap.
+func has_desk_space_for_another_offer(state) -> bool:
+	return Office.occupied_desks(state) + outstanding_offers() < Office.hire_cap(state)
+
+
 func make_offer(state, candidate_id: String, cash_offer: float, promises: Array = []) -> Dictionary:
 	"""Extend an offer (Attention-gated, short duration). The candidate transitions to
 	OFFERED now; the accept/reject decision lands after a couple ticks (ADR-0009). Promises
@@ -285,7 +300,14 @@ func make_offer(state, candidate_id: String, cash_offer: float, promises: Array 
 	# Office hire cap (#791): refuse at the OFFER stage, not at acceptance -- extending an
 	# offer you have no desk for would be a promise the office cannot keep. Crisp refusal,
 	# no Attention spent, no state touched.
-	if not Office.has_desk_space(state):
+	#
+	# EXPLOIT 001 (docs/EXPLOIT_REGISTER.md): this check used to read has_desk_space(), which counts
+	# only people who are already SITTING. An outstanding offer occupied no desk, so ONE free
+	# desk passed the check once per candidate and admitted a whole stampede -- six offers
+	# out, six accepted, seven bodies at two desks. An offer you have not yet honoured is
+	# exactly as much "a promise the office cannot keep" as one made with no desk at all, so
+	# the promises in flight are counted against the desks alongside the people in seats.
+	if not has_desk_space_for_another_offer(state):
 		return {"success": false, "message": Office.no_desk_message(state)}
 	if _has_job_for(candidate_id, KIND_OFFER):
 		return {"success": false, "message": "%s already has an offer out." % cand.researcher_name}
@@ -354,6 +376,15 @@ func _accept_offer(state, cand: Researcher, cash: float, promises: Array, resent
 	"""Employ the candidate. Pipeline hires are NOT force-revealed (a blind hire keeps its
 	hidden layer) and start UN-onboarded (not yet productive). Promises + resentment mint
 	their ledger bills here, at the moment they become real obligations."""
+	# EXPLOIT 001 belt-and-braces. make_offer() now counts offers in flight, so the common
+	# path can no longer over-promise; this covers the desk that disappears BETWEEN the offer
+	# and the handshake (an event hire, a manager seated, a smaller office). Seating someone
+	# with nowhere to sit is the breach itself, so the offer lapses instead -- the candidate
+	# goes back in the pool, exactly as a declined lowball does, and nothing is spent.
+	if not Office.has_desk_space(state):
+		cand.transition_hire_state(Researcher.HireState.CANDIDATE_IN_POOL)
+		return {"success": true, "outcome": "lapsed_no_desk",
+			"message": "%s accepted, but there was no desk left by then -- the offer lapsed." % cand.researcher_name}
 	cand.transition_hire_state(Researcher.HireState.OFFERED)  # ensure OFFERED before EMPLOYED
 	state.remove_candidate(cand)
 	cand.current_salary = cash
@@ -841,6 +872,25 @@ func _tick_campaigns(state) -> void:
 	campaigns = still
 
 
+## THE departure path. Everything that takes a person off the roster for good goes through
+## here, so a departure cannot be half-done depending on which door it came out of.
+##
+## Extracted from _tick_attrition for EXPLOIT 001 (docs/EXPLOIT_REGISTER.md). Firing used to be a
+## bare state.remove_researcher() plus a cash debit in GameManager -- no DEPARTED transition,
+## no ledger entry, no event -- which made being fired the only way to leave with no trace,
+## and it was the only departure the player CHOOSES. ADR-0003: "a disgruntled ex-researcher
+## is a secret entry". Severance is what makes firing DIFFERENT (the caller pays it); it is
+## not a substitute for the departure itself.
+##
+## `reason` names the door for the event feed ("early_attrition", "fired", ...).
+func depart(state, researcher: Researcher, reason: String) -> void:
+	researcher.transition_hire_state(Researcher.HireState.DEPARTED)
+	state.remove_researcher(researcher)
+	if state.ledger:
+		state.ledger.add(Ledger.staff_rider(researcher.researcher_name))  # disgruntled-departure rider
+	last_events.append({"kind": reason, "candidate": researcher.researcher_name})
+
+
 func _tick_attrition(state) -> void:
 	"""Un-mentored, still-at-risk hires can quit early (skimping bites). Deterministic."""
 	var risk := Balance.num("hiring.onboarding.attrition_risk", 0.15)
@@ -852,11 +902,7 @@ func _tick_attrition(state) -> void:
 	for r in at_risk:
 		if state.rng.randf() < risk:
 			r.mentoring_skipped = false  # one roll per skimped hire; consume the flag
-			r.transition_hire_state(Researcher.HireState.DEPARTED)
-			state.remove_researcher(r)
-			if state.ledger:
-				state.ledger.add(Ledger.staff_rider(r.researcher_name))  # disgruntled-departure rider
-			last_events.append({"kind": "early_attrition", "candidate": r.researcher_name})
+			depart(state, r, "early_attrition")
 
 
 # ============================================================================

@@ -53,7 +53,13 @@ var keybinds: Dictionary = {
 	# -- the same class of defect as #575. TAB is RESERVED; see RESERVED_KEYS below.
 	# Moved off backslash to N (N already opened the bug reporter) -- backslash is now DEV MODE.
 	"bug_reporter": {"key": KEY_N, "category": Category.UI, "description": "Open Bug Reporter"},
-	# "employee_tab": {"key": KEY_E, "category": Category.UI, "description": "Employee Screen"},  # DISABLED: moving to main UI
+	# Employee screen -- the ONLY surface that hosts the Fire button (EXPLOIT 001 follow-up,
+	# docs/EXPLOIT_REGISTER.md). This was commented out on KEY_E in the #602 audit and left dead in
+	# two places, so the screen was reachable by mouse alone. Restored on M, NOT on E: E is a
+	# RESERVED choice key (Q/W/E/R/A/S/D/F/Z select modal options -- see RESERVED_KEYS), so
+	# re-enabling the original line as written would have collided with choice slot 3. M is
+	# free and reads off the button's own label, "Employees -- roster & morale".
+	"employee_screen": {"key": KEY_M, "category": Category.UI, "description": "Employee Screen (roster & morale)"},
 	"settings": {"key": KEY_F10, "category": Category.UI, "description": "Settings Menu"},
 	"open_ledger": {"key": KEY_L, "category": Category.UI, "description": "Open Liability Ledger"},
 
@@ -113,7 +119,7 @@ var profiles: Dictionary = {}  # profile_name -> keybind dict
 
 # Config file
 const CONFIG_PATH = "user://keybinds.cfg"
-const KEYBINDS_CONFIG_VERSION = 6  # bump when default binds change; stale saved configs refresh to defaults
+const KEYBINDS_CONFIG_VERSION = 7  # bump when default binds change; stale saved configs refresh to defaults
 var config = ConfigFile.new()
 
 # Signals
