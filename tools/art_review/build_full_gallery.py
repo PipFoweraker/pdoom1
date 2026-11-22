@@ -366,14 +366,30 @@ def classify(p, kind, state):
                 )
         return (f"file:art_generated/{rel.as_posix()}", p.name, None)
 
-    # px: reuse the existing state key spelling if one exists (600 legacy keys
-    # are extension-less); otherwise use the resolvable with-extension form.
+    # px: ONE spelling per file, and it is serve_review.py's.
+    #
+    # This used to fall back to the with-extension form while serve_review.py
+    # wrote the extension-less one, so the same image accumulated two keys.
+    # Measured 2026-08-20: 1,863 files carried both, created almost entirely by
+    # the 2026-08-14/15 sweeps -- and 1,439 of those were `keep` under BOTH
+    # spellings, which the promotion gate then reported as a file contesting its
+    # own destination. That is the whole of ORPHANS A4.
+    #
+    # The extension-less form is canonical because it is what serve_review.py
+    # writes (line ~522) and what apply_review.py resolves first. But it only
+    # RESOLVES for .png: apply_review tries `base` then `base + ".png"`, so a
+    # .jpg or .webp stripped of its extension would resolve to nothing. There
+    # are 4,457 png and 9 non-png under art_source/, so non-png keeps its
+    # extension and is excluded from the collapse for the same reason.
     rel = p.relative_to(ART_SRC).as_posix()
     sans = rel[: -len(p.suffix)]
-    for candidate in (f"px:{sans}", f"px:{rel}"):
+    canonical = f"px:{sans}" if p.suffix.lower() == ".png" else f"px:{rel}"
+    # An existing key in the other spelling still wins, so a store that has not
+    # been collapsed yet keeps showing the verdict it already holds.
+    for candidate in (canonical, f"px:{sans}", f"px:{rel}"):
         if candidate in state:
             return (candidate, p.name, None)
-    return (f"px:{rel}", p.name, None)
+    return (canonical, p.name, None)
 
 
 # Facet order is the order the filter bar shows them, coarsest first.
@@ -779,9 +795,27 @@ def main():
         f"{n_matched} with an existing verdict, built in {dt:.1f}s"
     )
     if orphans:
+        # NOT "deleted/renamed", which is what this line used to say and what it
+        # led two separate readings to conclude. Measured 2026-08-15 and again on
+        # 2026-08-19: ZERO verdicts have been lost. The population is two things,
+        # and neither is attrition:
+        #
+        #   px:   the same present file counted twice under two key spellings
+        #         (with and without the extension). The file is right there.
+        #   gen:  art that is deliberately NOT on this machine -- see the RULING
+        #         below. Its verdict is the durable half and it is in git.
+        #
+        # RULING: 2026-08-19 -- New-Bort is the working machine and hosts new archives and images; the generated masters are NOT transferred to it but coordinated on an external drive or the upstream system, so a verdict whose art is absent is the designed steady state and orphan keys are never pruned -- flavour: art-provenance -- mechanism: this reporting line, and tools/art_review/ORPHANS_2026-08-15.md A1/A2
+        #
+        # So the count is reported as INFORMATION, never as loss. Anyone quoting
+        # it as attrition is overstating it by the whole px: population.
+        px = sum(1 for k in orphans if k.startswith("px:"))
+        gen = len(orphans) - px
         print(
-            f"[!] {len(orphans)} review_state keys matched no file on disk "
-            f"(deleted/renamed assets); first few: {orphans[:5]}"
+            f"[i] {len(orphans)} review_state keys name no file HERE: "
+            f"{gen} gen: (masters hosted off this machine by ruling), "
+            f"{px} px: (duplicate key spelling, file present). "
+            "No verdict is lost; nothing is pruned."
         )
     if args.open:
         webbrowser.open(OUT.as_uri())

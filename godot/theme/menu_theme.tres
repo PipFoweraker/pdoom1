@@ -158,7 +158,10 @@ Button/colors/font_hover_color = Color(1, 1, 1, 1)
 Button/colors/font_pressed_color = Color(1, 1, 1, 1)
 Button/colors/font_focus_color = Color(1, 1, 1, 1)
 Button/colors/font_disabled_color = Color(0.5, 0.5, 0.5, 1)
-Button/font_sizes/font_size = 16
+; NO Button/font_sizes/font_size here, on purpose (#1224). It used to say 16,
+; and because a theme beats the project theme it was the reason the font-size
+; SSOT could not reach a single menu button. Styling belongs here; sizing lives
+; in theme/base_theme.tres.
 Button/styles/normal = SubResource("btn_normal")
 Button/styles/hover = SubResource("btn_hover")
 Button/styles/pressed = SubResource("btn_pressed")

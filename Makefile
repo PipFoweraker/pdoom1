@@ -4,7 +4,7 @@
 GODOT := godot
 PYTHON := python
 
-.PHONY: help run test lint validate clean commit class-cache
+.PHONY: help run test lint validate clean commit class-cache agent-env
 
 help: ## Show this help message
 	@echo "P(Doom) Development Commands"
@@ -22,6 +22,15 @@ help: ## Show this help message
 class-cache: ## Verify + repair the Godot class cache (stale cache = silently broken game)
 	$(PYTHON) tools/check_class_cache.py --repair
 
+# CLAUDE.md is the file every agent reads before touching anything, and much of it is
+# factual claims about THIS machine. On 2026-08-21 four of them were false at once --
+# Godot was not installed anywhere the sheet named, the isolation path was another
+# user's home, the art-masters drive did not exist. It nearly handed a first-time
+# playtester a silently broken build for the second time in eight days. Editing the
+# sheet fixes today; this makes the claims checkable. ~0.5s. See #1259.
+agent-env: ## Verify CLAUDE.md's environment claims still describe this machine
+	$(PYTHON) tools/check_agent_env.py
+
 run: class-cache ## Run the game
 	$(GODOT) --path godot
 
@@ -34,7 +43,7 @@ test-ci: ## Run tests in CI mode (exits with status)
 # `--quit` alone is NOT a syntax check on a stale cache: measured 2026-08-13, it emitted 30
 # `Identifier "Capacity" not declared` parse errors plus 17 depended-script compile failures
 # and still EXITED 0. The class-cache prerequisite is what makes this target honest.
-lint: class-cache ## Check GDScript syntax
+lint: class-cache agent-env ## Check GDScript syntax
 	$(GODOT) --headless --path godot --quit
 
 validate: ## Validate historical data files

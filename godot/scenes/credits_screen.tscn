@@ -59,7 +59,6 @@ horizontal_alignment = 1
 [node name="Subtitle" type="Label" parent="Panel/VBox"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.7, 0.78, 0.86, 1)
-theme_override_font_sizes/font_size = 16
 text = "The cats are real. Their people said yes."
 horizontal_alignment = 1
 
@@ -83,11 +82,9 @@ theme_override_constants/separation = 16
 [node name="WebsiteButton" type="Button" parent="Panel/VBox/Footer"]
 custom_minimum_size = Vector2(280, 44)
 layout_mode = 2
-theme_override_font_sizes/font_size = 18
 text = "[W] Open pdoom1.com"
 
 [node name="BackButton" type="Button" parent="Panel/VBox/Footer"]
 custom_minimum_size = Vector2(280, 44)
 layout_mode = 2
-theme_override_font_sizes/font_size = 18
 text = "[ESC] Back"

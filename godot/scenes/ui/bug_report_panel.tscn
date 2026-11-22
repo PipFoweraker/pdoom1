@@ -62,13 +62,13 @@ theme_override_constants/separation = 15
 [node name="TitleLabel" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBox"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 32
-text = "Bug Report & Feedback"
+text = "Tell us anything"
 horizontal_alignment = 1
 
 [node name="SubtitleLabel" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBox"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 14
-text = "Help us improve P(Doom) by reporting bugs or suggesting features!"
+text = "Bugs, ideas, or just what you thought. Every report is read."
 horizontal_alignment = 1
 
 [node name="HSeparator" type="HSeparator" parent="CenterContainer/PanelContainer/MarginContainer/VBox"]

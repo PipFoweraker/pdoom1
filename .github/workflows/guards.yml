@@ -1,0 +1,273 @@
+name: Guards
+
+# WHY THIS FILE EXISTS (issue #1265, ruled by Pip 2026-08-20)
+#
+# Fifteen guards ran in .pre-commit-config.yaml and in NO workflow. A pre-commit hook is
+# per-clone: it is not installed on a machine that never ran `pre-commit install`, and
+# `git commit --no-verify` steps over every one of them. So those fifteen were guards the
+# project believed it had. The worked example: `balance-key-census` -- the only gate
+# pointed at the balance surface in either direction -- could be skipped by anyone,
+# silently, forever, and CI would never notice.
+#
+# This workflow runs the ones that had no CI presence. It deliberately does NOT touch
+# quality-checks.yml or any other existing workflow: those files are contended, and a
+# guard that cannot be added without a merge conflict is a guard that does not get added.
+#
+# Guards NOT here, with reasons (the same reasons are declared as WAIVERS in
+# tools/check_guard_parity.py, which fails if this list and that list ever disagree):
+#   * class-cache-check      -- CI is structurally blind to it (fresh clone, correct
+#                               cache every time). quality-checks.yml proves the DETECTOR
+#                               instead, via `unittest tests.test_check_class_cache`.
+#   * style-guide-reminder   -- reads `git diff --cached`, empty on a CI checkout, and
+#                               warn-only without --strict. In CI it could return exactly
+#                               one answer forever, which is the thing this PR is against.
+
+# release/** added 2026-10-26 (#1269): the version-bump commit on a release branch
+# is exactly what release-horizon-check, patch-notes-cover-shipped-version and the
+# index checks exist to catch, and it never passes through main first.
+on:
+  pull_request:
+    branches: [ main, 'release/**' ]
+  push:
+    branches: [ main, 'release/**' ]
+  # Forcible, for the reason quality-checks.yml already learned the hard way: a PR that
+  # touches .github/workflows/ can have its pull_request-triggered runs suppressed, and a
+  # gate you cannot invoke on demand is only as good as the events that happen to fire it.
+  workflow_dispatch:
+
+# PERMISSIONS ARE STATED, NOT INHERITED.
+# The default GITHUB_TOKEN scope is a repository/org setting, so an unstated `permissions:`
+# block means this job's authority is whatever someone last set elsewhere -- it can widen
+# without anyone touching this file. release-reminder.yml carries the other half of the
+# lesson: an absent block cost a red run on a clean v0.14.0 release, and a gate that reds
+# on something it does not gate trains the reader to discount reds.
+# These guards only read the checkout. They post nothing, tag nothing, and write nothing.
+#
+# `actions: read` added 2026-08-29 for check_chronic_red.py, which asks the Actions
+# API for this repository's own recent run history. Read-only: it lists workflows and
+# their runs and never re-runs, cancels or dispatches one. Without it that guard
+# cannot ask the question, and it is built to exit 2 (COULD NOT MEASURE) rather than
+# report a clean bill of health from a call that failed.
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  guards:
+    name: Guards with no other CI presence
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # scripts/generate_rulings.py shells out to `git ls-files`, and
+          # generate_commitment_calendar.py scans the tracked tree; both work on a
+          # shallow clone. Nothing here replays history, so fetch-depth stays at the
+          # default. (check_ladder_bump.py, which does, lives in quality-checks.yml
+          # with fetch-depth: 0.)
+          fetch-depth: 1
+          # TAGS, THOUGH -- and depth 1 does not fetch them (2026-08-29).
+          # release-index-check compares public/releases/releases.json against
+          # `git tag -l 'v*.*.*'`. On the tagless shallow checkout this job used to
+          # get, that list came back EMPTY and the guard reported all 27 correct
+          # entries as bogus. Tag NAMES are all it needs -- it never walks history
+          # -- so this stays cheap and fetch-depth stays at 1 for everything else.
+          fetch-tags: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run the guards
+        env:
+          # tools/check_environments.py shells out to `gh api`, which needs a token.
+          # Read-only use: it lists environments and never writes one.
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # GitHub's default shell here is `bash --noprofile --norc -e -o pipefail {0}`.
+          # `-e` MUST go: every guard has to run every time. Stopping at the first
+          # failure would report one finding and hide the rest, and the point of a
+          # census is seeing the whole surface in one run.
+          set +e
+          set -uo pipefail
+
+          fail=0
+          summary_rows=""
+
+          guard() {
+            label="$1"; shift
+            echo "::group::${label}  --  $*"
+            # `tee` so the output reaches both the folded log and a file, which lets the
+            # ::error:: annotation below carry the guard's own last line into the checks
+            # panel instead of a bare exit code.
+            "$@" 2>&1 | tee /tmp/guard.out
+            # ${PIPESTATUS[0]}, NEVER $?. After a pipeline $? is the RIGHTMOST command's
+            # status -- here that is `tee`, which succeeds whatever the guard did. A
+            # workflow written in this repo on 2026-08-24 had exactly this bug and
+            # reported green over a failing tool.
+            code=${PIPESTATUS[0]}
+            last=$(tail -n 1 /tmp/guard.out 2>/dev/null)
+            echo "::endgroup::"
+            case "$code" in
+              0)
+                echo "PASS  ${label}"
+                summary_rows="${summary_rows}| PASS | ${label} | \`$*\` |"$'\n'
+                ;;
+              2)
+                # THREE OUTCOMES, NOT TWO. Exit 2 in this repo means COULD NOT MEASURE
+                # (see scripts/run_godot_tests.py and tools/check_balance_keys.py). It
+                # fails the job -- a guard that did not run is not a pass -- but it must
+                # NOT be reported as a finding, because nothing was established. Folding
+                # it into "FAIL" would assert a result from a run that measured nothing.
+                echo "::error title=Guard could not run::${label} exited 2 (COULD NOT MEASURE) -- no result, not a finding. ${last}"
+                summary_rows="${summary_rows}| COULD NOT MEASURE (exit 2) | ${label} | \`$*\` |"$'\n'
+                fail=1
+                ;;
+              *)
+                echo "::error title=Guard failed::${label} exited ${code}. ${last}"
+                summary_rows="${summary_rows}| FAIL (exit ${code}) | ${label} | \`$*\` |"$'\n'
+                fail=1
+                ;;
+            esac
+          }
+
+          # --- the parity census itself -------------------------------------------
+          # Runs FIRST and self-tests before it censuses, so a new pre-commit-only hook
+          # is caught the day it is added rather than at the next audit.
+          guard "guard-parity self-test" python tools/check_guard_parity.py --self-test
+          guard "guard-parity census" python tools/check_guard_parity.py --check
+
+          # --- self-tests for guards that had none (issue #1265, act 2) ------------
+          # Each of these proves the checker can still return BOTH answers. They run
+          # BEFORE the guard they belong to, so a decayed detector reports as a decayed
+          # detector rather than as a clean tree.
+          guard "no-emoji self-test" python scripts/check_no_emoji.py --self-test
+          guard "balance-key-census self-test" python tools/check_balance_keys.py --self-test
+          # scene-nav-check already runs in quality-checks.yml; only its self-test is new,
+          # and it goes here because that file must not be edited (see the header).
+          guard "scene-nav self-test" python tools/check_scene_nav.py --self-test
+          # Pre-existing self-tests for tools whose GATE had no CI presence.
+          guard "credential-check self-test" python tools/assets/check_credentials.py --self-test
+          # The release-branch guard runs for real only at tag time (enhanced-release.yml
+          # preflight). Proving it on every PR means a decayed detector is found here,
+          # not on release night. Both are hermetic: throwaway repos, no network.
+          guard "release-branch self-test" python tools/check_release_branch.py --self-test
+          guard "release-branch unit tests" python -m unittest tests.test_check_release_branch
+
+          # --- the thirteen guards that ran in pre-commit and nowhere else ---------
+          guard "no-emoji" python scripts/check_no_emoji.py
+          guard "review-js-parses" python tools/check_review_js.py
+          guard "dq-index-check" python scripts/generate_dq_index.py --check
+          guard "adr-index-check" python scripts/generate_adr_index.py --check
+          guard "tools-index-check" python scripts/generate_tools_index.py --check
+          guard "action-taxonomy-index-check" python scripts/generate_action_taxonomy.py --check-stale
+          guard "credits-json-check" python scripts/generate_credits.py --check
+          guard "commitment-calendar-check" python scripts/generate_commitment_calendar.py --check
+          guard "rulings-index-check" python scripts/generate_rulings.py --check
+          guard "balance-key-census" python tools/check_balance_keys.py --check
+          guard "trust-declaration-check" python tools/generate_trust_declaration.py --check
+          guard "credential-check" python tools/assets/check_credentials.py
+          guard "font-size-ssot-check" python tools/check_font_sizes.py
+
+          # --- pause semantics (#1343) ----------------------------------------------
+          # SceneTree.create_timer() defaults process_always to TRUE -- it ignores the
+          # pause menu -- and that default shipped #1341 to players. Self-test first,
+          # so a decayed detector reports as one rather than as a clean tree.
+          guard "pause-timer-check self-test" python tools/check_pause_timers.py --self-test
+          guard "pause-timer-check" python tools/check_pause_timers.py
+
+          # --- the last three, closed 2026-08-29 -----------------------------------
+          # These were the residue the guard-parity census kept reporting after the
+          # thirteen above were wired: local-only, therefore not installed anywhere
+          # that had not run `pre-commit install`, and skippable with --no-verify.
+          #
+          # export-icon-check is the one with a body count. On 2026-08-23 the macOS
+          # preset acquired `application/icon=...pdoom1.ico`, Godot has no .ico
+          # decoder, the export died 1.4s into bundle assembly, and v0.14.3 shipped
+          # with no macOS build at all -- the release the guard existed to prevent.
+          # It was in pre-commit at the time and did not run, which is the whole
+          # argument for this section rather than a restatement of it.
+          #
+          # All three are offline, deterministic and sub-second; none needs Godot.
+          # Each is invoked with the flag that GATES, not merely the flag that runs
+          # -- the census reports a tool present under a different flag as PARTIAL.
+          guard "release-horizon-check" python tools/generate_release_horizon.py --check
+          guard "export-icon-check" python tools/check_export_icons.py
+          guard "patch-notes-cover-shipped-version" python tools/check_patch_notes.py --quiet
+
+          # --- the PARTIAL one, closed 2026-08-29 (issue #1297 section 2) -----------
+          # This is the subtlety a filename grep cannot see, and the reason the
+          # census reports three verdicts instead of two.
+          #
+          # scripts/generate_release_metadata.py DOES appear in enhanced-release.yml
+          # -- as `--version "$VERSION"`, which REGENERATES the feed. The gating flag
+          # is `--check`, and that ran in pre-commit and nowhere else. So a grep for
+          # the filename answered "covered" while the GATE was not covered at all,
+          # and the census called it PARTIAL rather than YES for exactly that reason.
+          #
+          # It was left unwired because it did not pass. It still did not pass on
+          # 2026-08-29: `public/releases/` was missing v0.14.4 entirely and its
+          # latest_version read v0.14.3, hours after v0.14.4 was published. That is
+          # the feed the website reads. The release workflow regenerates these files
+          # to upload as release ASSETS and never commits them back, so the in-repo
+          # copy goes stale on every single release and nothing noticed, because the
+          # only thing that checks is a hook CI cannot see.
+          #
+          # The feed is regenerated in this same change, so this arrives green.
+          #
+          # The self-test runs FIRST and exists because of what happened the first
+          # time this guard ran in CI: the checkout was shallow, `git tag` returned
+          # nothing, and the tool reported all 27 correct entries as bogus -- a
+          # measured verdict from a run that measured nothing. `--check` now exits 2
+          # (COULD NOT MEASURE) on a tagless checkout, and the self-test proves all
+          # three answers are still reachable rather than asserting it.
+          guard "release-index self-test" python scripts/generate_release_metadata.py --self-test
+          guard "release-index-check" python scripts/generate_release_metadata.py --check
+
+          # --- the environments audit ---------------------------------------------
+          # CI-only by construction: it calls the GitHub API, and a pre-commit hook that
+          # makes a network call is slow, fails offline, and teaches people to skip
+          # hooks. Reports only -- it never edits an environment; settings are Pip's.
+          # If this exits 2 with a 403, GITHUB_TOKEN needs more than `contents: read`
+          # for the environments endpoint. Exit 2 is the RIGHT answer there: the audit
+          # did not run, and saying "no findings" would be the defect it looks for.
+          guard "environments self-test" python tools/check_environments.py --self-test
+          guard "environments audit" python tools/check_environments.py
+
+          # --- the chronic-red census (issue #1279, added 2026-08-29) ---------------
+          # The one guard here whose subject is the OTHER guards. A workflow that has
+          # been red for three consecutive runs of the same trigger has stopped being
+          # a signal and become furniture, and it hides the next real red behind it.
+          # release-ledger.yml proved that in August: red for five days on an
+          # unsatisfiable gate, and its red for a GENUINE reason -- v0.14.4 tagged and
+          # never published -- arrived on 2026-08-28 looking exactly like the other
+          # seven.
+          #
+          # Also CI-only by construction, for the same reason as the environments
+          # audit above: it calls the GitHub API, and a pre-commit hook that makes a
+          # network call is slow, fails offline, and teaches people to skip hooks.
+          #
+          # It measures (workflow, EVENT) pairs, never workflows. docs-sync.yml is
+          # why: its overall streak is zero because its push runs pass, while its
+          # pull_request runs are 39-for-39 red (#1279). A per-workflow counter
+          # reports that workflow as healthy.
+          guard "chronic-red self-test" python tools/check_chronic_red.py --self-test
+          guard "chronic-red census" python tools/check_chronic_red.py --check
+
+          {
+            echo "## Guards"
+            echo ""
+            echo "| result | guard | command |"
+            echo "| --- | --- | --- |"
+            printf '%s' "${summary_rows}"
+            echo ""
+            echo "Exit 2 means COULD NOT MEASURE -- the guard did not produce a result."
+            echo "It fails the job, but it is not a finding."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          exit "$fail"

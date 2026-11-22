@@ -20,7 +20,17 @@ repos:
         args: ['--maxkb=1000']
         # Music tracks are legitimately >1MB; committed game/tool audio is
         # deliberate (storage-is-cheap policy). Guard stays for everything else.
-        exclude: '^(godot/assets/audio/|tools/music/captures/game/).*\.(ogg|mp3|wav)$'
+        #
+        # Review decision logs are the SECOND legitimate class. They are
+        # append-only and are the source of truth for every verdict ever made --
+        # review_state.json is only a projection of them. They grow forever by
+        # design, and the alternative to committing them is losing the history
+        # the whole review system exists to keep. Wanasai's crossed 1MB on her
+        # first session (2026-08-19); Pip's was at 902KB the same day, so this
+        # was days from firing regardless. Text, diffable, compresses well.
+        exclude: >-
+          ^(godot/assets/audio/|tools/music/captures/game/).*\.(ogg|mp3|wav)$
+          |^tools/art_review/review_log.*\.jsonl$
       - id: check-case-conflict
       - id: check-merge-conflict
       - id: detect-private-key
@@ -166,6 +176,22 @@ repos:
         files: '^(docs/.*\.md|docs/calendar/github_snapshot\.json|scripts/generate_commitment_calendar\.py|tools/.*\.py|scripts/.*\.py|[^/]*\.md)$'
         pass_filenames: false
 
+      # The release horizon is GENERATED (same anti-rot pattern as the DQ/ADR/
+      # tools indexes and the commitment calendar). It carries the SCHEDULED tier
+      # -- dates and ISO-week seeds out to v0.20 -- plus a ladder-epoch FLOOR that
+      # ratchets from ladder_version.txt. #1152 filed the hand-maintained version
+      # -> epoch tables as "off by one"; they were not off by one, the model was
+      # wrong, so the fix is that no document carries a predicted epoch and this
+      # gate keeps the floor honest.
+      # Fires on the two SSOT files it reads, the two documents it splices a
+      # generated region into, and its own outputs.
+      - id: release-horizon-check
+        name: release horizon (dates, seeds, ladder floor) up to date
+        entry: python tools/generate_release_horizon.py --check
+        language: system
+        files: '^(version\.txt|ladder_version\.txt|docs/ROADMAP\.md|docs/RELEASE_NOMENCLATURE\.md|docs/releases/(RELEASE_HORIZON\.md|release_horizon\.json)|tools/generate_release_horizon\.py)$'
+        pass_filenames: false
+
       # Godot class cache vs the class_name declarations (2026-08-13 playtest incident).
       # NOTE THE STAGE: post-merge / post-checkout, NOT pre-commit. This failure is a
       # property of a long-lived WORKING COPY, not of a diff -- the machine that authors a
@@ -186,9 +212,83 @@ repos:
         pass_filenames: false
         verbose: true
 
+      # Rulings evaporate unless something gathers them. Same shape as the
+      # commitment calendar: a one-line RULING: declaration writable anywhere,
+      # a GENERATED index, and a --check that keeps it honest.
+      # NOTE THE BREADTH, and why. A RULING: line can be written ANYWHERE -- that
+      # is the whole convention. The first version of this hook fired only on
+      # docs/rulings/**, which meant a ruling written where rulings are actually
+      # supposed to go (next to the code it governs) would never trigger the
+      # check. Caught 2026-08-17 when an incoming commit added two files under
+      # tools/art_review/ and left the index stale with no hook complaining.
+      # Same reasoning, same pattern as commitment-calendar-check above.
+      - id: rulings-index-check
+        name: Rulings index matches the RULING declarations
+        entry: python scripts/generate_rulings.py --check
+        language: system
+        files: '^(docs/.*\.md|tools/.*\.(py|md)|scripts/.*\.py|godot/.*\.gd|docs/rulings/.*|[^/]*\.md)$'
+        pass_filenames: false
+
+      # #1038. docs/TRUST.md enumerates every point the game reaches outside its
+      # own process, generated from the source. A hand-stale trust page is WORSE
+      # than none: an absent declaration is honest, a stale one is a false
+      # declaration to exactly the audience least able to check it.
+      # Silent-failure register sighting #1: Balance.num(key, fallback) returns
+      # the fallback for a key that does not exist, which is the generator behind
+      # four of the fifteen confirmed sightings. This is the ONLY gate pointed at
+      # the balance surface, in either direction.
+      - id: balance-key-census
+        name: Balance keys are defined where they are read
+        entry: python tools/check_balance_keys.py --check
+        language: system
+        files: '^(godot/data/balance/.*\.json|godot/.*\.gd|tools/check_balance_keys\.py|tools/balance_unread_ratchet\.txt)$'
+        pass_filenames: false
+
+      - id: trust-declaration-check
+        name: TRUST.md matches what the source actually reaches for
+        entry: python tools/generate_trust_declaration.py --check
+        language: system
+        files: '^(godot/(scripts|autoload)/.*\.gd|tools/generate_trust_declaration\.py|docs/TRUST\.md)$'
+        pass_filenames: false
+
+      # Shipped images must not silently lose their signed C2PA credential. PIL
+      # drops unknown ancillary chunks on re-encode, so one Image.open(...).save()
+      # anywhere downstream deletes provenance irreversibly and invisibly -- the
+      # loss that cost ~1,600 masters before 2026-08-15. Fires only when a PNG
+      # under godot/assets/ or an image tool changes, so it stays cheap.
+      - id: credential-check
+        name: Shipped images keep their C2PA content credential
+        entry: python tools/assets/check_credentials.py
+        language: system
+        files: '^(godot/assets/.*\.png|tools/assets/(check_credentials|generate_images|run_art_night|build_share_set|promote_assets)\.py|tools/assets/credentialed_pin\.json)$'
+        pass_filenames: false
+
+      # The provenance manifest and the pack must agree. This guard existed from
+      # 2026-08-11 and was wired to NOTHING until 2026-08-19 -- so on 2026-08-12
+      # `ab85ed0b` (#1196) shipped a packed asset with no provenance entry, the
+      # guard's own third direction, and it went unseen for a week. The lesson is
+      # the one this repo keeps relearning: a mechanism nobody runs is a document.
+      # Cheap (one git cat-file over 511 files) and fires only when the pack, the
+      # manifest, the pin or the two tools change.
+      - id: provenance-check
+        name: Packed assets and the provenance manifest agree
+        entry: python tools/assets/check_provenance.py
+        language: system
+        files: '^(godot/assets/.*|godot/data/asset_provenance\.json|tools/assets/(check_provenance|backfill_provenance)\.py|tools/assets/provenance_unknown_pin\.json)$'
+        pass_filenames: false
+
       - id: scene-nav-check
         name: Scene navigation routes through SceneTransition
         entry: python tools/check_scene_nav.py
+        language: system
+        files: '\.gd$'
+        pass_filenames: true
+
+      # #1343: SceneTree.create_timer() DEFAULTS to ignoring the pause menu (#1341).
+      # Every call must pass process_always explicitly. docs/design/PAUSE_SEMANTICS.md
+      - id: pause-timer-check
+        name: create_timer calls state their pause intent explicitly
+        entry: python tools/check_pause_timers.py
         language: system
         files: '\.gd$'
         pass_filenames: true
@@ -200,11 +300,49 @@ repos:
         files: '\.gd$'
         pass_filenames: true
 
+      - id: font-size-ssot-check
+        name: Raw font-size overrides have not risen above the ceiling
+        entry: python tools/check_font_sizes.py
+        language: system
+        # Whole-tree census, so it must not be given the changed-file list --
+        # a ratchet that only counts the files in one commit is not a ratchet.
+        files: '(\.tscn|\.gd|\.tres|project\.godot)$'
+        pass_filenames: false
+
+      # v0.14.3 shipped with NO macOS asset -- the first release ever to do so
+      # -- because the macOS preset's application/icon was pointed at a .ico,
+      # which Godot has no decoder for. The export died printing only
+      # 'Project export for preset "macOS" failed.' with no reason, and the
+      # ONLY thing in this repo that runs a macOS export is the release
+      # workflow, so the first measurement was the release itself. ~10ms, no
+      # Godot launch.
+      - id: export-icon-check
+        name: Export preset icons are a format that platform can decode
+        entry: python tools/check_export_icons.py
+        language: system
+        files: '^(godot/export_presets\.cfg|godot/assets/images/.*|tools/check_export_icons\.py)$'
+        pass_filenames: false
+
       - id: version-sync-check
         name: version.txt + ladder_version.txt synced to derived copies
         entry: python tools/sync_version.py --check
         language: system
         files: '(version\.txt|ladder_version\.txt|godot/autoload/game_config\.gd|godot/project\.godot|godot/export_presets\.cfg|godot/scenes/welcome\.tscn)$'
+        pass_filenames: false
+
+      # The OTHER half of the version chain. version-sync-check above proves
+      # version.txt reached game_config.gd's CURRENT_VERSION; this proves the version
+      # the modal then looks up actually exists in the data it looks it up in.
+      # Without it, a release bump that forgets patch_notes.json tells every player
+      # "No detailed patch notes available for this version" -- a missing entry
+      # rendered as a quiet release. The same assertion exists in
+      # godot/tests/unit/test_patch_notes.gd, but that tier needs a Godot binary and
+      # an import pass, so nothing was checking it at commit time.
+      - id: patch-notes-cover-shipped-version
+        name: patch_notes.json has an entry for version.txt's version
+        entry: python tools/check_patch_notes.py --quiet
+        language: system
+        files: '^(version\.txt|godot/data/patch_notes\.json|tools/check_patch_notes\.py)$'
         pass_filenames: false
 
       # Release feed index is GENERATED, never hand-maintained (#1008). Same anti-rot
@@ -241,6 +379,7 @@ exclude: |
       archived/.*|
       legacy/.*|
       docs/archive/.*|
+      vendor/.*|
       \.git/.*|
       \.mypy_cache/.*|
       \.pytest_cache/.*

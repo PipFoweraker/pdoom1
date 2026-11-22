@@ -140,7 +140,13 @@ asset_gallery.html
 # from being unrecoverable. It is ~465 KB of JSON: small, diffable, and exactly the
 # "index in git, blobs outside" split ADR-0019 is built around.
 # Its .bak-* siblings ARE regenerable churn and stay ignored.
-tools/art_review/review_state.json.bak-*
+# Timestamped backups written by the art-review tools before they touch a
+# store. The glob carries a wildcard before .json because a named reviewer's
+# store is review_state.<name>.json (2026-08-19, e01a9a0f) -- the old pattern
+# matched only the unsuffixed one, so wanasai's backup landed UNTRACKED and
+# unignored, one careless `git add -A` from being committed.
+tools/art_review/review_state*.json.bak-*
+tools/art_review/review_log*.jsonl.bak-*
 gallery_verdicts_*.json
 # Same deal for the slot picker (tools/art_review/build_slot_picker.py): the
 # browser download is a TRANSPORT, not a home. Its home is

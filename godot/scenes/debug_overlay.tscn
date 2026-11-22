@@ -34,7 +34,6 @@ layout_mode = 2
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Debug Overlay (F3)"
-theme_override_font_sizes/font_size = 16
 
 [node name="CloseButton" type="Button" parent="Panel/MarginContainer/VBoxContainer/Header"]
 layout_mode = 2

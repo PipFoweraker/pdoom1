@@ -390,10 +390,15 @@ func _transform_event(raw: Dictionary) -> Dictionary:
 		game_event["delivery_tier"] = "feed"
 		game_event["channel"] = "flavour"
 
-	# Add reactions if present (for UI display)
-	if raw.has("safety_researcher_reaction"):
+	# Add reactions if present (for UI display).
+	#
+	# The `!= null` half matters as much as the `has` half, and is the same
+	# idiom pdoom_impact already uses three lines below. pdoom-data keeps these
+	# keys and sets them to null when nobody was asked, so `has` alone copies a
+	# null through under a name that promises a sentence.
+	if raw.has("safety_researcher_reaction") and raw["safety_researcher_reaction"] != null:
 		game_event["safety_researcher_reaction"] = raw["safety_researcher_reaction"]
-	if raw.has("media_reaction"):
+	if raw.has("media_reaction") and raw["media_reaction"] != null:
 		game_event["media_reaction"] = raw["media_reaction"]
 
 	# Add pdoom_impact if present
@@ -504,9 +509,47 @@ func _generate_options(raw: Dictionary, category: String, significance: int) -> 
 	var doom_effect = int(3 * effect_multiplier)
 	var money_effect = int(10000 * effect_multiplier)
 
-	# Get reactions for flavor text
-	var safety_reaction = raw.get("safety_researcher_reaction", "")
-	var media_reaction = raw.get("media_reaction", "")
+	# --- ADR-0015: these options are built IN CODE, so they never went through the content
+	# migration that stripped literal doom deltas from res://data. They must write a named
+	# world-state INTERMEDIARY; DoomSystem alone owns the doom LEVEL (S1 + single-authority).
+	#
+	# A literal here was NOT inert. execute_event_choice's trap (events.gd:303) caught it and
+	# posted it to the `panic` stream, so it landed as REAL doom under a WRONG name -- and
+	# unbounded: measured at exactly -6.00 doom/turn at the shipped 2-events/turn cap
+	# (-7.78 once momentum compounds it), against a natural +0.06 baseline. Doom hit the 0.0
+	# floor in ~8 turns and stayed there. See test_adr_0015_runtime_doom_literals.gd.
+	#
+	# Magnitudes are Balance-priced and ANCHORED to the prices actions.gd already pays for the
+	# analogous founder move, so this adds no new tuning vocabulary:
+	#   safety_absorption <- action_safety_absorb (4.0)   adopted scrutiny; absorbs frontier
+	#   frontier_capability <- action_acquire_frontier (60.0)  capability actually advanced
+	#   global_panic      <- (1.5)  a shock the world reacts to; see the conversion note below
+	#
+	# WHY EVERY RELIEF GOES TO safety_absorption AND NONE TO global_alarm.
+	# A one-shot input of X integrates to a different total doom depending on the stream:
+	#   alarm:  -W_alarm/(1-alarm_decay) * X = -1.333 * X   (decaying, ~46-turn half-life)
+	#   panic:  +W_panic/(1-panic_decay) * X = +0.667 * X   (decaying)
+	#   absorption/frontier: -/+ W_frontier * X per turn = 0.000039 * X per turn, PERSISTENT
+	# alarm is the engine's designed relief channel and actions.gd uses it freely (lobby,
+	# warning, conference) -- but those are actions, competing for Attention against the whole
+	# board. THESE options recur on up to 2 events EVERY turn, and a repeated input I into a
+	# decaying stock settles at I/(1-decay), so alarm routing reproduces the very exploit
+	# being closed: an early draft of this fix routed safety_analysis to alarm as well and
+	# measured a sustained -0.84 doom/turn, flipping the natural trend negative all over
+	# again. safety_absorption cannot do that: the overhang stream is
+	# max(0, frontier_max - safety_absorption), so absorption past the frontier buys exactly
+	# nothing and the other eight streams are untouched. The bound is STRUCTURAL, not a price.
+	var absorb_effect: float = doom_effect * Balance.num("doom.streams.event_safety_absorb", 4.0)
+	var frontier_effect: float = doom_effect * Balance.num("doom.streams.event_frontier_gain", 60.0)
+
+	# Get reactions for flavor text.
+	#
+	# _reaction_text() rather than a bare .get(key, ""): pdoom-data serves null
+	# for a reaction nobody was asked for, and it KEEPS THE KEY. A present key
+	# holding null means the .get default never fires, so "" is not what comes
+	# back -- null is, and _format_reaction is typed String. See pdoom-data#96.
+	var safety_reaction: String = _reaction_text(raw, "safety_researcher_reaction")
+	var media_reaction: String = _reaction_text(raw, "media_reaction")
 
 	# Normalize category for matching
 	var cat_lower = category.to_lower()
@@ -517,7 +560,8 @@ func _generate_options(raw: Dictionary, category: String, significance: int) -> 
 				"id": "collaborate",
 				"text": "Seek collaboration",
 				"costs": {"attention": 1},
-				"effects": {"reputation": rep_effect, "doom": -doom_effect},
+				# Shared safety norms with another lab: adopted scrutiny -> absorption.
+				"effects": {"reputation": rep_effect, "safety_absorption": absorb_effect},
 				"message": "Established collaborative relationship." + (_format_reaction(safety_reaction))
 			},
 			{
@@ -542,14 +586,23 @@ func _generate_options(raw: Dictionary, category: String, significance: int) -> 
 				"id": "build_upon",
 				"text": "Build upon this research",
 				"costs": {"attention": 1, "money": money_effect},
-				"effects": {"research": rep_effect * 3, "doom": doom_effect / 2},
+				# The flavour text says it outright -- this ADVANCES THE FRONTIER. The honest
+				# intermediary for that is frontier_capability, which the overhang stream reads.
+				"effects": {"research": rep_effect * 3, "frontier_capability": frontier_effect / 2.0},
 				"message": "Advancing the research frontier." + (_format_reaction(safety_reaction))
 			},
 			{
 				"id": "safety_analysis",
 				"text": "Conduct safety analysis",
 				"costs": {"attention": 1},
-				"effects": {"research": rep_effect, "doom": -doom_effect, "reputation": rep_effect / 2},
+				# The load-bearing one: 1174 of the 1194 shipped pdoom-data events are
+				# `technical_research_breakthrough`, so this single option was ~99% of the
+				# exploit surface. Published safety work -> absorption (+ a little public alarm).
+				"effects": {
+					"research": rep_effect,
+					"safety_absorption": absorb_effect,
+					"reputation": rep_effect / 2,
+				},
 				"message": "Published safety analysis of the work."
 			},
 			{
@@ -567,7 +620,9 @@ func _generate_options(raw: Dictionary, category: String, significance: int) -> 
 				"id": "support",
 				"text": "Publicly support",
 				"costs": {"attention": 1},
-				"effects": {"reputation": rep_effect, "doom": -doom_effect},
+				# Governance that actually lands is civilisational absorption. (alarm would be
+				# the prettier fiction, but see the note above -- it is not bounded per-turn.)
+				"effects": {"reputation": rep_effect, "safety_absorption": absorb_effect},
 				"message": "Your support strengthens the policy effort." + (_format_reaction(media_reaction))
 			},
 			{
@@ -592,14 +647,16 @@ func _generate_options(raw: Dictionary, category: String, significance: int) -> 
 				"id": "respond_publicly",
 				"text": "Issue public response",
 				"costs": {"attention": 1},
-				"effects": {"reputation": rep_effect, "doom": -doom_effect / 2},
+				# Public understanding of an incident -> scrutiny the field absorbs. Half strength.
+				"effects": {"reputation": rep_effect, "safety_absorption": absorb_effect / 2.0},
 				"message": "Your response shapes public understanding." + (_format_reaction(media_reaction))
 			},
 			{
 				"id": "internal_review",
 				"text": "Conduct internal review",
 				"costs": {"attention": 1},
-				"effects": {"research": rep_effect, "doom": -doom_effect},
+				# "Lessons learned improve your safety practices" IS safety_absorption.
+				"effects": {"research": rep_effect, "safety_absorption": absorb_effect},
 				"message": "Lessons learned improve your safety practices."
 			},
 			{
@@ -626,7 +683,10 @@ func _generate_options(raw: Dictionary, category: String, significance: int) -> 
 				"id": "diversify_funding",
 				"text": "Diversify Funding Sources",
 				"costs": {"attention": 1},
-				"effects": {"doom": -doom_effect / 2, "reputation": rep_effect / 2},
+				# Weakest doom link of the seven, so the most conservative routing: a
+				# funder-diversified lab keeps its safety staff through a downturn instead of
+				# firing them, which is absorption retained. Half strength, as before.
+				"effects": {"safety_absorption": absorb_effect / 2.0, "reputation": rep_effect / 2},
 				"message": "Reduced dependency on any single funder."
 			},
 			{
@@ -693,6 +753,20 @@ func _calculate_base_effects(raw: Dictionary, significance: int) -> Dictionary:
 		else:
 			effects[game_var] = scaled_change
 
+	# ADR-0015: the pdoom-data variable map launders several source variables into the game
+	# var "doom" (`vibey_doom` alone appears on 1193 of the 1194 shipped events, plus `stress`,
+	# `burnout_risk`, `safety`). The content-scan guard in test_events.gd compares the RAW
+	# variable name against "doom" literally, so every aliased impact walked straight past it
+	# and became a literal doom delta at runtime -- ADR-0015 satisfied on paper by renaming the
+	# key. Convert here, at the single point where the alias resolves, so no caller downstream
+	# ever sees a "doom" effect: these are unmodelled world shocks, which is what the `panic`
+	# stream is for (and is where execute_event_choice's trap was already sending them).
+	# Scaled by 1/(W_panic/(1-panic_decay)) = 1.5 so the INTEGRATED doom is unchanged.
+	if effects.has("doom"):
+		var shock: float = float(effects["doom"]) * Balance.num("doom.streams.event_shock_panic", 1.5)
+		effects.erase("doom")
+		effects["global_panic"] = float(effects.get("global_panic", 0.0)) + shock
+
 	return effects
 
 
@@ -712,6 +786,25 @@ func _apply_scaled_effects(effects: Dictionary, scale: float) -> Dictionary:
 	for key in effects:
 		scaled[key] = int(effects[key] * scale)
 	return scaled
+
+
+func _reaction_text(raw: Dictionary, key: String) -> String:
+	"""A reaction as a String, treating null and absent as the same empty thing.
+
+	pdoom-data made safety_researcher_reaction and media_reaction nullable
+	because they had been carrying invented text: 1,166 of its 1,194 events
+	drew from a five-element list by random.choice, so one sentence stood as
+	what safety researchers thought about hundreds of separate papers. Null now
+	means nobody was asked.
+
+	The key stays present, which is why `raw.get(key, "")` is not enough. A
+	default only fires on a MISSING key; a present key holding null returns the
+	null. This is the whole of the incompatibility.
+	"""
+	var value = raw.get(key)
+	if value == null:
+		return ""
+	return str(value)
 
 
 func _format_reaction(reaction: String) -> String:
@@ -808,7 +901,11 @@ func _set_default_variable_mapping() -> void:
 	_default_effects = {
 		"common": {"research": 5},
 		"rare": {"research": 10, "reputation": 5},
-		"legendary": {"research": 20, "reputation": 10, "doom": 5}
+		# ADR-0015: no literal doom. The shipped variable_mapping.json already dropped this
+		# key; this in-code fallback (used only when that file is missing) had drifted out of
+		# sync and kept it -- in the content-scan guard's blind spot, since the guard walks
+		# res://data only. 5 doom -> 7.5 panic preserves the integrated magnitude (x1.5).
+		"legendary": {"research": 20, "reputation": 10, "global_panic": 7.5}
 	}
 
 

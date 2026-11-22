@@ -205,8 +205,12 @@ Consequence for this repo: `fit_board_name()` is a **board-integrity guard**, no
 a cosmetic nicety. Any client that submits an unfitted player-typed name can wipe
 a public league board by accident.
 
-`score_api.php` as deployed is not writable from here. **The server-side fix is
-the real fix** -- see the coordination ask below.
+**The server-side fix is the real fix, and it landed in #1272 (2026-08-24):**
+`score_api.php` is in THIS repo at `server/leaderboard/score_api.php` -- the
+older note here said it was not, which was wrong and is why the wipe sat unfixed
+for two weeks. What is still not automated is the DEPLOY: the repo has no deploy
+path to api.pdoom1.com, so the fixed file must be uploaded by hand before the
+live endpoint stops being wipeable.
 
 ### Two identity values, one wire field (shipped 2026-08-10)
 
@@ -250,17 +254,25 @@ Format rules, each forced by a real constraint:
 reason rather than a cautious one: it is dropped, so sending it would put the
 operator on the wire twice and desync the day the server whitelists it.
 
-### Coordination ask (pdoom1-website / API)
+### Coordination ask -- status after #1272 (2026-08-24)
 
-Not decided or changed in this repo. In priority order:
-
-1. **Fix the board-wipe.** Guard the write: either cut on a character boundary
-   (`mb_substr($s, 0, 40, 'UTF-8')`) or refuse to overwrite the board when
-   `json_encode()` returns `false`. Today one malformed name destroys a league.
-2. **Whitelist `operator_name`** in `$ALLOWED_FIELDS` and render it as a second
-   column, so the two names stop sharing 40 bytes.
-3. **Raise the 40-byte limit**, and **return the stored value** in the POST
-   response so the client can tell the player what actually landed.
+1. ~~**Fix the board-wipe.**~~ **DONE in code, NOT YET DEPLOYED.** The server
+   now encodes BEFORE it truncates (an encode failure leaves the board intact),
+   and fits names with `fit_utf8()`, which cuts on a codepoint boundary and
+   appends a visible `...`. Note `mb_substr()` was NOT used: mbstring is not
+   guaranteed on shared hosting. Pinned by
+   `php server/leaderboard/tests/test_score_api.php` (51 assertions), which
+   reproduces the wipe end-to-end against the pre-fix file.
+2. ~~**Whitelist `operator_name`.**~~ **DONE in code, NOT YET DEPLOYED.** It is
+   in `$ALLOWED_FIELDS` and is length-fitted like `player_name`. **The client
+   must not start sending it until the fix is deployed**, and when it does,
+   `to_wire_dict()` has to stop composing both names into `player_name` or the
+   operator goes on the wire twice.
+3. **Raise the 40-byte limit** -- still open, deliberately. The limit is now a
+   named constant (`$MAX_NAME_BYTES`), but the client fits to the same number,
+   so bumping it is a two-repo change. **Returning the stored value is DONE**:
+   the POST response now carries `player_name` as actually stored, so a client
+   can tell the player when the server shortened it.
 
 ---
 

@@ -8,4 +8,10 @@ isort>=5.12.0
 mypy>=1.0.0
 
 # Testing and profiling
+# pytest was ABSENT from this file until 2026-08-29, while tests/ held 90 test
+# files. Nothing in .github/workflows/ ran pytest either, so the entire Python
+# test suite executed nowhere: not in CI, and not on a fresh clone that followed
+# CONTRIBUTING.md, because the runner was not installed. Four files were invoked
+# individually via `python -m unittest`; the other 86 ran nowhere at all.
+pytest>=8.0.0
 psutil>=5.9.0

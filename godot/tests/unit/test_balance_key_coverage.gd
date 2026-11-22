@@ -10,15 +10,28 @@ extends GutTest
 const ACTIONS_SRC_PATH := "res://scripts/core/actions.gd"
 const DEFAULTS_PATH := "res://data/balance/defaults.json"
 
+## event_service.gd joined the list when the ADR-0015 runtime-option migration moved the
+## pdoom-data event effects onto `doom.streams.event_*` keys. Same failure mode as actions.gd:
+## a missing key degrades silently to the in-code fallback instead of failing CI.
+const BALANCE_KEY_SOURCES := [
+	ACTIONS_SRC_PATH,
+	"res://autoload/event_service.gd",
+]
+
 
 func test_every_balance_num_key_in_actions_exists_in_defaults() -> void:
-	var src: String = FileAccess.get_file_as_string(ACTIONS_SRC_PATH)
-	assert_false(src.is_empty(), "expected to read %s" % ACTIONS_SRC_PATH)
+	for src_path in BALANCE_KEY_SOURCES:
+		_assert_balance_keys_resolve(src_path)
+
+
+func _assert_balance_keys_resolve(src_path: String) -> void:
+	var src: String = FileAccess.get_file_as_string(src_path)
+	assert_false(src.is_empty(), "expected to read %s" % src_path)
 
 	var regex := RegEx.new()
 	regex.compile("Balance\\.num\\(\\s*\"([^\"]+)\"")
 	var matches := regex.search_all(src)
-	assert_gt(matches.size(), 0, "expected at least one Balance.num() call site in actions.gd")
+	assert_gt(matches.size(), 0, "expected at least one Balance.num() call site in %s" % src_path)
 
 	var defaults_text: String = FileAccess.get_file_as_string(DEFAULTS_PATH)
 	var json := JSON.new()
@@ -46,4 +59,4 @@ func test_every_balance_num_key_in_actions_exists_in_defaults() -> void:
 			missing.append(key)
 
 	assert_eq(missing.size(), 0,
-		"Balance.num() keys referenced in actions.gd but missing from defaults.json (silent 0.0/code-fallback): %s" % [missing])
+		"Balance.num() keys referenced in %s but missing from defaults.json (silent 0.0/code-fallback): %s" % [src_path, missing])

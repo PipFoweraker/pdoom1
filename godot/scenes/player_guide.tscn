@@ -59,7 +59,6 @@ horizontal_alignment = 1
 [node name="Subtitle" type="Label" parent="Panel/VBox"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.7, 0.78, 0.86, 1)
-theme_override_font_sizes/font_size = 16
 text = "One turn is one month. Plan it, watch it, survive the next one."
 horizontal_alignment = 1
 
@@ -87,11 +86,11 @@ theme_override_font_sizes/font_size = 24
 text = "THE OBJECTIVE"
 
 [node name="Text" type="RichTextLabel" parent="Panel/VBox/ContentScroll/ContentVBox/ObjectiveSection"]
-custom_minimum_size = Vector2(0, 96)
 layout_mode = 2
 theme_override_colors/default_color = Color(0.9, 0.9, 0.9, 1)
-theme_override_font_sizes/normal_font_size = 16
 bbcode_enabled = true
+fit_content = true
+scroll_active = false
 text = "[b]You cannot win. You can only buy time.[/b] There is no victory screen and no finish line.
 
 Your score is [color=#f6a800][b]turns survived[/b][/color] -- the number of months your lab kept going. The run ends when P(Doom) reaches 100%, or when your reputation collapses to zero. Runs that survive the same number of months are separated by how much doom they held off along the way.
@@ -112,11 +111,11 @@ theme_override_font_sizes/font_size = 24
 text = "THE MONTH: PLAN, THEN WATCH"
 
 [node name="Text" type="RichTextLabel" parent="Panel/VBox/ContentScroll/ContentVBox/ControlsSection"]
-custom_minimum_size = Vector2(0, 150)
 layout_mode = 2
 theme_override_colors/default_color = Color(0.9, 0.9, 0.9, 1)
-theme_override_font_sizes/normal_font_size = 16
 bbcode_enabled = true
+fit_content = true
+scroll_active = false
 text = "Every turn is one calendar month, played in two halves. The banner at the top of the screen always says which half you are in and what the next verb is.
 
 [color=#ffb833][b]## PLAN[/b][/color] -- lay out the month. Click action tiles to queue them. Hover a tile for its name, its cost, and why it is greyed out.
@@ -142,11 +141,11 @@ theme_override_font_sizes/font_size = 24
 text = "ATTENTION AND RESOURCES"
 
 [node name="Text" type="RichTextLabel" parent="Panel/VBox/ContentScroll/ContentVBox/ResourcesSection"]
-custom_minimum_size = Vector2(0, 190)
 layout_mode = 2
 theme_override_colors/default_color = Color(0.9, 0.9, 0.9, 1)
-theme_override_font_sizes/normal_font_size = 16
 bbcode_enabled = true
+fit_content = true
+scroll_active = false
 text = "[color=#f6a800][b]Attention[/b][/color] is the founder's month. You get a fresh grant every month and whatever you do not spend evaporates -- there is no banking.
 
 Attention splits two ways. [b]Planning hours[/b] queue strategic work; [b]operating hours[/b] pay for response windows, hiring and travel. A crisis can eat your planning hours, and planning can never buy back presence. That is why a tile can be dead while the top bar still shows Attention left: hover the tile, and hover the Attention readout, to see which hours are gone.
@@ -173,11 +172,11 @@ theme_override_font_sizes/font_size = 24
 text = "STRATEGY TIPS"
 
 [node name="Text" type="RichTextLabel" parent="Panel/VBox/ContentScroll/ContentVBox/StrategySection"]
-custom_minimum_size = Vector2(0, 140)
 layout_mode = 2
 theme_override_colors/default_color = Color(0.9, 0.9, 0.9, 1)
-theme_override_font_sizes/normal_font_size = 16
 bbcode_enabled = true
+fit_content = true
+scroll_active = false
 text = "1. [b]Runway first.[/b] Fundraising is the first tile for a reason. Most early runs die of bookkeeping, not of doom.
 2. [b]Spend the month.[/b] Unspent Attention evaporates at month end, so an under-planned month is a wasted one.
 3. [b]Both kinds of research cost you something.[/b] Capability work buys leverage and adds doom; safety work buys the reverse.

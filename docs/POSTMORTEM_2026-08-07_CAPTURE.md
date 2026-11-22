@@ -749,12 +749,12 @@ it."* Two of the three R1 instances above were caught this way.
 
 | # | Proposal | Falsifier | Date |
 |---|---|---|---|
-| P1 | Remove `\|\| true` from the ladder-bump check and add `godot/autoload/` to `GAMEPLAY_PREFIXES` | If by **2026-08-21** it has fired zero times **and** no ladder-owed change merged unbumped, it is dead weight -- delete it rather than keep a green ornament | 2026-08-21 |
-| P2 | Add `godot/data/**` and `godot/**/*.json` to the `Godot Tests` push path filter | If no push-triggered run between now and **2026-08-21** touches only those paths, the filter change bought nothing and should be reverted rather than left as coverage theatre | 2026-08-21 |
+| P1 | **KEPT (resolved 2026-08-21, see 6a).** Remove `\|\| true` from the ladder-bump check and add `godot/autoload/` to `GAMEPLAY_PREFIXES` | If by **2026-08-21** it has fired zero times **and** no ladder-owed change merged unbumped, it is dead weight -- delete it rather than keep a green ornament | 2026-08-21 |
+| P2 | **NOT DONE (resolved 2026-08-21, see 6a).** Add `godot/data/**` and `godot/**/*.json` to the `Godot Tests` push path filter | If no push-triggered run between now and **2026-08-21** touches only those paths, the filter change bought nothing and should be reverted rather than left as coverage theatre | 2026-08-21 |
 | P3 | Every published measurement command ships a control line proving it can return the other answer | Re-run the claim audit on the week of **2026-08-13**. A WRONG rate at or above today's 9 per cent means the rule did not take and should be replaced with the generator requirement, not patched again | 2026-08-20 |
-| P4 | Zero-result reads are errors. Any tool consuming a store and finding no usable records exits non-zero, naming the store and the count read | If this produces more than two false alarms by **2026-08-21**, it is mis-tuned and should be narrowed to the art tooling only | 2026-08-21 |
+| P4 | **NOT DONE (resolved 2026-08-21, see 6a).** Zero-result reads are errors. Any tool consuming a store and finding no usable records exits non-zero, naming the store and the count read | If this produces more than two false alarms by **2026-08-21**, it is mis-tuned and should be narrowed to the art tooling only | 2026-08-21 |
 | P5 | Generated HTML/JS artefacts are parsed before they are written. Extend `51ca568c`'s gate to `build_slot_picker.py` | If the gate rejects nothing by **2026-09-01**, the raw-string fix was sufficient alone and the gate is cost without benefit | 2026-09-01 |
-| P6 | No agent operates in the main checkout; lanes get worktrees | Read `git reflog` in the main checkout on **2026-08-21**. Any agent-attributable `reset` or `checkout --` means the rule was written and not operated -- the same failure as 07-31's unrecorded freeze exemption | 2026-08-21 |
+| P6 | **VIOLATED (resolved 2026-08-21, see 6a).** No agent operates in the main checkout; lanes get worktrees | Read `git reflog` in the main checkout on **2026-08-21**. Any agent-attributable `reset` or `checkout --` means the rule was written and not operated -- the same failure as 07-31's unrecorded freeze exemption | 2026-08-21 |
 | P7 | A ten-minute close-what-merged sweep, weekly | Open issue count on **2026-08-14**. If it is still at or above 208, the sweep did not happen and the triage lane should not be re-run until it does | 2026-08-14 |
 | P8 | Correct the four MEASURED tags in `SEED_ART_COST_MODEL.md`, or delete the doc | `grep -n MEASURED docs/art/SEED_ART_COST_MODEL.md` on **2026-08-14**. Any survivor beside a log-derived cost means the finding was documented and not fixed, which is F10 repeating one week on | 2026-08-14 |
 
@@ -778,6 +778,73 @@ COMMITMENT: 2026-08-14 -- P8 falsifier: grep -n MEASURED docs/art/SEED_ART_COST_
 COMMITMENT: 2026-08-14 -- P9, the pack's OWN falsifier: if none of P1-P8 started and no issue cites this document, stop producing printed packs -- owner: pdoom1-seat -- kind: falsifier -- note: the only item on the list whose subject is the planning apparatus itself.
 
 COMMITMENT: 2026-08-20 -- P3 falsifier: re-run the claim audit. A WRONG rate at or above 9 per cent means the control-line rule did not take -- owner: pdoom1-seat -- kind: falsifier -- covers: docs/CLAIM_AUDIT_2026-08-06.md -- note: section 6's P3 row carries TWO dates, 2026-08-13 in the falsifier prose and 2026-08-20 in the Date column. The Date column wins here; that ambiguity is exactly what a declaration removes.
+
+---
+
+## 6a. Falsifier outcomes -- resolved 2026-08-21
+
+Four falsifiers came due today. **Two of the four proposals were never
+implemented**, and the table in section 6 reads as though they were. That is the
+finding, and it is worth more than any individual verdict: the pack's
+follow-through rate is roughly half, and the only reason that is knowable is that
+the items carried dates. The falsifier mechanism did its job -- from the outside,
+against the pack's own optimism.
+
+| # | Verdict | Evidence |
+|---|---|---|
+| P1 | **SURVIVES -- keep the check** | It has fired repeatedly: **21 of the last 60 merged PRs** carry a `Ladder-Impact:` declaration, i.e. the gate demanded and got a written answer 21 times. And a ladder-owed change *did* merge unbumped: `01d40168` (v0.14.2, L4 -> L5, 2026-08-21) added `owed_bumps()` to `tools/check_ladder_bump.py` precisely because "an epoch cut declared a bump that has not been paid". **Both halves of the delete-condition fail.** |
+| P2 | **NEVER IMPLEMENTED** | `.github/workflows/godot-tests.yml` has not been touched since `e3a3b55e` (2026-07-28), ten days before this pack; twelve other workflow commits landed in the window, so the lane was active and P2 simply was not among them. The counterfactual is also empty: of 93 pushes to `main` since 2026-08-07, **13 touched `godot/data` or Godot JSON and 0 were confined to them**; all-time the rate is **3 of 1038 commits (0.29%)**, and all three predate the proposal. The framing was also inverted -- P2 *adds* paths, so it buys coverage and spends minutes rather than saving them. The gap it imagined was already covered three ways: `godot-tests.yml` runs on **all** PRs with no path filter (and every commit reaches `main` by squash-merge, so the identical tree is tested pre-merge), `data-validation.yml` already filters `godot/data/**`, and `quality-checks.yml` has no push path filter at all. |
+| P4 | **NEVER IMPLEMENTED** | No implementing code exists at any commit between `930e8b37` (2026-08-08) and `38528c22` (2026-08-21). Zero alarms, therefore zero false alarms, therefore the ">2 false alarms" arithmetic never receives an input. Near-misses checked and rejected: `run_godot_tests.py`'s `EXIT_NO_RESULT` is #1181 and predates the pack; `check_review_js.py` is P5 and says so in its own commit body; the website's store-absence split is on an unmerged branch in another repo. **The falsifier's own remedy is already true by accident** -- `run_art_night.py:929`, `measure_taste.py:84` and `slot_model.py:249` all treat a zero read as an abort and all predate the pack. One live dissenter remains: `tools/art_review/apply_review.py:1201-1207` prints "no verdicts yet" and returns 0, which is exactly the absorbing empty state P4 was written to close. |
+| P6 | **FIRES -- the rule was written and not operated** | See below. |
+
+### P6 in full, because the violation is attributable and recent
+
+`git reflog` in the main `pdoom1` checkout records, on 2026-08-21 between 05:20
+and 05:59 UTC:
+
+```
+05:20  checkout: moving from chore/backup-ignore-per-reviewer to main
+05:20  reset: moving to origin/main            <- hard reset, shared checkout
+05:20  checkout: moving from main to ci/provenance-gate-restored
+05:23  checkout: moving from ci/provenance-gate-restored to main
+05:24  checkout: moving from main to docs/credits-drop-the-aside
+05:27  commit: docs(credits): the credits screen was showing a note I wrote to myself
+05:59  checkout: moving from docs/credits-drop-the-aside to main
+```
+
+Six checkouts and a `git reset --hard origin/main` **in a checkout another seat
+was working in**, by the pdoom1-website seat. That seat was on
+`chore/backup-ignore-per-reviewer` at the time, so nothing of theirs sat on `main`
+to lose -- but nothing-was-lost is luck, not a control, and the reset is the exact
+operation the rule forbids.
+
+**The aggravating detail is that the same seat operated the rule correctly four
+hours later.** On noticing a release cut staged in that tree it built an isolated
+worktree, committed there, and removed it (`docs/playtest-sheet-wanasai-2026-08-21`,
+merged as `2e26de17`). So the rule is operable, the seat knew how, and did not
+until the risk became visible. **A rule followed only when danger is noticed is
+not a rule.** This document's own change is being made from a worktree for that
+reason.
+
+Six hard resets appear in that reflog over the past week. Only the 05:20 one is
+attributable to an agent by command log; the rest cluster in windows consistent
+with ordinary human work, which is not a violation.
+
+### What is now owed
+
+- **P1** -- nothing. Keep the check.
+- **P2** -- mark the section 6 row NOT DONE. The honest ledger entry is that the
+  proposal was written, dated, never actioned, and the week's data shows the
+  inaction cost nothing. That is a different and more useful finding than "the
+  filter bought nothing".
+- **P4** -- either land it as art-tooling-only, which is nearly free since three
+  of four call sites already behave that way, or strike it from the pack. Rolling
+  the date would be the third option and is the one this pack exists to argue
+  against.
+- **P6** -- the rule needs a mechanism or it should be dropped. A written rule
+  that an agent breaks and then keeps is worse than no rule, because it reads as
+  a control in every future audit.
+
 
 COMMITMENT: 2026-08-21 -- P1 falsifier: if the ladder-bump check has fired zero times and no ladder-owed change merged unbumped, delete it rather than keep a green ornament -- owner: pdoom1-seat -- kind: falsifier
 

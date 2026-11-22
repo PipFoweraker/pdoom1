@@ -57,12 +57,15 @@ python tools/build_release.py
 
 ### GitHub Actions
 
-**Pre-Release Checks** (`.github/workflows/pre-release-checks.yml`)
-- Triggered on version tag push
-- Validates CHANGELOG updated
-- Checks version consistency
-- Runs tests
-- Creates issue if validation fails
+**Release preflight** (the `preflight` job in `.github/workflows/enhanced-release.yml`;
+was the separate `pre-release-checks.yml` until 2026-10-26, #1299)
+- First job of the tag-triggered release; every build/publish job `needs:` it,
+  so a red preflight stops the release
+- Release-branch guard (`tools/check_release_branch.py`, #1269): tag must be on
+  `release/v<M>.<m>` and match `version.txt`
+- CHANGELOG section heading, release-notes guard, `project.godot` version
+- Creates an issue if it fails (the release was NOT published)
+- Dry run: `gh workflow run enhanced-release.yml --ref release/v0.X -f version=v0.X.Y`
 
 **Release Reminder** (`.github/workflows/release-reminder.yml`)
 - Triggered on version tag push

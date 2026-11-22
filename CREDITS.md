@@ -12,10 +12,20 @@ P(Doom)1 -- a turn-based AI-safety strategy game.
 > can resolve. The generator DROPS any entry still carrying a placeholder, so an
 > unresolved TODO can never reach a player's screen -- it just silently does not
 > appear. Resolving one is what makes it ship.
+>
+> **EVERY SECTION HERE IS PLAYER-FACING.** Prose you write in a section body is
+> rendered as a credits-screen note, not kept as a maintenance comment -- so
+> ADR-0002 applies throughout (the Music section spells this out, and a test
+> scans `godot/data/credits.json` for banned wording). Notes to yourself belong
+> in the commit message or in "Notes for Pip" at the bottom, never in a section.
+> **Diff `godot/data/credits.json` before committing** -- on 2026-08-20 an
+> internal remark about this file having been wrong was one `generate` away from
+> appearing on the credits screen, caught by reading that diff and by nothing
+> else.
 
 ## Game
 
-- **Design, direction, and development:** Pip Foweraker  *(adjust name form as preferred)*
+- **Design, direction, and development:** Pip Foweraker -- pipfoweraker.com
 - **Engine:** [Godot Engine](https://godotengine.org) 4.5.1 (MIT License)
 
 ## Cats
@@ -41,11 +51,13 @@ WITHOUT a credit line rather than printing the marker.
 | Missy | Spicy | web-missy.jpg |
 | Nigel | Nicki T. | web-nigel.jpg |
 
-Credit names are transcribed verbatim from
-`art_source/cats_incoming/INVENTORY.md` (the "Custodian" field), which is the
-only record this repo holds. Nobody has confirmed these are the forms the
-contributors want to be credited under -- see the Pip checklist below. Change the
-name HERE and the game picks it up on the next generate.
+Credit names are the forms each contributor agreed to, settled with each of them
+in the group chat where the photos were volunteered -- confirmed by Pip
+2026-08-20, on his account of that conversation rather than a linkable artifact.
+`art_source/cats_incoming/INVENTORY.md`'s "Custodian" field, still the only
+record this repo holds, is therefore a transcription of an agreed credit line
+and not internal metadata reused as one. Change the name HERE and the game picks
+it up on the next generate.
 
 ## Music
 
@@ -94,7 +106,10 @@ The full lineage is documented in `docs/audio/REFERENCE_TRACKS.md`.
 
 ### Notes for Pip (resolve before any public/shipped credits use)
 
-- [ ] Confirm your preferred credited name/handle (used "Pip Foweraker" above).
+- [x] **Confirmed 2026-08-20.** Credited as "Pip Foweraker", with pipfoweraker.com
+      as plain text. Ruled after the aside that used to sit on that line shipped
+      to the credits screen: the placeholder-drop only matches [bracket] markers,
+      so an italic parenthetical passed straight through.
 - [ ] Fill your friend's name/handle for the original tracks -- or "prefers
       anonymity" if that is their wish. Confirm the rights note in writing
       (the music brief says you hold full rights; STEM_CATALOGUE.md suggests
@@ -105,12 +120,11 @@ The full lineage is documented in `docs/audio/REFERENCE_TRACKS.md`.
 - [ ] Fill the art-pipeline attributions (owned by the art lane, not this session).
 - [x] In-game credits screen: BUILT. Welcome menu -> `Credits`, generated from
       this file. Cats get the top section.
-- [ ] **Cats: confirm each contributor's preferred credit form.** The eight names
-      above are transcribed from INVENTORY.md's "Custodian" field, which was
-      internal metadata, not a stated credit preference. Ask each contributor how
-      they want to appear (full name / first name / handle / "prefers
-      anonymity"), then edit the table. Until then the game ships the inventory
-      form.
+- [x] **Cats: RESOLVED 2026-08-20.** Each contributor's credit form was agreed
+      with them in the group chat where the photos were volunteered -- confirmed
+      by Pip. The "Custodian" field was therefore never merely internal
+      metadata; it recorded a form each person had chosen. The eight rows above
+      stand as shipped.
 - [x] **Doom Cat: RESOLVED 2026-08-07.** Contributed by Pip. The inventory's
       "Office (default/mascot)" custodian field was internal metadata, not an
       absence of a contributor.

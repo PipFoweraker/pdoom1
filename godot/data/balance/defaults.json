@@ -2,6 +2,11 @@
 	"_description": "Central gameplay tunables (L9, issue #621). These are the shipped defaults -- identical to the pre-L9 inline literals, so this file is behavior-neutral until a sweep varies it. Tune by editing here or by dropping a user://balance_overrides.json with the same shape (deep-merged on top). Consumers pass the same values as call-site fallbacks, so a missing file degrades safely.",
 	"events": {
 		"_description": "Event pacing. first_event_turn/max_new_events_per_turn are the pre-L1 day-tick throttle (#568) -- kept for the resolution tick. The MONTH plan layer (ADR-0009/workshop#3) governs decision load via the window DEMAND budget below, not an information budget: only 'window'-tier events demand a decision. Tiers per genre live on the event definitions (delivery_tier: ambient|feed|window).",
+		"retention": {
+			"_description": "Rival-retention counter-offers (#1225 item 4). A counter keeps the person a rival would otherwise take: loyalty up (loyalty IS poaching resistance) and current_salary up, which bills through normal payroll forever.",
+			"loyalty_gain": 20,
+			"salary_raise_pct": 0.15
+		},
 		"first_event_turn": 2,
 		"max_new_events_per_turn": 2,
 		"default_delivery_tier": "feed",
@@ -97,7 +102,9 @@
 			"action_safety_alarm": 0.03,
 			"action_paper_alarm": 3.0,
 			"action_audit_absorb": 1.0,
-			"action_desperation_absorb": 0.0,
+			"upgrade_cat_alarm": 5.0,
+			"_upgrade_cat_alarm_note": "The cat_adoption upgrade raises global_alarm (a happier, more careful org) rather than writing doom directly -- ADR-0015. Value matches the hardcoded fallback it replaces, so behaviour is unchanged; it is here so the effect is tunable and visible at all. Silent-failure register sighting #2.",
+			"action_desperation_absorb": 25.0,
 			"action_lobby_pressure": 0.5,
 			"action_lobby_alarm": 0.5,
 			"action_warning_alarm": 0.6,
@@ -106,7 +113,11 @@
 			"action_sabotage_panic": 5.0,
 			"action_opensource_alarm": 0.6,
 			"action_opensource_diffusion": 0.0,
-			"action_conference_alarm": 0.6
+			"action_conference_alarm": 0.6,
+			"_event_description": "event_* price the RUNTIME-GENERATED pdoom-data event options (event_service.gd _generate_options), which built their effects in code and so never went through the content migration that stripped literal doom deltas from res://data. Each is anchored to the action_* price for the analogous founder move rather than being a new dial. Relief is routed ONLY to safety_absorption, never global_alarm: these options recur on up to 2 events every turn, and a repeated input into a decaying stock settles at input/(1-decay), which reproduces the -6 doom/turn exploit this replaced. The overhang clamp max(0, frontier-absorption) bounds absorption structurally. event_shock_panic is the doom->panic conversion for impacts the pdoom-data variable map launders into 'doom' (vibey_doom/stress/burnout_risk/safety): 1/(W_panic/(1-panic_decay)) = 1.5, which keeps the INTEGRATED doom identical.",
+			"event_safety_absorb": 4.0,
+			"event_frontier_gain": 60.0,
+			"event_shock_panic": 1.5
 		}
 	},
 	"salaries": {

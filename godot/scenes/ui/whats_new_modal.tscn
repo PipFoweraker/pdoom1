@@ -81,7 +81,6 @@ horizontal_alignment = 1
 [node name="VersionLabel" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBox"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.91, 0.64, 0.24, 1)
-theme_override_font_sizes/font_size = 18
 text = "Version 0.11.0 - Travel & Conferences"
 horizontal_alignment = 1
 
@@ -99,7 +98,6 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_colors/default_color = Color(0.85, 0.88, 0.92, 1)
-theme_override_font_sizes/normal_font_size = 16
 bbcode_enabled = true
 text = "Loading patch notes..."
 fit_content = true
@@ -114,6 +112,5 @@ layout_mode = 2
 size_flags_horizontal = 4
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
-theme_override_font_sizes/font_size = 18
 theme_override_styles/normal = SubResource("StyleBoxFlat_button")
 text = "Got it!"

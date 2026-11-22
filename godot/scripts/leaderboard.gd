@@ -17,9 +17,12 @@ class_name Leaderboard
 # a multi-byte UTF-8 codepoint and store an invalid string. The client fits the
 # value itself (see fit_board_name) so the server's cut never fires at all.
 #
-# score_api.php lives on the server and is in no repo here, so raising this
-# limit or adding a field is a server change -- routed through coordination,
-# not decided here.
+# score_api.php IS in this repo, at server/leaderboard/score_api.php. The older
+# note here said it "lives on the server and is in no repo here", which was
+# false, and that belief is why the server-side board wipe sat unfixed for two
+# weeks (#1272). Raising this limit is still a coordinated change -- the server
+# fits to the same number and a DEPLOY is a separate manual step -- but the code
+# and its tests (server/leaderboard/tests/test_score_api.php) are editable here.
 const BOARD_NAME_MAX_BYTES := 40
 const BOARD_NAME_CUT_MARK := "..."
 

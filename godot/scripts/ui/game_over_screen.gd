@@ -766,13 +766,17 @@ func _build_death_attribution_bbcode() -> String:
 		return ""
 	var st = GameManager.state
 	var result: Dictionary = DeathAttribution.classify(st)
-	var chain: Array = result.get("chain", [])
+	# #1248: the proximate causes only. `chain` is the whole run's trail and was
+	# being printed verbatim under a heading that says CAUSE OF DEATH -- which
+	# blamed a turn-80 cash crisis the player recovered from for a turn-130 death.
+	var chain: Array = result.get("chain_proximate", [])
+	var earlier: Array = result.get("chain_earlier", [])
 	var surface := str(result.get("surface", ""))
 	var dominant := ""
 	if st.doom_system:
 		dominant = st.doom_system.get_dominant_stream()
 	var killer := overhang_killer_line(surface, dominant, st.frontier_capability, _rival_dicts(st))
-	return build_attribution_bbcode(chain, killer)
+	return build_attribution_bbcode(chain, killer, earlier)
 
 ## Serialize the live rival labs to dicts so the shared DoomBreakdown name-masking (which reads
 ## the save-shaped rival dicts) can resolve visibility identically on the defeat screen.
@@ -801,9 +805,14 @@ static func overhang_killer_line(surface: String, dominant_stream: String, front
 
 ## Compose the cause-of-death panel BBCode from a causal chain + optional named-killer line.
 ## Empty string when there is nothing to show. Pure -- unit-tested.
-static func build_attribution_bbcode(chain: Array, killer_line: String) -> String:
+## `chain` is the PROXIMATE trail; `earlier` is the rest of the run's history and
+## is rendered under its own heading (#1248). Passing everything as `chain` is what
+## made the panel blame a crisis the player survived, 50 turns after they survived it.
+static func build_attribution_bbcode(chain: Array, killer_line: String,
+		earlier: Array = []) -> String:
 	var has_chain: bool = chain != null and not chain.is_empty()
-	if not has_chain and killer_line == "":
+	var has_earlier: bool = earlier != null and not earlier.is_empty()
+	if not has_chain and not has_earlier and killer_line == "":
 		return ""
 	var out := "[center][b]CAUSE OF DEATH[/b][/center]\n"
 	if killer_line != "":
@@ -812,6 +821,17 @@ static func build_attribution_bbcode(chain: Array, killer_line: String) -> Strin
 	if has_chain:
 		out += "[color=%s]" % _hex(_C_DIM)
 		for line in chain:
+			out += "  " + str(line) + "\n"
+		out += "[/color]"
+	elif killer_line == "":
+		# Everything logged is older than the recency window. Say so, rather than
+		# printing an empty heading or promoting history to fill the space.
+		out += "[center][color=%s]nothing recent enough to blame[/color][/center]\n" % _hex(_C_DIM)
+	if has_earlier:
+		out += "\n[center][b]EARLIER IN THE RUN[/b][/center]\n"
+		out += "[center][color=%s]survived, not fatal[/color][/center]\n" % _hex(_C_DIM)
+		out += "[color=%s]" % _hex(_C_DIM)
+		for line in earlier:
 			out += "  " + str(line) + "\n"
 		out += "[/color]"
 	return out

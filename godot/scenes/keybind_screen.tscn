@@ -42,7 +42,6 @@ theme_override_constants/separation = 10
 [node name="ProfileLabel" type="Label" parent="MarginContainer/VBoxContainer/Header"]
 layout_mode = 2
 text = "Profile:"
-theme_override_font_sizes/font_size = 16
 
 [node name="ProfileSection" type="HBoxContainer" parent="MarginContainer/VBoxContainer/Header"]
 layout_mode = 2

@@ -19,8 +19,19 @@ THE INVARIANT THIS ENFORCES:
 USAGE:
     python tools/check_scene_nav.py            # scan the whole godot/ tree (CI mode)
     python tools/check_scene_nav.py <files...> # check specific files (pre-commit passes these)
+    python tools/check_scene_nav.py --self-test  # prove the scanner can still return BOTH answers
 
     Exit 0 = clean. Exit 1 = at least one direct navigation call outside the chokepoint.
+
+WHY --self-test EXISTS (added 2026-08-24, issue #1265):
+    This gate has been blocking in pre-commit AND in quality-checks.yml since the v0.11.0
+    crash, and in that whole time it has only ever printed nothing and exited 0. A gate
+    that has never gone red is indistinguishable from `def main(): return 0`. The
+    self-test asserts BOTH answers, and one of its cases is drawn from real code rather
+    than a fixture: godot/autoload/scene_transition.gd genuinely calls
+    change_scene_to_file() and reload_current_scene(), so the SANCTIONED exemption is
+    load-bearing -- scan_text() must flag those exact lines while scan_file() must not.
+    If someone widens the exemption to a directory, that case goes red.
 
 ESCAPE HATCH (use sparingly, with justification):
     Append  # scene-nav-allow  to a line to exempt it (e.g. a genuinely one-off tool).
@@ -53,13 +64,14 @@ def _code_part(line: str) -> str:
     return line if hashpos == -1 else line[:hashpos]
 
 
-def scan_file(path: Path) -> list[tuple[int, str]]:
-    if path.resolve() == SANCTIONED:
-        return []
-    try:
-        text = path.read_text(encoding="utf-8", errors="replace")
-    except OSError:
-        return []
+def scan_text(text: str) -> list[tuple[int, str]]:
+    """Return [(lineno, stripped_line)] for every banned CALL in `text`.
+
+    Split out from scan_file() so --self-test can exercise the decision without
+    writing files, and so the SANCTIONED exemption stays visibly separate from the
+    detection: scan_text says "is this a direct navigation call", scan_file says
+    "and is this file allowed to make one".
+    """
     hits: list[tuple[int, str]] = []
     in_docstring = (
         False  # inside a """...""" / '''...''' block (GDScript docstrings are string literals)
@@ -81,6 +93,102 @@ def scan_file(path: Path) -> list[tuple[int, str]]:
     return hits
 
 
+def scan_file(path: Path) -> list[tuple[int, str]]:
+    if path.resolve() == SANCTIONED:
+        return []
+    try:
+        text = path.read_text(encoding="utf-8", errors="replace")
+    except OSError:
+        return []
+    return scan_text(text)
+
+
+# --- self-test fixtures ----------------------------------------------------
+# Every form the scanner must NOT flag. Each line is a shape that has actually
+# appeared in this tree.
+SELF_TEST_CLEAN = '''extends Node
+
+## Do not call get_tree().change_scene_to_file() directly -- prose in a comment.
+func _on_pressed() -> void:
+\tSceneTransition.go_to("res://scenes/menu.tscn")
+\tSceneTransition.reload()  # not get_tree().reload_current_scene()
+
+func _legacy() -> void:
+\tget_tree().change_scene_to_file("res://scenes/x.tscn")  # scene-nav-allow
+
+var doc = """
+\tget_tree().change_scene_to_packed(packed)
+"""
+'''
+
+# Every form the scanner MUST flag -- the v0.11.0 crash shape and its two siblings.
+SELF_TEST_DIRTY = """extends Control
+
+func _gui_input(event: InputEvent) -> void:
+\tget_tree().change_scene_to_file("res://scenes/leaderboard.tscn")
+
+func _b() -> void:
+\tget_tree().change_scene_to_packed(_packed)
+
+func _c() -> void:
+\tget_tree().reload_current_scene()
+"""
+
+
+def self_test() -> int:
+    """Prove the checker can return BOTH answers (CLAUDE.md: a published command must be
+    shown capable of returning the other answer)."""
+    ok = True
+
+    clean = scan_text(SELF_TEST_CLEAN)
+    if clean:
+        ok = False
+        print("SELF-TEST FAIL: clean navigation forms were flagged: %r" % (clean,))
+    else:
+        print("  [ok] the five clean forms pass")
+        print("       (SceneTransition call / prose in a ## comment / inline comment /")
+        print("        an annotated %s exception / a triple-quoted block)" % ALLOW_MARKER)
+
+    dirty = scan_text(SELF_TEST_DIRTY)
+    found = {name for _, line in dirty for name in BANNED if name in line}
+    if len(dirty) != 3 or found != set(BANNED):
+        ok = False
+        print(
+            "SELF-TEST FAIL: expected all 3 banned calls, got %d %r" % (len(dirty), sorted(found))
+        )
+    else:
+        print("  [ok] all three banned calls are caught, including the v0.11.0 shape")
+        print("       (change_scene_to_file from inside _gui_input -- 0xc0000005)")
+
+    # Real history, not a fixture: the sanctioned file DOES make these calls. The
+    # exemption is therefore load-bearing, and both halves of it must hold.
+    if not SANCTIONED.is_file():
+        ok = False
+        print("SELF-TEST FAIL: sanctioned file missing: %s" % SANCTIONED)
+    else:
+        raw = SANCTIONED.read_text(encoding="utf-8", errors="replace")
+        in_sanctioned = scan_text(raw)
+        if not in_sanctioned:
+            ok = False
+            print(
+                "SELF-TEST FAIL: scene_transition.gd no longer contains a raw navigation\n"
+                "                call, so the SANCTIONED exemption proves nothing. Either the\n"
+                "                chokepoint moved, or the detector stopped detecting."
+            )
+        elif scan_file(SANCTIONED) != []:
+            ok = False
+            print("SELF-TEST FAIL: the sanctioned chokepoint was itself reported")
+        else:
+            print(
+                "  [ok] the chokepoint makes %d raw call(s) that scan_text flags and"
+                % len(in_sanctioned)
+            )
+            print("       scan_file exempts -- the exemption is load-bearing, not decorative")
+
+    print("SELF-TEST %s" % ("PASSED" if ok else "FAILED"))
+    return 0 if ok else 1
+
+
 def iter_targets(argv: list[str]) -> list[Path]:
     if argv:
         return [Path(a) for a in argv if a.endswith(".gd")]
@@ -88,6 +196,9 @@ def iter_targets(argv: list[str]) -> list[Path]:
 
 
 def main(argv: list[str]) -> int:
+    if "--self-test" in argv:
+        return self_test()
+
     violations: list[tuple[Path, int, str]] = []
     for path in iter_targets(argv):
         if not path.exists():

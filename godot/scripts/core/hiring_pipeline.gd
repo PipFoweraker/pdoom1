@@ -123,6 +123,11 @@ func advertise(state) -> Dictionary:
 		"months_remaining": Balance.inum("hiring.advertise.campaign_months", 3),
 		"per_month_min": Balance.inum("hiring.advertise.per_month_min", 0),
 		"per_month_max": Balance.inum("hiring.advertise.per_month_max", 2),
+		# #1225 item 3: the campaign has to be able to report on itself. `spent` is what
+		# this campaign cost so the closing line can name the money; `total_added` is how
+		# many people it actually produced, which is the number the player never had.
+		"spent": cost_money,
+		"total_added": 0,
 	})
 	return {"success": true, "message": "Launched a hiring ad campaign (candidates trickle in over the coming months)."}
 
@@ -306,6 +311,24 @@ func make_offer(state, candidate_id: String, cash_offer: float, promises: Array 
 		return {"success": false, "message": Office.no_desk_message(state)}
 	if _has_job_for(candidate_id, KIND_OFFER):
 		return {"success": false, "message": "%s already has an offer out." % cand.researcher_name}
+	# #1225 item 2, adjacent hole: this checked only KIND_OFFER. Offering during an
+	# IN-FLIGHT INTERVIEW was allowed; on accept the candidate leaves the pool, and the
+	# orphaned interview job later finds find_pool_candidate == null and is SILENTLY
+	# DROPPED -- 2 Attention burned, no message. Refuse instead, spending nothing.
+	if _has_job_for(candidate_id, KIND_INTERVIEW):
+		return {"success": false,
+			"message": "%s is mid-interview -- wait for it to land before offering." % cand.researcher_name}
+	# #1225 item 2, the exploit itself. A rejection left no mark, so re-sending the SAME
+	# lowball every 2 workdays at 1 Attention was a guaranteed eventual hire: rejection is
+	# a roll, and repeated rolls always land. Refuse a repeat at or below what they have
+	# already turned down -- crisp, free, and it says the number.
+	#
+	# NOT a raised floor: self_worth_floor() is untouched and a better offer resolves
+	# exactly as before. The candidate simply remembers.
+	if cand.offers_rejected > 0 and cash_offer <= cand.highest_rejected_offer:
+		return {"success": false,
+			"message": "%s already turned down $%d. Offer more than that, or move on." % [
+				cand.researcher_name, int(cand.highest_rejected_offer)]}
 	var cost_att := Balance.inum("hiring.offer.cost_attention", 1)
 	if state.month_plan == null or not state.month_plan.spend_attention(cost_att):
 		return {"success": false, "message": "Not enough Attention to make an offer (%d needed)" % cost_att}
@@ -335,10 +358,16 @@ func _resolve_offer(state, cand: Researcher, cash: float, promises: Array) -> Di
 	var shortfall_frac: float = (floor - cash) / maxf(1.0, floor)
 	var prob_reject: float = clampf(shortfall_frac * reject_scale, 0.0, 1.0)
 	if state.rng.randf() < prob_reject:
-		# Declined -- candidate returns to the pool (still selectable / re-offerable).
+		# Declined -- candidate returns to the pool (still selectable, but see below).
 		cand.transition_hire_state(Researcher.HireState.CANDIDATE_IN_POOL)
+		# #1225 item 2: REMEMBER IT. Without this the candidate came back identical and
+		# the same lowball could be re-sent until a roll landed. make_offer() now refuses
+		# anything at or below this number.
+		cand.highest_rejected_offer = maxf(cand.highest_rejected_offer, cash)
+		cand.offers_rejected += 1
 		return {"success": true, "outcome": "rejected",
-			"message": "%s declined the offer (lowball) -- back in the pool." % cand.researcher_name}
+			"message": "%s declined $%d -- back in the pool, and they will remember the number." % [
+				cand.researcher_name, int(cash)]}
 	# Accepted, but resentful: employed with a loyalty debt (ADR-0003).
 	return _accept_offer(state, cand, cash, promises, true)
 
@@ -649,7 +678,25 @@ func build_mentoring_prompt(cand: Researcher) -> Dictionary:
 		"id": "hiring_mentor_%s" % cand.candidate_id,
 		"kind": "hiring_mentoring_prompt",
 		"name": "Mentor %s?" % cand.researcher_name,
-		"description": "Optional: block out founder time to mentor %s. Mentored hires ramp to full effectiveness faster and are less likely to quit early. Skipping saves the time now, at a lasting output debuff and an early-quit risk." % cand.researcher_name,
+		# #1225 item 5, the trap: LAPSING OR DISMISSING THIS CARD IS CHOOSING TO SKIP.
+		# _resolve_hiring_window treats a dismissal as mentoring_skipped, which arms a
+		# PERMANENT x0.85 output debuff and a 15% per-month early-quit roll. A player who
+		# closes a popup had made a permanent decision and was never told so -- a #1221
+		# case: a refusal, or here a default, must say what it is.
+		#
+		# The numbers are named rather than hinted. They were previously "a lasting output
+		# debuff and an early-quit risk", which is true and unactionable.
+		"description": ("Optional: block out founder time to mentor %s. Mentored hires ramp to full effectiveness faster and are less likely to quit early.\n\n"
+			+ "Skipping costs a PERMANENT x%.2f output penalty and a %d%% chance per month that they quit early.\n\n"
+			+ "CLOSING OR IGNORING THIS CARD COUNTS AS SKIPPING. You can still mentor them later from the hiring screen, which un-arms both.") % [
+				cand.researcher_name,
+				# The SAME keys the sim reads, not lookalikes: researcher.gd's
+				# get_effective_productivity() applies skimped_multiplier, and
+				# _roll_early_attrition() rolls against attrition_risk. Reading different
+				# keys here would let the card and the sim drift the moment either is
+				# tuned -- the exact defect class this issue is about.
+				Balance.num("hiring.onboarding.skimped_multiplier", 0.85),
+				int(Balance.num("hiring.onboarding.attrition_risk", 0.15) * 100.0)],
 		"type": "popup",
 		"delivery_tier": "window",
 		"event_class": "no-action",
@@ -790,14 +837,38 @@ func _tick_campaigns(state) -> void:
 		var lo := int(camp.get("per_month_min", 0))
 		var hi := int(camp.get("per_month_max", 2))
 		var n: int = state.rng.randi_range(lo, hi)
+		var added := 0
+		var discarded := 0
 		for i in range(n):
 			var c := _spawn_candidate(state, false)
 			if _add_sourced_candidate(state, c):
+				added += 1
 				last_events.append({"kind": "advertise_hit", "candidate": c.researcher_name})
+			else:
+				# Pool at MAX_CANDIDATES. This discard was previously silent (#961); the
+				# summary below now carries it. NOTE the rng is still consumed either way
+				# -- _spawn_candidate runs before the cap is tested -- so surfacing this
+				# does not move the RNG stream and cannot fork a board key.
+				discarded += 1
+		camp["total_added"] = int(camp.get("total_added", 0)) + added
 		var rem := int(camp.get("months_remaining", 0)) - 1
 		if rem > 0:
 			camp["months_remaining"] = rem
 			still.append(camp)
+		# ONE summary per campaign per month, emitted whether or not anybody turned up.
+		# #1225 item 3: a zero-yield month used to emit NOTHING, which is indistinguishable
+		# from the campaign having quietly ended. The player paid for three months of
+		# something and could not tell month 2 from no campaign at all.
+		last_events.append({
+			"kind": "advertise_month",
+			"drawn": n,
+			"added": added,
+			"discarded": discarded,
+			"months_remaining": maxi(rem, 0),
+			"ended": rem <= 0,
+			"total_added": int(camp.get("total_added", 0)),
+			"spent": float(camp.get("spent", 0.0)),
+		})
 	campaigns = still
 
 
@@ -965,6 +1036,12 @@ func from_dict(data: Dictionary) -> void:
 			c["months_remaining"] = int(c.get("months_remaining", 0))
 			c["per_month_min"] = int(c.get("per_month_min", 0))
 			c["per_month_max"] = int(c.get("per_month_max", 0))
+			# #1225 item 3. JSON has no int type, so these come back as floats and the
+			# closing line would render "0.0 applicants" without the coercion. Defaults
+			# keep a pre-#1225 save loadable: an in-flight campaign from an older save
+			# reports what it produced FROM NOW ON rather than refusing to load.
+			c["total_added"] = int(c.get("total_added", 0))
+			c["spent"] = float(c.get("spent", 0.0))
 			campaigns.append(c)
 	jobs = []
 	for job in data.get("jobs", []):

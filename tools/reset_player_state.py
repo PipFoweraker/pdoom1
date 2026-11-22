@@ -35,6 +35,7 @@ import argparse
 import os
 import shutil
 import sys
+import time
 from datetime import datetime
 from pathlib import Path
 
@@ -149,7 +150,30 @@ def apply(root: Path, keep_identity: bool) -> int:
     return 0
 
 
-def restore(root: Path) -> int:
+def restore(root: Path, overwrite: bool = False) -> int:
+    """Undo the most recent --apply.
+
+    WHY THIS REFUSES RATHER THAN REPORTS SUCCESS
+    ---------------------------------------------
+    Until 2026-08-21 this function skipped any destination that already existed
+    and then printed "[OK] Restore complete." and returned 0 regardless. Because
+    `leaderboards/` exists as soon as the game runs once, a bare --restore
+    skipped THE ENTIRE DIRECTORY and reported success. This is the
+    disaster-recovery tool for the incident that destroyed a 50-entry league
+    board on 2026-07-31, and it could not perform the one restore it exists for
+    while telling the operator it had.
+
+    A recovery tool that cannot distinguish "restored everything" from
+    "restored nothing" is worse than no recovery tool, because it converts a
+    recoverable loss into a believed-recovered loss.
+
+    Two changes, and neither of them destroys anything:
+      - The outcome is COUNTED, and the exit code and final line follow the
+        count. Nothing restored plus something skipped is a FAILURE.
+      - --overwrite moves the live copy aside to <name>.superseded-<stamp>
+        before restoring over it, so the operator can still get back to the
+        state they were in thirty seconds ago.
+    """
     if not root.exists():
         raise SystemExit("No user data directory at %s" % root)
     backups = sorted(p for p in root.iterdir() if p.is_dir() and p.name.startswith(BACKUP_PREFIX))
@@ -157,18 +181,56 @@ def restore(root: Path) -> int:
         raise SystemExit("No backups found in %s" % root)
     newest = backups[-1]
     print("Restoring from %s" % newest)
+
+    restored, skipped, superseded = [], [], []
+    stamp = time.strftime("%Y%m%d_%H%M%S")
     for child in sorted(newest.iterdir()):
         dest = root / child.name
         if dest.exists():
-            print("  SKIP %s (already present -- not overwriting)" % child.name)
-            continue
+            if not overwrite:
+                skipped.append(child.name)
+                print("  SKIP %s (already present -- not overwriting)" % child.name)
+                continue
+            aside = root / ("%s.superseded-%s" % (child.name, stamp))
+            shutil.move(str(dest), str(aside))
+            superseded.append(aside.name)
+            print("  moved live %s aside to %s" % (child.name, aside.name))
         shutil.move(str(child), str(dest))
+        restored.append(child.name)
         print("  restored %s" % child.name)
+
     try:
         newest.rmdir()
     except OSError:
         print("  (backup dir kept: it still holds skipped items)")
-    print("[OK] Restore complete.")
+
+    print("")
+    print(
+        "  restored %d, skipped %d, moved aside %d" % (len(restored), len(skipped), len(superseded))
+    )
+
+    if skipped and not restored:
+        print("")
+        print("[FAILED] NOTHING WAS RESTORED. Every item in the backup already exists")
+        print("         at the destination, so all %d were skipped." % len(skipped))
+        print("         Skipped: %s" % ", ".join(skipped))
+        print("")
+        print("         This is the state that used to print [OK]. If you are recovering")
+        print("         real data, re-run with --overwrite: the live copies are moved to")
+        print("         <name>.superseded-<stamp> first, so nothing is destroyed either way.")
+        return 1
+
+    if skipped:
+        print("")
+        print(
+            "[PARTIAL] Restored %d, but %d item(s) already existed and were left alone:"
+            % (len(restored), len(skipped))
+        )
+        print("          %s" % ", ".join(skipped))
+        print("          Re-run with --overwrite if those are the ones you need.")
+        return 1
+
+    print("[OK] Restore complete -- %d item(s)." % len(restored))
     return 0
 
 
@@ -179,6 +241,13 @@ def main() -> int:
     ap.add_argument("--apply", action="store_true", help="actually clear (default is a dry run)")
     ap.add_argument("--restore", action="store_true", help="undo the most recent --apply")
     ap.add_argument(
+        "--overwrite",
+        action="store_true",
+        help="with --restore: move a live copy aside to <name>.superseded-<stamp> and restore "
+        "over it. Nothing is destroyed. Needed for a real recovery, because a bare "
+        "--restore skips anything that already exists and leaderboards/ always does.",
+    )
+    ap.add_argument(
         "--keep-identity",
         action="store_true",
         help="keep config.cfg + install_id.txt (WARNING: config.cfg carries scenario_id)",
@@ -187,7 +256,7 @@ def main() -> int:
 
     root = user_data_root()
     if args.restore:
-        return restore(root)
+        return restore(root, overwrite=args.overwrite)
     if args.apply:
         return apply(root, args.keep_identity)
     return describe(root, args.keep_identity)

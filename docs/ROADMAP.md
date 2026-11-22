@@ -38,23 +38,52 @@ reflects it. This file does not duplicate their contents.
 
 ## Monthly Themes (the release spine)
 
-Each month is a named Theme = a minor-version bump = a forking Epoch (first
-Friday; see RELEASE_NOMENCLATURE.md). Theme names beyond v0.13 are PROVISIONAL.
+**This table is tier 2, FORECAST: a plan, revisable, and Pip owns it.** Each
+month is a named Theme shipped as a minor-version bump (first Friday; see
+RELEASE_NOMENCLATURE.md). Theme names beyond v0.13 are PROVISIONAL. The dates
+and seeds are derived mechanically and live in the generated block below; **the
+ladder epoch is not here at all**, and the next section says why.
 
-| Version | Ships | Ladder | Theme | Headline |
-|---|---|---|---|---|
-| v0.13 | Jul 24 | L2-L3 | Launch epoch (shipped) | hiring pipeline, onboarding cold-open, office visuals, league live, legibility + stability, v0.13.1 honesty pass |
-| v0.14 | Aug 7 | L4 (shipped) | Per-tick & People (prov.) | per-tick resolution + people & money cohesion (roles / salary / manager / payroll) |
-| v0.15 | Sep 4 | L5 | (unnamed) | onboarding-as-mechanic + public-alpha hardening (leaderboard, install ping, bug reporter, test builds) |
-| v0.16 | Oct 2 | L6 | Sightings (prov.) | rivals begin -- Developments / procedural presence; wider event pool from pdoom-data |
-| v0.17 | Nov 6 | L7 | The World Shoots Back (prov.) | News feedline + rival midgame pressure (poaching, litigation, funding attacks); DQ-22 aggro built |
-| v0.18 | Dec 4 | L8 | (unnamed) | rival direct confrontation + News v1 + voice re-skin of event content |
+| Version | Ships | Theme | Headline |
+|---|---|---|---|
+| v0.13 | Jul 24 | Launch epoch (shipped) | hiring pipeline, onboarding cold-open, office visuals, league live, legibility + stability, v0.13.1 honesty pass |
+| v0.14 | Aug 7 | Per-tick & People (prov.) | per-tick resolution + people & money cohesion (roles / salary / manager / payroll) |
+| v0.15 | Sep 4 | (unnamed) | onboarding-as-mechanic + public-alpha hardening (leaderboard, install ping, bug reporter, test builds) |
+| v0.16 | Oct 2 | Sightings (prov.) | rivals begin -- Developments / procedural presence; wider event pool from pdoom-data |
+| v0.17 | Nov 6 | The World Shoots Back (prov.) | News feedline + rival midgame pressure (poaching, litigation, funding attacks); DQ-22 aggro built |
+| v0.18 | Dec 4 | (unnamed) | rival direct confrontation + News v1 + voice re-skin of event content |
 
-The "one Theme = one Epoch" rule is the intent, not a measured invariant: v0.13
-actually spanned TWO epochs (it shipped on L2 and the v0.13.2 league build cut
-L3), which is why its Ladder cell reads `L2-L3`. Future Ladder cells are a
-forecast; the SSOT is `ladder_version.txt`, and a mid-Theme gameplay change is
-allowed to fork the ladder again.
+**The Ladder column is gone (#1152), not corrected.** It used to read `L5`,
+`L6`, `L7`, `L8` down that table on a "one Theme = one Epoch" model the codebase
+has never obeyed: six epochs have been cut across four minor versions, and two
+of them landed inside v0.14.x alone. Correcting the numbers would only re-stale
+them. The SSOT is `ladder_version.txt`; the floor below ratchets from it.
+
+## Release horizon (generated -- do not hand-edit this block)
+
+<!-- BEGIN GENERATED: release-horizon -- tools/generate_release_horizon.py -- do not hand-edit -->
+**SCHEDULED (tier 1 -- mechanical, not a plan).** Monthly train, first
+Friday. Generated from `version.txt` plus the cadence rule; the full table
+with weekly seeds is [`releases/RELEASE_HORIZON.md`](releases/RELEASE_HORIZON.md).
+
+| Version | Ships | Featured seed at open |
+|---|---|---|
+| v0.15 | Fri 4 Sep 2026 | `weekly-2026-w36` |
+| v0.16 | Fri 2 Oct 2026 | `weekly-2026-w40` |
+| v0.17 | Fri 6 Nov 2026 | `weekly-2026-w45` |
+| v0.18 | Fri 4 Dec 2026 | `weekly-2026-w49` |
+| v0.19 | Fri 1 Jan 2027 (New Year's Day) | `weekly-2026-w53` |
+| v0.20 | Fri 5 Feb 2027 | `weekly-2027-w05` |
+
+**NOT FORECASTABLE (tier 3) -- the ladder epoch.** Floor today: **`>= L6`**.
+A minor bump always cuts the ladder; the ladder may also cut mid-version
+whenever gameplay forks, and most cuts so far were exactly that. No version
+in the table above carries a predicted epoch, because none can be predicted
+(`python tools/generate_release_horizon.py --self-test` measures the
+history rather than restating it).
+
+**Comparability horizon.** A score set today stays comparable until the next MINOR version at the latest, and possibly sooner.
+<!-- END GENERATED: release-horizon -->
 
 Further out (unscheduled, folded from the retired quarterly pins): player-facing
 Liability Ledger UI (#528); content-pool ladder v1 (DQ-33) + monthly world-diff

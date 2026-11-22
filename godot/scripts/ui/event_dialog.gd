@@ -175,10 +175,20 @@ func _show_next_event() -> void:
 
 	message_logged.emit("[color=gold]EVENT: %s[/color]" % event.get("name", "Unknown"))
 
+	# The month review gets its own presentation: a diegetic clipboard, roughly triple the
+	# generic panel's area, drawn by MonthReviewPanel. Everything else about the presenter --
+	# the queue, the blocker lifetime, the button wiring, the keyboard metas -- is shared, so
+	# the review keeps every behaviour B1/B2/B3 and #877 pinned to this path.
+	var is_review := MonthReviewPanel.is_month_review(event)
+
 	# Blurred blocker behind event dialog panel (Fix Issue #458 + #485)
 	# Add to root (get_tree().root) to ensure it blocks ALL UI interactions
 	var click_blocker := ColorRect.new()
-	click_blocker.color = Color(0.0, 0.0, 0.0, 0.6)
+	# Playtest 2026-08-14: at 0.6 the WATCH feed behind the review still read at close to full
+	# strength, so the review looked like it was COVERING the month it summarises rather than
+	# replacing it. The review darkens the office further (BACKDROP_ALPHA) so the clipboard is
+	# the only lit surface; every other event keeps the long-standing 0.6.
+	click_blocker.color = Color(0.0, 0.0, 0.0, MonthReviewPanel.BACKDROP_ALPHA if is_review else 0.6)
 	click_blocker.mouse_filter = Control.MOUSE_FILTER_STOP  # Block all mouse events
 	click_blocker.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	click_blocker.z_index = 999  # Just below dialog but above all other UI
@@ -188,69 +198,78 @@ func _show_next_event() -> void:
 
 	# Create event dialog - use Panel for consistent input handling
 	var dialog = Panel.new()
-	dialog.custom_minimum_size = Vector2(600, 450)
-	dialog.size = Vector2(600, 450)
-	# Center it manually
-	dialog.position = Vector2(
-		(get_viewport().get_visible_rect().size.x - 600) / 2,
-		(get_viewport().get_visible_rect().size.y - 450) / 2
-	)
+	# `main_vbox` is whatever container the option buttons and the rejection-reason label go
+	# into. The generic path builds the forest-green panel below; the review path hands back a
+	# slot on the clipboard's board.
+	var main_vbox: VBoxContainer
 
-	# Add forest green background for better visibility
-	var panel_style = StyleBoxFlat.new()
-	panel_style.bg_color = Color(0.15, 0.25, 0.15, 1.0)  # Dark forest green
-	panel_style.border_width_left = 3
-	panel_style.border_width_top = 3
-	panel_style.border_width_right = 3
-	panel_style.border_width_bottom = 3
-	panel_style.border_color = Color(0.3, 0.5, 0.3, 1.0)  # Lighter green border
-	panel_style.corner_radius_top_left = 8
-	panel_style.corner_radius_top_right = 8
-	panel_style.corner_radius_bottom_right = 8
-	panel_style.corner_radius_bottom_left = 8
-	dialog.add_theme_stylebox_override("panel", panel_style)
+	if is_review:
+		MonthReviewPanel.apply_geometry(dialog, get_viewport().get_visible_rect().size)
+		main_vbox = MonthReviewPanel.build(dialog, event)
+	else:
+		dialog.custom_minimum_size = Vector2(600, 450)
+		dialog.size = Vector2(600, 450)
+		# Center it manually
+		dialog.position = Vector2(
+			(get_viewport().get_visible_rect().size.x - 600) / 2,
+			(get_viewport().get_visible_rect().size.y - 450) / 2
+		)
+
+		# Add forest green background for better visibility
+		var panel_style = StyleBoxFlat.new()
+		panel_style.bg_color = Color(0.15, 0.25, 0.15, 1.0)  # Dark forest green
+		panel_style.border_width_left = 3
+		panel_style.border_width_top = 3
+		panel_style.border_width_right = 3
+		panel_style.border_width_bottom = 3
+		panel_style.border_color = Color(0.3, 0.5, 0.3, 1.0)  # Lighter green border
+		panel_style.corner_radius_top_left = 8
+		panel_style.corner_radius_top_right = 8
+		panel_style.corner_radius_bottom_right = 8
+		panel_style.corner_radius_bottom_left = 8
+		dialog.add_theme_stylebox_override("panel", panel_style)
+
+		# Create main container. #630: anchor it to fill the fixed-size Panel (a Panel is
+		# NOT a container, so children default to their content-driven minimum size at
+		# (0,0)). Without this, a long title_label forces the VBox min-width past the
+		# 600px panel and the wrapped body text spills over the right border. Anchoring
+		# clamps the content width to the panel, giving the autowrap labels a real width
+		# to wrap within (inner area = 600 - 2*15 = 570px).
+		var margin = MarginContainer.new()
+		margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		margin.add_theme_constant_override("margin_left", 15)
+		margin.add_theme_constant_override("margin_right", 15)
+		margin.add_theme_constant_override("margin_top", 15)
+		margin.add_theme_constant_override("margin_bottom", 15)
+		dialog.add_child(margin)
+
+		main_vbox = VBoxContainer.new()
+		margin.add_child(main_vbox)
+
+		# Add title (#630: autowrap so a long event name wraps instead of forcing the
+		# content wider than the panel).
+		var title_label = Label.new()
+		title_label.text = event.get("name", "Event")
+		title_label.add_theme_font_size_override("font_size", 18)
+		title_label.add_theme_color_override("font_color", Color.GOLD)
+		title_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		title_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		main_vbox.add_child(title_label)
+
+		# Add description label. #630: smart word-wrap + fill the container width so long
+		# body text wraps to the panel's inner width instead of clipping past the margins.
+		var desc_label = Label.new()
+		desc_label.text = event.get("description", "An event has occurred!")
+		desc_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		desc_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		main_vbox.add_child(desc_label)
+
+		# Add spacing
+		var spacer = Control.new()
+		spacer.custom_minimum_size = Vector2(0, 20)
+		main_vbox.add_child(spacer)
 
 	print("[EventDialog] Created Panel for event, size: %s, position: %s" % [dialog.size, dialog.position])
-
-	# Create main container. #630: anchor it to fill the fixed-size Panel (a Panel is
-	# NOT a container, so children default to their content-driven minimum size at
-	# (0,0)). Without this, a long title_label forces the VBox min-width past the
-	# 600px panel and the wrapped body text spills over the right border. Anchoring
-	# clamps the content width to the panel, giving the autowrap labels a real width
-	# to wrap within (inner area = 600 - 2*15 = 570px).
-	var margin = MarginContainer.new()
-	margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	margin.add_theme_constant_override("margin_left", 15)
-	margin.add_theme_constant_override("margin_right", 15)
-	margin.add_theme_constant_override("margin_top", 15)
-	margin.add_theme_constant_override("margin_bottom", 15)
-	dialog.add_child(margin)
-
-	var main_vbox = VBoxContainer.new()
-	margin.add_child(main_vbox)
-
-	# Add title (#630: autowrap so a long event name wraps instead of forcing the
-	# content wider than the panel).
-	var title_label = Label.new()
-	title_label.text = event.get("name", "Event")
-	title_label.add_theme_font_size_override("font_size", 18)
-	title_label.add_theme_color_override("font_color", Color.GOLD)
-	title_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	title_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	main_vbox.add_child(title_label)
-
-	# Add description label. #630: smart word-wrap + fill the container width so long
-	# body text wraps to the panel's inner width instead of clipping past the margins.
-	var desc_label = Label.new()
-	desc_label.text = event.get("description", "An event has occurred!")
-	desc_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	desc_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	main_vbox.add_child(desc_label)
-
-	# Add spacing
-	var spacer = Control.new()
-	spacer.custom_minimum_size = Vector2(0, 20)
-	main_vbox.add_child(spacer)
 
 	# Create container for option buttons
 	var vbox = VBoxContainer.new()
@@ -301,8 +320,15 @@ func _show_next_event() -> void:
 		# Add keyboard hint (LETTERS not numbers) + inline cost summary (#510)
 		if is_navigation:
 			btn.text = "%s   [SPACE]" % choice_text
-			btn.custom_minimum_size = Vector2(520, 54)
-			btn.add_theme_font_size_override("font_size", 16)
+			# The review's door sits on the clipboard's BOARD, not on the sheet, so it keeps the
+			# B2/B3 teal-on-dark primary chrome (teal ink on manila would be unreadable) and only
+			# grows: a wider footprint under a tripled panel, and +4pt like everything else here.
+			btn.custom_minimum_size = MonthReviewPanel.BUTTON_SIZE if is_review else Vector2(520, 54)
+			btn.add_theme_font_size_override("font_size",
+				MonthReviewPanel.SIZE_BUTTON if is_review else 16)
+			if is_review:
+				# The board is up to 1120px wide; a full-width door would out-shout the sheet.
+				btn.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 			btn.add_theme_color_override("font_color", PRIMARY_TEAL)
 			btn.add_theme_color_override("font_hover_color", Color(1, 1, 1, 1))
 		else:

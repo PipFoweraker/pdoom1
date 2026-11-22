@@ -35,6 +35,12 @@ var _pending_fade: bool = false
 
 
 func _ready() -> void:
+	# Navigation is infrastructure, not game: it runs whether or not the tree is paused
+	# (#1034, #1343; docs/design/PAUSE_SEMANTICS.md). The fade awaits a Tween bound to
+	# THIS node; under the inherited PAUSABLE mode a fade requested while paused never
+	# finished, is_transitioning was never cleared, and every later go_to()/reload() was
+	# silently dropped for the rest of the session -- behind a black, click-eating rect.
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	print("[SceneTransition] Initializing global scene navigation...")
 	fade_rect = ColorRect.new()
 	fade_rect.color = fade_color
@@ -97,6 +103,12 @@ func _run_transition() -> void:
 		fade_rect.mouse_filter = Control.MOUSE_FILTER_STOP
 		await fade_out()
 
+	# A pause never survives a scene change (#1343). The pause menu lives in main.tscn
+	# only, so a scene entered paused has nothing that can unpause it -- a soft-lock.
+	# Every current caller already unpauses first; this makes it a property of the
+	# router rather than of every call site remembering to.
+	_release_pause()
+
 	if _pending_reload:
 		get_tree().reload_current_scene()
 	else:
@@ -111,6 +123,17 @@ func _run_transition() -> void:
 	_pending_reload = false
 	_pending_fade = false
 	is_transitioning = false
+
+
+## Unpause the tree if it is paused; returns whether it was. Split out of
+## _run_transition() so a test can pin it without performing a real scene swap.
+func _release_pause() -> bool:
+	var tree := get_tree()
+	if tree == null or not tree.paused:
+		return false
+	print("[SceneTransition] navigating while paused -- unpausing (#1343)")
+	tree.paused = false
+	return true
 
 
 func fade_out() -> void:

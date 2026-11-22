@@ -110,3 +110,78 @@ func test_live_run_classifies_as_none():
 	var r: Dictionary = DeathAttribution.classify(state)
 	assert_eq(str(r.surface), "none")
 	assert_eq(str(r.root_cause), "none")
+
+## ---- #1248: the panel must not blame a crisis the player survived ----------
+##
+## Reproduces the run Pip played on 2026-08-21 exactly: died on turn 130, with
+## funding_starvation logged at t80 and rep_collapse at t87, and $1,189,765 in the
+## bank at the end. The old panel printed both under CAUSE OF DEATH.
+
+func _run_that_recovered():
+	var s = _fresh_state("issue_1248_recovered")
+	s.turn = 130
+	s.game_over = true
+	s.reputation = 0.0
+	s.money = 1189765.0
+	s.cause_log.append({
+		"turn": 80, "kind": "funding_starvation", "source": "payroll",
+		"effects": {"cash_level": 248.0, "bills_due": 670.3},
+	})
+	s.cause_log.append({
+		"turn": 87, "kind": "rep_collapse", "source": "reputation",
+		"effects": {"reputation_level": 5.0},
+	})
+	return s
+
+func test_causes_older_than_the_window_are_history_not_cause():
+	var s = _run_that_recovered()
+	var split: Dictionary = DeathAttribution.chain_split(s)
+	assert_eq(split["proximate"].size(), 0,
+		"t80 and t87 are 50 and 43 turns before a t130 death -- neither is proximate")
+	assert_eq(split["earlier"].size(), 2,
+		"both are kept as history; nothing is dropped")
+
+func test_panel_does_not_print_survived_crises_as_cause_of_death():
+	var s = _run_that_recovered()
+	var result := DeathAttribution.classify(s)
+	var bbcode := GameOverScreen.build_attribution_bbcode(
+		result.get("chain_proximate", []), "", result.get("chain_earlier", []))
+	var cause_half := bbcode.substr(0, bbcode.find("EARLIER IN THE RUN"))
+	assert_eq(cause_half.find("funding_starvation"), -1,
+		"a cash crisis survived 50 turns earlier must not sit under CAUSE OF DEATH")
+	assert_true(bbcode.find("EARLIER IN THE RUN") != -1,
+		"it is still shown, under an honest heading")
+	assert_true(bbcode.find("funding_starvation") != -1,
+		"and it is not thrown away -- the trail is the interesting part")
+
+func test_recent_causes_still_reach_the_cause_panel():
+	# The control: the same shapes, logged just before death, MUST be blamed.
+	var s = _fresh_state("issue_1248_proximate")
+	s.turn = 130
+	s.game_over = true
+	s.reputation = 0.0
+	s.cause_log.append({
+		"turn": 128, "kind": "ledger_default", "source": "payroll",
+		"effects": {"doom": 2.0, "reputation": -8.0},
+	})
+	var split: Dictionary = DeathAttribution.chain_split(s)
+	assert_eq(split["proximate"].size(), 1, "t128 vs a t130 death is proximate")
+	assert_eq(split["earlier"].size(), 0, "and nothing is demoted to history")
+
+func test_unstamped_cause_is_treated_as_proximate():
+	# A cause with no turn cannot be SHOWN to be old. Demoting it would hide a
+	# real one; the filter must fail toward blaming, not toward silence.
+	var s = _fresh_state("issue_1248_unstamped")
+	s.turn = 130
+	s.game_over = true
+	s.cause_log.append({"kind": "ledger_default", "source": "payroll", "effects": {}})
+	var split: Dictionary = DeathAttribution.chain_split(s)
+	assert_eq(split["proximate"].size(), 1, "an unstamped cause stays in the cause panel")
+
+func test_full_chain_is_unchanged_for_the_sweep_drivers():
+	# tests/manual/ analyse whole runs and read `chain`. Splitting the panel must
+	# not quietly shorten what they see.
+	var s = _run_that_recovered()
+	var result := DeathAttribution.classify(s)
+	assert_eq((result.get("chain", []) as Array).size(), 2,
+		"`chain` stays the UNFILTERED trail")

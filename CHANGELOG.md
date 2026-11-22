@@ -15,9 +15,144 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 > claimed. `scripts/check_release_notes.py --changelog-structure` now blocks
 > a second `[Unreleased]` heading from appearing again.
 
+## [0.14.5] - 2026-10-29 -- The Pause That Pauses
+
+A hotpatch for friends. Two things stood between a new player and a fair first
+session: a pause menu that did not stop the clock, and a macOS build carrying a
+library nothing used, packaged in a shape that could not be signed.
+
+### Fixed
+- The pause menu pauses the game (#1341). Month playback and turn advance ran
+  on engine timers that ignore pause by default, so on v0.14.4 six days and a
+  month boundary could pass behind the open menu, and the Month Review then
+  drew underneath it and stopped taking clicks. Both timers now respect pause;
+  `godot/tests/unit/test_pause_stops_month_playback.gd` pins it.
+- An event with no researcher reaction now shows no reaction, instead of
+  printing a null (#1327). The upstream historical-events data is moving to
+  an explicit null for reactions it never had, and this build reads that
+  correctly before the change arrives. The bundled events are unchanged.
+- The game no longer writes a log line for every action, event and random
+  roll (#1354). A score-verification debug mode was switched on for every
+  game; it is now off unless asked for with `--verify-debug`. Scores and
+  their verification hashes are unchanged.
+
+### Removed
+- GodotSteam, from every build (#1348). No game code ever called Steam. Its
+  macOS framework had been committed from a Windows checkout, which cannot
+  store the symlink a framework needs, and every macOS export since July
+  logged a signing failure on it and shipped it anyway. The Windows and Linux
+  zips no longer carry the Steam `.dll`/`.so` files either. The addon is parked
+  in `vendor/godotsteam/` for a later, deliberate return.
+- What this does NOT establish: that the macOS build launches. No macOS build
+  from this pipeline has yet been opened on a Mac and watched to work; #1071 is
+  still OPEN and macOS stays best-effort.
+
+## [0.14.4] - 2026-08-29 -- The Door That Was Not There
+
+A repair release, cut ahead of the monthly train for one reason: v0.14.3 was the
+first release in this game's history to ship no macOS build. The export died
+1.4 seconds into bundle assembly on a Windows `.ico` the engine has no decoder
+for, printed one line, and the pipeline published Windows and Linux without it.
+Mac players were sent to a door that was not there.
+
+The second item is the same shape at a smaller scale: a screen that rendered a
+packaging failure, a corruption and a quiet release in identical reassuring
+words.
+
+### Added
+- A report affordance on the What's New screen, reachable with `(R)`. It is
+  built on demand rather than declared in the scene, so it exists only on paths
+  where something is actually wrong -- an absent button is itself a statement.
+
+### Changed
+- Every state of the What's New screen carries its own player-facing words, its
+  own quotable reference code, and its own consequence (#1311). The six
+  outcomes live in one match statement, and
+  `godot/tests/unit/test_whats_new_states.gd` fails if any two rows share a body
+  or a code.
+
+### Fixed
+- The macOS build exports again (#1305). The macOS preset had acquired
+  `application/icon="res://assets/images/pdoom1.ico"`; Godot has no `.ico`
+  decoder, and the preset now points at the same PNG it used through v0.14.2.
+  What this restores is the EXPORT, not a verified run: no macOS build produced
+  by this pipeline has ever been launched on a Mac and watched to work, which is
+  what #1071 asks for, so #1071 is still OPEN and macOS stays best-effort. The
+  door exists again; nobody has walked through it.
+
+### Not in this release
+- The `score_api.php` truncation fix (#1296) is server-side and **has not been
+  deployed** to `api.pdoom1.com`. No client change in this build affects it; the
+  only `godot/` edit in that commit was a comment correction with no reachable
+  behaviour change.
+
+## [0.14.3] - 2026-08-23 -- Things That Charged You And Did Nothing
+
+A pass over things that took your money, or your attention, and gave nothing
+back for it -- an acquired startup's engineers who drew salary and never worked,
+a lever that quoted a doom figure it never applied, an $80,000 counter-offer
+that changed nothing, and a feedback button that saved a file to your disk and
+asked you to email it.
+
+### Added
+- Counter-offers retain a named researcher, at a permanent payroll cost.
+  Item 4 of the hiring-panel set; #1225 is still OPEN.
+- The onboarding bill and visa obligation are previewed before you commit.
+  Item 5 of the hiring-panel set; #1225 is still OPEN.
+- Ad campaigns emit a monthly report whether or not anyone applied, and name what
+  the campaign cost when it closes. Item 3 of the hiring-panel set;
+  #1225 is still OPEN.
+- A signed-build path: tooling exists and is tested, awaiting the
+  certificate. #1038 is still OPEN.
+- `docs/TRUST.md`, generated from source -- every point the game reaches outside
+  its own process. #1038 is still OPEN.
+
+### Changed
+- Compute engineers are real staff rather than an integer counter (#1247). They
+  used to appear on the employee screen and never load into the sim -- consuming
+  stationery and producing nothing.
+- The header stops calling committed Attention "queued", and hiring says
+  days. #1223 is still OPEN.
+- The music conductor takes a nudge, and a pick made mid-crossfade is no longer
+  dropped (#1249)
+- The game ships with its own icon instead of the default engine one -- visible in
+  the taskbar, alt-tab, and the Windows publisher warning
+- The featured league seed is `weekly-2026-w35` on ladder epoch `L6`. The seed
+  names the ISO week the league opens in; the rolls to `w34` (23 Aug) and `w35`
+  (24 Aug) were made in the repository but never reached a published build, so
+  players stayed on `weekly-2026-w33` / `L5`. This is the build that carries them
+  across. The slip is recorded rather than papered over.
+
+### Fixed
+- The game-over screen stops blaming crises the player actually survived (#1248)
+- The desperation lever applies real safety absorption instead of a printed
+  figure (#967) -- the button now does what its text says
+- An offer at or below a previously rejected figure is refused rather than
+  silently accepted. Item 2 of the hiring-panel set; #1225 is still OPEN.
+- Send Feedback (N) offers three one-click ways to actually send it. It used to
+  save a file to your disk and ask you to email it.
+- The weekly-seed fallback generator computed a non-ISO week and would have
+  emitted `weekly-2027-w1` on 1 January 2027, where the ISO week is
+  `weekly-2026-w53`. Wrong year, wrong week, and unpadded -- and `w1` and `w01`
+  are different board keys. Unreachable while the seed override is set, and now
+  correct if it ever is not.
+
 ## [Unreleased]
 
 ### Fixed
+- **The pause menu did not pause the game.** Found by Pip on the shipped v0.14.4
+  build: he opened the menu to change the music volume, and six day-ticks and a
+  month boundary ran while it was open. The Month Review then appeared over a
+  still-open, invisible pause menu that was still swallowing clicks, so "begin
+  planning next month" would not respond. `SceneTree.create_timer()` defaults its
+  `process_always` argument to **true**, meaning the timer deliberately ignores
+  `SceneTree.paused`, and both of game_manager's gameplay-advancing awaits used
+  the default. The pause menu itself was never at fault. Fixed at both sites,
+  with a regression test proven to fail without the fix -- it reproduces the same
+  six ticks Pip saw. Behaviour is unchanged whenever the tree is not paused, so
+  no run, replay or scored outcome moves (#1341). The wider family -- 9 more
+  timers, 18 tweens that say nothing about pause, and the question of which
+  overlay owns input -- is scoped in `docs/PAUSE_SEMANTICS_SWEEP.md` (#1343).
 - **Every action reached through a submenu could fail in complete silence, and
   hiring is entirely on that path.** Reported from a live playtest, in the
   player's words: *"I can fail silently if I queue 19 fundraisings and then try
@@ -97,6 +232,42 @@ Rolled at Pip's call per `docs/rituals/gate_5_seed_blessing.md`, which requires 
 const to be **merged and inside the cut before** Gate 5 -- blessing a seed without
 editing the const makes the blessed and posted boards diverge silently, and looks
 correct from both ends.
+
+## [0.14.2] - 2026-08-21 -- The Game Stops Doing Things Silently
+
+**NEW BOARD.** Ladder epoch L4 -> L5. The doom maths and the event deck both
+changed, so scores are not comparable with L4 runs. Your L4 scores stay valid
+and stay visible under L4.
+
+### Added
+- 28 new events covering every risk pool and severity cell (#1230), with varied
+  numbers of options instead of the same three-option shape
+- The cold-open arrival: a portal stitch and a held frame before the first
+  screen (#1196)
+- Response windows advertise their Attention cost up front (#1217)
+
+### Changed
+- The month review is a clipboard: about three times the area, typeset, and it
+  no longer sits over the feed you were reading (#1231)
+- One font-size lever moves every unoverridden screen, and the guide stopped
+  scrolling in five directions at once (#1236)
+- The first screen was rewritten to be legible to someone who has never
+  played (#1205)
+- A refusal now states whether it is a rule or a stub, so "you cannot do that"
+  and "this is not built yet" stop looking identical (#1222)
+- Monthly Attention capacity is derived in one place instead of several (#1211)
+
+### Fixed
+- Runtime pdoom-data event options bypassed the doom streams entirely, acting as
+  a sink of up to -6 doom per turn (#1233). **This changes run outcomes and is
+  why the ladder forks.**
+- PLAN-time rejections went to a hidden feed instead of to the player (#1204)
+- Submenu-driven refusals were invisible: the message existed and never reached
+  a surface you were looking at (#1220)
+- The Operator name was collected at signup and then carried nowhere, and long
+  names were being amputated rather than truncated (#1176)
+- 12 live contact addresses were redacted from the bundled historical
+  events (#1212)
 
 ## [0.14.1] - 2026-08-08
 

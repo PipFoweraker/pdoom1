@@ -87,7 +87,6 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_colors/default_color = Color(0.85, 0.88, 0.92, 1)
-theme_override_font_sizes/normal_font_size = 16
 bbcode_enabled = true
 text = "You run an AI safety lab racing to keep P(Doom) -- the probability of catastrophe -- from hitting 100%.
 
@@ -110,7 +109,6 @@ custom_minimum_size = Vector2(220, 45)
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
-theme_override_font_sizes/font_size = 18
 theme_override_styles/normal = SubResource("StyleBoxFlat_button")
 text = ">> Open Player Guide"
 
@@ -119,6 +117,5 @@ custom_minimum_size = Vector2(200, 45)
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
-theme_override_font_sizes/font_size = 18
 theme_override_styles/normal = SubResource("StyleBoxFlat_button")
 text = "Got it  [ESC]"

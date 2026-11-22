@@ -45,10 +45,20 @@ const MUSIC_TIER_BY_BAND := [0, 1, 1, 2, 2, 3, 4]
 ## menu") and the only candidate with a recorded positive verdict from him
 ## (tools/music/jukebox_notes2.json, "menu": "Transitioning to something like
 ## this is exceptional ... the attention-demands are diminished"). It is already
-## wired, imported and shipping as the MENU bed, so this costs no new asset.
-## CONSEQUENCE, deliberate: menu and calm-gameplay now share a bed, so launching
-## a run no longer changes the music. The run's musical arc is unchanged -- doom
-## still escalates through M1..M4 -- only the calm floor got calmer.
+## wired, imported and shipping as tier 0, so this costs no new asset.
+##
+## SUPERSEDED IN PART, 2026-08-21. This block used to end: "CONSEQUENCE,
+## deliberate: menu and calm-gameplay now share a bed, so launching a run no
+## longer changes the music." That is no longer true and the sentence is
+## replaced rather than deleted, because the 08-01 reasoning above still governs
+## TIER 0 and only the MENU half was reversed.
+## Pip, 2026-08-21: "let's make Out of Distribution the default track at main
+## menu and main menus, so people will notice it switching to the game tune when
+## they start" / "it's the one i like the most". The inaudible-launch property
+## was the cost of sharing a bed; he now wants the launch audible, so MENU moved
+## to out_of_distribution_trudge.ogg (see music_library) and tier 0 stayed put.
+## The run's musical arc is unchanged -- doom still escalates through M1..M4 --
+## and the calm floor is still checkpoint_saved.ogg.
 ## unit_tests_passing.ogg stays in the repo for the rework; restoring it is this
 ## one line.
 const MUSIC_TIER_STEMS := [
@@ -113,13 +123,51 @@ var _auto_music_tier: int = 0
 ## used to word the status line honestly; nothing reads it for behaviour.
 var _manual_pick_path: String = ""
 
+## ---- "Nudging the conductor" (#1249, Pip 2026-08-21) ----------------------
+## Pip: "I would probably like the game to tell me it's switching tracks if I
+## select another one and it doesn't start within, like, half a second. Make it
+## diegetic -- 'nudging the conductor....'"
+##
+## TWO causes produced one symptom, and only one of them was cosmetic:
+##
+##  1. CROSSFADE_DURATION is 2.0s and the incoming player starts at -80 dB, so a
+##     pick is inaudible for roughly the first half-second BY DESIGN. Nothing is
+##     broken; the player just cannot tell "working on it" from "my click did
+##     nothing".
+##  2. A pick made DURING an in-flight crossfade was DISCARDED, with a print()
+##     as its only trace. Crossfades last 2s, so any second pick inside that
+##     window was silently lost. That is the silent-wrongness failure this
+##     codebase hunts everywhere else -- player_status_line() even carries a
+##     comment about not blaming the player for a state they did not cause.
+##
+## Fixing only (1) would be worse than nothing: the nudge line would appear and
+## then resolve to the WRONG track. So the queue below fixes (2) as well.
+const CONDUCTOR_NUDGE_DELAY := 0.5
+## True once a pick has been waiting longer than CONDUCTOR_NUDGE_DELAY without
+## becoming audible. A FLAG, not a clock: player_status_line() stays a pure map
+## from state to string, and a test can set this directly.
+var _conductor_nudging: bool = false
+## Set the moment a pick is requested, cleared when it lands. Distinct from
+## _conductor_nudging, which only turns on after the delay -- a switch that
+## completes in 300ms should say nothing at all.
+var _switch_pending: bool = false
+## A stream requested while a crossfade was already running. Applied when that
+## crossfade finishes rather than dropped. Only the LAST one is kept: a player
+## clicking four tracks in two seconds wants the fourth, not a queue of four.
+var _queued_stream: AudioStream = null
+
 # Music tracks organized by context
 var music_library = {
 	MusicContext.MENU: [
-		# "Checkpoint saved" -- the respite cue (round-2 commission).
-		# Composed-audio only now; the last placeholder (PDOOMN ST1) and the
-		# 0.7 s beeyoowee UI blip are both out of the music rotation.
-		"res://assets/audio/music/checkpoint_saved.ogg"
+		# "Out of distribution" -- the papers-please trudge. Pip 2026-08-21:
+		# "let's make Out of Distribution the default track at main menu and
+		# main menus, so people will notice it switching to the game tune when
+		# they start" / "it's the one i like the most".
+		# This DELIBERATELY re-separates menu from gameplay: see the CONSEQUENCE
+		# note above MUSIC_TIER_STEMS. Starting a run is audible again.
+		# It is also the DEFEAT bed, so menu and game-over now share a track --
+		# accepted, because there is no spare composed bed to move DEFEAT to.
+		"res://assets/audio/music/out_of_distribution_trudge.ogg"
 	],
 	MusicContext.GAMEPLAY: [
 		# Legacy-playlist fallback (used only if the adaptive build fails):
@@ -284,7 +332,30 @@ func play_track(track_path: String):
 
 	print("[MusicManager] Loading track: ", track_path.get_file())
 	_adaptive_active = false
+	_begin_switch()
 	_play_stream(stream)
+
+
+## #1249: mark a requested switch, and raise the diegetic nudge if it has not
+## become audible within CONDUCTOR_NUDGE_DELAY.
+##
+## A one-shot timer sets a FLAG rather than player_status_line() reading a clock.
+## That function is documented as a "pure string build, unit-tested", and it stays
+## that way: a test sets _conductor_nudging directly and asserts the wording,
+## without waiting half a second or stubbing time.
+func _begin_switch() -> void:
+	_switch_pending = true
+	_conductor_nudging = false
+	var tree := get_tree()
+	if tree == null:
+		return  # headless/teardown: no timer to hang the nudge on, and nothing to show it
+	# process_always=true, deliberately (#1343): the track picker lives IN the pause
+	# menu, so this nudge has to fire while paused. Music keeps running when paused.
+	await tree.create_timer(CONDUCTOR_NUDGE_DELAY, true).timeout
+	# Still waiting after the delay -> say so. If the switch already landed,
+	# _switch_pending is false and the player never sees a flicker for a fast one.
+	if _switch_pending:
+		_conductor_nudging = true
 
 ## Start (or crossfade to) an already-loaded stream. Shared by the legacy
 ## playlist path and the adaptive gameplay stream.
@@ -294,6 +365,9 @@ func _play_stream(stream: AudioStream):
 		active_player.stream = stream
 		active_player.volume_db = 0
 		active_player.play()
+		# Audible immediately -- nothing to nudge the conductor about (#1249).
+		_switch_pending = false
+		_conductor_nudging = false
 		print("[MusicManager] Started playing: ", _stream_display_name(stream))
 	else:
 		# Crossfade to new track
@@ -311,7 +385,13 @@ func _stream_display_name(stream: AudioStream) -> String:
 ## Crossfade from active player to inactive player with new track
 func _crossfade_to_track(new_stream: AudioStream):
 	if is_crossfading:
-		print("[MusicManager] Already crossfading, ignoring request")
+		# #1249: QUEUE, do not drop. This used to return here with only a print()
+		# to show for it, so any pick made inside the 2s crossfade window vanished
+		# and the player was left believing they had not clicked. Keeping only the
+		# newest request is deliberate -- four clicks in two seconds means "play
+		# the fourth", not "play all four in order".
+		_queued_stream = new_stream
+		print("[MusicManager] Crossfade in flight; queued %s" % _stream_display_name(new_stream))
 		return
 
 	is_crossfading = true
@@ -340,6 +420,18 @@ func _crossfade_to_track(new_stream: AudioStream):
 
 	is_crossfading = false
 	print("[MusicManager] Crossfade complete")
+
+	# #1249: a pick made mid-crossfade waited here rather than being dropped.
+	# Apply it now. The pending/nudge flags stay set across this hop, because from
+	# the player's point of view their pick still has not been honoured.
+	if _queued_stream != null:
+		var queued := _queued_stream
+		_queued_stream = null
+		_crossfade_to_track(queued)
+		return
+
+	_switch_pending = false
+	_conductor_nudging = false
 
 ## Called when a track finishes playing
 func _on_track_finished():
@@ -509,8 +601,10 @@ func debug_force_tier(tier: int):
 ## Flat catalogue of every bed the game can play, for the overlay's one dropdown.
 ## Entries: {"label": String, "kind": "tier"|"track", "tier": int, "path": String}.
 ## Tiers come first (they are the adaptive score); the standalone context beds follow,
-## deduplicated against the tier stems -- checkpoint_saved.ogg is BOTH the MENU bed and
-## tier 0, and listing it twice would read as two different tracks.
+## deduplicated -- a bed used by two contexts would otherwise read as two different
+## tracks. Since 2026-08-21 the duplicate pair is MENU and DEFEAT (both
+## out_of_distribution_trudge.ogg); before that it was MENU and tier 0. The dedup is
+## generic, so which pair collides does not matter to this function.
 func audition_catalogue() -> Array:
 	var out: Array = []
 	var seen: Dictionary = {}
@@ -628,6 +722,12 @@ func player_catalogue_index() -> int:
 ## the question the dev line answers in jargon: what am I hearing, and what does the game
 ## want to play instead? Pure string build, unit-tested.
 func player_status_line() -> String:
+	# #1249. Takes precedence over everything below: while a switch is in flight the
+	# honest answer to "what am I hearing" is "not yet what you asked for". Reporting
+	# the OLD track as "now playing" during a crossfade is how the player concludes
+	# their click did nothing.
+	if _conductor_nudging:
+		return "Nudging the conductor...."
 	if not _adaptive_active:
 		# Two very different situations look the same from here: the player picked a
 		# standalone bed, or the adaptive stream could not be built (missing audio, and

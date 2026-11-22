@@ -9,11 +9,31 @@ runtime -- the old Python bridge is gone). Python exists only for CI/tooling in
 `scripts/` and `tools/`. Windows dev machine; CI is Ubuntu.
 
 ## Run the game
-- **`make run`, not a bare `godot --path godot`.** Same launch, plus the
-  stale-class-cache pre-flight (~30ms; see the Tests section). The bare command
-  is what was typed on 2026-08-13 and it launched a silently broken build in
-  front of a first-time playtester. On Pip's machine Godot is
-  `C:/Program Files/Godot/Godot_v4.5.1-stable_win64.exe`.
+- **Never a bare `godot --path godot`.** That is what was typed on 2026-08-13
+  and it launched a silently broken build in front of a first-time playtester.
+  What matters is the **stale-class-cache pre-flight** (~30ms; see the Tests
+  section) running FIRST -- `make run` is one way to get it, not the point.
+- **`make` is NOT installed on this machine** (nor `mingw32-make`/`gmake`), so
+  `make run` fails with "command not found" and the tempting fallback is exactly
+  the broken command above. Use the two-step form, which is what `make run`
+  does anyway:
+
+      python tools/check_class_cache.py --repair
+      godot --path godot
+
+  Every `make X` in this file has the same shape -- read the target in
+  `Makefile` and run its lines directly. `python tools/check_agent_env.py`
+  fails if `make` reappears or disappears, so this note cannot silently rot.
+- On this machine Godot 4.5.1 is at
+  `D:/Local_Code/_tools/Godot/Godot_v4.5.1-stable_win64.exe` (console variant
+  alongside it), with `godot` / `godot.bat` shims on PATH. **Do not hardcode
+  that path** -- set `PDOOM1_GODOT` and let the tools resolve it;
+  `scripts/run_godot_tests.py` honours it. Its bare `godot` PATH entry cannot
+  work on Windows: `subprocess` calls `CreateProcess`, which ignores PATHEXT
+  (measured -- `'godot'` -> WinError 2, `'godot.bat'` -> 0), which is why the
+  `.bat` shim exists. `python tools/check_agent_env.py` verifies this and the
+  other environment claims below; it exists because they were ALL false on
+  2026-08-21 (#1259).
 
 ## Tests -- two tiers, don't conflate them
 - **Fast gate (this is what you run for scoped changes):**
@@ -26,7 +46,10 @@ runtime -- the old Python bridge is gone). Python exists only for CI/tooling in
   Windows across 5 runs (#1181). It is NOT an hour-long tier; if it behaves
   like one, read the next bullet.
 - **If the sim tier ever crawls locally, suspect stdout, not the tests.** The
-  tier emits ~4-5M `print()` lines, and Godot's per-line write cost depends
+  tier USED to emit ~13M `print()` lines (measured 2026-10-28; 99.6% from
+  VerificationTracker debug mode, forced on for every game until #1354 made it
+  opt-in via `--verify-debug` / `PDOOM1_VERIFY_DEBUG=1`; ~57k lines since). If
+  it floods again, count lines by `[Tag]` prefix first. Godot's per-line write cost depends
   wildly on what stdout is attached to -- 200k prints measured at 2.4s through
   a native pipe, 432s through a Git Bash `> file` redirect, ~2900s through
   `| cat`. The runner now owns the pipe itself, so run it directly; do NOT wrap
@@ -115,16 +138,23 @@ runtime -- the old Python bridge is gone). Python exists only for CI/tooling in
 - **Every `godot --headless` run on this machine writes into
   `C:/Users/Pip/AppData/Roaming/Godot/app_userdata/P(Doom)/`.** The user data dir
   derives from `config/name` in `project.godot`, NOT from the worktree path, so
-  all worktrees share ONE profile. `scripts/run_godot_tests.py` inherits the
-  parent `APPDATA`.
+  all worktrees share ONE profile. **`scripts/run_godot_tests.py` no longer
+  inherits the parent `APPDATA`** -- since the 2026-08-07 incident it
+  self-isolates via `_isolated_env()` into a temp sandbox keyed by a hash of the
+  checkout path, so the test runner is safe by default and concurrent worktrees
+  do not collide. Manual isolation is still required for a BARE
+  `godot --headless` invocation, which is what the next bullet is about.
 - **What it cost:** a test run wrote **1,330 files** into that profile,
   **destroyed the 50-entry 2026-07-31 league board** (recovered from a backup),
   mutated `config.cfg`/`keybinds.cfg`/`theme.cfg`, and injected 23 synthetic rows
   into the LIVE `(weekly-2026-w32, L4)` board during a release playtest -- which
   then corrupted the evidence being used to diagnose a separate ship blocker.
   Filed as **#1070 on 2026-07-31 and left open for seven days** before it went off.
-- **Do this, every Godot invocation:**
-  `APPDATA=C:/Users/Pip/AppData/Local/Temp/claude/godot-iso-<lane> godot --headless ...`
+- **Do this, every BARE Godot invocation** (not needed for `run_godot_tests.py`):
+  `APPDATA="$LOCALAPPDATA/Temp/claude/godot-iso-<lane>" godot --headless ...`
+  Derive it from `%LOCALAPPDATA%`; do NOT hardcode a username. The old form named
+  `C:/Users/Pip/...`, which is unwritable on this machine (the account is `gday`)
+  -- a hardcoded home directory is exactly the claim that rotted (#1259).
   (PowerShell: set `$env:APPDATA` first.) **`XDG_DATA_HOME` does NOT work on
   Windows** -- proven, no effect. Verify by printing `OS.get_user_data_dir()` once
   and confirming it is not under `AppData/Roaming`.
@@ -165,13 +195,23 @@ runtime -- the old Python bridge is gone). Python exists only for CI/tooling in
   accidental run no longer sprays transliterated churn across the tree. Still
   NEVER `git add -A` (the `.import`/`.uid` staging trap remains); if a worktree
   ever looks mass-modified, suspect that, not enforce-standards.
-- **Squash-merge does NOT fire closes-keywords here** -- after merging,
-  verify the linked issues closed; close stale ones manually.
+- **Squash-merge closes-keywords are UNRELIABLE here, in both directions** --
+  this note used to say they never fire, but merging #1349 on 2026-10-28
+  auto-closed #1071 (the "nobody has launched the Mac build" issue) because
+  the PR body contained the prose "If that closes #1071 before the tag..." --
+  GitHub parses a keyword ANYWHERE in the text, even in a hypothetical. Write
+  `Refs #N`; never put close/fix/resolve directly before `#N` in a PR body
+  unless the merge really should close it. After merging, check
+  `gh pr view N --json closingIssuesReferences` and reopen or close by hand.
 - **Verify your Edit paths land in YOUR worktree** -- three lanes in one
   week initially edited the wrong checkout. Absolute paths from prompts go
   stale after worktree switches.
 - **Art over 1MB never goes in git** (no --no-verify, no cap raises):
-  docs/art/ART_MASTERS_POLICY.md. Masters staging: G:/tmp/pdoom1-art-masters/.
+  docs/art/ART_MASTERS_POLICY.md. **Masters staging is UNSET on this machine** --
+  the old `G:/tmp/pdoom1-art-masters/` was on the retired dev box and there is no
+  `G:` drive here. Put oversized masters anywhere OUTSIDE the repo, say where in
+  the PR, and push to the DreamObjects bucket (`tools/archive_masters.py --push`),
+  which is the durable location the policy actually names.
 - **Release tiers**: issues carry ship:tonight / ship:hotpatch-48h /
   ship:next-release labels; unlabeled = backlog. Monthly release train
   (docs/ROADMAP.md); release-branch model in issue #775.
@@ -208,6 +248,35 @@ runtime -- the old Python bridge is gone). Python exists only for CI/tooling in
   `python scripts/generate_commitment_calendar.py` (pre-commit `--check` blocks
   stale commits; `--refresh-github` is the only networked path). A future date
   with no declaration is reported as `UNPARSED`, never dropped.
+- `docs/rulings/` -- **where a decision goes so it stops evaporating.** Same shape
+  as the calendar above, for rulings instead of dates. Pip rules constantly and
+  the same questions recur "in similar flavours"; 190+ rulings were already
+  scattered through this tree as prose before anything gathered them. Writing a
+  ruling ANYWHERE (docstring, `.gd` comment, doc, issue) means one line:
+  `RULING: <YYYY-MM-DD> -- <the ruling> -- flavour: <slug>` (optional
+  ` -- mechanism: <what re-asks it>`, ` -- supersedes: <id>`). Prefer writing it
+  next to the thing it governs; if it has no home yet, use
+  `python tools/rule.py "<ruling>" --flavour <slug>`, which **shows you every
+  prior ruling in that flavour first**. `RULINGS.md` + `rulings.json` are
+  GENERATED by `python scripts/generate_rulings.py` (pre-commit `--check` blocks
+  stale commits). Ruling-shaped prose with no declaration is reported as
+  `UNDECLARED`, never dropped. **Cross-repo by design** (ruled 2026-08-15):
+  each repo emits `rulings.json` (schema `pdoom.rulings/0.1`) and an aggregator
+  reads them; nothing writes back. Convention argued in
+  `docs/rulings/RULINGS_CONVENTION.md`.
+- `godot/theme/base_theme.tres` -- **the font-size SSOT (#1224). ONE number:
+  `default_font_size`.** Registered as `gui/theme/custom` in `project.godot`, the
+  bottom of Godot's theme lookup chain, so it reaches every unoverridden Control
+  including `main.tscn` (declares no theme) and code-built panels with no
+  `.tscn`. `menu_theme.tres` is STYLING only and must declare no font size --
+  one `Button/font_sizes/font_size = 16` line there used to block the lever on
+  all nine menu screens. Named steps (`small`/`body`/`header`/`title`) come from
+  `ThemeManager.get_font_size()`, which reads the SSOT and does NOT consult the
+  active theme (a theme swap must not move a size a test pinned -- #1155).
+  **An explicit override always beats a theme**, so a raw
+  `theme_override_font_sizes/*` or `add_theme_font_size_override()` is a
+  deviation; `python tools/check_font_sizes.py` counts what is left (280 at the
+  time of writing) and RATCHETS -- the count may fall, never rise.
 - `godot/scripts/core/` -- game logic (game_state, turn_manager, actions,
   doom_system, finance_engine, events, ...). Deterministic, testable.
 - `godot/scripts/ui/` -- screens/panels (`main_ui.gd` is the 3k-line monolith).
@@ -243,10 +312,20 @@ genuine one-off exception `# scene-nav-allow`. Full story: `docs/LEADERBOARD_CRA
   (no more "unstamped"), exports, and PROVES a unique freshness marker is in the `.pck`
   before emitting. NEVER hand-run a raw `godot --export` (stale-cache risk; burned ~12
   cycles in v0.11.0).
-- **Godot packs the ENTIRE `godot/` tree into the `.pck` (referenced or not).**
+- **Godot packs the `godot/` tree into the `.pck` whether or not anything
+  REFERENCES a file -- but NOT whether or not the preset EXCLUDES it.** All three
+  presets carry the same line, and it is the half this note used to omit:
+  `exclude_filter="tests/*, addons/gut/*, tools/*, docs/*, *.md, *.py, *.bat,
+  *.ps1, *.sh, *.xml"`. So code, docs and the GUT addon are already out; the rule
+  below is about ART, which no filter excludes, and a stray `.png` under `godot/`
+  ships even if nothing points at it. Check `grep -n exclude_filter
+  godot/export_presets.cfg` before asserting a file adds `.pck` weight -- this
+  entry said "the ENTIRE tree" until 2026-08-29, and that phrasing was used to
+  justify a deletion on grounds that turned out to be false.
   Keep retired/source assets OUTSIDE `godot/` (`art_source/` for <=1MB art kept
-  in git; masters archive `G:/tmp/pdoom1-art-masters/` for >1MB per
-  `docs/art/ART_MASTERS_POLICY.md`). Before moving/removing ANY asset,
+  in git; masters >1MB go to the DreamObjects bucket per
+  `docs/art/ART_MASTERS_POLICY.md` -- there is no local staging dir on this
+  machine). Before moving/removing ANY asset,
   `grep -rn` its `uid://` AND `res://` path across `godot/` -- scenes/resources
   reference by UID, not path, so a blind move silently breaks refs (issue #787:
   ~488MB of unreferenced hi-res icon variants were bloating the `.pck`).

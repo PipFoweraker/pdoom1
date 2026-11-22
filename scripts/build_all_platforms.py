@@ -16,9 +16,10 @@ The per-platform builds are SEQUENTIAL BY DESIGN and must stay that way:
 every build_release.py invocation deletes godot/.godot, so parallel exports
 would destroy each other's import caches mid-flight.
 
-macOS is BEST-EFFORT (issue #1071): the GodotSteam .framework loses its
-Versions/Current symlink on non-mac checkouts, so the macOS export can fail
-through no fault of the tagged source. A macOS failure is reported LOUDLY and
+macOS is BEST-EFFORT (issue #1071): no macOS build has yet been launched by a
+human. The GodotSteam .framework that broke every Mac export (it lost its
+Versions/Current symlink on non-mac checkouts) is gone from the project, but
+until a launch is proven the platform stays best-effort. A macOS failure is reported LOUDLY and
 its outputs are discarded (never package an unproven artifact), but it does
 not block Windows and Linux from shipping. Windows or Linux failing fails the
 whole build, and nothing is packaged.
@@ -41,24 +42,18 @@ from typing import Optional
 class MultiPlatformBuilder:
     """Builds game for Windows, Linux, and macOS using Godot."""
 
-    # GDExtension libraries the Godot export lays down beside the executable
-    # (from godot/addons/godotsteam/godotsteam.gdextension: the [libraries]
-    # release entry plus the [dependencies] steam_api library). Shipping a zip
-    # without them causes GDExtension load errors and dead Steam integration
-    # (v0.13.1 forensics, issue #917), so packaging fails loudly if absent.
-    EXPECTED_WINDOWS_LIBS = [
-        "libgodotsteam.windows.template_release.x86_64.dll",
-        "steam_api64.dll",
-    ]
-    EXPECTED_LINUX_LIBS = [
-        "libgodotsteam.linux.template_release.x86_64.so",
-        "libsteam_api.so",
-    ]
+    # GDExtension libraries the Godot export must lay down beside the
+    # executable; packaging fails loudly if one is absent (v0.13.1 forensics,
+    # issue #917). EMPTY since issue #1071: GodotSteam was the only GDExtension,
+    # nothing in the game called it, and its macOS .framework broke every Mac
+    # export, so it was moved out of the Godot project to vendor/godotsteam/.
+    # If a native extension comes back, list its release libraries here.
+    EXPECTED_WINDOWS_LIBS: list = []
+    EXPECTED_LINUX_LIBS: list = []
 
     # Platforms a release MUST ship. macOS is deliberately absent: issue #1071
-    # (the GodotSteam .framework's Versions/Current symlink does not survive a
-    # non-mac checkout, so the macOS export can fail through no fault of the
-    # tagged source). The ruling (issue #1069): a macOS failure must be LOUD
+    # (no macOS build has yet been proven to launch; the GodotSteam .framework
+    # that broke every Mac export is gone, but that is not proof). The ruling (issue #1069): a macOS failure must be LOUD
     # and its outputs discarded, but it must not block Windows and Linux from
     # publishing. The release workflow's alias check (PDoom.app.zip must
     # answer 200) then turns the run red AFTER Windows/Linux publish -- a
@@ -337,7 +332,7 @@ class MultiPlatformBuilder:
         """Zip a Windows/Linux build dir: exe + pck + GDExtension libs + HOW-TO-RUN.
 
         Includes every lib matching lib_glob that the export laid down beside the
-        executable, and fails if any expected GodotSteam library is absent.
+        executable, and fails if any expected GDExtension library is absent.
         """
         ok = True
         files = [build_dir / exe_name, build_dir / "PDoom.pck"]
@@ -346,7 +341,7 @@ class MultiPlatformBuilder:
         missing = [n for n in expected_libs if not (build_dir / n).exists()]
         if missing:
             print(f"[ERROR] {build_dir} is missing expected GDExtension libraries: {missing}")
-            print("        The shipped game would fail to load GodotSteam. Aborting package.")
+            print("        The shipped game would fail to load them. Aborting package.")
             ok = False
 
         note = self._release_note(platform_key)
@@ -434,11 +429,9 @@ class MultiPlatformBuilder:
                 print(f"[ERROR] Failed to create Linux ZIP: {e}")
                 success = False
 
-        # macOS: the export emits PDoom.app.zip directly, with the GodotSteam
-        # framework + libsteam_api.dylib already embedded in Contents/Frameworks/
-        # (verified against the CI-built v0.13.1 asset). Verify that, add
-        # HOW-TO-RUN.txt beside the .app inside the zip, then copy to the
-        # versioned name.
+        # macOS: the export emits PDoom.app.zip directly. Check GodotSteam is
+        # NOT embedded (issue #1071), add HOW-TO-RUN.txt beside the .app inside
+        # the zip, then copy to the versioned name.
         #
         # BEST-EFFORT (issues #1069/#1071): a macOS packaging problem must not
         # block Windows/Linux from shipping, but a broken bundle must never
@@ -453,15 +446,17 @@ class MultiPlatformBuilder:
             try:
                 with zipfile.ZipFile(old_mac_zip, "a", zipfile.ZIP_DEFLATED) as zf:
                     names = zf.namelist()
-                    frameworks = [n for n in names if "/Contents/Frameworks/" in n]
-                    if not frameworks:
+                    # GodotSteam left the project (issue #1071). Its .framework
+                    # reappearing means it was re-added or a stale .godot
+                    # extension list resurrected it -- the exact bundle that
+                    # failed to sign on every Mac release before.
+                    steam = [n for n in names if "godotsteam" in n.lower()]
+                    if steam:
                         print(
-                            "[ERROR] macOS .app bundle has no Contents/Frameworks/ -- "
-                            "GodotSteam GDExtension was not embedded by the export"
+                            "[ERROR] macOS .app bundle embeds GodotSteam again "
+                            f"({len(steam)} entries) -- see issue #1071"
                         )
                         mac_ok = False
-                    else:
-                        print(f"[INFO] macOS bundle embeds {len(frameworks)} Frameworks/ entries")
                     note = self._release_note("macos")
                     if note is None:
                         mac_ok = False

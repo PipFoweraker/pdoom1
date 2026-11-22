@@ -347,6 +347,28 @@ static func execute_event_choice(event: Dictionary, choice_id: String, state: Ga
 					if poached == null:
 						break
 					staffing_notes.append(_format_departure(state, poached))
+			"retain_researcher":
+				# #1225 item 4: the MIRROR of lose_researcher, and the reason the
+				# counter-offer options were hollow.
+				#
+				# Measured before this existed: rival_poaching's "Counter-Offer" charged
+				# $80,000 for `effects: {}` -- literally empty. researcher_poached's
+				# "Match Their Offer" ($50,000) and "Counter with Promotion" ($30,000 +
+				# 1 Attention) moved reputation by +2/+3 and NOTHING ELSE. No person was
+				# named, no `current_salary` was ever changed by any of them, and loyalty
+				# -- which IS poaching resistance (researcher.gd) -- was untouched.
+				#
+				# So the departure path was rich (least-loyal targeting, a named
+				# departure line) and the RETENTION path could not even say who it kept.
+				# You matched someone's offer and their pay did not move.
+				#
+				# Same targeting as lose_researcher on purpose: whoever the rival would
+				# have taken is exactly who you are keeping.
+				for i in range(int(value)):
+					var kept := _retain_most_at_risk(state, "")
+					if kept == null:
+						break
+					staffing_notes.append(_format_retention(state, kept))
 			"loyalty_hit":
 				# employee_burnout "Push Through" interim content (WORKSHOP_2_BACKLOG
 				# "Burnout outcome model -- RULED", Pip 2026-07-13, resolves the #631/#635
@@ -454,6 +476,50 @@ static func _spec_matches(spec: String, spec_filter: String) -> bool:
 	if spec_filter == "safety":
 		return spec in ["safety", "interpretability", "alignment"]
 	return spec == spec_filter
+
+
+static func _retain_most_at_risk(state: GameState, spec_filter: String) -> Researcher:
+	"""Keep the person a rival would otherwise have taken, and make keeping them REAL.
+
+	Targets the LEAST LOYAL match -- the same person _poach_least_loyal would pick --
+	so a counter-offer defends against the actual threat rather than a random hire.
+
+	Two effects, both on the individual, because the complaint (#1225 item 4) was that
+	the retention options moved a global scalar and never touched the person:
+	  * loyalty UP -- loyalty is poaching resistance (researcher.gd), so fighting for
+	    someone should make the next raid harder, not leave them equally exposed.
+	  * current_salary UP -- "Match Their Offer" that does not change what they are paid
+	    is not a match. This is the first code path in the game that raises an existing
+	    researcher's salary, and it bills through the normal per-workday payroll from
+	    the next turn (turn_manager.gd), so retention has an ONGOING cost, not just a
+	    one-off. That is the point: keeping people is expensive forever.
+
+	Returns the retained researcher, or null when there is nobody to keep."""
+	var target: Researcher = null
+	for r in state.researchers:
+		if r.hire_state != Researcher.HireState.EMPLOYED:
+			continue
+		if spec_filter != "" and not _spec_matches(r.specialization, spec_filter):
+			continue
+		if target == null or r.loyalty < target.loyalty:
+			target = r
+	if target == null:
+		return null
+	var gain := Balance.inum("events.retention.loyalty_gain", 20)
+	var raise_pct := Balance.num("events.retention.salary_raise_pct", 0.15)
+	target.loyalty = clampi(target.loyalty + gain, 0, 100)
+	target.current_salary = target.current_salary * (1.0 + raise_pct)
+	return target
+
+
+static func _format_retention(state: GameState, r: Researcher) -> String:
+	"""Legible one-liner naming who was KEPT and what it now costs to keep them.
+	Deliberately symmetric with _format_departure: losing someone named them, and
+	keeping someone used to name nobody at all."""
+	return "%s (%s) stays -- loyalty now %d, salary now $%s/yr; %s team still %d" % [
+		r.researcher_name, r.specialization, r.loyalty,
+		GameConfig.format_number(int(r.current_salary)) if GameConfig.has_method("format_number") else str(int(r.current_salary)),
+		r.specialization, state.get_researcher_count_by_spec(r.specialization)]
 
 
 static func _format_departure(state: GameState, r: Researcher, reason: String = "poached by a rival lab") -> String:

@@ -1,0 +1,4 @@
+8  # defined-but-unread balance keys. May FALL, never RISE.
+# Lower it when you delete dead config; never raise it to make a
+# commit pass. See tools/check_balance_keys.py and
+# docs/design/SILENT_FAILURE_REGISTER.md sighting #3.

@@ -6,10 +6,14 @@ sixteen decision records first. It is factual, not a design manifesto  --  for t
 behind the design, read [`DESIGN_PHILOSOPHY.md`](game-design/DESIGN_PHILOSOPHY.md) and the
 [ADR set](game-design/decisions/) (`ADR-0001` ... `ADR-0016`).
 
-> **Two docs share this name.** This is the **developer** architecture map. The older
-> **funder/partner** pitch (audience "For Funders & Partners") now lives at
-> [`ARCHITECTURE_FUNDERS.md`](ARCHITECTURE_FUNDERS.md)  --  note it predates the L1 wave and
-> describes the retired momentum-doom model.
+> **Two docs shared this name.** This is the **developer** architecture map, and it is
+> now the only live one. The older **funder/partner** pitch (audience "For Funders &
+> Partners") was **retired 2026-08-23**: it advertised an annual funding ladder that was
+> never the ask being made, and claimed a "Web" shipping platform that does not exist. It
+> is archived with a per-claim record at
+> [`archive/2026-08-23-architecture-funders/`](archive/2026-08-23-architecture-funders/ARCHITECTURE_FUNDERS.md).
+> [`ARCHITECTURE_FUNDERS.md`](ARCHITECTURE_FUNDERS.md) is now a signpost to the single live
+> ask and to `docs/copy/budget.json`, which is the source of truth for money.
 
 > **Status of this doc:** written against `origin/main` at the L1 wave
 > (month engine #636, nine-stream doom #643, cost-of-debt finance #641, calibration #638,
@@ -302,6 +306,7 @@ again.
 | Register new save/load state | `to_dict`/`from_dict` in [`game_state.gd`](../godot/scripts/core/game_state.gd) -- read the SERIALIZATION CONVENTION block first |
 | Change scoring | `score_tuple`/`compare_score` in [`game_state.gd`](../godot/scripts/core/game_state.gd) |
 | Navigate between scenes (menu/game/leaderboard) | `SceneTransition.go_to(path)` / `.reload()` in [`scene_transition.gd`](../godot/autoload/scene_transition.gd) -- **NEVER** `get_tree().change_scene_to_file()` directly (deferred-swap chokepoint; enforced by `tools/check_scene_nav.py`). Why: [`LEADERBOARD_CRASH_DIAGNOSIS.md`](LEADERBOARD_CRASH_DIAGNOSIS.md) |
+| Add a timer, tween or node that must (or must not) run behind the pause menu | [`design/PAUSE_SEMANTICS.md`](design/PAUSE_SEMANTICS.md) -- what "paused" means, layer by layer. Every `create_timer()` passes `process_always` explicitly (its engine default IGNORES the pause, #1341); enforced by `tools/check_pause_timers.py` |
 | Cut a Windows build | `python tools/build_release.py` (nukes `.godot`, stamps the build, PROVES the pack is fresh) -- never a raw `godot --export` (stale-cache trap) |
 | Bump the game version | edit `version.txt`, run `python tools/sync_version.py`; `--check` gates pre-commit + CI |
 
@@ -349,9 +354,12 @@ Where a new dev will hit live edges. Pulled from the ADRs, code TODOs, and
    pre-L9 keys only.
 2. **Stale ADR index.** [`decisions/README.md`](game-design/decisions/README.md) lists only
    ADR-0001 (as PROPOSED) though there are 16 ADRs, nearly all ACCEPTED. Regenerate it.
-3. **Two docs named ARCHITECTURE.md.** This dev map replaced a funder pitch at the same path
-   (preserved as `ARCHITECTURE_FUNDERS.md`); ~18 files reference `ARCHITECTURE.md`. Pip to
-   confirm the split and repoint any links that specifically wanted the funder content.
+3. **Two docs named ARCHITECTURE.md.** ~~This dev map replaced a funder pitch at the same
+   path~~ **Resolved 2026-08-23:** the funder pitch is archived (see the banner at the top of
+   this file) and the path it held is a signpost to the live ask, so links that wanted the
+   funder content now land on the campaign and on `docs/copy/budget.json` rather than on a
+   stale tier ladder. ~18 files reference `ARCHITECTURE.md`; those wanted the dev map and
+   are unaffected.
 4. **"The turn is a month" headline vs mechanism.** ADR-0009's headline reads as a re-grain
    but the implementation is a plan layer over day ticks  --  self-noted in the ADR after it
    was misread during the L1 build. A junior dev *will* trip on `GameState.turn` counting

@@ -5,6 +5,14 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+  # Forcible on any branch, added 2026-08-19. A PR that touches
+  # .github/workflows/ gets its pull_request-triggered runs suppressed, so
+  # PR #1238 -- the one WIRING a new gate into this file -- could not run the
+  # gate it was adding, and there was no way to ask for it: every other
+  # workflow here had workflow_dispatch and this one did not. A quality gate
+  # you cannot invoke on demand is only as good as the events that happen to
+  # fire it.
+  workflow_dispatch:
 
 jobs:
   quality-checks:
@@ -68,6 +76,21 @@ jobs:
         python tools/check_refusal_classification.py --self-test
         python tools/check_refusal_classification.py
 
+    - name: Asset Provenance Check -- self-test, then the audit
+      run: |
+        echo "Enforcing: every packed asset has a provenance record, the record matches"
+        echo "the bytes, and the unknown set is exactly what was pinned (coordination#32)."
+        echo ""
+        echo "The self-test runs FIRST and on every build because this guard shipped on"
+        echo "2026-08-11 wired to nothing, and one day later #1196 shipped a packed asset"
+        echo "with no provenance entry -- caught only when someone ran it by hand on"
+        echo "2026-08-19. It also pins the fix from that day: the comparison is against"
+        echo "the git blob, not the working tree, so a checkout that predates"
+        echo "'*.svg text eol=lf' does not report six phantom drifts."
+        python tools/assets/check_provenance.py --self-test
+        echo ""
+        python tools/assets/check_provenance.py
+
     - name: Import Cleanup Check
       run: |
         echo "INFO  Project migrated to Godot - Python import checks skipped"
@@ -79,6 +102,49 @@ jobs:
         echo "(game_config.gd / project.godot / export_presets.cfg / welcome.tscn."
         echo " A silent drift forks the leaderboard board-key, so this gate is FATAL.)"
         python tools/sync_version.py --check
+
+    # WHY THIS RUNS HERE AND NOT ONLY AT RELEASE TIME (2026-08-29, after v0.14.4).
+    #
+    # v0.14.4 was tagged and then sat unpublished, because RN003 -- "a release
+    # body cites an issue that is still OPEN" -- failed on the tag, in BOTH
+    # release workflows. The gate was right. The problem was WHEN it could
+    # first speak:
+    #
+    #   pre-commit runs `--changelog-structure`, which is RN001/RN002 ONLY.
+    #   RN003 needs the network to ask GitHub for issue state, and pre-commit
+    #   is offline by design (there is an explicit --offline flag whose whole
+    #   job is skipping RN003/RN004).
+    #   Both workflows that DO run RN003 trigger on `push: tags: v*.*.*`.
+    #
+    # So between writing a changelog bullet and cutting a tag there was no
+    # moment at which this repo could tell you the citation was wrong. The
+    # first possible feedback arrived AFTER the tag existed, which means every
+    # mistake of this class necessarily costs a tag rewrite. That is a gap in
+    # the schedule of the checks, not a lapse by whoever wrote the bullet.
+    #
+    # This step closes it by asking the same question at the two earlier
+    # moments this workflow already runs: on the PR, and on push to main. On a
+    # release PR the cited issues describe work that merged earlier and should
+    # already be closed, so it is quiet by construction -- it is not the shape
+    # that arrives red and gets switched off in a week (measured: green on
+    # 0.14.4 as merged). The tag-time gates STAY. They check the exact bytes
+    # about to be published; this one checks the file, earlier, for free.
+    #
+    # Not fatal on a lookup failure: an unresolvable number is reported by the
+    # tool as UNKNOWN -- "treated as unresolved, not as a pass" -- so a token
+    # that cannot read issues degrades to a warning rather than a green light.
+    - name: Release notes citations -- ask before the tag, not after it
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        VERSION="$(cat version.txt)"
+        echo "Checking CHANGELOG section [$VERSION] for citations of still-open issues..."
+        echo "(RN003/RN005. The tag-time gates in enhanced-release.yml (preflight and"
+        echo " the release-body guard) remain authoritative -- they check the exact"
+        echo " published bytes. This is the same question, asked early enough to"
+        echo " be fixed without moving a tag.)"
+        python scripts/check_release_notes.py --changelog-structure
+        python scripts/check_release_notes.py --version "$VERSION"
 
     - name: Stale class-cache guard -- prove the DETECTOR still works
       run: |
@@ -167,6 +233,22 @@ jobs:
         fi
 
         echo "Commit message ASCII compliance verified"
+
+    - name: Leaderboard API tests (score_api.php, issue #1272)
+      run: |
+        # server/leaderboard/score_api.php is the only PHP in this repo, and it
+        # is a live public write endpoint: before #1272 one submitted player
+        # name could empty a whole league board. The test is dependency-free
+        # (no composer, no PHPUnit) and boots `php -S` for a real end-to-end
+        # pass, so all it needs is a php CLI.
+        #
+        # It exits 0 = pass, 1 = measured failure, 2 = DID NOT COMPLETE. The 2
+        # matters: a pre-fix score_api.php calls exit() when included, which
+        # once let the harness return green having run a third of its
+        # assertions. Do not collapse 2 into 0.
+        php --version || (sudo apt-get update -qq && sudo apt-get install -y -qq php-cli)
+        php --version
+        php server/leaderboard/tests/test_score_api.php
 
     - name: Health Gate Check
       run: |

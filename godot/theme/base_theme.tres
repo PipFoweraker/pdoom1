@@ -1,0 +1,19 @@
+; The font-size SSOT for the whole game (issue #1224). ONE number, below.
+;
+; Registered as the PROJECT theme (gui/theme/custom in project.godot), which is
+; the bottom of Godot's theme lookup chain, so it reaches every Control -- incl.
+; main.tscn, which sets no theme, and the panels built in code with no .tscn.
+;
+; Font sizes ONLY. No colours, no styleboxes, no fonts. menu_theme.tres sits
+; above this for the nine menu scenes and contributes styling only.
+;
+; Reasoning, the measured evidence, and what this CANNOT reach:
+; tools/check_font_sizes.py -- and it counts what is left, on every commit.
+;
+; NOTE: the Godot editor strips comments when it re-saves a .tres. If this block
+; is gone, it went that way; the tool above is the copy that survives.
+
+[gd_resource type="Theme" format=3 uid="uid://dbasethemepd001"]
+
+[resource]
+default_font_size = 19

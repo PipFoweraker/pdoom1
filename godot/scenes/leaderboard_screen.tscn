@@ -66,7 +66,6 @@ horizontal_alignment = 1
 [node name="Subtitle" type="Label" parent="MarginContainer/VBoxContainer/Header"]
 layout_mode = 2
 text = "Top scores across all seeds"
-theme_override_font_sizes/font_size = 18
 horizontal_alignment = 1
 
 [node name="LadderExplainer" type="Label" parent="MarginContainer/VBoxContainer/Header"]
@@ -88,7 +87,6 @@ alignment = 1
 [node name="SeedLabel" type="Label" parent="MarginContainer/VBoxContainer/Filters"]
 layout_mode = 2
 text = "Filter by Seed:"
-theme_override_font_sizes/font_size = 16
 
 [node name="SeedDropdown" type="OptionButton" parent="MarginContainer/VBoxContainer/Filters"]
 layout_mode = 2
@@ -134,31 +132,26 @@ theme_override_constants/separation = 10
 custom_minimum_size = Vector2(60, 0)
 layout_mode = 2
 text = "Rank"
-theme_override_font_sizes/font_size = 16
 
 [node name="Player" type="Label" parent="MarginContainer/VBoxContainer/LeaderboardPanel/MarginContainer/VBoxContainer/Header"]
 custom_minimum_size = Vector2(250, 0)
 layout_mode = 2
 text = "Player"
-theme_override_font_sizes/font_size = 16
 
 [node name="Score" type="Label" parent="MarginContainer/VBoxContainer/LeaderboardPanel/MarginContainer/VBoxContainer/Header"]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 text = "Turns"
-theme_override_font_sizes/font_size = 16
 
 [node name="Baseline" type="Label" parent="MarginContainer/VBoxContainer/LeaderboardPanel/MarginContainer/VBoxContainer/Header"]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 text = "vs Base"
-theme_override_font_sizes/font_size = 16
 
 [node name="Date" type="Label" parent="MarginContainer/VBoxContainer/LeaderboardPanel/MarginContainer/VBoxContainer/Header"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Date"
-theme_override_font_sizes/font_size = 16
 
 [node name="HSeparator" type="HSeparator" parent="MarginContainer/VBoxContainer/LeaderboardPanel/MarginContainer/VBoxContainer"]
 layout_mode = 2
@@ -186,7 +179,6 @@ theme_override_font_sizes/font_size = 14
 [node name="PageLabel" type="Label" parent="MarginContainer/VBoxContainer/Pagination"]
 layout_mode = 2
 text = "Page 1 of 1"
-theme_override_font_sizes/font_size = 16
 
 [node name="NextButton" type="Button" parent="MarginContainer/VBoxContainer/Pagination"]
 layout_mode = 2
@@ -221,13 +213,11 @@ alignment = 1
 [node name="BackButton" type="Button" parent="MarginContainer/VBoxContainer/Buttons"]
 layout_mode = 2
 text = "Back"
-theme_override_font_sizes/font_size = 18
 
 [node name="PlayAgainButton" type="Button" parent="MarginContainer/VBoxContainer/Buttons"]
 layout_mode = 2
 text = "New Run"
 tooltip_text = "Start a fresh run from the pre-game setup screen."
-theme_override_font_sizes/font_size = 18
 
 [connection signal="item_selected" from="MarginContainer/VBoxContainer/Filters/SeedDropdown" to="." method="_on_seed_dropdown_item_selected"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/Filters/RefreshButton" to="." method="_on_refresh_button_pressed"]

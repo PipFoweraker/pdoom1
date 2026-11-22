@@ -77,9 +77,9 @@ under ``docs/`` -- EXCEPT the machine-read ``.txt`` files listed in
 ``NOT_DOCUMENTATION``. That exception is not theoretical here: ``version.txt``
 and ``ladder_version.txt`` are the version and leaderboard-epoch SSOTs (CLAUDE.md
 -- a silent drift forks the board key), ``requirements*.txt`` are dependency
-pins, and ``godot/build_stamp.txt`` / ``godot/steam_appid.txt`` are engine data
-packed into the shipped ``.pck``. All five end in ``.txt`` and none of them is
-prose. Everything under ``godot/addons/`` is vendored third-party code.
+pins, and ``godot/build_stamp.txt`` is engine data packed into the shipped
+``.pck``. All five end in ``.txt`` and none of them is prose. Everything under
+``godot/addons/`` or ``vendor/`` is vendored third-party code.
 
 Usage::
 
@@ -131,11 +131,11 @@ NOT_DOCUMENTATION = (
     "requirements.txt",  # dependency pin
     "requirements-dev.txt",  # dependency pin
     "godot/build_stamp.txt",  # build provenance, packed into the .pck
-    "godot/steam_appid.txt",  # engine/platform data
+    "vendor/godotsteam/steam_appid.txt",  # engine/platform data, parked (#1071)
 )
 
 # Vendored third-party trees: a .md or .txt in here is upstream's, not ours.
-NOT_DOCUMENTATION_PREFIXES = ("godot/addons/",)
+NOT_DOCUMENTATION_PREFIXES = ("godot/addons/", "vendor/")
 
 # ---------------------------------------------------------------------------
 # The RED-RUN declaration (shape adopted from check_ladder_bump.DECLARATION_RE)

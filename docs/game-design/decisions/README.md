@@ -30,10 +30,11 @@
 | [ADR-0017](ADR-0017-anti-hollow-test-strategy.md) | Anti-hollow test strategy (load-time smoke + property-based invariants) | ACCEPTED | 2026-07-17 |  | Targets "hollow" tests that pass without exercising what they protect (zero-test CI, UI-parse-error-with-436-passing); adds load-time smoke and property-based invariants so a green suite means the code actually ran. |
 | [ADR-0018](ADR-0018-render-only-office-doctrine.md) | Render-only office doctrine: no spatial fact becomes a gameplay input | DRAFT * | 2026-07-27 |  | The office floor renders state and never produces it -- no spatial fact (grid cell, occupancy, adjacency) may become a gameplay input, so the sim stays headless-testable and the view stays free to change. |
 | [ADR-0019](ADR-0019-pull-from-demand-asset-pipeline.md) | Pull-from-demand asset pipeline: the pack is a function of declared demand | ACCEPTED | 2026-08-03 |  | The pack becomes a function of DECLARED DEMAND rather than an accumulation of past approvals: Library admission is taste-gated, but only a demand manifest pulls a size-declared derivative into godot/assets, making "packed but undemanded" unrepresentable rather than merely rejected. |
+| [ADR-0020](ADR-0020-machine-actor-identity.md) | Machine actor identity: a bot acts under its own name, or the attribution record is fiction | PROPOSED * | 2026-08-23 |  | Agent work is currently indistinguishable from Pip's in every repo's attribution record, because agents act through his credentials. This proposes a single machine actor with its own identity, its own audit trail, and permissions strictly narrower than Pip's -- and names the six questions that must be answered before one is created. |
 
-Total: 19 ADRs -- 18 ACCEPTED, 1 DRAFT. 2 carry amendments.
+Total: 20 ADRs -- 18 ACCEPTED, 1 DRAFT, 1 PROPOSED. 2 carry amendments.
 
-`*` marks a status carrying a qualifier that this index drops (12 of them, e.g. "ACCEPTED as design; build third"). Read the ADR for the condition -- the qualifier is often the load-bearing part.
+`*` marks a status carrying a qualifier that this index drops (13 of them, e.g. "ACCEPTED as design; build third"). Read the ADR for the condition -- the qualifier is often the load-bearing part.
 
 ## A second ADR series exists, and its numbers collide
 

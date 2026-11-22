@@ -68,9 +68,14 @@ func _create_notification(data: Dictionary):
 	tween.tween_property(notif_panel, "position", slide_in_pos, SLIDE_DURATION).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 
 	# Wait out the duration, or leave early if the player clicks the toast.
+	# process_always=false (#1343, docs/design/PAUSE_SEMANTICS.md): a message the
+	# player is meant to read must not spend its lifetime behind the pause menu. The
+	# slide tweens above/below are bound to this (pausable) node and already freeze;
+	# with the engine default this clock kept counting, so a toast raised just
+	# before ESC came back from the menu already expired and slid straight out.
 	var waited := 0.0
 	while waited < float(data["duration"]):
-		await get_tree().create_timer(0.1).timeout
+		await get_tree().create_timer(0.1, false).timeout
 		waited += 0.1
 		if not is_instance_valid(notif_panel):
 			active_notifications.erase(notif_panel)
@@ -164,7 +169,11 @@ func _build_notification_panel(data: Dictionary) -> PanelContainer:
 	var message_label = Label.new()
 	message_label.text = data["message"]
 	message_label.custom_minimum_size = Vector2(330, 0)
-	message_label.add_theme_font_size_override("font_size", ThemeManager.get_font_size("body"))
+	# No font-size override (#1224). This line used to read
+	# ThemeManager.get_font_size("body") against a key named "body_size", so it
+	# silently took a fallback and was the ONLY caller the font scale ever had.
+	# A plain Label now renders at the SSOT size on its own; restating it here
+	# would just be a second copy to drift.
 	message_label.add_theme_color_override("font_color", Color.WHITE)
 	message_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	message_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
