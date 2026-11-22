@@ -68,14 +68,13 @@ with weekly seeds is [`releases/RELEASE_HORIZON.md`](releases/RELEASE_HORIZON.md
 
 | Version | Ships | Featured seed at open |
 |---|---|---|
-| v0.15 | Fri 4 Sep 2026 | `weekly-2026-w36` |
 | v0.16 | Fri 2 Oct 2026 | `weekly-2026-w40` |
 | v0.17 | Fri 6 Nov 2026 | `weekly-2026-w45` |
 | v0.18 | Fri 4 Dec 2026 | `weekly-2026-w49` |
 | v0.19 | Fri 1 Jan 2027 (New Year's Day) | `weekly-2026-w53` |
 | v0.20 | Fri 5 Feb 2027 | `weekly-2027-w05` |
 
-**NOT FORECASTABLE (tier 3) -- the ladder epoch.** Floor today: **`>= L6`**.
+**NOT FORECASTABLE (tier 3) -- the ladder epoch.** Floor today: **`>= L7`**.
 A minor bump always cuts the ladder; the ladder may also cut mid-version
 whenever gameplay forks, and most cuts so far were exactly that. No version
 in the table above carries a predicted epoch, because none can be predicted
