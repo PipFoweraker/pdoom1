@@ -13,8 +13,8 @@ deciders: Pip
 ## Context
 
 The project historically used a two-branch Git-flow model: feature work merged into `develop`, which
-periodically merged into `main`. The last `develop` → `main` merge was `bf50f27` (2026-04-03,
-"Develop merge: Risk system… (#523)").
+periodically merged into `main`. The last `develop`  ->  `main` merge was `bf50f27` (2026-04-03,
+"Develop merge: Risk system... (#523)").
 
 For a solo maintainer working with AI coding agents, the two-branch model added ceremony without
 payoff: it doubled the surface for CI configuration, created confusion about which branch was
