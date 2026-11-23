@@ -190,6 +190,23 @@
       "release_state": "PUBLISHED",
       "release_published_at": "2026-10-28T21:49:19Z",
       "declared_untagged": null
+    },
+    {
+      "version": "0.15.0",
+      "bump_commit": "9ef96f64b63fa4f2698990e2929eb778397f03fd",
+      "bump_commit_short": "9ef96f64",
+      "bump_date": "2026-11-22T14:33:14+11:00",
+      "bump_subject": "release: prep v0.15.0 -- version, ladder L7, changelog, patch notes (#1373)",
+      "ladder_epoch_at_bump": "L7",
+      "featured_seed_at_bump": "weekly-2026-w35",
+      "board_key_at_bump": "(weekly-2026-w35, L7)",
+      "tag": "v0.15.0",
+      "tag_state": "TAGGED",
+      "tag_commit": "9ef96f64b63fa4f2698990e2929eb778397f03fd",
+      "tag_matches_bump_or_later": true,
+      "release_state": "PUBLISHED",
+      "release_published_at": "2026-11-22T03:45:34Z",
+      "declared_untagged": null
     }
   ]
 }
